@@ -138,7 +138,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     expect(t).toContain('{{controller}}, personne physique');
     for (const p of ['P1 ', 'P2 ', 'P2b', 'P3 ', 'P4 ', 'P4p', 'P5 ', 'P5s', 'P6 ', 'P7 ', 'P8 ', 'P9 ', 'P10a', 'P10b/P10c', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16']) expect(t, p).toContain(`${p.trim()} —`);
     // Release B (D2 V2): the account purposes (P1, P2, P2b, P3, P10a, P12–P16) are a section of their own, without the « proposed » badge; the later-wave
-    // purposes stay proposed (3 bis). v4-2026-11-15: the retention periods are the approved policy (retention-policy.js, 09/11/2026) — no badge on § 4
+    // purposes stay proposed (3 bis). Since v4 (15/11/2026): the retention periods are the approved policy (retention-policy.js, 09/11/2026) — no badge on § 4
     expect(notice.sections.filter((s) => s.proposed).map((s) => s.id)).toEqual(['purposes-later']);
     const v2 = notice.sections.find((s) => s.id === 'purposes');
     expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16']);

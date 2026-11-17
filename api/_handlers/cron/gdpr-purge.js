@@ -12,6 +12,7 @@ import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-or
 import { getCronAuth } from '../../_utils/cronAuth.js';
 import { startCronRun, finishCronRun } from '../../_utils/cron-run.js';
 import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.js';
+import { mailContactEraser } from '../../_services/mail-contact-erasure.js';
 import * as Sentry from '@sentry/node';
 import { restrictedDossierSql, restrictedSubjectSql } from '../../_services/processing-restriction.js';
 import { appointmentGuestSchema } from '../../_utils/schema-features.js';
@@ -296,10 +297,16 @@ export const PURGE_STEPS = [
         tables: ['CitizenUser', 'ConsentLog', 'DSRRequest', 'LegalHold'],
         count: (db, ctx) => countWhere(db, CitizenUser, unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS'))),
         run: async (db, ctx) => {
-            const ids = (await db.select({ id: CitizenUser.id }).from(CitizenUser).where(unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS')))).map((r) => r.id);
+            const found = await db.select({ id: CitizenUser.id, email: CitizenUser.email }).from(CitizenUser).where(unverifiedAccountsWhere(ctx.cutoff('UNVERIFIED_ACCOUNT_DAYS')));
+            const ids = found.map((/** @type {{ id: string }} */ r) => r.id);
             if (!ids.length) return 0;
             await db.delete(ConsentLog).where(and(eq(ConsentLog.subject_type, 'CITIZEN_USER'), inArray(ConsentLog.subject_id, ids)));
-            return affected(await db.delete(CitizenUser).where(and(inArray(CitizenUser.id, ids), isNull(CitizenUser.emailVerifiedAt))));
+            const gone = await db.delete(CitizenUser).where(and(inArray(CitizenUser.id, ids), isNull(CitizenUser.emailVerifiedAt))).returning({ id: CitizenUser.id });
+            // Legal v5: the verification e-mail made the provider save each of these addresses as a « contact » — deleted there too, after the commit
+            // (api/_services/mail-contact-erasure.js; fail-safe: the accounts are gone whatever the provider answers; an unresolved contact fails the step name)
+            const goneIds = new Set(gone.map((/** @type {{ id: string }} */ r) => r.id));
+            const emails = found.filter((/** @type {{ id: string }} */ r) => goneIds.has(r.id)).map((/** @type {{ email: string }} */ r) => r.email);
+            return { count: gone.length, afterCommit: async () => ((await mailContactEraser.eraseMany(emails, { reason: 'unverified_account_purge' })).unresolved > 0 ? 'mailContactErasure' : null) };
         } },
 
     // 7. Old AI Metrics (90 days — non-personal, storage hygiene)
@@ -566,6 +573,9 @@ export async function runGdprPurge(opts = {}) {
             steps: report,
         };
         if (execute) {
+            // Legal v5: provider contact deletions that failed earlier (contact ids only) are tried again at every run; what is still pending fails the run's status
+            const pendingContacts = await mailContactEraser.drainPending().catch(() => ({ remaining: 0 }));
+            if (pendingContacts.remaining > 0) { failedSteps.push('mailContactRetry'); out.status = 'partial_failure'; out.failed_steps = failedSteps; }
             // R44: evidence of the run (counts and step ids only — never a value, an address or an identifier of a person)
             try {
                 await database.insert(AuditLog).values({ action: 'GDPR_PURGE_RUN', actor: 'cron/gdpr-purge', entity: 'RetentionPolicy', entity_id: policy.version,

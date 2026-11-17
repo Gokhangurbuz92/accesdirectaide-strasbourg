@@ -10,6 +10,8 @@
  *  - Otherwise: hidden (fail-closed). The existing in-force pages (/cgu, /politique-confidentialite, /mentions-legales) are not affected.
  * Proposed legal bases (section 3 bis: functions not open yet) come from CONTROL/r44/R44_DECISIONS_RGPD_D1_D6_FR_v2.md (annexes A and B), NOT approved (D2).
  * The retention periods of section 4 are the APPROVED policy of api/_services/retention-policy.js (controller, 09/11/2026): no « proposé » badge since v4.
+ * A notice-only change still moves the ONE shared version (v4, v5): every document carries LEGAL_DRAFTS_VERSION, and Production keeps hiding all of them
+ * until VITE_LEGAL_DOCS_APPROVED_VERSION names « id@version ».
  */
 
 export const LEGAL_DRAFT_STATUS = Object.freeze({
@@ -17,7 +19,7 @@ export const LEGAL_DRAFT_STATUS = Object.freeze({
 });
 
 /** the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file) */
-export const LEGAL_DRAFTS_VERSION = 'v4-2026-11-15';   // Final review (15/11/2026): approved retention periods without the « proposé » badge, § 7 transfers rewritten from primary sources, § 11 basis and period no longer « proposées », § 4 consent / support lines, § 6 Vercel network, § 8 post-mortem directives (see the comment above the notice). v3-2026-11-14 = V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
+export const LEGAL_DRAFTS_VERSION = 'v5-2026-11-15';   // Provider verification (15/11/2026, CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md): § 4 Mailjet retention by objective criterion (90 days free plan / 13 months paid plan), recipient address kept as a contact and deleted at Mailjet when the account is erased, Vercel logs 1 day, Neon history tied to the free plan; § 6 Vercel and Sinch also act as controllers for some technical data; § 7 clauses incorporated, official Data Privacy Framework list (see the comment above the notice). v4-2026-11-15 = final review (15/11/2026): approved retention periods without the « proposé » badge, § 7 transfers rewritten from primary sources, § 11 basis and period no longer « proposées », § 4 consent / support lines, § 6 Vercel network, § 8 post-mortem directives (see the comment above the notice). v3-2026-11-14 = V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
 
 /**
  * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean }} DraftSection
@@ -184,23 +186,37 @@ export const LEGAL_DRAFT_DOCUMENTS = [
     ],
   },
   /*
-   * v4-2026-11-15 — sources read on 15/11/2026 for the factual claims of the privacy notice (primary / official pages only):
+   * v5-2026-11-15 — sources read on 15/11/2026 for the factual claims of the privacy notice (primary / official pages only). The provider claims were
+   * re-read for v5 (verification report CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md, sources V1–V7, M1–M8, U1–U5, N1–N5):
    *  § 4  CONSENT_SUPERSEDED_DAYS = 1095 (created_at of a decision replaced by a newer one) and SUPPORT_REQUEST_DAYS = 365 (closedAt):
    *       api/_services/retention-policy.js; purge steps deletedConsentLogsCount / supportRequestsDeleted in api/_handlers/cron/gdpr-purge.js; a help request
    *       is a row of « SupportRequest » written by the help form (api/_services/support.js, categories ACCOUNT…; surface « support » closed in the V2 scope).
-   *  § 4  Mailjet log period: NO figure. https://documentation.mailjet.com/hc/en-us/articles/360042755094 answered HTTP 403 to a direct read; the Sinch DPA
-   *       (https://sinch.com/legal/terms-and-conditions/other-sinch-terms-conditions/data-processing-agreement/) and https://www.mailjet.com/legal/security-privacy/
-   *       state no period for message / event data → « pendant la durée fixée par Mailjet dans sa documentation ».
+   *  § 4  Vercel runtime logs: https://vercel.com/docs/logs/runtime (table « Plan / Retention time »: Hobby 1 hour, Pro 1 day, Pro with Observability Plus
+   *       30 days, Enterprise 3 days). The team is on Pro (CLI `vercel teams ls`, 15/11/2026) → « 1 jour ». Account fact NOT verified: Observability Plus off.
+   *  § 4  Mailjet (M1) Help Center « How long are my statistics kept? », https://documentation.mailjet.com/hc/en-us/articles/360042755094-How-long-are-my-statistics-kept
+   *       (read in a browser; refuses automated fetch): statistics and campaigns 90 days on Free plans, 13 months on paid plans; templates and contacts kept
+   *       for the lifetime of the account. The plan of our account is NOT recorded → both figures, by criterion (« formule gratuite » / « formule payante »).
+   *       (M2) Sinch DPA v8 (29/10/2025), https://sinch.com/legal/terms-and-conditions/other-sinch-terms-conditions/data-processing-agreement/ § 11(b):
+   *       deletion within 90 days following termination of the account; § 3(a)(iv): Sinch « independent data controller » for transmitting messages
+   *       (anti-spam, fraud, network security). No source states a period for message CONTENT → « Mailjet ne publie pas de durée… ».
+   *       (M4) Send API v3.1 guide, https://dev.mailjet.com/email/guides/send-api-v31/: the Send API saves each recipient address as a contact.
+   *  § 4  « L'adresse enregistrée chez Mailjet est supprimée lorsque votre compte est effacé » is true through api/_services/mail-contact-erasure.js
+   *       (Mailjet « GDPR Delete contacts », https://dev.mailjet.com/docs/email-api/contact-management/gdpr-delete-contacts: the contact is anonymised at once,
+   *       its records deleted after 30 days), called by the account erasure, purge step 6c and the confirmed change of address (tests/unit/v5-mail-contact-erasure.test.js).
+   *  § 4  Neon history window: https://neon.com/docs/introduction/plans (Free: 6 hours; Launch up to 7 days, Scale up to 30) → tied to the free plan in the text.
    *  § 6  Vercel: docs/production-hosting.md § 1 (« fonctions à Francfort (fra1) ; pages et fichiers publics distribués par le réseau mondial de Vercel »).
+   *  § 6  Roles: Vercel DPA https://vercel.com/legal/dpa § 4.a (processor of Customer Data, Pro and Enterprise), § 4.b (Vercel « is the Controller » of
+   *       Service-Generated Data); Sinch DPA § 3(a)(iv) (above). DPAs incorporated by the terms: Vercel Terms § 11.1, Upstash Terms § D.5, Mailjet Terms § 4.
    *  § 7  SCC, Commission Implementing Decision (EU) 2021/914 of 4 June 2021 (https://eur-lex.europa.eu/legal-content/FR/ALL/?uri=CELEX%3A32021D0914), named by:
-   *       Vercel DPA https://vercel.com/legal/dpa ; Upstash DPA https://upstash.com/trust/dpa.pdf ; Sinch DPA (URL above, § 12 d) ;
-   *       Cloudflare DPA https://www.cloudflare.com/cloudflare-customer-dpa/ (1.1 g). Microsoft: SCC offered through its DPA
-   *       (https://learn.microsoft.com/en-us/compliance/regulatory/offering-eu-model-clauses). Neon / Databricks: https://neon.com/dpa names Databricks, Inc. as the
-   *       contracting party; its transfer clause was NOT read on that page (to confirm on the Databricks DPA).
-   *  § 7  EU–US Data Privacy Framework, self-declarations only (« déclarent adhérer »): Vercel, changelog of 4 June 2024
-   *       https://vercel.com/changelog/vercel-is-now-certified-under-the-eu-us-data-privacy-framework-dpf ; Upstash, privacy policy
-   *       https://upstash.com/trust/privacy.pdf (section « Transfer Mechanism and Data Privacy Framework »). The list of dataprivacyframework.gov could not be
-   *       read (script-rendered). NOT stated for Mailjet / Sinch (the Sinch DPA lists the DPF for « Sinch Email », not confirmed on the official list).
+   *       Vercel DPA § 13.3 and Schedule 3 (Module Two) ; Upstash DPA https://upstash.com/trust/dpa.pdf § 3.2(B), Annex 2 (the Data Privacy Framework first,
+   *       SCC if it does not cover the transfer or is invalidated) ; Sinch DPA § 12 (c)–(d) ; Cloudflare DPA https://www.cloudflare.com/cloudflare-customer-dpa/
+   *       (1.1 g). Microsoft: SCC offered through its DPA (https://learn.microsoft.com/en-us/compliance/regulatory/offering-eu-model-clauses).
+   *       Neon / Databricks (N4): Databricks DPA v3 (2023-07-21), https://www.databricks.com/legal/dpa § 8.1 and Annex B — SCC « deemed incorporated »,
+   *       Modules Two and Three; https://neon.com/dpa names Databricks, Inc. as the contracting party.
+   *  § 7  EU–US Data Privacy Framework: stated by the provider and Active on dataprivacyframework.gov/list, read 15/11/2026 — Vercel Inc. (privacy policy
+   *       https://vercel.com/legal/privacy-policy ; changelog of 4 June 2024), Upstash, Inc. (https://upstash.com/trust/privacy.pdf), Databricks, Inc.
+   *       The list is a status on the day it was read: re-read it at each notice version. NOT stated for Mailjet / Sinch: the listed company is Mailgun
+   *       Technologies, Inc., a US affiliate — Mailjet SAS is a French company.
    *  § 7  Sinch AB (publ) is « a Swedish limited liability company » (https://www.group.sinch.com/corporate-governance); US entities of the group (Sinch America Inc.,
    *       Mailgun Technologies, Inc.) and Mailjet SAS (France): https://sinch.com/legal/data-protection-agreement-sub-processors/.
    *  § 8  Loi n° 78-17 du 6 janvier 1978, article 85 (LEGIARTI000039280582, version in force since 01/01/2020), I:
@@ -255,14 +271,14 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         "Liens de vérification de l'adresse, de mot de passe et de changement d'adresse : valables 15 minutes (30 minutes pour un changement d'adresse), puis supprimés.",
         "Session de connexion : 7 jours au plus. Après 5 échecs de connexion, le compte est verrouillé 15 minutes.",
         "Compteurs de limitation des requêtes (votre adresse IP et, pour la connexion, la création de compte et l'envoi de liens, une empreinte de votre adresse électronique, jamais l'adresse elle-même) : effacés à la fin de leur fenêtre, de quelques minutes à une heure. Les journaux n'en gardent qu'une empreinte condensée.",
-        "E-mails de service : leur contenu n'est pas conservé par AccesDirectAide ; la trace de l'envoi (numéro du message chez le prestataire) est gardée 12 mois. Si une adresse refuse définitivement les messages, une empreinte de l'adresse (pas l'adresse elle-même) bloque les envois ; ce blocage est revu après 12 mois et supprimé s'il n'est plus justifié.",
+        "E-mails de service : leur contenu n'est pas conservé par AccesDirectAide ; la trace de l'envoi (numéro du message chez le prestataire) est gardée 12 mois. Si une adresse refuse définitivement les messages, une empreinte de l'adresse (pas l'adresse elle-même) bloque les envois ; ce blocage est revu après 12 mois et supprimé s'il n'est plus justifié. L'adresse enregistrée chez Mailjet est supprimée lorsque votre compte est effacé.",
         "Archives à accès restreint après l'effacement d'un compte : preuve de l'acceptation des conditions d'utilisation et de la déclaration « 18 ans ou plus », 12 mois ; demandes d'exercice des droits, 3 ans après leur clôture. Elles ne servent qu'à prouver ou à se défendre en cas de litige.",
         "Décisions de consentement remplacées par une décision plus récente : 3 ans après leur enregistrement.",
         "Demandes d'aide adressées au support par le formulaire d'aide (pas encore ouvert), y compris pour retrouver l'accès à un compte : 12 mois après la clôture de la demande.",
         "Journaux d'administration et de sécurité (sans votre adresse électronique) : 12 mois.",
         "Conservation bloquée (« gel ») d'une donnée précise, lorsqu'une autorité l'exige ou qu'un litige l'impose : jusqu'à la fin de la procédure ; la trace de la levée est gardée 12 mois.",
-        "Journaux techniques des prestataires : l'hébergeur (Vercel) garde ses journaux d'exécution de 1 heure à 1 jour selon l'offre ; le prestataire d'e-mails (Mailjet) garde ses journaux pendant la durée fixée par Mailjet dans sa documentation.",
-        "Historique de restauration : copies de sauvegarde chiffrées, 35 jours au plus ; historique de la base de données chez Neon, 6 heures au plus. Une donnée effacée peut subsister dans ces copies pendant ces durées ; elle n'est utilisée que pour réparer un incident. Pour qu'une restauration ne fasse pas revenir une personne effacée, une trace de chaque effacement (identifiant technique du compte et de la demande, date ; ni adresse ni nom) est gardée 40 jours hors de la base, chez Upstash (Francfort).",
+        "Journaux techniques des prestataires : l'hébergeur (Vercel) garde ses journaux d'exécution 1 jour. Le prestataire d'e-mails (Mailjet) garde les statistiques d'envoi 90 jours avec la formule gratuite de Mailjet, 13 mois avec une formule payante ; il enregistre l'adresse du destinataire comme contact et la garde tant que notre compte Mailjet existe, sauf si nous la supprimons avant ; à la fin de notre contrat, il efface les données dans un délai de 90 jours. Mailjet ne publie pas de durée pour le contenu des messages.",
+        "Historique de restauration : copies de sauvegarde chiffrées, 35 jours au plus ; historique de la base de données chez Neon, 6 heures au plus avec la formule gratuite de Neon, que nous utilisons. Une donnée effacée peut subsister dans ces copies pendant ces durées ; elle n'est utilisée que pour réparer un incident. Pour qu'une restauration ne fasse pas revenir une personne effacée, une trace de chaque effacement (identifiant technique du compte et de la demande, date ; ni adresse ni nom) est gardée 40 jours hors de la base, chez Upstash (Francfort).",
         "Fonctions pas encore ouvertes (rendez-vous, message facultatif, notifications des professionnels, assistant) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.",
       ], paras: [
         "Aucune de ces durées n'est imposée par un texte : elles sont fixées par le responsable du traitement. La suppression automatique à ces échéances n'est pas encore entièrement activée ; vous pouvez demander l'effacement à tout moment.",
@@ -279,10 +295,10 @@ export const LEGAL_DRAFT_DOCUMENTS = [
         'Microsoft : boîte de réception de l\'adresse de contact.',
         "Scaleway SAS (France) et Cloudflare, Inc. : copies de sauvegarde de la base de données. La tâche de sauvegarde s'exécute chez Scaleway, à Paris, et chiffre la copie avant tout envoi ; Cloudflare la stocke dans l'Union européenne sans pouvoir la lire.",
       ], paras: [
-        "Chacun de ces prestataires agit sur instruction, dans le cadre d'un accord de traitement des données (article 28 du RGPD) intégré à ses conditions de service.",
+        "Pour vos données, chacun de ces prestataires agit sur instruction, dans le cadre d'un accord de traitement des données (article 28 du RGPD) intégré à ses conditions de service. Deux d'entre eux traitent aussi certaines données techniques pour leur propre compte : Vercel, pour les données d'usage de son service ; Sinch (Mailjet), pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau.",
       ] },
       { id: 'transfers', title: '7. Transferts hors de l\'Union européenne', paras: [
-        "La plupart de ces prestataires appartiennent à des groupes établis aux États-Unis ; Mailjet appartient au groupe suédois Sinch, qui a des filiales aux États-Unis : un accès depuis les États-Unis est possible. Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914), selon les conditions de chaque prestataire. Vercel et Upstash déclarent en outre adhérer au cadre de protection des données UE–États-Unis. Scaleway SAS fait exception : c'est une société française, qui exécute la tâche de sauvegarde à Paris.",
+        "La plupart de ces prestataires appartiennent à des groupes établis aux États-Unis ; Mailjet appartient au groupe suédois Sinch, qui a des filiales aux États-Unis : un accès depuis les États-Unis est possible. Les garanties prévues sont les clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914), intégrées aux conditions de chaque prestataire. Vercel Inc. et Upstash, Inc. sont en outre inscrites sur la liste officielle du cadre de protection des données UE–États-Unis (consultée le 15 novembre 2026) ; Upstash s'appuie d'abord sur ce cadre, et sur les clauses contractuelles types s'il ne s'applique plus. Databricks, Inc. (Neon) y est également inscrite. Scaleway SAS fait exception : c'est une société française, qui exécute la tâche de sauvegarde à Paris.",
       ] },
       { id: 'rights', title: '8. Vos droits', items: [
         "Accès, rectification, effacement et limitation de vos données.",

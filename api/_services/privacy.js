@@ -5,6 +5,7 @@ import { appointmentTable, flagsOf, parcoursItemTable, parcoursPlanStepSchema, r
 import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
 import { createErasureTombstones } from './erasure-tombstones.js';
+import { mailContactEraser } from './mail-contact-erasure.js';
 import {
     CitizenUser,
     AuthToken,
@@ -376,7 +377,7 @@ async function executeWithTransaction(/** @type {{ transaction: unknown }} */ da
 }
 
 // @ts-ignore
-export function createPrivacyRightsService({ db, cryptoLib, tombstones = createErasureTombstones() }) {
+export function createPrivacyRightsService({ db, cryptoLib, tombstones = createErasureTombstones(), mailContacts = mailContactEraser }) {
     return {
         /**
        * @param {string | import("drizzle-orm").SQLWrapper} userId
@@ -896,6 +897,15 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 });
                 // Committed: now (and only now) the encrypted documents of the erased dossiers are deleted from object storage. Best effort; failures are logged by key.
                 await purgeDossierFiles(dossierStorageKeys).catch(() => { });
+                // Legal v5: the account is gone — the copy of its address that the e-mail provider keeps as a « contact » goes too (Mailjet GDPR delete,
+                // api/_services/mail-contact-erasure.js). After the commit and fail-safe: a provider error never undoes or blocks the erasure; « queued » is
+                // retried later from the contact id, « unresolved » (lookup failed, address no longer known) is reported in the summary.
+                if (domains.includes('CitizenProfile') && result?.profileDeleted > 0) {
+                    const contact = await mailContacts.erase(user.email, { reason: 'account_erasure' }).catch(() => ({ outcome: 'unresolved' }));
+                    result.mailContact = contact.outcome;
+                    result.mailContactUnresolved = contact.outcome === 'unresolved' ? 1 : 0;
+                    await mailContacts.drainPending({ limit: 10 }).catch(() => { });
+                }
                 return result;
             } catch (error) {
                 if (error?.code === 'LEGAL_HOLD_ACTIVE') {

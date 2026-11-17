@@ -4,6 +4,8 @@
  * § 11 no longer calls the directory basis and period « proposées », § 4 gains the superseded-consent and support lines the code already applies and no
  * longer says the Mailjet log period is « en cours de vérification », § 6 says the pages are served by Vercel's network, § 8 adds the post-mortem directives
  * (loi n° 78-17, art. 85). The sources read on 15/11/2026 are listed in the comment above the notice in src/config/legal-drafts.js.
+ * The current version is pinned by v2-legal-review-v5.test.js (provider verification: Mailjet retention, provider roles, Data Privacy Framework list);
+ * what v4 changed and v5 kept must stay true in every later version, which is what this file keeps checking.
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
@@ -16,10 +18,11 @@ const section = (/** @type {string} */ s) => notice.sections.find((x) => x.id ==
 const textOf = (/** @type {any} */ s) => [s.title, ...(s.items || []), ...(s.paras || [])].join('\n');
 const locale = (/** @type {string} */ lang) => JSON.parse(readFileSync(`src/i18n/locales/${lang}/legaldraft.json`, 'utf8'));
 
-describe('legal drafts v4-2026-11-15', () => {
-  it('the version is bumped on every document', () => {
-    expect(LEGAL_DRAFTS_VERSION).toBe('v4-2026-11-15');
-    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe('v4-2026-11-15');
+describe('legal drafts: what the v4 review (15/11/2026) changed still holds', () => {
+  it('every document carries the one current version, v4 or later', () => {
+    expect(LEGAL_DRAFTS_VERSION).toMatch(/^v\d+-\d{4}-\d{2}-\d{2}$/);
+    expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(4);
+    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_VERSION);
   });
 
   it('§ 4: the retention periods are approved — no « proposé » badge; § 3 bis keeps it', () => {
@@ -39,12 +42,10 @@ describe('legal drafts v4-2026-11-15', () => {
     expect(items).toHaveLength(14);
   });
 
-  it('§ 4: no « en cours de vérification » and no invented Mailjet figure', () => {
+  it('§ 4: no « en cours de vérification »; the Mailjet periods are the published ones (pinned by the v5 test), never a reference to « sa documentation »', () => {
     const t = textOf(section('retention'));
     expect(t).not.toMatch(/en cours de vérification/);
-    const mailjet = section('retention').items.find((x) => x.startsWith('Journaux techniques des prestataires'));
-    expect(mailjet).toContain("le prestataire d'e-mails (Mailjet) garde ses journaux pendant la durée fixée par Mailjet dans sa documentation.");
-    expect(mailjet.split('Mailjet')[1]).not.toMatch(/\d/);
+    expect(t).not.toMatch(/durée fixée par Mailjet dans sa documentation/);
   });
 
   it('§ 6: the functions run in Frankfurt and the static pages are served by Vercel\'s network', () => {
@@ -53,16 +54,16 @@ describe('legal drafts v4-2026-11-15', () => {
     expect(readFileSync('docs/production-hosting.md', 'utf8')).toMatch(/fonctions à Francfort \(`fra1`\) ; pages et fichiers publics distribués par le réseau mondial de Vercel/);
   });
 
-  it('§ 7: SCC for all, the Data Privacy Framework only as a declaration of Vercel and Upstash, Mailjet in the Swedish group Sinch', () => {
+  it('§ 7: SCC for all, the Data Privacy Framework never claimed for Mailjet / Sinch, Mailjet in the Swedish group Sinch', () => {
     const t = section('transfers').paras.join('\n');
     expect(t).toMatch(/^La plupart de ces prestataires appartiennent à des groupes établis aux États-Unis ; Mailjet appartient au groupe suédois Sinch, qui a des filiales aux États-Unis : un accès depuis les États-Unis est possible\./);
     expect(t).toContain("clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914)");
-    expect(t).toContain('Vercel et Upstash déclarent en outre adhérer au cadre de protection des données UE–États-Unis.');
     expect(t).not.toMatch(/^Ces prestataires appartiennent/);
     expect(t).not.toMatch(/pour Vercel, Upstash et Mailjet/);
-    // the framework sentence names neither Mailjet nor Sinch
-    const dpf = t.split('. ').find((x) => x.includes('cadre de protection des données'));
-    expect(dpf).not.toMatch(/Mailjet|Sinch|Neon|Cloudflare|Microsoft/);
+    // everything after the clauses (the framework sentences) names neither Mailjet nor Sinch, Cloudflare or Microsoft
+    const dpf = t.slice(t.indexOf('Les garanties prévues'), t.indexOf('Scaleway SAS fait exception'));
+    expect(dpf).toContain('cadre de protection des données UE–États-Unis');
+    expect(dpf).not.toMatch(/Mailjet|Sinch|Mailgun|Cloudflare|Microsoft/);
     expect(t).toContain("Scaleway SAS fait exception : c'est une société française");
   });
 
@@ -99,7 +100,6 @@ describe('legal drafts v4-2026-11-15', () => {
       expect(tr['privacyNotice.retention.i9'], lang).toMatch(/12/);
       expect(tr['privacyNotice.retention.i12'], lang).toMatch(/Vercel/);
       expect(tr['privacyNotice.retention.i12'], lang).toMatch(/Mailjet/);
-      expect(tr['privacyNotice.retention.i12'].split('Mailjet')[1], lang).not.toMatch(/\d/);
       expect(tr['privacyNotice.retention.i13'], lang).toMatch(/Neon/);
       expect(tr['privacyNotice.retention.i13'], lang).toMatch(/Upstash/);
       // § 6
@@ -115,7 +115,6 @@ describe('legal drafts v4-2026-11-15', () => {
       expect(tr['privacyNotice.rights.i5'], lang).toMatch(/85/);
       expect(tr['privacyNotice.art14.p2'], lang).not.toMatch(/[Pp]roposed|Önerilen|المقترح|Vorgeschlagene|Запропонован/);
     }
-    expect(locale('en')['privacyNotice.transfers.p1']).toContain('Vercel and Upstash also declare that they adhere to the EU–US Data Privacy Framework.');
     expect(locale('en')['privacyNotice.art14.p2']).toContain('Basis: legitimate interest (GDPR Article 6(1)(f)). Period: as long as the official source publishes the information');
     expect(locale('en')['badge.proposed']).toBeTruthy();
   });
