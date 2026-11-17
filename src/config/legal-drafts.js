@@ -376,16 +376,24 @@ export const LEGAL_NOTICE_VARIANT_DOCUMENT_V6 = Object.freeze({
 
 /*
  * v7-2026-11-18 — owner decision D5 b (17/11/2026): the erasure trace also has an encrypted second copy in the K3 object storage (Cloudflare R2, EU
- * jurisdiction; api/_services/erasure-tombstone-copy.js). v7 = v6 + the sentence below appended to the privacy notice § 4 « Historique de restauration »
- * item; nothing else changes (diff: CONTROL/v2/V7_METIN_FARKI_FR.md). Cloudflare's role is the one § 6 already states for the backups (processor; Cloudflare
- * DPA https://www.cloudflare.com/cloudflare-customer-dpa/, cited above for v5). The copy is written only while v7 is approved (copyWriteConfig):
- * Production can open on v6 with the copy off. The translations of the extended item are the « i13_v7 » keys (itemKeys).
+ * jurisdiction; api/_services/erasure-tombstone-copy.js). v7 = v6 + two appended sentences of the privacy notice, nothing else (diff:
+ * CONTROL/v2/V7_METIN_FARKI_FR.md): § 4 « Historique de restauration » (LEGAL_DRAFTS_V7_SENTENCE) and, for the provider-role consistency the owner requires
+ * between §§ 3, 5 and 6, the Cloudflare entry of § 6 (LEGAL_DRAFTS_V7_PROCESSOR_SENTENCE; §§ 3 and 5 list no storage per provider: unchanged). Cloudflare's
+ * role is the one § 6 already states for the backups (processor; Cloudflare DPA https://www.cloudflare.com/cloudflare-customer-dpa/, cited above for v5).
+ * The copy is written only while v7 is approved (copyWriteConfig): Production can open on v6 with the copy off. The translations of the extended items
+ * are the « i13_v7 » / « i6_v7 » keys (itemKeys).
  */
 export const LEGAL_DRAFTS_V7 = 'v7-2026-11-18';
 export const LEGAL_DRAFTS_V7_SENTENCE = "Une seconde copie chiffrée de cette trace, que Cloudflare ne peut pas lire, est gardée 40 jours chez Cloudflare dans l'Union européenne.";
+export const LEGAL_DRAFTS_V7_PROCESSOR_SENTENCE = "Cloudflare garde aussi, dans l'Union européenne et sans pouvoir la lire, la seconde copie chiffrée des traces d'effacement (section 4).";
+/** v7 additions: section → { item index (0-based) → [appended sentence, translation key] } (notice-confidentialite only) */
+export const LEGAL_DRAFTS_V7_ADDITIONS = Object.freeze({ retention: { 12: [LEGAL_DRAFTS_V7_SENTENCE, 'i13_v7'] }, processors: { 5: [LEGAL_DRAFTS_V7_PROCESSOR_SENTENCE, 'i6_v7'] } });
 /** @param {DraftDocument} d @returns {DraftDocument} */
-const toV7 = (d) => ({ ...d, version: LEGAL_DRAFTS_V7, sections: d.sections.map((s) => (d.id === 'notice-confidentialite' && s.id === 'retention' && s.items
-  ? { ...s, items: s.items.map((x, i) => (i === 12 ? `${x} ${LEGAL_DRAFTS_V7_SENTENCE}` : x)), itemKeys: { 12: 'i13_v7' } } : s)) });
+const toV7 = (d) => ({ ...d, version: LEGAL_DRAFTS_V7, sections: d.sections.map((s) => {
+  /** @type {Record<number, string[]> | undefined} */ const add = d.id === 'notice-confidentialite' ? /** @type {any} */ (LEGAL_DRAFTS_V7_ADDITIONS)[s.id] : undefined;
+  if (!add || !s.items) return s;
+  return { ...s, items: s.items.map((x, i) => (add[i] ? `${x} ${add[i][0]}` : x)), itemKeys: Object.fromEntries(Object.entries(add).map(([i, a]) => [Number(i), a[1]])) };
+}) });
 /** @type {DraftDocument[]} */
 export const LEGAL_DRAFT_DOCUMENTS_V7 = LEGAL_DRAFT_DOCUMENTS_V6.map(toV7);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT_V7 = Object.freeze({ ...LEGAL_NOTICE_VARIANT_DOCUMENT_V6, version: LEGAL_DRAFTS_V7 });

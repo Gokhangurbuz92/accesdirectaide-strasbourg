@@ -1,11 +1,12 @@
 /**
- * Legal drafts v7-2026-11-18 (owner, 18/11/2026; diff CONTROL/v2/V7_METIN_FARKI_FR.md) — v7 = v6 + ONE sentence appended to the privacy notice § 4
- * « Historique de restauration » item: the encrypted second copy of the erasure trace at Cloudflare (D5 b). v6 and v7 COEXIST, each approvable by
+ * Legal drafts v7-2026-11-18 (owner, 18/11/2026; diff CONTROL/v2/V7_METIN_FARKI_FR.md) — v7 = v6 + TWO appended sentences of the privacy notice:
+ * § 4 « Historique de restauration » (the encrypted second copy of the erasure trace at Cloudflare, D5 b) and the Cloudflare entry of § 6 (provider-role
+ * consistency §§ 3 / 5 / 6 required by the owner; §§ 3 and 5 list no storage per provider). v6 and v7 COEXIST, each approvable by
  * name; v7 stays a draft until approved by name; the tombstone copy is written only while the approved notice is v7 or later (fail closed).
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V7_SENTENCE, LEGAL_DRAFTS_VERSION, LEGAL_DRAFT_VERSIONS,
+import { LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V7_SENTENCE, LEGAL_DRAFTS_V7_PROCESSOR_SENTENCE, LEGAL_DRAFTS_VERSION, LEGAL_DRAFT_VERSIONS,
   LEGAL_NOTICE_VARIANT_DOCUMENT_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V7, LEGAL_DRAFT_STATUS, draftFor, draftByPath, draftVisibility, approvedVersionOf, approvedAtLeast } from '../../src/config/legal-drafts.js';
 import { citizenTermsInForce } from '../../api/_utils/terms-in-force.js';
 import { termsReference } from '../../api/_utils/terms-acceptance.js';
@@ -27,7 +28,7 @@ describe('legal drafts v7-2026-11-18 — v6 + one sentence', () => {
     for (const d of [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7]) { expect(d.version).toBe(LEGAL_DRAFTS_V7); expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); }
     for (const d of [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6]) expect(d.version).toBe(LEGAL_DRAFTS_V6);
   });
-  it('the ONLY difference is the sentence appended to § 4 « Historique de restauration »', () => {
+  it('the ONLY differences are the sentences appended to § 4 « Historique de restauration » and to the Cloudflare entry of § 6', () => {
     const strip = (/** @type {any} */ docs, /** @type {string} */ v) => JSON.parse(JSON.stringify(docs).replaceAll(v, 'V'));
     const a = strip(LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_DRAFTS_V6); const b = strip(LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_DRAFTS_V7);
     const nb = b.find((/** @type {any} */ d) => d.id === 'notice-confidentialite'); const na = a.find((/** @type {any} */ d) => d.id === 'notice-confidentialite');
@@ -35,12 +36,25 @@ describe('legal drafts v7-2026-11-18 — v6 + one sentence', () => {
     expect(rb.items[12]).toBe(`${ra.items[12]} ${LEGAL_DRAFTS_V7_SENTENCE}`);
     expect(ra.items[12]).toContain('chez Upstash (Francfort).');
     expect(LEGAL_DRAFTS_V7_SENTENCE).toBe("Une seconde copie chiffrée de cette trace, que Cloudflare ne peut pas lire, est gardée 40 jours chez Cloudflare dans l'Union européenne.");
-    rb.items[12] = ra.items[12]; delete rb.itemKeys;
+    const pb = nb.sections.find((/** @type {any} */ s) => s.id === 'processors'); const pa = na.sections.find((/** @type {any} */ s) => s.id === 'processors');
+    expect(pa.items[5]).toMatch(/^Scaleway SAS \(France\) et Cloudflare, Inc\. : copies de sauvegarde/);
+    expect(pb.items[5]).toBe(`${pa.items[5]} ${LEGAL_DRAFTS_V7_PROCESSOR_SENTENCE}`);
+    expect(LEGAL_DRAFTS_V7_PROCESSOR_SENTENCE).toBe("Cloudflare garde aussi, dans l'Union européenne et sans pouvoir la lire, la seconde copie chiffrée des traces d'effacement (section 4).");
+    // §§ 3 and 5 unchanged (they list no storage per provider)
+    for (const id of ['purposes', 'recipients']) expect(nb.sections.find((/** @type {any} */ s) => s.id === id)).toEqual(na.sections.find((/** @type {any} */ s) => s.id === id));
+    rb.items[12] = ra.items[12]; delete rb.itemKeys; pb.items[5] = pa.items[5]; delete pb.itemKeys;
     expect(b).toEqual(a);
   });
-  it('six languages: the extended item is translated (« i13_v7 » = the v6 translation + the sentence, same figures); v6 keys unchanged', () => {
-    const fr = LEGAL_DRAFT_DOCUMENTS_V7.find((d) => d.id === 'notice-confidentialite').sections.find((s) => s.id === 'retention');
-    expect(fr.itemKeys).toEqual({ 12: 'i13_v7' });
+  it('six languages: the extended items are translated (« i13_v7 » / « i6_v7 » = the v6 translation + the sentence, same figures); v6 keys unchanged', () => {
+    const notice = LEGAL_DRAFT_DOCUMENTS_V7.find((d) => d.id === 'notice-confidentialite');
+    const fr = notice.sections.find((s) => s.id === 'retention'); const fp = notice.sections.find((s) => s.id === 'processors');
+    expect(fr.itemKeys).toEqual({ 12: 'i13_v7' }); expect(fp.itemKeys).toEqual({ 5: 'i6_v7' });
+    for (const lang of LANGS) {
+      const t = locale(lang);
+      expect(t['privacyNotice.processors.i6_v7'].startsWith(`${t['privacyNotice.processors.i6']} `), lang).toBe(true);
+      expect(figures(t['privacyNotice.processors.i6_v7']), lang).toBe(figures(fp.items[5]));
+      expect(t['privacyNotice.processors.i6_v7'].split('Cloudflare').length, lang).toBeGreaterThan(t['privacyNotice.processors.i6'].split('Cloudflare').length);
+    }
     for (const lang of LANGS) {
       const t = locale(lang);
       expect(t['privacyNotice.retention.i13_v7'].startsWith(`${t['privacyNotice.retention.i13']} `), lang).toBe(true);
