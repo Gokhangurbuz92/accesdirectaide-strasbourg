@@ -358,6 +358,9 @@ describe.skipIf(!hasDatabase)('M2 — redirect, follow-up and référent de parc
     for (const p of [P.y, P.z, P.w, P.x2]) expect((await volunteer(p)).statusCode, p.id).toBe(404);
     expect((await volunteer(P.x1, { displayNameConsent: false })).body.error).toBe('NAME_CONSENT_REQUIRED');
     expect((await volunteer(P.x1, { displayName: ' ' })).body.error).toBe('INVALID_NAME');
+    // C7 data minimisation: at most 80 characters, and a name only — no e-mail address, link or number
+    expect((await volunteer(P.x1, { displayName: 'C'.repeat(81) })).body.error).toBe('INVALID_NAME');
+    for (const n of ['Camille camille@example.org', 'Camille 06 12 34 56 78', 'Camille https://example.org', 'Camille www.example.org']) expect((await volunteer(P.x1, { displayName: n })).body.error, n).toBe('NAME_NOT_MINIMAL');
     expect((await referentRows()).length).toBe(0);
     const v = await volunteer(P.x1);
     expect(v.statusCode, JSON.stringify(v.body)).toBe(201);

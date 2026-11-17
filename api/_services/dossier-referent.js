@@ -29,6 +29,8 @@ export const REFERENT_STATUSES = Object.freeze(['PROPOSED', 'ACCEPTED_BY_CITIZEN
 export const REFERENT_ENDED_BY = Object.freeze(['CITIZEN', 'PROFESSIONAL', 'DEPARTURE', 'ACCESS_REVOKED', 'ORGANIZATION_CLOSED']);
 const CURRENT = sql`('PROPOSED', 'ACCEPTED_BY_CITIZEN')`;
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
+/** C7 — a display name carries no other identifier: no « @ », no link, at most 5 digits in all (« Camille, CESF 2 » passes; a telephone number does not) */
+export const isMinimalDisplayName = (/** @type {string} */ name) => !/@|https?:|www\.|:\/\//i.test(name) && (name.match(/\d/g) || []).length <= 5;
 const notFound = () => bad('not_found', 'Dossier introuvable.', 404);
 const unavailable = () => bad('REFERENT_UNAVAILABLE', 'La personne de contact du parcours n’est pas encore disponible sur ce service.', 409);
 const ready = async (db) => (await referralChainSchema(db)).referent;
@@ -88,6 +90,9 @@ export async function volunteer(ctx, caseId, input = {}, deps = {}) {
   // eslint-disable-next-line no-control-regex -- control characters are removed from a name that will be displayed
   const displayName = String(input.displayName || '').replace(/[\u0000-\u001f\u007f<>]/g, ' ').replace(/\s+/g, ' ').trim();
   if (displayName.length < 2 || displayName.length > 80) return bad('INVALID_NAME', 'Indiquez le nom à afficher (2 à 80 caractères).', 400);
+  // C7 (data minimisation, owner Paket 4): the field is a NAME to show, nothing else — no e-mail address, link or number (telephone, file or social-security
+  // number…) that would identify or reach someone beyond the name the professional chose
+  if (!isMinimalDisplayName(displayName)) return bad('NAME_NOT_MINIMAL', 'Indiquez seulement un nom (par exemple votre prénom et votre fonction), sans adresse e-mail, lien ni numéro.', 400);
   // only the dossier's owner can agree, from a verified account (as for a referral proposal)
   if (!(await db.execute(sql`SELECT 1 AS ok FROM "SharedDiagnostic" d JOIN "CitizenUser" u ON u.id = d."ownerCitizenId" WHERE d.id = ${c.d} AND u."emailVerifiedAt" IS NOT NULL`)).rows.length) {
     return bad('NO_CITIZEN_ACCOUNT', 'Ce dossier n’est rattaché à aucun compte vérifié : personne ne pourrait donner son accord.', 409);
