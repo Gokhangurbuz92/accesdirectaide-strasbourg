@@ -365,6 +365,13 @@
       "when": 1794930000000,
       "tag": "0051_p19_dispositif_content_type",
       "breakpoints": true
+    },
+    {
+      "idx": 52,
+      "version": "7",
+      "when": 1794940000000,
+      "tag": "0052_c8_observatory_quarter_snapshot",
+      "breakpoints": true
     }
   ]
 }

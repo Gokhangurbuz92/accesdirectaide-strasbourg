@@ -80,7 +80,7 @@ Ce sont des hypothèses **non vérifiables hors ligne** ; chacune est bloquante 
    restent des fonctions sans export par défaut : un appel direct répond une erreur, sans donnée.
 6. **Fichiers lus à l'exécution** : la recherche (synonymes), `/api/docs/openapi.json` et `/api/status` répondent normalement (`includeFiles`).
 7. **Région** : les fonctions s'exécutent à `fra1`.
-8. **Planification** : les tâches de `vercel.json` (dix entrées ; C2 : `/api/cron/link-check` le lundi à 04:23 UTC, fermée tant que `ADA_BETA_OPEN_JOBS` ne la nomme pas et que `LINK_CHECK_ENABLED` ne vaut pas `1`) ; le contrôle de santé `/api/cron/health-alert` tourne **toutes les heures**
+8. **Planification** : les tâches de `vercel.json` (onze entrées ; C2 : `/api/cron/link-check` le lundi à 04:23 UTC, fermée tant que `ADA_BETA_OPEN_JOBS` ne la nomme pas et que `LINK_CHECK_ENABLED` ne vaut pas `1` ; C8 : `/api/cron/observatory-freeze` chaque jour à 06:17 UTC, fermée tant que `ADA_BETA_OPEN_JOBS` ne la nomme pas, sans effet sans la migration 0052) ; le contrôle de santé `/api/cron/health-alert` tourne **toutes les heures**
    (minute 7) — un rythme de 5 minutes maintiendrait la base Neon Free éveillée en permanence.
 9. **Plan du site** : `/sitemap.xml` est le plan dynamique (il n'y a plus de fichier statique qui le masquait).
 10. **Maintenance** : `MAINTENANCE_MODE=1` sur la preview → chaque page répond 503 avec la page de maintenance ; l'API et `/api/health` répondent toujours.

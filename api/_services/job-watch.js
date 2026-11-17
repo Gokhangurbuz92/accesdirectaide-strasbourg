@@ -32,6 +32,8 @@ export const WATCHED_JOBS = Object.freeze({
   'gdpr-purge': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'partial']), aliases: Object.freeze([]) }),
   // C2: weekly link check of the official sources — « skipped » = LINK_CHECK_ENABLED off (a deliberate state), « partial » = stopped by its quota or time budget
   'link-check': Object.freeze({ group: 'jobs', maxAgeHours: 337, good: Object.freeze(['success', 'partial', 'skipped']), aliases: Object.freeze([]) }),
+  // C8: daily freezing of closed observatory quarters — « skipped » = database without 0052 (a deliberate state until the migration is authorised)
+  'observatory-freeze': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'skipped']), aliases: Object.freeze([]) }),
 });
 
 /** key of the « first check that expected this job » timestamp (KV, timestamp only) @param {string} job */

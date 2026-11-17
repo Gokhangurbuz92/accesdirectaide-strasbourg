@@ -19,19 +19,34 @@ Tests: `tests/integration/c8-observatory-single-base-db.test.js` (the attacks D1
 = 2; they fail after), `tests/integration/g1-territory-scope-db.test.js` (nested territories), `tests/integration/vis-observatoire-differencing-db.test.js`.
 
 Rounding of totals was considered and not added: no published total is a true total (each is a sum of published cells), so there is nothing a rounded
-total would protect; rounding cells would change the published grid and is an owner decision.
+total would protect; rounding cells would change the published grid and is an owner decision. Thresholds: k = 5, 3 organizations to show a commune,
+the collusion rule below — none of them was loosened.
 
-## Residual risks (not removed by C8)
-1. **Re-reading the same quarter later (increment disclosure).** Cells of a past quarter are recomputed at each read. They change when an organization
-   gains or loses verification, changes address, when a commune crosses the 3-organization threshold, or when a referral is answered after the quarter.
-   Two reads of the same quarter, before and after, can isolate the change. Masked-to-masked changes stay invisible (tested), published-to-published do
-   not. Remedy: freeze each quarter's block tables at first publication (a snapshot table — a new migration, 0050+, not done).
-2. **Contributor collusion (dominance).** An organization knows its own counts. In a commune with exactly 3 organizations, two of them together subtract
-   their own counts from a published cell and obtain the third one's. The « 3 organizations » rule does not prevent this; a dominance or p % rule, or a
-   higher minimum, would. Owner decision.
-3. **Linear relation inside a block.** The table by need and the table by commune count the same referrals: their published sums give the DIFFERENCE of the
-   two masked sums. With at least two masked cells on each side (enforced) this yields bounds, not values, except in edge cases (for example every
-   masked cell at its bound). A complete protection-interval audit (as in τ-ARGUS) is not implemented.
+## Closed by the C8 follow-up (owner: « solvable C8 engineering must not be left open »)
+1. **Contributor collusion (dominance)** — p % rule with coalitions (Hundepool et al., « Statistical Disclosure Control », Wiley 2012, magnitude-table
+   sensitivity rules; τ-ARGUS manual; section numbers not re-checked): with contributions x1 ≥ x2 ≥ … of a cell T, the cell is masked when
+   T − (x1 + … + x(c+1)) < p/100 · x1. Defaults c = 2 colluding organizations, p = 20 (engineering choices, not sourced values); configuration can only
+   tighten them (`OBS_DOMINANCE_COALITION` 2..5, `OBS_DOMINANCE_P_PERCENT` 20..100). Applied to every referral cell (by need and by commune), appointment
+   cell, « people with an appointment » cell and active-member cell. Consequence: a cell from three organizations or fewer is never published.
+   Attack test: `tests/integration/c8-dominance-freeze-db.test.js` K (Villé 7 + 3 + 2 = 12 was published; two colluders obtained the 7).
+2. **Re-reading a closed quarter** — migration 0052 (`ObservatoryQuarterSnapshot`) and the daily job `/api/cron/observatory-freeze` (category A, closed
+   in the beta until named): a closed quarter's published blocks are stored once and read back unchanged; UPDATE is refused by a trigger.
+   Attack test: same file, F (a late answer and a lost verification moved the live cells; frozen, nothing moves). Without 0052, or before the job has run
+   for a quarter, the quarter is computed live as before (see residual 1 below).
+3. **Bounds from the two marginal tables** — reduced: `protectMarginals` computes the attacker's exact interval of every masked cell (one equation, box
+   constraints: a masked cell ≤ max(4, smallest published cell of its column), a listed need ≥ 1) and masks more cells, the other table first, until
+   no masked cell is narrowed below what « masked » says (0..4 for a commune, 1..4 for a listed need). Attack test: `tests/unit/c8-marginal-bounds.test.js`
+   (needs 4, 4, 5 / communes 0, 0, 13 pinned each need to 3..5; a sweep of small blocks).
+
+## Residual risks (not removed)
+1. **Window before freezing.** A closed quarter is frozen at the job's first run after it closes (daily). Until then — and on a database without 0052,
+   and for any quarter whose row an operator deletes — it is computed live and the re-read difference exists. Frozen quarters keep the rules in force when
+   they were frozen; a later tightening applies to them only if their row is deleted and re-frozen.
+2. **Marginal bounds — what the audit does not model**: dominance-masked cells can exceed the assumed bound (the attacker cannot know which cells they
+   are); relations between measures (unmet ≤ sent, out of scope ≤ sent) and between quarters are not part of the interval computation; no full
+   linear-programming audit (τ-ARGUS-style) across several blocks.
+3. **Active members** (professional page) are a current count, not frozen; protected by the threshold and the collusion rule only. The current number of
+   verified organizations shown there is the public directory count.
 4. **Row existence.** A need listed with « < 5 » says at least one referral of that need reached the block in the quarter.
 5. **Platform administrators.** The preview is suppressed like every view, but administrators keep other administrative access; the preview is not the
    control that limits them.

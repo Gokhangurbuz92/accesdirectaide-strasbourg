@@ -37,7 +37,8 @@ const MEASURES = ['sent', 'unmet', 'outOfScope'];
 
 describe.skipIf(!hasDatabase)('C8: one suppressed base for every view (real DB)', () => {
   let db, stats, orgStats, scopeOf; let seq = 0;
-  const target = (k) => (k === 'LOST' ? LOST : org(k, 0));
+  const turn = {};   // C8 collusion rule: each commune's referrals and appointments are spread over its FOUR organizations in turn
+  const target = (k) => (k === 'LOST' ? LOST : org(k, (turn[k] = (turn[k] ?? -1) + 1) % 4));
   const referral = (k, need, response, when) => db.execute(sql`INSERT INTO "Referral" (id, "sharedDiagnosticId", "fromStructureId", "toStructureId", status, "reasonCode", "responseCode", "citizenDecisionAt", "grantId", "sentAt", "createdAt", "updatedAt")
     VALUES (${`c8-ref-${(seq += 1)}-${TS}`}, ${DOSSIER}, ${FROM}, ${target(k)}, 'COMPLETED', ${need}, ${response}, ${when}, 'c8-grant', ${when}, ${when}, NOW())`);
   const mine = (rows, key = 'commune') => rows.filter((r) => Object.values(NAMES).includes(r[key]));
@@ -51,7 +52,7 @@ describe.skipIf(!hasDatabase)('C8: one suppressed base for every view (real DB)'
     scopeOf = (await import('../../api/lib/geography/territoryScope.js')).territoryScope;
     const structure = (id, ville, cp, verification) => db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
       VALUES (${id}, ${id}, ${id}, 'association', '1 rue', ${ville}, ${cp}, false, '{}', '{}', '{}', 'actif', ${verification}, NOW(), NOW())`);
-    for (const k of Object.keys(PLACES)) for (let i = 0; i < 3; i += 1) await structure(org(k, i), PLACES[k][0], PLACES[k][1], 'VERIFIED');
+    for (const k of Object.keys(PLACES)) for (let i = 0; i < 4; i += 1) await structure(org(k, i), PLACES[k][0], PLACES[k][1], 'VERIFIED');
     await structure(LOST, 'Sélestat', '68000', 'VERIFIED');
     await structure(FROM, 'Strasbourg', '67000', 'PENDING');
     await db.execute(sql`INSERT INTO "SharedDiagnostic" (id, "expiresAt", situation, results, "viewCount") VALUES (${DOSSIER}, NOW() + interval '7 days', '{}'::jsonb, '{}'::jsonb, 0)`);

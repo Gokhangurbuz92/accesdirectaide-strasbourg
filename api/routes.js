@@ -163,6 +163,7 @@ const routeTable = [
     { path: 'cron/ingest-structures', match: 'exact', handler: () => import('./_handlers/cron/ingest-structures.js') },
     { path: 'cron/ingest-aids', match: 'exact', handler: () => import('./_handlers/cron/ingest-aids.js') },
     { path: 'cron/link-check', match: 'exact', handler: () => import('./_handlers/cron/link-check.js') },
+    { path: 'cron/observatory-freeze', match: 'exact', handler: () => import('./_handlers/cron/observatory-freeze.js') },   // C8: frozen closed quarters (drizzle/0052)
     { path: 'cron/veille', match: 'exact', handler: () => import('./_handlers/cron/veille.js') },   // automatic verification chain (owner decision 2026-10-25)
     { path: 'cron/rdv-reminder', match: 'exact', handler: () => import('./_handlers/cron/rdv-reminder.js') },
     { path: 'cron/referral-timeouts', match: 'exact', handler: () => import('./_handlers/cron/referral-timeouts.js') },

@@ -147,6 +147,8 @@ export const SCHEDULED_JOBS = Object.freeze({
   actualites: 'A', 'health-alert': 'B', 'ingest-structures': 'B', 'ingest-aids': 'B',   // ingest-aids: the only Aides-territoires path (needs its token)
   // C2 (RB-01): weekly check of the official links of visible records — public official sources only, report only, no personal data; ALSO needs LINK_CHECK_ENABLED=1
   'link-check': 'A',
+  // C8: freezes the published cells of closed observatory quarters (drizzle/0052) — aggregates only, no personal data, nothing sent
+  'observatory-freeze': 'A',
   'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',
   'ingest-demarches': 'D', 'ingest-annuaire': 'D', 'review-queue/scan': 'D',
 });

@@ -30,9 +30,9 @@ const MEASURES = ['sent', 'unmet', 'outOfScope'];
 const pub = (rows, k) => rows.reduce((n, r) => n + (r[k] ?? 0), 0);
 
 describe.skipIf(!hasDatabase)('visibility audit: differencing attacks on the observatoires (real DB)', () => {
-  let db, stats, orgStats; let seq = 0;
+  let db, stats, orgStats; let seq = 0; const turn = {};   // C8 collusion rule: referrals spread over the commune's four organizations in turn
   const referral = (ci, need, response) => db.execute(sql`INSERT INTO "Referral" (id, "sharedDiagnosticId", "fromStructureId", "toStructureId", status, "reasonCode", "responseCode", "citizenDecisionAt", "grantId", "sentAt", "createdAt", "updatedAt")
-    VALUES (${`visd-ref-${(seq += 1)}-${TS}`}, ${DOSSIER}, ${FROM}, ${org(ci, 0)}, 'COMPLETED', ${need}, ${response}, ${SENT}, 'visd-grant', ${SENT}, ${SENT}, NOW())`);
+    VALUES (${`visd-ref-${(seq += 1)}-${TS}`}, ${DOSSIER}, ${FROM}, ${org(ci, (turn[ci] = (turn[ci] ?? -1) + 1) % 4)}, 'COMPLETED', ${need}, ${response}, ${SENT}, 'visd-grant', ${SENT}, ${SENT}, NOW())`);
   const csvRows = (csv) => csv.replace(/^\uFEFF/, '').trim().split('\r\n').map((l) => l.split(','));
 
   beforeAll(async () => {
@@ -40,7 +40,7 @@ describe.skipIf(!hasDatabase)('visibility audit: differencing attacks on the obs
     stats = await import('../../api/_services/territorial-stats.js'); orgStats = await import('../../api/_services/org-stats.js');
     const structure = (id, ville, verification, cp = '67000') => db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
       VALUES (${id}, ${id}, ${id}, 'association', '1 rue', ${ville}, ${cp}, false, '{}', '{}', '{}', 'actif', ${verification}, NOW(), NOW())`);
-    for (let c = 0; c < COMMUNES.length; c += 1) for (let i = 0; i < 3; i += 1) await structure(org(c, i), COMMUNES[c], 'VERIFIED', POSTAL[c]);
+    for (let c = 0; c < COMMUNES.length; c += 1) for (let i = 0; i < 4; i += 1) await structure(org(c, i), COMMUNES[c], 'VERIFIED', POSTAL[c]);
     await structure(FROM, `VisDiffFrom-${TS}`, 'PENDING');   // the sender: not verified, so its commune is never shown
     await db.execute(sql`INSERT INTO "SharedDiagnostic" (id, "expiresAt", situation, results, "viewCount") VALUES (${DOSSIER}, NOW() + interval '7 days', '{}'::jsonb, '{}'::jsonb, 0)`);
     for (const [ci, need, response, count] of FIXTURE) for (let i = 0; i < count; i += 1) await referral(ci, need, response);
@@ -84,7 +84,7 @@ describe.skipIf(!hasDatabase)('visibility audit: differencing attacks on the obs
     for (const r of mine) {
       const line = body.find((l) => l[3] === r.commune);
       expect(MEASURES.map((m) => line[col[m]]), 'the export publishes the observatoire\'s own cells').toEqual(MEASURES.map((m) => (r[m] === null ? '' : String(r[m]))));
-      expect(line[4]).toBe('3');
+      expect(line[4]).toBe('4');
     }
     expect(JSON.stringify(obs)).not.toMatch(/visd-|@example\.test/);
     for (const key of ['besoinsNonCouverts', 'horsPerimetre', 'limites', 'totaux', 'periodes']) expect(obs.methodology[key], key).toBeTruthy();
@@ -110,8 +110,9 @@ describe.skipIf(!hasDatabase)('visibility audit: differencing attacks on the obs
 
   it('P4: the professional observatoire publishes complete quarters only — an appointment of the running period between two polls changes nothing', async () => {
     const ctx = { userId: PRO, structureId: org(0, 0) };
+    let n = 0;   // C8 collusion rule: the appointments are spread over commune A's four organizations
     const apt = (id, startAt) => db.execute(sql`INSERT INTO "ProAppointment" (id, "structureId", "serviceId", "startAt", "endAt", status, "beneficiaryName", "createdAt", "updatedAt")
-      VALUES (${id}, ${org(0, 0)}, ${SVC}, ${startAt}, ${new Date(startAt.getTime() + 60_000)}, 'confirmed', 'v1:sealed', NOW(), NOW())`);
+      VALUES (${id}, ${org(0, (n += 1) % 4)}, ${SVC}, ${startAt}, ${new Date(startAt.getTime() + 60_000)}, 'confirmed', 'v1:sealed', NOW(), NOW())`);
     const last = stats.periodWindow('quarter');
     for (let i = 0; i < 7; i += 1) await apt(`visd-q${i}-${TS}`, new Date(last.start.getTime() + (20 + i) * 86400000));
     const first = await orgStats.regionalStats(ctx, db);

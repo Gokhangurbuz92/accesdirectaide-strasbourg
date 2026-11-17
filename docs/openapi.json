@@ -1086,6 +1086,14 @@
         "responses": { "200": { "description": "Vérification terminée" } }
       }
     },
+    "/cron/observatory-freeze": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Gel des trimestres clos de l'observatoire (valeurs publiées seulement ; sans effet sans la migration 0052)",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Trimestres gelés ou déjà gelés" } }
+      }
+    },
     "/cron/rdv-reminder": {
       "get": {
         "tags": ["Cron"],

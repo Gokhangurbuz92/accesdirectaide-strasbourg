@@ -94,7 +94,8 @@ Vercel Crons (9 planifiés dans vercel.json, heures UTC ; pendant la bêta chaqu
   ├─ gdpr-purge         → Purge RGPD (quotidien 3h)
   ├─ health-alert       → Monitoring (toutes les heures, à la 7e minute)
   ├─ veille             → Vérification automatique des sources officielles (6 tranches nocturnes, 0h37–5h37)
-  └─ link-check         → Contrôle des liens officiels, rapport seulement (lundi 4h23 UTC ; LINK_CHECK_ENABLED=1 requis)
+  ├─ link-check         → Contrôle des liens officiels, rapport seulement (lundi 4h23 UTC ; LINK_CHECK_ENABLED=1 requis)
+  └─ observatory-freeze → Gel des trimestres clos de l'observatoire (chaque jour 6h17 UTC ; migration 0052)
 ```
 
 12 connecteurs d'ingestion :

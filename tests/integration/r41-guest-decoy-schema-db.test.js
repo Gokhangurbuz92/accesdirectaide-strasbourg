@@ -101,16 +101,29 @@ describe.skipIf(!hasDatabase)('R41-B decoy exclusion and purge on a 0042 and a 0
     expect(rep.body.kpis.totalAppointments).toBe(10);
   });
 
-  it('regional and territorial statistics count the 5 appointments of the commune, never a decoy', async () => {
-    const reg = await orgStats.regionalStats({ userId: ADMIN.id, structureId: STR[0] });
-    expect(reg.ok, JSON.stringify(reg)).toBe(true);
-    const out = await territorial.territoryCsv('quarter');
-    expect(out.ok, JSON.stringify(out)).toBe(true);
-    const line = out.csv.split('\r\n').find((l) => l.includes(TOWN));
-    expect(line).toBeTruthy();
-    expect(line.split(',')[5]).toBe('5');   // rendez_vous of the last complete quarter
-    const city = reg.stats.cities.find((c) => c.name === TOWN);
-    expect(city?.rdv).toBe(5);   // the last complete quarter's 5 appointments (visibility audit 2026-11: no month-to-date figure any more); that quarter's decoy is not one
+  it('regional and territorial statistics count the appointments of the commune, never a decoy', async () => {
+    // C8 collusion rule: a cell that comes from one organization is never published (the others know they had none). Three more organizations of the
+    // commune get 5 appointments each in the same quarter: the cell is 5 + 15 = 20 from four organizations — published; the decoy would make it 21.
+    const extra = [1, 2, 3].map((i) => `r41sch-str${i}x-${TS}`);
+    await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
+      VALUES (${extra[2]}, ${'R41 ' + extra[2]}, ${extra[2]}, 'association', '1 rue', ${TOWN}, '67120', false, '{}', '{}', '{}', 'actif', 'VERIFIED', NOW(), NOW())`);
+    const owners = [STR[1], STR[2], extra[2]];
+    try {
+      for (const [k, owner] of owners.entries()) for (let i = 0; i < 5; i += 1) await db.execute(sql`INSERT INTO "ProAppointment" (id, "structureId", "serviceId", "startAt", "endAt", status, "beneficiaryName", "createdAt", "updatedAt")
+        VALUES (${`r41sch-x${k}-${i}-${TS}`}, ${owner}, ${SVC}, ${new Date(lastQuarter.getTime() + i * 3_600_000)}, ${new Date(lastQuarter.getTime() + i * 3_600_000 + 60_000)}, 'confirmed', 'v1:sealed', NOW(), NOW())`);
+      const reg = await orgStats.regionalStats({ userId: ADMIN.id, structureId: STR[0] });
+      expect(reg.ok, JSON.stringify(reg)).toBe(true);
+      const out = await territorial.territoryCsv('quarter');
+      expect(out.ok, JSON.stringify(out)).toBe(true);
+      const line = out.csv.split('\r\n').find((l) => l.includes(TOWN));
+      expect(line).toBeTruthy();
+      expect(line.split(',')[5]).toBe('20');   // rendez_vous of the last complete quarter: 5 + 3 × 5, never the decoy
+      const city = reg.stats.cities.find((c) => c.name === TOWN);
+      expect(city?.rdv).toBe(20);   // the last complete quarter's appointments (visibility audit 2026-11: no month-to-date figure any more); that quarter's decoy is not one
+    } finally {
+      await db.execute(sql`DELETE FROM "ProAppointment" WHERE id LIKE ${`r41sch-x%-${TS}`}`);
+      await db.execute(sql`DELETE FROM "Structure" WHERE id = ${extra[2]}`);
+    }
   });
 
   it('an absence over the upcoming decoy lists no appointment to move (0044; on 0042 this handler already fails before R41, see the R41-B report)', async () => {

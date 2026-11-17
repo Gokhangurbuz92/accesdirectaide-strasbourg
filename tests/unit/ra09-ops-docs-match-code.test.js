@@ -57,7 +57,7 @@ describe('RA-09 operations documents match the code', () => {
     const crons = JSON.parse(read('vercel.json')).crons;
     expect(crons.find((c) => c.path === '/api/cron/veille').schedule).toBe('37 0-5 * * *'); expect(dep).toContain('`37 0-5 * * *`');
     expect(crons.find((c) => c.path === '/api/cron/health-alert').schedule).toBe('7 * * * *');
-    expect(crons).toHaveLength(10); expect(dep).toMatch(/dix entrées/);
+    expect(crons).toHaveLength(11); expect(dep).toMatch(/onze entrées/);
     expect(fs.readdirSync('.github/workflows').sort()).toEqual(['ci.yml', 'healthcheck.yml']);   // C1: the external watchdog (tests/unit/c1-external-watchdog.test.js)
   });
 });

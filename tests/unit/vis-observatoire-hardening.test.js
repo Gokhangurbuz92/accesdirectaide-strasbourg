@@ -136,7 +136,8 @@ describe('P4 and labels: what the professional observatoire measures, and how it
 
   it('complete calendar quarters only: no month-to-date figure, no rolling days, no NOW() in a period', () => {
     expect(regional).not.toMatch(/date_trunc\('month'/); expect(regional).not.toMatch(/interval '6 days'|generate_series/); expect(regional).not.toMatch(/NOW\(\)/);
-    expect(regional).toContain('lastQuarters(now)');
+    expect(regional).toContain('base.regionalBase(db, now)');   // C8: the quarters of the one base (stat-periods.js lastQuarters, inside regionalBase)
+    { const ts = src('api/_services/territorial-stats.js'); const fn = ts.slice(ts.indexOf('export async function regionalBase'), ts.indexOf('/** The observatoire of the communes')); expect(fn).toContain('const quarters = lastQuarters(now);'); expect(fn).toContain('baseReader(db, everywhere, rules)'); }
     expect(regional).toMatch(/appointmentsLastQuarter/); expect(regional).not.toMatch(/appointmentsThisMonth/);
   });
 

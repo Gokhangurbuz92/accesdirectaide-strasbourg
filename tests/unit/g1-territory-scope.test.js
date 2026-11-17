@@ -184,7 +184,7 @@ describe('audit findings fixed with G1', () => {
   it('A16 + C8: every cross-organization table places an organization in its INSEE commune (name AND postal code), through ONE base — no table keys on the text as typed', () => {
     const org = src('api/_services/org-stats.js'); const terr = src('api/_services/territorial-stats.js');
     const regional = org.slice(org.indexOf('export async function regionalStats'), org.indexOf('const PERIODS'));
-    expect(regional).toContain('base.locatedPopulation(db)'); expect(regional).toContain('base.blockAppointments(db, pop, q)'); expect(regional).not.toMatch(/s\.ville|GROUP BY o\.commune/);
+    expect(regional).toContain('base.regionalBase(db, now)'); expect(regional).toContain("cellsOf(lastBlocks, 'appointments')"); expect(regional).not.toMatch(/s\.ville|GROUP BY o\.commune/);
     expect(terr).toContain('const at = communeOfAddress(r); if (!at) continue;');
     // the preview and the unscoped CSV are the restriction of the one base to every block — no second, name-keyed computation
     for (const fn of ['export async function observatoire', 'export async function territoryCsv']) expect(terr.slice(terr.indexOf(fn), terr.indexOf(fn) + 600), fn).toMatch(/observatoireOf\(db, everywhere|csvOf\(db, everywhere/);

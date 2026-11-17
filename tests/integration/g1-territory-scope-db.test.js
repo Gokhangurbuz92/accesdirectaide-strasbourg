@@ -34,9 +34,9 @@ const FIXTURE = [
 const MEASURES = ['sent', 'unmet', 'outOfScope'];
 
 describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory only (real DB)', () => {
-  let db, stats, scopeOf, handler, sign; let seq = 0;
+  let db, stats, scopeOf, handler, sign; let seq = 0; const turn = {};   // C8 collusion rule: each commune's referrals are spread over its FOUR organizations in turn
   const referral = (k, need, response, when) => db.execute(sql`INSERT INTO "Referral" (id, "sharedDiagnosticId", "fromStructureId", "toStructureId", status, "reasonCode", "responseCode", "citizenDecisionAt", "grantId", "sentAt", "createdAt", "updatedAt")
-    VALUES (${`g1-ref-${(seq += 1)}-${TS}`}, ${DOSSIER}, ${FROM}, ${org(k, 0)}, 'COMPLETED', ${need}, ${response}, ${when}, 'g1-grant', ${when}, ${when}, NOW())`);
+    VALUES (${`g1-ref-${(seq += 1)}-${TS}`}, ${DOSSIER}, ${FROM}, ${org(k, (turn[k] = (turn[k] ?? -1) + 1) % 4)}, 'COMPLETED', ${need}, ${response}, ${when}, 'g1-grant', ${when}, ${when}, NOW())`);
   const scope = (label) => scopeOf(label);
   const view = (label) => stats.scopedObservatoire(scope(label), db, NOW);
   const csvOf = (label) => stats.scopedTerritoryCsv('quarter', scope(label), db, NOW);
@@ -65,7 +65,7 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
     sign = (await import('../../api/_utils/institution-auth.js')).signInstitutionToken;
     const structure = (id, ville, cp, verification) => db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
       VALUES (${id}, ${id}, ${id}, 'association', '1 rue', ${ville}, ${cp}, false, '{}', '{}', '{}', 'actif', ${verification}, NOW(), NOW())`);
-    for (const k of Object.keys(PLACES)) for (let i = 0; i < 3; i += 1) await structure(org(k, i), PLACES[k][0], PLACES[k][1], 'VERIFIED');
+    for (const k of Object.keys(PLACES)) for (let i = 0; i < 4; i += 1) await structure(org(k, i), PLACES[k][0], PLACES[k][1], 'VERIFIED');
     // not located: a name and a postal code that do not agree, and a place that is no commune — verified, with referrals, counted NOWHERE in a scoped view
     await structure(`g1-x0-${TS}`, 'Haguenau', '68000', 'VERIFIED'); await structure(`g1-x1-${TS}`, `G1 Lieu-dit ${TS}`, '67500', 'VERIFIED');
     await structure(FROM, 'Strasbourg', '67000', 'PENDING');   // the sender: not verified
@@ -181,7 +181,7 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
   it('A6 the CSV of a territory: its communes only, the observatoire\'s own cells, appointments masked the same way; no scope = no file', async () => {
     await db.execute(sql`INSERT INTO "ProRdvService" (id, "structureId", name, "durationMinutes", "updatedAt") VALUES (${SVC}, ${org('H', 0)}, 'S', 30, NOW())`);
     const appointment = (k, i) => db.execute(sql`INSERT INTO "ProAppointment" (id, "structureId", "serviceId", "beneficiaryName", "startAt", "endAt", status, "updatedAt")
-      VALUES (${`g1-apt-${k}-${i}-${TS}`}, ${org(k, 0)}, ${SVC}, 'Personne synthétique', ${T4}, ${new Date(T4.getTime() + 1800000)}, 'done', NOW())`);
+      VALUES (${`g1-apt-${k}-${i}-${TS}`}, ${org(k, i % 4)}, ${SVC}, 'Personne synthétique', ${T4}, ${new Date(T4.getTime() + 1800000)}, 'done', NOW())`);
     for (let i = 0; i < 6; i += 1) await appointment('H', i);
     for (let i = 0; i < 7; i += 1) await appointment('B', i);
     for (let i = 0; i < 3; i += 1) await appointment('W', i);   // masked; then the smallest published of the block (Haguenau's 6)
@@ -190,15 +190,15 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
     const epci = rows((await csvOf(TERRITORIES.epci)).csv);
     expect(epci[0].join(',')).toBe('schema,licence,periode,commune,organisations_verifiees,rendez_vous,orientations_recues,besoins_non_couverts,orientations_hors_perimetre');
     expect(epci.slice(1)).toEqual([
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Bischwiller', '3', '', '', '', ''],
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Brumath', '3', '7', '', '', ''],
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Haguenau', '3', '', '15', '', ''],
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'TOTAL (cellules publiées)', '9', '7', '15', '', ''],
+      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Bischwiller', '4', '', '', '', ''],
+      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Brumath', '4', '7', '', '', ''],
+      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Haguenau', '4', '', '15', '', ''],
+      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'TOTAL (cellules publiées)', '12', '7', '15', '', ''],
     ]);
     const commune = rows((await csvOf(TERRITORIES.commune)).csv);
     expect(commune.slice(1).map((r) => r[3])).toEqual(['Haguenau', 'TOTAL (cellules publiées)']); expect(commune[1]).toEqual(epci[3]);   // the same cells as in the EPCI's file
     const other = (await csvOf(TERRITORIES.other)).csv;
-    expect(other).toMatch(/Colmar,3,9,,,/); expect(other).not.toMatch(/Haguenau|Brumath|Bischwiller|Saverne/);
+    expect(other).toMatch(/Colmar,4,9,,,/); expect(other).not.toMatch(/Haguenau|Brumath|Bischwiller|Saverne/);
     expect(await stats.scopedTerritoryCsv('month', scope(TERRITORIES.epci), db, NOW)).toMatchObject({ ok: false, code: 'PERIOD_NOT_OFFERED' });
     for (const bad of ['', 'mon secteur', 'France entière', '*', 'Communauté de communes des Deux Vallées', null, undefined]) {
       expect(await stats.scopedTerritoryCsv('quarter', scope(bad), db, NOW), String(bad)).toMatchObject({ ok: false, status: 403, code: 'TERRITORY_SCOPE_UNDEFINED' });
@@ -264,7 +264,7 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
     const epci = await call('epci', 'export', { period: 'quarter' }); const other = await call('other', 'export', { period: 'quarter' });
     expect(epci.statusCode).toBe(200); expect(epci.headers['content-type']).toMatch(/text\/csv/);
     expect(rows(epci).slice(1).map((r) => r[3])).toEqual(['Bischwiller', 'Brumath', 'Haguenau', 'TOTAL (cellules publiées)']);
-    expect(rows(epci)[3].slice(4)).toEqual(['3', '', '12', '', '']);
+    expect(rows(epci)[3].slice(4)).toEqual(['4', '', '12', '', '']);
     expect(String(other.body)).toMatch(/Colmar/); expect(String(other.body)).not.toMatch(/Haguenau|Brumath|Bischwiller/);
     const obs = (await call('epci', 'observatoire')).body;
     for (const r of obs.byCommune) expect(rows(epci).find((l) => l[3] === r.commune)[6]).toBe(r.sent === null ? '' : String(r.sent));
@@ -314,7 +314,7 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
     expect(regional.ok).toBe(true);
     const city = regional.stats.cities.filter((c) => c.name === 'Sarre-Union');
     expect(city).toHaveLength(1); expect(city[0].city).toBe('3 structures vérifiées');
-    expect(regional.stats.cities.find((c) => c.name === 'Haguenau').orgs, 'the organization « Haguenau, 68000 » is not located: Haguenau keeps its 3').toBe(3);
+    expect(regional.stats.cities.find((c) => c.name === 'Haguenau').orgs, 'the organization « Haguenau, 68000 » is not located: Haguenau keeps its 4').toBe(4);
     // audit A19: its appointments are masked (none, so « < 5 »): the status says « masked », never « inactive »
     expect(city[0]).toMatchObject({ rdv: null, status: 'masked' }); expect(regional.stats.cities.every((c) => ['masked', 'published'].includes(c.status))).toBe(true);
     await db.execute(sql`DELETE FROM "ProUser" WHERE id = ${`g1-pro-${TS}`}`);

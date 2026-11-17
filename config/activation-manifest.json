@@ -1386,6 +1386,14 @@
       "class": "optional",
       "nature": "config"
     },
+    "OBS_DOMINANCE_COALITION": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OBS_DOMINANCE_P_PERCENT": {
+      "class": "optional",
+      "nature": "config"
+    },
     "CRON_ACTUALITES_STALE_MINUTES": {
       "class": "optional",
       "nature": "config"

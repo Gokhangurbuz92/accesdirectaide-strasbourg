@@ -895,6 +895,20 @@ export const RdvConversationRead = pgTable('RdvConversationRead', {
 	'RdvConversationRead_proUser_idx': index('RdvConversationRead_proUser_idx').on(RdvConversationRead.proUserId)
 }));
 
+// C8 (drizzle/0052) — the PUBLISHED cells of one closed calendar quarter of the cross-organization statistics, frozen once (api/_services/territorial-stats.js
+// freezeClosedQuarters is the only writer; an UPDATE is refused by a trigger). No organization id and no raw count: commune codes and names, the number of
+// organizations per shown commune, and the cells as published. No relation is declared on purpose: the code asks the catalogue first.
+export const ObservatoryQuarterSnapshot = pgTable('ObservatoryQuarterSnapshot', {
+	quarter: text('quarter').notNull().primaryKey(),
+	schemaVersion: text('schemaVersion').notNull(),
+	rules: jsonb('rules').notNull(),
+	blocks: jsonb('blocks').notNull(),
+	frozenAt: timestamp('frozenAt', { precision: 3 }).notNull().defaultNow(),
+	release: text('release')
+}, (ObservatoryQuarterSnapshot) => ({
+	'ObservatoryQuarterSnapshot_quarter_format_check': check('ObservatoryQuarterSnapshot_quarter_format_check', sql`${ObservatoryQuarterSnapshot.quarter} ~ '^[0-9]{4}-T[1-4]$'`)
+}));
+
 export const RdvNotificationLog = pgTable('RdvNotificationLog', {
 	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
 	kind: text('kind').notNull().default("MESSAGE_EMAIL"),

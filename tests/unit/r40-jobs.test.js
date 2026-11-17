@@ -69,7 +69,7 @@ describe('G1 — the veille is a known job, closed by default, openable alone', 
   it('the veille is scheduled nightly and still closed by default', () => {
     const crons = JSON.parse(fs.readFileSync('vercel.json', 'utf8')).crons;
     expect(crons.find((c) => c.path === '/api/cron/veille')?.schedule).toBe('37 0-5 * * *');
-    expect(crons).toHaveLength(10);   // C2: + link-check
+    expect(crons).toHaveLength(11);   // C2: + link-check; C8: + observatory-freeze
     expect(isAllowedInPublicBeta('GET', 'cron/veille', BETA)).toBe(false);
   });
 });

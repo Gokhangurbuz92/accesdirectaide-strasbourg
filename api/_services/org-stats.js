@@ -78,35 +78,34 @@ export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
   // PKG-5 / I02 (differencing): every figure is computed over the SAME population — organizations of communes shown (>= K_ORGS located verified
   // organizations). Organizations elsewhere (hidden communes, or no single commune named by their address) are only COUNTED, never measured.
   const base = await import('./territorial-stats.js');   // dynamic: territorial-stats imports K_MIN / K_ORGS from this file
-  const quarters = lastQuarters(now); const last = quarters[quarters.length - 1];
-  const pop = await base.locatedPopulation(db);
-  const all = [...pop.perCommune.keys()]; const labels = base.communeLabels(all, pop.names);
-  const listed = all.sort((a, b) => String(labels.get(a)).localeCompare(String(labels.get(b)), 'fr')).slice(0, 100);
-  const appointments = [];
-  for (const q of quarters) appointments.push(await base.blockAppointments(db, pop, q));
-  const rdv = appointments[appointments.length - 1];
-  const rows = base.populationRows(pop);
-  const inQuarter = sql`a."startAt" >= ${last.start} AND a."startAt" < ${last.end}`;
-  const agentsOf = new Map(pop.orgs.length ? (await db.execute(sql`SELECT m.c AS commune, count(u.id)::int AS n FROM ${rows} JOIN "ProUser" u ON u."structureId" = m.id AND u.status = 'active' GROUP BY m.c`)).rows.map((r) => [r.commune, Number(r.n)]) : []);
-  const peopleOf = new Map(pop.orgs.length ? (await db.execute(sql`SELECT m.c AS commune, count(DISTINCT a."citizenUserId")::int AS n FROM ${rows} JOIN "ProAppointment" a ON a."structureId" = m.id
-    WHERE a."citizenUserId" IS NOT NULL AND a.status IN ('done', 'booked', 'confirmed') AND ${inQuarter} GROUP BY m.c`)).rows.map((r) => [r.commune, Number(r.n)]) : []);
-  const communes = listed.map((c) => ({ code: c, name: labels.get(c), orgs: pop.perCommune.get(c), agents: agentsOf.get(c) || 0, people: peopleOf.get(c) || 0, rdv: rdv.get(c) ?? null }));
+  // C8: the communes, organizations, appointment and « people » cells of each quarter are that quarter's PUBLISHED blocks (frozen once closed, drizzle/0052)
+  const { rules, quarters, perQuarter, population, namesOf } = await base.regionalBase(db, now);
+  const last = quarters[quarters.length - 1]; const lastBlocks = perQuarter[perQuarter.length - 1];
+  const all = lastBlocks.flatMap((b) => b.communes); const labels = base.communeLabels(all, namesOf(lastBlocks));
+  const listed = [...all].sort((a, b) => String(labels.get(a)).localeCompare(String(labels.get(b)), 'fr')).slice(0, 100);
+  const cellsOf = (blocks, key) => new Map(blocks.flatMap((b) => Object.entries(b[key])));
+  const rdv = cellsOf(lastBlocks, 'appointments'); const people = cellsOf(lastBlocks, 'people'); const orgs = cellsOf(lastBlocks, 'orgs');
+  // active members are not quarterly: counted live per organization of the listed communes, then the same thresholds and collusion rule
+  const pop = await population();
+  const agentRows = pop.orgs.length ? (await db.execute(sql`SELECT m.id AS org, m.c AS commune, count(u.id)::int AS n FROM ${base.populationRows(pop)} JOIN "ProUser" u ON u."structureId" = m.id AND u.status = 'active' GROUP BY m.id, m.c`)).rows : [];
+  const agentsOf = (c) => { const xs = agentRows.filter((r) => r.commune === c).map((r) => Number(r.n)); return base.primaryCell(xs.reduce((a, b) => a + b, 0), xs, rules); };
+  const communes = listed.map((c) => ({ code: c, name: labels.get(c), orgs: orgs.get(c), agents: agentsOf(c), people: people.get(c) ?? null, rdv: rdv.get(c) ?? null }));
   // the trend: per quarter, the published appointment cells of the listed communes (the same cells as the table), summed, then suppressed
-  const trend = quarters.map((q, i) => ({ quarter: q.label, value: suppress(listed.reduce((n, c) => n + (appointments[i].get(c) ?? 0), 0)) }));
+  const trend = quarters.map((q, i) => { const cells = cellsOf(perQuarter[i], 'appointments'); return { quarter: q.label, value: suppress(listed.reduce((n, c) => n + (cells.get(c) ?? 0), 0)) }; });
   // PKG-5 batch 2 / I02 (complementary suppression): a total is the sum of the PUBLISHED cells only; the number of masked cells is stated instead.
-  const published = (k) => communes.reduce((n, c) => n + ((k === 'rdv' ? c.rdv : suppress(c[k])) ?? 0), 0);
-  const masked = (k) => communes.filter((c) => (k === 'rdv' ? c.rdv : suppress(c[k])) === null).length;
-  const shownOrgs = communes.reduce((n, c) => n + c.orgs, 0);
+  const published = (k) => communes.reduce((n, c) => n + (c[k] ?? 0), 0);
+  const masked = (k) => communes.filter((c) => c[k] === null).length;
+  const shownOrgs = communes.reduce((n, c) => n + (c.orgs || 0), 0);
   return { ok: true, kAnonymityMin: K_MIN, minOrganizationsPerCommune: K_ORGS,
     period: { label: last.label, from: last.start.toISOString().slice(0, 10), to: last.end.toISOString().slice(0, 10) },
     stats: {
-      activeStructures: pop.verifiedTotal, structuresInShownCommunes: shownOrgs, structuresInHiddenCommunes: pop.verifiedTotal - shownOrgs,
+      activeStructures: pop.verifiedTotal, structuresInShownCommunes: shownOrgs, structuresInHiddenCommunes: Math.max(0, pop.verifiedTotal - shownOrgs),
       totalAgents: suppress(published('agents')), appointmentsLastQuarter: suppress(published('rdv')), peopleWithAppointment: suppress(published('people')),
       maskedCells: { agents: masked('agents'), appointments: masked('rdv'), peopleWithAppointment: masked('people') },
-      cities: communes.map((c) => ({ id: c.name, name: c.name, city: `${c.orgs} structures vérifiées`, orgs: c.orgs, agents: suppress(c.agents), rdv: c.rdv, status: c.rdv === null ? 'masked' : 'published' })),
+      cities: communes.map((c) => ({ id: c.name, name: c.name, city: `${c.orgs} structures vérifiées`, orgs: c.orgs, agents: c.agents, rdv: c.rdv, status: c.rdv === null ? 'masked' : 'published' })),
       trend,
     },
-    note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées situées par leur adresse : nom de commune et code postal concordants) ; rendez-vous et personnes avec un rendez-vous : dernier trimestre civil complet ; tendance : quatre derniers trimestres complets ; valeurs inférieures à 5 masquées, et une autre valeur de la même intercommunalité quand elle serait seule masquée ; les totaux et la tendance additionnent seulement les valeurs publiées ; les autres structures sont seulement dénombrées. Les rendez-vous publiés sont les mêmes valeurs que celles de l’export des institutions. Un rendez-vous enregistré n’est pas une aide obtenue.' };
+    note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées situées par leur adresse : nom de commune et code postal concordants) ; rendez-vous et personnes avec un rendez-vous : dernier trimestre civil complet ; tendance : quatre derniers trimestres complets ; valeurs inférieures à 5 masquées, ainsi que les valeurs venant de trop peu de structures (deux structures ne doivent pas pouvoir retrouver celle d’une troisième), et une autre valeur de la même intercommunalité quand elle serait seule masquée ; un trimestre clos est figé une fois publié ; les totaux et la tendance additionnent seulement les valeurs publiées ; les autres structures sont seulement dénombrées. Les rendez-vous publiés sont les mêmes valeurs que celles de l’export des institutions. Un rendez-vous enregistré n’est pas une aide obtenue.' };
 }
 
 const PERIODS = { month: '1 month', quarter: '3 months', year: '1 year' };
