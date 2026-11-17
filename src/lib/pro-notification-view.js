@@ -19,6 +19,7 @@ export function notificationPath(notif) {
   const type = String(notif?.type || '');
   if (id(m.referralId)) return `/pro/orientations/${id(m.referralId)}`;
   if (id(m.caseId)) return `/pro/dossiers/${id(m.caseId)}`;
+  if (id(m.conversationId)) return `/pro/messages/${id(m.conversationId)}`;
   if (id(m.appointmentId)) return `/pro/appointments/${id(m.appointmentId)}`;
   if (id(m.proposalId) || type === 'structure_proposal_decided') return '/pro/structure';
   if (type === 'team_role_change') return '/pro/team';

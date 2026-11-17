@@ -45,7 +45,7 @@ describe('A11 notify(): every member, deep link, live catalogue', () => {
   it('notificationPath maps the stored identifiers; a value that is not a plain id never becomes an address', () => {
     expect(notificationPath('case_assigned', { caseId: 'c1' })).toBe('/pro/dossiers/c1');
     expect(notificationPath('rdv_rescheduled', { appointmentId: 'a1' })).toBe('/pro/appointments/a1');
-    expect(notificationPath('message_received', { appointmentId: 'a1' })).toBe('/pro/appointments/a1');
+    expect(notificationPath('message_received', { appointmentId: 'a1', conversationId: 'conv1' })).toBe('/pro/messages/conv1');
     expect(notificationPath('structure_proposal_decided', { proposalId: 'p1' })).toBe('/pro/structure');
     expect(notificationPath('team_role_change', {})).toBe('/pro/team');
     expect(notificationPath('NEW_AIDE', null)).toBe('/pro/dashboard');
@@ -88,7 +88,7 @@ describe('A01 a person’s message: the appointment’s professional, else the t
     const out = await notifyStructureOfMessage({ conversation: conversation('pro-young'), messageId: 'msg1' }, { notify: notifyImpl });
     expect(out.target).toBe('owner');
     expect(calls).toHaveLength(1);
-    expect(calls[0]).toMatchObject({ structureId: 's', to: ['pro-young'], type: 'message_received', metadata: { appointmentId: 'a1' }, coalesceUnread: true });
+    expect(calls[0]).toMatchObject({ structureId: 's', to: ['pro-young'], type: 'message_received', metadata: { appointmentId: 'a1', conversationId: 'conv1' }, coalesceUnread: true });
     expect(JSON.stringify(calls[0])).not.toMatch(/body|content/i);
   });
   it('no professional on the appointment, or an account that left: every active member', async () => {

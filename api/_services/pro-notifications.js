@@ -48,7 +48,7 @@ export const CATALOGUE = Object.freeze({
   structure_proposal_decided: ev('structure', 'Proposition de modification traitée'),
   NEW_AIDE: ev('content', 'Nouvelle aide dans la veille', false),
 });
-const METADATA_KEYS = new Set(['caseId', 'referralId', 'appointmentId', 'proposalId', 'aideId', 'startAt', 'previousRole', 'newRole', 'count', 'changedBy', 'kind']);
+const METADATA_KEYS = new Set(['caseId', 'referralId', 'appointmentId', 'conversationId', 'proposalId', 'aideId', 'startAt', 'previousRole', 'newRole', 'count', 'changedBy', 'kind']);
 export function safeMetadata(m) {
   if (!m || typeof m !== 'object') return null;
   const out = {};
@@ -65,6 +65,7 @@ export function notificationPath(type, metadata) {
   const id = (v) => (typeof v === 'string' && /^[A-Za-z0-9_-]{1,120}$/.test(v) ? encodeURIComponent(v) : null);
   if (id(m.referralId)) return `/pro/orientations/${id(m.referralId)}`;
   if (id(m.caseId)) return `/pro/dossiers/${id(m.caseId)}`;
+  if (id(m.conversationId)) return `/pro/messages/${id(m.conversationId)}`;   // a person's message opens its thread
   if (id(m.appointmentId)) return `/pro/appointments/${id(m.appointmentId)}`;
   if (id(m.proposalId) || type === 'structure_proposal_decided') return '/pro/structure';
   if (type === 'team_role_change') return '/pro/team';

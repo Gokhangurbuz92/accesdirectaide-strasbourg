@@ -62,10 +62,12 @@ export default function ProMessages() {
           {items.length > 0 ? (
             <ul className="space-y-3" aria-label={t('pro:messages.conversations_structure', 'Conversations structure')}>
               {items.map((item) => (
-                <li key={item.id} className="rounded-md border border-slate-200 bg-white p-4">
+                <li key={item.id} data-testid="pro-conversation" data-unread={item.unread ? 'true' : undefined} className={`rounded-md border bg-white p-4 ${item.unread ? 'border-blue-800' : 'border-slate-200'}`}>
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-slate-900">
+                      <p className={`text-sm text-slate-900 ${item.unread ? 'font-bold' : 'font-semibold'}`}>
+                        {/* B02: unread for THIS member (said in words, not by colour alone); absent when the database keeps no read marker */}
+                        {item.unread ? <span data-testid="pro-conversation-unread" className="me-2 inline-flex rounded-full bg-blue-800 px-2 py-0.5 text-xs font-bold text-white">{t('pro:messages.unread', 'Non lu')}</span> : null}
                         {item.appointment?.serviceName || t('pro:messages.service', 'Service')} - {formatDate(item.appointment?.startsAt)}
                       </p>
                       <p className="text-sm text-slate-700">{item.lastMessagePreview || t('pro:messages.no_message', 'Aucun message')}</p>

@@ -15,6 +15,7 @@ import {
 } from '../../_utils/rdv-messaging.js';
 import { insertMessageWithAttachment, prepareAttachment, readAttachment, sendAttachment, withAttachments } from '../../_services/message-attachments.js';
 import { canNotify } from '../../_services/citizen-account.js';
+import { markConversationRead, unreadConversationIds } from '../../_services/conversation-read.js';
 
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
@@ -130,9 +131,13 @@ async function getConversations(req, res, proCtx) {
     },
   });
 
+  // B02: which of them this member has not read (null on a database without the read marker: no flag at all, as before)
+  const unread = await unreadConversationIds(proCtx).catch(() => null);
+
   return res.status(200).json({
     ok: true,
-    items: conversations.map((conversation) => serializeConversationListItem(conversation)),
+    items: conversations.map((conversation) => ({ ...serializeConversationListItem(conversation), ...(unread ? { unread: unread.has(conversation.id) } : {}) })),
+    unreadAvailable: Boolean(unread),
   });
 }
 
@@ -154,6 +159,9 @@ async function getConversation(req, res, proCtx, conversationId) {
   if (!conversation || conversation.structureId !== proCtx.structureId) {
     return res.status(404).json({ error: 'Conversation introuvable.' });
   }
+
+  // B02: this member has now opened the thread
+  await markConversationRead({ conversationId: conversation.id, appointmentId: conversation.appointmentId, structureId: proCtx.structureId, userId: proCtx.userId });
 
   return res.status(200).json({
     ok: true,
@@ -207,6 +215,7 @@ async function sendMessage(req, res, proCtx, conversationId) {
   }).where(eq(RdvConversation.id, conversation.id));
 
   const created = { conversation, message, forbidden: false };
+  await markConversationRead({ conversationId: conversation.id, appointmentId: conversation.appointmentId, structureId: proCtx.structureId, userId: proCtx.userId });   // B02: answering is reading
 
   try {
     await notifyConversationMessage({

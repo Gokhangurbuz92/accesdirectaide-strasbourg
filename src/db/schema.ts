@@ -868,6 +868,32 @@ export const RdvConversationMessage = pgTable('RdvConversationMessage', {
 		.onUpdate('cascade')
 }));
 
+// RECON Pro B02 (drizzle/0049): a professional's read marker for a conversation — the moment that member last opened the thread. No relation is declared
+// on purpose: the relational queries of RdvConversation stay exactly as they are on a database without this table (api/_services/conversation-read.js is
+// the only reader / writer and asks the catalogue first).
+export const RdvConversationRead = pgTable('RdvConversationRead', {
+	conversationId: text('conversationId').notNull(),
+	proUserId: text('proUserId').notNull(),
+	lastReadAt: timestamp('lastReadAt', { precision: 3 }).notNull().defaultNow()
+}, (RdvConversationRead) => ({
+	'RdvConversationRead_pkey': primaryKey({ name: 'RdvConversationRead_pkey', columns: [RdvConversationRead.conversationId, RdvConversationRead.proUserId] }),
+	'RdvConversationRead_conversation_fkey': foreignKey({
+		name: 'RdvConversationRead_conversation_fkey',
+		columns: [RdvConversationRead.conversationId],
+		foreignColumns: [RdvConversation.id]
+	})
+		.onDelete('cascade')
+		.onUpdate('cascade'),
+	'RdvConversationRead_proUser_fkey': foreignKey({
+		name: 'RdvConversationRead_proUser_fkey',
+		columns: [RdvConversationRead.proUserId],
+		foreignColumns: [ProUser.id]
+	})
+		.onDelete('cascade')
+		.onUpdate('cascade'),
+	'RdvConversationRead_proUser_idx': index('RdvConversationRead_proUser_idx').on(RdvConversationRead.proUserId)
+}));
+
 export const RdvNotificationLog = pgTable('RdvNotificationLog', {
 	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
 	kind: text('kind').notNull().default("MESSAGE_EMAIL"),

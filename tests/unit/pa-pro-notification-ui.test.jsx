@@ -19,15 +19,15 @@ const tFr = (key, fallback, vars) => (typeof fallback === 'string' ? fallback.re
 
 describe('A11 notificationView', () => {
   it('the path comes from the stored identifiers, the same on the server (e-mail) and in the interface', () => {
-    for (const [type, metadata] of [['referral_received', { referralId: 'r1' }], ['case_mention', { caseId: 'c1' }], ['rdv_rescheduled', { appointmentId: 'a1' }], ['message_received', { appointmentId: 'a1' }],
+    for (const [type, metadata] of [['referral_received', { referralId: 'r1' }], ['case_mention', { caseId: 'c1' }], ['rdv_rescheduled', { appointmentId: 'a1' }], ['message_received', { appointmentId: 'a1', conversationId: 'conv1' }],
       ['structure_proposal_decided', { proposalId: 'p1' }], ['team_role_change', {}], ['case_handover', {}], ['NEW_AIDE', { aideId: 'x' }], ['case_assigned', { caseId: '//evil.example' }]]) {
       expect(notificationPath({ type, metadata })).toBe(serverPath(type, metadata));
     }
     expect(notificationPath({ type: 'referral_received', metadata: { referralId: 'r1' } })).toBe('/pro/orientations/r1');
   });
   it('another language than French: the title comes from the type; a fixed message is translated; a free message stays French and is marked', () => {
-    const v = notificationView(t, 'en', { type: 'message_received', title: 'Nouveau message d’une personne', message: 'Une personne vous a écrit au sujet d’un rendez-vous.', metadata: { appointmentId: 'a1' } });
-    expect(v).toMatchObject({ title: '[pro:notifications.types.message_received]', message: '[pro:notifications.bodies.message_received]', path: '/pro/appointments/a1' });
+    const v = notificationView(t, 'en', { type: 'message_received', title: 'Nouveau message d’une personne', message: 'Une personne vous a écrit au sujet d’un rendez-vous.', metadata: { appointmentId: 'a1', conversationId: 'conv1' } });
+    expect(v).toMatchObject({ title: '[pro:notifications.types.message_received]', message: '[pro:notifications.bodies.message_received]', path: '/pro/messages/conv1' });
     expect(v.titleLang).toBeUndefined(); expect(v.messageLang).toBeUndefined();
     const free = notificationView(t, 'de', { type: 'rdv_rescheduled', title: 'Rendez-vous déplacé par la personne', message: 'Un rendez-vous a été déplacé.', metadata: {} });
     expect(free.title).toBe('[pro:notifications.types.rdv_rescheduled]');

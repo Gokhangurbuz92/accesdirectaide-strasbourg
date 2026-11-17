@@ -14,6 +14,7 @@ export {
   RdvConversation,
   RdvConversationMessage,
   RdvNotificationLog,
+  RdvConversationRead,
   ProTimeOff,
   StructureRdvSettings,
   Invitation,
