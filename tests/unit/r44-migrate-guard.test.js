@@ -18,7 +18,8 @@ const T44 = '0044_r39_guest_reminder_consent';
 const T45 = '0045_r43_appointment_notice_kinds';
 const T46 = '0046_m1_parcours_plan_step';   // M1 (additive, one nullable column)
 const T47 = '0047_m2_referral_redirect_referent';   // M2 (additive: referral redirect, contact person of the path)
-const T48 = '0048_m2_referral_message_history';   // M2: the newest migration (additive: history of the referral texts)
+const T48 = '0048_m2_referral_message_history';   // M2 (additive: history of the referral texts)
+const T49 = '0049_pa_conversation_read';   // pro messages: the newest migration (additive: a member's read marker per conversation)
 /** the history rows a database holds after these tags (drizzle's shape: id, sha256 of the file, created_at = « when ») */
 const rowsFor = (tags) => tags.map((t, i) => ({ id: i + 1, hash: real.files[t].hash, created_at: String(byTag(t).when) }));
 const upTo = (idx) => E.filter((e) => e.idx <= idx).map((e) => e.tag);
@@ -39,18 +40,19 @@ async function drizzleWouldApply(lastCreatedAt) {
 }
 
 describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
-  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045 (and the later 0046, 0047, 0048)', async () => {
-    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46, T47, T48]);
+  it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045 (and the later 0046, 0047, 0048, 0049)', async () => {
+    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46, T47, T48, T49]);
   });
-  it('after 0045 applied out of order, 0043 / 0044 are skipped for good: only the later 0046, 0047, 0048 are pending, and nothing after them', async () => {
+  it('after 0045 applied out of order, 0043 / 0044 are skipped for good: only the later 0046, 0047, 0048, 0049 are pending, and nothing after them', async () => {
     const pending = await drizzleWouldApply(byTag(T45).when);
-    expect(pending).toEqual([T46, T47, T48]);
+    expect(pending).toEqual([T46, T47, T48, T49]);
     expect(pending).not.toContain(T43);
     expect(pending).not.toContain(T44);
-    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([T47, T48]);
-    expect(await drizzleWouldApply(byTag(T47).when)).toEqual([T48]);
-    expect(await drizzleWouldApply(byTag(T48).when)).toEqual([]);
-    expect(E[E.length - 1].tag).toBe(T48);
+    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([T47, T48, T49]);
+    expect(await drizzleWouldApply(byTag(T47).when)).toEqual([T48, T49]);
+    expect(await drizzleWouldApply(byTag(T48).when)).toEqual([T49]);
+    expect(await drizzleWouldApply(byTag(T49).when)).toEqual([]);
+    expect(E[E.length - 1].tag).toBe(T49);
   });
   it('planDeploy() computes the same pending set as drizzle for every level, and refuses while an obsolete one is pending', async () => {
     for (const lvl of [null, ...E.map((e) => e.when)]) {
@@ -60,14 +62,14 @@ describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
       else expect(p.ok && p.apply.map((e) => e.tag)).toEqual(drizzleSet);
     }
   });
-  it('0046, 0047, 0048 are the only pending migrations on Production 0042 + 0045; a future 0049 after them is the only one pending once they are applied', () => {
+  it('0046, 0047, 0048, 0049 are the only pending migrations on Production 0042 + 0045; a future 0050 after them is the only one pending once they are applied', () => {
     const now = planDeploy(E, byTag(T45).when);
-    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46, T47, T48]);
-    const e49 = { idx: 49, when: byTag(T48).when + 1000, tag: '0049_future' };
-    const all = planDeploy([...E, e49], byTag(T45).when);
-    expect(all.ok && all.apply.map((e) => e.tag)).toEqual([T46, T47, T48, '0049_future']);
-    const p = planDeploy([...E, e49], byTag(T48).when);
-    expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0049_future']);
+    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49]);
+    const e50 = { idx: 50, when: byTag(T49).when + 1000, tag: '0050_future' };
+    const all = planDeploy([...E, e50], byTag(T45).when);
+    expect(all.ok && all.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, '0050_future']);
+    const p = planDeploy([...E, e50], byTag(T49).when);
+    expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0050_future']);
   });
 });
 
@@ -88,16 +90,16 @@ describe('obsolete manifest and journal integrity', () => {
   });
   const codes = (r) => r.problems.map((p) => p.code);
   it('refuses a later migration whose « when » is not after the previous one (drizzle would skip it silently)', () => {
-    const r = verifyJournal(mk([...E, { idx: 49, when: byTag(T48).when, tag: '0049_x' }]));
+    const r = verifyJournal(mk([...E, { idx: 50, when: byTag(T49).when, tag: '0050_x' }]));
     expect(codes(r)).toContain('WHEN_NOT_INCREASING');
   });
   it('refuses idx gaps, duplicate tags, unnumbered tags, missing files and files without an entry', () => {
-    expect(codes(verifyJournal(mk([...E, { idx: 50, when: 9e12, tag: '0050_x' }])))).toContain('IDX_NOT_CONTIGUOUS');
-    expect(codes(verifyJournal(mk([...E, { idx: 49, when: 9e12, tag: '0099_x' }])))).toContain('TAG_NOT_NUMBERED_BY_IDX');
-    expect(codes(verifyJournal(mk([...E, { ...E[45], idx: 49, when: 9e12 }])))).toContain('DUPLICATE_TAG');
+    expect(codes(verifyJournal(mk([...E, { idx: 51, when: 9e12, tag: '0051_x' }])))).toContain('IDX_NOT_CONTIGUOUS');
+    expect(codes(verifyJournal(mk([...E, { idx: 50, when: 9e12, tag: '0099_x' }])))).toContain('TAG_NOT_NUMBERED_BY_IDX');
+    expect(codes(verifyJournal(mk([...E, { ...E[45], idx: 50, when: 9e12 }])))).toContain('DUPLICATE_TAG');
     const files = { ...real.files }; delete files[T42];
     expect(codes(verifyJournal(mk(E, files)))).toContain('MISSING_FILE');
-    expect(codes(verifyJournal(mk(E, null, [...real.sqlFiles, '0049_orphan.sql'])))).toContain('FILE_WITHOUT_ENTRY');
+    expect(codes(verifyJournal(mk(E, null, [...real.sqlFiles, '0050_orphan.sql'])))).toContain('FILE_WITHOUT_ENTRY');
   });
   it('refuses an obsolete migration removed, moved, edited or renamed', () => {
     expect(codes(verifyJournal(mk(E.filter((e) => e.tag !== T44))))).toEqual(expect.arrayContaining(['OBSOLETE_ENTRY_MISSING']));

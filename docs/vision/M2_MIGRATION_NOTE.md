@@ -11,8 +11,8 @@ Tested on the local LAB cluster only (PostgreSQL, databases `ada_m2_test`, `ada_
 
 ## 1. Things to know before applying
 
-- **After 0046 (M1).** The journal is contiguous: 0046 (`when` 1794742203358) → 0047 → 0048. The snapshots are chained 0046 → `0047_snapshot.json` → `0048_snapshot.json` (both include M1's `ParcoursItem.planStep`).
-- **Order.** 0047 then 0048 (journal order). Rollback in the reverse order: **0048_down first, then 0047_down** — drizzle re-applies only what is later than the newest recorded migration, so rolling back 0047 alone while 0048 stays recorded would leave 0047 un-reapplicable by the migrator.
+- **Neighbours in the journal.** Contiguous: 0046 (M1, `when` 1794742203358) → 0047 → 0048 → 0049 (pro messages, `RdvConversationRead`, `when` 1794770972252). Snapshots are chained 0046 → 0047 → 0048 → 0049 (0047 and 0048 include M1's `ParcoursItem.planStep`; 0049 includes the M1 and M2 objects). A plain run on 0042 + 0045 would apply 0046–0049 together: use `--only <tag>` in journal order.
+- **Order.** 0047 then 0048 (journal order). Rollback in the reverse order: **0049_down first when 0049 is recorded, then 0048_down, then 0047_down** — drizzle re-applies only what is later than the newest recorded migration, so rolling back 0047 alone while 0048 stays recorded would leave 0047 un-reapplicable by the migrator.
 - **Production** is applied with `scripts/db-deploy-migrate.mjs --only <tag>` (never `npm run db:migrate`), one migration at a time, after an encrypted backup. The guard knows 0047's CHECK change (`CHECK_MARKERS`).
 - **The code does not need the migrations.** New code on a database without them keeps every earlier path working (§5). The migrations can therefore be applied before or after the code release; the new features only appear once they are applied.
 
@@ -177,7 +177,7 @@ If old code runs *after* the new code created data: a referral declined with `RE
 
 ## 6. Rollback SQL
 
-Run with an encrypted backup first, 0048 before 0047.
+Run with an encrypted backup first: 0049 (when recorded) before 0048, 0048 before 0047.
 
 ### 0048 (down)
 

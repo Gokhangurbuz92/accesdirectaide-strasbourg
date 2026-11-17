@@ -1,6 +1,6 @@
 {
   "id": "e5096816-0e52-433d-8efd-849654929e4b",
-  "prevId": "8ddb0c09-99df-465e-9b82-84bb5f4a259c",
+  "prevId": "41992848-8a38-4c9e-b37c-8f0ce1477c56",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -3956,6 +3956,279 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.DossierReferent": {
+      "name": "DossierReferent",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "sharedDiagnosticId": {
+          "name": "sharedDiagnosticId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "structureId": {
+          "name": "structureId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "proUserId": {
+          "name": "proUserId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "displayName": {
+          "name": "displayName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'PROPOSED'"
+        },
+        "displayNameConsentAt": {
+          "name": "displayNameConsentAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "proposedAt": {
+          "name": "proposedAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "citizenDecisionAt": {
+          "name": "citizenDecisionAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "endedAt": {
+          "name": "endedAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "endedBy": {
+          "name": "endedBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "DossierReferent_current_key": {
+          "name": "DossierReferent_current_key",
+          "columns": [
+            {
+              "expression": "sharedDiagnosticId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"status\" IN ('PROPOSED', 'ACCEPTED_BY_CITIZEN')",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "DossierReferent_structure_idx": {
+          "name": "DossierReferent_structure_idx",
+          "columns": [
+            {
+              "expression": "structureId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "DossierReferent_pro_idx": {
+          "name": "DossierReferent_pro_idx",
+          "columns": [
+            {
+              "expression": "proUserId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "DossierReferent_dossier_fkey": {
+          "name": "DossierReferent_dossier_fkey",
+          "tableFrom": "DossierReferent",
+          "tableTo": "SharedDiagnostic",
+          "columnsFrom": [
+            "sharedDiagnosticId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "DossierReferent_structure_fkey": {
+          "name": "DossierReferent_structure_fkey",
+          "tableFrom": "DossierReferent",
+          "tableTo": "Structure",
+          "columnsFrom": [
+            "structureId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "DossierReferent_pro_fkey": {
+          "name": "DossierReferent_pro_fkey",
+          "tableFrom": "DossierReferent",
+          "tableTo": "ProUser",
+          "columnsFrom": [
+            "proUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.DossierReferentEvent": {
+      "name": "DossierReferentEvent",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "referentId": {
+          "name": "referentId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actorType": {
+          "name": "actorType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "actorId": {
+          "name": "actorId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "fromStatus": {
+          "name": "fromStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "toStatus": {
+          "name": "toStatus",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reason": {
+          "name": "reason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "DossierReferentEvent_referent_idx": {
+          "name": "DossierReferentEvent_referent_idx",
+          "columns": [
+            {
+              "expression": "referentId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "DossierReferentEvent_referent_fkey": {
+          "name": "DossierReferentEvent_referent_fkey",
+          "tableFrom": "DossierReferentEvent",
+          "tableTo": "DossierReferent",
+          "columnsFrom": [
+            "referentId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.EmailChangeRequest": {
       "name": "EmailChangeRequest",
       "schema": "",
@@ -5672,6 +5945,12 @@
         "note": {
           "name": "note",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "planStep": {
+          "name": "planStep",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": false
         },
@@ -8540,89 +8819,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.RdvConversationRead": {
-      "name": "RdvConversationRead",
-      "schema": "",
-      "columns": {
-        "conversationId": {
-          "name": "conversationId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "proUserId": {
-          "name": "proUserId",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "lastReadAt": {
-          "name": "lastReadAt",
-          "type": "timestamp (3)",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "RdvConversationRead_proUser_idx": {
-          "name": "RdvConversationRead_proUser_idx",
-          "columns": [
-            {
-              "expression": "proUserId",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "RdvConversationRead_conversation_fkey": {
-          "name": "RdvConversationRead_conversation_fkey",
-          "tableFrom": "RdvConversationRead",
-          "tableTo": "RdvConversation",
-          "columnsFrom": [
-            "conversationId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        },
-        "RdvConversationRead_proUser_fkey": {
-          "name": "RdvConversationRead_proUser_fkey",
-          "tableFrom": "RdvConversationRead",
-          "tableTo": "ProUser",
-          "columnsFrom": [
-            "proUserId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "cascade"
-        }
-      },
-      "compositePrimaryKeys": {
-        "RdvConversationRead_pkey": {
-          "name": "RdvConversationRead_pkey",
-          "columns": [
-            "conversationId",
-            "proUserId"
-          ]
-        }
-      },
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.Referral": {
       "name": "Referral",
       "schema": "",
@@ -8778,9 +8974,58 @@
           "type": "timestamp (3)",
           "primaryKey": false,
           "notNull": true
+        },
+        "previousReferralId": {
+          "name": "previousReferralId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "suggestedStructureId": {
+          "name": "suggestedStructureId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "followUpNotifiedAt": {
+          "name": "followUpNotifiedAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {
+        "Referral_previous_idx": {
+          "name": "Referral_previous_idx",
+          "columns": [
+            {
+              "expression": "previousReferralId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "Referral_previous_live_key": {
+          "name": "Referral_previous_live_key",
+          "columns": [
+            {
+              "expression": "previousReferralId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"previousReferralId\" IS NOT NULL AND \"status\" IN ('DRAFT', 'PENDING_CITIZEN', 'SENT', 'ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'IN_PROGRESS')",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
         "Referral_to_status_idx": {
           "name": "Referral_to_status_idx",
           "columns": [
@@ -8877,6 +9122,32 @@
         }
       },
       "foreignKeys": {
+        "Referral_previous_fkey": {
+          "name": "Referral_previous_fkey",
+          "tableFrom": "Referral",
+          "tableTo": "Referral",
+          "columnsFrom": [
+            "previousReferralId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
+        "Referral_suggested_fkey": {
+          "name": "Referral_suggested_fkey",
+          "tableFrom": "Referral",
+          "tableTo": "Structure",
+          "columnsFrom": [
+            "suggestedStructureId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        },
         "Referral_dossier_fkey": {
           "name": "Referral_dossier_fkey",
           "tableFrom": "Referral",
@@ -9031,6 +9302,86 @@
         "ReferralEvent_referral_fkey": {
           "name": "ReferralEvent_referral_fkey",
           "tableFrom": "ReferralEvent",
+          "tableTo": "Referral",
+          "columnsFrom": [
+            "referralId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.ReferralMessage": {
+      "name": "ReferralMessage",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "referralId": {
+          "name": "referralId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "side": {
+          "name": "side",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bodyEncrypted": {
+          "name": "bodyEncrypted",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "ReferralMessage_referral_idx": {
+          "name": "ReferralMessage_referral_idx",
+          "columns": [
+            {
+              "expression": "referralId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "createdAt",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "ReferralMessage_referral_fkey": {
+          "name": "ReferralMessage_referral_fkey",
+          "tableFrom": "ReferralMessage",
           "tableTo": "Referral",
           "columnsFrom": [
             "referralId"
@@ -12598,6 +12949,89 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.RdvConversationRead": {
+      "name": "RdvConversationRead",
+      "schema": "",
+      "columns": {
+        "conversationId": {
+          "name": "conversationId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "proUserId": {
+          "name": "proUserId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lastReadAt": {
+          "name": "lastReadAt",
+          "type": "timestamp (3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "RdvConversationRead_proUser_idx": {
+          "name": "RdvConversationRead_proUser_idx",
+          "columns": [
+            {
+              "expression": "proUserId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "RdvConversationRead_conversation_fkey": {
+          "name": "RdvConversationRead_conversation_fkey",
+          "tableFrom": "RdvConversationRead",
+          "tableTo": "RdvConversation",
+          "columnsFrom": [
+            "conversationId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "RdvConversationRead_proUser_fkey": {
+          "name": "RdvConversationRead_proUser_fkey",
+          "tableFrom": "RdvConversationRead",
+          "tableTo": "ProUser",
+          "columnsFrom": [
+            "proUserId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "RdvConversationRead_pkey": {
+          "name": "RdvConversationRead_pkey",
+          "columns": [
+            "conversationId",
+            "proUserId"
+          ]
+        }
+      },
       "uniqueConstraints": {},
       "policies": {},
       "checkConstraints": {},

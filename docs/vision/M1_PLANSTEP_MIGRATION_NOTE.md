@@ -21,6 +21,9 @@ ALTER TABLE "ParcoursItem" ADD COLUMN IF NOT EXISTS "planStep" jsonb;
 0042 + 0045: a PLAIN run of `scripts/db-deploy-migrate.mjs` (no `--only`) on Production would now plan and apply 0046 (`planDeploy`, covered by
 `tests/unit/r44-migrate-guard.test.js` and `tests/unit/r43-booking-units.test.jsx`). Do not run it on Production until the owner authorises 0046;
 `--check` and `--dry-run` stay read-only.
+Since then the journal holds later migrations: 0047 and 0048 (M2, `docs/vision/M2_MIGRATION_NOTE.md`) and 0049 (pro messages,
+`RdvConversationRead`). A plain run on 0042 + 0045 would apply 0046, 0047, 0048 and 0049 together: use `--only <tag>`, one authorised migration at a time,
+in journal order.
 
 ## 2. Data impact
 
@@ -66,7 +69,8 @@ DELETE FROM drizzle.__drizzle_migrations WHERE created_at = 1794742203358;
   `scripts/db-backup.mjs`).
 - `DROP COLUMN` is also a catalogue change (no rewrite). The second statement forgets the migration's history row so that a later run applies 0046 again
   instead of silently skipping it (rule since 0043, test `tests/unit/r39-rollback-journal.test.js`).
-- Order: on Production (0042 + 0045 + 0046) it runs on its own; on a LAB database it runs before `0045_down.sql`.
+- Order: on Production (0042 + 0045 + 0046) it runs on its own; on a LAB database it runs before `0045_down.sql`. Where a later migration is
+  recorded (0047, 0048, 0049), roll those back first, newest first (`0049_down.sql`, `0048_down.sql`, `0047_down.sql`): drizzle only re-applies what is later than the newest recorded row.
 - Up → down → up was rehearsed on a throwaway LAB database (same test): after down the catalogue is identical to level 0045 and the pre-M1 INSERT works;
   after the second up the column is back and empty.
 
