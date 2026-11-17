@@ -9,6 +9,7 @@ import { frontendEnv } from '@/config/env';
 import { Link } from 'react-router-dom';
 import VerifiedCatalogue from '@/components/layout/VerifiedCatalogue';
 import { useT } from '@/i18n';
+import FalcPageDraft from '@/components/FalcPageDraft';
 
 /** R26: how a record gets onto the site — the three facts behind « vérifiée le … », in plain words, with the full method one click away */
 function HowWeVerify() {
@@ -56,6 +57,8 @@ export default function Home() {
 
       {/* Above-fold — critical for LCP */}
       <HeroSearch />
+      {/* FA-D4: the simplified draft of this page, when « Facile à lire » is on */}
+      <div className="mx-auto max-w-3xl px-4 sm:px-6"><FalcPageDraft id="home" /></div>
       {frontendEnv.flags.publicBeta ? (
         <section className="border-y border-slate-200 bg-slate-50 py-12">
           <div className="mx-auto max-w-6xl px-4 sm:px-6"><VerifiedCatalogue /></div>

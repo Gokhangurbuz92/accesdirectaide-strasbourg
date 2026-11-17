@@ -4,6 +4,7 @@ import SEO from '@/components/SEO';
 import HumanHelpBlock from '@/components/HumanHelpBlock';
 import brand from '@/lib/brand-config';
 import { useT } from '@/i18n';
+import FalcPageDraft from '@/components/FalcPageDraft';
 import {
     ArrowLeft,
     Home,
@@ -69,6 +70,8 @@ export default function ServiceError({ code = 404 }) {
                         ? t('layout:error.notFoundText', "L’adresse saisie est peut-être incorrecte ou la page a été déplacée.")
                         : t('layout:error.temporaryText', "Une erreur technique empêche d’afficher cette page. Réessayez dans quelques instants.")}
                 </p>
+                {/* FA-D4: simplified provisional draft, when « Facile à lire » is on */}
+                <div className="w-full max-w-xl"><FalcPageDraft id={is404 ? 'notFound' : 'serviceError'} /></div>
 
                 {/* Actions */}
                 <div className="flex gap-3">
