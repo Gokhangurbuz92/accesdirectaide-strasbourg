@@ -754,7 +754,7 @@
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA § 13.3, annexe 3) ; Vercel Inc. active sur la liste officielle du Data Privacy Framework (lue le 17/11/2026)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
       "role_propre": "Vercel est aussi responsable de traitement pour les données d'usage de son service (DPA § 4.b)",
-      "journaux": "journaux d'exécution : 1 jour sur l'offre Pro, 30 jours si l'option Observability Plus s'applique au projet (activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — état de l'option NON VÉRIFIÉ (contrôle du responsable dans le compte)"
+      "journaux": "journaux d'exécution : 1 jour sur l'offre Pro, 30 jours si l'option Observability Plus s'applique au projet (activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — option NON activée, vérifié en lecture seule par l'API Vercel le 17/11/2026 ; équipe en Pro depuis le 21/01/2026"
     },
     {
       "nom": "Vercel Analytics + Speed Insights",

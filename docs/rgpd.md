@@ -38,7 +38,7 @@
 - **Transferts.** Clauses contractuelles types (UE) 2021/914 pour les quatre ; Vercel Inc., Upstash, Inc. et Databricks, Inc. sont en outre sur la liste
   officielle du Data Privacy Framework (relue le 17/11/2026 ; à relire à chaque version de la notice). Pas Mailjet : la société inscrite est Mailgun Technologies, Inc.
 - **Durées chez les prestataires.** Vercel : journaux d'exécution 1 jour sur l'offre Pro, 30 jours si l'option Observability Plus s'applique au projet
-  (elle est activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — **état de l'option non vérifié**, la notice donne le critère.
+  (elle est activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — **non activée, vérifié en lecture seule par l'API Vercel le 17/11/2026** (équipe en Pro depuis le 21/01/2026) ; la notice garde le critère, l'option pouvant être activée à tout moment.
   Mailjet : statistiques 90 jours (offre gratuite) ou 13 mois (offre payante) — **offre du compte non vérifiée** ; aucune durée publiée pour le contenu des
   messages. Neon : historique de 6 heures sur l'offre gratuite (une offre payante l'allonge : la notice devrait alors changer).
 - **Contact Mailjet (décision C6 du 17/11/2026 : l'adresse n'est copiée nulle part).** L'API d'envoi enregistre l'adresse de chaque destinataire comme
