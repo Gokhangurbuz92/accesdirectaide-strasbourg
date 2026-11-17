@@ -20,13 +20,13 @@ const HOUR = 3600_000;
 /**
  * job → { maxAgeHours, good, group }. maxAgeHours = twice the longest gap of its schedule in vercel.json + 1 h (one missed run is tolerated, two are not);
  * tests/unit/ra03-job-watch.test.js pins every entry against vercel.json. `good`: the statuses that count as a run that did its work. `aliases`: older
- * names of the same job in CronRun. The veille keeps its own check (ALERT_VEILLE_STALE_HOURS); health-alert does not watch itself (docs/runbooks.md).
+ * names of the same job in CronRun. parcours-reminder: « skipped » is its only skip — Mon Parcours closed (A-18), a run that did its (empty) work. The veille keeps its own check (ALERT_VEILLE_STALE_HOURS); health-alert does not watch itself (docs/runbooks.md).
  */
 export const WATCHED_JOBS = Object.freeze({
   actualites: Object.freeze({ group: 'ingestion', maxAgeHours: 13, good: Object.freeze(['success']), aliases: Object.freeze(['ACTUALITES']) }),
   'ingest-aids': Object.freeze({ group: 'ingestion', maxAgeHours: 49, good: Object.freeze(['success']), aliases: Object.freeze(['INGEST_AIDS']) }),
   'ingest-structures': Object.freeze({ group: 'ingestion', maxAgeHours: 337, good: Object.freeze(['success']), aliases: Object.freeze([]) }),
-  'parcours-reminder': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'partial']), aliases: Object.freeze([]) }),
+  'parcours-reminder': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'partial', 'skipped']), aliases: Object.freeze([]) }),
   'referral-timeouts': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'partial']), aliases: Object.freeze([]) }),
   'rdv-reminder': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'partial']), aliases: Object.freeze([]) }),
   'gdpr-purge': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'partial']), aliases: Object.freeze([]) }),

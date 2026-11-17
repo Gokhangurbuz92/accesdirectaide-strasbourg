@@ -177,6 +177,21 @@ describe.skipIf(!hasDatabase)('R41-E G5 — parcours reminders (real DB)', () =>
     expect(row.metrics).toHaveProperty('considered');
   });
 
+  it('A-18: Mon Parcours closed (citizen.parcours not listed, gates on) => no-op: nothing claimed or sent, a CronRun row « skipped » CAPABILITY_CLOSED', async () => {
+    const now = new Date();
+    const p = await seed(new Date(now.getTime() + 10 * H));
+    vi.stubEnv('ADA_CAPABILITY_ENFORCEMENT', '1'); vi.stubEnv('ADA_CAPABILITIES_OPEN', 'citizen.delegations');
+    const before = new Date(Date.now() - 1000);
+    const r = mk();
+    await cron.default({ method: 'GET', url: '/api/cron/parcours-reminder', query: {}, headers: { host: 'x', 'x-cron-secret': process.env.CRON_SECRET } }, r);
+    expect(r.statusCode, JSON.stringify(r.body)).toBe(200);
+    expect(r.body).toMatchObject({ ok: true, skipped: true, reason: 'CAPABILITY_CLOSED' });
+    expect(await status(p.id, 'J1')).toBeUndefined();
+    const row = (await db.execute(sql`SELECT status, "skipReason", "finishedAt" FROM "CronRun" WHERE job = 'parcours-reminder' AND "startedAt" >= ${before} ORDER BY "startedAt" DESC LIMIT 1`)).rows[0];
+    expect(row).toMatchObject({ status: 'skipped', skipReason: 'CAPABILITY_CLOSED' });
+    expect(row.finishedAt).not.toBeNull();
+  });
+
   it('logs never carry an address, a number, the message, a step title or a key — even when a sender throws with them', async () => {
     const logger = (await import('../../api/_utils/logger.js')).default;
     const raw = []; const out = [];

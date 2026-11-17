@@ -11,6 +11,7 @@ import { isSmsSendWindow, optOutReady, withOptOut } from '../../lib/sms-policy.j
 import { formatParisDate } from '../../_services/appointment-notices.js';
 import { sendTwilioSms } from '../../_utils/twilio-sms.js';
 import { finishCronRun, startCronRun } from '../../_utils/cron-run.js';
+import { capabilityOpen } from '../../_utils/capabilities.js';
 
 /**
  * PKG-2 / C08 — reminders of Mon Parcours deadlines (GET|POST /api/cron/parcours-reminder, CRON_SECRET).
@@ -112,11 +113,20 @@ export async function runParcoursReminders({ now = new Date(), deps = {} } = {})
   return summary;
 }
 
+export const PARCOURS_CAPABILITY = 'citizen.parcours';
+export const CAPABILITY_CLOSED = 'CAPABILITY_CLOSED';
+
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   if (!getCronAuth(req).ok) return res.status(401).json({ error: 'Unauthorized' });   // CRON_SECRET only (Vercel Cron sends it; a user-agent proves nothing)
   const startedAtMs = Date.now();
   const runId = await startCronRun(db, 'parcours-reminder', { trigger: 'cron' });   // R41-E / G5: a run record (health / admin cron page)
+  // A-18 / C08: Mon Parcours closed in this environment (citizen.parcours) => no-op: nothing read, nothing sent; the run is recorded « skipped »
+  if (!capabilityOpen(PARCOURS_CAPABILITY)) {
+    logger.info({ job: 'parcours-reminder', skipped: true, reason: CAPABILITY_CLOSED }, '[Cron] Parcours reminders skipped: capability closed');
+    await finishCronRun(db, runId, { status: 'skipped', skipReason: CAPABILITY_CLOSED, startedAtMs, metrics: { considered: 0 } });
+    return res.status(200).json({ ok: true, skipped: true, reason: CAPABILITY_CLOSED, capability: PARCOURS_CAPABILITY });
+  }
   try {
     const summary = await runParcoursReminders();
     logger.info(summary, '[Cron] Parcours reminders completed');
