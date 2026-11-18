@@ -38,7 +38,7 @@ const CommandInput = React.forwardRef((/** @type {React.ComponentPropsWithoutRef
      
     cmdk-input-wrapper=""
   >
-    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+    <Search className="me-2 h-4 w-4 shrink-0 opacity-50" />
     <CommandPrimitive.Input
       ref={ref}
       className={cn(
@@ -101,7 +101,7 @@ const CommandShortcut = (/** @type {Record<string, string | number | boolean | n
 }) => {
   return (
     (<span
-      className={cn("ml-auto text-xs tracking-widest text-muted-foreground", className)}
+      className={cn("ms-auto text-xs tracking-widest text-muted-foreground", className)}
       {...props} />)
   );
 }

@@ -127,7 +127,7 @@ export default function ProLayout() {
         <div className="min-h-screen bg-slate-100 flex">
             <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
             >
                 {t('pro:layout.aller_contenu_principal', 'Aller au contenu principal')}
             </a>
@@ -141,7 +141,7 @@ export default function ProLayout() {
                 <OnboardingTour onComplete={() => setShowOnboarding(false)} />
             )}
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col">
+            <aside className="w-64 bg-white border-e border-slate-200 hidden md:flex flex-col">
                 <div className="p-6 border-b border-slate-200 flex items-center justify-between">
                     <p className="font-bold text-xl text-blue-800">{t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}</p>{/* Q10: the brand is not the page heading — each page has its own h1 */}
                     {user && <NotificationCenter proId={user.id} />}
@@ -155,7 +155,7 @@ export default function ProLayout() {
                         <p className="text-xs text-slate-700">{proRole(user?.role)}</p>
                     </div>
                     <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
+                        <LogOut className="me-2 h-4 w-4" />
                         {t('pro:layout.deconnexion', 'Déconnexion')}
                     </Button>
                 </div>

@@ -85,7 +85,7 @@ export default function AdminInbox() {
 
             <div className="flex justify-between items-center">
                 <h1 className="text-3xl font-bold">{t('admin:inbox.title', 'Boîte de réception — actualités')}</h1>
-                <div className="space-x-2">
+                <div className="space-x-2 rtl:space-x-reverse">
                     <Button variant={statusFilter === 'brouillon' ? 'default' : 'outline'} onClick={() => setStatusFilter('brouillon')}>{t('admin:inbox.filter_drafts', 'Brouillons')}</Button>
                     <Button variant={statusFilter === 'publie' ? 'default' : 'outline'} onClick={() => setStatusFilter('publie')}>{t('admin:inbox.filter_published', 'Publiés')}</Button>
                     <Button variant={statusFilter === 'rejected' ? 'default' : 'outline'} onClick={() => setStatusFilter('rejected')}>{t('admin:inbox.filter_rejected', 'Rejetés')}</Button>
@@ -95,8 +95,8 @@ export default function AdminInbox() {
             <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>{t('admin:inbox.list_title', 'Actualités ({{n}})', { n: items.length })}</CardTitle>
-                    <div className="space-x-2">
-                        <Button size="sm" variant="secondary" onClick={fetchInbox}><RefreshCw className="h-4 w-4 mr-2" />{t('admin:inbox.refresh', 'Actualiser')}</Button>
+                    <div className="space-x-2 rtl:space-x-reverse">
+                        <Button size="sm" variant="secondary" onClick={fetchInbox}><RefreshCw className="h-4 w-4 me-2" />{t('admin:inbox.refresh', 'Actualiser')}</Button>
                         {selectedIds.length > 0 && (
                             <>
                                 <Button size="sm" onClick={() => handleAction('PUBLISH')}>{t('admin:inbox.publish_all', 'Tout Publier')}</Button>
@@ -153,12 +153,12 @@ export default function AdminInbox() {
                                         <RecordText as="div" className="font-medium truncate" title={item.titre}>{item.titre}</RecordText>
                                         <div className="text-sm text-gray-500 flex items-center mt-1">
                                             {item.falc_status === 'generated' ? (
-                                                <Badge variant="secondary" className="text-xs mr-2">{t('admin:inbox.falc_ok', 'FALC OK')}</Badge>
+                                                <Badge variant="secondary" className="text-xs me-2">{t('admin:inbox.falc_ok', 'FALC OK')}</Badge>
                                             ) : (
-                                                <Badge variant="destructive" className="text-xs mr-2">{t('admin:inbox.falc_status', 'FALC {{status}}', { status: item.falc_status })}</Badge>
+                                                <Badge variant="destructive" className="text-xs me-2">{t('admin:inbox.falc_status', 'FALC {{status}}', { status: item.falc_status })}</Badge>
                                             )}
                                             <a href={item.canonical_url} target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center">
-                                                {t('admin:inbox.original', 'Original')} <ExternalLink className="h-3 w-3 ml-1" />
+                                                {t('admin:inbox.original', 'Original')} <ExternalLink className="h-3 w-3 ms-1" />
                                             </a>
                                         </div>
                                     </TableCell>
@@ -168,7 +168,7 @@ export default function AdminInbox() {
                                         </Badge>
                                     </TableCell>
                                     <TableCell>
-                                        <div className="flex space-x-1">
+                                        <div className="flex space-x-1 rtl:space-x-reverse">
                                             <Button size="icon" variant="ghost" className="h-11 w-11 text-green-600" onClick={() => handleAction('PUBLISH', item.id)} title={t('admin:inbox.publish', 'Publier')} aria-label={t('admin:inbox.publish_item', 'Publier « {{title}} »', { title: item.titre })}>
                                                 <Check className="h-4 w-4" />
                                             </Button>

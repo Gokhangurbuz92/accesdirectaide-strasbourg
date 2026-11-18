@@ -68,7 +68,7 @@ export default function AdminOperations() {
             <li key={r.id} className="rounded border p-2 text-sm" data-testid="admin-ops-bg">
               <p>{r.actor} — {formatDateTime(r.openedAt)} — {r.reason}</p>
               <details data-testid="admin-ops-bg-actions"><summary className="cursor-pointer text-blue-800">{t('admin:k5.operations.bg_actions', 'Ce qui a été fait pendant l’accès d’urgence ({{n}} entrée(s) du journal)', { n: (r.actions || []).length })}</summary>
-                <ul className="list-disc pl-5">{(r.actions || []).map((x, i) => <li key={i}>{formatTime(x.at)} — {x.action}{x.entity ? ` — ${x.entity}` : ''}{x.entityId ? ` ${x.entityId}` : ''}</li>)}</ul>
+                <ul className="list-disc ps-5">{(r.actions || []).map((x, i) => <li key={i}>{formatTime(x.at)} — {x.action}{x.entity ? ` — ${x.entity}` : ''}{x.entityId ? ` ${x.entityId}` : ''}</li>)}</ul>
               </details>
               <Field id={`bg-${r.id}`} label={t('admin:k5.operations.review_label', 'Revue (ce qui a été vérifié dans le journal)')} value={f.review[r.id] || ''} onChange={(v) => set({ review: { ...f.review, [r.id]: v } })} rows={2} />
               <Button size="sm" variant="outline" disabled={busy} onClick={async () => { setProblem(''); try { await apiClient.admin.elevation({ action: 'review', id: r.id, note: f.review[r.id] || '' }); setMsg(t('admin:k5.operations.review_saved', 'Revue enregistrée.')); await elev.load(); } catch (x) { setProblem(explain(x)); } }}>{t('admin:k5.operations.save_review', 'Enregistrer la revue')}</Button>

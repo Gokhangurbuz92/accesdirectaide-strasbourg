@@ -158,7 +158,7 @@ export default function ProDashboard() {
                         size="sm"
                         onClick={() => navigate('/pro/rdv/new')}
                     >
-                        <Plus className="mr-2 h-4 w-4" /> {t('pro:dashboard.nouveau_rendez_vous', 'Nouveau rendez-vous')}
+                        <Plus className="me-2 h-4 w-4" /> {t('pro:dashboard.nouveau_rendez_vous', 'Nouveau rendez-vous')}
                     </Button>
                     <Button
                         size="sm"
@@ -167,7 +167,7 @@ export default function ProDashboard() {
                         title={outlookOff ? t('pro:dashboard.outlook_off_ada', 'Outlook n’est pas encore activé sur ADA.') : undefined}
                         className="bg-indigo-600 hover:bg-indigo-700"
                     >
-                        <Calendar className="mr-2 h-4 w-4" />
+                        <Calendar className="me-2 h-4 w-4" />
                         {outlookConnected ? t('pro:dashboard.outlook_connected', 'Outlook connecté') : outlookOff ? t('pro:dashboard.outlook_pending', 'Outlook (pas encore activé)') : t('pro:dashboard.outlook_connect', 'Connecter Outlook')}
                     </Button>
                 </div>
@@ -231,7 +231,7 @@ export default function ProDashboard() {
                             className="mt-1 border-indigo-200 text-indigo-700 hover:bg-indigo-100"
                             onClick={() => navigate('/pro/visio')}
                         >
-                            <Video className="mr-2 h-3 w-3" /> {t('pro:dashboard.comment_fonctionne_visio', 'Comment fonctionne la visio')}
+                            <Video className="me-2 h-3 w-3" /> {t('pro:dashboard.comment_fonctionne_visio', 'Comment fonctionne la visio')}
                         </Button>
                     </CardContent>
                 </Card>
@@ -270,7 +270,7 @@ export default function ProDashboard() {
                                     className="mt-4"
                                     onClick={() => navigate('/pro/rdv/disponibilites')}
                                 >
-                                    <Plus className="mr-2 h-3 w-3" /> {t('pro:dashboard.definir_mes_disponibilites', 'Définir mes disponibilités')}
+                                    <Plus className="me-2 h-3 w-3" /> {t('pro:dashboard.definir_mes_disponibilites', 'Définir mes disponibilités')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -323,7 +323,7 @@ export default function ProDashboard() {
                                                     navigate(`/pro/appointments/${rdv.id}`)
                                                 }
                                             >
-                                                {t('pro:dashboard.dossier', 'Dossier')} <ChevronRight className="ml-1" size={14} />
+                                                {t('pro:dashboard.dossier', 'Dossier')} <ChevronRight className="ms-1 rtl:-scale-x-100" size={14} />
                                             </Button>
                                         </div>
                                     </CardContent>
@@ -370,7 +370,7 @@ export default function ProDashboard() {
                                             <div className="relative w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-xs font-bold text-slate-700">
                                                 {(m.email || '?')[0].toUpperCase()}
                                                 {m.status === 'active' && (
-                                                    <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full" />
+                                                    <div className="absolute -bottom-0.5 -end-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full" />
                                                 )}
                                             </div>
                                             <div>
@@ -400,7 +400,7 @@ export default function ProDashboard() {
                                     {t('pro:dashboard.messages_chiffres_enregistrement', 'Messages chiffrés à l’enregistrement')}
                                 </p>
                             </div>
-                            <ChevronRight className="ml-auto text-slate-300" size={16} />
+                            <ChevronRight className="ms-auto text-slate-300 rtl:-scale-x-100" size={16} />
                         </CardContent>
                     </Card>
 

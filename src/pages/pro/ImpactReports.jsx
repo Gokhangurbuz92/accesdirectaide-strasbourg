@@ -140,7 +140,7 @@ export default function ImpactReports() {
                         ))}
                     </div>
                     <Button variant="outline" size="sm" onClick={handleExportCSV} data-testid="pro-report-csv">
-                        <Download className="mr-2 h-4 w-4" />
+                        <Download className="me-2 h-4 w-4" />
                         CSV
                     </Button>
                 </div>
@@ -305,7 +305,7 @@ export default function ImpactReports() {
                                                 </PieChart>
                                             </ResponsiveContainer>
                                         </div>
-                                        <div className="w-1/2 space-y-3 pl-4">
+                                        <div className="w-1/2 space-y-3 ps-4">
                                             {data.themes.map((/** @type {{ value: number; name: any; }} */ item, /** @type {number} */ i) => {
                                                 const total = data.themes.reduce((/** @type {number} */ s, t) => s + t.value, 0);
                                                 const pct = total > 0 ? Math.round((item.value / total) * 100) : 0;
@@ -320,7 +320,7 @@ export default function ImpactReports() {
                                                                 {item.name}
                                                             </span>
                                                         </div>
-                                                        <span className="text-xs font-bold text-slate-900 ml-2">
+                                                        <span className="text-xs font-bold text-slate-900 ms-2">
                                                             {pct}%
                                                         </span>
                                                     </div>

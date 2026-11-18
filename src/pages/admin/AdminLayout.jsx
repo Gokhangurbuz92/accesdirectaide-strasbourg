@@ -215,11 +215,11 @@ function SidebarSection({ section, isActive }) {
                 <span className="flex-1 text-start">{navLabel(t, section.label)}</span>
                 {open
                     ? <ChevronDown className="h-3 w-3" />
-                    : <ChevronRight className="h-3 w-3" />
+                    : <ChevronRight className="h-3 w-3 rtl:-scale-x-100" />
                 }
             </button>
             {open && (
-                <div className="ml-2 space-y-0.5">
+                <div className="ms-2 space-y-0.5">
                     {section.items.map(item => (
                         <NavItem key={item.to} item={item} />
                     ))}
@@ -377,7 +377,7 @@ export default function AdminLayout() {
         <div className="min-h-screen bg-slate-100 flex">
             <a
                 href="#main-content"
-                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
+                className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
             >
                 {t('admin:layout.skip_link', 'Aller au contenu principal')}
             </a>
@@ -387,7 +387,7 @@ export default function AdminLayout() {
             </Helmet>
 
             {/* Desktop Sidebar */}
-            <aside className="w-64 bg-white border-r border-slate-200 hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-hidden">
+            <aside className="w-64 bg-white border-e border-slate-200 hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-hidden">
                 {sidebarContent}
             </aside>
 

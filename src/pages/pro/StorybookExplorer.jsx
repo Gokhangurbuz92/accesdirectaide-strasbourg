@@ -43,7 +43,7 @@ export default function StorybookExplorer() {
                     to="/pro/dashboard"
                     className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
                 >
-                    <ArrowLeft className="w-4 h-4" />
+                    <ArrowLeft className="w-4 h-4 rtl:-scale-x-100" />
                     Retour au tableau de bord
                 </Link>
             </div>

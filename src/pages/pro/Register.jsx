@@ -111,7 +111,7 @@ export default function ProRegister() {
                             <p id="password-rule" className="text-xs text-slate-700">{passwordRuleText()}</p>
                         </div>
                         <Button type="submit" className="w-full" disabled={loading}>
-                            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : t('pro:register.submit', "S'inscrire")}
+                            {loading ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : t('pro:register.submit', "S'inscrire")}
                         </Button>
                         <div className="text-center text-sm text-slate-600 mt-4">
                             {t('pro:register.deja_compte', 'Déjà un compte ?')} <Link to={loginPath} className="text-blue-600 underline underline-offset-2 hover:text-blue-800">{t('pro:register.connecter', 'Se connecter')}</Link>

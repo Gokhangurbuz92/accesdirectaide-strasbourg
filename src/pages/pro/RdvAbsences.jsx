@@ -182,7 +182,7 @@ export default function ProRdvAbsences() {
 
             <div className="flex flex-wrap gap-2 md:col-span-2">
               <Button type="submit" disabled={saving}>
-                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {saving ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : null}
                 {editingId ? t('pro:rdv_absences.update', 'Mettre à jour') : t('pro:rdv_absences.add', 'Ajouter')}
               </Button>
               {editingId ? (
@@ -197,7 +197,7 @@ export default function ProRdvAbsences() {
           {overlap.length ? (
             <div className="mt-3 rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" role="status" data-testid="pro-timeoff-overlap">
               <p>{t('pro:rdv_absences.overlap', { count: overlap.length, defaultValue_one: '{{count}} rendez-vous déjà pris pendant cette absence reste maintenu : annulez-les ou déplacez-les depuis l’agenda (la personne sera prévenue).', defaultValue_other: '{{count}} rendez-vous déjà pris pendant cette absence restent maintenus : annulez-les ou déplacez-les depuis l’agenda (la personne sera prévenue).' })}</p>
-              <ul className="mt-1 list-disc pl-5">{overlap.map((a) => <li key={a.id}>{formatDate(new Date(a.startAt), { timeZone: 'Europe/Paris', dateStyle: 'full', timeStyle: 'short' })}</li>)}</ul>
+              <ul className="mt-1 list-disc ps-5">{overlap.map((a) => <li key={a.id}>{formatDate(new Date(a.startAt), { timeZone: 'Europe/Paris', dateStyle: 'full', timeStyle: 'short' })}</li>)}</ul>
             </div>
           ) : null}
         </CardContent>
@@ -235,11 +235,11 @@ export default function ProRdvAbsences() {
                   </div>
                   {item.canEdit === false ? null : <div className="flex gap-2">
                     <Button type="button" variant="outline" size="sm" onClick={() => startEdit(item)}>
-                      <Pencil className="mr-1 h-4 w-4" />
+                      <Pencil className="me-1 h-4 w-4" />
                       {t('pro:rdv_absences.edit', 'Modifier')}
                     </Button>
                     <Button type="button" variant="destructive" size="sm" onClick={() => handleDelete(item.id)}>
-                      <Trash2 className="mr-1 h-4 w-4" />
+                      <Trash2 className="me-1 h-4 w-4" />
                       {t('pro:rdv_absences.delete', 'Supprimer')}
                     </Button>
                   </div>}

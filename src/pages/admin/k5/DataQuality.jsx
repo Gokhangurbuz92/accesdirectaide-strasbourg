@@ -18,8 +18,8 @@ export default function AdminDataQuality() {
             <h2 id="dq-ws2" className="font-semibold">{t('admin:k5.data_quality.ws2_heading', 'Fiches du lancement (WS2)')}</h2>
             <p data-testid="admin-dq-ws2">{t('admin:k5.data_quality.ws2_totals', '{{records}} fiches : {{verified}} vérifiées par une personne, {{pending}} à vérifier, {{onHold}} en attente, {{rejected}} refusées, {{notInDb}} absentes de la base.', { records: d.ws2.totals.records, verified: d.ws2.totals.humanVerified, pending: d.ws2.totals.pending, onHold: d.ws2.totals.onHold, rejected: d.ws2.totals.rejected, notInDb: d.ws2.totals.notInDatabase })}</p>
             <table className="mt-2 text-sm"><caption className="sr-only">{t('admin:k5.data_quality.caption', 'Fiches par jeu de données et état')}</caption>
-              <thead><tr><th scope="col" className="pr-4 text-start">{t('admin:k5.data_quality.dataset', 'Jeu')}</th>{Object.values(STATE).map((s) => <th key={s} scope="col" className="pr-4 text-start">{s}</th>)}</tr></thead>
-              <tbody>{Object.entries(d.ws2.byDataset).map(([ds, m]) => <tr key={ds}><th scope="row" className="pr-4 text-start">{ds}</th>{Object.keys(STATE).map((s) => <td key={s} className="pr-4">{m[s] || 0}</td>)}</tr>)}</tbody>
+              <thead><tr><th scope="col" className="pe-4 text-start">{t('admin:k5.data_quality.dataset', 'Jeu')}</th>{Object.values(STATE).map((s) => <th key={s} scope="col" className="pe-4 text-start">{s}</th>)}</tr></thead>
+              <tbody>{Object.entries(d.ws2.byDataset).map(([ds, m]) => <tr key={ds}><th scope="row" className="pe-4 text-start">{ds}</th>{Object.keys(STATE).map((s) => <td key={s} className="pe-4">{m[s] || 0}</td>)}</tr>)}</tbody>
             </table>
             <p className="mt-1 text-xs text-slate-700">{t('admin:k5.data_quality.ws2_rule', 'Règle du contrôle historique WS2 : seule une vérification enregistrée par une personne d’ADA avec MFA y compte. La publication courante suit la vérification automatique D-5 v2 (page Veille).')}</p>
           </section>

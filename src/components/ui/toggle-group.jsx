@@ -3,6 +3,7 @@ import * as React from "react"
 import * as ToggleGroupPrimitive from "@radix-ui/react-toggle-group"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/i18n"
 import { toggleVariants } from "@/components/ui/toggle"
 
 const ToggleGroupContext = React.createContext(/** @type {Pick<NonNullable<Parameters<typeof toggleVariants>[0]>, "variant" | "size">} */ ({
@@ -10,16 +11,20 @@ const ToggleGroupContext = React.createContext(/** @type {Pick<NonNullable<Param
   variant: "default",
 }))
 
-const ToggleGroup = React.forwardRef((/** @type {React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & Pick<NonNullable<Parameters<typeof toggleVariants>[0]>, "variant" | "size">} */ { className, variant, size, children, ...props }, ref) => (
+const ToggleGroup = React.forwardRef((/** @type {React.ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Root> & Pick<NonNullable<Parameters<typeof toggleVariants>[0]>, "variant" | "size">} */ { className, variant, size, children, ...props }, ref) => {
+  const { dir } = useLanguage();   // FA-RTL: Radix defaults to dir="ltr" without a DirectionProvider — arrow keys follow the reading order
+  return (
   <ToggleGroupPrimitive.Root
     ref={ref}
+    dir={dir}
     className={cn("flex items-center justify-center gap-1", className)}
     {...props}>
     <ToggleGroupContext.Provider value={{ variant, size }}>
       {children}
     </ToggleGroupContext.Provider>
   </ToggleGroupPrimitive.Root>
-))
+  );
+})
 
 ToggleGroup.displayName = ToggleGroupPrimitive.Root.displayName
 

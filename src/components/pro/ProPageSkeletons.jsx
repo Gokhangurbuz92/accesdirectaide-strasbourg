@@ -51,16 +51,16 @@ export function MessageThreadSkeleton() {
             {/* Messages */}
             <div className="space-y-3 px-4">
                 <div className="flex justify-end">
-                    <Skeleton className="h-12 w-48 rounded-2xl rounded-tr-sm" />
+                    <Skeleton className="h-12 w-48 rounded-2xl rounded-se-sm" />
                 </div>
                 <div className="flex justify-start">
-                    <Skeleton className="h-16 w-56 rounded-2xl rounded-tl-sm" />
+                    <Skeleton className="h-16 w-56 rounded-2xl rounded-ss-sm" />
                 </div>
                 <div className="flex justify-end">
-                    <Skeleton className="h-10 w-40 rounded-2xl rounded-tr-sm" />
+                    <Skeleton className="h-10 w-40 rounded-2xl rounded-se-sm" />
                 </div>
                 <div className="flex justify-start">
-                    <Skeleton className="h-12 w-52 rounded-2xl rounded-tl-sm" />
+                    <Skeleton className="h-12 w-52 rounded-2xl rounded-ss-sm" />
                 </div>
             </div>
             {/* Input bar */}

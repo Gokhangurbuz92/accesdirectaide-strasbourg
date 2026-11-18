@@ -172,7 +172,7 @@ export default function AdminAudit() {
 
                                     {/* User comment */}
                                     {log.userComment && (
-                                        <div className="rounded-2xl border-l-4 border-red-400 bg-red-50/50 p-4">
+                                        <div className="rounded-2xl border-s-4 border-red-400 bg-red-50/50 p-4">
                                             <p className="mb-1 flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-red-500">
                                                 <AlertCircle className="h-3 w-3" /> {t('admin:audit.reason', 'Raison du mécontentement')}
                                             </p>

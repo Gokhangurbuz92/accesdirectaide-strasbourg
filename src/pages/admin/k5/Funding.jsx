@@ -116,7 +116,7 @@ function FundingDetail({ id }) {
       {d.warnings.length ? (
         <section className="rounded border border-amber-300 bg-amber-50 p-3 text-sm" aria-labelledby="fd-warn" data-testid="funding-warnings">
           <h2 id="fd-warn" className="font-semibold">{t('admin:k5.funding.warnings', 'Points à compléter ({{n}})', { n: d.warnings.length })}</h2>
-          <ul className="list-disc pl-5">{d.warnings.map((w) => <li key={w.code + w.message}>{w.blocking ? <strong>{t('admin:k5.funding.blocking_prefix', 'Bloquant : ')}</strong> : null}{w.message}</li>)}</ul>
+          <ul className="list-disc ps-5">{d.warnings.map((w) => <li key={w.code + w.message}>{w.blocking ? <strong>{t('admin:k5.funding.blocking_prefix', 'Bloquant : ')}</strong> : null}{w.message}</li>)}</ul>
         </section>
       ) : <p className="rounded border border-emerald-300 bg-emerald-50 p-3 text-sm">{t('admin:k5.funding.no_warning', 'Aucun point à compléter détecté. La relecture et la décision de déposer restent celles du porteur.')}</p>}
 

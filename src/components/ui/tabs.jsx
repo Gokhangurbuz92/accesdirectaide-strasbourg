@@ -2,8 +2,15 @@ import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/i18n"
 
-const Tabs = TabsPrimitive.Root
+/** FA-RTL: Radix falls back to dir="ltr" without a DirectionProvider (no new dependency): the interface direction is passed unless the caller sets one,
+ * so arrow keys move in reading order in Arabic.
+ * @param {import("react").ComponentPropsWithoutRef<typeof TabsPrimitive.Root>} props */
+function Tabs(props) {
+  const { dir } = useLanguage();
+  return <TabsPrimitive.Root dir={dir} {...props} />;
+}
 
 const TabsList = React.forwardRef((/** @type {React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>} */ { className, ...props }, ref) => (
   <TabsPrimitive.List

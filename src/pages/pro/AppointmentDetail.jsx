@@ -114,13 +114,13 @@ export default function ProAppointmentDetail() {
         <div className="space-y-6">
             <div className="flex items-center gap-4">
                 <Button variant="ghost" asChild>
-                    <Link to="/pro/rdv/agenda"><ArrowLeft className="mr-2 h-4 w-4" /> {t('pro:appointment_detail.back', 'Retour')}</Link>
+                    <Link to="/pro/rdv/agenda"><ArrowLeft className="me-2 h-4 w-4 rtl:-scale-x-100" /> {t('pro:appointment_detail.back', 'Retour')}</Link>
                 </Button>
                 <h1 className="text-xl font-bold">{t('pro:appointment_detail.title', 'Rendez-vous avec {{name}}', { name: appointment.beneficiary.firstName })}</h1>
             </div>
 
             {/* Tabs */}
-            <div className="flex space-x-4 border-b border-slate-200">
+            <div className="flex space-x-4 rtl:space-x-reverse border-b border-slate-200">
                 <button
                     onClick={() => setActiveTab('details')}
                     className={`pb-2 px-4 font-medium ${activeTab === 'details' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-700'}`}

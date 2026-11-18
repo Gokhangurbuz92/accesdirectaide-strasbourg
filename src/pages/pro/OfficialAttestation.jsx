@@ -79,7 +79,7 @@ export default function OfficialAttestation() {
                 <div className="max-w-4xl mx-auto flex items-center justify-between">
                     <div className="flex items-center gap-3">
                         <Button variant="ghost" size="sm" onClick={() => navigate(-1)} aria-label={t('pro:attestation.back', 'Retour')}>
-                            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+                            <ArrowLeft className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
                         </Button>
                         <div>
                             <p className="text-xs font-bold text-slate-900">{t('pro:attestation.toolbar_title', 'Récapitulatif du dossier')}</p>
@@ -87,7 +87,7 @@ export default function OfficialAttestation() {
                         </div>
                     </div>
                     <Button size="sm" onClick={() => window.print()}>
-                        <Printer className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
+                        <Printer className="me-1.5 h-3.5 w-3.5" aria-hidden="true" />
                         {t('pro:attestation.print', 'Imprimer ou enregistrer en PDF')}
                     </Button>
                 </div>

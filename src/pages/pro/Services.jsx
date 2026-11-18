@@ -341,9 +341,9 @@ export default function ProServices() {
               {canEdit ? (
                 <Button type="submit" disabled={settingsSaving}>
                   {settingsSaving ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="me-2 h-4 w-4 animate-spin" />
                   ) : (
-                    <Save className="mr-2 h-4 w-4" />
+                    <Save className="me-2 h-4 w-4" />
                   )}
                   {t('pro:services.save_settings', 'Enregistrer les paramètres')}
                 </Button>
@@ -383,7 +383,7 @@ export default function ProServices() {
             </p>
             {canEdit ? (
               <Button size="sm" variant="outline" className="mt-4" onClick={openCreate}>
-                <Plus className="mr-2 h-3 w-3" /> {t('pro:services.add', 'Ajouter un service')}
+                <Plus className="me-2 h-3 w-3" /> {t('pro:services.add', 'Ajouter un service')}
               </Button>
             ) : null}
           </CardContent>
@@ -410,15 +410,15 @@ export default function ProServices() {
                 {canEdit ? (
                   <div className="flex flex-wrap gap-2">
                     <Button variant="outline" size="sm" onClick={() => openEdit(service)}>
-                      <Edit className="mr-1 h-4 w-4" />
+                      <Edit className="me-1 h-4 w-4" />
                       {t('pro:services.edit', 'Modifier')}
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleToggleActive(service)}>
-                      <Power className="mr-1 h-4 w-4" />
+                      <Power className="me-1 h-4 w-4" />
                       {service.isActive ? t('pro:services.deactivate', 'Désactiver') : t('pro:services.activate', 'Activer')}
                     </Button>
                     <Button variant="destructive" size="sm" onClick={() => handleDelete(service.id)}>
-                      <Trash2 className="mr-1 h-4 w-4" />
+                      <Trash2 className="me-1 h-4 w-4" />
                       {t('pro:services.delete', 'Supprimer')}
                     </Button>
                   </div>
@@ -511,7 +511,7 @@ export default function ProServices() {
 
             <DialogFooter>
               <Button type="submit" disabled={saving}>
-                {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                {saving ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Save className="me-2 h-4 w-4" />}
                 {t('pro:services.save', 'Enregistrer')}
               </Button>
             </DialogFooter>

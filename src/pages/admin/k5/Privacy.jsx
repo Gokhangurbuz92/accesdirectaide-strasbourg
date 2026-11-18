@@ -52,7 +52,7 @@ export default function AdminPrivacy() {
               <DsrDue r={r} />
               <p>{t('admin:k5.privacy.request_of', 'Demande du {{date}} — {{stage}}', { date: formatDate(r.createdAt, DATE_SHORT), stage: r.stage === 'AWAITING_SECOND_REVIEWER' ? t('admin:k5.privacy.proposed_waiting', 'proposition ({{proposed}}) en attente d’une deuxième personne', { proposed: r.proposed }) : t('admin:k5.privacy.to_examine', 'à examiner') })}</p>
               <Button size="sm" variant="outline" onClick={() => readNotes(r.id)}>{t('admin:k5.privacy.read_notes', 'Lire les notes concernées (journalisé)')}</Button>
-              {notes[r.id] ? <ul className="list-disc pl-5">{notes[r.id].map((n, i) => <li key={i}>{n.body}</li>)}</ul> : null}
+              {notes[r.id] ? <ul className="list-disc ps-5">{notes[r.id].map((n, i) => <li key={i}>{n.body}</li>)}</ul> : null}
               {r.stage === 'AWAITING_PROPOSAL' ? (
                 <div className="space-y-1">
                   <Field id={`basis-${r.id}`} label={t('admin:k5.privacy.basis', 'Fondement de la décision')} value={v(`basis-${r.id}`)} onChange={(x) => set(`basis-${r.id}`, x)} rows={2} />
@@ -236,11 +236,11 @@ export default function AdminPrivacy() {
       </section>
       <section className="space-y-2 rounded border p-3" aria-labelledby="pv-ret">
         <h2 id="pv-ret" className="font-semibold">{t('admin:k5.privacy.retention_heading', 'Durées de conservation')}</h2>
-        <ul className="list-disc pl-5 text-sm">
+        <ul className="list-disc ps-5 text-sm">
           {Object.entries(d?.retention?.registry || {}).map(([key, r]) => <li key={key}>{key} : {r.durationDays ? t('admin:k5.privacy.days', '{{n}} jours', { n: r.durationDays }) : t('admin:k5.privacy.to_decide', 'à décider')} — {r.action}</li>)}
         </ul>
         {(d?.retention?.conflicts || []).length ? <h3 className="font-semibold">{t('admin:k5.privacy.to_settle', 'À trancher (décision juridique)')}</h3> : null}
-        <ul className="list-disc pl-5 text-sm" data-testid="admin-privacy-conflicts">
+        <ul className="list-disc ps-5 text-sm" data-testid="admin-privacy-conflicts">
           {(d?.retention?.conflicts || []).map((c) => <li key={c.data}>{t('admin:k5.privacy.conflict', '{{data}} : registre « {{registry}} » mais {{purge}} — décision : {{decision}}', { data: c.data, registry: c.registry, purge: c.purge, decision: c.decision })}</li>)}
         </ul>
         {/* launch-readiness item 62: what no job deletes yet — counted, never deleted here */}

@@ -80,7 +80,7 @@ export default function AdminReview() {
                                 className="text-red-600 border-red-200 hover:bg-red-50"
                                 onClick={() => rejectMutation.mutate({ id: item.id, type: 'Aide' })}
                             >
-                                <XCircle className="w-4 h-4 mr-2" />
+                                <XCircle className="w-4 h-4 me-2" />
                                 {t('admin:review.reject', 'Rejeter (Brouillon)')}
                             </Button>
                             <Button
@@ -88,7 +88,7 @@ export default function AdminReview() {
                                 className="bg-green-600 hover:bg-green-700"
                                 onClick={() => approveMutation.mutate({ id: item.id, type: 'Aide' })}
                             >
-                                <CheckCircle className="w-4 h-4 mr-2" />
+                                <CheckCircle className="w-4 h-4 me-2" />
                                 {t('admin:review.publish', 'Publier')}
                             </Button>
                         </CardFooter>

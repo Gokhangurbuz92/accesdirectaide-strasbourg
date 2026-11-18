@@ -69,7 +69,7 @@ export default function CatalogueList({ kind, title, published, newPath, editPat
       {verifiable && (items?.length || show !== 'all') ? (
         <div className="flex flex-wrap items-center gap-3 text-sm" data-testid="admin-catalogue-summary">
           <span>{t('admin:catalogue_list.summary', '{{n}} fiches : {{detail}}', { n: allCount, detail: filters.slice(1).map(([k, l]) => `${countOf(k)} ${l.toLowerCase()}`).join(' · ') })}</span>
-          <span className="flex flex-wrap items-center gap-2 sm:ml-auto">
+          <span className="flex flex-wrap items-center gap-2 sm:ms-auto">
             <label htmlFor={`admin-catalogue-show-${kind}`}>{t('admin:catalogue_list.show', 'Afficher')}</label>
             <select id={`admin-catalogue-show-${kind}`} className="min-h-11 rounded border border-slate-300 px-2" value={show} onChange={(e) => setShow(e.target.value)}>
               {filters.map(([k, l]) => <option key={k} value={k}>{`${l} (${k === 'all' ? allCount : countOf(k)})`}</option>)}
