@@ -92,10 +92,12 @@ describe('FA-RTL logical direction utilities in the pro / structure / institutio
       expect(a.why.length).toBeGreaterThan(20);
     }
   });
-  it('Radix Select / DropdownMenu receive the interface direction (Radix writes dir="ltr" on trigger and content without it)', () => {
-    for (const f of ['src/components/ui/select.jsx', 'src/components/ui/dropdown-menu.jsx']) {
+  it('Radix roots receive the interface direction (without a DirectionProvider Radix writes dir="ltr" and arrow keys run left-to-right)', () => {
+    // caller's own dir (in props) still wins: {...props} comes after dir={dir}
+    for (const f of ['select', 'dropdown-menu', 'tabs', 'accordion', 'radio-group', 'toggle-group'].map((n) => `src/components/ui/${n}.jsx`)) {
       const src = fs.readFileSync(f, 'utf8');
-      expect(src, f).toMatch(/const \{ dir \} = useLanguage\(\);\s*return <\w+Primitive\.Root dir=\{dir\} \{\.\.\.props\} \/>/);
+      expect(src, f).toMatch(/const \{ dir \} = useLanguage\(\);/);
+      expect(src, f).toMatch(/<\w+Primitive\.Root\s[^>]*?dir=\{dir\}[^>]*?\{\.\.\.props\}/s);
     }
   });
 });

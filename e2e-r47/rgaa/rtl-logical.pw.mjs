@@ -36,6 +36,8 @@ const SCREENS = [
   ['Admin', '/admin/inbox'], ['Admin', '/admin/parametres'], ['Admin', '/admin/signalements'], ['Admin', '/admin/ws2'], ['Admin', '/admin/sources'], ['Admin', '/admin/appointments'], ['Admin', '/admin/orchestrator'], ['Admin', '/admin/audit'],
   ['Ops', '/admin/operations'], ['Ops', '/admin/observability'], ['Ops', '/admin/runs'], ['Ops', '/admin/data-quality'],
 ];
+// iteration aid: RTL_ONLY=/compte/parametres,/pro/parametres runs only these screens
+if (process.env.RTL_ONLY) { const only = new Set(process.env.RTL_ONLY.split(',')); for (let i = SCREENS.length - 1; i >= 0; i -= 1) if (!only.has(SCREENS[i][1])) SCREENS.splice(i, 1); }
 const rows = [];
 
 const CSRF = crypto.randomUUID(); let ipn = 0; const xff = () => `10.51.${Math.floor((ipn += 1) / 250) % 250}.${(ipn % 250) + 1}`;
@@ -110,7 +112,17 @@ for (const lang of LANGS) {
           .filter(vis).slice(0, 2000).map((e) => { const b = e.getBoundingClientRect(); return `${e.tagName}|${Math.round(b.left)},${Math.round(b.top)},${Math.round(b.width)},${Math.round(b.height)}`; });
         return out;
       });
-      const row = { lang, surface, route, opened, url: page.url(), screenshot: file, axe: axe.violations.map((v) => `${v.id}(${v.nodes.length})`), ...geo };
+      // Radix tabs: the next tab is reached with the arrow pointing in the reading direction (ArrowLeft in Arabic, ArrowRight in French)
+      let tabs = null;
+      const tab = page.locator('[role="tablist"] [role="tab"]');
+      if (await tab.count() > 1) {
+        const names = await tab.allInnerTexts(); await tab.first().click(); await page.waitForTimeout(200);
+        await page.keyboard.press(lang === 'ar' ? 'ArrowLeft' : 'ArrowRight'); await page.waitForTimeout(250);   // Radix roving focus moves in a setTimeout
+        const now = await page.evaluate(() => document.activeElement?.innerText || '');
+        tabs = { dir: await page.locator('[role="tablist"]').first().evaluate((e) => e.closest('[dir]')?.getAttribute('dir') + (e.closest('[dir]') === document.documentElement ? ' (html)' : ' (radix root)')), expected: names[1], focused: now, ok: now.trim() === names[1].trim() };
+        if (!tabs.ok) geo.problems.push(`tab arrow order: ${lang === 'ar' ? 'ArrowLeft' : 'ArrowRight'} focused « ${now.trim()} », expected « ${names[1].trim()} » (tablist dir=${tabs.dir})`);
+      }
+      const row = { lang, surface, route, opened, tabs, url: page.url(), screenshot: file, axe: axe.violations.map((v) => `${v.id}(${v.nodes.length})`), ...geo };
       row.pass = row.axe.length === 0 && geo.problems.length === 0 && geo.overflow <= 0 && geo.dir === (lang === 'ar' ? 'rtl' : 'ltr');
       rows.push(row); if (!row.pass) console.log('FINDING', JSON.stringify(row));
       await ctx.close();

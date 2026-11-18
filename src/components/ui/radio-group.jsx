@@ -3,9 +3,11 @@ import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
 import { Circle } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/i18n"
 
 const RadioGroup = React.forwardRef((/** @type {React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>} */ { className, ...props }, ref) => {
-  return (<RadioGroupPrimitive.Root className={cn("grid gap-2", className)} {...props} ref={ref} />);
+  const { dir } = useLanguage();   // FA-RTL: Radix defaults to dir="ltr" without a DirectionProvider — arrow keys follow the reading order
+  return (<RadioGroupPrimitive.Root dir={dir} className={cn("grid gap-2", className)} {...props} ref={ref} />);
 })
 RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
 

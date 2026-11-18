@@ -3,8 +3,15 @@ import * as AccordionPrimitive from "@radix-ui/react-accordion"
 import { ChevronDown } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/i18n"
 
-const Accordion = AccordionPrimitive.Root
+/** FA-RTL: Radix falls back to dir="ltr" without a DirectionProvider (no new dependency): the interface direction is passed unless the caller sets one,
+ * so arrow keys move in reading order in Arabic.
+ * @param {import("react").ComponentPropsWithoutRef<typeof AccordionPrimitive.Root>} props */
+function Accordion(props) {
+  const { dir } = useLanguage();
+  return <AccordionPrimitive.Root dir={dir} {...props} />;
+}
 
 const AccordionItem = React.forwardRef((/** @type {React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>} */ { className, ...props }, ref) => (
   <AccordionPrimitive.Item ref={ref} className={cn("border-b", className)} {...props} />
