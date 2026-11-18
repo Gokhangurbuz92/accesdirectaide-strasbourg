@@ -80,6 +80,9 @@ export const outbox = async (to, base = BASE) => (await (await fetch(`${base}/__
 
 export async function settle(page) {
   await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== 'running'), null, { timeout: 10000 }).catch(() => {});
+  // cand-fa: framer-motion runs a DELAYED fade (EmptyState heading: delay 0.2 s) on a JS timer — it is not in document.getAnimations() during the delay, and axe
+  // then measured « Aucun résultat » at inline opacity 0 (contrast 2.02). Also wait until no element of the main content is mid-fade (inline opacity < 1).
+  await page.waitForFunction(() => [...document.querySelectorAll('main [style*="opacity"]')].every((el) => el.style.opacity === '' || Number(el.style.opacity) >= 1), null, { timeout: 3000 }).catch(() => {});
   await page.waitForTimeout(200);
 }
 export async function axe(page, label) {
