@@ -72,7 +72,7 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(registre.organisme.responsable_traitement).toMatch(/Personne physique porteuse du projet/);
     expect(registre.organisme.responsable_traitement).toMatch(/n'est pas présentée comme responsable/);
     // legal v5: an agreement incorporated by a provider's terms is recorded as such — never as a signed one
-    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le 15\/11\/2026)$/);
+    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le (15|09)\/11\/2026|accepté dans la console par le responsable de traitement \(déclaration du 13\/11\/2026\) — PDF non archivé, non signé séparément)$/);
     expect(registre.transferts_hors_ue).toMatch(/aucun signé/);
   });
 
@@ -110,8 +110,8 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
   });
 
   it('date_mise_a_jour is the fixed revision date, not the run date', () => {
-    expect(registre.date_mise_a_jour).toBe('2026-11-17');   // legal v6: Mailjet outcomes, Vercel criterion, Upstash role (2026-11-15 = v5, 2026-11-04 = R42-LEGAL)
-    expect(REGISTRE_DATE_REVISION).toBe('2026-11-17');
+    expect(registre.date_mise_a_jour).toBe('2026-11-18');   // FA-D5: backups, Scaleway, Cloudflare, erasure traces (2026-11-17 = legal v6, 2026-11-15 = v5, 2026-11-04 = R42-LEGAL)
+    expect(REGISTRE_DATE_REVISION).toBe('2026-11-18');
     const built = buildRegistre(readCodeSources(ROOT));
     expect(built.date_mise_a_jour).toBe(REGISTRE_DATE_REVISION);
   });
@@ -127,6 +127,30 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(decoy.donnee).toMatch(/plus aucun stockage KV/);
     expect(registre.traitements.find((t) => t.id === 'T17').statut).toMatch(/désactivé par défaut/);
     expect(fileText).not.toMatch(/Personnes ayant réservé sans compte \(R38, optionnel/);
+  });
+
+  it('FA-D5: backups (Scaleway runs, Cloudflare R2 stores), the erasure traces (Upstash + encrypted R2 copy) are in the register, durations read from the code', async () => {
+    const { TOMBSTONE_TTL_SECONDS } = await import('../../api/_services/erasure-tombstones.js');
+    const { COPY_RETENTION_DAYS } = await import('../../api/_services/erasure-tombstone-copy.js');
+    const { RETENTION_POLICY } = await import('../../api/_services/retention-policy.js');
+    const scw = registre.sous_traitants.find((s) => /^Scaleway/.test(s.nom));
+    expect(scw.localisation).toMatch(/Paris/);
+    expect(scw.role).toMatch(/sauvegarde/i);
+    const cf = registre.sous_traitants.find((s) => /^Cloudflare/.test(s.nom));
+    expect(cf.role).toMatch(/sauvegardes chiffrées/);
+    expect(cf.role).toMatch(/seconde copie chiffrée des traces d'effacement/);
+    expect(cf.localisation).toMatch(/juridiction UE/);
+    expect(cf.mecanisme_transfert).toMatch(/2021\/914/);
+    const t = registre.traitements.find((x) => x.id === 'T22');
+    expect(t.nom).toMatch(/Sauvegardes/);
+    expect(t.sous_traitants.join(' ')).toMatch(/Scaleway/);
+    expect(t.sous_traitants.join(' ')).toMatch(/Cloudflare/);
+    expect(t.sous_traitants.join(' ')).toMatch(/Upstash/);
+    const d = Object.fromEntries(t.conservation.map((c) => [c.source, c.duree_jours]));
+    expect(d['retention-policy.BACKUP_KEEP_DAYS']).toBe(RETENTION_POLICY.durations.BACKUP_KEEP_DAYS.days);
+    expect(d['erasure-tombstones.TOMBSTONE_TTL_SECONDS']).toBe(TOMBSTONE_TTL_SECONDS / 86400);
+    expect(d['erasure-tombstone-copy.COPY_RETENTION_DAYS']).toBe(COPY_RETENTION_DAYS);
+    expect(t.categories_donnees.join(' ')).toMatch(/ni adresse ni nom/);
   });
 
   it('the script no longer contains the clear-text export sub-command', () => {

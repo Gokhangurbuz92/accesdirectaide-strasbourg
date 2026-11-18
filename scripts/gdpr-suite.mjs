@@ -22,19 +22,26 @@ const ROOT_DIR = path.join(__dirname, '..');
  */
 
 // Date de révision du contenu (fixe). À changer uniquement quand le contenu du registre est révisé — jamais la date d'exécution.
-export const REGISTRE_VERSION = '0.3';   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
-export const REGISTRE_DATE_REVISION = '2026-11-17';
+export const REGISTRE_VERSION = '0.4';   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
+export const REGISTRE_DATE_REVISION = '2026-11-18';
 
 export const CONTACT_PROTECTION_DONNEES = '[À COMPLÉTER : contact protection des données]';
 const DPA_INCONNU = 'inconnu / non signé';
 const NON_VERIFIE = 'NON VÉRIFIÉ';
 // Legal v5: an agreement incorporated by the provider's terms is NOT a signed agreement — the register says which one it is, and when it was read
 const DPA_INTEGRE = 'intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026';
+// FA-D5: Cloudflare — DPA v6.4 incorporated by the Self-Serve Subscription Agreement § 6.1, read 09/11/2026 (CONTROL/v2/PRESTATAIRES_CONTRATS_PREUVES_FR.md)
+const DPA_INTEGRE_0911 = 'intégré aux conditions de service (non signé) — pages publiques lues le 09/11/2026';
+// FA-D5: Scaleway — the owner's statement « Scaleway DPA : kabul » (13/11/2026, AIPD V2 annex § 8); the PDF is not archived yet
+const DPA_SCALEWAY = 'accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément';
 
 export const SOURCE_FILES = Object.freeze({
     retention: 'api/_handlers/cron/gdpr-purge.js',
     registry: 'api/_services/privacy.js',
     legalEntity: 'src/config/legal-entity.ts',
+    tombstones: 'api/_services/erasure-tombstones.js',
+    tombstoneCopy: 'api/_services/erasure-tombstone-copy.js',
+    retentionPolicy: 'api/_services/retention-policy.js',
 });
 
 // ─── Lecture statique des sources ─────────────────────
@@ -109,12 +116,22 @@ export function parseLegalEntity(source, file = SOURCE_FILES.legalEntity) {
         legalName: read('legalName'), tradeName: read('tradeName'), siren: read('siren'), registeredOffice: read('registeredOffice'), dpoContact: read('dpoContact') };
 }
 
+/** FA-D5: the backup and erasure-trace durations, read from the code (never typed into the register) */
+export function parseBackupDurations({ tombstones, tombstoneCopy, retentionPolicy }) {
+    const ttl = /export const TOMBSTONE_TTL_SECONDS\s*=\s*(\d+)\s*\*\s*86400\s*;/.exec(tombstones);
+    const copy = /export const COPY_RETENTION_DAYS\s*=\s*(\d+)\s*;/.exec(tombstoneCopy);
+    const backup = /BACKUP_KEEP_DAYS\s*:\s*\{\s*days\s*:\s*(\d+)/.exec(retentionPolicy);
+    if (!ttl || !copy || !backup) throw new Error('durées des sauvegardes / traces d\'effacement introuvables dans le code');
+    return { tombstoneDays: Number(ttl[1]), copyDays: Number(copy[1]), backupDays: Number(backup[1]) };
+}
+
 export function readCodeSources(rootDir = ROOT_DIR) {
     const read = (rel) => fs.readFileSync(path.join(rootDir, rel), 'utf-8');
     return {
         retention: parseRetention(read(SOURCE_FILES.retention)),
         registry: parseRetentionPolicyRegistry(read(SOURCE_FILES.registry)),
         legalEntity: parseLegalEntity(read(SOURCE_FILES.legalEntity)),
+        backups: parseBackupDurations({ tombstones: read(SOURCE_FILES.tombstones), tombstoneCopy: read(SOURCE_FILES.tombstoneCopy), retentionPolicy: read(SOURCE_FILES.retentionPolicy) }),
     };
 }
 
@@ -123,7 +140,8 @@ export function readCodeSources(rootDir = ROOT_DIR) {
 /**
  * @param {{ retention: Record<string, number>, registry: Record<string, {durationDays: number|null, action: string|null, implementedBy: string|null}>, legalEntity: Record<string, string|null> }} sources
  */
-export function buildRegistre({ retention, registry, legalEntity }) {
+export function buildRegistre({ retention, registry, legalEntity, backups }) {
+    if (!backups) throw new Error('durées des sauvegardes absentes (readCodeSources)');
     const days = (key) => {
         const v = retention[key];
         if (!Number.isInteger(v)) throw new Error(`RETENTION.${key} absent du code`);
@@ -450,12 +468,33 @@ export function buildRegistre({ retention, registry, legalEntity }) {
                 conservation: [texte('Données d\'audience', NON_VERIFIE, 'durée réglée par Vercel, non vérifiée')],
                 mesures_securite: NON_VERIFIE,
             },
+            {
+                // FA-D5 (18/11/2026): P17 + P15b of the V2 register (CONTROL/v2/D2_V2_BASES_LEGALES_FR.md), notice v7 § 4 and § 6
+                id: 'T22',
+                nom: 'Sauvegardes chiffrées, restauration et traces d\'effacement',
+                statut: 'sauvegardes en service (2 par jour) ; traces d\'effacement chez Upstash dès qu\'un effacement a lieu ; seconde copie des traces chez Cloudflare éteinte tant que sa clé n\'est pas posée et que la notice v7 n\'est pas en vigueur',
+                finalite: 'Rétablir la base après un incident (RPO 24 h, RTO 1 jour ouvré : objectifs) sans faire revenir une personne effacée (rejeu des effacements après toute restauration)',
+                base_legale_proposee: 'Intérêt légitime à la disponibilité et à l\'intégrité (art. 6.1.f, mesure de l\'art. 32.1 b-c) ; traces : obligation d\'effacement (art. 6.1.c, art. 17) — à valider',
+                categories_donnees: ['Copie intégrale de la base, chiffrée avant envoi et signée', 'Traces d\'effacement : identifiant de la demande, identifiant pseudonyme du compte, domaines effacés, date, phase — ni adresse ni nom'],
+                categories_personnes: ['Toutes les personnes présentes dans la base', 'Personnes effacées (traces)'],
+                destinataires: ['Responsable de traitement (clé privée de restauration, hors du producteur)'],
+                sous_traitants: ['Scaleway SAS (exécution de la sauvegarde, Paris)', 'Cloudflare R2 (stockage chiffré, juridiction UE ; ne détient pas les clés)', 'Upstash (traces d\'effacement, Francfort)', neon],
+                conservation: [
+                    { donnee: 'Sauvegardes chiffrées (seau R2 ada-db-backups)', duree_jours: backups.backupDays, source: 'retention-policy.BACKUP_KEEP_DAYS', statut: 'appliqué', description: `${backups.backupDays} jours au plus (règle de cycle de vie du seau, verrou 30 jours)` },
+                    { donnee: 'Traces d\'effacement chez Upstash', duree_jours: backups.tombstoneDays, source: 'erasure-tombstones.TOMBSTONE_TTL_SECONDS', statut: 'appliqué', description: `${backups.tombstoneDays} jours par entrée (élagage à chaque écriture et contrôle horaire)` },
+                    { donnee: 'Seconde copie chiffrée des traces (Cloudflare R2)', duree_jours: backups.copyDays, source: 'erasure-tombstone-copy.COPY_RETENTION_DAYS', statut: 'non appliqué', description: `${backups.copyDays} jours par objet (suppression horaire ; règle de cycle de vie à 39 jours en filet) — copie éteinte tant qu'elle n'est pas activée` },
+                    texte('Historique de la base chez Neon', 'appliqué', '6 heures (offre gratuite, fait du prestataire)'),
+                ],
+                mesures_securite: 'Chiffrement avant envoi (clé privée hors du producteur), sauvegardes et registre signés, vérification mensuelle de restauration dans une base jetable effacée ensuite, rejeu des effacements refusé si les traces sont incomplètes ou en désaccord ; copie des traces chiffrée et authentifiée (AES-256-GCM), noms HMAC',
+            },
         ],
         sous_traitants: [
             { nom: 'Vercel', role: 'Hébergement front et fonctions serveur, cron', statut: 'en service (bêta publique restreinte ; crons fermés)', localisation: 'UE — région fra1 (Francfort) pour les fonctions ; pages statiques distribuées par le réseau mondial ; installations principales de Vercel aux États-Unis (DPA § 13.1)', entite_contractante: 'Vercel Inc. (USA) — équipe sur l\'offre Pro', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, module 2 (DPA § 13.3, annexe 3) ; Vercel Inc. active sur la liste officielle du Data Privacy Framework (lue le 17/11/2026)', dpa: DPA_INTEGRE, role_propre: 'Vercel est aussi responsable de traitement pour les données d\'usage de son service (DPA § 4.b)', journaux: 'journaux d\'exécution : 1 jour sur l\'offre Pro, 30 jours si l\'option Observability Plus s\'applique au projet (activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — option NON activée, vérifié en lecture seule par l\'API Vercel le 17/11/2026 ; équipe en Pro depuis le 21/01/2026' },
             { nom: 'Vercel Analytics + Speed Insights', role: 'Audience et performance', statut: 'désactivé par défaut (ADR-022 ; VITE_AUDIENCE_MEASUREMENT)', localisation: NON_VERIFIE, entite_contractante: 'Vercel Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Neon', role: 'Base de données PostgreSQL', statut: 'en service (bêta publique restreinte)', localisation: 'Francfort selon /mentions-legales — preuve console à archiver', entite_contractante: 'Databricks, Inc., société mère de Neon, LLC (neon.com/dpa) — offre gratuite', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, modules 2 et 3, réputées intégrées (DPA Databricks § 8.1, annexe B) ; Databricks, Inc. active sur la liste officielle du Data Privacy Framework (lue le 15/11/2026)', dpa: DPA_INTEGRE, journaux: 'historique de la base : 6 heures sur l\'offre gratuite (plus long sur une offre payante)' },
             { nom: 'Upstash', role: 'Limitation de débit (KV/Redis) ; traces d\'effacement (40 jours) ; plus aucun identifiant de contact Mailjet depuis la v6 (décision C6 : ancienne liste seulement vidée) ; ne contient plus l\'état des leurres de réservation (R41-B)', statut: 'en service (bêta publique restreinte)', localisation: 'Francfort (fra1) — preuve UPSTASH_REGION_EVIDENCE_2026-11-15', entite_contractante: 'Upstash, Inc. — offre gratuite', mecanisme_transfert: 'Data Privacy Framework d\'abord (Upstash, Inc. active sur la liste officielle, lue le 17/11/2026) ; clauses contractuelles types (UE) 2021/914, module 2, s\'il ne s\'applique plus (DPA § 3.2 B, annexe 2)', dpa: DPA_INTEGRE, role_propre: 'Le DPA d\'Upstash ne couvre pas ses traitements pour sa propre sécurité et l\'analyse de son service : Upstash en est responsable (DPA, « How and when this DPA applies »)' },
+            { nom: 'Scaleway SAS', role: 'Exécution des sauvegardes de la base (tâche planifiée qui chiffre la copie avant tout envoi) et de la vérification de restauration', statut: 'en service (2 sauvegardes par jour)', localisation: 'Paris (UE)', entite_contractante: 'Scaleway SAS (France)', mecanisme_transfert: 'aucun transfert hors UE', dpa: DPA_SCALEWAY },
+            { nom: 'Cloudflare (R2)', role: 'Stockage des sauvegardes chiffrées de la base ; seconde copie chiffrée des traces d\'effacement (éteinte jusqu\'à son activation) ; Cloudflare ne détient pas les clés', statut: 'en service pour les sauvegardes', localisation: 'seaux en juridiction UE', entite_contractante: 'Cloudflare, Inc. (USA)', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, modules 2 et 3, et Data Privacy Framework (DPA Cloudflare, lu le 09/11/2026) ; contenu illisible sans les clés', dpa: DPA_INTEGRE_0911 },
             { nom: 'Stockage objet S3/R2 (fournisseur à confirmer)', role: 'Coffre, pièces jointes (fichiers chiffrés par enveloppe)', statut: 'prévu', localisation: 'non choisie', entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Sentry (Functional Software Inc.)', role: 'Erreurs serveur et navigateur, Session Replay (1 % / 10 % en erreur), traces 10 %', statut: 'activé si un DSN est configuré', localisation: NON_VERIFIE, entite_contractante: 'Functional Software Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Microsoft (Outlook, boîte contact@accesdirectaide.fr)', role: 'Réception des messages envoyés à l\'adresse de contact publiée', statut: 'en service (boîte existante, R42-A05)', localisation: NON_VERIFIE, entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
@@ -470,7 +509,7 @@ export function buildRegistre({ retention, registry, legalEntity }) {
             { nom: 'OpenFisca (API publique)', statut: 'refusé en production', motif: 'Prototype de développement uniquement' },
             { nom: 'SIAO', statut: 'désactivé', motif: 'SIAO_ENABLED off ; aucune convention' },
         ],
-        transferts_hors_ue: 'Vercel, Neon (Databricks), Upstash et Mailjet (Sinch) : clauses contractuelles types (UE) 2021/914 intégrées à leurs conditions, lues sur leurs pages publiques le 15/11/2026 ; Vercel Inc., Upstash, Inc. et Databricks, Inc. actives sur la liste officielle du Data Privacy Framework à cette date (pas Mailjet). Accords art. 28 intégrés aux conditions de service, aucun signé. Autres prestataires : NON VÉRIFIÉ.',
+        transferts_hors_ue: 'Vercel, Neon (Databricks), Upstash et Mailjet (Sinch) : clauses contractuelles types (UE) 2021/914 intégrées à leurs conditions, lues sur leurs pages publiques le 15/11/2026 ; Vercel Inc., Upstash, Inc. et Databricks, Inc. actives sur la liste officielle du Data Privacy Framework à cette date (pas Mailjet). Cloudflare, Inc. (R2) : clauses contractuelles types et Data Privacy Framework (DPA lu le 09/11/2026) ; contenu chiffré, clés hors de Cloudflare. Scaleway SAS : aucun transfert (Paris). Accords art. 28 intégrés aux conditions de service, aucun signé. Autres prestataires : NON VÉRIFIÉ.',
         droits_exercables: [
             'Droit d\'accès (article 15) — export depuis le compte',
             'Droit de rectification (article 16)',
