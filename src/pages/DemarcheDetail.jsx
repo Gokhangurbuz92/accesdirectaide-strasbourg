@@ -32,6 +32,7 @@ import AutoVerificationNote from '@/components/AutoVerificationNote';
 import { asList } from '@/lib/textLists';
 import FalcToggle from '@/components/FalcToggle';
 import FalcContent from '@/components/FalcContent';
+import FalcPageDraft from '@/components/FalcPageDraft';
 import FeedbackButton from '@/components/FeedbackButton';
 import { getProvenance } from '@/lib/provenance';
 import CategoryChip, { resolveCategory } from '@/components/ui/CategoryChip';
@@ -290,6 +291,8 @@ export default function DemarcheDetail() {
           {isFalcMode && !(demarche?.summary_falc || demarche?.description_falc || demarche?.resume_falc) && frontendEnv.flags.publicBeta && (
             <p className="mt-3 text-sm text-slate-700" data-testid="falc-not-available">{t('demarches:detail.falc.not_available', 'Il n’y a pas encore de version facile à lire pour cette démarche. La fiche complète ci-dessous reste valable.')}</p>
           )}
+          {/* FA-D4: how to read a record, simplified (provisional draft) */}
+          <FalcPageDraft id="rightDetail" />
           {isFalcMode && !(demarche?.summary_falc || demarche?.description_falc || demarche?.resume_falc) && !frontendEnv.flags.publicBeta && (
             <button
               type="button"

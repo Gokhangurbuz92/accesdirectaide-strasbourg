@@ -133,12 +133,12 @@ export default function CompteProfil() {
       ) : null}
 
       <Card>
-        <CardHeader><CardTitle className="text-lg">{t('compte:profile.informations_personnelles', 'Informations personnelles')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:profile.informations_personnelles', 'Informations personnelles')}</CardTitle></CardHeader>
         <CardContent>
           <form onSubmit={saveProfile} className="space-y-4">
             <div>
               <label htmlFor="pf-name" className="block text-sm font-medium text-slate-800">{t('compte:profile.nom_affiche_facultatif', 'Nom affiché (facultatif)')}</label>
-              <input id="pf-name" data-testid="pf-name" className="mt-1 w-full rounded-md border border-slate-300 p-2" maxLength={60} value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
+              <input id="pf-name" data-testid="pf-name" autoComplete="nickname" className="mt-1 w-full rounded-md border border-slate-300 p-2" maxLength={60} value={form.displayName} onChange={(e) => setForm({ ...form, displayName: e.target.value })} />
             </div>
             <div>
               <label htmlFor="pf-lang" className="block text-sm font-medium text-slate-800">{t('compte:profile.langue_compte_language', 'Langue du compte · Language')}</label>
@@ -174,7 +174,7 @@ export default function CompteProfil() {
       <GuardianLinks ageBand={account.profile?.ageBand || null} />
 
       <Card>
-        <CardHeader><CardTitle className="text-lg">{t('compte:profile.mon_foyer', 'Mon foyer')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:profile.mon_foyer', 'Mon foyer')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           {account.household.length === 0 ? <p data-testid="household-empty" className="text-sm text-slate-700">{t('compte:profile.aucune_personne_ajoutee', 'Aucune personne ajoutée.')}</p> : (
             <ul className="space-y-2" data-testid="household-list">
@@ -199,7 +199,7 @@ export default function CompteProfil() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-lg">{t('compte:profile.mes_notifications', 'Mes notifications')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:profile.mes_notifications', 'Mes notifications')}</CardTitle></CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-slate-700">{t('compte:profile.chaque_reglage_est_applique', 'Chaque réglage est appliqué par le serveur. Les SMS et les informations facultatives ne sont jamais activés sans votre accord explicite, distinct de l’acceptation du service.')}</p>
           {/* PKG-9 / M04: `relative` contains the absolutely positioned screen-reader texts of the cells; without it they escaped the scroll box and widened the page by 21 px at 390 px */}
@@ -265,7 +265,7 @@ export default function CompteProfil() {
 
       {sharesOpen ? (
       <Card id="mes-dossiers" tabIndex={-1} ref={(el) => { if (el && typeof window !== 'undefined' && window.location.hash === '#mes-dossiers' && !el.dataset.focused) { el.dataset.focused = '1'; el.scrollIntoView(); el.focus({ preventScroll: true }); } }}>   {/* R18: the « Mes dossiers partagés » tile lands here */}
-        <CardHeader><CardTitle className="text-lg">{t('compte:profile.mes_dossiers_partages', 'Mes dossiers partagés')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:profile.mes_dossiers_partages', 'Mes dossiers partagés')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           {shares.length === 0 ? <p data-testid="shares-empty" className="text-sm text-slate-700">{t('compte:profile.aucun_dossier_est_rattache', 'Aucun dossier n’est rattaché à votre compte.')}</p> : (
             <ul className="space-y-2" data-testid="shares-list">

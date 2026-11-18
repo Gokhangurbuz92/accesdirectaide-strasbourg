@@ -72,7 +72,7 @@ export default function CompteCoffre() {
       {problem ? <p role="alert" data-testid="coffre-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
 
       <Card>
-        <CardHeader><CardTitle className="text-lg">{t('compte:coffre.ajouter_document', 'Ajouter un document')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:coffre.ajouter_document', 'Ajouter un document')}</CardTitle></CardHeader>
         <CardContent>
           <form className="grid gap-3 sm:grid-cols-2" onSubmit={upload}>
             <div className="sm:col-span-2"><label htmlFor="cf-file" className="block text-sm font-medium text-slate-800">{t('compte:coffre.fichier_pdf_png_jpeg', 'Fichier (PDF, PNG ou JPEG, 3 Mo au plus)')}</label><input id="cf-file" data-testid="coffre-file" ref={fileRef} type="file" accept={ACCEPT} className="mt-1 block w-full text-sm" /></div>
@@ -86,7 +86,7 @@ export default function CompteCoffre() {
       </Card>
 
       <Card>
-        <CardHeader><CardTitle className="text-lg">{t('compte:coffre.mes_documents', 'Mes documents')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:coffre.mes_documents', 'Mes documents')}</CardTitle></CardHeader>
         <CardContent>
           {state.documents.length ? (
             <ul className="space-y-2" data-testid="coffre-list">

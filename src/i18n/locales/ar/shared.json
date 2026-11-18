@@ -297,5 +297,7 @@
  "humanHelp.franceServices": "ابحث عن مكتب France services (الموقع الرسمي)",
  "humanHelp.ccas": "ابحث عن مركز CCAS (الدليل الرسمي للإدارة)",
  "humanHelp.mairie": "ابحث عن بلدية (الدليل الرسمي للإدارة)",
- "humanHelp.directory": "عرض مكاتب France services في دليلنا"
+ "humanHelp.directory": "عرض مكاتب France services في دليلنا",
+ "catalog.results_heading": "النتائج",
+ "falc.draft.label": "نص مبسَّط مؤقت باللغة الفرنسية: لم يراجعه بعد أشخاص من ذوي الإعاقة الذهنية"
 }

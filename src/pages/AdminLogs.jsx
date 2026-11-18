@@ -143,7 +143,7 @@ export default function AdminLogs() {
                             <div className="relative overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="bg-slate-50 text-left">
+                                        <tr className="bg-slate-50 text-start">
                                             <th className="px-4 py-3 font-semibold text-slate-600 w-10">{t('admin:logs.col_level', 'Niv.')}</th>
                                             <th className="px-4 py-3 font-semibold text-slate-600 w-44">{t('admin:logs.col_date', 'Date')}</th>
                                             <th className="px-4 py-3 font-semibold text-slate-600">{t('admin:logs.col_message', 'Message')}</th>

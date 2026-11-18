@@ -233,7 +233,7 @@ export default function ProServices() {
     <div className="space-y-6">
       <Card data-testid="pro-rdv-settings-card">
         <CardHeader>
-          <CardTitle>{t('pro:services.settings_title', 'Publication de la prise de RDV')}</CardTitle>
+          <CardTitle as="h2">{t('pro:services.settings_title', 'Publication de la prise de RDV')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* owner usefulness pass: only once the check answered (it flashed while loading), in plain words */}

@@ -283,5 +283,7 @@
  "humanHelp.franceServices": "Знайти офіс France services (офіційний сайт)",
  "humanHelp.ccas": "Знайти CCAS (офіційний довідник державних установ)",
  "humanHelp.mairie": "Знайти мерію (офіційний довідник державних установ)",
- "humanHelp.directory": "Переглянути офіси France services у нашому довіднику"
+ "humanHelp.directory": "Переглянути офіси France services у нашому довіднику",
+ "catalog.results_heading": "Результати",
+ "falc.draft.label": "Тимчасовий спрощений текст французькою мовою: ще не перевірений людьми з інтелектуальною інвалідністю"
 }

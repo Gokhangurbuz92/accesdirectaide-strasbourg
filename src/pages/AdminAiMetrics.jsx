@@ -169,12 +169,12 @@ export default function AdminAiMetrics() {
                             <div className="relative overflow-x-auto">
                                 <table className="w-full text-sm">
                                     <thead>
-                                        <tr className="bg-slate-50 text-left">
+                                        <tr className="bg-slate-50 text-start">
                                             <th className="px-4 py-3 font-semibold text-slate-600">{t('admin:ai_metrics.col_type', 'Type')}</th>
-                                            <th className="px-4 py-3 font-semibold text-slate-600 text-right">{t('admin:ai_metrics.col_requests', 'Requêtes')}</th>
-                                            <th className="px-4 py-3 font-semibold text-slate-600 text-right">{t('admin:ai_metrics.col_tokens', 'Tokens')}</th>
-                                            <th className="px-4 py-3 font-semibold text-slate-600 text-right">{t('admin:ai_metrics.col_errors', 'Erreurs')}</th>
-                                            <th className="px-4 py-3 font-semibold text-slate-600 text-right">{t('admin:ai_metrics.col_error_rate', 'Taux erreur')}</th>
+                                            <th className="px-4 py-3 font-semibold text-slate-600 text-end">{t('admin:ai_metrics.col_requests', 'Requêtes')}</th>
+                                            <th className="px-4 py-3 font-semibold text-slate-600 text-end">{t('admin:ai_metrics.col_tokens', 'Tokens')}</th>
+                                            <th className="px-4 py-3 font-semibold text-slate-600 text-end">{t('admin:ai_metrics.col_errors', 'Erreurs')}</th>
+                                            <th className="px-4 py-3 font-semibold text-slate-600 text-end">{t('admin:ai_metrics.col_error_rate', 'Taux erreur')}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-slate-100">
@@ -189,14 +189,14 @@ export default function AdminAiMetrics() {
                                                             {type}
                                                         </Badge>
                                                     </td>
-                                                    <td className="px-4 py-3 text-right font-medium">{data.requests}</td>
-                                                    <td className="px-4 py-3 text-right">{formatNumber(data.tokens)}</td>
-                                                    <td className="px-4 py-3 text-right">
+                                                    <td className="px-4 py-3 text-end font-medium">{data.requests}</td>
+                                                    <td className="px-4 py-3 text-end">{formatNumber(data.tokens)}</td>
+                                                    <td className="px-4 py-3 text-end">
                                                         <span className={data.errors > 0 ? 'text-red-600 font-medium' : 'text-slate-600'}>
                                                             {data.errors}
                                                         </span>
                                                     </td>
-                                                    <td className="px-4 py-3 text-right">{errorRate}%</td>
+                                                    <td className="px-4 py-3 text-end">{errorRate}%</td>
                                                 </tr>
                                             );
                                         })}
@@ -208,7 +208,7 @@ export default function AdminAiMetrics() {
                 </Card>
 
                 {/* Storage Info */}
-                <p className="text-xs text-slate-600 text-right">
+                <p className="text-xs text-slate-600 text-end">
                     {t('admin:ai_metrics.storage', 'Source : {{storage}}', { storage: m.storage || 'unknown' })}
                     {m.buffer_size != null && t('admin:ai_metrics.buffer', ' · Buffer: {{size}}/{{max}}', { size: m.buffer_size, max: m.buffer_max })}
                 </p>
@@ -254,9 +254,9 @@ function LocalModelSection({ local }) {
                         <h3 className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2"><Clock className="h-4 w-4 text-blue-600" />{t('admin:ai_metrics.latency_title', 'Durée des appels au modèle')}</h3>
                         {(local.latencyMs || []).length === 0 ? <p className="text-sm text-slate-600">{t('admin:ai_metrics.no_call', 'Aucun appel au modèle.')}</p> : (
                             <table className="w-full text-sm">
-                                <thead><tr className="text-left text-slate-500"><th className="py-1">{t('admin:ai_metrics.col_usage', 'Usage')}</th><th className="py-1 text-right">{t('admin:ai_metrics.col_calls', 'Appels')}</th><th className="py-1 text-right">p50</th><th className="py-1 text-right">p95</th></tr></thead>
+                                <thead><tr className="text-start text-slate-500"><th className="py-1">{t('admin:ai_metrics.col_usage', 'Usage')}</th><th className="py-1 text-end">{t('admin:ai_metrics.col_calls', 'Appels')}</th><th className="py-1 text-end">p50</th><th className="py-1 text-end">p95</th></tr></thead>
                                 <tbody>{local.latencyMs.map((l) => (
-                                    <tr key={l.feature}><td className="py-1">{l.feature}</td><td className="py-1 text-right">{l.calls}</td><td className="py-1 text-right">{l.p50} ms</td><td className={`py-1 text-right ${l.p95 >= 30000 ? 'text-red-600 font-medium' : ''}`}>{l.p95} ms</td></tr>
+                                    <tr key={l.feature}><td className="py-1">{l.feature}</td><td className="py-1 text-end">{l.calls}</td><td className="py-1 text-end">{l.p50} ms</td><td className={`py-1 text-end ${l.p95 >= 30000 ? 'text-red-600 font-medium' : ''}`}>{l.p95} ms</td></tr>
                                 ))}</tbody>
                             </table>
                         )}

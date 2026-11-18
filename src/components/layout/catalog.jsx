@@ -68,6 +68,9 @@ HeroSearch.propTypes = {
  * @param {{ sidebar?: import('react').ReactNode, sidebarLabel?: string, children: import('react').ReactNode, className?: string }} props
  */
 export function CatalogBody({ sidebar = null, sidebarLabel, children, className = '' }) {
+  const { t } = useT('shared');
+  // FA-D4 (RGAA 9.1): the result cards are h3 — a hidden h2 keeps the outline h1 → h2 → h3 (it used to jump from the page title to the first card)
+  const resultsHeading = <h2 className="sr-only" data-testid="catalog-results-heading">{t('shared:catalog.results_heading', 'Résultats')}</h2>;
   return (
     <div className={`${CONTAINER} py-6 sm:py-8 ${className}`}>
       {sidebar ? (
@@ -75,9 +78,9 @@ export function CatalogBody({ sidebar = null, sidebarLabel, children, className 
           <aside aria-label={sidebarLabel} className="hidden lg:sticky lg:top-24 lg:block lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:rounded-2xl lg:border lg:border-slate-200 lg:bg-white lg:p-5 lg:shadow-subtle" data-testid="catalog-sidebar">
             {sidebar}
           </aside>
-          <div className="min-w-0">{children}</div>
+          <div className="min-w-0">{resultsHeading}{children}</div>
         </div>
-      ) : children}
+      ) : <>{resultsHeading}{children}</>}
     </div>
   );
 }

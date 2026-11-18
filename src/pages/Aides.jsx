@@ -21,6 +21,7 @@ import serviceTerritory from '../../data/geography/service-territory.v1.json';
 import { categoryLabel } from '@/components/ui/CategoryChip';
 import { Trans } from 'react-i18next';
 import i18n, { useLanguage, useT } from '@/i18n';
+import FalcPageDraft from '@/components/FalcPageDraft';
 
 /** @param {string} t */
 const slugOf = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -454,6 +455,7 @@ export default function Aides() {
                     onReset={resetAll}
                   />
                   <NoResultsHelp kind="aides" q={q} />
+                  <FalcPageDraft id="emptyResults" />{/* FA-D4: simplified provisional draft, when « Facile à lire » is on */}
                   <HumanHelpBlock />
                   <OfficialResourcesNotice />
                 </div>

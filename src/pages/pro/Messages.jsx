@@ -72,7 +72,7 @@ export default function ProMessages() {
                       </p>
                       <p className="text-sm text-slate-700">{item.lastMessagePreview || t('pro:messages.no_message', 'Aucun message')}</p>
                     </div>
-                    <div className="text-right">
+                    <div className="text-end">
                       <p className="text-xs text-slate-700">{t('pro:messages.dernier_message', 'Dernier message:')} {formatDate(item.lastMessageAt)}</p>
                       <Link
                         to={`/pro/messages/${encodeURIComponent(item.id)}`}

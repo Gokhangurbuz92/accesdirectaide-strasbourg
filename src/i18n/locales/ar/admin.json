@@ -2168,5 +2168,6 @@
  "k5.submissions.kind.actualite": "خبر",
  "k5.submissions.kind.all": "الكل",
  "k5.submissions.kind_filter": "نوع المحتوى",
- "k5.submissions.legacy_dispositif": "مسجّل تحت « مساعدة » (التصنيف السابق للبرامج)."
+ "k5.submissions.legacy_dispositif": "مسجّل تحت « مساعدة » (التصنيف السابق للبرامج).",
+ "layout.title_area": "الإدارة"
 }

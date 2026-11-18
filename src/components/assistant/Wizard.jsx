@@ -15,6 +15,7 @@ import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 import { buildWizardDiagnostic, defaultHousehold } from '@/lib/wizardDiagnostic';
 import { client } from '@/api/client';
 import { useT } from '@/i18n';
+import FalcPageDraft from '@/components/FalcPageDraft';
 
 // same public directory lookup as the /diagnostic page (the plan's structure shortlist; the person chooses on the structure's own page)
 const loadStructures = async (query) => {
@@ -184,6 +185,8 @@ export default function Wizard() {
                         <div data-testid="diagnostic-results">
                             <DiagnosticOutcome results={diagnosticData.result} situation={diagnosticData.situation} structureLoader={loadStructures} />
                         </div>
+                        {/* FA-D4: how to read this result, simplified (provisional draft), when « Facile à lire » is on */}
+                        <FalcPageDraft id="orientationResult" />
                         {data.need && NEED_LABELS[data.need] ? (
                             <NeedRecommendations need={NEED_LABELS[data.need]} label={NEED_TITLES[data.need] || NEED_LABELS[data.need]} territory={/^\d{5}$/.test(String(data.territory || '').trim()) ? String(data.territory).trim() : undefined} />
                         ) : null}

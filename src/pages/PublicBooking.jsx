@@ -581,7 +581,7 @@ export default function PublicBooking() {
                                     key={service.id}
                                     data-testid={`booking-service-${service.id}`}
                                     onClick={() => handleSelectService(service)}
-                                    className="w-full bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-indigo-400 hover:shadow-md transition-all flex items-center justify-between group text-left"
+                                    className="w-full bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:border-indigo-400 hover:shadow-md transition-all flex items-center justify-between group text-start"
                                 >
                                     <div className="flex items-center gap-4">
                                         <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center">
@@ -797,7 +797,7 @@ export default function PublicBooking() {
                                 onClick={() => switchMode('VIDEO')}
                                 aria-pressed={bookingMode === 'VIDEO'}
                                 data-testid="booking-mode-VIDEO"
-                                className={`p-4 rounded-xl border-2 text-left transition-all ${bookingMode === 'VIDEO'
+                                className={`p-4 rounded-xl border-2 text-start transition-all ${bookingMode === 'VIDEO'
                                     ? 'border-indigo-500 bg-indigo-50'
                                     : 'border-slate-200 hover:border-slate-300'
                                     }`}
@@ -818,7 +818,7 @@ export default function PublicBooking() {
                                 onClick={() => switchMode('IN_PERSON')}
                                 aria-pressed={bookingMode === 'IN_PERSON'}
                                 data-testid="booking-mode-IN_PERSON"
-                                className={`p-4 rounded-xl border-2 text-left transition-all ${bookingMode === 'IN_PERSON'
+                                className={`p-4 rounded-xl border-2 text-start transition-all ${bookingMode === 'IN_PERSON'
                                     ? 'border-indigo-500 bg-indigo-50'
                                     : 'border-slate-200 hover:border-slate-300'
                                     }`}

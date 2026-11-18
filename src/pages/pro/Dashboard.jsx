@@ -187,7 +187,7 @@ export default function ProDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('pro:dashboard.rendez_vous', 'Rendez-vous')}</CardTitle>
+                        <CardTitle as="h2" className="text-sm font-medium">{t('pro:dashboard.rendez_vous', 'Rendez-vous')}</CardTitle>
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -197,7 +197,7 @@ export default function ProDashboard() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('pro:dashboard.equipe', 'Équipe')}</CardTitle>
+                        <CardTitle as="h2" className="text-sm font-medium">{t('pro:dashboard.equipe', 'Équipe')}</CardTitle>
                         <Users className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -207,7 +207,7 @@ export default function ProDashboard() {
                 </Card>
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">{t('pro:dashboard.structure', 'Structure')}</CardTitle>
+                        <CardTitle as="h2" className="text-sm font-medium">{t('pro:dashboard.structure', 'Structure')}</CardTitle>
                         <Building2 className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
@@ -219,7 +219,7 @@ export default function ProDashboard() {
                 </Card>
                 <Card className="border-indigo-200 bg-indigo-50/30">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium text-indigo-700">
+                        <CardTitle as="h2" className="text-sm font-medium text-indigo-700">
                             {t('pro:dashboard.visioconference', 'Visioconférence')}
                         </CardTitle>
                         <Video className="h-4 w-4 text-indigo-500" />

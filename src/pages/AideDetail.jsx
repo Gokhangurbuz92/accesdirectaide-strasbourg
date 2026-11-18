@@ -33,6 +33,7 @@ import AutoVerificationNote from '@/components/AutoVerificationNote';
 import { asList } from '@/lib/textLists';
 import FalcToggle from '@/components/FalcToggle';
 import FalcContent from '@/components/FalcContent';
+import FalcPageDraft from '@/components/FalcPageDraft';
 import FeedbackButton from '@/components/FeedbackButton';
 import { getProvenance } from '@/lib/provenance';
 import { useAideDetail } from '@/lib/hooks/useAideDetail';
@@ -340,6 +341,8 @@ export default function AideDetail() {
           {isFalcMode && !hasFalcContent && frontendEnv.flags.publicBeta && (
             <p className="mt-3 text-sm text-slate-700" data-testid="falc-not-available">{t('aides:falc.not_available', 'Il n’y a pas encore de version facile à lire pour cette fiche. La fiche complète ci-dessous reste valable.')}</p>
           )}
+          {/* FA-D4: how to read a rights record, simplified (provisional draft) */}
+          <FalcPageDraft id="rightDetail" />
           {isFalcMode && !hasFalcContent && !frontendEnv.flags.publicBeta && (
             <button
               type="button"

@@ -269,5 +269,7 @@
  "humanHelp.franceServices": "Ein France-services-Büro finden (offizielle Website)",
  "humanHelp.ccas": "Ein CCAS finden (offizielles Behördenverzeichnis)",
  "humanHelp.mairie": "Ein Rathaus finden (offizielles Behördenverzeichnis)",
- "humanHelp.directory": "France-services-Büros in unserem Verzeichnis ansehen"
+ "humanHelp.directory": "France-services-Büros in unserem Verzeichnis ansehen",
+ "catalog.results_heading": "Ergebnisse",
+ "falc.draft.label": "Vorläufiger vereinfachter Text, auf Französisch: noch nicht von Menschen mit geistiger Behinderung gegengelesen"
 }

@@ -7,6 +7,7 @@ import { useNavigate, useLocation, Link, Outlet } from 'react-router-dom';
 import { LayoutDashboard, Building2, Users, FileText, LogOut, CalendarDays, Clock3, MessageCircle, Shield, BarChart3, Settings, Menu, X, Globe, ListChecks } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
+import useMainHeadingText from '@/hooks/useMainHeadingText';
 import NotificationCenter from '@/components/NotificationCenter';
 import { useProUnreadMessages } from '@/lib/use-pro-unread-messages';
 import OnboardingTour from '@/components/OnboardingTour';
@@ -22,6 +23,7 @@ export default function ProLayout() {
     const { proRole } = useProLabels();
     const navigate = useNavigate();
     const location = useLocation();
+    const heading = useMainHeadingText(location.pathname);   // FA-D4 (RGAA 8.6): each screen's own title, from its h1, unless the page sets one
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const [showOnboarding, setShowOnboarding] = useState(false);
@@ -130,7 +132,7 @@ export default function ProLayout() {
                 {t('pro:layout.aller_contenu_principal', 'Aller au contenu principal')}
             </a>
             <SEO
-                title={t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}
+                title={heading ? `${heading} — ${t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}` : t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}
                 description={t('pro:layout.espace_professionnel', 'Espace professionnel.')}
                 noindex={true}
             />

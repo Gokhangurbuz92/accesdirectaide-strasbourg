@@ -203,7 +203,7 @@ export default function MfaSettings() {
                                 : t('pro:mfa.subtitle.intro', 'Protégez votre compte avec un code temporaire')}
                     </CardDescription>
                     {mfaRequired && step !== 4 && (
-                        <p role="status" data-testid="mfa-required-notice" className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-left text-sm text-amber-900">
+                        <p role="status" data-testid="mfa-required-notice" className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-start text-sm text-amber-900">
                             {t('pro:mfa.required_notice', 'La double authentification est obligatoire pour accéder aux dossiers et aux messages d’ADA Pro. Activez-la pour continuer.')}
                         </p>
                     )}

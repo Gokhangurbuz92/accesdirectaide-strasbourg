@@ -61,7 +61,8 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        // FA-D4 (RGAA 12.6): the sign-in page had no main landmark (it is rendered outside the administration layout)
+        <main id="main-content" className="flex items-center justify-center min-h-screen bg-gray-50">
             <SEO title={t('admin:login.title', 'Administration')} description={t('admin:login.seo_description', 'Connexion à l\'espace d\'administration')} path="/admin/login" noindex={true} />
             <Card className="w-full max-w-md">
                 <CardHeader>
@@ -105,6 +106,6 @@ export default function AdminLogin() {
                     )}
                 </CardContent>
             </Card>
-        </div>
+        </main>
     );
 }

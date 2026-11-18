@@ -46,7 +46,7 @@ export default function Login() {
                             <div className="p-3 bg-indigo-100 text-indigo-600 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                                 <User className="w-6 h-6" aria-hidden="true" />
                             </div>
-                            <div className="ml-4 text-left">
+                            <div className="ml-4 text-start">
                                 <h3 className="font-semibold text-lg text-gray-900">{t('account:login.citizen', 'Particulier')}</h3>
                                 <p className="text-sm text-gray-500">{t('account:login.citizen_hint', 'Gérer mes aides et mes rendez-vous')}</p>
                             </div>
@@ -58,7 +58,7 @@ export default function Login() {
                             <div className="p-3 bg-emerald-100 text-emerald-600 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                                 <Briefcase className="w-6 h-6" aria-hidden="true" />
                             </div>
-                            <div className="ml-4 text-left">
+                            <div className="ml-4 text-start">
                                 <h3 className="font-semibold text-lg text-gray-900">{t('account:login.pro', 'Professionnel')}</h3>
                                 <p className="text-sm text-gray-500">{t('account:login.pro_hint', 'Accéder à mon espace structure')}</p>
                             </div>

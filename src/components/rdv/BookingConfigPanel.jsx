@@ -84,7 +84,7 @@ export default function BookingConfigPanel({ canEdit }) {
       </label>
 
       {view.team.enabled ? (
-        <table className="w-full text-left text-sm" data-testid="pro-booking-members">
+        <table className="w-full text-start text-sm" data-testid="pro-booking-members">
           <caption className="sr-only">{t('pro:booking_config.members_caption', 'Membres de l’équipe et prise de rendez-vous')}</caption>
           <thead><tr>
             <th scope="col" className="py-1">{t('pro:booking_config.member', 'Membre')}</th>

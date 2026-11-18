@@ -5,12 +5,11 @@
  */
 import { Link } from 'react-router-dom';
 import { Bookmark, BookmarkCheck, Layers } from 'lucide-react';
-import { formatDate, useT } from '@/i18n';
+import { DATE_SHORT, formatDate, useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import { htmlToPlainText } from '@/lib/htmlText';
 import NewsIllustration from './NewsIllustration';
 import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
-import { formatProvenanceDate } from '@/lib/provenance';
 import { geoLabel, laneLabel, topicLabel } from './newsLabels';
 
 /** `compact`: a secondary story beside the lead one (smaller picture, shorter summary)
@@ -27,7 +26,8 @@ export default function NewsCardV2({ item, featured = false, compact = false, sa
   const readLabel = t('news:card.read_label', "Lire l'actualité {{title}}", { title });
   const others = (item.coverage || []).length;
   // shared card parts (R29): the automatic verification date of a licensed item and its source; the action strip
-  const verifiedAt = formatProvenanceDate(item.lane === 'A' && item.auto_publish ? item.published_at : item.lane === 'ADA' ? item.ada?.reviewedAt : null);
+  // FA-D4: in the interface language (was a fixed « fr-FR » inside a translated sentence)
+  const verifiedAt = formatDate(item.lane === 'A' && item.auto_publish ? item.published_at : item.lane === 'ADA' ? item.ada?.reviewedAt : null, DATE_SHORT) || null;
   const sourceLabel = item.publisher;
   return (
     <article className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-subtle transition-shadow hover:border-blue-200 hover:shadow-float focus-within:ring-2 focus-within:ring-blue-700 ${featured ? 'md:flex-row lg:flex-col' : ''} ${item.est_important ? 'ring-1 ring-amber-300' : ''}`}

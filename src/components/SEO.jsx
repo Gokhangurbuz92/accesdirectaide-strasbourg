@@ -46,7 +46,9 @@ export default function SEO({
     const { code } = useLanguage();
     const pageDescription = description ?? t('shared:seo.description', 'Vos droits et démarches sociales, simplement.');
     const pageImageAlt = imageAlt ?? t('shared:seo.imageAlt', 'Accès Direct Aide - Informations sociales officielles');
-    const pageTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
+    // FA-D4 (RGAA 8.6): a few pages already end their title with « — AccesDirectAide »; the site name is added once
+    const ownTitle = title ? String(title).replace(/\s+[—–-]\s+AccesDirectAide$/, '') : '';
+    const pageTitle = ownTitle ? `${ownTitle} | ${SITE_NAME}` : SITE_NAME;
     const activePath = path || getCurrentPathname();
     const canonicalUrl = buildCanonicalUrl(activePath);
     const imageUrl = buildAbsoluteImageUrl(image);

@@ -78,7 +78,7 @@ export default function ProStructure() {
       {problem ? <p role="alert" data-testid="structure-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
       <div aria-live="polite" role="status" data-testid="structure-status">{busy ? <span className="sr-only">{t('common:form.status.saving', 'Enregistrement en cours…')}</span> : null}{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {s ? (
-        <Card><CardHeader><CardTitle {...fr}>{s.nom}</CardTitle><CardDescription>{s.verification_status !== 'VERIFIED' ? t('pro:structure.record_unverified', 'Fiche publique telle que vérifiée par ADA (non vérifiée).') : s.date_verification ? t('pro:structure.record_verified_on', 'Fiche publique telle que vérifiée par ADA (vérifiée le {{date}}).', { date: formatDate(s.date_verification, { dateStyle: 'short' }) }) : t('pro:structure.record_verified', 'Fiche publique telle que vérifiée par ADA (vérifiée).')}</CardDescription></CardHeader>
+        <Card><CardHeader><CardTitle as="h2" {...fr}>{s.nom}</CardTitle><CardDescription>{s.verification_status !== 'VERIFIED' ? t('pro:structure.record_unverified', 'Fiche publique telle que vérifiée par ADA (non vérifiée).') : s.date_verification ? t('pro:structure.record_verified_on', 'Fiche publique telle que vérifiée par ADA (vérifiée le {{date}}).', { date: formatDate(s.date_verification, { dateStyle: 'short' }) }) : t('pro:structure.record_verified', 'Fiche publique telle que vérifiée par ADA (vérifiée).')}</CardDescription></CardHeader>
           <CardContent><dl className="grid gap-2 text-sm sm:grid-cols-2" data-testid="structure-record">
             {Object.keys(STRUCTURE_FIELD_LABELS).map((f) => (
               <div key={f}><dt className="font-medium text-slate-700">{STRUCTURE_FIELD_LABELS[f]}</dt><dd className="whitespace-pre-wrap text-slate-900" {...(f === 'accessibilite_pmr' ? {} : fr)}>{shown(f, f === 'service_area' ? s.insee_codes : s[f], t)}</dd></div>
@@ -86,7 +86,7 @@ export default function ProStructure() {
           </dl></CardContent></Card>
       ) : null}
       {state.canPropose ? (
-        <Card><CardHeader><CardTitle className="text-lg">{t('pro:structure.proposer_une_modification', 'Proposer une modification')}</CardTitle><CardDescription>{t('pro:structure.rien_est_publie_directement', 'Rien n’est publié directement : l’équipe ADA vérifie chaque proposition avant publication.')}</CardDescription></CardHeader>
+        <Card><CardHeader><CardTitle as="h2" className="text-lg">{t('pro:structure.proposer_une_modification', 'Proposer une modification')}</CardTitle><CardDescription>{t('pro:structure.rien_est_publie_directement', 'Rien n’est publié directement : l’équipe ADA vérifie chaque proposition avant publication.')}</CardDescription></CardHeader>
           <CardContent><form onSubmit={submit} className="space-y-3" noValidate aria-busy={busy || undefined}>
             <ErrorSummary ref={proposeErr.summaryRef} errors={proposeErr.errors} order={['structure-value']} testid="structure-propose-errors" />
             <div><label htmlFor="structure-field" className="block text-sm font-medium">{t('pro:structure.information_modifier', 'Information à modifier')}</label>
@@ -103,7 +103,7 @@ export default function ProStructure() {
             <Button type="submit" disabled={busy} data-testid="structure-propose">{t('pro:structure.envoyer_proposition', 'Envoyer la proposition')}</Button>
           </form></CardContent></Card>
       ) : <p className="text-sm text-slate-700">{t('pro:structure.seul_administrateur_rice_structure', 'Seul·e un·e administrateur·rice de la structure peut proposer une modification de la fiche.')}</p>}
-      <Card><CardHeader><CardTitle className="text-lg">{t('pro:structure.propositions', 'Propositions')}</CardTitle></CardHeader><CardContent>
+      <Card><CardHeader><CardTitle as="h2" className="text-lg">{t('pro:structure.propositions', 'Propositions')}</CardTitle></CardHeader><CardContent>
         {state.proposals.length ? <ul className="space-y-2">{state.proposals.map((p) => (
           <li key={p.id} data-testid="structure-proposal" className="rounded-md border border-slate-200 p-2 text-sm">
             <p><strong>{STRUCTURE_FIELD_LABELS[p.field] || p.field}</strong> : {shown(p.field, p.proposedValue, t)} — <span data-testid="structure-proposal-status">{PROPOSAL_STATUS_LABELS[p.status] || p.status}</span> <span className="text-slate-600">({when(p.createdAt)})</span></p>
@@ -114,7 +114,7 @@ export default function ProStructure() {
       </CardContent></Card>
       {state.canPropose ? <Button type="button" variant="outline" onClick={exportData} data-testid="structure-export">{t('pro:structure.exporter_les_donnees_structure', 'Exporter les données de la structure')}</Button> : null}
       {state.canPropose ? (
-        <Card data-testid="structure-closure"><CardHeader><CardTitle className="text-lg">{t('pro:structure.fermer_espace_structure', 'Fermer l’espace de la structure')}</CardTitle>
+        <Card data-testid="structure-closure"><CardHeader><CardTitle as="h2" className="text-lg">{t('pro:structure.fermer_espace_structure', 'Fermer l’espace de la structure')}</CardTitle>
           <CardDescription>{t('pro:structure.deux_personnes_equipe_ada', 'Deux personnes de l’équipe ADA examinent la demande. À l’exécution : les accès aux dossiers sont retirés (les personnes gardent leurs dossiers), les notes internes, les notifications et les comptes des membres sont effacés, les suivis et orientations en cours sont clos et les rendez-vous à venir annulés (les personnes sont prévenues). Exportez d’abord les données de la structure si vous en avez besoin.')}</CardDescription></CardHeader>
           <CardContent>
             {state.closure && ['IN_REVIEW', 'BLOCKED', 'EXECUTING'].includes(state.closure.status)

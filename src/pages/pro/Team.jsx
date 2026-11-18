@@ -695,7 +695,7 @@ function StatCard({ icon, label, value }) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-xs font-medium text-slate-700">
+                <CardTitle as="h2" className="text-xs font-medium text-slate-700">
                     {label}
                 </CardTitle>
                 {icon}

@@ -16,6 +16,7 @@ import NoResultsHelp from '@/components/search/NoResultsHelp';
 import StructureCard from '@/components/cards/StructureCard';
 import { generateBreadcrumbSchema } from '@/utils/schema';
 import { useT } from '@/i18n';
+import FalcPageDraft from '@/components/FalcPageDraft';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 const StructureMap = React.lazy(() => import('../components/StructureMap'));
@@ -344,6 +345,8 @@ export default function Annuaire() {
               data-testid="annuaire-empty"
             />
           )}
+          {/* FA-D4: simplified provisional draft of the empty state, when « Facile à lire » is on */}
+          {!isLoading && !error && structures.length === 0 ? <FalcPageDraft id="emptyResults" /> : null}
           {!isLoading && !structures.length && (
             <NoResultsHelp kind="structures" q={q} />
           )}

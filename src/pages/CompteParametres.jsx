@@ -36,6 +36,7 @@ import { logoutOnServer } from '@/lib/citizenSession';
 import { ACCESSIBILITY_EVENT, applyDisplayPreferences, readDisplayPreferences } from '@/lib/accountAccessibility';
 import DeviceDisplayPreferences from '@/components/account/DeviceDisplayPreferences';
 import { formatDate, useT } from '@/i18n';
+import FalcPageDraft from '@/components/FalcPageDraft';
 
 // (P2b, 08/11/2026: the display preferences moved to the device store of src/lib/accountAccessibility.js; « ada_citizen_prefs » is only read once there)
 
@@ -103,7 +104,7 @@ function ProfilTab({ user }) {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.informations_compte', 'Informations du compte')}</h3>
+                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.informations_compte', 'Informations du compte')}</h2>
                 <div className="space-y-4">
                     {/* Email */}
                     <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
@@ -160,7 +161,7 @@ function NotificationsTab() {
     // consent). The real, server-side preferences — with the consent they need — are on the profile page.
     return (
         <div className="space-y-4" data-testid="compte-notifications-pointer">
-            <h3 className="text-lg font-semibold">{t('compte:settings.preferences_notification', 'Préférences de notification')}</h3>
+            <h2 className="text-lg font-semibold">{t('compte:settings.preferences_notification', 'Préférences de notification')}</h2>
             <p className="text-sm text-slate-700">
                 {t('compte:settings.vos_choix_notification_mail', 'Vos choix de notification (e-mail, SMS, rappels) sont enregistrés sur votre compte, avec votre consentement quand il est nécessaire. Ils se règlent sur la page de votre profil.')}
             </p>
@@ -176,7 +177,7 @@ function SecurityTab({ user }) {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.securite_compte', 'Sécurité du compte')}</h3>
+                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.securite_compte', 'Sécurité du compte')}</h2>
                 <div className="space-y-4">
                     {/* Email verification */}
                     <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
@@ -262,7 +263,7 @@ function AccessibilityTab() {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.preferences_accessibilite', 'Préférences d\'accessibilité')}</h3>
+                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.preferences_accessibilite', 'Préférences d\'accessibilité')}</h2>
                 <div className="space-y-4">
                     {/* Font Size */}
                     <div className="p-4 rounded-lg border bg-white">
@@ -494,7 +495,9 @@ function DataTab() {
     return (
         <div className="space-y-6">
             <div>
-                <h3 className="text-lg font-semibold mb-4">{t('compte:settings.mes_donnees_personnelles', 'Mes données personnelles')}</h3>
+                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.mes_donnees_personnelles', 'Mes données personnelles')}</h2>
+                {/* FA-D4: simplified provisional draft, when « Facile à lire » is on */}
+                <FalcPageDraft id="accountData" />
                 <div className="space-y-4">
                     {/* Export */}
                     <div className="p-4 rounded-lg border bg-white">

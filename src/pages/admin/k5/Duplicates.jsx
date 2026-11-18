@@ -334,7 +334,7 @@ export default function AdminDuplicates() {
             })}
             {!paged.items.length ? <li>{t('admin:k5.duplicates.none', 'Aucune paire à examiner.')}</li> : null}
           </ul>
-          <nav aria-label={t('admin:k5.duplicates.pagination', 'Pagination')} className="flex items-center gap-2 text-sm">
+          <nav aria-label={t('admin:k5.duplicates.pagination', 'Pagination')} className="flex flex-wrap items-center gap-2 text-sm">
             <Button size="sm" variant="outline" disabled={paged.page <= 1} onClick={() => setPage(paged.page - 1)}>{t('admin:k5.duplicates.prev_page', 'Page précédente')}</Button>
             <span>{t('admin:k5.duplicates.page_of', 'Page {{page}} sur {{pages}}', { page: paged.page, pages: paged.pages })}</span>
             <Button size="sm" variant="outline" disabled={paged.page >= paged.pages} onClick={() => setPage(paged.page + 1)}>{t('admin:k5.duplicates.next_page', 'Page suivante')}</Button>

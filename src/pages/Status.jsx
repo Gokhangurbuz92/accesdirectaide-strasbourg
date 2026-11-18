@@ -98,7 +98,7 @@ export default function Status() {
           const stKey = c && STATE[/** @type {keyof typeof STATE} */ (c.state)] ? c.state : 'info';
           return (
             <Card key={s.id} data-testid={`status-${s.id}`}>
-              <CardHeader><CardTitle>{sectionTitle(t, s.id) ?? s.title}</CardTitle></CardHeader>
+              <CardHeader><CardTitle as="h2">{sectionTitle(t, s.id) ?? s.title}</CardTitle></CardHeader>
               <CardContent className="space-y-2 text-sm">
                 {st ? (
                   <>

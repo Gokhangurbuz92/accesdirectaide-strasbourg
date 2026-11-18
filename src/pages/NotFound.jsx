@@ -6,6 +6,7 @@ import SEO from '@/components/SEO';
 import HumanHelpBlock from '@/components/HumanHelpBlock';
 import { FileQuestion } from 'lucide-react';
 import { useT } from '@/i18n';
+import FalcPageDraft from '@/components/FalcPageDraft';
 
 /**
  * « Not found » of a page or of a record (aide, démarche, lieu, dispositif, ressource).
@@ -41,6 +42,8 @@ export default function NotFound({ kind = 'page' }) {
               ? t('layout:notFound.record.text', "Cette fiche n'est pas disponible pour le moment. Elle n'existe pas, ou elle est en cours de vérification.")
               : t('layout:notFound.text', "Désolé, la page que vous recherchez n'existe pas ou a été déplacée.")}
           </p>
+          {/* FA-D4: simplified provisional draft, when « Facile à lire » is on */}
+          {record ? null : <FalcPageDraft id="notFound" />}
 
           <div className="space-y-3">
             <Button asChild className="w-full">

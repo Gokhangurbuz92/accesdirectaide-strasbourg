@@ -200,8 +200,8 @@ function SessionsTab() {
             {data && (
                 <>
                     <table className="w-full text-sm" data-testid="admin-session-admins">
-                        <caption className="text-left font-medium mb-2">{t('admin:parametres.admins_caption', 'Administrateurs')}</caption>
-                        <thead><tr className="text-left"><th scope="col">{t('admin:parametres.col_address', 'Adresse')}</th><th scope="col">{t('admin:parametres.col_holder', 'Titulaire')}</th><th scope="col">{t('admin:parametres.role', 'Rôle')}</th><th scope="col">{t('admin:parametres.col_mfa', 'Double authentification')}</th><th scope="col">{t('admin:parametres.col_last_login', 'Dernière connexion')}</th><th scope="col">{t('admin:parametres.col_state', 'État')}</th></tr></thead>
+                        <caption className="text-start font-medium mb-2">{t('admin:parametres.admins_caption', 'Administrateurs')}</caption>
+                        <thead><tr className="text-start"><th scope="col">{t('admin:parametres.col_address', 'Adresse')}</th><th scope="col">{t('admin:parametres.col_holder', 'Titulaire')}</th><th scope="col">{t('admin:parametres.role', 'Rôle')}</th><th scope="col">{t('admin:parametres.col_mfa', 'Double authentification')}</th><th scope="col">{t('admin:parametres.col_last_login', 'Dernière connexion')}</th><th scope="col">{t('admin:parametres.col_state', 'État')}</th></tr></thead>
                         <tbody>{data.admins.map((a) => (
                             <tr key={a.email}><td>{a.email}</td><td>{a.holder || t('admin:parametres.holder_missing', 'non renseigné')}</td><td>{a.role}</td><td>{a.mfa ? t('admin:parametres.mfa_active', 'active') : t('admin:parametres.mfa_todo', 'à configurer')}</td><td>{when(a.lastLogin)}</td><td>{a.disabledAt ? t('admin:parametres.disabled_on', 'désactivé le {{date}}', { date: when(a.disabledAt) }) : t('admin:parametres.state_active', 'actif')}</td></tr>
                         ))}</tbody>
@@ -219,8 +219,8 @@ function SessionsTab() {
                         <Button onClick={act} disabled={!form.email || form.reason.trim().length < 10}>{t('admin:parametres.apply', 'Appliquer')}</Button>
                     </fieldset>
                     <table className="w-full text-sm" data-testid="admin-session-events">
-                        <caption className="text-left font-medium mb-2">{t('admin:parametres.events_caption', 'Événements de session récents')}</caption>
-                        <thead><tr className="text-left"><th scope="col">{t('admin:parametres.col_date', 'Date')}</th><th scope="col">{t('admin:parametres.col_event', 'Événement')}</th><th scope="col">{t('admin:parametres.col_by', 'Par')}</th><th scope="col">{t('admin:parametres.col_target', 'Concerné')}</th></tr></thead>
+                        <caption className="text-start font-medium mb-2">{t('admin:parametres.events_caption', 'Événements de session récents')}</caption>
+                        <thead><tr className="text-start"><th scope="col">{t('admin:parametres.col_date', 'Date')}</th><th scope="col">{t('admin:parametres.col_event', 'Événement')}</th><th scope="col">{t('admin:parametres.col_by', 'Par')}</th><th scope="col">{t('admin:parametres.col_target', 'Concerné')}</th></tr></thead>
                         <tbody>{data.events.map((ev, i) => (
                             <tr key={i}><td>{when(ev.at)}</td><td>{EVENT_LABELS[ev.action] || ev.action}</td><td>{ev.actor || '—'}</td><td>{ev.target || '—'}</td></tr>
                         ))}</tbody>

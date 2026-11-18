@@ -2149,5 +2149,6 @@
  "k5.submissions.kind.actualite": "News",
  "k5.submissions.kind.all": "All",
  "k5.submissions.kind_filter": "Content type",
- "k5.submissions.legacy_dispositif": "Filed under « Aid » (earlier classification of schemes)."
+ "k5.submissions.legacy_dispositif": "Filed under « Aid » (earlier classification of schemes).",
+ "layout.title_area": "Administration"
 }
