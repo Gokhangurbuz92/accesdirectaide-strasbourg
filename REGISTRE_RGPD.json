@@ -1,12 +1,15 @@
 {
   "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
-  "version": "0.3",
-  "date_mise_a_jour": "2026-11-17",
+  "version": "0.4",
+  "date_mise_a_jour": "2026-11-18",
   "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
   "sources_code": {
     "retention": "api/_handlers/cron/gdpr-purge.js",
     "registry": "api/_services/privacy.js",
-    "legalEntity": "src/config/legal-entity.ts"
+    "legalEntity": "src/config/legal-entity.ts",
+    "tombstones": "api/_services/erasure-tombstones.js",
+    "tombstoneCopy": "api/_services/erasure-tombstone-copy.js",
+    "retentionPolicy": "api/_services/retention-policy.js"
   },
   "organisme": {
     "nom_usage": "AccesDirectAide",
@@ -742,6 +745,61 @@
         }
       ],
       "mesures_securite": "NON VÉRIFIÉ"
+    },
+    {
+      "id": "T22",
+      "nom": "Sauvegardes chiffrées, restauration et traces d'effacement",
+      "statut": "sauvegardes en service (2 par jour) ; traces d'effacement chez Upstash dès qu'un effacement a lieu ; seconde copie des traces chez Cloudflare éteinte tant que sa clé n'est pas posée et que la notice v7 n'est pas en vigueur",
+      "finalite": "Rétablir la base après un incident (RPO 24 h, RTO 1 jour ouvré : objectifs) sans faire revenir une personne effacée (rejeu des effacements après toute restauration)",
+      "base_legale_proposee": "Intérêt légitime à la disponibilité et à l'intégrité (art. 6.1.f, mesure de l'art. 32.1 b-c) ; traces : obligation d'effacement (art. 6.1.c, art. 17) — à valider",
+      "categories_donnees": [
+        "Copie intégrale de la base, chiffrée avant envoi et signée",
+        "Traces d'effacement : identifiant de la demande, identifiant pseudonyme du compte, domaines effacés, date, phase — ni adresse ni nom"
+      ],
+      "categories_personnes": [
+        "Toutes les personnes présentes dans la base",
+        "Personnes effacées (traces)"
+      ],
+      "destinataires": [
+        "Responsable de traitement (clé privée de restauration, hors du producteur)"
+      ],
+      "sous_traitants": [
+        "Scaleway SAS (exécution de la sauvegarde, Paris)",
+        "Cloudflare R2 (stockage chiffré, juridiction UE ; ne détient pas les clés)",
+        "Upstash (traces d'effacement, Francfort)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Sauvegardes chiffrées (seau R2 ada-db-backups)",
+          "duree_jours": 35,
+          "source": "retention-policy.BACKUP_KEEP_DAYS",
+          "statut": "appliqué",
+          "description": "35 jours au plus (règle de cycle de vie du seau, verrou 30 jours)"
+        },
+        {
+          "donnee": "Traces d'effacement chez Upstash",
+          "duree_jours": 40,
+          "source": "erasure-tombstones.TOMBSTONE_TTL_SECONDS",
+          "statut": "appliqué",
+          "description": "40 jours par entrée (élagage à chaque écriture et contrôle horaire)"
+        },
+        {
+          "donnee": "Seconde copie chiffrée des traces (Cloudflare R2)",
+          "duree_jours": 40,
+          "source": "erasure-tombstone-copy.COPY_RETENTION_DAYS",
+          "statut": "non appliqué",
+          "description": "40 jours par objet (suppression horaire ; règle de cycle de vie à 39 jours en filet) — copie éteinte tant qu'elle n'est pas activée"
+        },
+        {
+          "donnee": "Historique de la base chez Neon",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "6 heures (offre gratuite, fait du prestataire)"
+        }
+      ],
+      "mesures_securite": "Chiffrement avant envoi (clé privée hors du producteur), sauvegardes et registre signés, vérification mensuelle de restauration dans une base jetable effacée ensuite, rejeu des effacements refusé si les traces sont incomplètes ou en désaccord ; copie des traces chiffrée et authentifiée (AES-256-GCM), noms HMAC"
     }
   ],
   "sous_traitants": [
@@ -784,6 +842,24 @@
       "mecanisme_transfert": "Data Privacy Framework d'abord (Upstash, Inc. active sur la liste officielle, lue le 17/11/2026) ; clauses contractuelles types (UE) 2021/914, module 2, s'il ne s'applique plus (DPA § 3.2 B, annexe 2)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
       "role_propre": "Le DPA d'Upstash ne couvre pas ses traitements pour sa propre sécurité et l'analyse de son service : Upstash en est responsable (DPA, « How and when this DPA applies »)"
+    },
+    {
+      "nom": "Scaleway SAS",
+      "role": "Exécution des sauvegardes de la base (tâche planifiée qui chiffre la copie avant tout envoi) et de la vérification de restauration",
+      "statut": "en service (2 sauvegardes par jour)",
+      "localisation": "Paris (UE)",
+      "entite_contractante": "Scaleway SAS (France)",
+      "mecanisme_transfert": "aucun transfert hors UE",
+      "dpa": "accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément"
+    },
+    {
+      "nom": "Cloudflare (R2)",
+      "role": "Stockage des sauvegardes chiffrées de la base ; seconde copie chiffrée des traces d'effacement (éteinte jusqu'à son activation) ; Cloudflare ne détient pas les clés",
+      "statut": "en service pour les sauvegardes",
+      "localisation": "seaux en juridiction UE",
+      "entite_contractante": "Cloudflare, Inc. (USA)",
+      "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, modules 2 et 3, et Data Privacy Framework (DPA Cloudflare, lu le 09/11/2026) ; contenu illisible sans les clés",
+      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 09/11/2026"
     },
     {
       "nom": "Stockage objet S3/R2 (fournisseur à confirmer)",
@@ -871,7 +947,7 @@
       "motif": "SIAO_ENABLED off ; aucune convention"
     }
   ],
-  "transferts_hors_ue": "Vercel, Neon (Databricks), Upstash et Mailjet (Sinch) : clauses contractuelles types (UE) 2021/914 intégrées à leurs conditions, lues sur leurs pages publiques le 15/11/2026 ; Vercel Inc., Upstash, Inc. et Databricks, Inc. actives sur la liste officielle du Data Privacy Framework à cette date (pas Mailjet). Accords art. 28 intégrés aux conditions de service, aucun signé. Autres prestataires : NON VÉRIFIÉ.",
+  "transferts_hors_ue": "Vercel, Neon (Databricks), Upstash et Mailjet (Sinch) : clauses contractuelles types (UE) 2021/914 intégrées à leurs conditions, lues sur leurs pages publiques le 15/11/2026 ; Vercel Inc., Upstash, Inc. et Databricks, Inc. actives sur la liste officielle du Data Privacy Framework à cette date (pas Mailjet). Cloudflare, Inc. (R2) : clauses contractuelles types et Data Privacy Framework (DPA lu le 09/11/2026) ; contenu chiffré, clés hors de Cloudflare. Scaleway SAS : aucun transfert (Paris). Accords art. 28 intégrés aux conditions de service, aucun signé. Autres prestataires : NON VÉRIFIÉ.",
   "droits_exercables": [
     "Droit d'accès (article 15) — export depuis le compte",
     "Droit de rectification (article 16)",

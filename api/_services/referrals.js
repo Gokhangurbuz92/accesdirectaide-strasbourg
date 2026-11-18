@@ -34,6 +34,7 @@ import { OUTCOMES, ensureCase, isAdmin } from './pro-cases.js';
 import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
 import { canNotify } from './citizen-account.js';
 import { isDossierRestricted } from './processing-restriction.js';
+import { ACCESS_ENDED_BY, recordAccessEnded, recordSharingGranted, SHARING_GRANTED_BY } from '../lib/consent-ledger.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
 import { logger } from '../lib/logger.js';
 
@@ -128,6 +129,8 @@ async function revokeReferralGrant(db, r) {
     .returning({ structureId: SharedDossierGrant.structureId });
   // M2 / G5: a référent de parcours of that organization ends with its access (the record never outlives the grant)
   if (closed.length) await endReferentsForLostAccess(db, r.sharedDiagnosticId, closed[0].structureId, 'ACCESS_REVOKED');
+  // FA-D5 / F2: the sharing purpose of that access ends in the consent ledger (channel referral_ended — the person decided nothing)
+  if (closed.length) await recordAccessEnded(db, [{ shareId: r.sharedDiagnosticId, structureId: closed[0].structureId }], ACCESS_ENDED_BY.REFERRAL_ENDED, logger);
 }
 /** PKG-4 / R20: every active member of the organization, through the one catalogue (in-app always; e-mail per preference; honest delivery record). */
 async function notifyOrg(db, structureId, type, title, message, metadata) {
@@ -271,6 +274,7 @@ export async function citizenDecide(userId, id, accept, db = defaultDb) {
         purposesUpdatedAt: sql`CASE WHEN "SharedDossierGrant"."revokedAt" IS NULL THEN "SharedDossierGrant"."purposesUpdatedAt" ELSE NOW() END`,
         grantedVia: sql`CASE WHEN "SharedDossierGrant"."revokedAt" IS NULL THEN "SharedDossierGrant"."grantedVia" ELSE 'referral' END`,
         revokedAt: null } }).returning();
+    await recordSharingGranted(tx, r.sharedDiagnosticId, r.toStructureId, SHARING_GRANTED_BY.REFERRAL);   // FA-D5: the person's « yes » to PURP-06, same transaction
     const now = new Date();
     const done = await transition(tx, r.id, ['PENDING_CITIZEN'], { status: 'SENT', grantId: g.id, citizenDecisionAt: now, sentAt: now, dueAt: new Date(now.getTime() + ACK_DAYS * day) }, sql`TRUE`, R);
     if (!done) throw Object.assign(new Error('raced'), { code: 'ALREADY_DECIDED' });
