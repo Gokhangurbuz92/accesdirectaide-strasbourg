@@ -254,7 +254,7 @@ export default function DuplicateDecisions({ errorText }) {
           </tbody>
         </table>
       </div>
-      <nav aria-label={t('admin:k5.dupdec.pagination', 'Pages des décisions enregistrées')} className="flex items-center gap-2 text-sm">
+      <nav aria-label={t('admin:k5.dupdec.pagination', 'Pages des décisions enregistrées')} className="flex flex-wrap items-center gap-2 text-sm">
         <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage(page - 1)} data-testid="dupdec-prev">{t('admin:k5.duplicates.prev_page', 'Page précédente')}</Button>
         <span data-testid="dupdec-page">{t('admin:k5.duplicates.page_of', 'Page {{page}} sur {{pages}}', { page, pages: data.pages })}</span>
         <Button size="sm" variant="outline" disabled={page >= data.pages} onClick={() => setPage(page + 1)} data-testid="dupdec-next">{t('admin:k5.duplicates.next_page', 'Page suivante')}</Button>
