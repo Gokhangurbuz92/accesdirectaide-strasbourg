@@ -188,12 +188,12 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
     for (let i = 0; i < 9; i += 1) await appointment('C', i);
     const rows = (csv) => csv.replace(/^\uFEFF/, '').trim().split('\r\n').map((l) => l.split(','));
     const epci = rows((await csvOf(TERRITORIES.epci)).csv);
-    expect(epci[0].join(',')).toBe('schema,licence,periode,commune,organisations_verifiees,rendez_vous,orientations_recues,besoins_non_couverts,orientations_hors_perimetre');
+    expect(epci[0].join(',')).toBe('schema,licence,periode,commune,organisations_verifiees,rendez_vous,orientations_recues,orientations_refusees_capacite,orientations_hors_perimetre');
     expect(epci.slice(1)).toEqual([
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Bischwiller', '4', '', '', '', ''],
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Brumath', '4', '7', '', '', ''],
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'Haguenau', '4', '', '15', '', ''],
-      ['ada.territory-stats.v2', 'PENDING_OWNER_DECISION', '2016-T4', 'TOTAL (cellules publiées)', '12', '7', '15', '', ''],
+      ['ada.territory-stats.v3', 'PENDING_OWNER_DECISION', '2016-T4', 'Bischwiller', '4', '', '', '', ''],
+      ['ada.territory-stats.v3', 'PENDING_OWNER_DECISION', '2016-T4', 'Brumath', '4', '7', '', '', ''],
+      ['ada.territory-stats.v3', 'PENDING_OWNER_DECISION', '2016-T4', 'Haguenau', '4', '', '15', '', ''],
+      ['ada.territory-stats.v3', 'PENDING_OWNER_DECISION', '2016-T4', 'TOTAL (cellules publiées)', '12', '7', '15', '', ''],
     ]);
     const commune = rows((await csvOf(TERRITORIES.commune)).csv);
     expect(commune.slice(1).map((r) => r[3])).toEqual(['Haguenau', 'TOTAL (cellules publiées)']); expect(commune[1]).toEqual(epci[3]);   // the same cells as in the EPCI's file
@@ -248,10 +248,12 @@ describe.skipIf(!hasDatabase)('G1: an institution reads its authorised territory
       }
     }
     expect(answers.size, 'the refusal never depends on what was named').toBe(1);
-    // parameters that name no territory are ignored: still the account's own territory, byte for byte
+    // parameters that name no territory are refused too (FA-D9: they used to be ignored) — one answer, and the account's own view is unchanged
+    const other = new Set();
     for (const q of [{ id: accounts.epci.id }, { account: accounts.epci.id }, { organisation: 'x' }, { limit: '100000' }, { page: '2' }, { offset: '0' }, { quarter: '2016-T4' }, { from: '2000-01-01' }]) {
-      const r = await call('other', 'observatoire', q); expect(r.statusCode).toBe(200); expect(JSON.stringify(r.body), JSON.stringify(q)).toBe(own);
+      const r = await call('other', 'observatoire', q); expect(r.statusCode, JSON.stringify(q)).toBe(400); expect(r.body.error).toBe('QUERY_PARAMETER_NOT_ACCEPTED'); other.add(JSON.stringify(r.body));
     }
+    expect(other.size).toBe(1); expect(JSON.stringify((await call('other', 'observatoire')).body)).toBe(own);
     // an institutional token names its account: a token of one account with another account's id in the request stays the first account
     const forged = mk();
     await handler({ method: 'GET', url: '/api/institution/observatoire', query: {}, headers: { authorization: `Bearer ${accounts.other.token}`, 'x-institution-id': accounts.epci.id, 'x-territory': 'Bas-Rhin' }, body: { territory: 'Bas-Rhin' }, socket: {} }, forged);

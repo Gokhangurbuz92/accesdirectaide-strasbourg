@@ -15,6 +15,7 @@ import { activeMemberSql } from '../_utils/share-access.js';
 import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 import { capabilityOpen } from '../_utils/capabilities.js';
 import { lastQuarters } from './stat-periods.js';
+import { metricsOf } from '../lib/observatory-metrics.js';
 
 /**
  * R46 / R45 residual F-9: the reports, team statistics and CSV of an organization no longer return the aggregate counts of a capability that is CLOSED in this
@@ -79,7 +80,7 @@ export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
   // organizations). Organizations elsewhere (hidden communes, or no single commune named by their address) are only COUNTED, never measured.
   const base = await import('./territorial-stats.js');   // dynamic: territorial-stats imports K_MIN / K_ORGS from this file
   // C8: the communes, organizations, appointment and « people » cells of each quarter are that quarter's PUBLISHED blocks (frozen once closed, drizzle/0052)
-  const { rules, quarters, perQuarter, population, namesOf } = await base.regionalBase(db, now);
+  const { rules, quarters, perQuarter, population, namesOf, states, frozenOnly } = await base.regionalBase(db, now);
   const last = quarters[quarters.length - 1]; const lastBlocks = perQuarter[perQuarter.length - 1];
   const all = lastBlocks.flatMap((b) => b.communes); const labels = base.communeLabels(all, namesOf(lastBlocks));
   const listed = [...all].sort((a, b) => String(labels.get(a)).localeCompare(String(labels.get(b)), 'fr')).slice(0, 100);
@@ -89,7 +90,10 @@ export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
   const pop = await population();
   const agentRows = pop.orgs.length ? (await db.execute(sql`SELECT m.id AS org, m.c AS commune, count(u.id)::int AS n FROM ${base.populationRows(pop)} JOIN "ProUser" u ON u."structureId" = m.id AND u.status = 'active' GROUP BY m.id, m.c`)).rows : [];
   // D8: one organisation's records are one contributor (pop.contributorOf: SIREN / duplicate register / record), as in every other cell of the base
+  // FA-D9 R4: active members are a CURRENT count (never frozen) — two reads differenced into one organisation's staff change. Where only frozen quarters
+  // are published (Production), they are not published either.
   const agentsOf = (c) => {
+    if (frozenOnly) return null;
     const per = new Map(); for (const r of agentRows.filter((x) => x.commune === c)) { const k = pop.contributorOf?.get(r.org) || r.org; per.set(k, (per.get(k) || 0) + Number(r.n)); }
     const xs = [...per.values()]; return base.primaryCell(xs.reduce((a, b) => a + b, 0), xs, rules);
   };
@@ -101,15 +105,16 @@ export async function regionalStats(ctx, db = defaultDb, now = new Date()) {
   const masked = (k) => communes.filter((c) => c[k] === null).length;
   const shownOrgs = communes.reduce((n, c) => n + (c.orgs || 0), 0);
   return { ok: true, kAnonymityMin: K_MIN, minOrganizationsPerCommune: K_ORGS,
-    period: { label: last.label, from: last.start.toISOString().slice(0, 10), to: last.end.toISOString().slice(0, 10) },
+    period: { label: last.label, from: last.start.toISOString().slice(0, 10), to: last.end.toISOString().slice(0, 10), ...(states[last.label] === 'WITHHELD' ? { withheld: true } : {}) },
+    metrics: metricsOf(['rdv', 'peopleWithAppointment']),
     stats: {
       activeStructures: pop.verifiedTotal, structuresInShownCommunes: shownOrgs, structuresInHiddenCommunes: Math.max(0, pop.verifiedTotal - shownOrgs),
       totalAgents: suppress(published('agents')), appointmentsLastQuarter: suppress(published('rdv')), peopleWithAppointment: suppress(published('people')),
       maskedCells: { agents: masked('agents'), appointments: masked('rdv'), peopleWithAppointment: masked('people') },
       cities: communes.map((c) => ({ id: c.name, name: c.name, city: `${c.orgs} structures vérifiées`, orgs: c.orgs, agents: c.agents, rdv: c.rdv, status: c.rdv === null ? 'masked' : 'published' })),
-      trend,
+      trend: trend.map((t) => (states[t.quarter] === 'WITHHELD' ? { ...t, withheld: true } : t)),
     },
-    note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées situées par leur adresse : nom de commune et code postal concordants) ; rendez-vous et personnes avec un rendez-vous : dernier trimestre civil complet ; tendance : quatre derniers trimestres complets ; valeurs inférieures à 5 masquées, ainsi que les valeurs venant de trop peu de structures (deux structures ne doivent pas pouvoir retrouver celle d’une troisième), et une autre valeur de la même intercommunalité quand elle serait seule masquée ; un trimestre clos est figé une fois publié ; les totaux et la tendance additionnent seulement les valeurs publiées ; les autres structures sont seulement dénombrées. Les rendez-vous publiés sont les mêmes valeurs que celles de l’export des institutions. Un rendez-vous enregistré n’est pas une aide obtenue.' };
+    note: 'Agrégats mesurés uniquement, calculés sur les communes affichées (au moins 3 structures vérifiées situées par leur adresse : nom de commune et code postal concordants) ; rendez-vous et personnes avec un rendez-vous : dernier trimestre civil complet ; tendance : quatre derniers trimestres complets ; valeurs inférieures à 5 masquées, ainsi que les valeurs venant de trop peu de structures (deux structures ne doivent pas pouvoir retrouver celle d’une troisième), et une autre valeur de la même intercommunalité quand elle serait seule masquée ; un trimestre clos est figé une fois publié ; les totaux et la tendance additionnent seulement les valeurs publiées ; les autres structures sont seulement dénombrées. Les rendez-vous publiés sont les mêmes valeurs que celles de l’export des institutions. Un rendez-vous enregistré (non annulé) n’est ni un rendez-vous honoré ni une aide obtenue ; les comptes citoyens avec un rendez-vous sont des comptes, pas des personnes, et la somme des communes compte un même compte une fois par commune. En production, un trimestre clos n’est publié qu’une fois figé, et le nombre d’agents (un compte courant, jamais figé) n’est pas publié.' };
 }
 
 const PERIODS = { month: '1 month', quarter: '3 months', year: '1 year' };

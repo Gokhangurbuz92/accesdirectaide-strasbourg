@@ -63,7 +63,7 @@ describe.skipIf(!hasDatabase)('visibility audit: differencing attacks on the obs
     expect(obs.window.period).toBe('2018-T4');
     const out = await stats.territoryCsv('quarter', db, NOW); expect(out.ok).toBe(true);
     const rows = csvRows(out.csv); const head = rows[0]; const total = rows[rows.length - 1]; const body = rows.slice(1, -1);
-    const col = { sent: head.indexOf('orientations_recues'), unmet: head.indexOf('besoins_non_couverts'), outOfScope: head.indexOf('orientations_hors_perimetre') };
+    const col = { sent: head.indexOf('orientations_recues'), unmet: head.indexOf('orientations_refusees_capacite'), outOfScope: head.indexOf('orientations_hors_perimetre') };
     for (const m of MEASURES) {
       expect(col[m], m).toBeGreaterThan(0);
       // everything a reader holds that could stand for « the total »

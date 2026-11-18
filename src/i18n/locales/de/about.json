@@ -115,7 +115,7 @@
  "impact.description": "Wir veröffentlichen nur gemessene Zahlen. Hier sehen Sie, was heute gemessen wird und was noch nicht.",
  "impact.published_today": "Heute veröffentlicht (Live-Zahlen)",
  "impact.not_measured.title": "Was wir noch nicht messen",
- "impact.not_measured.text": "Während der öffentlichen Beta messen wir die Reichweite nicht, und es sind keine Konten eröffnet: Wir kennen weder die Zahl der Besuche noch die Zahl der Menschen, denen geholfen wurde. Diese Zahlen werden veröffentlicht, sobald sie gemessen werden, zusammen mit ihrer Methode.",
+ "impact.not_measured.text_v2": "Während der öffentlichen Beta messen wir die Reichweite nicht, und es sind keine Konten eröffnet: Wir kennen weder die Zahl der Besuche noch die Zahl der Menschen, denen geholfen wurde. Ein Besuch oder eine Suche ist kein Mensch, dem geholfen wurde, und wir werden das eine nie als das andere darstellen. Ob eine Person eine Hilfe erhalten hat, wird nirgends in der Plattform erfasst: Diese Zahl wird nicht veröffentlicht, solange keine Quelle sie belegt.",
  "impact.how.title": "Wie diese Zahlen entstehen",
  "impact.how.text": "Sie zählen die auf der Website sichtbaren Seiten: Jede Hilfe, jeder Behördengang und jede Anlaufstelle wird erst nach einer automatischen und datierten Prüfung anhand der offiziellen Quelle veröffentlicht (Service-Public, FINESS-Verzeichnis, Annuaire de l’administration…).",
  "impact.how.link": "Unsere Prüfmethode",

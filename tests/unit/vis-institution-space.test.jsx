@@ -37,7 +37,7 @@ describe('institutional space: the server gate and the out-of-scope indicator', 
     expect(screen.queryByTestId('institution-problem')).toBeNull(); expect(screen.queryByTestId('institution-method')).toBeNull(); expect(screen.queryByText('Télécharger (CSV)')).toBeNull();
   });
 
-  it('the tables show « Hors périmètre » apart from « Non couverts »; a 403 PASSWORD_CHANGE_REQUIRED on the export brings the password form', async () => {
+  it('the tables show « Hors périmètre » apart from « Refusées faute de capacité » (FA-D9: not « Non couverts »); a 403 PASSWORD_CHANGE_REQUIRED on the export brings the password form', async () => {
     vi.stubGlobal('fetch', vi.fn(async (url) => {
       if (url === '/api/institution/me') return json(200, { organisation: 'QA', territory: 'Bas-Rhin', temporaryPassword: false });
       if (url === '/api/institution/observatoire') return json(200, OBS);
@@ -46,10 +46,10 @@ describe('institutional space: the server gate and the out-of-scope indicator', 
     }));
     space();
     const byNeed = await screen.findByTestId('institution-by-need');
-    expect(within(byNeed).getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['Besoin', 'Orientations', 'Non couverts', 'Hors périmètre']);
+    expect(within(byNeed).getAllByRole('columnheader').map((h) => h.textContent)).toEqual(['Besoin', 'Orientations', 'Refusées faute de capacité', 'Hors périmètre']);
     expect(within(byNeed).getAllByRole('cell').map((c) => c.textContent)).toEqual(['15', '< 5', '6']);
     expect(within(screen.getByTestId('institution-by-commune')).getAllByRole('cell').map((c) => c.textContent)).toEqual(['9', '< 5', '< 5']);
-    expect(screen.getByText(/besoins non couverts \(pas de capacité\) : 6 ; orientations hors périmètre : < 5/)).toBeInTheDocument();
+    expect(screen.getByText(/orientations refusées faute de capacité : 6 ; orientations hors périmètre : < 5/)).toBeInTheDocument();
     const method = screen.getByTestId('institution-method');
     expect(method).toHaveTextContent('une orientation mal adressée, comptée à part'); expect(method).toHaveTextContent('Aucun total réel n’est publié');
     fireEvent.click(screen.getByText('Télécharger (CSV)'));

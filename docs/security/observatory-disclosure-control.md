@@ -45,13 +45,70 @@ the collusion rule below — none of them was loosened.
 ## Residual risks (not removed)
 1. **Window before freezing.** A closed quarter is frozen at the job's first run after it closes (daily). Until then — and on a database without 0052,
    and for any quarter whose row an operator deletes — it is computed live and the re-read difference exists. Frozen quarters keep the rules in force when
-   they were frozen; a later tightening applies to them only if their row is deleted and re-frozen.
+   they were frozen; a later tightening applies to them only if their row is deleted and re-frozen. **FA-D9 (18/11/2026): closed in Production** — see
+   « Red team FA-D9 » below (R4): in Production a closed quarter is published only once frozen; the window remains in the LAB (live by default).
 2. **Marginal bounds — what the audit does not model**: dominance-masked cells can exceed the assumed bound (the attacker cannot know which cells they
    are); relations between measures (unmet ≤ sent, out of scope ≤ sent) and between quarters are not part of the interval computation; no full
    linear-programming audit (τ-ARGUS-style) across several blocks.
 3. **Active members** (professional page) are a current count, not frozen; protected by the threshold and the collusion rule only. The current number of
-   verified organizations shown there is the public directory count.
+   verified organizations shown there is the public directory count. **FA-D9: not published in Production** (frozen-only mode publishes no live
+   count); in the LAB the residual remains.
 4. **Row existence.** A need listed with « < 5 » says at least one referral of that need reached the block in the quarter.
 5. **Platform administrators.** The preview is suppressed like every view, but administrators keep other administrative access; the preview is not the
    control that limits them.
 6. **Scientific / institutional validation** of the indicators remains external (vision document, observatoire row).
+
+## Red team FA-D9 (18/11/2026) — privacy risk model and attack battery
+
+**What the thresholds are, and are not.** k = 5, « at least 3 organisations », the p % rule (c = 2, p = 20), complementary suppression, marginal
+protection and the frozen quarterly grid are disclosure-control *heuristics*. They lower the risk that a published figure gives back a small count of
+one organisation or of a few people. They are **not a proof of anonymity**: no formal guarantee (differential privacy or an equivalent) is claimed, the
+parameters are engineering choices (not values taken from a source), and the CNIL's anonymisation criteria (individualisation, correlation, inference)
+have not been assessed by a DPO or an external reviewer. The aggregates are treated as **pseudonymous-risk outputs** whose publication stays DEFERRED.
+
+### Assets, actors, channels
+- Assets: per-organisation referral and appointment counts (commercially and socially sensitive for a structure), the existence of a referral of a given
+  need in a small area (can concern an identifiable person when the area is small), citizen account counts.
+- Actors: a verified organisation (knows its own counts — the collusion model), a coalition of organisations, an institutional account (one territory),
+  a platform administrator (preview — but has other administrative access anyway), an outsider with public knowledge (directory).
+- Channels: institutional observatoire and CSV (closed: `institution.portal` capability), administrators' preview, professional regional observatoire
+  (closed with the pro surface). Nothing is public. Raw rows never leave `liveBlocks`.
+
+### Metric definitions (what each figure IS)
+`api/lib/observatory-metrics.js` is the single registry. PUBLISHED: `referral_sent` (key `sent`), `referral_declined_no_capacity` (key `unmet` — a
+referral refused for lack of capacity, **not an unmet need**; CSV column renamed `orientations_refusees_capacite`, schema v3), `referral_declined_out_of_scope`
+(`outOfScope`), `appointment_not_cancelled` (`rdv`/`appointments` — not honoured, not an aid obtained), `citizen_accounts_with_appointment`
+(`people`/`peopleWithAppointment` — accounts, not persons; the sum of communes counts an account once per commune). DEFINED_NOT_PUBLISHED (a recorded
+fact exists; publishing needs a disclosure review and the owner): `referral_accepted`, `referral_expired`, `appointment_honoured`, `support_closed_declared`.
+NOT_COMPUTED (no recorded fact, or the fact is in a person's own space, which statistics never read): `need_expressed`, `aid_found`, `action_started`,
+`service_rendered`, `non_take_up`, `page_view`. Non-take-up needs eligibility established and non-receipt established — the platform has neither.
+
+### Attack battery (machine-executable)
+`tests/integration/d9-observatory-redteam-db.test.js` (real PostgreSQL) and `tests/unit/d9-observatory-redteam.test.js`:
+| # | Attack | Before FA-D9 | After |
+|---|---|---|---|
+| R1 | repeated reads of every view | byte-identical | unchanged |
+| R2 | groups: preview / EPCI / département / commune view | same commune cell everywhere; no by-need table below a block | unchanged |
+| R3 | time windows: month, year, free period | refused | unchanged |
+| R4 | frozen vs live: two reads around one organisation losing its verification | **succeeded where quarters are live** (Production with the freezing job closed): 20 − 16 = 4, one organisation's exact count | Production publishes a closed quarter only once frozen (`publishFrozenOnly`); before, WITHHELD (`withheld: true`, CSV 409 `QUARTER_NOT_FROZEN`); active members not published |
+| R5 | exact zeros | never published (« < 5 ») | unchanged |
+| R6 | cohorts / unique characteristics | only need × commune × quarter | unchanged |
+| R7 | metric names | « besoins non couverts » for a refused referral | renamed; every key names its metric (`metrics`) |
+| H1 | two queries differing by one filter (need, dates, cohort, cache-buster…) | ignored (identical output) | refused before anything is read (`QUERY_PARAMETER_NOT_ACCEPTED`) |
+| H2 | query rate | unlimited | 30 reads / hour / institutional account (`OBSERVATORY_READ`), refused before reading or journaling |
+| H3 | preview / pro read request input | no | unchanged |
+Already covered and not repeated: preview − CSV and pro − CSV (C8 D1–D3), collusion (C8 K, D8 F4), nested territories (G1), marginal bounds (C8),
+masked-cell sums (visibility audit).
+
+### Residual risks after FA-D9
+1. **LAB is live by default** (tests need it): R4 succeeds in the LAB; `OBS_PUBLISH_FROZEN_ONLY=1` closes it there too.
+2. **Row existence** (residual 4 above): a listed need says ≥ 1 referral of that need in the block and quarter. Listing all nine reasons always would hide
+   it but forces complementary masking of commune cells (a zero row next to an unmasked commune table is exactly 0) — a published-grid change, owner decision.
+3. **Snapshot deletion** by a database operator returns the quarter to WITHHELD; the next freeze recomputes it, and old − new isolates the changes in
+   between. Requires database write access (operator), audited outside the application.
+4. **Outside knowledge**: an organisation that also knows a person's situation from elsewhere, or several institutions pooling territories, are not modelled
+   beyond the coalition of 2 organisations; no linear-programming audit across blocks and quarters.
+5. **Rate limit backend**: in Production the limiter uses Upstash and fails closed on error; the in-memory fallback is per instance (LAB only).
+6. **Small populations of the future**: the thresholds were chosen for Strasbourg / Eurométropole densities; a sparse territory can make most cells
+   masked (utility) or, with a rare need, keep residual 2 meaningful.
+7. **Validation**: no DPO, CNIL, statistician or institutional review of the method; publication stays DEFERRED until privacy review and owner authorisation.

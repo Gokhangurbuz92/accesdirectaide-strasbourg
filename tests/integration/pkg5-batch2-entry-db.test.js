@@ -311,7 +311,7 @@ describe.skipIf(!hasDatabase)('PKG-5 batch 2 (K5) through the real API entry (re
     expect(line).toMatch(/PENDING_OWNER_DECISION/);
     // organisations, rendez-vous, then the observatoire's own cells (referrals, unmet, out of scope)
     expect(line.split(',').slice(-5)).toEqual(['3', '', communeRow.sent === null ? '' : '7', '', '']);
-    expect(String(e1.body).split('\r\n')[0]).toMatch(/besoins_non_couverts,orientations_hors_perimetre$/);
+    expect(String(e1.body).split('\r\n')[0]).toMatch(/orientations_refusees_capacite,orientations_hors_perimetre$/);
     delete process.env.OPEN_DATA_EXPORT_ENABLED;
     expect((await call('POST', '/api/admin/institutions', { bearer: mfa, body: { action: 'agreement_end', id: g.body.id } })).body.accountsSuspended).toBe(1);
     expect((await call('GET', '/api/institution/me', { bearer: it_ })).statusCode).toBe(401);

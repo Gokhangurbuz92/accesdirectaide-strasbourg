@@ -1645,7 +1645,7 @@
           "Institution"
         ],
         "summary": "Export CSV du territoire autorisé",
-        "description": "Mêmes cellules que l’observatoire, communes du territoire autorisé seulement. Schéma ada.territory-stats.v2 ; colonnes : schema, licence, periode, commune, organisations_verifiees, rendez_vous, orientations_recues, besoins_non_couverts, orientations_hors_perimetre ; une cellule vide est une valeur masquée ; dernière ligne « TOTAL (cellules publiées) ». Fermé tant que l’indicateur OPEN_DATA_EXPORT n’est pas ouvert. Chaque téléchargement est journalisé (période, empreinte du fichier).",
+        "description": "Mêmes cellules que l’observatoire, communes du territoire autorisé seulement. Schéma ada.territory-stats.v3 ; colonnes : schema, licence, periode, commune, organisations_verifiees, rendez_vous, orientations_recues, orientations_refusees_capacite (orientations refusées faute de capacité : ce n’est pas un nombre de besoins non couverts), orientations_hors_perimetre ; une cellule vide est une valeur masquée ; dernière ligne « TOTAL (cellules publiées) ». Fermé tant que l’indicateur OPEN_DATA_EXPORT n’est pas ouvert. Chaque téléchargement est journalisé (période, empreinte du fichier).",
         "parameters": [
           {
             "name": "period",
@@ -3455,6 +3455,10 @@
               "period": {
                 "type": "string",
                 "example": "2026-T3"
+              },
+              "withheld": {
+                "type": "boolean",
+                "description": "Présent (true) quand le trimestre clos n’est pas encore figé et que seuls les trimestres figés sont publiés (production) : aucune valeur de ce trimestre n’est publiée"
               }
             }
           },
@@ -3520,7 +3524,7 @@
                   "type": "integer",
                   "nullable": true,
                   "minimum": 5,
-                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                  "description": "Orientations refusées faute de capacité (métrique referral_declined_no_capacity — pas un nombre de besoins non couverts). Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
                 },
                 "outOfScope": {
                   "type": "integer",
@@ -3551,7 +3555,7 @@
                   "type": "integer",
                   "nullable": true,
                   "minimum": 5,
-                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                  "description": "Orientations refusées faute de capacité (métrique referral_declined_no_capacity — pas un nombre de besoins non couverts). Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
                 },
                 "outOfScope": {
                   "type": "integer",
@@ -3582,7 +3586,7 @@
                   "type": "integer",
                   "nullable": true,
                   "minimum": 5,
-                  "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                  "description": "Orientations refusées faute de capacité (métrique referral_declined_no_capacity — pas un nombre de besoins non couverts). Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
                 },
                 "outOfScope": {
                   "type": "integer",
@@ -3606,7 +3610,7 @@
                 "type": "integer",
                 "nullable": true,
                 "minimum": 5,
-                "description": "Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
+                "description": "Orientations refusées faute de capacité (pas un nombre de besoins non couverts). Valeur publiée (toujours ≥ 5) ; null = masquée (« < 5 », y compris zéro)"
               },
               "outOfScope": {
                 "type": "integer",
@@ -3616,6 +3620,18 @@
               },
               "note": {
                 "type": "string"
+              }
+            }
+          },
+          "metrics": {
+            "type": "object",
+            "description": "Pour chaque clé publiée (sent, unmet, outOfScope) : la métrique qu’elle compte (api/lib/observatory-metrics.js), son libellé et son unité (EVENT : des orientations, jamais des personnes)",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "metric": { "type": "string" },
+                "label": { "type": "string" },
+                "unit": { "type": "string", "enum": ["EVENT", "ACCOUNT"] }
               }
             }
           },

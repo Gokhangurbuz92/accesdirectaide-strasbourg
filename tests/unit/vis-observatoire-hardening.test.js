@@ -88,10 +88,11 @@ describe('P1 publishTables: nothing published gives back a masked cell', () => {
 
   it('the methodology says it; the export schema moved with its new column; the grid is still complete quarters', () => {
     expect(METHODOLOGY.totaux).toMatch(/Aucun total réel n’est publié/); expect(METHODOLOGY.totaux).toMatch(/deux plus petites valeurs/);
-    expect(METHODOLOGY.besoinsNonCouverts).toBe('Orientations auxquelles la structure destinataire a répondu « pas de capacité ».');
+    // FA-D9: a referral refused for lack of capacity, named for what it is — never « an unmet need »
+    expect(METHODOLOGY.besoinsNonCouverts).toMatch(/^Orientations refusées faute de capacité : orientations auxquelles la structure destinataire a répondu « pas de capacité »\. Ce n’est pas un nombre de besoins non couverts/);
     expect(METHODOLOGY.horsPerimetre).toMatch(/« hors de notre champ ».*ce n’est pas un besoin non couvert/);
     expect(METHODOLOGY.limites).toMatch(/inférieure à 5/); expect(METHODOLOGY.limites).toMatch(/au moins 3 structures vérifiées/);
-    expect(SCHEMA_VERSION).toBe('ada.territory-stats.v2');
+    expect(SCHEMA_VERSION).toBe('ada.territory-stats.v3');   // FA-D9: the « pas de capacité » column renamed orientations_refusees_capacite
     expect(lastQuarters(new Date('2026-11-20T10:00:00Z')).map((q) => q.label)).toEqual(['2025-T4', '2026-T1', '2026-T2', '2026-T3']);
     expect(periodWindow('quarter', new Date('2026-01-05T00:00:00Z')).label).toBe('2025-T4');
     const code = src('api/_services/territorial-stats.js');
@@ -144,17 +145,18 @@ describe('P4 and labels: what the professional observatoire measures, and how it
   it('« Citoyens aidés » is gone: the key, the French label and the five translations say « with an appointment »', () => {
     expect(regional).not.toMatch(/helped|Helped/); expect(regional).toMatch(/peopleWithAppointment/);
     expect(page).not.toMatch(/Citoyens aidés|totalCitizensHelped|kpi_citizens|RDV ce mois|7 derniers jours/);
-    expect(page).toContain("t('pro:regional.kpi_people_with_appointment', 'Personnes avec un rendez-vous (trimestre)')");
-    expect(page).toContain("t('pro:regional.kpi_quarter', 'RDV du dernier trimestre complet')");
+    // FA-D9: accounts (not people; summed over communes) and appointments not cancelled (not honoured)
+    expect(page).toContain("t('pro:regional.kpi_accounts_with_appointment', 'Comptes citoyens avec un rendez-vous (trimestre, somme des communes)')");
+    expect(page).toContain("t('pro:regional.kpi_quarter_not_cancelled', 'Rendez-vous non annulés du dernier trimestre complet')");
     const claims = { en: /helped|supported/i, de: /unterstützt|geholfen/i, tr: /yardım/i, uk: /допомог/i, ar: /مساعد/ };
     for (const [lang, claim] of Object.entries(claims)) {
       const pro = JSON.parse(src(`src/i18n/locales/${lang}/pro.json`));
       expect(pro['regional.kpi_citizens'], lang).toBeUndefined(); expect(pro['regional.kpi_month'], lang).toBeUndefined(); expect(pro['regional.trend_title'], lang).toBeUndefined();
-      for (const key of ['regional.kpi_people_with_appointment', 'regional.kpi_quarter', 'regional.trend_title_quarters']) expect(pro[key], `${lang} ${key}`).toBeTruthy();
-      expect(pro['regional.kpi_people_with_appointment'], lang).not.toMatch(claim);
+      for (const key of ['regional.kpi_accounts_with_appointment', 'regional.kpi_quarter_not_cancelled', 'regional.trend_title_quarters']) expect(pro[key], `${lang} ${key}`).toBeTruthy();
+      expect(pro['regional.kpi_accounts_with_appointment'], lang).not.toMatch(claim);
       const inst = JSON.parse(src(`src/i18n/locales/${lang}/institution.json`));
-      for (const key of ['space.hors_perimetre', 'space.method.out_of_scope', 'space.method.unmet_capacity', 'space.method.totals', 'space.method.limits_v2']) expect(inst[key], `${lang} ${key}`).toBeTruthy();
-      expect(inst['space.period_totals_v2'], lang).toContain('{{outOfScope}}');
+      for (const key of ['space.hors_perimetre', 'space.method.out_of_scope', 'space.method.declined_capacity', 'space.method.totals', 'space.method.limits_v2']) expect(inst[key], `${lang} ${key}`).toBeTruthy();
+      expect(inst['space.period_totals_v3'], lang).toContain('{{outOfScope}}');
       expect(inst['space.method.unmet'], `${lang}: the text that called an out-of-scope answer an unmet need`).toBeUndefined();
     }
   });

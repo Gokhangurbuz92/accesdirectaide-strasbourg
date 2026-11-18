@@ -23,6 +23,9 @@
  *   9. (C8) collusion of contributors: the p % rule with coalitions (`dominated`) masks a cell that two organizations could subtract down to a third one's
  *  10. (C8) bounds from the two marginal tables of a block: protectMarginals masks more until no masked cell is narrowed below « masked »
  *  11. (C8, drizzle/0052) a closed quarter is frozen once and read back unchanged (re-reading a past quarter no longer isolates a later change)
+ *  12. (FA-D9) in Production a closed quarter is published only once frozen (publishFrozenOnly): never a live recompute of a closed quarter
+ *  13. (FA-D9) every published key names its metric (api/lib/observatory-metrics.js): « pas de capacité » is a refused referral, not an unmet need;
+ *      nothing here measures non-take-up, a service rendered or a person helped
  *   6. what a number is called: « besoin non couvert » is a referral answered NO_CAPACITY only. OUT_OF_SCOPE is a referral sent to the wrong place (a
  *      mis-orientation), published as its own indicator « orientations hors périmètre » under the same suppression rules — never as an unmet need
  */
@@ -34,8 +37,11 @@ import { periodWindow, lastQuarters } from './stat-periods.js';
 import { notGuestDecoySql } from '../_utils/rdv-guest-decoy.js';   // R41-B: a decoy hold is no appointment
 import { communeOfAddress } from '../lib/geography/territoryScope.js';
 import { contributorKey } from '../lib/structure-model.js';
+import { metricsOf, NOT_MEASURED_TEXT } from '../lib/observatory-metrics.js';
 
-export const SCHEMA_VERSION = 'ada.territory-stats.v2';   // v2: column orientations_hors_perimetre; besoins_non_couverts = « pas de capacité » only
+// v2: column orientations_hors_perimetre. v3 (FA-D9): the « pas de capacité » column is named for what it counts — orientations_refusees_capacite (it was
+// besoins_non_couverts: a referral declined for lack of capacity is not an unmet need — the person may have been referred elsewhere and helped)
+export const SCHEMA_VERSION = 'ada.territory-stats.v3';
 export const LICENCE_STATUS = 'PENDING_OWNER_DECISION';   // I03: the open-data licence is the owner's decision; until then the export is for signed partners only
 const suppress = (n) => (Number(n) >= K_MIN ? Number(n) : null);
 
@@ -171,14 +177,16 @@ const NO_CAPACITY = sql`r."responseCode" = 'NO_CAPACITY'`; const OUT_OF_SCOPE = 
 
 export const METHODOLOGY = {
   sources: 'Rendez-vous et orientations enregistrés dans la plateforme par les structures vérifiées (aucune estimation, aucune donnée externe).',
-  besoinsNonCouverts: 'Orientations auxquelles la structure destinataire a répondu « pas de capacité ».',
+  besoinsNonCouverts: 'Orientations refusées faute de capacité : orientations auxquelles la structure destinataire a répondu « pas de capacité ». Ce n’est pas un nombre de besoins non couverts : la personne a pu être orientée ensuite ailleurs et accompagnée, et un besoin qui n’a donné lieu à aucune orientation n’est pas compté.',
   horsPerimetre: 'Orientations auxquelles la structure destinataire a répondu « hors de notre champ » : une orientation mal adressée, comptée à part — ce n’est pas un besoin non couvert.',
   limites: 'Seules les demandes passées par la plateforme sont comptées ; une structure est placée dans sa commune d’après son adresse déclarée (nom de commune et code postal concordants), sinon elle n’est comptée nulle part ; une commune n’apparaît qu’avec au moins 3 structures vérifiées ainsi situées, et chaque commune affichée figure dans le tableau même sans orientation ; toute valeur inférieure à 5 est masquée, et une autre valeur de la même colonne l’est aussi quand elle serait seule masquée.',
   organisations: 'Une organisation compte une seule fois : les établissements d’une même entité juridique (même SIREN) et une fiche enregistrée comme doublon d’une autre fiche forment une seule organisation, pour le seuil d’au moins 3 organisations par commune comme pour la règle des contributions ci-dessous.',
   dominance: 'Une valeur est aussi masquée quand elle vient de trop peu de structures : si deux structures, en retirant leurs propres chiffres, pouvaient estimer celui de la plus importante à 20 % près, la valeur est masquée (règle « p % » avec coalition). Une valeur qui vient de trois structures ou moins n’est donc jamais publiée.',
   totaux: 'Aucun total réel n’est publié : les totaux et la tendance par trimestre additionnent seulement les valeurs publiées. Quand l’un des deux tableaux (par besoin, par commune) a des valeurs masquées et l’autre aucune, les deux plus petites valeurs de l’autre sont masquées aussi, et d’autres encore quand la comparaison des deux tableaux permettrait d’encadrer trop précisément une valeur masquée.',
   periodes: 'Trimestres civils complets uniquement, sans chevauchement (pas de mois, d’année ni de période libre : deux périodes emboîtées permettraient de retrouver une valeur masquée).',
-  gel: 'Un trimestre clos est figé une fois publié : les réponses tardives, les changements de structures ou les nouvelles inscriptions ne modifient plus ses valeurs (sans quoi deux lectures successives isoleraient le changement).',
+  gel: 'Un trimestre clos est figé une fois publié : les réponses tardives, les changements de structures ou les nouvelles inscriptions ne modifient plus ses valeurs (sans quoi deux lectures successives isoleraient le changement). En production, un trimestre clos n’est publié qu’une fois figé ; avant, aucune de ses valeurs n’est publiée.',
+  nonRecours: NOT_MEASURED_TEXT,
+  completude: 'Couverture et biais : seules les structures inscrites, vérifiées et situées par leur adresse sont comptées — une commune ou un besoin absent ne veut pas dire qu’il n’y a pas de besoin ; le motif d’une orientation est choisi par la structure qui oriente parmi neuf motifs ; la réponse « pas de capacité » est déclarée par la structure destinataire ; une réponse arrivée après le gel du trimestre n’y figure pas ; les rendez-vous pris sans compte ne comptent pas parmi les comptes citoyens. Ces chiffres décrivent l’activité enregistrée dans la plateforme, pas la situation du territoire.',
   base: 'Une seule base publiée pour tous les tableaux (observatoire des institutions, export, aperçu de l’administration, observatoire des professionnels) : chaque intercommunalité est publiée une fois, avec les mêmes masques, et chaque vue n’additionne que ces valeurs publiées. Deux vues ne peuvent donc pas être soustraites l’une de l’autre pour retrouver une valeur masquée.',
 };
 
@@ -329,19 +337,36 @@ async function frozenBlocks(db, label) {
     appointments: byCommune(b, 'appointments'), people: byCommune(b, 'people') }));
 }
 
-/** Reads the published blocks of quarters for one scope: the frozen ones when they exist, otherwise live (one population per reader). */
-function baseReader(db, touches, rules) {
-  let pop = null;
+/**
+ * FA-D9 red team R4 — frozen snapshot vs live recompute. With the freezing job closed (Production today) every closed quarter was recomputed on each read:
+ * two reads around one late answer or one organisation losing its verification differenced into that change (one organisation's referrals, 4 in the
+ * test). In Production a closed quarter is therefore published only once frozen; until then it is WITHHELD (no cell, the view says so). Configuration can
+ * only tighten: OBS_PUBLISH_FROZEN_ONLY turns it on elsewhere (the LAB keeps live quarters for its tests); nothing turns it off in Production.
+ * @param {Record<string, string | undefined>} [envVars]
+ */
+export function publishFrozenOnly(envVars = process.env) {
+  return envVars.VERCEL_ENV === 'production' || ['1', 'true', 'on', 'yes'].includes(String(envVars.OBS_PUBLISH_FROZEN_ONLY || '').trim().toLowerCase());
+}
+
+/**
+ * Reads the published blocks of quarters for one scope: the frozen ones when they exist; otherwise live (one population per reader), or nothing in
+ * frozen-only mode. `states` records, per quarter label, FROZEN | LIVE | WITHHELD (only WITHHELD is ever shown).
+ */
+function baseReader(db, touches, rules, frozenOnly = publishFrozenOnly()) {
+  let pop = null; const states = {};
   const population = async () => (pop ||= await locatedPopulation(db, touches));
   return {
-    population,
+    population, states, frozenOnly,
     async quarter(q) {
       const frozen = await frozenBlocks(db, q.label);
-      if (frozen) return frozen.filter((b) => b.communes.some((c) => touches(c)));
+      if (frozen) { states[q.label] = 'FROZEN'; return frozen.filter((b) => b.communes.some((c) => touches(c))); }
+      if (frozenOnly) { states[q.label] = 'WITHHELD'; return []; }
+      states[q.label] = 'LIVE';
       return liveBlocks(db, await population(), q, rules);
     },
   };
 }
+const MEASURE_METRICS = metricsOf(MEASURES);
 
 /**
  * Freeze every closed quarter of the window (the last four complete calendar quarters before `now`) that is not frozen yet: its published blocks are
@@ -380,7 +405,7 @@ export async function regionalBase(db, now = new Date()) {
   const rules = disclosureRules(); const reader = baseReader(db, everywhere, rules);
   const quarters = lastQuarters(now); const perQuarter = [];
   for (const q of quarters) perQuarter.push(await reader.quarter(q));
-  return { rules, quarters, perQuarter, population: reader.population, namesOf };
+  return { rules, quarters, perQuarter, population: reader.population, namesOf, states: reader.states, frozenOnly: reader.frozenOnly };
 }
 
 /** The observatoire of the communes `inScope` accepts (every commune for the administrators' preview), read from the one base. */
@@ -396,20 +421,24 @@ async function observatoireOf(db, inScope, now) {
   const sums = (v) => Object.fromEntries(MEASURES.map((m) => [m, suppress(publishedSum(v[basis], m))]));
   const labels = communeLabels(last.byCommune.map((r) => r.commune), namesOf(perQuarter[perQuarter.length - 1]));
   const byCommune = last.byCommune.map((r) => ({ ...r, commune: labels.get(r.commune) })).sort((a, b) => String(a.commune).localeCompare(String(b.commune), 'fr'));
-  return { window: { from: start.toISOString().slice(0, 10), to: end.toISOString().slice(0, 10), period: quarters[quarters.length - 1].label }, kAnonymityMin: K_MIN, minOrganizationsPerCommune: K_ORGS,
-    coverage: last.byNeedCoverage, basis, byNeed: last.byNeed, byCommune, trend: quarters.map((q, i) => ({ quarter: q.label, ...sums(views[i]) })),
+  // a WITHHELD quarter says so (`withheld: true`); a frozen and a live quarter look the same (freezing publishes exactly what was live)
+  const held = (label) => (reader.states[label] === 'WITHHELD' ? { withheld: true } : {});
+  return { window: { from: start.toISOString().slice(0, 10), to: end.toISOString().slice(0, 10), period: quarters[quarters.length - 1].label, ...held(quarters[quarters.length - 1].label) }, kAnonymityMin: K_MIN, minOrganizationsPerCommune: K_ORGS,
+    coverage: last.byNeedCoverage, basis, byNeed: last.byNeed, byCommune, trend: quarters.map((q, i) => ({ quarter: q.label, ...sums(views[i]), ...held(q.label) })),
     totals: { ...sums(last), note: basis === 'byNeed' ? 'somme des cellules publiées seulement' : 'somme des cellules publiées du tableau par commune seulement' } };
 }
 
 /** The CSV of the communes `inScope` accepts, read from the one base (same columns, same cells as the observatoire of the same scope). */
 async function csvOf(db, inScope, now) {
   const w = periodWindow('quarter', now);
-  const blocks = await baseReader(db, inScope, disclosureRules()).quarter(w);
+  const reader = baseReader(db, inScope, disclosureRules());
+  const blocks = await reader.quarter(w);
+  if (reader.states[w.label] === 'WITHHELD') return QUARTER_NOT_FROZEN;
   const referrals = new Map(restrictToScope(blocks, inScope).byCommune.map((r) => [r.commune, r]));
   const rdv = new Map(blocks.flatMap((b) => Object.entries(b.appointments))); const orgs = new Map(blocks.flatMap((b) => Object.entries(b.orgs)));
   const codes = [...referrals.keys()]; const labels = communeLabels(codes, namesOf(blocks));
   const cell = (v) => { const s = v === null || v === undefined ? '' : String(v); const safe = /^[=+\-@\t\r]/.test(s) ? `'${s}` : s; return /[",\n;\r]/.test(safe) ? `"${safe.replace(/"/g, '""')}"` : safe; };
-  const head = ['schema', 'licence', 'periode', 'commune', 'organisations_verifiees', 'rendez_vous', 'orientations_recues', 'besoins_non_couverts', 'orientations_hors_perimetre'];
+  const head = ['schema', 'licence', 'periode', 'commune', 'organisations_verifiees', 'rendez_vous', 'orientations_recues', 'orientations_refusees_capacite', 'orientations_hors_perimetre'];
   const body = codes.map((c) => { const p = referrals.get(c); return [SCHEMA_VERSION, LICENCE_STATUS, w.label, labels.get(c), orgs.get(c), rdv.get(c) ?? null, p.sent ?? null, p.unmet ?? null, p.outOfScope ?? null]; })
     .sort((a, b) => String(a[3]).localeCompare(String(b[3]), 'fr'));
   const tot = (i) => body.reduce((n, r) => n + (r[i] ?? 0), 0);
@@ -420,6 +449,7 @@ async function csvOf(db, inScope, now) {
 
 const periodRefused = (period) => period !== undefined && period !== null && period !== '' && period !== 'quarter';
 const PERIOD_REFUSAL = { ok: false, status: 400, code: 'PERIOD_NOT_OFFERED', message: 'Seul le dernier trimestre civil complet est publié.' };
+const QUARTER_NOT_FROZEN = { ok: false, status: 409, code: 'QUARTER_NOT_FROZEN', message: 'Le dernier trimestre clos n’est pas encore figé : aucune de ses valeurs n’est publiée avant son gel.' };
 
 /**
  * I04 — administrators' PREVIEW (platform administrators only, api/_handlers/admin/institutions.js): every shown commune, read from the one base with
@@ -428,7 +458,7 @@ const PERIOD_REFUSAL = { ok: false, status: 400, code: 'PERIOD_NOT_OFFERED', mes
 export async function observatoire(db = defaultDb, now = new Date()) {
   const v = await observatoireOf(db, everywhere, now);
   return { ok: true, window: v.window, kAnonymityMin: v.kAnonymityMin, minOrganizationsPerCommune: v.minOrganizationsPerCommune, scope: { kind: 'all', byNeed: v.coverage, totalsBasis: v.basis },
-    byNeed: v.byNeed, byCommune: v.byCommune, trend: v.trend, totals: v.totals, methodology: METHODOLOGY };
+    byNeed: v.byNeed, byCommune: v.byCommune, trend: v.trend, totals: v.totals, metrics: MEASURE_METRICS, methodology: METHODOLOGY };
 }
 
 /** I03 — reproducible CSV of every shown commune (same database + same period = the same bytes; no generation time in the body). */
@@ -451,7 +481,7 @@ export async function scopedObservatoire(scope, db = defaultDb, now = new Date()
   const v = await observatoireOf(db, (c) => scope.communes.has(c), now);
   return { ok: true, window: v.window, kAnonymityMin: v.kAnonymityMin, minOrganizationsPerCommune: v.minOrganizationsPerCommune,
     scope: { kind: scope.kind, code: scope.code, byNeed: v.coverage, totalsBasis: v.basis },
-    byNeed: v.byNeed, byCommune: v.byCommune, trend: v.trend, totals: v.totals,
+    byNeed: v.byNeed, byCommune: v.byCommune, trend: v.trend, totals: v.totals, metrics: MEASURE_METRICS,
     methodology: { ...METHODOLOGY, territoire: METHODOLOGY_TERRITORY } };
 }
 
