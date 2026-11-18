@@ -64,6 +64,9 @@ export const CAPABILITIES = Object.freeze({
   'pro.case_management': { description: 'ProCase follow-up, notes, history, members (R03–R11)', aipd: 'out', requiresHds: true, hdsDependsOnStructure: true, hdsNote: `${M} row 9: yes / probable for an ESSMS (L312-1); not under L1111-8 for a non-ESSMS — unknown category fails closed`, surface: 'pro', aipdRef: 'P9' },
   'pro.referrals': { description: 'referrals between organisations (R09 R10 E06)', aipd: 'out', requiresHds: true, hdsNote: `${M} row 10: yes / probable — closed until HDS`, surface: 'pro', aipdRef: 'P8' },
   'pro.orientation_selections': { description: 'orientation baskets of an organisation (R18)', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row; selections of public catalogue records: no`, surface: 'pro', aipdRef: 'P8' },
+  // FA-D7: the signed adapter to a partner organization's OWN tool (ada.partner-referral/1): referral states out, the receiver's answers in — no partner exists
+  'partner.referral_adapter': { description: 'partner referral adapter: signed referral events to a connected organization’s own tool and its signed answers (api/_services/partner-adapter.js); needs a partner agreement and ADA_PARTNER_ADAPTERS',
+    aipd: 'out', requiresHds: true, hdsNote: `${M} row 10 (referrals): yes / probable — closed until HDS`, surface: 'pro', aipdRef: 'P8' },
   'pro.siao_interop': { description: 'SI-SIAO interoperability export of a dossier', aipd: 'out', requiresHds: true, hdsNote: `${M} rows 7 and 10 (dossier of an orientation): probable`, surface: 'pro', aipdRef: 'AIPD § 2.1 « SIAO »' },
   'ai.processing': { description: 'assistant, AI recommendations, FALC summaries, AI discovery agents, AI dossier synthesis', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row: no (the AI policy and art. 9 apply separately)`, surface: 'diagnostic', aipdRef: 'AIPD § 2.1 « assistant »' },
   'institution.portal': { description: 'territory / institution space and the creation of institution accounts', aipd: 'out', requiresHds: false, surface: 'institution', aipdRef: 'AIPD § 2.1 « institution »' },
@@ -106,6 +109,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'pro/cases': ['pro.case_management'], 'pro/referrals': ['pro.referrals'], 'pro/selections': ['pro.orientation_selections'],
   'pro/consent': ['citizen.shared_dossier'], 'pro/attestation-data': ['citizen.shared_dossier'],
   'pro/interop-siao': ['pro.siao_interop', 'citizen.shared_dossier'],
+  // FA-D7: the partner's signed answers apply referral steps (refused 503 before the handler while closed)
+  'monitor/partner': ['partner.referral_adapter', 'pro.referrals'],
   'pro/dossier-synthesis': ['ai.processing', 'citizen.shared_dossier'],
   'pro/agent-discovery': ['ai.processing'], 'pro/agent-scheduler': ['ai.processing'],
   // documents

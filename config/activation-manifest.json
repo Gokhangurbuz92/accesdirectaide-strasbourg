@@ -367,6 +367,24 @@
       "format": "^(HDS1:[a-z0-9][a-z0-9-]{1,39}:[A-Za-z0-9][A-Za-z0-9._-]{2,63}:[0-9]{4}-[0-9]{2}-[0-9]{2}:[0-9a-f]{64})?$",
       "note": "R45 (ENG-LR-6): attestation token of a certified health-data host (HDS), HDS1:<provider-slug>:<certificate-reference>:<valid-until YYYY-MM-DD>:<sha256 of the certificate document>. Malformed or expired = no HDS capability opens. A recorded statement by the controller, not a verification; unset until a certified host exists"
     },
+    "ADA_PARTNER_ADAPTERS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(\\[.*\\])?$",
+      "note": "FA-D7: JSON list of connected partner organisations { id, structureId, endpoint, delegateProUserId } for the closed referral adapter ada.partner-referral/1 (api/lib/partner-adapter/config.js). Each partner also needs ADA_PARTNER_SECRET_<ID> (>= 32 characters, server only; dynamic name). Unset = no integration (native ADA Pro path). Needs a partner agreement, the AIPD extension and HDS; unset until then"
+    },
+    "ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$",
+      "note": "FA-D7: production / preview only — the owner's switch after the partner agreement; without it ADA_PARTNER_ADAPTERS is ignored (PRODUCTION_NOT_APPROVED)"
+    },
     "ADA_CAPABILITY_ENFORCEMENT": {
       "class": "lab",
       "nature": "config",
@@ -1743,6 +1761,15 @@
       "class": "owner_deferred",
       "nature": "config",
       "provider": "proconnect"
+    },
+    "PROCONNECT_PRODUCTION_APPROVED": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$",
+      "note": "FA-D8: production / preview only — the owner's switch after the ProConnect DataPass agreement and the eligibility check (a private service may only authenticate public-sector agents). Without it a complete configuration stays DISCONNECTED (PRODUCTION_ACTIVATION_PENDING)"
     },
     "ADA_PROTECTED_RECORDS": {
       "class": "decision",

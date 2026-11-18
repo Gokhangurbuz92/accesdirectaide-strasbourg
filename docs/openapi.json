@@ -383,6 +383,25 @@
         "responses": { "200": { "description": "Données attestation" } }
       }
     },
+    "/monitor/partner/referral-events": {
+      "post": {
+        "tags": ["Monitor"],
+        "summary": "Réponse signée d'une structure partenaire connectée (contrat ada.partner-referral/1) — FERMÉ",
+        "description": "Adaptateur partenaire FA-D7, fermé par défaut : capacité partner.referral_adapter (hors AIPD, HDS), configuration ADA_PARTNER_ADAPTERS et signature HMAC-SHA256 (en-tête ADA-Signature: t=<unix>,v1=<hex> sur `${t}.${JSON canonique}`, tolérance 300 s). Applique une étape de l'orientation (accusé, acceptation, refus, demande de précisions, début, fin) comme le membre délégué nommé de la structure, avec les mêmes règles que dans ADA Pro. Idempotent sur (partenaire, idempotencyKey). Aucune donnée personnelle dans la requête ni la réponse. Partenaire non configuré : 404.",
+        "security": [{ "PartnerSignature": [] }],
+        "parameters": [{ "name": "partner", "in": "query", "required": true, "schema": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,39}$" } }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PartnerReferralCallback" } } } },
+        "responses": {
+          "200": { "description": "Étape appliquée, ou rejeu de la première réponse (replay: true)" },
+          "400": { "description": "Corps invalide (codes des champs fautifs, aucune valeur renvoyée)" },
+          "401": { "description": "Signature absente, invalide ou périmée" },
+          "404": { "description": "Partenaire non configuré, ou orientation inconnue / adressée à une autre structure" },
+          "409": { "description": "Refusé par les règles de l'orientation (état, accès retiré, délégué inactif, clé réutilisée pour une autre commande)" },
+          "413": { "description": "Corps trop volumineux" },
+          "503": { "description": "CAPABILITY_NOT_OPEN (capacité fermée)" }
+        }
+      }
+    },
     "/pro/interop-siao": {
       "post": {
         "tags": ["Pro"],
@@ -1028,6 +1047,15 @@
         "tags": ["Monitor"],
         "summary": "Monitoring des rendez-vous pro",
         "responses": { "200": { "description": "État RDV" } }
+      }
+    },
+    "/cron/partner-outbox": {
+      "get": {
+        "tags": ["Cron"],
+        "summary": "Envoi des événements signés ada.partner-referral/1 aux structures partenaires connectées (non planifié ; ignoré tant que la capacité est fermée)",
+        "description": "Voir x-webhooks.partnerReferralEvent pour le format envoyé. Nouvelles tentatives bornées ; état de chaque envoi dans le journal d'audit (identifiants seulement).",
+        "security": [{ "CronSecret": [] }],
+        "responses": { "200": { "description": "Compteurs (delivered, rejected, failed, abandoned) ou skipped / noIntegration" } }
       }
     },
     "/cron/pipeline": {
@@ -3283,8 +3311,59 @@
       }
     }
   },
+  "x-webhooks": {
+    "partnerReferralEvent": {
+      "post": {
+        "summary": "Événement envoyé par ADA à l'URL de la structure partenaire (contrat ada.partner-referral/1, FA-D7, fermé)",
+        "security": [{ "PartnerSignature": [] }],
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/PartnerReferralEvent" } } } },
+        "responses": { "2XX": { "description": "Reçu (y compris un eventId déjà vu : le partenaire déduplique sur Idempotency-Key)" }, "4XX": { "description": "Refusé : pas de nouvelle tentative" }, "5XX": { "description": "Nouvelle tentative bornée" } }
+      }
+    }
+  },
   "components": {
     "schemas": {
+      "PartnerReferralEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Événement sortant ada.partner-referral/1 (ADA → partenaire). Aucune donnée personnelle : la structure ouvre le dossier dans ADA Pro avec son propre compte et l'accès accordé par la personne. En-têtes : Idempotency-Key (= eventId, identique à chaque nouvelle tentative), ADA-Contract, ADA-Signature.",
+        "required": ["contract", "eventId", "type", "occurredAt", "referral"],
+        "properties": {
+          "contract": { "type": "string", "enum": ["ada.partner-referral/1"] },
+          "eventId": { "type": "string" },
+          "type": { "type": "string", "enum": ["referral.received", "referral.cancelled", "referral.expired", "referral.closed"] },
+          "occurredAt": { "type": "string", "format": "date-time" },
+          "referral": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "status", "reasonCode", "dueAt", "proUrl"],
+            "properties": {
+              "id": { "type": "string" },
+              "status": { "type": "string", "enum": ["SENT", "CANCELLED", "EXPIRED", "CLOSED"] },
+              "reasonCode": { "type": "string", "nullable": true },
+              "dueAt": { "type": "string", "format": "date-time", "nullable": true },
+              "proUrl": { "type": "string", "format": "uri" }
+            }
+          }
+        }
+      },
+      "PartnerReferralCallback": {
+        "type": "object",
+        "additionalProperties": false,
+        "description": "Réponse entrante ada.partner-referral/1 (partenaire → ADA). responseCode seulement pour decline ; outcome et citizenSummary seulement pour complete ; message obligatoire (5 à 1500 caractères) pour needs_info.",
+        "required": ["contract", "idempotencyKey", "referralId", "action", "occurredAt"],
+        "properties": {
+          "contract": { "type": "string", "enum": ["ada.partner-referral/1"] },
+          "idempotencyKey": { "type": "string", "pattern": "^[A-Za-z0-9._:-]{16,128}$" },
+          "referralId": { "type": "string" },
+          "action": { "type": "string", "enum": ["acknowledge", "accept", "decline", "needs_info", "start", "complete"] },
+          "responseCode": { "type": "string", "enum": ["OUT_OF_SCOPE", "NO_CAPACITY", "ALREADY_SUPPORTED", "OTHER"] },
+          "outcome": { "type": "string", "enum": ["SUPPORT_COMPLETED", "APPLICATION_FILED", "INFORMATION_PROVIDED", "REFERRED_ELSEWHERE", "CITIZEN_WITHDREW", "NO_RESPONSE", "OTHER"] },
+          "message": { "type": "string", "maxLength": 1500 },
+          "citizenSummary": { "type": "string", "maxLength": 1000 },
+          "occurredAt": { "type": "string", "format": "date-time" }
+        }
+      },
       "HealthResponse": {
         "type": "object",
         "properties": {
@@ -3641,6 +3720,12 @@
         "in": "header",
         "name": "x-admin-token",
         "description": "Token d'administration"
+      },
+      "PartnerSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "ADA-Signature",
+        "description": "t=<secondes unix>,v1=<hex HMAC-SHA256(secret partagé du partenaire, `${t}.${JSON canonique du corps}`)> ; JSON canonique = clés triées à tous les niveaux, sans espace"
       },
       "CronSecret": {
         "type": "apiKey",

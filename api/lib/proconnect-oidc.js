@@ -10,6 +10,7 @@
  *   PROCONNECT_REDIRECT_URI                     the registered callback (…/api/pro/auth/proconnect/callback)
  *   PROCONNECT_POST_LOGOUT_REDIRECT_URI         the registered post-logout page (optional: without it the federation logout is not offered)
  *   PROCONNECT_SCOPES (optional, default « openid email given_name usual_name siret »), PROCONNECT_ACR_VALUES (optional)
+ *   PROCONNECT_PRODUCTION_APPROVED=true         required in production / preview only (FA-D8): the owner's switch after the DataPass agreement
  *
  * Security properties (tests: tests/unit/r46-proconnect-oidc.test.js against a local mock issuer):
  *   - discovery metadata must name exactly the configured issuer; every endpoint must be https (local http only in the LAB);
@@ -24,7 +25,7 @@
 import crypto from 'node:crypto';
 
 export const PROCONNECT_REQUIRED_ENV = Object.freeze(['PROCONNECT_ENABLED', 'PROCONNECT_ISSUER', 'PROCONNECT_CLIENT_ID', 'PROCONNECT_CLIENT_SECRET', 'PROCONNECT_REDIRECT_URI']);
-export const PROCONNECT_OPTIONAL_ENV = Object.freeze(['PROCONNECT_POST_LOGOUT_REDIRECT_URI', 'PROCONNECT_SCOPES', 'PROCONNECT_ACR_VALUES']);
+export const PROCONNECT_OPTIONAL_ENV = Object.freeze(['PROCONNECT_POST_LOGOUT_REDIRECT_URI', 'PROCONNECT_SCOPES', 'PROCONNECT_ACR_VALUES', 'PROCONNECT_PRODUCTION_APPROVED']);
 export const DEFAULT_SCOPES = 'openid email given_name usual_name siret';
 const ALLOWED_ALGS = new Set(['RS256', 'ES256']);
 const CLOCK_SKEW_S = 120;
@@ -50,7 +51,7 @@ export function allowedEndpoint(/** @type {unknown} */ value, envVars = process.
 /**
  * @param {Record<string, string | undefined>} [envVars]
  * @returns {{ configured: boolean, missing: string[], invalid: string[], issuer: string, clientId: string, clientSecret: string, redirectUri: string,
- *   postLogoutRedirectUri: string, scopes: string, acrValues: string }}
+ *   postLogoutRedirectUri: string, scopes: string, acrValues: string, productionApprovalPending: boolean }}
  */
 export function proConnectConfig(envVars = process.env) {
   const missing = PROCONNECT_REQUIRED_ENV.filter((k) => !flag(envVars[k]));
@@ -59,9 +60,13 @@ export function proConnectConfig(envVars = process.env) {
   for (const k of ['PROCONNECT_ISSUER', 'PROCONNECT_REDIRECT_URI', 'PROCONNECT_POST_LOGOUT_REDIRECT_URI']) if (flag(envVars[k]) && !allowedEndpoint(flag(envVars[k]), envVars)) invalid.push(k);
   const scopes = flag(envVars.PROCONNECT_SCOPES) || DEFAULT_SCOPES;
   if (!scopes.split(/\s+/).includes('openid') || !scopes.split(/\s+/).includes('email')) invalid.push('PROCONNECT_SCOPES');
+  // FA-D8: like FranceConnect, a deployment (production / preview) also needs the owner's explicit approval after the DataPass agreement and the
+  // eligibility check (a private service may only authenticate PUBLIC-sector agents through ProConnect — partenaires.proconnect.gouv.fr, read 18/11/2026)
+  const productionApprovalPending = isProduction(envVars) && missing.length === 0 && flag(envVars.PROCONNECT_PRODUCTION_APPROVED).toLowerCase() !== 'true';
+  if (productionApprovalPending) invalid.push('PROCONNECT_PRODUCTION_APPROVED');
   return {
     configured: missing.length === 0 && invalid.length === 0,
-    missing, invalid,
+    missing, invalid, productionApprovalPending,
     issuer: flag(envVars.PROCONNECT_ISSUER).replace(/\/+$/, ''),
     clientId: flag(envVars.PROCONNECT_CLIENT_ID), clientSecret: flag(envVars.PROCONNECT_CLIENT_SECRET),
     redirectUri: flag(envVars.PROCONNECT_REDIRECT_URI), postLogoutRedirectUri: flag(envVars.PROCONNECT_POST_LOGOUT_REDIRECT_URI),

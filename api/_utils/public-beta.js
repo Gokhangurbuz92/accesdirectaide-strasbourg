@@ -42,6 +42,11 @@ export function isSmsInboundRequest(method, path, envVars = process.env) {
     && String(envVars.SMS_INBOUND_URL || '').startsWith('https://') && Boolean(envVars.TWILIO_AUTH_TOKEN);
 }
 
+/** FA-D7: a partner's signed answer, only once partner adapters are configured (the capability gate and the signature still apply) @param {string} method @param {string} path @param {Record<string, string | undefined>} [envVars] */
+export function isPartnerCallbackRequest(method, path, envVars = process.env) {
+  return String(method || '').toUpperCase() === 'POST' && path === 'monitor/partner/referral-events' && String(envVars.ADA_PARTNER_ADAPTERS || '').trim() !== '';
+}
+
 /** @param {Record<string, string | undefined>} [envVars] */
 export function isPublicBetaRestricted(envVars = process.env) {
   return ['1', 'true'].includes(String(envVars.ADA_PUBLIC_BETA_RESTRICTED || '').trim().toLowerCase());
@@ -150,6 +155,8 @@ export const SCHEDULED_JOBS = Object.freeze({
   // C8: freezes the published cells of closed observatory quarters (drizzle/0052) — aggregates only, no personal data, nothing sent
   'observatory-freeze': 'A',
   'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',
+  // FA-D7: signed referral events to connected partner organizations (personal-data adjacent: referral ids and states) — not scheduled in vercel.json
+  'partner-outbox': 'C',
   'ingest-demarches': 'D', 'ingest-annuaire': 'D', 'review-queue/scan': 'D',
 });
 /** @param {unknown} v */
@@ -199,6 +206,7 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   // R43-MAIL: the Mailjet delivery events — POST to that exact path only, and only when MAILER_EVENTS_ENABLED=1 (basic auth is checked by the handler)
   if (isMailEventsRequest(method, p, envVars)) return true;
   if (isSmsInboundRequest(method, p, envVars)) return true;
+  if (isPartnerCallbackRequest(method, p, envVars)) return true;
   const surface = surfaceOf(p);
   // R47 (activation finding F1): the citizen side of « appointments » acts through a citizen account, so it follows « accounts » too — closing
   // « accounts » (rollback) must also stop an already-open citizen session from booking, rescheduling or cancelling; public slot reading stays
