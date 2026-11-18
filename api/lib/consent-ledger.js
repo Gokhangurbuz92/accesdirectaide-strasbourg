@@ -28,6 +28,37 @@ export const SHARING_GRANTED_BY = Object.freeze({
 });
 
 /**
+ * FA-D5 / F2 — an access that ends WITHOUT a decision of the person (the organisation's space is closed, a referral ends: declined, cancelled, expired). The
+ * purposes that access carried no longer apply, so the ledger says so — with a channel that says WHY (never presented as the person's own withdrawal) and the
+ * proof level SYSTEM_STATE (the platform recorded a state change; the person decided nothing).
+ */
+export const ACCESS_ENDED_BY = Object.freeze({
+  ORGANISATION_CLOSED: Object.freeze({ channel: 'organisation_closed', proof: 'SYSTEM_STATE' }),
+  REFERRAL_ENDED: Object.freeze({ channel: 'referral_ended', proof: 'SYSTEM_STATE' }),
+});
+
+/**
+ * FA-D5 / F2 — records, for each (dossier, organisation) whose access just ended without the person, the end of every purpose that access held. Runs inside a
+ * SAVEPOINT of the caller's transaction (db.transaction on a transaction): a ledger failure is logged and never undoes the closure / referral change itself.
+ * @param {any} db @param {{ shareId: string, structureId: string }[]} pairs @param {{ channel: string, proof: string }} endedBy
+ * @param {{ error: (o: any, m: string) => void }} [log]
+ * @returns {Promise<number>} rows written
+ */
+export async function recordAccessEnded(db, pairs, endedBy, log = console) {
+  let n = 0;
+  const seen = new Set();
+  for (const p of pairs || []) {
+    const key = `${p?.shareId}:${p?.structureId}`;
+    if (!p?.shareId || !p?.structureId || seen.has(key)) continue;
+    seen.add(key);
+    try { n += await db.transaction(async (/** @type {any} */ sp) => withdrawPurposesOfRevokedGrants(sp, p.shareId, p.structureId, { endedBy })); } catch (error) {
+      log.error({ err: { name: /** @type {any} */ (error)?.name, message: /** @type {any} */ (error)?.message }, channel: endedBy?.channel }, '[consent-ledger] end of an access was not recorded');
+    }
+  }
+  return n;
+}
+
+/**
  * FA-D5 — the « yes » to PURP-06 for (dossier, organisation): call it in the SAME transaction that creates or re-activates the grant (no proof, no access).
  * Derived from the state: written only when the organisation holds an ACTIVE grant and the latest PURP-06 decision is not already « yes » — so a page reload or a
  * second colleague writes nothing, and an access granted again after a revocation writes a new « yes ». Append-only.
@@ -59,16 +90,20 @@ export async function recordSharingGranted(db, shareId, structureId, by) {
  * access (changing one purpose is recorded by its own action), and it also closes rows left open by an earlier revocation. The new row copies the policy version,
  * hash, channel and proof level of the decision it withdraws and is strictly later than it. Append-only: nothing is updated.
  * FA-D5: the same call also writes the PURP-06 (sharing) withdrawal of every revoked grant of the dossier — see the second statement below.
+ * FA-D5 / F2: with `endedBy` (ACCESS_ENDED_BY.*) the new rows carry that channel and proof level instead of copying those of the decision they end.
  * @param {any} db @param {string} shareId @param {string | null} [structureId] one organisation, or every organisation of the dossier
+ * @param {{ endedBy?: { channel: string, proof: string } | null }} [opts]
  * @returns {Promise<number>} the number of withdrawal rows written
  */
-export async function withdrawPurposesOfRevokedGrants(db, shareId, structureId = null) {
+export async function withdrawPurposesOfRevokedGrants(db, shareId, structureId = null, { endedBy = null } = {}) {
+  const channelOf = (/** @type {any} */ fallback) => (endedBy ? sql`${String(endedBy.channel)}` : fallback);
+  const proofOf = (/** @type {any} */ fallback) => (endedBy ? sql`${String(endedBy.proof)}` : fallback);
   const dossier = String(shareId || '');
   if (!dossier) return 0;
   const subjects = structureId ? sql`c.subject_id = ${`${dossier}:${String(structureId)}`}` : sql`split_part(c.subject_id, ':', 1) = ${dossier}`;
   const out = await db.execute(sql`
     INSERT INTO "ConsentLog" (id, subject_type, subject_id, purpose, decision, withdrawn_at, policy_version, policy_hash, collection_channel, guardian_involved, proof_level, created_at)
-    SELECT gen_random_uuid()::text, l.subject_type, l.subject_id, l.purpose, false, LOCALTIMESTAMP(3), l.policy_version, l.policy_hash, l.collection_channel, COALESCE(l.guardian_involved, false), l.proof_level,
+    SELECT gen_random_uuid()::text, l.subject_type, l.subject_id, l.purpose, false, LOCALTIMESTAMP(3), l.policy_version, l.policy_hash, ${channelOf(sql`l.collection_channel`)}, COALESCE(l.guardian_involved, false), ${proofOf(sql`l.proof_level`)},
            GREATEST(LOCALTIMESTAMP(3), l.created_at + interval '1 millisecond')
     FROM (
       SELECT DISTINCT ON (c.subject_id, c.purpose) c.* FROM "ConsentLog" c
@@ -86,7 +121,7 @@ export async function withdrawPurposesOfRevokedGrants(db, shareId, structureId =
     INSERT INTO "ConsentLog" (id, subject_type, subject_id, purpose, decision, withdrawn_at, policy_version, policy_hash, collection_channel, guardian_involved, proof_level, created_at)
     SELECT gen_random_uuid()::text, 'SHARED_DOSSIER_GRANT', s.subject_id, ${SHARING_PURPOSE}, false, s.revoked_at,
            COALESCE(l.policy_version, ${DOSSIER_PURPOSE_POLICY_VERSION}), COALESCE(l.policy_hash, ${dossierPurposePolicyHash(SHARING_PURPOSE)}),
-           COALESCE(l.collection_channel, 'owner_link'), COALESCE(l.guardian_involved, false), COALESCE(l.proof_level, 'OWNER_SECRET'),
+           ${channelOf(sql`COALESCE(l.collection_channel, 'owner_link')`)}, COALESCE(l.guardian_involved, false), ${proofOf(sql`COALESCE(l.proof_level, 'OWNER_SECRET')`)},
            GREATEST(LOCALTIMESTAMP(3), COALESCE(l.created_at + interval '1 millisecond', LOCALTIMESTAMP(3)))
     FROM (SELECT g."sharedDiagnosticId" || ':' || g."structureId" AS subject_id, g."revokedAt" AS revoked_at FROM "SharedDossierGrant" g
           WHERE g."sharedDiagnosticId" = ${dossier} ${grantScope} AND g."revokedAt" IS NOT NULL) s

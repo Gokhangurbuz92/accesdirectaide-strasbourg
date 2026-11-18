@@ -119,6 +119,27 @@ export async function purgeSupersededConsents(database, before) {
     return Number(res?.rowCount ?? res?.length ?? 0);
 }
 
+/**
+ * FA-D5 / F3 — the dossier-sharing decisions (subject SHARED_DOSSIER_GRANT « dossier:organisation », purposes PURP-05 / PURP-06 / PURP-07). The latest decision
+ * is never « superseded », so the rule above never removed it, and nothing else did: it outlived the dossier forever. Now: every row of a (dossier, organisation)
+ * goes once the DOSSIER NO LONGER EXISTS (erased by its owner, or past its maximum life) AND that subject's latest decision is older than the cutoff. No new
+ * duration: the cutoff is the existing CONSENT_AFTER_ERASURE_DAYS (« preuves … après l'effacement », the same proof purpose); whether it is the right one for
+ * dossiers is for the owner to confirm (the step runs only once approved in the policy, like every other). A legal hold on the dossier or the subject keeps it.
+ * @param {Date} before
+ */
+export const sharedDossierConsentsGoneWhere = (before) => and(
+    eq(ConsentLog.subject_type, 'SHARED_DOSSIER_GRANT'),
+    sql`NOT EXISTS (SELECT 1 FROM "SharedDiagnostic" d WHERE d.id = split_part(${ConsentLog.subject_id}, ':', 1))`,
+    sql`NOT EXISTS (SELECT 1 FROM "ConsentLog" newer WHERE newer.subject_type = ${ConsentLog.subject_type} AND newer.subject_id = ${ConsentLog.subject_id}
+        AND newer.created_at >= ${before})`,
+    sql`NOT ${heldSql(sql`split_part(${ConsentLog.subject_id}, ':', 1)`, ConsentLog.subject_id)}`
+);
+/** Returns the number of rows deleted. @param {any} database @param {Date} before */
+export async function purgeSharedDossierConsentsAfterDossierGone(database, before) {
+    const res = await database.delete(ConsentLog).where(sharedDossierConsentsGoneWhere(before));
+    return Number(res?.rowCount ?? res?.length ?? 0);
+}
+
 /** Rows affected by a drizzle delete/update: node-postgres returns a result object (rowCount), not an array. */
 const affected = (/** @type {any} */ r) => Number(r?.rowCount ?? r?.length ?? 0);
 const countWhere = async (db, table, where) => Number((await db.select({ n: sql`count(*)::int` }).from(table).where(where))?.[0]?.n ?? 0);
@@ -338,6 +359,11 @@ export const PURGE_STEPS = [
                 AND r."completedAt" < ${ctx.cutoff('CONSENT_AFTER_ERASURE_DAYS')})`,
             sql`NOT EXISTS (SELECT 1 FROM "CitizenUser" u WHERE u.id = ${ConsentLog.subject_id})`,
             sql`NOT ${heldSql(ConsentLog.subject_id)}`)) },
+
+    // 8c. FA-D5 / F3 — the dossier-sharing decisions of a dossier that no longer exists (see sharedDossierConsentsGoneWhere): same duration as 8b, no new value
+    { id: 'sharedDossierConsentsAfterDossierGone', summaryKey: 'shared_dossier_consents_after_dossier_gone', ecode: 'E10', kind: 'delete', table: 'ConsentLog',
+        durationKey: 'CONSENT_AFTER_ERASURE_DAYS', tables: ['ConsentLog', 'SharedDiagnostic', 'LegalHold'],
+        ...deleteStep(ConsentLog, (ctx) => sharedDossierConsentsGoneWhere(ctx.cutoff('CONSENT_AFTER_ERASURE_DAYS'))) },
 
     // 9. Expired User Consents
     { id: 'deletedUserConsentsCount', summaryKey: 'user_consents_deleted', ecode: null, kind: 'delete', table: 'UserConsent', durationKey: null, tables: ['UserConsent', 'LegalHold'],

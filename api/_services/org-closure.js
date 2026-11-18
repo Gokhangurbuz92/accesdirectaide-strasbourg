@@ -31,6 +31,8 @@ import { snapshotRow } from './content-versions.js';
 import { formatParis, noticeCitizen } from './appointment-notices.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
 import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
+import { ACCESS_ENDED_BY, recordAccessEnded } from '../lib/consent-ledger.js';
+import { logger } from '../lib/logger.js';
 import { canNotify } from './citizen-account.js';
 import { buildAppUrl } from '../_utils/user-auth.js';
 
@@ -142,13 +144,17 @@ async function execute(tx, sid, requestId, reviewer) {
   const refs = (await tx.execute(sql`SELECT id, status, "fromStructureId" AS f, "toStructureId" AS t, "sharedDiagnosticId" AS d, "grantId" AS g, "fromCaseId" AS c FROM "Referral" WHERE ("fromStructureId" = ${sid} OR "toStructureId" = ${sid})
     AND status IN (${list(LIVE_REFERRALS)}) FOR UPDATE`)).rows;
   let ended = 0; const endedReferrals = [];
+  /** @type {{ shareId: string, structureId: string }[]} */ const endedAccesses = grants.map((g) => ({ shareId: g.d, structureId: sid }));
   for (const r of refs) {
     const sent = r.f === sid;
     if (sent && ['ACCEPTED', 'IN_PROGRESS'].includes(r.status)) continue;
     const to = sent || ['DRAFT', 'PENDING_CITIZEN'].includes(r.status) ? 'CANCELLED' : 'CLOSED';
     await tx.execute(sql`UPDATE "Referral" SET status = ${to}, "closedAt" = NOW(), "updatedAt" = NOW() WHERE id = ${r.id}`);
     await tx.execute(sql`INSERT INTO "ReferralEvent" (id, "referralId", "actorType", "actorId", "fromStatus", "toStatus", "createdAt") VALUES (${crypto.randomUUID()}, ${r.id}, 'SYSTEM', 'ORGANIZATION_CLOSED', ${r.status}, ${to}, NOW())`);
-    if (sent && r.g) await tx.execute(sql`UPDATE "SharedDossierGrant" SET "revokedAt" = NOW() WHERE id = ${r.g} AND "grantedVia" = 'referral' AND "revokedAt" IS NULL`);
+    if (sent && r.g) {
+      const g = (await tx.execute(sql`UPDATE "SharedDossierGrant" SET "revokedAt" = NOW() WHERE id = ${r.g} AND "grantedVia" = 'referral' AND "revokedAt" IS NULL RETURNING "sharedDiagnosticId" AS d, "structureId" AS s`)).rows;
+      for (const x of g) endedAccesses.push({ shareId: x.d, structureId: x.s });
+    }
     // A07: a referral the closing organization RECEIVED ends without support — the sender's case leaves REFERRED when it has no other referral held by a
     // receiver (the closing organization's own cases are closed above)
     if (!sent) await releaseSenderCase(tx, r.c);
@@ -156,6 +162,8 @@ async function execute(tx, sid, requestId, reviewer) {
     endedReferrals.push({ id: r.id, sharedDiagnosticId: r.d, was: r.status, sent, otherStructureId: sent ? r.t : r.f });
   }
   summary.referralsEnded = ended;
+  // FA-D5 / F2: the purposes (PURP-05/06/07) those accesses carried end in the consent ledger — channel organisation_closed, never the person's withdrawal
+  summary.consentLedgerRows = await recordAccessEnded(tx, endedAccesses, ACCESS_ENDED_BY.ORGANISATION_CLOSED, logger);
   const appts = (await tx.execute(sql`UPDATE "ProAppointment" SET status = 'cancelled', "cancelledAt" = NOW(), "cancelledBy" = 'ORGANIZATION_CLOSED', "updatedAt" = NOW()
     WHERE "structureId" = ${sid} AND status IN ('booked', 'requested', 'confirmed') AND "startAt" > NOW() RETURNING id, "citizenUserId", "startAt"`)).rows;   // R47: the account bookings (confirmed, requested) too, not only the legacy « booked »
   summary.appointmentsCancelled = appts.length;
