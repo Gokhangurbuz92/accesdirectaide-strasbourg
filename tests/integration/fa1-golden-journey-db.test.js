@@ -84,8 +84,12 @@ describe.skipIf(!hasDatabase)(`FA-D1 golden journey — one synthetic case (${'f
     if (as.other) Object.assign(h, { cookie: citizenCookie(OTHER) }, csrf);
     if (as.anon) Object.assign(h, { cookie: `__csrf=${CSRF}` }, csrf);
     if (as.forged) {   // the golden person's session, signed with ANOTHER secret
-      const real = process.env.JWT_SECRET; process.env.JWT_SECRET = `forged-${TS}-0123456789abcdef0123456789abcdef`;
-      const ck = (() => { try { return userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: CIT.id, email: CIT.email })).split(';')[0]; } finally { process.env.JWT_SECRET = real; } })();
+      // the session secret is AUTH_SECRET, else AUTH_JWT_SECRET, else JWT_SECRET (user-auth.js): every link of that chain is swapped, or an environment that sets
+      // AUTH_SECRET (the native QA launcher does) would sign the « forged » token with the real secret
+      const chain = ['AUTH_SECRET', 'AUTH_JWT_SECRET', 'JWT_SECRET'];
+      const real = Object.fromEntries(chain.map((k) => [k, process.env[k]]));
+      setEnv(Object.fromEntries(chain.map((k) => [k, `forged-${TS}-0123456789abcdef0123456789abcdef`])));
+      const ck = (() => { try { return userAuth.buildUserSessionCookie(userAuth.signUserSessionToken({ userId: CIT.id, email: CIT.email })).split(';')[0]; } finally { setEnv(real); } })();
       Object.assign(h, { cookie: `${ck}; __csrf=${CSRF}` }, csrf);
     }
     if (as.pro) h.authorization = `Bearer ${auth.signProToken({ id: as.pro.id, email: `${as.pro.id}@example.test`, structureId: as.pro.st, role: as.pro.role })}`;

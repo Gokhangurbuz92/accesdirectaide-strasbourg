@@ -236,8 +236,14 @@ describe.skipIf(!hasDatabase)('FA-D7 partner referral adapter + lifecycle gaps (
     expect(partnerSide.got.length).toBe(before);
     partnerSide.mode = 'ok';
     const [closedEv] = (await db.execute(sql`SELECT id FROM "ReferralEvent" WHERE "referralId" = ${J.exp} AND "toStatus" = 'CLOSED'`)).rows;
-    const states = (await db.execute(sql`SELECT action FROM "AuditLog" WHERE entity = 'ReferralEvent' AND entity_id = ${closedEv.id} ORDER BY timestamp`)).rows.map((r) => r.action);
-    expect(states.filter((s) => s === 'PARTNER_EVENT_FAILED')).toHaveLength(svc.OUTBOX_MAX_FAILED_RUNS); expect(states.at(-1)).toBe('PARTNER_EVENT_ABANDONED');
+    // "AuditLog".timestamp has millisecond precision: the last run's FAILED and the ABANDONED row it triggers can share the same millisecond, so the order of a
+    // tie is not asserted. What is asserted: the bound's FAILED rows, ONE abandonment naming the bound, and nothing recorded for this event after it.
+    const rows = (await db.execute(sql`SELECT action, timestamp, details FROM "AuditLog" WHERE entity = 'ReferralEvent' AND entity_id = ${closedEv.id} ORDER BY timestamp`)).rows;
+    const states = rows.map((r) => r.action);
+    expect(states.filter((s) => s === 'PARTNER_EVENT_FAILED')).toHaveLength(svc.OUTBOX_MAX_FAILED_RUNS);
+    const abandoned = rows.filter((r) => r.action === 'PARTNER_EVENT_ABANDONED');
+    expect(abandoned).toHaveLength(1); expect(abandoned[0].details).toMatchObject({ failedRuns: svc.OUTBOX_MAX_FAILED_RUNS });
+    expect(rows.filter((r) => new Date(r.timestamp).getTime() > new Date(abandoned[0].timestamp).getTime())).toEqual([]);
   });
 
   it('actor accountability over the whole test: every human step names its actor, only the platform\'s own steps have none; audit rows hold no text', async () => {
