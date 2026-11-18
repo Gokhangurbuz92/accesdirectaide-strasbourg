@@ -69,6 +69,7 @@
  "beta.closed.title": "Bu işlev henüz açık değil",
  "beta.closed.intro": "Accès Direct Aide <strong>genel beta</strong> aşamasındadır. Bu aşamada doğrulanmış yardımlara, işlemlere ve kuruluşlara resmi kaynaklarıyla birlikte göz atabilirsiniz.",
  "beta.closed.later": "Hesap oluşturma, kişisel alan, randevu alma, dosya paylaşma, belge gönderme ve iletişim formları, veri koruma güvenceleri sağlandığında daha sonra açılacaktır. Burada sizden hiçbir şey istenmez: <0>Gizlilik</0> sayfasında açıklandığı gibi yalnızca teknik veriler işlenir (barındırma sağlayıcısının kayıtlarındaki IP adresi, güvenlik çerezi).",
+ "beta.closed.later_accounts": "Artık kişisel bir hesap oluşturabilir ve giriş yapabilirsiniz. Randevu alma, mesajlaşma, dosya paylaşma, belge gönderme ve iletişim formları, veri koruma güvenceleri sağlandığında daha sonra açılacaktır. Bu sayfa sizden hiçbir bilgi istemez; verilerinizin nasıl işlendiği <0>Gizlilik</0> sayfasında açıklanır.",
  "beta.closed.contact": "Bir soru sormak veya bir hatayı bildirmek için bize <0>{{email}}</0> adresinden yazın. Hassas kişisel bilgiler (sağlık, sosyal güvenlik numarası, belgeler) yazmayın.",
  "beta.closed.aides": "Yardım arayın",
  "beta.closed.demarches": "İşlemleri görün",

@@ -69,6 +69,7 @@
  "beta.closed.title": "This feature is not open yet",
  "beta.closed.intro": "Accès Direct Aide is in <strong>public beta</strong>. During this phase, you can consult the checked benefits, procedures and support centres, with their official sources.",
  "beta.closed.later": "Creating an account, the personal area, booking appointments, sharing a file, sending documents and the contact forms will open later, once the data protection safeguards are in place. Nothing is asked of you here: only technical data is processed (IP address in the host’s logs, security cookie), as explained on the <0>Privacy</0> page.",
+ "beta.closed.later_accounts": "You can already create a personal account and sign in. Booking appointments, messaging, sharing a file, sending documents and the contact forms will open later, once the data protection safeguards are in place. This page asks you for no information; how your data is processed is explained on the <0>Privacy</0> page.",
  "beta.closed.contact": "For a question or to report an error, write to us at <0>{{email}}</0>. Do not write sensitive personal information (health, social security number, documents).",
  "beta.closed.aides": "Search for a benefit",
  "beta.closed.demarches": "See the procedures",

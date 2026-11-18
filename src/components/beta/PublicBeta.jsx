@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import { publicContactEmail } from '@/lib/contactEmail';
 import i18n, { useT } from '@/i18n';
-import { personalSurfacesOpened } from '@/lib/publicBeta';
+import { accountsOpened, personalSurfacesOpened } from '@/lib/publicBeta';
 
 /** Discreet, always-visible notice of the restricted public beta (owner directive 29/10/2026). */
 export function PublicBetaBanner() {
@@ -36,13 +36,23 @@ export function PublicBetaUnavailable() {
       <p className="mb-3">
         <Trans i18n={i18n} i18nKey="layout:beta.closed.intro" defaults="Accès Direct Aide est en <strong>bêta publique</strong>. Pendant cette phase, vous pouvez consulter les aides, les démarches et les structures vérifiées, avec leurs sources officielles." />
       </p>
-      <p className="mb-6">
+      <p className="mb-6" data-testid="public-beta-later">
+        {/* 6B (18/11): once this build opens the personal accounts, the closed screens no longer say that creating an account « will open later » */}
+        {accountsOpened() ? (
+          <Trans
+            i18n={i18n}
+            i18nKey="layout:beta.closed.later_accounts"
+            defaults="Vous pouvez déjà créer un compte personnel et vous y connecter. La prise de rendez-vous, la messagerie, le partage de dossier, l’envoi de documents et les formulaires de contact ouvriront plus tard, quand les garanties de protection des données seront en place. Cette page ne vous demande aucune information ; le traitement de vos données est expliqué sur la page <0>Confidentialité</0>."
+            components={[<Link key="privacy" to="/confidentialite" className="underline font-medium" />]}
+          />
+        ) : (
         <Trans
           i18n={i18n}
           i18nKey="layout:beta.closed.later"
           defaults="La création de compte, l’espace personnel, la prise de rendez-vous, le partage de dossier, l’envoi de documents et les formulaires de contact ouvriront plus tard, quand les garanties de protection des données seront en place. Rien ne vous est demandé ici : seules des données techniques sont traitées (adresse IP dans les journaux de l’hébergeur, cookie de sécurité), comme l’explique la page <0>Confidentialité</0>."
           components={[<Link key="privacy" to="/confidentialite" className="underline font-medium" />]}
         />
+        )}
       </p>
       {contact && email && (
         <p className="mb-6" data-testid="public-beta-contact">

@@ -69,6 +69,7 @@
  "beta.closed.title": "Diese Funktion ist noch nicht verfügbar",
  "beta.closed.intro": "Accès Direct Aide befindet sich in der <strong>öffentlichen Beta</strong>. In dieser Phase können Sie die geprüften Hilfen, Behördengänge und Anlaufstellen mit ihren offiziellen Quellen einsehen.",
  "beta.closed.later": "Kontoerstellung, persönlicher Bereich, Terminbuchung, Teilen einer Akte, Versand von Dokumenten und die Kontaktformulare werden später freigeschaltet, sobald die Datenschutzgarantien bestehen. Hier wird nichts von Ihnen verlangt: Es werden nur technische Daten verarbeitet (IP-Adresse in den Protokollen des Hosting-Anbieters, Sicherheits-Cookie), wie auf der Seite <0>Datenschutz</0> erklärt.",
+ "beta.closed.later_accounts": "Sie können bereits ein persönliches Konto erstellen und sich anmelden. Terminbuchung, Nachrichten, das Teilen einer Akte, der Versand von Dokumenten und die Kontaktformulare werden später freigeschaltet, sobald die Datenschutzgarantien bestehen. Diese Seite verlangt keine Angaben von Ihnen; wie Ihre Daten verarbeitet werden, erklärt die Seite <0>Datenschutz</0>.",
  "beta.closed.contact": "Für eine Frage oder um einen Fehler zu melden, schreiben Sie uns an <0>{{email}}</0>. Schreiben Sie keine sensiblen persönlichen Daten (Gesundheit, Sozialversicherungsnummer, Dokumente).",
  "beta.closed.aides": "Eine Hilfe suchen",
  "beta.closed.demarches": "Behördengänge ansehen",

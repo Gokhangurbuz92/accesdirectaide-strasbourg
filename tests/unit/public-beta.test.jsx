@@ -7,7 +7,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it, vi } from 'vitest';
 import { createElement } from 'react';
-import { render, screen } from '@testing-library/react';
+import { cleanup, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { isAllowedInPublicBeta, isPublicBetaRestricted, PUBLIC_BETA_MESSAGE, surfaceOf, openSurfaces } from '../../api/_utils/public-beta.js';
 import { evaluateReleasePreflight } from '../../scripts/release-preflight.mjs';
@@ -174,6 +174,25 @@ describe('browser side', () => {
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Cette fonction n’est pas encore ouverte');
     expect(screen.getByRole('link', { name: 'Rechercher une aide' }).getAttribute('href')).toBe('/aides');
     expect(screen.queryByTestId('public-beta-contact')).toBeNull();   // not on a screen other than the contact form
+  });
+  it('6B regression (18/11): with accounts open, a closed screen no longer says that creating an account will open later', async () => {
+    const closedText = () => screen.getByTestId('public-beta-later').textContent;
+    render(createElement(MemoryRouter, null, createElement(PublicBetaUnavailable)));
+    expect(closedText()).toContain('La création de compte');
+    cleanup();
+    vi.stubEnv('VITE_PUBLIC_BETA_OPEN_SURFACES', 'admin,accounts');
+    vi.resetModules();
+    const { PublicBetaUnavailable: Unavailable } = await import('../../src/components/beta/PublicBeta.jsx');
+    render(createElement(MemoryRouter, { initialEntries: ['/compte/messages'] }, createElement(Unavailable)));
+    expect(closedText()).toContain('Vous pouvez déjà créer un compte personnel');
+    expect(closedText()).not.toContain('La création de compte');
+    expect(closedText()).not.toContain('Rien ne vous est demandé');
+    expect(screen.getByRole('link', { name: 'Confidentialité' }).getAttribute('href')).toBe('/confidentialite');
+    for (const lang of ['en', 'de', 'tr', 'ar', 'uk']) {
+      const j = JSON.parse(readFileSync(resolve(process.cwd(), `src/i18n/locales/${lang}/layout.json`), 'utf8'));
+      expect(j['beta.closed.later_accounts'], lang).toMatch(/<0>[^<]+<\/0>/);
+    }
+    vi.unstubAllEnvs(); vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
   });
   it('a closed screen is not offered as a link (home tiles, footer); outside the beta every link stays', () => {
     const links = [{ to: '/aides' }, { to: '/orientation' }, { to: '/diagnostic' }, { to: '/contact?sujet=signalement_erreur' }, { to: '/structures' }];
