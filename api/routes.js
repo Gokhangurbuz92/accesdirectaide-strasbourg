@@ -29,6 +29,7 @@ const routeTable = [
     { path: 'monitor/pro-rdv', match: 'exact', handler: () => import('./_handlers/monitor/pro-rdv.js') },
     { path: 'monitor/csp-report', match: 'exact', handler: () => import('./_handlers/monitor/csp-report.js') },
     { path: 'monitor/mail-events/mailjet', match: 'exact', handler: () => import('./_handlers/monitor/mail-events-mailjet.js') },
+    { path: 'monitor/partner/referral-events', match: 'exact', handler: () => import('./_handlers/monitor/partner-referral-events.js') },   // FA-D7: closed partner adapter (capability partner.referral_adapter)
     { path: 'monitor/sms-inbound/twilio', match: 'exact', handler: () => import('./_handlers/monitor/sms-inbound-twilio.js') },   // R46 N02: off unless SMS_INBOUND_URL + TWILIO_AUTH_TOKEN   // R43-MAIL: off unless MAILER_EVENTS_ENABLED=1
     // --- Special / Root ---
     { path: 'download', match: 'exact', handler: () => import('./_handlers/download.js') },
@@ -167,6 +168,7 @@ const routeTable = [
     { path: 'cron/veille', match: 'exact', handler: () => import('./_handlers/cron/veille.js') },   // automatic verification chain (owner decision 2026-10-25)
     { path: 'cron/rdv-reminder', match: 'exact', handler: () => import('./_handlers/cron/rdv-reminder.js') },
     { path: 'cron/referral-timeouts', match: 'exact', handler: () => import('./_handlers/cron/referral-timeouts.js') },
+    { path: 'cron/partner-outbox', match: 'exact', handler: () => import('./_handlers/cron/partner-outbox.js') },   // FA-D7: not scheduled; skipped while the capability is closed
     { path: 'cron/parcours-reminder', match: 'exact', handler: () => import('./_handlers/cron/parcours-reminder.js') },
     { path: 'cron/ingest-demarches', match: 'exact', handler: () => import('./_handlers/cron/ingest-demarches.js') },
     { path: 'cron/ingest-annuaire', match: 'exact', handler: () => import('./_handlers/cron/ingest-annuaire.js') },

@@ -111,7 +111,7 @@ export function finalConfig(opts = {}) {
     FRANCECONNECT_ISSUER: m.fc, FRANCECONNECT_CLIENT_ID: `${SYNTHETIC}-fc`, FRANCECONNECT_CLIENT_SECRET: `${SYNTHETIC}-${rnd(8)}`,
     FRANCECONNECT_REDIRECT_URI: `${base}/api/auth/franceconnect/callback`, FRANCECONNECT_PRODUCTION_APPROVED: 'true',
     PROCONNECT_ENABLED: 'true', PROCONNECT_ISSUER: m.pc, PROCONNECT_CLIENT_ID: `${SYNTHETIC}-pc`, PROCONNECT_CLIENT_SECRET: `${SYNTHETIC}-${rnd(8)}`,
-    PROCONNECT_REDIRECT_URI: `${base}/api/pro/auth/proconnect/callback`,
+    PROCONNECT_REDIRECT_URI: `${base}/api/pro/auth/proconnect/callback`, PROCONNECT_PRODUCTION_APPROVED: 'true',
     OPENFISCA_URL: m.openfisca, AIDES_TERRITOIRES_API_KEY: `${SYNTHETIC}-${rnd(8)}`,
     SENTRY_DSN: `https://${rnd(8)}@o0.ingest.de.sentry.io/0`, ALERT_WEBHOOK_URL: m.alert,
     OPEN_DATA_EXPORT_ENABLED: 'true',
@@ -214,7 +214,7 @@ export function buildItems() {
     'citizen.household': ['C03'], 'citizen.guardians': ['C05'], 'citizen.parcours': ['C07', 'C08'], 'citizen.favorites': ['C10'], 'citizen.history': ['C11'],
     'citizen.franceconnect': ['C26', 'N08'], 'citizen.delegations': ['C23'], 'citizen.orientation_records': ['R09', 'R10'], 'citizen.vault': ['C09'],
     'citizen.shared_dossier': ['C14', 'C15', 'C16', 'C17', 'R13', 'R15'], 'citizen.saved_diagnostic': ['C12'], 'diagnostic.questionnaire': ['P13', 'D10', 'D20'],
-    'pro.case_management': ['R03', 'R05', 'R06', 'R07', 'R08', 'R11', 'R12'], 'pro.referrals': ['R09', 'R10', 'E06'], 'pro.orientation_selections': ['R18'], 'pro.siao_interop': ['R22'],
+    'pro.case_management': ['R03', 'R05', 'R06', 'R07', 'R08', 'R11', 'R12'], 'pro.referrals': ['R09', 'R10', 'E06'], 'pro.orientation_selections': ['R18'], 'pro.siao_interop': ['R22'], 'partner.referral_adapter': ['R09', 'R10', 'E06'],
     'ai.processing': ['P17', 'D17', 'D18', 'R17', 'R23', 'P18'], 'institution.portal': ['I01', 'I02', 'I03', 'I04'], video: ['B07', 'N06'], 'citizen.minor_accounts': [] };
   for (const [name, cap] of Object.entries(CAPABILITIES)) {
     const env = [tok('ADA_BETA_OPEN_SURFACES', cap.surface)];
@@ -229,6 +229,7 @@ export function buildItems() {
     if (name === 'pro.siao_interop') other.push({ type: 'partner', what: 'spécification et convention SI-SIAO ; adaptateur réel à écrire (aujourd’hui fiche de transmission manuelle)', ref: 'api/_handlers/pro/interop-siao.js' });
     if (name === 'ai.processing') other.push({ type: 'code_record', what: 'aucun modèle local joignable sur Vercel (OLLAMA_BASE_URL doit être en boucle locale) : un fournisseur d’IA approuvé (DPIA, DPA) demande une modification du code', ref: 'api/lib/ai-foundation.js' },
       { type: 'human_review', what: 'revue de sécurité du jeu d’évaluation de l’IA', ref: 'scripts/ai-eval.mjs' });
+    if (name === 'partner.referral_adapter') other.push({ type: 'partner', what: 'convention avec une structure partenaire réelle, secret partagé, membre délégué désigné ; ADA_PARTNER_ADAPTERS + ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED', ref: 'api/_services/partner-adapter.js' });
     if (name === 'citizen.franceconnect') other.push({ type: 'provider_account', what: 'habilitation DataPass FranceConnect', ref: 'api/lib/franceconnect/oidc-client.js' });
     items.push({ id: `capability.${name}`, kind: 'capability', label: cap.description, features: CAP_FEATURES[name] || [], env, requires: CAP_REQUIRES[name] || [], other,
       finalExpected: cap.openable === false ? 'closed' : 'open', note: cap.openable === false ? 'NOT_OPENABLE : aucun interrupteur (politique d’âge)' : undefined,
@@ -263,7 +264,7 @@ export function buildItems() {
   const JOB_REQUIRES = { 'rdv-reminder': ['provider.mail', 'surface.appointments'], 'parcours-reminder': ['provider.mail'], 'referral-timeouts': ['provider.mail'],
     'health-alert': ['provider.alert'], 'ingest-aids': ['provider.aides-territoires'] };
   const JOB_FEATURES = { veille: ['D04', 'D07', 'D14'], actualites: ['P10'], 'health-alert': ['Q07'], 'ingest-structures': ['D05'], 'ingest-aids': ['D08'], 'parcours-reminder': ['C08'],
-    'referral-timeouts': ['R10'], 'rdv-reminder': ['B06'], 'gdpr-purge': ['Q03', 'A12'] };
+    'referral-timeouts': ['R10'], 'partner-outbox': ['R10', 'E06'], 'rdv-reminder': ['B06'], 'gdpr-purge': ['Q03', 'A12'] };
   const vercelCrons = (() => { try { return new Set((JSON.parse(fs.readFileSync(path.resolve(path.dirname(new URL(import.meta.url).pathname), '..', 'vercel.json'), 'utf8')).crons || []).map((c) => c.path)); } catch { return new Set(); } })();
   for (const [job, cat] of Object.entries(SCHEDULED_JOBS)) {
     const env = cat === 'D' ? [] : [tok('ADA_BETA_OPEN_JOBS', job), ...(cat === 'C' ? [tok('ADA_JOBS_APPROVED', job)] : []), eqv('CRON_SECRET', '≥ 24 caractères')];
@@ -297,7 +298,7 @@ export function buildItems() {
     video: ['VIDEO_PROVIDER', 'VIDEO_JITSI_DOMAIN', 'VIDEO_JITSI_APP_ID', 'VIDEO_JITSI_SECRET', 'VIDEO_PRODUCTION_APPROVED'],
     openfisca: ['OPENFISCA_URL'], 'aides-territoires': ['AIDES_TERRITOIRES_API_KEY'],
     franceconnect: ['FRANCECONNECT_ISSUER', 'FRANCECONNECT_CLIENT_ID', 'FRANCECONNECT_CLIENT_SECRET', 'FRANCECONNECT_PRODUCTION_APPROVED'],
-    proconnect: ['PROCONNECT_ENABLED', 'PROCONNECT_ISSUER', 'PROCONNECT_CLIENT_ID', 'PROCONNECT_CLIENT_SECRET', 'PROCONNECT_REDIRECT_URI'], sentry: ['SENTRY_DSN'],
+    proconnect: ['PROCONNECT_ENABLED', 'PROCONNECT_ISSUER', 'PROCONNECT_CLIENT_ID', 'PROCONNECT_CLIENT_SECRET', 'PROCONNECT_REDIRECT_URI', 'PROCONNECT_PRODUCTION_APPROVED'], sentry: ['SENTRY_DSN'],
   };
   const PROVIDER_OTHER = {
     mail: [{ type: 'provider_account', what: 'Mailjet : domaine, DKIM, sous-clé, DPA', ref: 'scripts/mail-provider-check.mjs' }],
