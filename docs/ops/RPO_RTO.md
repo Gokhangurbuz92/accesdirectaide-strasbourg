@@ -95,3 +95,35 @@ spending cap, and the R2 plan must already be purchased (it is: K2/K3). Cloudfla
 permission can delete, but the backup probe never observed a deletion (its bucket lock refuses it first). For this copy, deletion is **checked** by
 `scripts/tombstone-copy-probe.mjs` (run by the setup script before anything is stored) and, in service, a refused deletion raises
 `tombstone_copy.retention`. If R2 refused deletion, the 40-day retention would rest on the bucket lifecycle rule alone.
+
+## 6. Measured (FA-D11, 18/11/2026) — LAB timings, Production evidence, extrapolation
+
+**LAB, synthetic data** (`node --import tsx scripts/lab/d11-restore-timing.mjs --filler-rows N --out …`; Apple M4, local PostgreSQL 17, loopback
+fake bucket; the Production migration shape 0000..0042 + 0045..0052 = 51 history rows, 114 tables). The producer and verifier are the K3 job scripts
+(`scripts/cloud-backup.mjs`, `scripts/cloud-restore-verify.mjs`; byte-identical between the K3 pin 297c2b3 and 46afa53). Every run: producer → 20
+erasures after the backup → verifier restore into an empty database (signatures, history) → `db-deploy-migrate --check` → replay dry run →
+`--execute` → dry run again (0 present again) — all checks PASS.
+
+| Size | Encrypted dump | Producer | Verifier restore | Schema check | Replay dry / execute / dry | Restore path total |
+|---|---|---|---|---|---|---|
+| Production-like (3 runs) | 14.8 MB (Production 17/11: 14.6 MB) | 1.1 s | 1.69–1.78 s | 0.09–0.10 s | 0.18 / 0.58 / 0.18 s | **2.72–2.86 s** |
+| same, 300 erasures to replay | 14.8 MB | 1.1 s | 2.0 s | 0.10 s | 0.22 / 1.77 / 0.22 s | 4.3 s |
+| 10 × Production | 144 MB (database 681 MB) | 6.5 s | 12.6 s | 0.14 s | 0.18 / 0.60 / 0.18 s | **13.7 s** |
+
+**Production evidence (real, K3, 12/11/2026, `CONTROL/v2/c7/EVIDENCE_2026-11-12.json`)**: 10.5 MB dump restored and checked in a disposable Neon
+database in **25 s** (verifier's own count); the Scaleway job took 170 s wall-clock including the container start. Producer job 181 s wall-clock.
+
+**Extrapolation (assumption: restore time grows at most linearly with the dump size; the LAB 1× → 10× ratio was 7.4× for 9.7× the size).** Over the
+network to Neon, 25 s / 10.5 MB ≈ 2.4 s per MB ⇒ today's 14.6 MB ≈ 35 s; a database at the Neon Free storage cap (1 GB) — assuming the LAB ratio of
+about 5 : 1 between database size and encrypted dump — ≈ 200 MB ⇒ about 8 minutes. The **technical** part of the RTO is minutes; the RTO is spent
+in human steps (decision, new Neon database, Cloudflare download, Vercel variable + redeploy, about 4–5 min per build, smoke tests).
+
+**Where the targets are NOT met today (state 18/11/2026):**
+1. RTO 1 business day assumes the owner is reachable that day: there is no second person and no on-call fallback (single owner). Not met when the
+   owner is unavailable.
+2. RPO 24 h on the erasure side needs the tombstones: with the second copy not activated (D5 b waits for the owner's key setup), a simultaneous loss of
+   Upstash (Free: archived after ≥ 30 days of inactivity, deletable after 1 week under the terms) and of the database leaves `--execute` refused
+   (`TOMBSTONES_INCOMPLETE`) — the restore can be done, but not reopened lawfully without the owner's recorded decision.
+3. The yearly Neon restore drill (D7) and the genuine tombstone-copy recovery test (§ 4) have **not** been executed.
+4. A missed producer run is announced by Healthchecks after ~15 h (12 h period + 3 h grace) — inside the RPO; the job's own freshness verdict only
+   after 36 h (`BACKUP_MAX_AGE_HOURS`, § 1).

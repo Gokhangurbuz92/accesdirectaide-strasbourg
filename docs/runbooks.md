@@ -87,8 +87,9 @@ fichiers). Avant, elles devenaient illisibles dès la promotion d'une nouvelle c
 - **Signaux de sécurité** (RA-01) : connexions refusées, codes MFA refusés, exports — fenêtre de 70 minutes (intervalle du contrôle + 10 minutes de
   recouvrement, `ALERT_SECURITY_WINDOW_MINUTES`), prolongée jusqu'au contrôle précédent si une exécution a été retardée ; un même épisode n'est pas alerté deux fois.
 - **Erreurs** : Sentry, région UE, 10 % des traces de performance (`SENTRY_TRACES_SAMPLE_RATE`), Session Replay désactivé.
-- **Externe** (C1) : `.github/workflows/healthcheck.yml`, toutes les heures depuis GitHub, lectures publiques seulement ; échec de la 2e exécution
-  consécutive = e-mail GitHub au propriétaire (puis toutes les 6). Il signale l'absence du contrôle interne quand la fonction, le planificateur ou le
+- **Externe** (C1) : `.github/workflows/healthcheck.yml`, au plus une fois par heure depuis GitHub (GitHub peut retarder ou abandonner une exécution
+  planifiée : une seule exécution sur 11 heures observée le 17/11/2026), lectures publiques seulement ; échec de la 2e exécution consécutive = e-mail
+  GitHub au propriétaire (puis toutes les 6), ou dès la 1re quand l'exécution précédente date de plus de 2 heures. Il signale l'absence du contrôle interne quand la fonction, le planificateur ou le
   déploiement est arrêté. Il ne tourne qu'une fois poussé sur GitHub (`docs/ops/EXTERNAL_WATCHDOG.md`).
 - **CSP** : les violations apparaissent dans les journaux (`csp.violation` : directive, origine bloquée, chemin). Un pic après un déploiement indique
   une ressource bloquée.

@@ -1,8 +1,8 @@
 # External watchdog (RA-04 / C1)
 
 **State: installed in the repository** as `.github/workflows/healthcheck.yml` (owner Paket 4, C1 « EVET », 17/11/2026). GitHub runs it once the
-file is on the default branch of the GitHub repository (a push with a token that has the `workflow` scope). Until that push it does not run.
-Whether it has run is visible only in GitHub → Actions → « External healthcheck »; nothing in this document says it has.
+file is on the default branch of the GitHub repository (a push with a token that has the `workflow` scope). It is on `main` since 17/11/2026 (workflow
+registered 13:32 UTC) and has run (first scheduled run 17/11 22:16 UTC, success). GitHub → Actions → « External healthcheck » shows every run.
 
 ## Why
 The in-platform health check (`/api/cron/health-alert`, hourly) cannot report its own absence: if the serverless function, the Vercel scheduler or the
@@ -10,6 +10,10 @@ deployment is down, nobody is told. The external probe closes that gap without a
 
 ## What it does
 - Runs on GitHub's runners every hour at minute 12 (five minutes after the in-platform check, while Neon Free is still awake), and on demand.
+  **Scheduled, not guaranteed.** GitHub states that the `schedule` event « can be delayed during periods of high loads » and that « some queued jobs
+  may be dropped » (https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows, read 18/11/2026). Observed
+  (FA-D11, `gh run list --workflow healthcheck.yml`, 18/11/2026 00:39 UTC): the workflow was registered 17/11 13:32 UTC and ran **once** in the next
+  11 hours (17/11 22:16 UTC, success, every probe 200, served release 297c2b3). Treat it as « at most hourly ».
 - Read-only `GET` of public pages (`/`, `/aides`, `/demarches`, `/structures`, `/sitemap.xml`) and public endpoints (`/api/health`, `/api/health/ready`,
   `/api/status`, `/api/aides?pageSize=1`); each must answer 200 (two attempts, 15 s apart, 15 s time limit each).
 - `/api/status` must not report an unavailable component (the local assistant is ignored: there is no model in Production).
@@ -21,8 +25,9 @@ deployment is down, nobody is told. The external probe closes that gap without a
 ## Alerting without noise
 A failed probe does not fail the run. The step « Probe failed (strike) » runs instead and counts the consecutive failed runs before it (from this
 workflow's run history, up to 30 runs back). The run fails — GitHub's standard e-mail to the owner — only at the **2nd consecutive failed run**, then at
-every 6th (6, 12, 18, 24, 30 hours). One cold start or one network blip never alerts. If the run history cannot be read while the probe is failing, the
-run fails (an alert rather than silence). After 30 consecutive failed hours no further e-mail is sent (the history window); the runs stay visible.
+every 6th (6, 12, 18, 24, 30 runs). FA-D11: because GitHub may drop scheduled runs, the run also fails at the **1st** failed run when the previous
+run is more than 2 hours old (or there is none) — otherwise « two consecutive runs » could mean a day of silence. One cold start or one network blip never alerts. If the run history cannot be read while the probe is failing, the
+run fails (an alert rather than silence). After 30 consecutive failed runs no further e-mail is sent (the history window); the runs stay visible.
 
 ## Owner checks (outside the repository, not verified here)
 1. GitHub → Settings → Notifications → « Actions »: notifications for failed workflows must be on for the owner account.
