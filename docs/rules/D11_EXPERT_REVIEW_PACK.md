@@ -32,7 +32,7 @@ Ambiguïtés à trancher :
 - F286 donne des bornes d'âge incohérentes (18-25 / 16-25 / 16-24 selon la section ; la page N19775 dit 18-24) : à trancher par l'expert — décision : ……
 - Montant 651,69 € (personne seule) sans date d'effet sur la page — décision : ……
 
-Cas de référence proposés (5) :
+Cas de référence proposés (6) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
@@ -41,6 +41,7 @@ Cas de référence proposés (5) :
 | rsa-band-18-24 | {ageRange: [18, 24]} | {age: UNKNOWN} | {age: UNKNOWN} | tranche entièrement sous 25 ans : même cas que rsa-age-24 | ☐ accepter ☐ corriger ☐ rejeter |
 | rsa-band-25-59 | {ageRange: [25, 59]} | {age: MET} | {age: MET} | tranche entièrement à 25 ans ou plus | ☐ accepter ☐ corriger ☐ rejeter |
 | rsa-unread | {ageRange: [40, 40]} | {residence: UNKNOWN, resources: UNKNOWN, nationality: UNKNOWN, activity: UNKNOWN, activity_young: UNKNOWN} | {residence: UNKNOWN, resources: UNKNOWN, nationality: UNKNOWN, activity: UNKNOWN, activity_young: UNKNOWN} | conditions non lisibles à partir des réponses ADA : toujours inconnues | ☐ accepter ☐ corriger ☐ rejeter |
+| rsa-age-26 | {ageRange: [26, 26]} | {age: MET} | {age: MET} | F19778 « Vous pouvez demander le RSA si vous êtes âgé d'au moins 25 ans » : 26 ans, au-delà du seuil (FA-D6, archive DILA du 17/11/2026) | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
 
@@ -65,12 +66,13 @@ Ambiguïtés à trancher :
 - Montants forfaitaires (638,28 € / 957,42 €) revalorisés : date d'effet à confirmer — décision : ……
 - Pas de plafond explicite étudiants / apprentis sur la page — décision : ……
 
-Cas de référence proposés (2) :
+Cas de référence proposés (3) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
 | prime-age-17 | {ageRange: [17, 17]} | {age: NOT_MET} | {age: NOT_MET} | F2882 « 18 ans ou plus » | ☐ accepter ☐ corriger ☐ rejeter |
 | prime-age-18 | {ageRange: [18, 18]} | {age: MET} | {age: MET} | F2882 « 18 ans ou plus » : 18 inclus | ☐ accepter ☐ corriger ☐ rejeter |
+| prime-band-under-18 | {ageRange: [0, 17]} | {age: NOT_MET} | {age: NOT_MET} | F2882 « Avoir 18 ans ou plus » : tranche entièrement sous 18 ans (FA-D6) | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
 
@@ -96,12 +98,13 @@ Ambiguïtés à trancher :
 - Sous-location : le texte et l'infographie de la page diffèrent (moins de 30 ans / plus de 60 ans / handicap) — décision : ……
 - Plafonds non publiés sur la page — décision : ……
 
-Cas de référence proposés (2) :
+Cas de référence proposés (3) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
 | apl-tenant | {housing: {status: tenant}} | {housing.status: MET} | {housing.status: MET} | F12006 « locataire » | ☐ accepter ☐ corriger ☐ rejeter |
 | apl-owner | {housing: {status: owner}} | {housing.status: UNKNOWN} | {housing.status: UNKNOWN} | propriétaire : hors du champ de F12006 tel que relevé (APL accession non relevée) | ☐ accepter ☐ corriger ☐ rejeter |
+| apl-tenant-hlm | {housing: {status: tenant_hlm}} | {housing.status: MET} | {housing.status: MET} | F12006 « La plupart des logements HLM » : locataire d'un logement HLM = locataire (conventionnement à vérifier) (FA-D6) | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
 
@@ -125,7 +128,7 @@ Base légale citée : CSS L821-1 à L821-8 ; CSS R821-1 à R821-9 ; CSS D821-1 �
 Ambiguïtés à trancher :
 - Plafonds et montant maximal (1 041,59 €) revalorisés : date d'effet à confirmer — décision : ……
 
-Cas de référence proposés (7) :
+Cas de référence proposés (8) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
@@ -136,6 +139,7 @@ Cas de référence proposés (7) :
 | aah-res-above | {annualResources: 12500, children: 0} | {resources: NOT_MET} | {resources: NOT_MET} | F12242 : au-dessus de 12 499 € sans enfant | ☐ accepter ☐ corriger ☐ rejeter |
 | aah-res-1child | {annualResources: 18000, children: 1} | {resources: MET} | {resources: MET} | F12242 : 18 749 € avec 1 enfant | ☐ accepter ☐ corriger ☐ rejeter |
 | aah-res-2children | {annualResources: 18000, children: 2} | {resources: UNKNOWN} | {resources: UNKNOWN} | plafond pour 2 enfants non relevé dans le registre | ☐ accepter ☐ corriger ☐ rejeter |
+| aah-res-1child-above | {annualResources: 18750, children: 1} | {resources: NOT_MET} | {resources: NOT_MET} | F12242 « Nombre d'enfants à charge au sens des prestations familiales » : 18 749 € avec 1 enfant ; 18 750 € est au-dessus (FA-D6) | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
 
@@ -160,13 +164,14 @@ Ambiguïtés à trancher :
 - Plafonds de plan d'aide : F10009 (GIR1 2 080,33 € … GIR4 811,52 €) et une page solidarites.gouv.fr non consultée directement (GIR1 1 914,04 € …) divergent — décision : ……
 - Livret CeA de janvier 2023 : périmé — décision : ……
 
-Cas de référence proposés (3) :
+Cas de référence proposés (4) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
 | apa-age-59 | {ageRange: [59, 59]} | {age: NOT_MET} | {age: NOT_MET} | F10009 « Vous devez être âgé d’au moins 60 ans » | ☐ accepter ☐ corriger ☐ rejeter |
 | apa-age-60 | {ageRange: [60, 60]} | {age: MET} | {age: MET} | F10009 « Vous devez être âgé d’au moins 60 ans » | ☐ accepter ☐ corriger ☐ rejeter |
 | apa-band-60plus | {ageRange: [60, 130]} | {age: MET, dependency: UNKNOWN} | {age: MET, dependency: UNKNOWN} | GIR 1 à 4 : évaluation par l'équipe médico-sociale du Département, jamais lisible par ADA | ☐ accepter ☐ corriger ☐ rejeter |
+| apa-band-25-59 | {ageRange: [25, 59]} | {age: NOT_MET} | {age: NOT_MET} | F10009 « Vous devez être âgé d’au moins 60 ans » : tranche entièrement sous 60 ans (FA-D6) | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
 
@@ -217,7 +222,7 @@ Base légale citée : CSS L861-1 à L861-12 ; CSS R861-2 à R861-10 ; CSS R111-1
 Ambiguïtés à trancher :
 - Plafonds sans date d'effet sur la page ; ameli.fr non consulté — décision : ……
 
-Cas de référence proposés (4) :
+Cas de référence proposés (5) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
@@ -225,6 +230,7 @@ Cas de référence proposés (4) :
 | c2s-contribution | {annualResources: 12000, householdSize: 1, area: metropole} | {resources: MET} | {resources: MET} | F10027 : avec participation de 10 421 à 14 069 € | ☐ accepter ☐ corriger ☐ rejeter |
 | c2s-above | {annualResources: 14070, householdSize: 1, area: metropole} | {resources: NOT_MET} | {resources: NOT_MET} | F10027 : au-dessus de 14 069 € | ☐ accepter ☐ corriger ☐ rejeter |
 | c2s-household-2 | {annualResources: 12000, householdSize: 2, area: metropole} | {resources: UNKNOWN} | {resources: UNKNOWN} | barème au-delà d'une personne non relevé dans le registre | ☐ accepter ☐ corriger ☐ rejeter |
+| c2s-at-upper | {annualResources: 14069, householdSize: 1, area: metropole} | {resources: MET} | {resources: MET} | F10027 « Entre 10 421 € et 14 069 € » : 14 069 € inclus dans la tranche avec participation (inclusion de la borne à confirmer par l'expert) (FA-D6) | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
 
@@ -248,7 +254,7 @@ Ambiguïtés à trancher :
 - Aucun plafond de ressources, règle de nationalité, barème ni article de loi sur la page ; date de mise à jour absente — décision : ……
 - La page contenait un texte caché adressé à des agents automatiques : ignoré (donnée de page) — décision : ……
 
-Cas de référence proposés (6) :
+Cas de référence proposés (9) :
 
 | Cas | Réponses | Attendu (proposé) | Lecture actuelle | Fondement | Décision expert |
 |---|---|---|---|---|---|
@@ -258,6 +264,9 @@ Cas de référence proposés (6) :
 | faj-age-26 | {ageRange: [26, 26]} | {age: NOT_MET} | {age: NOT_MET} | au-delà de 25 ans | ☐ accepter ☐ corriger ☐ rejeter |
 | faj-territory-67000 | {territory: 67000} | {territory: UNKNOWN} | {territory: UNKNOWN} | code postal du Bas-Rhin : la liste des communes de l'Eurométropole n'est pas vérifiée | ☐ accepter ☐ corriger ☐ rejeter |
 | faj-territory-75011 | {territory: 75011} | {territory: NOT_MET} | {territory: NOT_MET} | hors Bas-Rhin, donc hors Eurométropole (le FAJ d'un autre territoire peut s'appliquer) | ☐ accepter ☐ corriger ☐ rejeter |
+| faj-territory-68100 | {territory: 68100} | {territory: NOT_MET} | {territory: NOT_MET} | Haut-Rhin (Alsace-Moselle, hors Bas-Rhin) : hors Eurométropole ; le FAJ de la Collectivité européenne d'Alsace peut s'appliquer (règlement non lu) (FA-D6, résidence) | ☐ accepter ☐ corriger ☐ rejeter |
+| faj-territory-57000 | {territory: 57000} | {territory: NOT_MET} | {territory: NOT_MET} | Moselle (Alsace-Moselle, hors Bas-Rhin) : hors Eurométropole ; un autre fonds d'aide aux jeunes peut exister (non lu) (FA-D6, résidence) | ☐ accepter ☐ corriger ☐ rejeter |
+| faj-territory-dept-67 | {territory: 67} | {territory: UNKNOWN} | {territory: UNKNOWN} | département 67 seul : la commune, donc l'appartenance à l'Eurométropole, reste à vérifier (FA-D6, résidence) | ☐ accepter ☐ corriger ☐ rejeter |
 
 Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
 

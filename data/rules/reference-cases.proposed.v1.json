@@ -440,6 +440,128 @@
       },
       "basis": "ARE : aucune condition lisible à partir des réponses ADA (perte d'emploi, durée d'affiliation, inscription) : France Travail décide",
       "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-age-26",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          26,
+          26
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "F19778 « Vous pouvez demander le RSA si vous êtes âgé d'au moins 25 ans » : 26 ans, au-delà du seuil (FA-D6, archive DILA du 17/11/2026)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "prime-band-under-18",
+      "right": "prime-activite",
+      "facts": {
+        "ageRange": [
+          0,
+          17
+        ]
+      },
+      "expected": {
+        "age": "NOT_MET"
+      },
+      "basis": "F2882 « Avoir 18 ans ou plus » : tranche entièrement sous 18 ans (FA-D6)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-1child-above",
+      "right": "aah",
+      "facts": {
+        "annualResources": 18750,
+        "children": 1
+      },
+      "expected": {
+        "resources": "NOT_MET"
+      },
+      "basis": "F12242 « Nombre d'enfants à charge au sens des prestations familiales » : 18 749 € avec 1 enfant ; 18 750 € est au-dessus (FA-D6)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apa-band-25-59",
+      "right": "apa",
+      "facts": {
+        "ageRange": [
+          25,
+          59
+        ]
+      },
+      "expected": {
+        "age": "NOT_MET"
+      },
+      "basis": "F10009 « Vous devez être âgé d’au moins 60 ans » : tranche entièrement sous 60 ans (FA-D6)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apl-tenant-hlm",
+      "right": "apl",
+      "facts": {
+        "housing": {
+          "status": "tenant_hlm"
+        }
+      },
+      "expected": {
+        "housing.status": "MET"
+      },
+      "basis": "F12006 « La plupart des logements HLM » : locataire d'un logement HLM = locataire (conventionnement à vérifier) (FA-D6)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-at-upper",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 14069,
+        "householdSize": 1,
+        "area": "metropole"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "F10027 « Entre 10 421 € et 14 069 € » : 14 069 € inclus dans la tranche avec participation (inclusion de la borne à confirmer par l'expert) (FA-D6)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-territory-68100",
+      "right": "faj-strasbourg",
+      "facts": {
+        "territory": "68100"
+      },
+      "expected": {
+        "territory": "NOT_MET"
+      },
+      "basis": "Haut-Rhin (Alsace-Moselle, hors Bas-Rhin) : hors Eurométropole ; le FAJ de la Collectivité européenne d'Alsace peut s'appliquer (règlement non lu) (FA-D6, résidence)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-territory-57000",
+      "right": "faj-strasbourg",
+      "facts": {
+        "territory": "57000"
+      },
+      "expected": {
+        "territory": "NOT_MET"
+      },
+      "basis": "Moselle (Alsace-Moselle, hors Bas-Rhin) : hors Eurométropole ; un autre fonds d'aide aux jeunes peut exister (non lu) (FA-D6, résidence)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-territory-dept-67",
+      "right": "faj-strasbourg",
+      "facts": {
+        "territory": "67"
+      },
+      "expected": {
+        "territory": "UNKNOWN"
+      },
+      "basis": "département 67 seul : la commune, donc l'appartenance à l'Eurométropole, reste à vérifier (FA-D6, résidence)",
+      "status": "PROPOSED_UNREVIEWED"
     }
   ]
 }

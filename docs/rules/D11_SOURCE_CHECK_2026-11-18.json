@@ -1,0 +1,1576 @@
+{
+ "schema": "ADA_D11_SOURCE_CHECK_EVIDENCE_V1",
+ "checkedAt": "2026-11-18",
+ "statement": "FA-D6 : contrôle de sources indépendant (SOURCE_CHECKED). Aucune règle n'est validée : relecture par une personne experte nommée requise (EXPERT_REVIEW_PENDING).",
+ "livePages": {
+  "checkedAt": "2026-11-17T23:46:48.048Z",
+  "pages": [
+   {
+    "right": "rsa",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F19778",
+    "recorded": "2026-04-01",
+    "http": 200,
+    "current": "2026-04-01",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "rsa",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F286",
+    "recorded": "2026-04-01",
+    "http": 200,
+    "current": "2026-04-01",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "prime-activite",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2882",
+    "recorded": "2026-06-01",
+    "http": 200,
+    "current": "2026-06-01",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "apl",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12006",
+    "recorded": "2026-07-01",
+    "http": 200,
+    "current": "2026-07-01",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "aah",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12242",
+    "recorded": "2026-09-14",
+    "http": 200,
+    "current": "2026-09-14",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "apa",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10009",
+    "recorded": "2026-06-01",
+    "http": 200,
+    "current": "2026-06-01",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "are",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38881",
+    "recorded": "2026-07-23",
+    "http": 200,
+    "current": "2026-07-23",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "c2s",
+    "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10027",
+    "recorded": "2026-07-01",
+    "http": 200,
+    "current": "2026-07-01",
+    "verdict": "UNCHANGED"
+   },
+   {
+    "right": "faj-strasbourg",
+    "url": "https://www.strasbourg.eu/fr/fond-aide-jeunes",
+    "recorded": null,
+    "http": 200,
+    "current": null,
+    "verdict": "NO_DATE_ON_PAGE"
+   }
+  ],
+  "summary": {
+   "UNCHANGED": 8,
+   "NO_DATE_ON_PAGE": 1
+  }
+ },
+ "assert": {
+  "tool": "scripts/d11-source-assert.mjs",
+  "ranAt": "2026-11-17T23:57:08.818Z",
+  "archive": {
+   "file": "vosdroits-latest.zip",
+   "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107",
+   "fiches": 3244
+  },
+  "statement": "Machine checks only. Nothing here validates a rule: the D11 decision stays with an expert reviewer (scripts/d11-review.mjs, api/lib/validatedRules.js).",
+  "referenceDate": "2026-11-18",
+  "items": 85,
+  "summary": {
+   "TEXT_CONFIRMED": 32,
+   "METADATA_UNCHANGED": 12,
+   "NOT_MACHINE_CHECKABLE": 35,
+   "LIVE_PAGE_CONFIRMED": 4,
+   "NO_ARCHIVE_SOURCE": 2
+  },
+  "legalBasis": {
+   "rsa": {
+    "articles": 49,
+    "inForce": 49,
+    "notInForce": [],
+    "repealScheduled": []
+   },
+   "prime-activite": {
+    "articles": 49,
+    "inForce": 49,
+    "notInForce": [],
+    "repealScheduled": []
+   },
+   "apl": {
+    "articles": 48,
+    "inForce": 48,
+    "notInForce": [],
+    "repealScheduled": []
+   },
+   "aah": {
+    "articles": 72,
+    "inForce": 72,
+    "notInForce": [],
+    "repealScheduled": []
+   },
+   "apa": {
+    "articles": 32,
+    "inForce": 32,
+    "notInForce": [],
+    "repealScheduled": []
+   },
+   "are": {
+    "articles": 15,
+    "inForce": 15,
+    "notInForce": [],
+    "repealScheduled": []
+   },
+   "c2s": {
+    "articles": 59,
+    "inForce": 59,
+    "notInForce": [],
+    "repealScheduled": [
+     "CSS L861-3 (repeal scheduled 2222-02-22)",
+     "CSS L861-5 (repeal scheduled 2222-02-22)"
+    ]
+   }
+  },
+  "rows": [
+   {
+    "right": "rsa",
+    "item_type": "condition",
+    "item_id": "age",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 25",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "rsa",
+    "item_type": "condition",
+    "item_id": "residence",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "rsa",
+    "item_type": "condition",
+    "item_id": "resources",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 3",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "rsa",
+    "item_type": "condition",
+    "item_id": "nationality",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 3",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 5",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "rsa",
+    "item_type": "condition",
+    "item_id": "activity",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "rsa",
+    "item_type": "condition",
+    "item_id": "activity_young",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 2",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 3214",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 3",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "rsa",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [
+     {
+      "check": "figure 286 (information only)",
+      "result": "NOT_FOUND"
+     },
+     {
+      "check": "figure 19775 (information only)",
+      "result": "NOT_FOUND"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "rsa",
+    "item_type": "ambiguity",
+    "item_id": "2",
+    "tier": "D",
+    "checks": [
+     {
+      "check": "figure 651,69 (information only)",
+      "result": "FOUND"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "rsa",
+    "item_type": "case",
+    "item_id": "rsa-age-25",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « au moins 25 ans »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "rsa",
+    "item_type": "case",
+    "item_id": "rsa-age-24",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "rsa",
+    "item_type": "case",
+    "item_id": "rsa-band-18-24",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "rsa",
+    "item_type": "case",
+    "item_id": "rsa-band-25-59",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "rsa",
+    "item_type": "case",
+    "item_id": "rsa-unread",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "rsa",
+    "item_type": "case",
+    "item_id": "rsa-age-26",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « Vous pouvez demander le RSA si vous êtes âgé d'au moins 25 ans »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-04-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "condition",
+    "item_id": "age",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 18",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "condition",
+    "item_id": "activity",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "condition",
+    "item_id": "residence",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "condition",
+    "item_id": "nationality",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 3",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [
+     {
+      "check": "figure 638,28 (information only)",
+      "result": "FOUND"
+     },
+     {
+      "check": "figure 957,42 (information only)",
+      "result": "FOUND"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "ambiguity",
+    "item_id": "2",
+    "tier": "D",
+    "checks": [],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "case",
+    "item_id": "prime-age-17",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « 18 ans ou plus »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "case",
+    "item_id": "prime-age-18",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « 18 ans ou plus »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "prime-activite",
+    "item_type": "case",
+    "item_id": "prime-band-under-18",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « Avoir 18 ans ou plus »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apl",
+    "item_type": "condition",
+    "item_id": "housing.status",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "apl",
+    "item_type": "condition",
+    "item_id": "housing",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "apl",
+    "item_type": "condition",
+    "item_id": "resources",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 12",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 3",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 30000",
+      "result": "FOUND"
+     },
+     {
+      "check": "citation « arrêté du 27 septembre 2019 »",
+      "result": "FOUND",
+      "detail": "checked against the legal basis (LEGI subset), not the fiche"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apl",
+    "item_type": "condition",
+    "item_id": "nationality",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 1",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 2026",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apl",
+    "item_type": "condition",
+    "item_id": "exclusion",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "apl",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "apl",
+    "item_type": "ambiguity",
+    "item_id": "2",
+    "tier": "D",
+    "checks": [],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "apl",
+    "item_type": "case",
+    "item_id": "apl-tenant",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « locataire »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apl",
+    "item_type": "case",
+    "item_id": "apl-owner",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "apl",
+    "item_type": "case",
+    "item_id": "apl-tenant-hlm",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « La plupart des logements HLM »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "aah",
+    "item_type": "condition",
+    "item_id": "disability",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 80",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 50",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 79",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 1",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "none <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "aah",
+    "item_type": "condition",
+    "item_id": "age",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 20",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 16",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "none <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "aah",
+    "item_type": "condition",
+    "item_id": "residence",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "none <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "aah",
+    "item_type": "condition",
+    "item_id": "resources",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 2",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 12499",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 18749",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 1",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "none <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "aah",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [
+     {
+      "check": "figure 1041,59 (information only)",
+      "result": "FOUND"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-age-15",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-age-17",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-age-20",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « au moins 20 ans »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "none <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-res-at-ceiling",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « jusqu'à »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "none <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-res-above",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-res-1child",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-res-2children",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "aah",
+    "item_type": "case",
+    "item_id": "aah-res-1child-above",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « Nombre d'enfants à charge au sens des prestations familiales »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "none <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apa",
+    "item_type": "condition",
+    "item_id": "age",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 60",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apa",
+    "item_type": "condition",
+    "item_id": "dependency",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 1",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 4",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apa",
+    "item_type": "condition",
+    "item_id": "residence",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "apa",
+    "item_type": "condition",
+    "item_id": "exclusion",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "apa",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [
+     {
+      "check": "figure 10009 (information only)",
+      "result": "NOT_FOUND"
+     },
+     {
+      "check": "figure 2080,33 (information only)",
+      "result": "FOUND"
+     },
+     {
+      "check": "figure 4811,52 (information only)",
+      "result": "NOT_FOUND"
+     },
+     {
+      "check": "figure 1914,04 (information only)",
+      "result": "NOT_FOUND"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "apa",
+    "item_type": "ambiguity",
+    "item_id": "2",
+    "tier": "D",
+    "checks": [
+     {
+      "check": "figure 2023 (information only)",
+      "result": "NOT_FOUND"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "apa",
+    "item_type": "case",
+    "item_id": "apa-age-59",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « Vous devez être âgé d’au moins 60 ans »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apa",
+    "item_type": "case",
+    "item_id": "apa-age-60",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « Vous devez être âgé d’au moins 60 ans »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "apa",
+    "item_type": "case",
+    "item_id": "apa-band-60plus",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "apa",
+    "item_type": "case",
+    "item_id": "apa-band-25-59",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « Vous devez être âgé d’au moins 60 ans »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-06-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "are",
+    "item_type": "condition",
+    "item_id": "employment_loss",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-23 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "are",
+    "item_type": "condition",
+    "item_id": "affiliation",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 6",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 130",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 910",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 24",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 36",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 55",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 1",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 2026",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 5",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-23 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "are",
+    "item_type": "condition",
+    "item_id": "registration",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 12",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-23 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "are",
+    "item_type": "condition",
+    "item_id": "residence",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-23 <= 2026-10-21"
+     }
+    ],
+    "verdict": "METADATA_UNCHANGED"
+   },
+   {
+    "right": "are",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "are",
+    "item_type": "case",
+    "item_id": "are-unread",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "c2s",
+    "item_type": "condition",
+    "item_id": "residence",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 3",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "c2s",
+    "item_type": "condition",
+    "item_id": "resources",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 12",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 13",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 2",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 1",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 10421",
+      "result": "FOUND"
+     },
+     {
+      "check": "number 14069",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "c2s",
+    "item_type": "condition",
+    "item_id": "automatic",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "number 2",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "c2s",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "c2s",
+    "item_type": "case",
+    "item_id": "c2s-free",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "c2s",
+    "item_type": "case",
+    "item_id": "c2s-contribution",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "c2s",
+    "item_type": "case",
+    "item_id": "c2s-above",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "c2s",
+    "item_type": "case",
+    "item_id": "c2s-household-2",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "c2s",
+    "item_type": "case",
+    "item_id": "c2s-at-upper",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « Entre 10 421 € et 14 069 € »",
+      "result": "FOUND"
+     },
+     {
+      "check": "important_change_date",
+      "result": "UNCHANGED",
+      "detail": "2026-07-01 <= 2026-10-21"
+     }
+    ],
+    "verdict": "TEXT_CONFIRMED"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "condition",
+    "item_id": "age",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "source",
+      "result": "NO_ARCHIVE_SOURCE",
+      "detail": "strasbourg.eu: not in the DILA archive (no date on page)"
+     },
+     {
+      "check": "number 16 (live page)",
+      "result": "FOUND",
+      "detail": "https://www.strasbourg.eu/fr/fond-aide-jeunes read 2026-11-17T23:57:08.817Z, sha256 8f8c5300f309"
+     },
+     {
+      "check": "number 25 (live page)",
+      "result": "FOUND",
+      "detail": "https://www.strasbourg.eu/fr/fond-aide-jeunes read 2026-11-17T23:57:08.817Z, sha256 8f8c5300f309"
+     }
+    ],
+    "verdict": "LIVE_PAGE_CONFIRMED"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "condition",
+    "item_id": "territory",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "source",
+      "result": "NO_ARCHIVE_SOURCE",
+      "detail": "strasbourg.eu: not in the DILA archive (no date on page)"
+     }
+    ],
+    "verdict": "NO_ARCHIVE_SOURCE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "condition",
+    "item_id": "nature",
+    "tier": "B",
+    "checks": [
+     {
+      "check": "source",
+      "result": "NO_ARCHIVE_SOURCE",
+      "detail": "strasbourg.eu: not in the DILA archive (no date on page)"
+     }
+    ],
+    "verdict": "NO_ARCHIVE_SOURCE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "ambiguity",
+    "item_id": "1",
+    "tier": "D",
+    "checks": [],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "ambiguity",
+    "item_id": "2",
+    "tier": "D",
+    "checks": [],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-age-15",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « 16 à 25 ans » (live page)",
+      "result": "FOUND",
+      "detail": "https://www.strasbourg.eu/fr/fond-aide-jeunes read 2026-11-17T23:57:08.817Z, sha256 8f8c5300f309"
+     }
+    ],
+    "verdict": "LIVE_PAGE_CONFIRMED"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-age-16",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « 16 à 25 ans » (live page)",
+      "result": "FOUND",
+      "detail": "https://www.strasbourg.eu/fr/fond-aide-jeunes read 2026-11-17T23:57:08.817Z, sha256 8f8c5300f309"
+     }
+    ],
+    "verdict": "LIVE_PAGE_CONFIRMED"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-age-25",
+    "tier": "A",
+    "checks": [
+     {
+      "check": "quote « 16 à 25 ans » (live page)",
+      "result": "FOUND",
+      "detail": "https://www.strasbourg.eu/fr/fond-aide-jeunes read 2026-11-17T23:57:08.817Z, sha256 8f8c5300f309"
+     }
+    ],
+    "verdict": "LIVE_PAGE_CONFIRMED"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-age-26",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-territory-67000",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-territory-75011",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-territory-68100",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-territory-57000",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   },
+   {
+    "right": "faj-strasbourg",
+    "item_type": "case",
+    "item_id": "faj-territory-dept-67",
+    "tier": "C",
+    "checks": [
+     {
+      "check": "internal_consistency",
+      "result": "TESTED_ELSEWHERE",
+      "detail": "expected result = draft reading (tests/unit/pkg6-d11-rules-draft.test.jsx)"
+     }
+    ],
+    "verdict": "NOT_MACHINE_CHECKABLE"
+   }
+  ],
+  "livePages": [
+   {
+    "right": "faj-strasbourg",
+    "url": "https://www.strasbourg.eu/fr/fond-aide-jeunes",
+    "status": 200,
+    "fetchedAt": "2026-11-17T23:57:08.817Z",
+    "sha256": "8f8c5300f30980978845facf9425fd1f1ff64603748cf2cf07e45371644ff70a"
+   }
+  ]
+ }
+}
