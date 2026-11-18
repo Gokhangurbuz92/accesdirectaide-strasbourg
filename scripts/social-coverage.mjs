@@ -9,7 +9,7 @@
  * the published places of its place types, whether the cross-language search knows its domain, and the official emergency numbers it carries.
  * Status (never one merged percentage):
  *   COVERED_VERIFIED   verified rights content AND (local places, or the subdomain is national/remote by nature)
- *   PARTIALLY_COVERED  verified rights content OR places, not both
+ *   PARTIALLY_COVERED  verified rights content OR places OR a declared service of a published place (FA-D2), not the full pair
  *   TAXONOMY_ONLY      the reference names it, nothing published matches
  * A keyword match is a FINDING aid, not a relevance judgement: the matrix lists the matched slugs so a reviewer can check them.
  */
@@ -19,6 +19,7 @@ import { publishedRecords } from './translate-content.mjs';
 import TERMS from '../api/_services/verification/datainclusion-terms.js';
 import { withoutExclusions } from '../api/lib/finess-labels.js';   // R37: « (non compris …) » clauses never match
 import { isMainModule } from './lib/is-main.mjs';
+import { EXTRA } from '../api/_services/verification/classify.js';   // FA-D2: the words the reference lacks, shared with the classification
 
 /** R36: the kind of answer each need calls for (data/reference/service-response-types.v1.json) */
 const RESPONSES = JSON.parse(fs.readFileSync(new URL('../data/reference/service-response-types.v1.json', import.meta.url), 'utf8')).subdomains;
@@ -39,6 +40,21 @@ const isEms = (p) => EMS_POSTCODE.test(String(p.code_postal || '')) || EMS_TOWN.
 /** data·inclusion thématique label → code (the schema's own vocabulary) */
 const CODE_OF_THEME = new Map(Object.entries(TERMS.lists.thematiques || {}).map(([code, label]) => [label, code]));
 
+/**
+ * FA-D2 (18/11/2026): the subdomains the verification chain placed a record in (auto_check.classification, kept in the --cache dump as « cls »; a public Level 1
+ * record also carries them as mots_cles [domain, subdomain]), or null for a record nobody classified (hand-written content: words decide, as before).
+ * With 1 400 Level 1 fiches in the LAB catalogue, context-blind words counted « pension alimentaire » as food aid, « permis de construire » as mobility to work
+ * and « budget prévisionnel d'une copropriété » as budget advice: a classified record now counts only where the classification put it.
+ * @param {any} r @returns {Set<string> | null}
+ */
+export function classifiedSubdomains(r) {
+  const c = r?.cls || r?.auto_check?.classification;
+  if (c && typeof c === 'object') return new Set([...(Array.isArray(c.subdomains) ? c.subdomains : []), ...(c.domain && c.subdomain ? [`${c.domain}/${c.subdomain}`] : [])]);
+  const official = r?.mode === 'OFFICIAL_SOURCE' || r?.auto_check?.textsMode === 'OFFICIAL_SOURCE';
+  if (official && Array.isArray(r.mots_cles) && r.mots_cles.length) return new Set(r.mots_cles[1] ? [`${r.mots_cles[0]}/${r.mots_cles[1]}`] : []);
+  return null;
+}
+
 export function matchKeyword(haystack, kw) {
   const k = fold(kw); const h = fold(haystack);
   if (/^[a-z0-9]{2,5}$/i.test(kw) && kw === kw.toUpperCase()) return new RegExp(`(?<![\\p{L}\\d])${k}(?![\\p{L}\\d])`, 'u').test(h);   // acronyms: whole word
@@ -48,10 +64,17 @@ export function matchKeyword(haystack, kw) {
 /** @param {any} ref @param {any} data @param {Set<string>} lexiconIds @param {Map<string, number>} [scenarioHits] passing orientation scenarios per subdomain */
 export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), responses = RESPONSES) {
   const rows = [];
-  for (const d of ref.domains) for (const s of d.subdomains) {
+  for (const d of ref.domains) for (const s0 of d.subdomains) {
+    // FA-D2: the classification's extra words (EXTRA) count here too — one list, so a need the classifier reaches is not measured empty
+    const extra = EXTRA[`${d.id}/${s0.id}`] || [];
+    const s = { ...s0, keywords: [...s0.keywords, ...extra] };
+    // a classified record counts where the chain placed it, or where a curated EXTRA word names it in its title (a record classified before the word was added)
+    const placedHere = (r, placed) => placed.has(`${d.id}/${s.id}`) || extra.some((kw) => matchKeyword(text(r.titre), kw));
     const rights = [];
     for (const kind of ['aide', 'demarche', 'guide', 'dispositif', 'actualite']) {
       for (const r of data[kind] || []) {
+        const placed = classifiedSubdomains(r);
+        if (placed) { if (placedHere(r, placed)) rights.push(`${kind}:${r.slug}`); continue; }
         const hay = RIGHTS_FIELDS.map((f) => text(r[f])).join(' ');
         if (s.keywords.some((kw) => matchKeyword(hay, kw))) rights.push(`${kind}:${r.slug}`);
       }
@@ -61,11 +84,11 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), respon
     const answer = responses[s.id] || null;
     // R36: a need served by an official national channel (hotline, benefit, national procedure) is remote by nature, as the R32 list already said for others
     const remote = REMOTE.has(s.id) || s.emergency.length > 0 || answer?.national === true;
-    const status = rights.length && (places.length || remote) ? 'COVERED_VERIFIED' : rights.length || places.length ? 'PARTIALLY_COVERED' : 'TAXONOMY_ONLY';
     // R34: the stricter evidence ladder. A keyword in a long text, or a building of the right type, is not proof that a service exists for this need.
     const titled = []; const procedures = [];
     for (const kind of ['aide', 'demarche', 'guide', 'dispositif']) for (const r of data[kind] || []) {
-      if (s.keywords.some((kw) => matchKeyword(text(r.titre), kw))) { titled.push(`${kind}:${r.slug}`); if (kind === 'demarche' || kind === 'guide') procedures.push(`${kind}:${r.slug}`); }
+      const placed = classifiedSubdomains(r);
+      if (placed ? placedHere(r, placed) : s.keywords.some((kw) => matchKeyword(text(r.titre), kw))) { titled.push(`${kind}:${r.slug}`); if (kind === 'demarche' || kind === 'guide') procedures.push(`${kind}:${r.slug}`); }
     }
     // the services of a place: its own declared list, and the services data·inclusion attributes to it (Structure.services_externes: schema labels only,
     // each with its producer and authority — a public operator, the managing body, or a self-declaration on a platform)
@@ -90,6 +113,9 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), respon
       return s.emergency.filter((n) => /^\d{3,}$/.test(n)).some((n) => [...t.matchAll(new RegExp(`(?<!\\d)${n}(?!\\d)`, 'g'))].some((m) => s.keywords.filter((kw) => !/^\d+$/.test(kw)).some((kw) => t.slice(Math.max(0, m.index - 300), m.index + 300).includes(fold(kw)))));
     }).map((g) => `guide:${g.slug}`);
     const servicesEms = services.filter((x) => isEms(x.p));
+    // FA-D2: TAXONOMY_ONLY means nothing published matches — a published place that declares a service for this need (data·inclusion) is something:
+    // such a need is PARTIALLY_COVERED, never COVERED_VERIFIED on services alone (LAB 18/11: iae, illettrisme, isolement had 2 / 9 / 46 such services)
+    const status = rights.length && (places.length || remote) ? 'COVERED_VERIFIED' : rights.length || places.length || services.length ? 'PARTIALLY_COVERED' : 'TAXONOMY_ONLY';
     const contact = (p) => Boolean(p.telephone || p.email || p.site_web);
     const official = (x) => x.list.some((v) => ['OPERATEUR_PUBLIC', 'ORGANISME_GESTIONNAIRE', 'AUTORISATION_FINESS', 'LIEU_SERVICE_PUBLIC'].includes(v.authority));
     const fresh = (x) => x.p.date_verification && Date.now() - Date.parse(x.p.date_verification) < 90 * 86400e3 && x.list.some((v) => v.updatedAt && Date.now() - Date.parse(v.updatedAt) < 365 * 86400e3);
@@ -119,7 +145,7 @@ export function coverage(ref, data, lexiconIds, scenarioHits = new Map(), respon
     rows.push({ domain: d.id, letter: d.letter, subdomain: s.id, fr: s.fr, status,
       rightsContent: rights.length, rightsSlugs: rights.slice(0, 12), places: places.length, placesEurometropole: inEms.length, placeTypes: s.structureTypes,
       emergency: s.emergency, crossLanguageSearch: d.lexicon.some((c) => lexiconIds.has(c)), casf: s.casf, dataInclusion: s.dataInclusion,
-      remoteByNature: remote, responseTypes: answer?.types || null, nationalChannel: answer?.channel || null, insufficient: answer?.insufficient || null, evidence, serviceStatus, serviceEvidence: serviceStatus === 'SERVICE_VERIFIED' ? (byTitle ? 'OFFICIAL_TITLE_AND_CHANNEL' : 'OFFICIAL_SHEET_HOTLINE') : null, hotlineSheets, titledSlugs: titled.slice(0, 8), services: services.length, servicesEurometropole: servicesEms.length, servicesOfficial: services.filter(official).length, servicePlaces: servicesEms.slice(0, 6).map((x) => x.p.slug), gap: status === 'COVERED_VERIFIED' ? null : rights.length ? 'missing verified local service data' : places.length ? 'missing verified rights content' : 'missing content and service data' });
+      remoteByNature: remote, responseTypes: answer?.types || null, nationalChannel: answer?.channel || null, insufficient: answer?.insufficient || null, evidence, serviceStatus, serviceEvidence: serviceStatus === 'SERVICE_VERIFIED' ? (byTitle ? 'OFFICIAL_TITLE_AND_CHANNEL' : 'OFFICIAL_SHEET_HOTLINE') : null, hotlineSheets, titledSlugs: titled.slice(0, 8), services: services.length, servicesEurometropole: servicesEms.length, servicesOfficial: services.filter(official).length, servicePlaces: servicesEms.slice(0, 6).map((x) => x.p.slug), gap: status === 'COVERED_VERIFIED' ? null : rights.length ? 'missing verified local service data' : places.length ? 'missing verified rights content' : services.length ? 'missing verified rights content (declared services only)' : 'missing content and service data' });
   }
   const count = (k) => rows.reduce((a, r) => ({ ...a, [r[k]]: (a[r[k]] || 0) + 1 }), {});
   return { schema: 'ada-social-coverage/1', reference: ref.version, measuredAt: new Date().toISOString(), totals: { subdomains: rows.length, byStatus: count('status'), byServiceStatus: count('serviceStatus'),

@@ -14,8 +14,11 @@ import { fileURLToPath } from 'node:url';
  * The dataset provides thousands of "fiches pratiques" covering administrative
  * procedures for French citizens (démarches, droits, formulaires).
  *
- * Source: https://www.data.gouv.fr/fr/datasets/service-public-fr-guide-vos-droits-et-demarches-particuliers/
+ * Source: https://www.data.gouv.fr/fr/datasets/53699fe5a3a729239d206232/ (« Fiches pratiques et ressources de Service-Public.gouv.fr Particuliers »)
  * License: Licence Ouverte v2.0 — Attribution "Service-Public.gouv.fr / DILA"
+ * FA-D2 (18/11/2026, data.gouv.fr API read the same day): resource 0ed10f28-… is the feed 3.5 archive
+ * (https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip, the URL the verification chain reads: DILA_ARCHIVE_URL); the dataset
+ * states that feed 3.3 was removed on 4 May 2026 (its URL answers 404). Never point SERVICE_PUBLIC_DEMARCHES_DATASET_URL at a 3.3 address.
  */
 const DEFAULT_DATASET_URL =
     'https://www.data.gouv.fr/fr/datasets/r/0ed10f28-d197-4324-97b3-037f625095ac';
