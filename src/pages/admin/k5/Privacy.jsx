@@ -100,6 +100,7 @@ export default function AdminPrivacy() {
               ) : r.stage === 'AWAITING_SECOND_REVIEWER' ? (
                 <div className="space-y-1">
                   <p data-testid="admin-erasure-proposal">{t('admin:k5.privacy.proposed_by', 'Proposé par {{by}} le {{date}}', { by: r.proposedBy, date: r.proposedAt ? formatDateTime(r.proposedAt) : '—' })}{r.reason ? t('admin:k5.privacy.reason_suffix', ' — raison : {{reason}}', { reason: r.reason }) : ''}</p>
+                  {r.soleAdministratorConfirmableFrom ? <p className="text-sm" data-testid="admin-erasure-sole-admin">{t('admin:k5.privacy.sole_admin_note', 'Seul administrateur actif avec MFA (décision du 18/11/2026) : vous pouvez confirmer votre propre proposition à partir du {{date}}, après 24 h de réflexion et une nouvelle lecture. Dès qu’un deuxième administrateur existe, une autre personne doit confirmer.', { date: formatDateTime(r.soleAdministratorConfirmableFrom) })}</p> : null}
                   {erasure[r.id] ? null : <p className="text-sm" data-testid="admin-erasure-read-first">{t('admin:k5.privacy.erasure_read_first', 'Ouvrez « Voir ce qui serait supprimé » (journalisé) : « Confirmer » s’active après votre lecture.')}</p>}
                   <Field id={`erase-confirm-${r.id}`} label={t('admin:k5.privacy.second_note', 'Note de la deuxième personne')} value={v(`erase-confirm-${r.id}`)} onChange={(x) => set(`erase-confirm-${r.id}`, x)} rows={2} />
                   <div className="flex gap-2">

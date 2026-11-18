@@ -768,6 +768,7 @@
  "k5.privacy.erase_intro": "Two people: one proposes (carry out or refuse, with the reason that will be communicated), another confirms. Confirming an execution deletes the data at once; an active legal hold blocks it.",
  "k5.privacy.erased": "Erasure carried out.",
  "k5.privacy.erasure_read_first": "Open “See what would be deleted” (logged): “Confirm” becomes available after your reading.",
+ "k5.privacy.sole_admin_note": "Only active administrator with MFA (decision of 18/11/2026): you can confirm your own proposal from {{date}}, after 24 hours of reflection and a new reading. As soon as a second administrator exists, another person must confirm.",
  "k5.privacy.erasure_summary": "Account: {{account}} — files: {{dossiers}} — appointments: {{appointments}} — active legal holds: {{holds}}",
  "k5.privacy.execute": "carry out",
  "k5.privacy.extract": "Extract to communicate (if communicated)",

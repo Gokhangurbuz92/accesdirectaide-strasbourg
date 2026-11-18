@@ -4,6 +4,11 @@
  * account was never erased. TWO PEOPLE, as for access reviews: a first MFA administrator PROPOSES (APPROVE, or REJECT with the written reason — e.g. doubt on who
  * asked); a SECOND, different MFA administrator CONFIRMS — APPROVE then runs the existing deletion engine at once (an active legal hold still blocks it and the
  * request is marked BLOCKED) — or sends it back. The system never decides; the review screen shows counts and holds, never dossier content.
+ *
+ * Owner decision 18/11/2026 (« tek yönetici kuralı »), natural-person publisher with one administrator: when the proposer is the ONLY active named administrator
+ * with MFA (no other AdminUser row that is enabled and has MFA), they may confirm their own proposal, but only after SOLE_ADMIN_DELAY_MS (24 h of reflection),
+ * after a fresh journalised reading, and the outcome and the audit record say soleAdministrator. As soon as a second active MFA administrator exists, the
+ * two-person rule applies again unchanged. The env identity (no AdminUser row) never qualifies.
  */
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
@@ -47,6 +52,19 @@ async function parkForMailContact(db, requestId, error, actor) {
 
 const audit = (db, action, reviewer, requestId, details = {}) => db.insert(AuditLog).values({ action, entity: 'DSR_REQUEST', entity_id: requestId, actor_id: reviewer, details: { requestId, ...details }, ip_hash: 'ADMIN_MFA' });
 
+export const SOLE_ADMIN_DELAY_MS = 24 * 3600 * 1000;
+
+/** Owner decision 18/11: is `email` a registered, enabled, MFA administrator, and how many OTHER such administrators exist? */
+export async function soleAdministratorCheck(db, email) {
+  const e = String(email || '').trim().toLowerCase();
+  const [row] = (await db.execute(sql`SELECT
+      count(*) FILTER (WHERE lower(email) = ${e})::int AS self,
+      count(*) FILTER (WHERE lower(email) <> ${e})::int AS others
+    FROM "AdminUser" WHERE "disabledAt" IS NULL AND "mfaEnabled" = true`)).rows;
+  const self = Number(row?.self || 0); const others = Number(row?.others || 0);
+  return { registered: self === 1, others, sole: self === 1 && others === 0 };
+}
+
 const blockedStage = (code) => (code === 'EXECUTION_FAILED' ? 'EXECUTION_FAILED_RETRYABLE' : code === 'MAIL_CONTACT_RETRY' ? 'MAIL_CONTACT_RETRY' : 'BLOCKED_BY_LEGAL_HOLD');
 
 export async function listOpenErasures(db = defaultDb) {
@@ -54,7 +72,8 @@ export async function listOpenErasures(db = defaultDb) {
   return { ok: true, requests: rows.map((r) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt),
     stage: r.status === 'BLOCKED' ? blockedStage(r.reasonCode) : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
     ...(r.status === 'BLOCKED' && r.reasonCode === 'MAIL_CONTACT_RETRY' ? { mailContactRetry: { attempts: r.o?.mailContactRetry?.attempts ?? null, retryUntil: r.o?.mailContactRetry?.retryUntil ?? null } } : {}),
-    proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null })) };
+    proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null,
+    soleAdministratorConfirmableFrom: r.o?.proposal?.proposedAt ? new Date(Date.parse(r.o.proposal.proposedAt) + SOLE_ADMIN_DELAY_MS).toISOString() : null })) };
 }
 
 /** What the deletion would touch (counts only) and the active legal holds — MFA reviewer; the reading is audited. */
@@ -87,8 +106,8 @@ export async function proposeErasure(id, input, reviewer, db = defaultDb) {
   return { ok: true, request: { id: rows[0].id, status: 'IN_REVIEW', proposed: decision, awaiting: 'confirmation by a second reviewer' } };
 }
 
-/** The second reviewer: confirm (APPROVE runs the deletion now) or send back. The proposer can never confirm their own proposal. */
-export async function confirmErasure(id, input, reviewer, db = defaultDb, privacy = createPrivacyRightsService({ db, cryptoLib: crypto })) {
+/** The second reviewer: confirm (APPROVE runs the deletion now) or send back. The proposer confirms their own proposal only as the SOLE administrator (above). */
+export async function confirmErasure(id, input, reviewer, db = defaultDb, privacy = createPrivacyRightsService({ db, cryptoLib: crypto }), deps = {}) {
   const action = String(input?.action || '').toLowerCase();
   if (!['confirm', 'send_back'].includes(action)) return bad('invalid_action', 'Action invalide.');
   const note = String(input?.note || '').trim().slice(0, 2000);
@@ -96,24 +115,35 @@ export async function confirmErasure(id, input, reviewer, db = defaultDb, privac
   const [r] = (await db.execute(sql`SELECT id, status, "subjectId", "reviewOutcome" AS o FROM "DSRRequest" WHERE id = ${String(id || '')} AND "requestType" = 'DELETE' AND status = 'IN_REVIEW'`)).rows;
   const p = r?.o?.proposal;
   if (!p) return bad('not_found', 'Aucune proposition à confirmer.', 404);
-  if (p.proposedBy === reviewer) return bad('second_reviewer_required', 'La confirmation doit venir d’une autre personne que celle qui a proposé.', 403);
+  let soleAdministrator = false;
+  if (p.proposedBy === reviewer) {
+    const check = await (deps.soleAdministratorCheck || soleAdministratorCheck)(db, reviewer);
+    if (!check.sole) return bad('second_reviewer_required', 'La confirmation doit venir d’une autre personne que celle qui a proposé.', 403);
+    const from = Date.parse(p.proposedAt || '') + SOLE_ADMIN_DELAY_MS;
+    if (action === 'confirm' && !(Date.now() >= from)) {
+      return { ...bad('sole_admin_delay', `Seul administrateur : vous pourrez confirmer votre propre proposition à partir du ${new Date(Number.isFinite(from) ? from : Date.now() + SOLE_ADMIN_DELAY_MS).toISOString()} (24 h de réflexion).`, 409), confirmableFrom: Number.isFinite(from) ? new Date(from).toISOString() : null };
+    }
+    soleAdministrator = true;
+  }
+  // the sole administrator reads again AFTER the reflection time (a reading made before or right after proposing does not count)
+  const readFrom = soleAdministrator ? new Date(Date.parse(p.proposedAt) + SOLE_ADMIN_DELAY_MS).toISOString() : p.proposedAt;
   if (String(input?.proposedAt || '') !== String(p.proposedAt || '')) return bad('version_changed', 'La proposition a changé depuis votre lecture : rechargez et relisez-la.', 409);
-  if (action === 'confirm' && !(await readSince(db, 'DSR_DELETE_REVIEW_READ', r.id, reviewer, p.proposedAt))) return READ_REQUIRED;   // owner LAB audit: confirm what was read
+  if (action === 'confirm' && !(await readSince(db, 'DSR_DELETE_REVIEW_READ', r.id, reviewer, readFrom))) return READ_REQUIRED;   // owner LAB audit: confirm what was read
   const now = new Date().toISOString();
   if (action === 'send_back') {
     const done = (await db.execute(sql`UPDATE "DSRRequest" SET "reviewOutcome" = ${JSON.stringify({ sentBack: { by: reviewer, at: now, note, previous: p.decision } })}::jsonb
         WHERE id = ${r.id} AND status = 'IN_REVIEW' AND "reviewOutcome" = ${JSON.stringify(r.o)}::jsonb RETURNING id`)).rows;
     if (!done.length) return bad('conflict', 'La demande a changé entre-temps.', 409);
-    await audit(db, 'DSR_DELETE_REVIEW_SENT_BACK', reviewer, r.id);
+    await audit(db, 'DSR_DELETE_REVIEW_SENT_BACK', reviewer, r.id, soleAdministrator ? { soleAdministrator } : {});
     return { ok: true, request: { id: r.id, status: 'IN_REVIEW' } };
   }
-  const outcome = { decision: p.decision === 'APPROVE' ? 'APPROVED' : 'REJECTED', decidedAt: now, proposedBy: p.proposedBy, confirmedBy: reviewer, confirmationNote: note, ...(p.reason ? { reason: p.reason } : {}) };
+  const outcome = { decision: p.decision === 'APPROVE' ? 'APPROVED' : 'REJECTED', decidedAt: now, proposedBy: p.proposedBy, confirmedBy: reviewer, confirmationNote: note, ...(p.reason ? { reason: p.reason } : {}), ...(soleAdministrator ? { soleAdministrator } : {}) };
   const nextStatus = p.decision === 'APPROVE' ? 'APPROVED' : 'REJECTED';
   const done = (await db.execute(sql`UPDATE "DSRRequest" SET status = ${nextStatus}, "reviewOutcome" = ${JSON.stringify(outcome)}::jsonb,
       "completedAt" = ${nextStatus === 'REJECTED' ? now : null}::timestamp
       WHERE id = ${r.id} AND status = 'IN_REVIEW' AND "reviewOutcome" = ${JSON.stringify(r.o)}::jsonb RETURNING id`)).rows;
   if (!done.length) return bad('conflict', 'La demande a changé entre-temps.', 409);
-  await audit(db, nextStatus === 'APPROVED' ? 'DSR_DELETE_REVIEW_APPROVED' : 'DSR_DELETE_REVIEW_REJECTED', reviewer, r.id);
+  await audit(db, nextStatus === 'APPROVED' ? 'DSR_DELETE_REVIEW_APPROVED' : 'DSR_DELETE_REVIEW_REJECTED', reviewer, r.id, soleAdministrator ? { soleAdministrator } : {});
   if (nextStatus === 'REJECTED') return { ok: true, request: { id: r.id, status: 'REJECTED' } };
   try {
     const summary = await privacy.executeApprovedDeletion(r.id);

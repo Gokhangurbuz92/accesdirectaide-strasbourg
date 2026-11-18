@@ -768,6 +768,7 @@
  "k5.privacy.erase_intro": "İki kişi: biri önerir (uygulamak veya reddetmek, iletilecek gerekçeyle), diğeri onaylar. Bir uygulamanın onaylanması verileri hemen siler; etkin bir yasal saklama bunu engeller.",
  "k5.privacy.erased": "Silme uygulandı.",
  "k5.privacy.erasure_read_first": "“Nelerin silineceğini gör” bölümünü açın (kayda geçer): “Onayla” okumanızdan sonra etkinleşir.",
+ "k5.privacy.sole_admin_note": "MFA'lı tek aktif yönetici (18/11/2026 kararı): kendi önerinizi {{date}} tarihinden itibaren, 24 saatlik düşünme süresinden ve yeniden okumadan sonra onaylayabilirsiniz. İkinci bir yönetici olduğu anda onayı başka bir kişi vermelidir.",
  "k5.privacy.erasure_summary": "Hesap: {{account}} — dosyalar: {{dossiers}} — randevular: {{appointments}} — etkin yasal saklamalar: {{holds}}",
  "k5.privacy.execute": "uygula",
  "k5.privacy.extract": "İletilecek alıntı (iletilecekse)",

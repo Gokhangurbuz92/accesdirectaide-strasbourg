@@ -768,6 +768,7 @@
  "k5.privacy.erase_intro": "Zwei Personen: Eine schlägt vor (ausführen oder ablehnen, mit der Begründung, die mitgeteilt wird), eine andere bestätigt. Die Bestätigung einer Ausführung löscht die Daten sofort; eine aktive gesetzliche Aufbewahrung blockiert sie.",
  "k5.privacy.erased": "Löschung ausgeführt.",
  "k5.privacy.erasure_read_first": "Öffnen Sie „Ansehen, was gelöscht würde“ (protokolliert): „Bestätigen“ wird nach Ihrem Lesen aktiv.",
+ "k5.privacy.sole_admin_note": "Einzige aktive Administratorin bzw. einziger aktiver Administrator mit MFA (Entscheidung vom 18.11.2026): Sie können Ihren eigenen Vorschlag ab {{date}} bestätigen, nach 24 Stunden Bedenkzeit und erneutem Lesen. Sobald es eine zweite Administratorin oder einen zweiten Administrator gibt, muss eine andere Person bestätigen.",
  "k5.privacy.erasure_summary": "Konto: {{account}} — Akten: {{dossiers}} — Termine: {{appointments}} — aktive gesetzliche Aufbewahrungen: {{holds}}",
  "k5.privacy.execute": "ausführen",
  "k5.privacy.extract": "Mitzuteilender Auszug (falls mitgeteilt wird)",
