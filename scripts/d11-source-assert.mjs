@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * R35 (§8, D11): rule-source assertion harness — the automated half of the D11 review, designed in R33 (R33_ORIGINAL_SIX_OPEN_REQUIREMENTS_EN.md §2).
- * For each of the 76 items of docs/rules/D11_REVIEW_FORM.csv it checks what a machine CAN check against the official texts:
+ * For each of the items (85 on 18/11/2026) of docs/rules/D11_REVIEW_FORM.csv it checks what a machine CAN check against the official texts:
  *   - a number a condition states (or a draftCheck parameter) is present in the current Service-Public fiche;
  *   - a phrase a reference case quotes « … » is present in the fiche;
  *   - the fiche still exists, was not redirected, and DILA's « date of the last important change » is not later than the register's consultation;

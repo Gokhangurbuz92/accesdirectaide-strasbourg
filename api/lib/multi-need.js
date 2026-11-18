@@ -208,18 +208,20 @@ const CONTENT = {
 };
 
 /** cautions: a benefit the ordinary search may list, and the condition the person's words put in doubt (the aide titles they apply to, for the result cards) */
-/** @type {{ id: string, when: (q: string) => boolean, aides: RegExp, text: string, sheets: string[] }[]} */
+// FA-D6: `doubts` names the condition of the D11 register (data/rules/rights-rules.v1.json: right id, condition fact) whose wording the caution repeats; it
+// is read only by the rights graph (api/lib/rightsGraph.js) and never changes the answer of analyseNeeds
+/** @type {{ id: string, when: (q: string) => boolean, aides: RegExp, text: string, sheets: string[], doubts: { right: string, fact: string }[] }[]} */
 const CAUTIONS = [
   { id: 'permit-housing-aid', when: (q) => NO_PERMIT.test(q) && !HAS_PERMIT.test(q), aides: /aide personnalis[ée]e au logement|\(apl\)|allocation de logement|\(als\)|\(alf\)/i,
-    text: 'L’APL et l’ALS demandent, pour une personne étrangère, un titre de séjour en cours de validité.', sheets: ['F12006', 'F1280'] },
+    text: 'L’APL et l’ALS demandent, pour une personne étrangère, un titre de séjour en cours de validité.', sheets: ['F12006', 'F1280'], doubts: [{ right: 'apl', fact: 'nationality' }] },
   { id: 'permit-rsa', when: (q) => NO_PERMIT.test(q) && !HAS_PERMIT.test(q), aides: /revenu de solidarit[ée] active|\(rsa\)|prime d.activit[ée]/i,
-    text: 'Le RSA demande, pour une personne étrangère hors Union européenne, un séjour régulier (par exemple un titre de séjour permettant de travailler depuis au moins 5 ans, une carte de résident, ou le statut de réfugié).', sheets: ['F19778'] },
+    text: 'Le RSA demande, pour une personne étrangère hors Union européenne, un séjour régulier (par exemple un titre de séjour permettant de travailler depuis au moins 5 ans, une carte de résident, ou le statut de réfugié).', sheets: ['F19778'], doubts: [{ right: 'rsa', fact: 'nationality' }, { right: 'prime-activite', fact: 'nationality' }] },
   { id: 'no-home-housing-aid', when: (q) => NO_HOME.test(q) || w("je n'ai pas de logement|n'ai plus de logement").test(q), aides: /aide personnalis[ée]e au logement|\(apl\)|allocation de logement|\(als\)|\(alf\)/i,
-    text: 'L’APL et l’ALS aident à payer un loyer ou une redevance : elles ne peuvent être demandées qu’une fois un logement loué ou une place obtenue en établissement ou en foyer (FJT, résidence).', sheets: ['F12006', 'F1280'] },
+    text: 'L’APL et l’ALS aident à payer un loyer ou une redevance : elles ne peuvent être demandées qu’une fois un logement loué ou une place obtenue en établissement ou en foyer (FJT, résidence).', sheets: ['F12006', 'F1280'], doubts: [{ right: 'apl', fact: 'housing.status' }] },
   { id: 'under-25-rsa', when: UNDER_25, aides: /revenu de solidarit[ée] active|\(rsa\)/i,
-    text: 'Le RSA se demande en principe à partir de 25 ans ; avant 25 ans, seulement dans des cas particuliers.', sheets: ['F19778'] },
+    text: 'Le RSA se demande en principe à partir de 25 ans ; avant 25 ans, seulement dans des cas particuliers.', sheets: ['F19778'], doubts: [{ right: 'rsa', fact: 'age' }] },
   { id: 'isolated-meaning', when: (q) => w('isolee?s?').test(q) && w("deprime\\w*|depression|solitude|personne a qui parler|ne vois personne|triste|mal[- ]etre").test(q), aides: /revenu de solidarit[ée] active|\(rsa\)|prime d.activit[ée]/i,
-    text: '« Personne isolée » dans les règles du RSA ou de la prime d’activité veut dire « qui vit seule », pas « qui se sent seule » : ces aides dépendent des ressources.', sheets: ['F19778'] },
+    text: '« Personne isolée » dans les règles du RSA ou de la prime d’activité veut dire « qui vit seule », pas « qui se sent seule » : ces aides dépendent des ressources.', sheets: ['F19778'], doubts: [] },
 ];
 
 /** the question that changes the answer, when the words do not say it (offered as two re-searches; nothing is stored) */
@@ -229,8 +231,24 @@ const QUESTIONS = [
     text: 'Avez-vous un titre de séjour en cours de validité ?', options: [['Oui', 'avec titre de séjour'], ['Non', 'sans titre de séjour']] },
 ];
 
-/** @param {Date} d */
-const isWinter = (d) => { const m = d.getUTCMonth() + 1; return m >= 11 || m <= 3; };
+// FA-D6 (18/11/2026) DEFECT fixed: the trêve hivernale is a French calendar period, « du 1er novembre au 31 mars (inclus) de l'année suivante » (F34736,
+// F20055, DILA archive of 17/11/2026). It was read on the UTC month, so the first hour of 1 November (Paris) showed it as not in force and the first two
+// hours of 1 April as still in force. The month is now the Paris calendar month.
+const PARIS_MONTH = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', month: 'numeric' });
+/** the trêve hivernale window, as data (read by api/lib/rightsGraph.js) */
+export const TREVE_HIVERNALE = Object.freeze({ from: '11-01', to: '03-31', timeZone: 'Europe/Paris', sheets: Object.freeze(['F34736', 'F20055']) });
+/** @param {Date} d @returns {boolean} whether the Paris calendar day of `d` is inside the trêve hivernale */
+export const inTreveHivernale = (d) => { const m = Number(PARIS_MONTH.format(d)); return m >= 11 || m <= 3; };
+const isWinter = inTreveHivernale;
+
+/** @param {any} o @returns {any} */
+const deepFreeze = (o) => { if (o && typeof o === 'object' && !Object.isFrozen(o)) { Object.freeze(o); Object.values(o).forEach(deepFreeze); } return o; };
+/**
+ * FA-D6 — read-only views of the orientation constants, for the rights graph (api/lib/rightsGraph.js): the graph is generated FROM these, never copied.
+ * Deep-frozen copies: the orientation itself keeps reading NEEDS / CONTENT / CAUTIONS.
+ */
+export const NEED_DEFINITIONS = deepFreeze(NEEDS.map(([id, priority]) => ({ id, priority, ...structuredClone(CONTENT[id]) })));
+export const CAUTION_DEFINITIONS = deepFreeze(CAUTIONS.map(({ id, aides, text, sheets, doubts }) => ({ id, aides: aides.source, text, sheets: [...sheets], doubts: doubts.map((d) => ({ ...d })) })));
 
 /**
  * @param {string[]} queries the query as typed and, when it was typed in another language, its French translation

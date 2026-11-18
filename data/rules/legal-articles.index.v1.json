@@ -1,14 +1,14 @@
 {
  "schema": "ADA_LEGAL_ARTICLES_INDEX_V1",
- "referenceDate": "2026-10-27",
+ "referenceDate": "2026-11-18",
  "source": {
   "producer": "DILA",
   "dataset": "LEGI (codes en vigueur)",
   "licence": "Licence Ouverte / Open Licence 2.0",
   "attribution": "Direction de l’information légale et administrative (DILA) — Légifrance",
-  "baseArchive": "Freemium_legi_global_20250713-140000.tar.gz",
-  "lastDelta": "LEGI_20261026-212955.tar.gz",
-  "deltasApplied": 477
+  "baseArchive": "Freemium_legi_global_20261108-140000.tar.gz",
+  "lastDelta": "LEGI_20261117-212708.tar.gz",
+  "deltasApplied": 11
  },
  "references": [
   {

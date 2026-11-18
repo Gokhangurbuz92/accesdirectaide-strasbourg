@@ -81,7 +81,81 @@
         "F286 donne des bornes d'âge incohérentes (18-25 / 16-25 / 16-24 selon la section ; la page N19775 dit 18-24) : à trancher par l'expert",
         "Montant 651,69 € (personne seule) sans date d'effet sur la page"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "conflicts": [
+        {
+          "fact": "activity_young",
+          "appliesToAges": [
+            16,
+            25
+          ],
+          "note": "bornes d'âge du RSA jeune actif : F286 dit « 18 à 25 ans » puis « 16 à 25 ans », le dossier N19775 dit « 18 à 24 ans » (relu le 18/11/2026 dans l'archive DILA du 17/11/2026) : abstention « à vérifier » jusqu'à la décision d'un expert",
+          "sources": [
+            {
+              "id": "F286",
+              "quote": "Un jeune de 18 à 25 ans"
+            },
+            {
+              "id": "F286",
+              "quote": "âgé de 16 à 25 ans"
+            },
+            {
+              "id": "N19775",
+              "quote": "aux jeunes actifs de 18 à 24 ans"
+            }
+          ]
+        }
+      ],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F19778",
+            "id": "F19778",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-04-01",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": "2026-04-01",
+            "archiveModifiedAt": "2026-04-01",
+            "archiveTextSha256": "d2f660ef6545dbcd9732fff6d603d9e35354e5b94e55818a1b0904a0b37ab2b2"
+          },
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F286",
+            "id": "F286",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-04-01",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": "2026-04-01",
+            "archiveModifiedAt": "2026-04-01",
+            "archiveTextSha256": "e09cbac5ea21af52e41c00751a8ffb8f58538507e78e893a9b48483a94d500be"
+          }
+        ],
+        "formItems": {
+          "TEXT_CONFIRMED": 6,
+          "METADATA_UNCHANGED": 2,
+          "NOT_MACHINE_CHECKABLE": 6
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 49,
+          "inForce": 49,
+          "notInForce": [],
+          "repealScheduled": [],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     },
     {
       "id": "prime-activite",
@@ -140,7 +214,46 @@
         "Montants forfaitaires (638,28 € / 957,42 €) revalorisés : date d'effet à confirmer",
         "Pas de plafond explicite étudiants / apprentis sur la page"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2882",
+            "id": "F2882",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-06-01",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": "2026-06-01",
+            "archiveModifiedAt": "2026-06-01",
+            "archiveTextSha256": "7f019e48d777d0ab0558c7363c1956fb36ec0ac8cd20e0d5b9e20b53ed191db4"
+          }
+        ],
+        "formItems": {
+          "TEXT_CONFIRMED": 5,
+          "METADATA_UNCHANGED": 2,
+          "NOT_MACHINE_CHECKABLE": 2
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 49,
+          "inForce": 49,
+          "notInForce": [],
+          "repealScheduled": [],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     },
     {
       "id": "apl",
@@ -194,7 +307,15 @@
         {
           "fact": "nationality",
           "text": "étrangers : titre de séjour en cours de validité ; étudiants hors UE à partir du 1er juillet 2026 : bourse sur critères sociaux, emploi ou contrat d'apprentissage / de professionnalisation",
-          "source": "F12006"
+          "source": "F12006",
+          "datedParts": [
+            {
+              "text": "étudiants ressortissants d'un pays hors UE, EEE ou Suisse avec un titre de séjour délivré pour les études : règle particulière en vigueur depuis le 1er juillet 2026 (conditions détaillées sur la fiche)",
+              "effectiveFrom": "2026-07-01",
+              "source": "F12006",
+              "quote": "Depuis le 1er juillet 2026, si vous êtes étudiant ressortissant d'un pays hors Union européenne (UE)"
+            }
+          ]
         },
         {
           "fact": "exclusion",
@@ -207,7 +328,46 @@
         "Sous-location : le texte et l'infographie de la page diffèrent (moins de 30 ans / plus de 60 ans / handicap)",
         "Plafonds non publiés sur la page"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12006",
+            "id": "F12006",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-07-01",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": "2026-07-01",
+            "archiveModifiedAt": "2026-07-01",
+            "archiveTextSha256": "537c625f339adf1e0fd6b1fae23020c110256717b2ccdd397dbd719346fbe482"
+          }
+        ],
+        "formItems": {
+          "METADATA_UNCHANGED": 3,
+          "TEXT_CONFIRMED": 4,
+          "NOT_MACHINE_CHECKABLE": 3
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 48,
+          "inForce": 48,
+          "notInForce": [],
+          "repealScheduled": [],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     },
     {
       "id": "aah",
@@ -270,7 +430,46 @@
       "ambiguities": [
         "Plafonds et montant maximal (1 041,59 €) revalorisés : date d'effet à confirmer"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12242",
+            "id": "F12242",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-09-14",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": null,
+            "archiveModifiedAt": "2026-09-14",
+            "archiveTextSha256": "25db7bf9db8fcd8ee189ba6583ec1b61579c85f7e8e6cc8ec5b915da8b89a43b"
+          }
+        ],
+        "formItems": {
+          "TEXT_CONFIRMED": 6,
+          "METADATA_UNCHANGED": 1,
+          "NOT_MACHINE_CHECKABLE": 6
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 72,
+          "inForce": 72,
+          "notInForce": [],
+          "repealScheduled": [],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     },
     {
       "id": "apa",
@@ -325,7 +524,46 @@
         "Plafonds de plan d'aide : F10009 (GIR1 2 080,33 € … GIR4 811,52 €) et une page solidarites.gouv.fr non consultée directement (GIR1 1 914,04 € …) divergent",
         "Livret CeA de janvier 2023 : périmé"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10009",
+            "id": "F10009",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-06-01",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": "2026-06-01",
+            "archiveModifiedAt": "2026-06-01",
+            "archiveTextSha256": "2705573c2c608cbf593fed1a33318ecbc95c0e3817cfa31afaf518b2359e12ac"
+          }
+        ],
+        "formItems": {
+          "TEXT_CONFIRMED": 5,
+          "METADATA_UNCHANGED": 2,
+          "NOT_MACHINE_CHECKABLE": 3
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 32,
+          "inForce": 32,
+          "notInForce": [],
+          "repealScheduled": [],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     },
     {
       "id": "are",
@@ -357,7 +595,15 @@
         {
           "fact": "affiliation",
           "text": "6 mois (130 jours ou 910 heures) sur 24 mois (36 mois à partir de 55 ans) ; primo-entrants à partir du 1er avril 2026 : 5 mois",
-          "source": "F38881"
+          "source": "F38881",
+          "datedParts": [
+            {
+              "text": "primo-entrants inscrits à France Travail : durée d'affiliation modulable à compter du 1er avril 2026",
+              "effectiveFrom": "2026-04-01",
+              "source": "F38881",
+              "quote": "À compter du 1er avril 2026, la durée d'affiliation peut être modulée pour les demandeurs d’emploi primo-entrants"
+            }
+          ]
         },
         {
           "fact": "registration",
@@ -374,7 +620,46 @@
       "ambiguities": [
         "unedic.org non consulté"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38881",
+            "id": "F38881",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-07-23",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": "2026-07-23",
+            "archiveModifiedAt": "2026-07-23",
+            "archiveTextSha256": "8ef9bcc48b3b1ae0ac8aec49ca70d099b6dc95083f68cfbd899072758593c336"
+          }
+        ],
+        "formItems": {
+          "METADATA_UNCHANGED": 2,
+          "TEXT_CONFIRMED": 2,
+          "NOT_MACHINE_CHECKABLE": 2
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 15,
+          "inForce": 15,
+          "notInForce": [],
+          "repealScheduled": [],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     },
     {
       "id": "c2s",
@@ -436,7 +721,48 @@
       "ambiguities": [
         "Plafonds sans date d'effet sur la page ; ameli.fr non consulté"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10027",
+            "id": "F10027",
+            "http": 200,
+            "pageVerifiedOnLive": "2026-07-01",
+            "liveVerdict": "UNCHANGED",
+            "readAt": "2026-11-18",
+            "archiveImportantChangeAt": "2026-07-01",
+            "archiveModifiedAt": "2026-07-01",
+            "archiveTextSha256": "619eb81b479d32aa673b37554db0fabc9077d6c68fe6d5429adfde54e46a7f67"
+          }
+        ],
+        "formItems": {
+          "TEXT_CONFIRMED": 4,
+          "NOT_MACHINE_CHECKABLE": 5
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 59,
+          "inForce": 59,
+          "notInForce": [],
+          "repealScheduled": [
+            "CSS L861-3 (repeal scheduled 2222-02-22)",
+            "CSS L861-5 (repeal scheduled 2222-02-22)"
+          ],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     },
     {
       "id": "faj-strasbourg",
@@ -486,8 +812,47 @@
         "Aucun plafond de ressources, règle de nationalité, barème ni article de loi sur la page ; date de mise à jour absente",
         "La page contenait un texte caché adressé à des agents automatiques : ignoré (donnée de page)"
       ],
-      "referenceCases": []
+      "referenceCases": [],
+      "sourceCheck": {
+        "result": "SOURCE_CHECKED",
+        "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
+        "reviewState": "EXPERT_REVIEW_PENDING",
+        "checkedAt": "2026-11-18",
+        "dilaArchive": {
+          "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+          "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+          "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107"
+        },
+        "pages": [
+          {
+            "url": "https://www.strasbourg.eu/fr/fond-aide-jeunes",
+            "id": null,
+            "http": 200,
+            "pageVerifiedOnLive": null,
+            "liveVerdict": "NO_DATE_ON_PAGE",
+            "readAt": "2026-11-18",
+            "liveSha256": "8f8c5300f30980978845facf9425fd1f1ff64603748cf2cf07e45371644ff70a",
+            "note": "page sans date « Vérifié le » ; texte non conservé (réutilisation non autorisée), empreinte et date de lecture seulement"
+          }
+        ],
+        "formItems": {
+          "LIVE_PAGE_CONFIRMED": 4,
+          "NO_ARCHIVE_SOURCE": 2,
+          "NOT_MACHINE_CHECKABLE": 8
+        },
+        "legalBasis": {
+          "referenceDate": "2026-11-18",
+          "lastDelta": "LEGI_20261117-212708.tar.gz",
+          "articlesOrTexts": 0,
+          "inForce": 0,
+          "notInForce": [],
+          "repealScheduled": [],
+          "unresolved": []
+        },
+        "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      }
     }
   ],
-  "draftCheckStatement": "draftCheck = a machine-readable reading of the cited condition, written by ADA engineering (not by an expert). It is executed ONLY by api/lib/rulesDraft.js for the expert review pack and its tests; no user-facing assessment uses it while the right is not EXPERT_VALIDATED. A condition without draftCheck cannot be read from the answers ADA collects and always stays UNKNOWN."
+  "draftCheckStatement": "draftCheck = a machine-readable reading of the cited condition, written by ADA engineering (not by an expert). It is executed ONLY by api/lib/rulesDraft.js for the expert review pack and its tests; no user-facing assessment uses it while the right is not EXPERT_VALIDATED. A condition without draftCheck cannot be read from the answers ADA collects and always stays UNKNOWN.",
+  "datedPartsStatement": "FA-D6 (18/11/2026): conditions[].datedParts = a part of a condition that applies only from a date the fiche states (« Depuis le… », « À compter du… »), with the exact sentence; conflicts[] = official texts that disagree on a condition (each sentence quoted), for the ages they concern. Both are read by the rights graph (api/lib/rightsGraph.js) and re-checked against the DILA archive by scripts/rights-graph-sources.mjs; neither is read by rulesDraft.js nor by any user-facing answer."
 }

@@ -8,21 +8,24 @@ nomme l'organisme qui décide. Ce document explique à la personne experte ce qu
 | Document | Contenu |
 |---|---|
 | `docs/rules/D11_EXPERT_REVIEW_PACK.md` | pour chaque droit : sources officielles et leur date, base légale citée, conditions relevées, lecture automatique proposée, ambiguïtés, cas de référence proposés |
-| `docs/rules/D11_REVIEW_FORM.csv` | le formulaire à remplir : une ligne par condition, par ambiguïté et par cas (76 lignes) |
+| `docs/rules/D11_REVIEW_FORM.csv` | le formulaire à remplir : une ligne par condition, par ambiguïté et par cas (85 lignes) |
 
 Les huit pages Service-Public citées ont été relues le 31/10/2026 (`scripts/d11-source-check.mjs`) : leur date « Vérifié le » n'a pas changé depuis le
 relevé du registre. La page du FAJ (strasbourg.eu) ne porte pas de date. À relancer juste avant la relecture.
+Contrôle de sources du 18/11/2026 (FA-D6, `sourceCheck` de chaque droit dans `data/rules/rights-rules.v1.json`) : les neuf pages relues en direct et
+dans l'archive DILA du 17/11/2026, la base légale relue dans le jeu LEGI ; résultat `SOURCE_CHECKED` (contrôle indépendant, pas une validation) et statut
+de relecture `EXPERT_REVIEW_PENDING` : une personne experte nommée reste nécessaire.
 
 | Droit | Qui décide | Source (date de la page) | Lu à partir des réponses | Jamais lisible par le site (toujours « à vérifier ») | Ambiguïtés | Cas proposés |
 |---|---|---|---|---|---|---|
-| RSA | Caf / MSA ; département | F19778, F286 (01/04/2026) | âge | résidence, ressources, nationalité, activité, activité des moins de 25 ans | 2 | 5 |
-| Prime d'activité | Caf / MSA | F2882 (01/06/2026) | âge | activité, résidence, nationalité | 2 | 2 |
-| APL | Caf / MSA | F12006 (01/07/2026) | statut d'occupation | logement, ressources, nationalité, exclusions | 2 | 2 |
-| AAH | CDAPH (MDPH) ; versement Caf / MSA | F12242 (14/09/2026) | âge, ressources | handicap, résidence | 1 | 7 |
-| APA à domicile | Collectivité européenne d'Alsace | F10009 (01/06/2026) | âge | perte d'autonomie, résidence, exclusions | 2 | 3 |
+| RSA | Caf / MSA ; département | F19778, F286 (01/04/2026) | âge | résidence, ressources, nationalité, activité, activité des moins de 25 ans | 2 | 6 |
+| Prime d'activité | Caf / MSA | F2882 (01/06/2026) | âge | activité, résidence, nationalité | 2 | 3 |
+| APL | Caf / MSA | F12006 (01/07/2026) | statut d'occupation | logement, ressources, nationalité, exclusions | 2 | 3 |
+| AAH | CDAPH (MDPH) ; versement Caf / MSA | F12242 (14/09/2026) | âge, ressources | handicap, résidence | 1 | 8 |
+| APA à domicile | Collectivité européenne d'Alsace | F10009 (01/06/2026) | âge | perte d'autonomie, résidence, exclusions | 2 | 4 |
 | ARE | France Travail | F38881 (23/07/2026) | — | perte d'emploi, affiliation, inscription, résidence | 1 | 1 |
-| C2S | CPAM | F10027 (01/07/2026) | ressources | résidence, attribution automatique | 1 | 4 |
-| FAJ (Eurométropole) | Eurométropole, via la Mission locale | strasbourg.eu (non datée) | âge, territoire | nature de la demande | 2 | 6 |
+| C2S | CPAM | F10027 (01/07/2026) | ressources | résidence, attribution automatique | 1 | 5 |
+| FAJ (Eurométropole) | Eurométropole, via la Mission locale | strasbourg.eu (non datée) | âge, territoire | nature de la demande | 2 | 9 |
 
 ## 2. Comment remplir le formulaire
 

@@ -2,7 +2,7 @@
 /**
  * PKG-6 / D11 — the register becomes usable WITHOUT becoming a rule of the product:
  *  - api/lib/rulesDraft.js reads each cited condition as MET / NOT_MET / UNKNOWN (never an eligibility verdict), boundaries included;
- *  - the 30 proposed reference cases (written from the source text, PROPOSED_UNREVIEWED) agree with that reading — a consistency check, NOT a validation;
+ *  - the 39 proposed reference cases (written from the source text, PROPOSED_UNREVIEWED) agree with that reading — a consistency check, NOT a validation;
  *  - no user-facing assessment path imports it, and no right is promoted by being executable;
  *  - the expert review pack is generated from the data and must be in sync;
  *  - the explanation UI links the official pages as « pour en savoir plus », says no expert validated the summary, and that the result is not computed from them.
@@ -28,7 +28,7 @@ afterEach(cleanup);
 
 describe('PKG-6 / D11 draft reading of the register', () => {
   it('every proposed reference case (PROPOSED_UNREVIEWED, cited basis) agrees with the draft reading — consistency only', () => {
-    expect(proposed.cases.length).toBe(30);
+    expect(proposed.cases.length).toBe(39);   // FA-D6 (18/11/2026): +9 proposed cases (boundaries, residence)
     for (const c of proposed.cases) {
       expect(c.status, c.id).toBe('PROPOSED_UNREVIEWED');
       expect(c.basis.length, c.id).toBeGreaterThan(10);

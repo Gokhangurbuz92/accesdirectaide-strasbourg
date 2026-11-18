@@ -1,0 +1,458 @@
+{
+ "schema": "ADA_RIGHTS_GRAPH_SOURCES_V1",
+ "statement": "Fiches DILA (Service-Public) citées par le graphe des droits (api/lib/rightsGraph.js), relues dans l'archive officielle ; phrases citées par le graphe, retrouvées ou non. Ce n'est pas une lecture juridique.",
+ "archive": {
+  "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+  "lastModified": "Tue, 17 Nov 2026 16:18:09 GMT",
+  "sha256": "ab2ff06d630605465ebe8dd27ff4e7cb9166b16d017518d64158546fcad62107",
+  "fiches": 3244,
+  "readAt": "2026-11-18",
+  "licence": "Licence Ouverte / Open Licence 2.0",
+  "attribution": "Direction de l’information légale et administrative (DILA) — Service-Public"
+ },
+ "fiches": [
+  {
+   "id": "F10009",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Allocation personnalisée d'autonomie (Apa)",
+   "importantChangeAt": "2026-06-01",
+   "modifiedAt": "2026-06-01",
+   "textSha256": "2705573c2c608cbf593fed1a33318ecbc95c0e3817cfa31afaf518b2359e12ac"
+  },
+  {
+   "id": "F10027",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Complémentaire santé solidaire (ex-CMU-C)",
+   "importantChangeAt": "2026-07-01",
+   "modifiedAt": "2026-07-01",
+   "textSha256": "619eb81b479d32aa673b37554db0fabc9077d6c68fe6d5429adfde54e46a7f67"
+  },
+  {
+   "id": "F1121",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Instances dirigeantes d'une association",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-08-14",
+   "textSha256": "7157d2457a9f78f767e4345687922a268a5ea09d6a15ba5b92dca3cee4f9a70d"
+  },
+  {
+   "id": "F12006",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Aide personnalisée au logement (APL)",
+   "importantChangeAt": "2026-07-01",
+   "modifiedAt": "2026-07-01",
+   "textSha256": "537c625f339adf1e0fd6b1fae23020c110256717b2ccdd397dbd719346fbe482"
+  },
+  {
+   "id": "F12242",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Allocation aux adultes handicapés (AAH)",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-09-14",
+   "textSha256": "25db7bf9db8fcd8ee189ba6583ec1b61579c85f7e8e6cc8ec5b915da8b89a43b"
+  },
+  {
+   "id": "F12544",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Violences conjugales",
+   "importantChangeAt": "2026-04-01",
+   "modifiedAt": "2026-06-01",
+   "textSha256": "36ccefe09325d10d9cf5c6d366fb88011fe347c21d4af7ce72da2c402119367b"
+  },
+  {
+   "id": "F1280",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Allocation de logement sociale (ALS)",
+   "importantChangeAt": "2026-07-01",
+   "modifiedAt": "2026-07-01",
+   "textSha256": "ada798dcaeefbebfe5d2319093e413f8aab7f97b7034157b2d1f1c65a4edc314"
+  },
+  {
+   "id": "F1334",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Quelle aide apporte le Fonds de solidarité pour le logement (FSL) ?",
+   "importantChangeAt": null,
+   "modifiedAt": "2025-12-12",
+   "textSha256": "e674c4d9d052b4051521af51ebf5f90e61f6c05f745c76ce62165ab584d92fcb"
+  },
+  {
+   "id": "F134",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Déposer un dossier de surendettement devant la commission de surendettement",
+   "importantChangeAt": null,
+   "modifiedAt": "2025-01-07",
+   "textSha256": "c23cefefbe56e2ad641729e8a5581284f2988ee9c9ff279cbfdc4fbd77ee640b"
+  },
+  {
+   "id": "F14202",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Prestation de compensation du handicap (PCH)",
+   "importantChangeAt": "2026-07-01",
+   "modifiedAt": "2026-07-01",
+   "textSha256": "6dc2afe34cc6ba304d1888f8d5c0430a13349a14b2670f3f9164d58304c64e6e"
+  },
+  {
+   "id": "F16920",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Congé de proche aidant",
+   "importantChangeAt": "2026-06-15",
+   "modifiedAt": "2026-06-15",
+   "textSha256": "9175b1daece3e3550cab6019e8276c66c7499e1b43f71ff2f6f23a616c96eafb"
+  },
+  {
+   "id": "F17317",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Sans domicile stable ou fixe (SDF) : en quoi consiste la domiciliation (ou élection de domicile) ?",
+   "importantChangeAt": null,
+   "modifiedAt": "2024-10-10",
+   "textSha256": "7f0b3949fcbaafb0ae26c1ca40a0f2f5c6526e7061b16d6e607f9603cff81c49"
+  },
+  {
+   "id": "F19778",
+   "present": true,
+   "redirectedTo": null,
+   "title": "RSA : demandeur de 25 ans et plus",
+   "importantChangeAt": "2026-04-01",
+   "modifiedAt": "2026-04-01",
+   "textSha256": "d2f660ef6545dbcd9732fff6d603d9e35354e5b94e55818a1b0904a0b37ab2b2"
+  },
+  {
+   "id": "F2003",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Quelles solutions d’hébergement existent pour les personnes en situation de précarité ?",
+   "importantChangeAt": "2018-12-10",
+   "modifiedAt": "2026-08-06",
+   "textSha256": "fd05d2441680b7b9a3dd4c22b489dad224830ef6527c1e6e5dc9441e2c077444"
+  },
+  {
+   "id": "F20055",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Impayés de factures (gaz, électricité, eau, téléphone, internet) : quelles conséquences ?",
+   "importantChangeAt": "2023-04-01",
+   "modifiedAt": "2025-11-19",
+   "textSha256": "8ce72afb5401bbf1f8d7b547087fde51a9355504d5991749f341d82d5d2aeb43"
+  },
+  {
+   "id": "F2018",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Foyer de jeunes travailleurs (FJT) ou \"Habitat jeunes\"",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-10-13",
+   "textSha256": "5f9ab8256a1493d84312e41f868a73ef7e473456acd4f7c1eba58f766d0a9f2f"
+  },
+  {
+   "id": "F2444",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Aide sociale à l'hébergement (ASH) d'une personne âgée",
+   "importantChangeAt": "2026-01-01",
+   "modifiedAt": "2026-01-01",
+   "textSha256": "bba8f03aeb6ec4c3b73bb357a2e3b79bfe760d3eb38f151105ceab936914ae1c"
+  },
+  {
+   "id": "F245",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Personne âgée : aide financière pour rémunérer une aide à domicile",
+   "importantChangeAt": "2025-01-01",
+   "modifiedAt": "2025-01-01",
+   "textSha256": "b32507cd4bab236521128342263989a448d4607a2aa5824339790c0136d9fb32"
+  },
+  {
+   "id": "F246",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Service autonomie à domicile (SAD)",
+   "importantChangeAt": "2026-10-19",
+   "modifiedAt": "2026-11-02",
+   "textSha256": "9816de6c7c703c09244cfa19f4b327e440b19698bef49c134520d3c070454928"
+  },
+  {
+   "id": "F24610",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Mon enfant est en situation de handicap",
+   "importantChangeAt": "2024-03-26",
+   "modifiedAt": "2024-10-03",
+   "textSha256": "282896475299e65e1ba53dd642a6fabc5610f9c186df0f497185cf5780b0ec1f"
+  },
+  {
+   "id": "F255",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Quels sont les hébergements permanents pour personnes âgées (Ehpad...) ?",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-09-30",
+   "textSha256": "af4c2cb45bc501e56e869b9fedfbb2f310794bc160a050c9d4caaebb63b2dcc2"
+  },
+  {
+   "id": "F286",
+   "present": true,
+   "redirectedTo": null,
+   "title": "RSA jeune actif",
+   "importantChangeAt": "2026-04-01",
+   "modifiedAt": "2026-04-01",
+   "textSha256": "e09cbac5ea21af52e41c00751a8ffb8f58538507e78e893a9b48483a94d500be"
+  },
+  {
+   "id": "F2882",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Prime d'activité : salarié ou fonctionnaire",
+   "importantChangeAt": "2026-06-01",
+   "modifiedAt": "2026-06-01",
+   "textSha256": "7f019e48d777d0ab0558c7363c1956fb36ec0ac8cd20e0d5b9e20b53ed191db4"
+  },
+  {
+   "id": "F3079",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Qu'est-ce que l'aide médicale de l'État (AME) ?",
+   "importantChangeAt": "2026-04-01",
+   "modifiedAt": "2026-04-01",
+   "textSha256": "425c2c99cd007772b907c4dbe9bcd9bc2d6537b0a0143b6b8afc31db5e007afc"
+  },
+  {
+   "id": "F31029",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Je suis en situation de handicap",
+   "importantChangeAt": "2024-09-17",
+   "modifiedAt": "2024-09-17",
+   "textSha256": "bad44d7ee64d17d2a89ae0bbb0554b1ba420d1ef797756c103ae8c00445ad946"
+  },
+  {
+   "id": "F31272",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Loyers impayés et expulsion du locataire",
+   "importantChangeAt": "2026-08-06",
+   "modifiedAt": "2026-08-06",
+   "textSha256": "ba15812abafbd00e9a6efe83e4ae9b6f9435d82ff24b4a6e2bbf133d8ff8f028"
+  },
+  {
+   "id": "F32037",
+   "present": true,
+   "redirectedTo": null,
+   "title": "L'aide personnelle au logement (APL, ALF ou ALS) est-elle maintenue en cas de loyers impayés ?",
+   "importantChangeAt": "2026-01-01",
+   "modifiedAt": "2026-01-01",
+   "textSha256": "9ab7ae72e1674288b8dd6a357629c2fe5f70584a3a05020163a85a625721e920"
+  },
+  {
+   "id": "F33865",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Élève ou étudiant en situation de handicap : qu'est-ce que le projet personnalisé de scolarisation (PPS) ?",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-03-27",
+   "textSha256": "4c4f7bde297ccb0a042e21862829a4959832b3c9a99c65fbc739bd5d7e42871d"
+  },
+  {
+   "id": "F33954",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Quels sont les numéros en cas d'urgence (Samu, pompiers...) et les numéros d'écoute ?",
+   "importantChangeAt": "2026-08-25",
+   "modifiedAt": "2026-08-25",
+   "textSha256": "4e7e7b0491f3c86abb17db7e60fe87cd319bc869cf92acab632fef3d2144b82e"
+  },
+  {
+   "id": "F34049",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Carte mobilité inclusion (CMI)",
+   "importantChangeAt": "2021-06-20",
+   "modifiedAt": "2026-04-28",
+   "textSha256": "0eccc0cf36ba1df1570a63e9dd64c6d4f447b264265efd9011ee3d5ca78fb190"
+  },
+  {
+   "id": "F34736",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Quand s'applique la trêve hivernale ?",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-11-01",
+   "textSha256": "1efc6ae0da51b43b1c1bf5010c9ea59ddd6e720b06abca997658284ea1ca02ad"
+  },
+  {
+   "id": "F34917",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Consultation d'un psychologue ou d'un psychiatre : quelle prise en charge ?",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-07-03",
+   "textSha256": "fa8a20732214a2a70511d1f41ab2669257df8e5f403b4567d0945a05e5b30716"
+  },
+  {
+   "id": "F37501",
+   "present": true,
+   "redirectedTo": null,
+   "title": "MaPrimeAdapt' : travaux d'adaptation du logement à la perte d'autonomie",
+   "importantChangeAt": "2026-01-01",
+   "modifiedAt": "2026-01-01",
+   "textSha256": "99e7da56c134e91ae6e059b0c4642e03f919ceca043c1d0c150ab43951c1b595"
+  },
+  {
+   "id": "F38243",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Vous avez trouvé un mode de garde pour votre enfant : aides financières",
+   "importantChangeAt": "2025-09-01",
+   "modifiedAt": "2026-04-30",
+   "textSha256": "ff094b57044e8df469cd956aee95508dc06b436d35f87439eca3e5d7c9ec01c8"
+  },
+  {
+   "id": "F38244",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Votre enfant entre à l'école ou est déjà scolarisé : aides financières",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-04-30",
+   "textSha256": "f7655f58aea83265866f97bb4900115b4896f7735e09fcfa9b19bec231502095"
+  },
+  {
+   "id": "F38245",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Vous élevez seul votre enfant ou vos enfants : aides financières",
+   "importantChangeAt": "2025-08-30",
+   "modifiedAt": "2026-04-30",
+   "textSha256": "827b9292e1c587e2495b61e89d8da2b0f55799152b37ce9fb5e2be4fc895127e"
+  },
+  {
+   "id": "F38589",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Vous n'arrivez plus à payer vos factures : aides financières",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-04-30",
+   "textSha256": "d29056afedc5c62dcbb35a80d49e0ac32be2cca559198e5984df4151efff02a4"
+  },
+  {
+   "id": "F38881",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Allocation chômage d'aide au retour à l'emploi (ARE) d'un salarié du secteur privé dont la fin de contrat de travail intervient à compter du 1er avril 2025",
+   "importantChangeAt": "2026-07-23",
+   "modifiedAt": "2026-07-23",
+   "textSha256": "8ef9bcc48b3b1ae0ac8aec49ca70d099b6dc95083f68cfbd899072758593c336"
+  },
+  {
+   "id": "F601",
+   "present": true,
+   "redirectedTo": null,
+   "title": "J'ai besoin de faire garder mes enfants",
+   "importantChangeAt": "2025-09-01",
+   "modifiedAt": "2025-09-01",
+   "textSha256": "00ec4f26d30b54ed6f85b8048ef3285ad672f144537e371f3f273c35ab156c93"
+  },
+  {
+   "id": "F827",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Faut-il signaler un changement de situation (déménagement, séparation, chômage...) quand on perçoit des prestations familiales ?",
+   "importantChangeAt": null,
+   "modifiedAt": "2026-03-13",
+   "textSha256": "3fb0e3f19f02bbf506b987bf2829fa12d2dd81efeb5cfdacfd7ddedad9e28d77"
+  },
+  {
+   "id": "N19775",
+   "present": true,
+   "redirectedTo": null,
+   "title": "Revenu de solidarité active (RSA)",
+   "importantChangeAt": null,
+   "modifiedAt": "2025-07-10",
+   "textSha256": "705e6947078f87b6de8566e15d756be42a867617371e85e4f1dcbff3c89fc774"
+  }
+ ],
+ "quotes": [
+  {
+   "where": "register rsa.conflicts[activity_young]",
+   "fiche": "F286",
+   "quote": "Un jeune de 18 à 25 ans",
+   "found": true
+  },
+  {
+   "where": "register rsa.conflicts[activity_young]",
+   "fiche": "F286",
+   "quote": "âgé de 16 à 25 ans",
+   "found": true
+  },
+  {
+   "where": "register rsa.conflicts[activity_young]",
+   "fiche": "N19775",
+   "quote": "aux jeunes actifs de 18 à 24 ans",
+   "found": true
+  },
+  {
+   "where": "register apl.nationality.datedParts[0]",
+   "fiche": "F12006",
+   "quote": "Depuis le 1er juillet 2026, si vous êtes étudiant ressortissant d'un pays hors Union européenne (UE)",
+   "found": true
+  },
+  {
+   "where": "register are.affiliation.datedParts[0]",
+   "fiche": "F38881",
+   "quote": "À compter du 1er avril 2026, la durée d'affiliation peut être modulée pour les demandeurs d’emploi primo-entrants",
+   "found": true
+  },
+  {
+   "where": "AIDS.faillite-civile",
+   "fiche": "F134",
+   "quote": "engager une procédure de faillite civile spécifique aux habitants d'Alsace-Moselle",
+   "found": true
+  },
+  {
+   "where": "INTERACTIONS.apa-pch-non-cumul",
+   "fiche": "F10009",
+   "quote": "Il n'est pas possible de recevoir l'Apa lorsque l'on reçoit au moins l'une des prestations suivantes",
+   "found": true
+  },
+  {
+   "where": "INTERACTIONS.apa-pch-non-cumul",
+   "fiche": "F10009",
+   "quote": "Prestation de compensation du handicap (PCH)",
+   "found": true
+  },
+  {
+   "where": "INTERACTIONS.als-subsidiaire-apl",
+   "fiche": "F1280",
+   "quote": "L'ALS est versée si vous ne pouvez prétendre ni à l'aide personnalisée au logement (APL), ni à l'allocation de logement familiale (ALF)",
+   "found": true
+  },
+  {
+   "where": "INTERACTIONS.rsa-c2s-automatique",
+   "fiche": "F10027",
+   "quote": "Cette attribution est automatique sauf opposition de votre part",
+   "found": true
+  },
+  {
+   "where": "INTERACTIONS.surendettement-faillite-civile",
+   "fiche": "F134",
+   "quote": "il est recommandé d'opter pour 1 seule de ces 2 procédures",
+   "found": true
+  },
+  {
+   "where": "TERRITORIES.alsace-moselle",
+   "fiche": "F1121",
+   "quote": "Alsace-Moselle (départements du Bas-Rhin, du Haut-Rhin et de la Moselle)",
+   "found": true
+  }
+ ]
+}
