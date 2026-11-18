@@ -131,7 +131,7 @@ export default function AdminObservability() {
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin:observability.public_api', 'API publique')}</CardTitle>
+            <CardTitle as="h2">{t('admin:observability.public_api', 'API publique')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
@@ -155,7 +155,7 @@ export default function AdminObservability() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin:observability.deep_title', 'Base, cache et stockage')}</CardTitle>
+            <CardTitle as="h2">{t('admin:observability.deep_title', 'Base, cache et stockage')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3 text-sm">
             <div className="flex items-center justify-between">
@@ -194,7 +194,7 @@ export default function AdminObservability() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('admin:observability.sentry', 'Suivi des erreurs (Sentry)')}</CardTitle>
+            <CardTitle as="h2">{t('admin:observability.sentry', 'Suivi des erreurs (Sentry)')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex items-center justify-between">
@@ -222,7 +222,7 @@ export default function AdminObservability() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('admin:observability.freshness', 'Fraîcheur des actualités (tâche planifiée)')}</CardTitle>
+          <CardTitle as="h2">{t('admin:observability.freshness', 'Fraîcheur des actualités (tâche planifiée)')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
@@ -260,7 +260,7 @@ export default function AdminObservability() {
       {adminStats && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+            <CardTitle as="h2" className="flex items-center gap-2">
               <Database className="h-4 w-4" />
               {t('admin:observability.inventory', 'Inventaire des données')}
             </CardTitle>
@@ -297,7 +297,7 @@ export default function AdminObservability() {
       {/* ── Email Provider Health ── */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle as="h2" className="flex items-center gap-2">
             <Mail className="h-4 w-4" />
             {t('admin:observability.emails', 'E-mails')}
           </CardTitle>
@@ -323,7 +323,7 @@ export default function AdminObservability() {
 
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2">
-          <CardTitle>{t('admin:observability.history', 'Historique des tâches planifiées')}</CardTitle>
+          <CardTitle as="h2">{t('admin:observability.history', 'Historique des tâches planifiées')}</CardTitle>
           <div className="flex flex-wrap gap-1">
             {CRON_JOBS.map(job => (
               <Button

@@ -70,7 +70,7 @@ export default function CompteOrientations() {
       {problem ? <p role="alert" data-testid="orientation-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
       <div aria-live="polite" role="status" data-testid="orientation-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {pending.length ? (
-        <Card><CardHeader><CardTitle className="text-lg">{t('compte:orientations.decider', 'À décider')}</CardTitle></CardHeader><CardContent className="space-y-3">
+        <Card><CardHeader><CardTitle as="h2" className="text-lg">{t('compte:orientations.decider', 'À décider')}</CardTitle></CardHeader><CardContent className="space-y-3">
           {pending.map((r) => (
             <div key={r.id} data-testid="orientation-pending" className="space-y-2 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm">
               <p><strong>{r.from}</strong> {t('compte:orientations.proposes_to', 'propose de transmettre votre dossier à')} <strong>{r.to}</strong> {t('compte:orientations.reason', '— motif :')} {label(REASON_LABELS, r.reasonCode)}.</p>
@@ -85,7 +85,7 @@ export default function CompteOrientations() {
           ))}
         </CardContent></Card>
       ) : null}
-      <Card><CardHeader><CardTitle className="text-lg">{t('compte:orientations.suivi', 'Suivi')}</CardTitle></CardHeader><CardContent>
+      <Card><CardHeader><CardTitle as="h2" className="text-lg">{t('compte:orientations.suivi', 'Suivi')}</CardTitle></CardHeader><CardContent>
         {others.length ? <ul className="space-y-2">{others.map((r) => (
           <li key={r.id} data-testid="orientation-item" className="rounded-md border border-slate-200 p-2 text-sm">
             <p>{r.from} → <strong>{r.to}</strong> — <span data-testid="orientation-item-status">{label(REFERRAL_STATUS_LABELS, r.status)}</span></p>

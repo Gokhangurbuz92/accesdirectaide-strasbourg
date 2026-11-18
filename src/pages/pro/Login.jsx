@@ -207,6 +207,7 @@ export default function ProLogin() {
                                     <Input
                                         id="email"
                                         type="email"
+                                        autoComplete="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder={t('pro:login.email_placeholder', 'nom@structure.fr')}
@@ -230,6 +231,7 @@ export default function ProLogin() {
                                     <Input
                                         id="password"
                                         type="password"
+                                        autoComplete="current-password"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="••••••••"

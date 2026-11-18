@@ -2149,5 +2149,6 @@
  "k5.submissions.kind.actualite": "Neuigkeit",
  "k5.submissions.kind.all": "Alle",
  "k5.submissions.kind_filter": "Inhaltstyp",
- "k5.submissions.legacy_dispositif": "Unter « Hilfe » abgelegt (frühere Einordnung der Programme)."
+ "k5.submissions.legacy_dispositif": "Unter « Hilfe » abgelegt (frühere Einordnung der Programme).",
+ "layout.title_area": "Verwaltung"
 }

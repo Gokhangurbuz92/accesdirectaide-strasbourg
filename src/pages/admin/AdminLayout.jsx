@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { hasPermission, SIDEBAR_PERMISSIONS } from '@/lib/rbac';
 import ServiceUnavailable from '@/components/ServiceUnavailable';
+import useMainHeadingText from '@/hooks/useMainHeadingText';
 import { useT } from '@/i18n';
 
 
@@ -211,7 +212,7 @@ function SidebarSection({ section, isActive }) {
                 className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-700 hover:text-slate-700 transition-colors"
             >
                 <SectionIcon className="h-3.5 w-3.5" />
-                <span className="flex-1 text-left">{navLabel(t, section.label)}</span>
+                <span className="flex-1 text-start">{navLabel(t, section.label)}</span>
                 {open
                     ? <ChevronDown className="h-3 w-3" />
                     : <ChevronRight className="h-3 w-3" />
@@ -259,6 +260,7 @@ const PageLoader = () => (
 export default function AdminLayout() {
     const { t } = useT('admin');
     const location = useLocation();
+    const heading = useMainHeadingText(location.pathname);   // FA-D4 (RGAA 8.6): each screen's own title, from its h1, unless the page sets one
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
     const [allowed, setAllowed] = useState(false);
@@ -380,6 +382,7 @@ export default function AdminLayout() {
                 {t('admin:layout.skip_link', 'Aller au contenu principal')}
             </a>
             <Helmet>
+                <title>{`${heading ? `${heading} — ` : ''}${t('admin:layout.title_area', 'Administration')} | Accès Direct Aide`}</title>
                 <meta name="robots" content="noindex, nofollow" />
             </Helmet>
 

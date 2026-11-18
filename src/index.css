@@ -267,6 +267,13 @@
   outline: none;
 }
 
+/* FA-D4 (RGAA 10.7): a date / time field is entered segment by segment (day, month, year…): Chrome then highlights only the segment and the field
+   itself does not match :focus-visible, so the field had no focus outline at all. Any focus of such a field — keyboard or pointer — is shown. */
+input:is([type='date'], [type='time'], [type='datetime-local'], [type='month'], [type='week']):focus {
+  outline: 2px solid hsl(var(--ring, 222.2 84% 4.9%));
+  outline-offset: 2px;
+}
+
 /* ============================================================
    Phase 3.4 RGAA — Accessibility Modes
    ============================================================ */

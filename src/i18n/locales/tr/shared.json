@@ -269,5 +269,7 @@
  "humanHelp.franceServices": "Bir France services ofisi bulun (resmî site)",
  "humanHelp.ccas": "Bir CCAS bulun (resmî kamu hizmetleri rehberi)",
  "humanHelp.mairie": "Bir belediye bulun (resmî kamu hizmetleri rehberi)",
- "humanHelp.directory": "Rehberimizdeki France services ofislerini görün"
+ "humanHelp.directory": "Rehberimizdeki France services ofislerini görün",
+ "catalog.results_heading": "Sonuçlar",
+ "falc.draft.label": "Geçici sadeleştirilmiş metin, Fransızca: zihinsel engelli kişiler tarafından henüz okunup kontrol edilmedi"
 }

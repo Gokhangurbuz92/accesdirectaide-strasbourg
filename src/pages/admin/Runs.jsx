@@ -37,7 +37,7 @@ export default function AdminRuns() {
             {data ? (
                 <>
                     <Card>
-                        <CardHeader><CardTitle>{t('admin:runs.queue_title', 'File de synchronisation')}</CardTitle></CardHeader>
+                        <CardHeader><CardTitle as="h2">{t('admin:runs.queue_title', 'File de synchronisation')}</CardTitle></CardHeader>
                         <CardContent>
                             {queue === null ? <p data-testid="admin-runs-queue-unavailable">{t('admin:runs.queue_unavailable', 'La file n’a pas pu être lue.')}</p> : queue.length === 0 ? <p data-testid="admin-runs-queue-empty">{t('admin:runs.queue_empty', 'Aucune synchronisation demandée.')}</p> : (
                                 <Table scrollLabel={t('admin:runs.queue_title', 'File de synchronisation')}>
@@ -63,7 +63,7 @@ export default function AdminRuns() {
                         </CardContent>
                     </Card>
                     <Card>
-                        <CardHeader><CardTitle>{t('admin:runs.imports_title', 'Imports (tâches planifiées)')}</CardTitle></CardHeader>
+                        <CardHeader><CardTitle as="h2">{t('admin:runs.imports_title', 'Imports (tâches planifiées)')}</CardTitle></CardHeader>
                         <CardContent>
                             {logs.length === 0 ? <p data-testid="admin-runs-imports-empty">{t('admin:runs.imports_empty', 'Aucun import enregistré.')}</p> : (
                                 <Table scrollLabel={t('admin:runs.imports', 'Imports')}>

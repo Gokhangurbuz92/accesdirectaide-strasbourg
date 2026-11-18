@@ -31,7 +31,7 @@ export default function AdminSync() {
         {isLoading ? <p role="status">{t('admin:sync.loading', 'Chargement…')}</p> : error ? <p role="alert" className="text-rose-800">{t('admin:sync.history_error', 'L’historique n’a pas pu être lu.')}</p> : runs.length === 0 ? (
           <p className="mt-2 text-sm text-slate-700" data-testid="admin-sync-empty">{t('admin:sync.empty', 'Aucune exécution enregistrée (normal dans le LAB local : aucune tâche n’y est planifiée).')}</p>
         ) : (
-          <table className="mt-2 w-full text-left text-sm">
+          <table className="mt-2 w-full text-start text-sm">
             <thead><tr><th scope="col">{t('admin:sync.col.job', 'Tâche')}</th><th scope="col">{t('admin:sync.col.start', 'Début')}</th><th scope="col">{t('admin:sync.col.result', 'Résultat')}</th><th scope="col">{t('admin:sync.col.duration', 'Durée')}</th></tr></thead>
             <tbody>{runs.map((r) => (
               <tr key={r.id} className="border-t border-slate-200">

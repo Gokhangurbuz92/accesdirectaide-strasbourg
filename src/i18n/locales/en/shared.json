@@ -269,5 +269,7 @@
  "humanHelp.franceServices": "Find a France services office (official site)",
  "humanHelp.ccas": "Find a CCAS (official directory of public services)",
  "humanHelp.mairie": "Find a town hall (official directory of public services)",
- "humanHelp.directory": "See the France services offices in our directory"
+ "humanHelp.directory": "See the France services offices in our directory",
+ "catalog.results_heading": "Results",
+ "falc.draft.label": "Provisional simplified text, in French: not yet proofread by people with an intellectual disability"
 }

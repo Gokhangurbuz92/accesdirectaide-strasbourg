@@ -2159,5 +2159,6 @@
  "k5.submissions.kind.actualite": "Новина",
  "k5.submissions.kind.all": "Усі",
  "k5.submissions.kind_filter": "Тип вмісту",
- "k5.submissions.legacy_dispositif": "Зареєстровано як « Допомога » (попередня класифікація програм)."
+ "k5.submissions.legacy_dispositif": "Зареєстровано як « Допомога » (попередня класифікація програм).",
+ "layout.title_area": "Адміністрування"
 }

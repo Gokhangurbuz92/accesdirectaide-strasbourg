@@ -64,7 +64,7 @@ const SheetHeader = (/** @type {Record<string, string | number | boolean | null 
   ...props
 }) => (
   <div
-    className={cn("flex flex-col space-y-2 text-center sm:text-left", className)}
+    className={cn("flex flex-col space-y-2 text-center sm:text-start", className)}
     {...props} />
 )
 SheetHeader.displayName = "SheetHeader"

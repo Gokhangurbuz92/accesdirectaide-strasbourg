@@ -96,6 +96,7 @@ export default function ProRdvLayout() {
             <Link
               key={link.to}
               to={link.to}
+              aria-current={active ? 'page' : undefined}
               className={`rounded-md border px-3 py-2 text-sm transition-colors ${
                 active
                   ? 'border-blue-200 bg-blue-50 text-blue-800'

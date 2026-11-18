@@ -252,7 +252,7 @@ export default function CompteParcours() {
 
       {state.shares.length ? (
         <Card>
-          <CardHeader><CardTitle className="text-lg">{t('compte:parcours.suivre_plan_dossier', 'Suivre le plan d’un dossier')}</CardTitle></CardHeader>
+          <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:parcours.suivre_plan_dossier', 'Suivre le plan d’un dossier')}</CardTitle></CardHeader>
           <CardContent>
             <ul className="space-y-2">
               {state.shares.map((s) => (
@@ -267,7 +267,7 @@ export default function CompteParcours() {
       ) : null}
 
       <Card>
-        <CardHeader><CardTitle className="text-lg">{t('compte:parcours.etapes_cours', 'Étapes en cours')}</CardTitle></CardHeader>
+        <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:parcours.etapes_cours', 'Étapes en cours')}</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           {active.length && grouped ? (
             <div className="space-y-4" data-testid="parcours-active">
@@ -288,7 +288,7 @@ export default function CompteParcours() {
         </CardContent>
       </Card>
       {done.length ? (
-        <Card><CardHeader><CardTitle className="text-lg">{t('compte:parcours.etapes_terminees', 'Étapes terminées')}</CardTitle></CardHeader><CardContent><ul className="space-y-3" data-testid="parcours-done">{done.map(renderItem)}</ul></CardContent></Card>
+        <Card><CardHeader><CardTitle as="h2" className="text-lg">{t('compte:parcours.etapes_terminees', 'Étapes terminées')}</CardTitle></CardHeader><CardContent><ul className="space-y-3" data-testid="parcours-done">{done.map(renderItem)}</ul></CardContent></Card>
       ) : null}
     </div>
   );

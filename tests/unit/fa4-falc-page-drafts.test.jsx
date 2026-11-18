@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-/* global document, localStorage */
+/* global localStorage */
 // FA-D4 — simplified French drafts of the key citizen pages (src/content/falc/citizenPages.fr.js): every draft is marked
 // « simplified-draft-awaiting-participatory-validation » (never « FALC validé »: the first Unapei rule — participation of people with an intellectual
 // disability — has not been applied yet), follows the measurable Unapei rules (short sentences, one sentence per line), never states an entitlement,

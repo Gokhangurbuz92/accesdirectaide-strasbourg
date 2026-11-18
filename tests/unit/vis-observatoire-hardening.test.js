@@ -155,7 +155,7 @@ describe('P4 and labels: what the professional observatoire measures, and how it
       for (const key of ['regional.kpi_accounts_with_appointment', 'regional.kpi_quarter_not_cancelled', 'regional.trend_title_quarters']) expect(pro[key], `${lang} ${key}`).toBeTruthy();
       expect(pro['regional.kpi_accounts_with_appointment'], lang).not.toMatch(claim);
       const inst = JSON.parse(src(`src/i18n/locales/${lang}/institution.json`));
-      for (const key of ['space.hors_perimetre', 'space.method.out_of_scope', 'space.method.declined_capacity', 'space.method.totals', 'space.method.limits_v2']) expect(inst[key], `${lang} ${key}`).toBeTruthy();
+      for (const key of ['space.hors_perimetre', 'space.method.out_of_scope', 'space.method.declined_capacity', 'space.method.totals_v2', 'space.method.limits_v3']  /* FA-D4: renamed with the server's current texts */) expect(inst[key], `${lang} ${key}`).toBeTruthy();
       expect(inst['space.period_totals_v3'], lang).toContain('{{outOfScope}}');
       expect(inst['space.method.unmet'], `${lang}: the text that called an out-of-scope answer an unmet need`).toBeUndefined();
     }

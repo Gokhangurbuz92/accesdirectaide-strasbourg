@@ -327,7 +327,7 @@ export default function AdminReviewQueue() {
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-3xl font-bold">{t('admin:review_queue.title', 'File d’attente qualité des données')}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button onClick={() => loadItems()} disabled={loading} className="gap-2" variant="outline">
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
             {t('admin:review_queue.refresh', 'Actualiser')}

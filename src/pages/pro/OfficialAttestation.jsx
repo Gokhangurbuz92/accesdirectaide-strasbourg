@@ -100,7 +100,7 @@ export default function OfficialAttestation() {
                             <p className="text-sm font-bold uppercase" style={{ color: brand.colors.primary }}>{brand.name}</p>
                             <p className="text-xs text-slate-600">{brand.region}</p>
                         </div>
-                        <div className="text-right">
+                        <div className="text-end">
                             <p className="text-xs text-slate-600 uppercase font-bold mb-1">{t('pro:attestation.printed_on', 'Imprimé le')}</p>
                             <p className="text-base font-bold text-slate-900">{att.date}</p>
                         </div>

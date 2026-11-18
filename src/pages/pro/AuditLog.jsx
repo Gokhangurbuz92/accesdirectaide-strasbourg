@@ -201,7 +201,7 @@ export default function ProAuditLog() {
                                             )}
                                         </p>
                                     </div>
-                                    <div className="text-right shrink-0">
+                                    <div className="text-end shrink-0">
                                         <p className="text-[10px] text-slate-600 flex items-center gap-1">
                                             <Clock size={10} />
                                             {formatDate(new Date(entry.timestamp), {

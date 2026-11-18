@@ -256,7 +256,7 @@ export default function ProRdvNew() {
                     key={slot.startAt}
                     type="button"
                     onClick={() => setSelectedSlot(slot)}
-                    className={`rounded-md border px-3 py-2 text-left text-sm ${active ? 'border-blue-300 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700'
+                    className={`rounded-md border px-3 py-2 text-start text-sm ${active ? 'border-blue-300 bg-blue-50 text-blue-900' : 'border-slate-200 bg-white text-slate-700'
                       }`}
                   >
                     <div className="font-medium">{formatSlot(slot.startAt)}</div>

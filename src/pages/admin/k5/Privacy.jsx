@@ -248,7 +248,7 @@ export default function AdminPrivacy() {
           <>
             <h3 className="font-semibold">{t('admin:k5.privacy.report_heading', 'Données qu’aucune tâche ne supprime encore (comptage seulement)')}</h3>
             {fr.lang ? <p className="text-xs text-slate-600" data-testid="admin-privacy-legal-fr">{t('admin:k5.privacy.legal_text_fr', 'Texte juridique en français : les catégories et leurs conditions restent rédigées en français tant que le DPO ne les a pas validées.')}</p> : null}
-            <table className="w-full text-left text-sm" data-testid="admin-privacy-retention-report">
+            <table className="w-full text-start text-sm" data-testid="admin-privacy-retention-report">
               <thead><tr><th scope="col">{t('admin:k5.privacy.category', 'Catégorie')}</th><th scope="col">{t('admin:k5.privacy.col.duration', 'Durée')}</th><th scope="col">{t('admin:k5.privacy.col.records', 'Enregistrements')}</th><th scope="col">{t('admin:k5.privacy.col.overdue', 'Au-delà de la durée')}</th></tr></thead>
               <tbody>
                 {d.retentionReport.items.map((it) => (

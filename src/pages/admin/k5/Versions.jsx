@@ -36,7 +36,7 @@ export default function AdminVersions() {
         <section className="space-y-2 rounded border p-3" aria-labelledby="ver-preview" data-testid="admin-version-preview">
           <h2 id="ver-preview" className="font-semibold">{t('admin:k5.versions.back_to', 'Retour à la version du {{date}}', { date: formatDateTime(preview.versionAt) })}</h2>
           {preview.changes.length ? (
-            <table className="w-full text-sm"><thead><tr className="text-left"><th scope="col">{t('admin:k5.versions.field', 'Champ')}</th><th scope="col">{t('admin:k5.versions.today', 'Aujourd’hui')}</th><th scope="col">{t('admin:k5.versions.after', 'Après le retour')}</th></tr></thead>
+            <table className="w-full text-sm"><thead><tr className="text-start"><th scope="col">{t('admin:k5.versions.field', 'Champ')}</th><th scope="col">{t('admin:k5.versions.today', 'Aujourd’hui')}</th><th scope="col">{t('admin:k5.versions.after', 'Après le retour')}</th></tr></thead>
               <tbody>{preview.changes.map((c) => <tr key={c.field} className="align-top"><td className="font-medium">{c.field}</td><td className="whitespace-pre-wrap">{fmt(c.current)}</td><td className="whitespace-pre-wrap">{fmt(c.restored)}</td></tr>)}</tbody></table>
           ) : <p>{t('admin:k5.versions.identical', 'Cette version est identique au contenu actuel : le retour ne changerait rien.')}</p>}
           <p className="text-xs text-slate-700">{t('admin:k5.versions.never_restored', 'L’état de vérification n’est jamais restauré ; une fiche vérifiée dont le contenu change est mise en attente de revérification.')}</p>

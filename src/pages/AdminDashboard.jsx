@@ -57,16 +57,18 @@ export default function AdminDashboard() {
 
     if (isLoading) {
         return (
-            <div className="w-full p-4"><SkeletonList count={3} variant="card" /></div>
+            // FA-D4 (RGAA 9.1): the page keeps its title while it loads and when it fails (it had no heading at all in these states)
+            <div className="w-full p-4" aria-busy="true"><h1 className="mb-4 text-2xl font-bold text-slate-900">{t('admin:dashboard.title', 'À traiter')}</h1><SkeletonList count={3} variant="card" /></div>
         );
     }
 
     if (error) {
         return (
             <div className="p-6">
+                <h1 className="mb-4 text-2xl font-bold text-slate-900">{t('admin:dashboard.title', 'À traiter')}</h1>
                 <Card>
-                    <CardContent className="p-8 text-center">
-                        <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" />
+                    <CardContent className="p-8 text-center" role="alert">
+                        <AlertCircle className="h-10 w-10 text-red-400 mx-auto mb-3" aria-hidden="true" />
                         <p className="text-slate-600">{t('admin:dashboard.load_error', 'Erreur de chargement des statistiques')}</p>
                         <p className="text-sm text-slate-600 mt-1">{error.message}</p>
                     </CardContent>
