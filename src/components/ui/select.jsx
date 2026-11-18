@@ -5,6 +5,7 @@ import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/i18n"
 
 /** @typedef {import("react").ElementRef<typeof SelectPrimitive.Trigger>} SelectTriggerElement */
 /** @typedef {import("react").ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>} SelectTriggerProps */
@@ -27,7 +28,13 @@ import { cn } from "@/lib/utils"
 /** @typedef {import("react").ElementRef<typeof SelectPrimitive.Separator>} SelectSeparatorElement */
 /** @typedef {import("react").ComponentPropsWithoutRef<typeof SelectPrimitive.Separator>} SelectSeparatorProps */
 
-const Select = SelectPrimitive.Root
+/** FA-RTL: Radix falls back to dir="ltr" without a DirectionProvider and writes it on the trigger / content, so the logical classes below
+ * resolved left-to-right in Arabic (the trigger showed its value on the left). The interface direction is passed unless the caller sets one.
+ * @param {import("react").ComponentPropsWithoutRef<typeof SelectPrimitive.Root>} props */
+function Select(props) {
+  const { dir } = useLanguage();
+  return <SelectPrimitive.Root dir={dir} {...props} />;
+}
 
 const SelectGroup = SelectPrimitive.Group
 
@@ -132,11 +139,11 @@ const SelectItem = React.forwardRef(
     <SelectPrimitive.Item
       ref={ref}
       className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-2 pr-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 ps-2 pe-8 text-sm outline-none focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
         className
       )}
       {...props}>
-      <span className="absolute right-2 flex h-3.5 w-3.5 items-center justify-center">
+      <span className="absolute end-2 flex h-3.5 w-3.5 items-center justify-center">
         <SelectPrimitive.ItemIndicator>
           <Check className="h-4 w-4" />
         </SelectPrimitive.ItemIndicator>
