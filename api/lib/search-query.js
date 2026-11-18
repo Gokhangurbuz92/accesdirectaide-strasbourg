@@ -11,6 +11,20 @@ import { categoryVariants } from '../_services/verification/classify.js';
  * Catalogue (12/11/2026): at equal quality, the records written and checked for the platform come first, then the reproduced official fiches that serve a
  * subdomain of the reference, then the others — a thousand official fiches published the same night must not push the RSA or the APL off the first page.
  */
+
+// the accents of French place names (lower case) and their plain letters, in the same order — used by territorySlug and territorySlugSql
+const TERRITORY_ACCENTED = 'àâäáãåçéèêëíìîïñóòôöõúùûüýÿœæ';
+const TERRITORY_PLAIN = 'aaaaaaceeeeiiiinooooouuuuyyoa';
+/** a territory value as a slug: lower case, no accent, every other run of characters a single « - » (« Saint-Louis », « saint louis » → « saint-louis ») @param {unknown} v */
+export function territorySlug(v) {
+  const lower = String(v ?? '').toLowerCase();
+  let out = '';
+  for (const ch of lower) { const k = TERRITORY_ACCENTED.indexOf(ch); out += k >= 0 ? TERRITORY_PLAIN[k] : ch; }
+  return out.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+/** the same slug in SQL @param {import('drizzle-orm').SQL} col */
+const territorySlugSql = (col) => sql`trim(both '-' from regexp_replace(translate(lower(${col}), ${TERRITORY_ACCENTED}, ${TERRITORY_PLAIN}), '[^a-z0-9]+', '-', 'g'))`;
+
 const CURATED_FIRST = sql`(coalesce(auto_check->'texts'->>'mode', '') = 'OFFICIAL_SOURCE') ASC, (auto_check->'classification'->>'subdomain' IS NULL) ASC,`;
 const categoryIn = (c) => sql`"categorie" IN (${sql.join(categoryVariants(c).map((v) => sql`${v}`), sql`, `)})`;
 import { buildProvenance } from '../_utils/provenance.js';
@@ -241,7 +255,10 @@ export async function searchAides(params) {
 
   const effectiveGeo = geo; // 'territoire' alias
   if (effectiveGeo) {
-    conditions.push(sql`${effectiveGeo} = ANY("territoires")`);
+    // FA-CAP / QA v50 (P28, DTA-B85): a territory is matched by its SLUG form on both sides — the records spell a commune as the catalogue writes it
+    // (« Strasbourg ») or in lower case (« strasbourg »), and a territorial page sends the commune name or its address slug. An exact comparison lost
+    // one of them whatever the page sent. Same normalisation in JS (territorySlug) and SQL (no extension needed: unaccent may be absent).
+    conditions.push(sql`${territorySlug(effectiveGeo)} = ANY(ARRAY(SELECT ${territorySlugSql(sql`t`)} FROM unnest("territoires") AS t))`);
   }
 
   if (provider) {
