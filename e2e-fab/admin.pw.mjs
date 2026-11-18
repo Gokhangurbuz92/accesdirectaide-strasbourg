@@ -10,10 +10,10 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { OPEN, PROD, TWIN, CREDS, TOKENS, db, closeDb, visitor, anon, bearer, ips, expectClosed, citizenSignIn, consoleContext, outbox } from './lib.mjs';
+import { OPEN, PROD, TWIN, CREDS, TOKENS, db, closeDb, visitor, anon, bearer, ips, expectClosed, citizenSignIn, consoleContext } from './lib.mjs';
 
 const nextIp = ips(180, 249);
-const F = CREDS.catalogue.citizens; const ORG = CREDS.structures;
+const F = CREDS.catalogue.citizens;
 const code = (j) => j?.code || j?.error;
 const admin = (method, p, body, base = PROD, token = 'admin') => bearer(token, method, p, body, { ip: nextIp(), base });
 const cron = (job, base = PROD) => fetch(`${base}/api/cron/${job}`, { headers: { authorization: `Bearer ${TOKENS.cron}`, 'x-forwarded-for': nextIp() } }).then(async (r) => ({ status: r.status, json: await r.json().catch(() => null) }));

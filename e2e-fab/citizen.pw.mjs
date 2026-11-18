@@ -10,7 +10,7 @@ import { OPEN, PROD, CREDS, TOKENS, db, closeDb, visitor, anon, bearer, ips, exp
 
 const nextIp = ips(60, 119);
 const code = (j) => j?.code || j?.error;
-const C = CREDS.citizens; const F = CREDS.catalogue.citizens; const ORG = CREDS.structures;
+const F = CREDS.catalogue.citizens; const ORG = CREDS.structures;
 test.afterAll(async () => { await closeDb(); });
 
 /** a synthetic adult signed in on the OPEN server through the real form */
