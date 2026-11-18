@@ -1473,7 +1473,7 @@ async function feedFiches(ctx) {
     if (linked.has(m.id) || failed.has(m.id)) continue;
     const c = classifyFiche(m);   // without the parsed fiche: theme, coverage, subdomain (the kind is decided again on the full fiche)
     if (!c.ok) { if (c.pending !== 'NOT_A_CATALOGUE_KIND') count(ctx, `fiches:pending:${c.pending}`); continue; }
-    candidates.push({ meta: m, rank: c.subdomain ? 0 : 1 });
+    candidates.push({ meta: m, rank: c.allowList ? -1 : c.subdomain ? 0 : 1 });   // C3: the owner's allow-listed fiches first (a handful; never crowded out by the cap)
   }
   candidates.sort((x, y) => x.rank - y.rank || String(plausibleDay(y.meta.importantChangeAt) || '').localeCompare(String(plausibleDay(x.meta.importantChangeAt) || '')) || x.meta.id.localeCompare(y.meta.id));
   const limit = level1 ? ctx.limits.newOfficial : ctx.limits.newFiches;
@@ -1497,7 +1497,7 @@ async function feedFiches(ctx) {
     const mark = sourceMark(src, 'DILA');
     const patch = level1 ? officialPatch(kind, src) : textPatch(kind, t, src);
     const tier = tierOf('DILA', src);
-    const classification = { at: ctx.now().toISOString(), kind, categorie: c.categorie, audience: c.audience, domain: c.domain, subdomain: c.subdomain, subdomains: c.subdomains, confidence: c.confidence, reasons: c.reasons };
+    const classification = { at: ctx.now().toISOString(), kind, categorie: c.categorie, audience: c.audience, domain: c.domain, subdomain: c.subdomain, subdomains: c.subdomains, confidence: c.confidence, reasons: c.reasons, ...(c.allowList ? { allowList: c.allowList } : {}) };
     const auto = { checkedAt: ctx.now().toISOString(), runId: ctx.runId, origin: 'DILA', sourceUrl: src.url, sourceTitle: src.title, sourceId: meta.id, importantChangeAt: plausibleDay(src.importantChangeAt), coverage: src.coverage || null,
       legal: (src.references || []).slice(0, 6), authority: { sourceId: 'dila-service-public', level: 'NATIONAL' }, tier: tier.tier, nextCheckAt: nextAt(ctx, tier), classification,
       official: officialContent(src, meta.id, ctx.archive),

@@ -80,6 +80,28 @@ export const THEMES = Object.freeze([
   { re: /^Transports/i, categorie: 'transports', domain: 'mobilite' },
   { re: /^Loisirs/i, categorie: 'loisirs', domain: 'lien-social' },
 ]);
+/**
+ * C3 — owner decision of 18/11/2026 (« C3 = EVET », on the FA-D2 review of the 43 fiches the « Associations » theme kept pending): ten fiches of that theme
+ * that concern a person (a tenant, a parent, a consumer, an employee who represents or leads an association, a volunteer, a member, a demonstrator) are
+ * catalogue candidates ONE BY ONE. The theme itself stays unmapped: its 24 organisation-side fiches (governance, tax, events, fundraising) stay out, and the 9
+ * whose rules differ in Alsace-Moselle (statutes, declaration, dissolution…) stay held for a named D11 reviewer. A listed fiche is still published only by
+ * the nightly D-5 v2 path (official source read, Level 1 reproduction, recordVerification); its placement is the one recorded in the FA-D2 review — no
+ * subdomain is invented where none fits (subdomain null).
+ */
+export const ASSOCIATIONS_THEME = /^Associations, fondations et fonds de dotation$/i;
+export const ASSOCIATION_ALLOWLIST = Object.freeze({
+  F1218: { categorie: 'logement', domain: 'logement', subdomain: null },                     // Association de locataires
+  F13091: { categorie: 'famille', domain: 'famille', subdomain: 'parentalite' },            // Association familiale
+  F1126: { categorie: 'argent', domain: 'budget', subdomain: 'conseil-budget' },            // Association de défense des consommateurs agréée
+  F1390: { categorie: 'famille', domain: 'famille', subdomain: 'parentalite' },             // Association de parents d'élèves
+  F2335: { categorie: 'travail-formation', domain: 'emploi', subdomain: null },             // Congé de représentation pour les membres d'une association
+  F34105: { categorie: 'travail-formation', domain: 'emploi', subdomain: null },            // Congé d'engagement associatif du responsable bénévole
+  F21899: { categorie: 'papiers-citoyennete', domain: 'discrimination', subdomain: null },  // Organisation de manifestations sur la voie publique
+  F15870: { categorie: 'loisirs', domain: 'lien-social', subdomain: null },                 // Titre-restaurant du bénévole
+  F3175: { categorie: 'loisirs', domain: 'lien-social', subdomain: null },                  // Cotisations à une association
+  F24418: { categorie: 'loisirs', domain: 'lien-social', subdomain: null },                 // Démission d'un membre d'une association
+});
+
 /** the domain → the taxonomy category when the subdomain decides it (the reference's legacy.taxonomy, first entry that is a public category) */
 let DC = null;
 const domainCategory = (id) => (DC ||= Object.fromEntries(ref().domains.map((d) => [d.id, (d.legacy?.taxonomy || []).find((c) => TAXONOMY_CATEGORIES.includes(c)) || null])))[id] || null;
@@ -128,9 +150,11 @@ export function classifyFiche(meta, src = null) {
   if (!OUR_COVERAGE.test(String(meta.coverage || '')) || OTHER_CITY.test(String(meta.title || ''))) return out({ pending: 'COVERAGE_ELSEWHERE' });
   // the bread-crumb starts at the portal's home (« Accueil particuliers ») and ends on the fiche itself: the theme is the first level below the home
   const pathTitles = (meta.path || []).filter((x) => x.id !== meta.id && !/^Accueil /i.test(x.title || '')).map((x) => x.title);
-  const theme = THEMES.find((t) => t.re.test(pathTitles[0] || ''));
+  const allowed = ASSOCIATIONS_THEME.test(pathTitles[0] || '') ? ASSOCIATION_ALLOWLIST[meta.id] || null : null;
+  const theme = THEMES.find((t) => t.re.test(pathTitles[0] || '')) || (allowed ? { categorie: allowed.categorie, domain: allowed.domain } : null);
   if (!theme) return out({ pending: 'THEME_UNMAPPED' });
   reasons.push(`thème Service-Public « ${pathTitles[0]} »`);
+  if (allowed) reasons.push('admise une à une par décision du propriétaire C3 du 18/11/2026 (liste nominative ; le thème « Associations » reste hors catalogue)');
 
   // subdomains: keywords of the reference in the title (3), the fiche's path (2), its official description (1)
   const T = fold(meta.title); const P = fold(pathTitles.slice(1).join(' > ')); const D = fold(meta.description);
@@ -145,10 +169,11 @@ export function classifyFiche(meta, src = null) {
   if (best) reasons.push(`mots du référentiel : ${best.hits.slice(0, 3).join(', ')} → ${best.domain}/${best.id}`);
   const placed = best && best.score >= 2;
   const fallback = theme.categorie === 'social-sante' ? (SOCIAL_SECOND.find(([re]) => re.test(pathTitles.slice(1).join(' ') + ' ' + meta.title))?.[1] || theme.domain) : theme.domain;
-  const domain = placed ? best.domain : fallback;
-  const subdomain = placed ? best.id : null;
+  // C3: an allow-listed fiche keeps the placement of the FA-D2 review, whatever the reference's words say
+  const domain = allowed ? allowed.domain : placed ? best.domain : fallback;
+  const subdomain = allowed ? allowed.subdomain : placed ? best.id : null;
   const labour = theme.categorie === 'travail-formation' && LABOUR.test(meta.title);
-  const categorie = (!labour && SPECIFIC.has(domain) && domainCategory(domain)) || theme.categorie;
+  const categorie = allowed ? allowed.categorie : (!labour && SPECIFIC.has(domain) && domainCategory(domain)) || theme.categorie;
 
   // kind: the title, then the structure of the fiche (chapters on the amount, a procedure, an online service)
   const heads = String(src?.text || '').split('\n').filter((l) => /^#{2,4} /.test(l)).join(' ');
@@ -169,5 +194,6 @@ export function classifyFiche(meta, src = null) {
   // a benefit title with a procedure title as strong (« Carte Mobilité Inclusion », « Chèque énergie : demande ») stays a candidate for a person to decide
   if (signals.aide >= 2 && signals.demarche >= 3 && kind === 'aide') return out({ pending: 'KIND_AMBIGUOUS', domain, subdomain, categorie, subdomains });
   const audience = PUBLIC_AGENTS.test(meta.title) && !NOT_AGENTS_ONLY.test(meta.title) && !pathTitles.some((t) => DESCRIBES_ACTORS.test(t)) ? 'agents-publics' : 'particuliers';
+  if (allowed) return { ok: true, kind, categorie, domain, subdomain, subdomains: subdomain ? [`${domain}/${subdomain}`] : [], audience, confidence: 'medium', reasons, allowList: 'C3' };
   return { ok: true, kind, categorie, domain, subdomain, subdomains, audience, confidence: subdomain ? 'high' : 'medium', reasons };
 }
