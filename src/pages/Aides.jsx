@@ -99,7 +99,11 @@ export default function Aides() {
   const q = (searchParams.get('q') || '').trim();
   const category = (categorySlug || searchParams.get('category') || searchParams.get('theme') || '').trim();
   const situation = (searchParams.get('situation') || '').trim();
-  const territory = (territorySlug || searchParams.get('territory') || searchParams.get('territoire') || '').trim();
+  // FA-CAP (P28): a territorial page (/aides/theme/<theme>/<commune>) carries the commune as a SLUG; the records name it as the catalogue writes it
+  // (« Strasbourg », data/aides-alsace.csv) and the API compares the exact value — the slug matched nothing and every territorial view was empty. A commune
+  // of the service territory is sent by its name; anything else (a département code, « national », an unknown slug) is sent as before.
+  const communeKnown = territorySlug ? ((/** @type {[string, string][]} */ (serviceTerritory.communes)).find(([, nom]) => slugOf(nom) === slugOf(territorySlug)) || [])[1] || '' : '';
+  const territory = (communeKnown || territorySlug || searchParams.get('territory') || searchParams.get('territoire') || '').trim();
   const page = parsePage(searchParams.get('page'));
   const limit = parseLimit(searchParams.get('limit') || searchParams.get('pageSize'));
   const sort = (searchParams.get('sort') || (q ? 'relevance' : 'quality')).trim();
@@ -136,7 +140,6 @@ export default function Aides() {
     queryFn: () => client.taxonomy.get(),
   });
   const themeKnown = categorySlug ? taxonomy?.categories?.find((/** @type {{ slug: string; label: string }} */ c) => c.slug === category) : null;
-  const communeKnown = territorySlug ? ((/** @type {[string, string][]} */ (serviceTerritory.communes)).find(([, nom]) => slugOf(nom) === slugOf(territorySlug)) || [])[1] || '' : '';
 
   // ------------------------------------------------------------------
   // Apply local filters ON TOP of API results
