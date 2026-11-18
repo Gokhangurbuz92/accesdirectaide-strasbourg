@@ -80,8 +80,11 @@ jobs:
         run: |
           set -uo pipefail
           # consecutive failed runs BEFORE this one: walk back through this workflow's completed runs while each of them ran the strike step
-          runs=$(gh api "repos/$REPO/actions/workflows/healthcheck.yml/runs?status=completed&per_page=30" --jq ".workflow_runs[] | select(.id != $RUN_ID) | .id" 2>/dev/null) || runs="__unreadable__"
-          if [ "$runs" = "__unreadable__" ]; then echo "ALERT: the probe failed and the previous runs could not be read: alerting now rather than staying silent"; exit 1; fi
+          list=$(gh api "repos/$REPO/actions/workflows/healthcheck.yml/runs?status=completed&per_page=30" --jq ".workflow_runs[] | select(.id != $RUN_ID) | \"\\(.id) \\(.created_at)\"" 2>/dev/null) || list="__unreadable__"
+          if [ "$list" = "__unreadable__" ]; then echo "ALERT: the probe failed and the previous runs could not be read: alerting now rather than staying silent"; exit 1; fi
+          runs=$(printf '%s\n' "$list" | awk 'NF{print $1}')
+          # FA-D11: GitHub may delay or DROP scheduled runs (observed 17/11/2026: one run in 11 hours). Age of the previous run, in seconds (none = very old)
+          gap=$(printf '%s\n' "$list" | awk 'NF{print $2; exit}' | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const t=Date.parse(s.trim());console.log(Number.isFinite(t)?Math.floor((Date.now()-t)/1000):999999)})')
           before=0
           for id in $runs; do
             ran=$(gh api "repos/$REPO/actions/runs/$id/jobs" --jq "[.jobs[].steps[]? | select(.name == \"$STRIKE\" and .conclusion != \"skipped\")] | length" 2>/dev/null) || { echo "ALERT: run history unreadable"; exit 1; }
@@ -93,4 +96,7 @@ jobs:
           if [ "$streak" -eq 2 ] || { [ "$streak" -gt 2 ] && [ $((streak % 6)) -eq 0 ]; }; then
             echo "ALERT: the public site failed $streak runs in a row (see the probe step above)"; exit 1
           fi
-          echo "Not alerting on this run (alert at the 2nd consecutive failure, then every 6th)."
+          if [ "$streak" -eq 1 ] && [ "$gap" -gt 7200 ]; then
+            echo "ALERT: the probe failed and the previous run was $((gap / 60)) minutes ago: no confirming run is expected soon (GitHub dropped scheduled runs)"; exit 1
+          fi
+          echo "Not alerting on this run (alert at the 2nd consecutive failure, then every 6th; at the 1st when the previous run is over 2 hours old)."

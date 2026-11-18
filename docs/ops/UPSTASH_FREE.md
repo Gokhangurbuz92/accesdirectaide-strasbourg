@@ -32,7 +32,8 @@ read-only Vercel API check of 15/11/2026 recorded in the control documents; noth
 Two independent hourly paths send real commands:
 1. the in-platform health check (`/api/cron/health-alert`, minute 7, open in Production) — SET/GET of `health-alert:ping` and the sentinel read;
 2. the external watchdog (`.github/workflows/healthcheck.yml`, minute 12) — `GET /api/aides?pageSize=1`, a public read that passes the rate limiter.
-Either alone is far inside the 1-week clause. Both stop only if the site itself is down for a week (then the watchdog has alerted for days) or if both
+Either alone is far inside the 1-week clause. Evidence (FA-D11, 18/11/2026): path 1 ran in each of the 23 hours of Vercel's 1-day runtime-log window
+(`vercel logs`, 17/11 02:07 → 18/11 00:07 UTC); path 2 is best effort (GitHub dropped most scheduled runs on 17/11, `EXTERNAL_WATCHDOG.md`). Both stop only if the site itself is down for a week (then the watchdog has alerted for days) or if both
 the Vercel scheduler and GitHub's schedule stop (GitHub disables a schedule after 60 days without repository activity). Cost: about 2 × 24 × 31 ≈ 1,500
 commands a month for keep-alive, against 500K.
 
