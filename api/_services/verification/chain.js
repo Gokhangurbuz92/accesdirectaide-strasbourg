@@ -1089,6 +1089,11 @@ export function siretDuplicateVerdict(a, b, siret, { env = process.env, trustedD
   const found = [...r.reasons, ...r.warnings];
   const apart = Object.keys(TELLS_APART).map((code) => found.find((x) => x.code === code)).find(Boolean);
   if (apart) return { auto: false, basis: apart.code, why: TELLS_APART[apart.code](apart.params) };
+  // FA D3 (18/11): one record is a FINESS establishment, the other carries no FINESS number. One SIRET can hold several FINESS establishments (and activities
+  // FINESS does not list), so the shared SIRET does not say the second record is THAT establishment: a person decides (the Neuhof decision of 15/11 was
+  // taken on this ground alone). Both FINESS numbers equal or different are handled above (FINESS_SAME / FINESS_DIFFERENT).
+  const fin = (x) => String(x?.numero_finess || '').replace(/[^0-9A-Za-z]/g, '').toUpperCase();
+  if (Boolean(fin(a)) !== Boolean(fin(b))) return { auto: false, basis: 'FINESS_ONE_SIDED', why: `une seule des deux fiches est un établissement FINESS (n° ${fin(a) || fin(b)})` };
   if (r.reasons.some((x) => SAME_ESTABLISHMENT.includes(x.code))) return { auto: true, basis: r.reasons.find((x) => SAME_ESTABLISHMENT.includes(x.code)).code, why: '' };
   return { auto: false, basis: 'INSUFFICIENT', why: 'preuve insuffisante' };
 }

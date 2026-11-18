@@ -34,7 +34,9 @@ describe('siretDuplicateVerdict: same SIRET is not enough when something tells t
     expect(siretDuplicateVerdict(rec('a', { nom: 'Association Entraide', siret: SIRET }), rec('b', { nom: 'Association Entraide Strasbourg', adresse: '3, r. des Tilleuls', code_postal: '67100' }), SIRET))
       .toEqual({ auto: true, basis: 'SIRET_SAME_ONLY', why: '' });
     expect(siretDuplicateVerdict(rec('a', { siret: SIRET, numero_finess: '670000001' }), rec('b', { numero_finess: '670000001' }), SIRET)).toMatchObject({ auto: true, basis: 'FINESS_SAME' });
-    expect(siretDuplicateVerdict(rec('a', { siret: SIRET, numero_finess: '670000001' }), rec('b'), SIRET)).toMatchObject({ auto: true, basis: 'SIRET_SAME_ONLY' });
+  });
+  it('FA D3: a FINESS establishment and a record without a FINESS number are not decided on the SIRET alone (one SIRET, several FINESS establishments)', () => {
+    expect(siretDuplicateVerdict(rec('a', { siret: SIRET, numero_finess: '670000001' }), rec('b'), SIRET)).toMatchObject({ auto: false, basis: 'FINESS_ONE_SIDED' });
   });
   it('a record without an address cannot be read as the same place: not automatic', () => {
     expect(siretDuplicateVerdict(rec('a', { siret: SIRET, adresse: '' }), rec('b'), SIRET).auto).toBe(false);
