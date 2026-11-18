@@ -22,7 +22,7 @@ export async function seedCatalogue(url) {
     // ── aides: two themes, plus the deliberate negatives
     const aides = [
       ['fab-aide-logement', 'Aide FAB logement (test)', 'logement', V()], ['fab-aide-emploi', 'Aide FAB emploi (test)', 'emploi', V()],
-      ['fab-aide-famille', 'Aide FAB famille (test)', 'famille', V()], ['fab-aide-logement-fr', 'Aide FAB logement nationale (test)', 'logement', V()],
+      ['fab-aide-famille', 'Aide FAB famille (test)', 'famille', V()], ['fab-aide-logement-fr', 'Aide FAB logement minuscules (test)', 'logement', V()],
     ];
     for (const [slug, titre, cat, v] of aides) {
       await q(`INSERT INTO "Aide" (id, slug, titre, cest_quoi, categorie, statut, published_at, ${COLS}, "updatedAt") VALUES ($1, $1, $2, $3, $4, 'publie', NOW() - interval '3 days', ${v}, NOW())`,
@@ -54,7 +54,9 @@ export async function seedCatalogue(url) {
     }
     // territoires as the project catalogue writes them (data/aides-alsace.csv: a commune name or « France entière »)
     await q(`UPDATE "Aide" SET territoires = ARRAY['Strasbourg'], departements = ARRAY['67'] WHERE id = 'fab-aide-logement'`);
-    await q(`UPDATE "Aide" SET territoires = ARRAY['France entière'] WHERE id IN ('fab-aide-emploi', 'fab-aide-famille', 'fab-aide-logement-fr')`);
+    await q(`UPDATE "Aide" SET territoires = ARRAY['France entière'] WHERE id IN ('fab-aide-emploi', 'fab-aide-famille')`);
+    // the same commune stored in its lower-case form, as other writers (and the native QA fixture DTA-B85) store it
+    await q(`UPDATE "Aide" SET territoires = ARRAY['strasbourg'] WHERE id = 'fab-aide-logement-fr'`);
     await q(`UPDATE "Aide" SET summary_falc = 'Texte FALC FAB : une aide pour payer le logement (test).' WHERE id = 'fab-aide-logement'`);
     await q('COMMIT');
     // ── this suite's own adult people (one per test that needs a fresh account): verified address, adult statement in the append-only ledger

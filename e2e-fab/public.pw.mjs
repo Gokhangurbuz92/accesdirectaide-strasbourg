@@ -365,6 +365,13 @@ test('P28 AccesDirectAide Local: a territorial view lists the records of that co
   // record must be listed (before the fix: the slug was sent as is and matched nothing, every territorial view was empty)
   const titles = page.getByTestId('aide-title');
   await expect(titles.filter({ hasText: 'Aide FAB logement (test)' })).toBeVisible();
+  // QA v50 DTA-B85: a record that stores the commune in lower case (« strasbourg ») is the same commune and must be listed too
+  await expect(titles.filter({ hasText: 'Aide FAB logement minuscules (test)' })).toBeVisible();
+  for (const t of ['strasbourg', 'Strasbourg', 'STRASBOURG']) {
+    const api = await anon('GET', `/api/aides?category=logement&territoire=${t}&pageSize=50`, undefined, { base: PROD, ip: nextIp() });
+    const slugs = (api.json.items || []).map((a) => a.slug);
+    expect(slugs, t).toEqual(expect.arrayContaining(['fab-aide-logement', 'fab-aide-logement-fr']));
+  }
   const s = await anon('GET', '/api/structures?city=Strasbourg&pageSize=50', undefined, { base: PROD, ip: nextIp() });
   const names = JSON.stringify(s.json);
   expect(names).toContain('Centre FAB Strasbourg (test)'); expect(names).not.toContain('Centre FAB Mulhouse (test)');
