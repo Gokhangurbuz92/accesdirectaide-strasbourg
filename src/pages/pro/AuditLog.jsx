@@ -140,7 +140,7 @@ export default function ProAuditLog() {
                         </SelectContent>
                     </Select>
                     <Button variant="outline" onClick={handleExport}>
-                        <Download className="mr-2 h-4 w-4" />
+                        <Download className="me-2 h-4 w-4" />
                         {t('pro:audit_log.export_csv', 'Export CSV')}
                     </Button>
                 </div>
@@ -235,7 +235,7 @@ export default function ProAuditLog() {
                         onClick={() => setCurrentPage((p) => p - 1)}
                         aria-label={t('pro:audit_log.previous_page', 'Page précédente')}
                     >
-                        <ChevronLeft size={14} aria-hidden="true" />
+                        <ChevronLeft className="rtl:-scale-x-100" size={14} aria-hidden="true" />
                     </Button>
                     <span className="text-xs text-slate-700">
                         {t('pro:audit_log.page', 'Page {{page}} / {{total}}', { page: currentPage, total: pagination.totalPages })}
@@ -247,7 +247,7 @@ export default function ProAuditLog() {
                         onClick={() => setCurrentPage((p) => p + 1)}
                         aria-label={t('pro:audit_log.next_page', 'Page suivante')}
                     >
-                        <ChevronRight size={14} aria-hidden="true" />
+                        <ChevronRight className="rtl:-scale-x-100" size={14} aria-hidden="true" />
                     </Button>
                 </div>
             )}

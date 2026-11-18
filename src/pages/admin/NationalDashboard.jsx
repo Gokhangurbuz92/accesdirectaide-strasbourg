@@ -146,7 +146,7 @@ export default function NationalDashboard() {
                                                 <p className="text-xs uppercase text-slate-300">{scope.scope}</p>
                                                 <p className="text-xl font-bold font-mono">{formatNumber(scope.count)}</p>
                                             </div>
-                                            <ChevronRight className="text-teal-400" size={16} />
+                                            <ChevronRight className="text-teal-400 rtl:-scale-x-100" size={16} />
                                         </div>
                                     ))}
                                 </div>

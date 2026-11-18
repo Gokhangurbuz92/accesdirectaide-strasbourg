@@ -87,7 +87,7 @@ function NotificationsTab() {
     return (
         <div className="space-y-6" data-testid="admin-notifications-routing">
             <h3 className="text-lg font-semibold">{t('admin:parametres.alerts_title', 'Où arrivent les alertes')}</h3>
-            <ul className="list-disc space-y-2 pl-5 text-sm text-slate-800">
+            <ul className="list-disc space-y-2 ps-5 text-sm text-slate-800">
                 <li><Trans i18n={i18n} i18nKey="admin:parametres.alerts_outages" defaults="<0>Pannes et erreurs critiques</0> : envoyées au webhook d’alerte configuré sur le serveur (ALERT_WEBHOOK_URL) et au suivi des erreurs ; visibles dans « Observabilité »." components={[<strong key="s" />]} /></li>
                 <li><Trans i18n={i18n} i18nKey="admin:parametres.alerts_content" defaults="<0>Contenu à traiter</0> (signalements, demandes, décisions en attente) : la page « À traiter » du tableau de bord." components={[<strong key="s" />]} /></li>
                 <li><Trans i18n={i18n} i18nKey="admin:parametres.alerts_veille" defaults="<0>Veille automatique</0> : le compte rendu de chaque nuit est dans « Veille »." components={[<strong key="s" />]} /></li>
@@ -139,7 +139,7 @@ function SecurityTab() {
                             <p className="text-xs text-slate-700 mt-0.5">{t('admin:parametres.device_note', "Appareil connecté à l'interface admin")}</p>
                         </div>
                     </div>
-                    <div className="ml-9 p-3 bg-slate-50 rounded text-sm text-slate-600">
+                    <div className="ms-9 p-3 bg-slate-50 rounded text-sm text-slate-600">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-green-500 rounded-full" />
                             <span>{typeof navigator !== 'undefined' ? navigator.userAgent.split('(')[1]?.split(')')[0] || t('admin:parametres.browser', 'Navigateur') : t('admin:parametres.browser', 'Navigateur')}</span>
@@ -155,7 +155,7 @@ function SecurityTab() {
                             <p className="text-xs text-slate-700 mt-1">{t('admin:parametres.audit_log_note', 'Historique complet des actions administratives')}</p>
                             <Button variant="outline" size="sm" className="mt-3" asChild>
                                 <Link to="/admin/audit">
-                                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                                    <ExternalLink className="h-3.5 w-3.5 me-1.5" />
                                     {t('admin:parametres.see_log', 'Voir le journal')}
                                 </Link>
                             </Button>

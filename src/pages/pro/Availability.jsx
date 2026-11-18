@@ -151,7 +151,7 @@ export default function ProAvailability() {
         <h2 className="text-xl font-bold text-slate-900">{t('pro:availability.title', 'Disponibilités')}</h2>
         {canEdit ? (
           <Button onClick={handleSave} disabled={saving} data-testid="availability-save">
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+            {saving ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <Save className="me-2 h-4 w-4" />}
             {t('pro:availability.save', 'Enregistrer')}
           </Button>
         ) : null}
@@ -204,7 +204,7 @@ export default function ProAvailability() {
               </div>
               {canEdit ? (
                 <Button type="button" variant="outline" size="sm" onClick={() => addSlot(day.key)} aria-label={t('pro:availability.slot_add', 'Ajouter une plage le {{day}}', { day: day.label.toLowerCase() })}>
-                  <Plus className="mr-1 h-4 w-4" aria-hidden="true" />
+                  <Plus className="me-1 h-4 w-4" aria-hidden="true" />
                   {t('pro:availability.add', 'Ajouter')}
                 </Button>
               ) : null}

@@ -51,8 +51,8 @@ export default function AdminSources() {
           </section>
           <section aria-labelledby="src-builtin" className="rounded border border-slate-300 bg-white p-4">
             <h2 id="src-builtin" className="font-semibold">{t('admin:sources.builtin', 'Domaines toujours acceptés comme preuve')}</h2>
-            <ul className="mt-2 list-disc pl-5" data-testid="admin-sources-builtin">{src.builtIn.map((d) => <li key={d}>{d}</li>)}</ul>
-            {src.extra.length ? <><p className="mt-2 text-sm text-slate-700">{t('admin:sources.extra', 'Ajoutés pour ce serveur :')}</p><ul className="list-disc pl-5" data-testid="admin-sources-extra">{src.extra.map((d) => <li key={d}>{d}</li>)}</ul></> : null}
+            <ul className="mt-2 list-disc ps-5" data-testid="admin-sources-builtin">{src.builtIn.map((d) => <li key={d}>{d}</li>)}</ul>
+            {src.extra.length ? <><p className="mt-2 text-sm text-slate-700">{t('admin:sources.extra', 'Ajoutés pour ce serveur :')}</p><ul className="list-disc ps-5" data-testid="admin-sources-extra">{src.extra.map((d) => <li key={d}>{d}</li>)}</ul></> : null}
           </section>
         </>
       )}

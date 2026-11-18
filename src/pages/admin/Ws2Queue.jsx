@@ -75,12 +75,12 @@ export default function AdminWs2Queue() {
       <select id="ws2-filter" className="rounded border p-2" value={filter || 'ALL'} onChange={(e) => setFilter(e.target.value)}>
         {FILTERS.map((x) => <option key={x} value={x}>{x === 'ALL' ? t('admin:ws2.all_records', 'Toutes') : stateLabel[x]}</option>)}
       </select>
-      <label htmlFor="ws2-group" className="text-sm sm:ml-2">{t('admin:ws2.group', 'Groupe')}</label>
+      <label htmlFor="ws2-group" className="text-sm sm:ms-2">{t('admin:ws2.group', 'Groupe')}</label>
       <select id="ws2-group" className="rounded border p-2" value={group} onChange={(e) => setGroup(e.target.value)}>
         <option value="ALL">{t('admin:ws2.all_groups', 'Tous')}</option>
         {Object.entries(groups).map(([k, l]) => <option key={k} value={k}>{l}{state.data?.groups?.[k] ? ` (${state.data.groups[k]})` : ''}</option>)}
       </select>
-      <label htmlFor="ws2-search" className="text-sm sm:ml-2">{t('admin:ws2.search', 'Rechercher')}</label>
+      <label htmlFor="ws2-search" className="text-sm sm:ms-2">{t('admin:ws2.search', 'Rechercher')}</label>
       <input id="ws2-search" type="search" className="rounded border p-2" value={query} onChange={(e) => setQuery(e.target.value)} data-testid="admin-ws2-search" />
       </div>
       {state.data ? <p className="text-sm text-slate-700" aria-live="polite" data-testid="admin-ws2-count">{t('admin:ws2.shown', '{{count}} fiche(s) affichée(s)', { count: records.length })}</p> : null}
@@ -103,7 +103,7 @@ export default function AdminWs2Queue() {
                   <div className="space-y-2">
                     {r.preparation && r.state !== 'HUMAN_VERIFIED' ? (
                       <div className="rounded bg-slate-50 p-2" data-testid="admin-ws2-prep">
-                        <ul className="list-disc pl-5">{r.preparation.check.map((c, i) => <li key={i} {...fr}>{c}</li>)}</ul>
+                        <ul className="list-disc ps-5">{r.preparation.check.map((c, i) => <li key={i} {...fr}>{c}</li>)}</ul>
                         {r.preparation.sourceUrl ? <p>{t('admin:ws2.source_to_check', 'Source à consulter :')} <a className="break-all text-blue-800 underline" href={r.preparation.sourceUrl} target="_blank" rel="noreferrer noopener">{r.preparation.sourceUrl}</a>{r.preparation.sourceAccepted ? t('admin:ws2.source_accepted', ' (acceptée)') : t('admin:ws2.source_not_accepted', ' (non acceptée en l’état)')}</p> : null}
                         <p className="text-xs text-slate-700">{t('admin:ws2.prep_note', 'Préparation automatique : elle aide, elle ne vaut pas vérification. La décision reste la vôtre.')}</p>
                       </div>

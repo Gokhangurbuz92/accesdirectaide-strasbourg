@@ -232,7 +232,7 @@ export default function MfaSettings() {
                             </div>
                             {hasGrant ? (
                                 <Button onClick={startSetup} disabled={loading} className="w-full">
-                                    {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ArrowRight className="mr-2 h-4 w-4" />}
+                                    {loading ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <ArrowRight className="me-2 h-4 w-4 rtl:-scale-x-100" />}
                                     {t('pro:mfa.configure', 'Configurer le MFA')}
                                 </Button>
                             ) : (
@@ -271,7 +271,7 @@ export default function MfaSettings() {
                                 disabled={loading || code.length !== 6}
                                 className="w-full"
                             >
-                                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldOff className="mr-2 h-4 w-4" />}
+                                {loading ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <ShieldOff className="me-2 h-4 w-4" />}
                                 {t('pro:mfa.disable', 'Désactiver le MFA')}
                             </Button>
                         </>
@@ -301,7 +301,7 @@ export default function MfaSettings() {
                                 <code className="block mt-1 p-2 bg-slate-50 rounded text-[10px] break-all">{otpauthUrl}</code>
                             </details>
                             <Button onClick={() => setStep(3)} className="w-full">
-                                <ArrowRight className="mr-2 h-4 w-4" />
+                                <ArrowRight className="me-2 h-4 w-4 rtl:-scale-x-100" />
                                 {t('pro:mfa.secret_added', 'J\'ai ajouté le secret')}
                             </Button>
                             <button
@@ -309,7 +309,7 @@ export default function MfaSettings() {
                                 onClick={() => setStep(1)}
                                 className="w-full text-sm text-slate-700 hover:text-slate-700 flex items-center justify-center gap-1"
                             >
-                                <ArrowLeft size={14} /> {t('pro:mfa.cancel', 'Annuler')}
+                                <ArrowLeft className="rtl:-scale-x-100" size={14} /> {t('pro:mfa.cancel', 'Annuler')}
                             </button>
                         </>
                     )}
@@ -335,7 +335,7 @@ export default function MfaSettings() {
                                 />
                             </div>
                             <Button onClick={verifyAndEnable} disabled={loading || code.length !== 6} className="w-full">
-                                {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ShieldCheck className="mr-2 h-4 w-4" />}
+                                {loading ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : <ShieldCheck className="me-2 h-4 w-4" />}
                                 {t('pro:mfa.enable', 'Activer le MFA')}
                             </Button>
                             <button
@@ -343,7 +343,7 @@ export default function MfaSettings() {
                                 onClick={() => { setStep(2); setCode(''); }}
                                 className="w-full text-sm text-slate-700 hover:text-slate-700 flex items-center justify-center gap-1"
                             >
-                                <ArrowLeft size={14} /> {t('pro:mfa.review_secret', 'Revoir le secret')}
+                                <ArrowLeft className="rtl:-scale-x-100" size={14} /> {t('pro:mfa.review_secret', 'Revoir le secret')}
                             </button>
                         </>
                     )}

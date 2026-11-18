@@ -237,7 +237,7 @@ function SelectionDetail({ id }) {
         <h1 className="text-lg font-bold">{t('pro:selections.print_title', 'Pistes d’orientation préparées pour vous')}</h1>
         {basket.needs.length ? <p>{t('pro:selections.print_needs', 'Besoins pris en compte : {{needs}}.', { needs: basket.needs.map((n) => needLabel(n.code) || n.label).join(', ') })}</p> : null}
         <p>{t('pro:selections.print_disclaimer', 'Ces pistes sont une orientation, pas une décision : seul l’organisme concerné décide de vos droits, après examen de votre situation.')}</p>
-        <ol className="list-decimal space-y-2 pl-5">
+        <ol className="list-decimal space-y-2 ps-5">
           {shown.map((i) => (
             <li key={i.key}><RecordText as="strong">{i.title}</RecordText> ({itemKinds[i.kind] || i.kindLabel}{i.place ? `, ${i.place}` : ''})<br />{t('pro:selections.print_why', 'Pourquoi : {{why}}', { why: personWhy(i, basket.needCodes, t, needLabel) })}<br />{t('pro:selections.print_source', 'Source officielle : {{url}} (vérifiée le {{date}})', { url: i.sourceUrl, date: day(i.verifiedAt, t) })}</li>
           ))}

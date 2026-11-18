@@ -117,7 +117,7 @@ export default function ProLogin() {
     return (
         <>
         {/* R41-K A6: the sign-in page renders outside ProLayout's shell — its own skip link and #main-content (RouteFocus target) */}
-        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700">
             {t('pro:layout.aller_contenu_principal', 'Aller au contenu principal')}
         </a>
         <main id="main-content" tabIndex={-1} className="min-h-screen flex flex-col items-center justify-center bg-slate-50 p-4 outline-none">
@@ -181,7 +181,7 @@ export default function ProLogin() {
                                 className="w-full h-14 bg-slate-900 hover:bg-slate-800 text-white font-black text-lg rounded-[1.25rem] shadow-xl"
                                 disabled={loading || mfaCode.length !== 6}
                             >
-                                {loading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : t('pro:login.verify', 'Vérifier')}
+                                {loading ? <Loader2 className="me-2 h-5 w-5 animate-spin" /> : t('pro:login.verify', 'Vérifier')}
                             </Button>
                             <button
                                 type="button"
@@ -199,11 +199,11 @@ export default function ProLogin() {
                         /* Standard Login */
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div className="space-y-2">
-                                <Label htmlFor="email" className="text-slate-700 font-bold text-xs uppercase tracking-widest ml-1">
+                                <Label htmlFor="email" className="text-slate-700 font-bold text-xs uppercase tracking-widest ms-1">
                                     {t('pro:login.identifiant_professionnel', 'Identifiant professionnel')}
                                 </Label>
                                 <div className="relative group">
-                                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 w-5 h-5 group-focus-within:text-emerald-500 transition-colors" />
+                                    <Mail className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-600 w-5 h-5 group-focus-within:text-emerald-500 transition-colors" />
                                     <Input
                                         id="email"
                                         type="email"
@@ -211,7 +211,7 @@ export default function ProLogin() {
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
                                         placeholder={t('pro:login.email_placeholder', 'nom@structure.fr')}
-                                        className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-200 focus:bg-white transition-all text-base"
+                                        className="h-14 ps-12 rounded-2xl bg-slate-50 border-slate-200 focus:bg-white transition-all text-base"
                                         required
                                     />
                                 </div>
@@ -227,7 +227,7 @@ export default function ProLogin() {
                                     </Link>
                                 </div>
                                 <div className="relative group">
-                                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 w-5 h-5 group-focus-within:text-emerald-500 transition-colors" />
+                                    <Lock className="absolute start-4 top-1/2 -translate-y-1/2 text-slate-600 w-5 h-5 group-focus-within:text-emerald-500 transition-colors" />
                                     <Input
                                         id="password"
                                         type="password"
@@ -235,7 +235,7 @@ export default function ProLogin() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         placeholder="••••••••"
-                                        className="h-14 pl-12 rounded-2xl bg-slate-50 border-slate-200 focus:bg-white transition-all text-base"
+                                        className="h-14 ps-12 rounded-2xl bg-slate-50 border-slate-200 focus:bg-white transition-all text-base"
                                         required
                                     />
                                 </div>
@@ -260,7 +260,7 @@ export default function ProLogin() {
                                     <Loader2 className="w-6 h-6 animate-spin" />
                                 ) : (
                                     <span className="flex items-center gap-2">
-                                        {t('pro:login.connecter', 'Se connecter')} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                        {t('pro:login.connecter', 'Se connecter')} <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform rtl:-scale-x-100 rtl:group-hover:-translate-x-1" />
                                     </span>
                                 )}
                             </Button>

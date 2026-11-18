@@ -19,7 +19,7 @@ export default function AIOrchestrator() {
             <p className="text-sm text-slate-700">
                 {t('admin:orchestrator.how_records_enter', 'Les fiches entrent dans le catalogue par la saisie gouvernée de l\'administration et par les synchronisations autorisées. Une fiche n\'est présentée comme vérifiée qu\'après sa vérification — automatique par la veille (décision D-5 v2, relecteur « ada-veille-automatique ») ou par une personne —, avec sa source officielle.')}
             </p>
-            <ul className="list-disc pl-5 text-sm space-y-1">
+            <ul className="list-disc ps-5 text-sm space-y-1">
                 <li><Link className="text-blue-700 underline underline-offset-2" to="/admin/review-queue">{t('admin:orchestrator.link.review_queue', 'File de revue')}</Link></li>
                 <li><Link className="text-blue-700 underline underline-offset-2" to="/admin/signalements">{t('admin:orchestrator.link.reports', 'Signalements')}</Link></li>
                 <li><Link className="text-blue-700 underline underline-offset-2" to="/admin/versions">{t('admin:orchestrator.link.versions', 'Versions et vérifications des fiches')}</Link></li>

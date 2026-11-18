@@ -188,7 +188,7 @@ function CaseDetail({ id }) {
             <div className="space-y-1"><label htmlFor="case-note-body" className="block text-sm">{t('pro:cases.note', 'Note')}</label><textarea id="case-note-body" data-testid="pro-note-body" aria-required="true" maxLength={4000} className="w-full rounded-md border border-slate-300 p-2" value={note.body} {...fieldA11y('case-note-body', noteErr.errors)} onChange={(e) => { setNote({ ...note, body: e.target.value }); noteErr.clear('case-note-body'); }} /><FieldError field="case-note-body" errors={noteErr.errors} /></div>
             {note.visibility === 'INTERNAL' && data.members.length > 1 ? (
               <fieldset className="text-sm"><legend>{t('pro:cases.mention', 'Mentionner (notification sans le contenu)')}</legend>
-                {data.members.filter((m) => m.id !== me.id).map((m) => <label key={m.id} className="mr-3 inline-flex items-center gap-1"><input type="checkbox" checked={note.mentions.includes(m.id)} onChange={(e) => setNote({ ...note, mentions: e.target.checked ? [...note.mentions, m.id] : note.mentions.filter((x) => x !== m.id) })} />{m.email}</label>)}
+                {data.members.filter((m) => m.id !== me.id).map((m) => <label key={m.id} className="me-3 inline-flex items-center gap-1"><input type="checkbox" checked={note.mentions.includes(m.id)} onChange={(e) => setNote({ ...note, mentions: e.target.checked ? [...note.mentions, m.id] : note.mentions.filter((x) => x !== m.id) })} />{m.email}</label>)}
               </fieldset>
             ) : null}
             <Button type="submit" size="sm" disabled={busy} data-testid="pro-note-add">{t('pro:cases.add_note', 'Ajouter la note')}</Button>

@@ -300,7 +300,7 @@ export default function ProTeam() {
                     </p>
                 </div>
                 <Button onClick={() => setIsInviteOpen(true)}>
-                    <UserPlus className="mr-2 h-4 w-4" />
+                    <UserPlus className="me-2 h-4 w-4" />
                     {t('pro:team.invite_button', 'Inviter un collaborateur')}
                 </Button>
             </div>
@@ -367,7 +367,7 @@ export default function ProTeam() {
                                     <div className="relative w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center text-sm font-bold text-slate-700 shrink-0">
                                         {(u.email || '?')[0].toUpperCase()}
                                         {u.status === 'active' && (
-                                            <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full" />
+                                            <div className="absolute -bottom-0.5 -end-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full" />
                                         )}
                                     </div>
                                     <div className="min-w-0">
@@ -445,12 +445,12 @@ export default function ProTeam() {
                                     {u.id !== user?.id && u.status === 'active' && (
                                         u.mfa_enabled ? (
                                             <Button variant="outline" size="sm" onClick={() => setConfirmMfaReset(u)} disabled={mfaInvitingId === u.id} data-testid={`team-mfa-reset-${u.id}`}>
-                                                <ShieldCheck className="mr-1 h-3.5 w-3.5" aria-hidden="true" />
+                                                <ShieldCheck className="me-1 h-3.5 w-3.5" aria-hidden="true" />
                                                 {t('pro:team.mfa_lost_device', 'Appareil perdu')}<span className="sr-only">{t('pro:team.mfa_lost_device_sr', ' : réinitialiser la double authentification de {{email}}', { email: u.email })}</span>
                                             </Button>
                                         ) : (
                                             <Button variant="outline" size="sm" onClick={() => handleMfaInvitation(u, false)} disabled={mfaInvitingId === u.id} data-testid={`team-mfa-invite-${u.id}`}>
-                                                {mfaInvitingId === u.id ? <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <ShieldCheck className="mr-1 h-3.5 w-3.5" aria-hidden="true" />}
+                                                {mfaInvitingId === u.id ? <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" aria-hidden="true" /> : <ShieldCheck className="me-1 h-3.5 w-3.5" aria-hidden="true" />}
                                                 {t('pro:team.mfa_invite', 'Inviter à la double authentification')}<span className="sr-only">{t('pro:team.mfa_invite_sr', ' : {{email}}', { email: u.email })}</span>
                                             </Button>
                                         )
@@ -469,9 +469,9 @@ export default function ProTeam() {
                                             disabled={disablingId === u.id}
                                         >
                                             {disablingId === u.id ? (
-                                                <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                                                <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" />
                                             ) : (
-                                                <UserX className="mr-1 h-3.5 w-3.5" />
+                                                <UserX className="me-1 h-3.5 w-3.5" />
                                             )}
                                             {t('pro:team.disable', 'Désactiver')}
                                         </Button>
@@ -528,9 +528,9 @@ export default function ProTeam() {
                                             disabled={resendingId === inv.id}
                                         >
                                             {resendingId === inv.id ? (
-                                                <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                                                <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" />
                                             ) : (
-                                                <RefreshCw className="mr-1 h-3.5 w-3.5" />
+                                                <RefreshCw className="me-1 h-3.5 w-3.5" />
                                             )}
                                             {t('pro:team.resend', 'Relancer')}
                                         </Button>
@@ -542,9 +542,9 @@ export default function ProTeam() {
                                             disabled={cancellingId === inv.id}
                                         >
                                             {cancellingId === inv.id ? (
-                                                <Loader2 className="mr-1 h-3.5 w-3.5 animate-spin" />
+                                                <Loader2 className="me-1 h-3.5 w-3.5 animate-spin" />
                                             ) : (
-                                                <Trash2 className="mr-1 h-3.5 w-3.5" />
+                                                <Trash2 className="me-1 h-3.5 w-3.5" />
                                             )}
                                             {t('pro:team.cancel', 'Annuler')}
                                         </Button>
@@ -676,9 +676,9 @@ export default function ProTeam() {
                             disabled={disablingId === confirmDisable?.id}
                         >
                             {disablingId === confirmDisable?.id ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                <Loader2 className="me-2 h-4 w-4 animate-spin" />
                             ) : (
-                                <UserX className="mr-2 h-4 w-4" />
+                                <UserX className="me-2 h-4 w-4" />
                             )}
                             {t('pro:team.disable_confirm', 'Confirmer la désactivation')}
                         </Button>

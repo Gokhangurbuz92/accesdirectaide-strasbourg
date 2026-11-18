@@ -140,7 +140,7 @@ function TeamTab() {
                                 </p>
                                 <Button variant="outline" size="sm" className="mt-3" asChild>
                                     <Link to="/pro/team">
-                                        <Users className="h-3.5 w-3.5 mr-1.5" />
+                                        <Users className="h-3.5 w-3.5 me-1.5" />
                                         {t('pro:parametres.manage_team', 'Gérer l\'équipe')}
                                     </Link>
                                 </Button>
@@ -269,7 +269,7 @@ function SecurityProTab({ user }) {
                         </div>
                         <Button variant="outline" size="sm" asChild>
                             <Link to="/pro/forgot-password">
-                                <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                                <ExternalLink className="h-3.5 w-3.5 me-1.5" />
                                 {t('pro:parametres.receive_link', 'Recevoir le lien')}
                             </Link>
                         </Button>
@@ -298,10 +298,10 @@ function SecurityProTab({ user }) {
                                 <p className="text-xs text-slate-700 mt-0.5">{t('pro:parametres.audit_hint', 'Historique des actions sur votre compte')}</p>
                             </div>
                         </div>
-                        <div className="ml-9">
+                        <div className="ms-9">
                             <Button variant="outline" size="sm" asChild>
                                 <Link to="/pro/audit">
-                                    <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                                    <ExternalLink className="h-3.5 w-3.5 me-1.5" />
                                     {t('pro:parametres.see_audit', 'Voir le journal')}
                                 </Link>
                             </Button>

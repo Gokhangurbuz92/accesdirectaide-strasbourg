@@ -176,7 +176,7 @@ export default function RegionalDashboard() {
                         <div className="relative">
                             <Search
                                 size={14}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600"
+                                className="absolute start-3 top-1/2 -translate-y-1/2 text-slate-600"
                             />
                             <input
                                 type="text"
@@ -184,7 +184,7 @@ export default function RegionalDashboard() {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 aria-label={t('pro:regional.search_label', 'Rechercher une structure')}
-                                className="w-full pl-9 pr-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
+                                className="w-full ps-9 pe-4 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
                             />
                         </div>
 

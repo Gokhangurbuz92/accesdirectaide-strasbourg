@@ -158,7 +158,7 @@ export default function ProAppointments() {
         <h2 className="text-xl font-bold text-slate-900">{t('pro:appointments.title', 'Agenda')}</h2>
         <div className="flex flex-wrap gap-2">
           <Button variant="outline" onClick={loadData}>
-            <RefreshCw className="mr-2 h-4 w-4" />
+            <RefreshCw className="me-2 h-4 w-4" />
             {t('pro:appointments.refresh', 'Actualiser')}
           </Button>
           <Button variant="outline" data-testid="pro-agenda-ics" onClick={async () => {
@@ -258,7 +258,7 @@ export default function ProAppointments() {
               asChild
             >
               <Link to="/pro/rdv/disponibilites">
-                <Plus className="mr-2 h-3 w-3" /> {t('pro:appointments.set_availability', 'Définir mes disponibilités')}
+                <Plus className="me-2 h-3 w-3" /> {t('pro:appointments.set_availability', 'Définir mes disponibilités')}
               </Link>
             </Button>
           </CardContent>
@@ -305,7 +305,7 @@ export default function ProAppointments() {
                     {!['done', 'no_show', 'cancelled', 'requested', 'refused', 'expired'].includes(appointment.status) && new Date(appointment.startAt || appointment.start_at).getTime() <= Date.now() ? (
                       <>
                         <Button size="sm" variant="outline" data-testid="pro-agenda-attended" onClick={() => updateStatus(appointment.id, 'done')} disabled={updatingId === appointment.id}>
-                          {updatingId === appointment.id ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-1 h-4 w-4" />}
+                          {updatingId === appointment.id ? <Loader2 className="me-1 h-4 w-4 animate-spin" /> : <CheckCircle className="me-1 h-4 w-4" />}
                           {t('pro:appointments.attended', 'Présent·e')}
                         </Button>
                         <Button size="sm" variant="outline" data-testid="pro-agenda-no-show" onClick={() => updateStatus(appointment.id, 'no_show')} disabled={updatingId === appointment.id}>{t('pro:appointments.no_show', 'Absent·e')}</Button>
@@ -320,7 +320,7 @@ export default function ProAppointments() {
                         onClick={() => updateStatus(appointment.id, 'cancelled')}
                         disabled={updatingId === appointment.id}
                       >
-                        {updatingId === appointment.id ? <Loader2 className="mr-1 h-4 w-4 animate-spin" /> : <XCircle className="mr-1 h-4 w-4" />}
+                        {updatingId === appointment.id ? <Loader2 className="me-1 h-4 w-4 animate-spin" /> : <XCircle className="me-1 h-4 w-4" />}
                         {t('pro:appointments.cancel', 'Annuler')}
                       </Button>
                     ) : null}

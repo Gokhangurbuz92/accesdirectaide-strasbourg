@@ -40,9 +40,9 @@ export default function AdminSubmissions() {
       <h1 className="text-2xl font-bold">{t('admin:k5.submissions.title', 'Signalements et suggestions')}</h1>
       <Status msg={msg} problem={problem} id="admin-submissions" />
       <section className="space-y-2" aria-labelledby="sub-r"><h2 id="sub-r" className="font-semibold">{t('admin:k5.submissions.reports_heading', 'Signalements de contenu')}</h2>
-        <label htmlFor="sub-status" className="mr-2 text-sm">{t('admin:k5.submissions.show', 'Afficher')}</label>
+        <label htmlFor="sub-status" className="me-2 text-sm">{t('admin:k5.submissions.show', 'Afficher')}</label>
         <select id="sub-status" className="rounded border p-2" value={status} onChange={(e) => setStatus(e.target.value)}>{Object.entries(REPORT).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
-        <label htmlFor="sub-kind" className="ml-4 mr-2 text-sm">{t('admin:k5.submissions.kind_filter', 'Type de contenu')}</label>
+        <label htmlFor="sub-kind" className="ms-4 me-2 text-sm">{t('admin:k5.submissions.kind_filter', 'Type de contenu')}</label>
         <select id="sub-kind" className="rounded border p-2" value={kind} onChange={(e) => setKind(e.target.value)} data-testid="admin-submissions-kind">
           <option value="">{t('admin:k5.submissions.kind.all', 'Tous')}</option>{Object.entries(KIND).map(([k, l]) => <option key={k} value={k}>{l}</option>)}</select>
         <ul className="space-y-2">{d.reports.map((r) => (

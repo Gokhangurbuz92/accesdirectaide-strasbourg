@@ -231,7 +231,7 @@ export default function ProRdvNew() {
 
           <div className="flex items-end">
             <Button type="button" onClick={handleLoadSlots} disabled={loadingServices || loadingSlots || !form.serviceId}>
-              {loadingSlots ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {loadingSlots ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : null}
               {t('pro:rdv_new.load_slots', 'Charger les créneaux')}
             </Button>
           </div>
@@ -313,7 +313,7 @@ export default function ProRdvNew() {
             <fieldset className="space-y-1 text-sm" data-testid="pro-new-mode">
               <legend className="font-medium text-slate-800">{t('pro:rdv_new.mode', 'Modalité')}</legend>
               {(Array.isArray(selectedService.modes) && selectedService.modes.length ? selectedService.modes : ['IN_PERSON']).map((m) => (
-                <label key={m} className="mr-4 inline-flex items-center gap-2">
+                <label key={m} className="me-4 inline-flex items-center gap-2">
                   <input type="radio" name="pro-new-mode" value={m} data-testid={`pro-new-mode-${m}`} checked={form.mode === m} onChange={() => { setForm((prev) => ({ ...prev, mode: m })); setSlots([]); setSelectedSlot(null); }} />
                   {m === 'VIDEO' ? t('pro:rdv_new.mode_video', 'À distance (visio)') : t('pro:rdv_new.mode_in_person', 'En présentiel')}
                 </label>
@@ -335,7 +335,7 @@ export default function ProRdvNew() {
           {successMessage ? <p className="text-sm text-emerald-700">{successMessage}</p> : null}
 
           <Button type="button" onClick={handleCreateAppointment} disabled={saving || !selectedSlot}>
-            {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            {saving ? <Loader2 className="me-2 h-4 w-4 animate-spin" /> : null}
             {t('pro:rdv_new.confirm', 'Confirmer le rendez-vous')}
           </Button>
         </CardContent>

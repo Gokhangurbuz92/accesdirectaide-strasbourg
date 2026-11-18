@@ -264,6 +264,7 @@ export default function RegisterPro() {
                                 <div className="relative">
                                     <Input
                                         id="reg-password"
+                                        className="pe-10"
                                         type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -274,7 +275,7 @@ export default function RegisterPro() {
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword((v) => !v)}
-                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-600"
+                                        className="absolute end-3 top-1/2 -translate-y-1/2 text-slate-600 hover:text-slate-600"
                                         aria-label={showPassword ? t('pro:register_pro.hide', 'Masquer') : t('pro:register_pro.show', 'Afficher')}
                                     >
                                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -311,9 +312,9 @@ export default function RegisterPro() {
                                 className="w-full"
                             >
                                 {submitting ? (
-                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    <Loader2 className="me-2 h-4 w-4 animate-spin" />
                                 ) : (
-                                    <CheckCircle2 className="mr-2 h-4 w-4" />
+                                    <CheckCircle2 className="me-2 h-4 w-4" />
                                 )}
                                 {submitting ? t('pro:register_pro.creating', 'Création en cours...') : t('pro:register_pro.create', 'Créer mon accès')}
                             </Button>
