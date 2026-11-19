@@ -9,11 +9,13 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_DOCUMENTS_V8, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT } from '../../src/config/legal-drafts.js';
 import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../../api/_services/retention-policy.js';
 
 const LANGS = ['en', 'tr', 'ar', 'de', 'uk'];
-const notice = LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === 'notice-confidentialite');
+// G8 (19/11/2026): the notice's newest draft is v9 (professional accounts inserted in §§ 3, 4, 5, 8): this file pins the positions of the v8 text,
+// which v9 keeps word for word apart from its own changes (tests/unit/g8-notice-v9.test.jsx)
+const notice = LEGAL_DRAFT_DOCUMENTS_V8.find((d) => d.id === 'notice-confidentialite');
 const section = (/** @type {string} */ s) => notice.sections.find((x) => x.id === s);
 const textOf = (/** @type {any} */ s) => [s.title, ...(s.items || []), ...(s.paras || [])].join('\n');
 const locale = (/** @type {string} */ lang) => JSON.parse(readFileSync(`src/i18n/locales/${lang}/legaldraft.json`, 'utf8'));
@@ -23,7 +25,7 @@ describe('legal drafts: what the v4 review (15/11/2026) changed still holds', ()
     expect(LEGAL_DRAFTS_VERSION).toMatch(/^v\d+-\d{4}-\d{2}-\d{2}$/);
     expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(4);
     // G4 (19/11/2026): v8 covers the two professional documents only; the others keep the shared version
-    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
+    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G8: the notice is at v9
   });
 
   it('§ 4: the retention periods are approved — no « proposé » badge; § 3 bis keeps it', () => {

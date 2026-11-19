@@ -396,6 +396,12 @@
    "text": "04 XX XX XX XX",
    "category": "example-value",
    "reason": "French telephone number format (the structures are in France)."
+  },
+  {
+   "file": "src/pages/Confidentialite.jsx",
+   "text": "Notice de confidentialité (RGPD, articles 13 et 14)",
+   "category": "french-legal",
+   "reason": "Title of the approved French notice in force, named in the French-only reference line (lang=\"fr\" dir=\"ltr\"; the French version is the only legally authoritative one). Added G8: the line came with 6c65d85 without its exception."
   }
  ]
 }

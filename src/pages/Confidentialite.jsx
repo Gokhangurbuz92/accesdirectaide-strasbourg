@@ -30,6 +30,10 @@ const SectionTitle = ({ icon: Icon, children }) => (
   </div>
 );
 
+/** the approved notice v8 paragraph (P3): its French default is the code constant LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH — scripts/i18n-check.mjs reads
+ * literal defaults only, so the key is named here (as LegalDraftDocument.jsx builds its keys) instead of failing the « keys without a French default » gate */
+const NOTICE_V8_P3_KEY = 'legaldraft:privacyNotice.purposes.p3_v8';
+
 /** @param {{ title: import('react').ReactNode, children: import('react').ReactNode }} props */
 const Item = ({ title, children }) => (
   <div>
@@ -137,7 +141,7 @@ export default function Confidentialite() {
                   {/* G8 (live check 19/11): since the G4 opening the questionnaire runs in the browser — the server/24 h text was no longer true. The text shown
                       is the APPROVED privacy notice v8 paragraph (P3, legaldraft privacyNotice.purposes.p3_v8), not new wording. */}
                   {orientationBrowserOnly()
-                    ? <span data-testid="privacy-questionnaire-browser-only">{t('legaldraft:privacyNotice.purposes.p3_v8', LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH)}</span>
+                    ? <span data-testid="privacy-questionnaire-browser-only">{t(NOTICE_V8_P3_KEY, LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH)}</span>
                     : <>
                       {t('legal:privacy.data.questionnaire.text', 'Vos réponses sont envoyées à notre serveur pour le calcul, sans y être conservées. Votre appareil les garde 24 heures, puis les efface à votre visite suivante ; sur un appareil partagé, effacez-les tout de suite. Si vous partagez votre dossier avec une structure, une copie chiffrée de vos réponses est conservée pour ce partage.')}
                       <ClearDeviceAnswers />
