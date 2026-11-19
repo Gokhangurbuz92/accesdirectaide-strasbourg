@@ -98,7 +98,9 @@ export const USER_PERSONAL_DATA_LINEAGE = Object.freeze({
             // X04 (0053): event registrations cascade with the account too (and are in the export, export-account-sections.js)
             'EventRegistration',
             // X02 (0054): testimonials and the reports the person made cascade with the account too (in the export; the consent rows stay in ConsentLog)
-            'Testimonial', 'TestimonialReport']
+            'Testimonial', 'TestimonialReport',
+            // X01 (0055): the community pseudonym, its stories and the reports the person made cascade with the account too (in the export; consent rows stay in ConsentLog)
+            'CommunityMember', 'CommunityStory', 'CommunityStoryReport']
     },
     CitizenSession: {
         action: 'DELETE',

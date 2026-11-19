@@ -16,7 +16,7 @@ import ServiceUnavailable from '@/components/ServiceUnavailable';
 import useMainHeadingText from '@/hooks/useMainHeadingText';
 import { useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
-import { eventsOpened, testimonialsOpened } from '@/lib/publicBeta';
+import { eventsOpened, storiesOpened, testimonialsOpened } from '@/lib/publicBeta';
 
 
 /**
@@ -56,6 +56,8 @@ const SIDEBAR_SECTIONS = [
             ...(eventsOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Académie et événements', to: '/admin/academie-evenements', icon: FileText }] : []),
             // X02 (expansion): same rule for the moderation of the testimonials
             ...(testimonialsOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Modération des témoignages', to: '/admin/temoignages', icon: FileText }] : []),
+            // X01 (expansion): same rule for the moderation of the community stories
+            ...(storiesOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Modération des histoires', to: '/admin/histoires', icon: FileText }] : []),
         ]
     },
     {

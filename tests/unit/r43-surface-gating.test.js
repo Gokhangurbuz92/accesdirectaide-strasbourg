@@ -80,7 +80,7 @@ describe('E2 — « accounts » opens the booking scope unless ADA_BETA_ACCOUNTS
     expect(routes.length).toBeGreaterThan(20);
     for (const r of routes) {
       const s = surfaceOf(r);
-      if (s !== 'accounts') { expect(['documents', 'appointments', 'events', 'testimonials']).toContain(s); continue; }   // the Coffre / dossier (documents), the Outlook callback (appointments), X04 registrations (events), X02 (testimonials)
+      if (s !== 'accounts') { expect(['documents', 'appointments', 'events', 'testimonials', 'stories']).toContain(s); continue; }   // the Coffre / dossier (documents), the Outlook callback (appointments), X04 registrations (events), X02 (testimonials), X01 (stories)
       expect(inAccountsBookingScope(r) || REST.includes(r), r).toBe(true);
     }
     for (const x of ACCOUNTS_BOOKING_SCOPE) expect(surfaceOf(x === 'auth' ? 'auth/login' : x), x).toBe('accounts');

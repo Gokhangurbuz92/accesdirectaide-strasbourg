@@ -629,6 +629,28 @@
         "responses": { "200": { "description": "Retrait" }, "201": { "description": "Témoignage envoyé / signalement enregistré" }, "400": { "description": "CONSENT_REQUIRED, DISPLAY_NAME_INVALID, BODY_TOO_SHORT, CONTACT_OR_LINK_IN_TEXT, PHONE_IN_TEXT, UNKNOWN_REASON" }, "401": { "description": "Session requise" }, "403": { "description": "ADULT_ACCOUNT_REQUIRED" }, "404": { "description": "TESTIMONIAL_NOT_FOUND" }, "409": { "description": "ALREADY_SUBMITTED, ALREADY_REPORTED, OWN_TESTIMONIAL" }, "429": { "description": "REPORT_LIMIT" }, "503": { "description": "CAPABILITY_NOT_OPEN, TESTIMONIALS_NOT_AVAILABLE" } }
       }
     },
+    "/stories": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Histoires publiées de la communauté (X01, extension — fermé par défaut)",
+        "description": "Histoires approuvées par la modération : pseudonyme choisi, titre, texte, langue, date, identifiant opaque (pour un signalement) — jamais un compte, un e-mail ni l'identifiant du membre. Cache-Control: no-store (un retrait disparaît à la réponse suivante). Refusé 503 CAPABILITY_NOT_OPEN tant que la capacité community.stories est fermée (surface stories). Sans la migration 0055 : liste vide. Aucune histoire d'exemple. Pas de commentaires.",
+        "responses": { "200": { "description": "{ items }" }, "503": { "description": "CAPABILITY_NOT_OPEN ou bêta restreinte" } }
+      }
+    },
+    "/citizen/stories": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Mon pseudonyme et mes histoires (X01, fermé par défaut)",
+        "description": "Session citoyenne vérifiée ; uniquement les lignes du compte. { available, member, canSubmit, consentVersion, limits, stories }.",
+        "responses": { "200": { "description": "{ available, member, canSubmit, consentVersion, limits, stories }" }, "401": { "description": "Session requise" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+      },
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Rejoindre, quitter, envoyer, retirer, signaler (X01, fermé par défaut)",
+        "description": "{ action: join, pseudonym } — compte majeur ; pseudonyme choisi, unique, non modifiable. { action: leave } — toutes les histoires retirées et effacées, pseudonyme supprimé. { action: submit, title, body, lang, consent: true, consentVersion } — compte majeur ; une ligne ConsentLog COMMUNITY_STORY_PUBLICATION dans la même transaction ; image, balise, lien, e-mail, compte de réseau social, téléphone refusés ; 3 en attente au plus, 3 par jour ; relue avant publication. { action: withdraw, id } — à tout moment, texte effacé. { action: report, id, reason } — histoire publiée, motif d'une liste fermée, une fois par compte, 5 par jour.",
+        "responses": { "200": { "description": "Retrait / départ" }, "201": { "description": "Pseudonyme enregistré / histoire envoyée / signalement enregistré" }, "400": { "description": "CONSENT_REQUIRED, PSEUDONYM_INVALID, PSEUDONYM_FROM_EMAIL, PSEUDONYM_RESERVED, TITLE_TOO_SHORT, BODY_TOO_SHORT, IMAGE_OR_MARKUP, CONTACT_OR_LINK_IN_TEXT, PHONE_IN_TEXT, UNKNOWN_REASON" }, "401": { "description": "Session requise" }, "403": { "description": "ADULT_ACCOUNT_REQUIRED" }, "404": { "description": "STORY_NOT_FOUND, NOT_A_MEMBER" }, "409": { "description": "PSEUDONYM_TAKEN, ALREADY_MEMBER, PSEUDONYM_REQUIRED, TOO_MANY_PENDING, ALREADY_REPORTED, OWN_STORY" }, "429": { "description": "SUBMIT_LIMIT, REPORT_LIMIT" }, "503": { "description": "CAPABILITY_NOT_OPEN, STORIES_NOT_AVAILABLE" } }
+      }
+    },
     "/tools": {
       "get": {
         "tags": ["Core Data"],
@@ -923,6 +945,22 @@
         "description": "{ action: approve | reject | takedown | dismiss_reports, id, reason? } — MFA ; refus et retrait effacent le texte et le nom, avec un motif d'une liste fermée ; chaque décision est journalisée.",
         "security": [{ "AdminToken": [] }],
         "responses": { "200": { "description": "Décision enregistrée" }, "400": { "description": "ID_REQUIRED, REASON_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "404": { "description": "NOT_FOUND" }, "409": { "description": "NOT_PENDING, NOT_PUBLISHED, STATE_CHANGED" }, "422": { "description": "APPROVAL_REFUSED (problems)" }, "503": { "description": "CAPABILITY_NOT_OPEN, TESTIMONIALS_NOT_AVAILABLE" } }
+      }
+    },
+    "/admin/stories": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Modération des histoires : files (X01, fermé par défaut)",
+        "description": "?queue=pending|reported|published — titre, texte, pseudonyme, langue, dates, manques avant approbation, nombre de signalements par motif ; jamais le compte, son e-mail, l'identifiant du membre ni l'auteur d'un signalement. Lecture : session administrateur nominative avec MFA, journalisée.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "{ items }" }, "400": { "description": "BAD_QUEUE" }, "401": { "description": "Session administrateur requise" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "503": { "description": "CAPABILITY_NOT_OPEN, STORIES_NOT_AVAILABLE" } }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Publier, refuser, retirer, classer les signalements (X01)",
+        "description": "{ action: approve | reject | takedown | dismiss_reports, id, reason? } — MFA ; l'approbation revérifie le contenu, le pseudonyme et la formulation « vous avez droit » (422) ; refus et retrait effacent titre et texte, avec un motif d'une liste fermée ; chaque décision est journalisée.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Décision enregistrée" }, "400": { "description": "ID_REQUIRED, REASON_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "404": { "description": "NOT_FOUND" }, "409": { "description": "NOT_PENDING, NOT_PUBLISHED, STATE_CHANGED" }, "422": { "description": "APPROVAL_REFUSED (problems)" }, "503": { "description": "CAPABILITY_NOT_OPEN, STORIES_NOT_AVAILABLE" } }
       }
     },
     "/admin/inbox": {

@@ -386,6 +386,13 @@
       "when": 1794960000000,
       "tag": "0054_x02_testimonials",
       "breakpoints": true
+    },
+    {
+      "idx": 55,
+      "version": "7",
+      "when": 1794970000000,
+      "tag": "0055_x01_community_stories",
+      "breakpoints": true
     }
   ]
 }

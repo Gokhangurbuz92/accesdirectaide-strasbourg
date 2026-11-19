@@ -2697,6 +2697,76 @@ export const TestimonialReport = pgTable('TestimonialReport', {
 }));
 
 /**
+ * X01 (expansion, migration 0055) — the community's PSEUDONYMOUS PRINCIPAL (R47 § 8: « a new public principal so CitizenUser is never exposed »). One row
+ * per adult account that joined the community: an opaque random id (never the account id) and the pseudonym the person CHOSE (never prefilled, never the
+ * e-mail; unique without regard to case; immutable — it disappears only when the person leaves the community or the account is deleted). Everything public or
+ * shown to a moderator names this pseudonym, never the account. Deleted with the account (ON DELETE CASCADE). Only writer: api/_services/community-stories.js.
+ */
+export const CommunityMember = pgTable('CommunityMember', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	citizenUserId: text('citizenUserId').notNull(),
+	pseudonym: text('pseudonym').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'CommunityMember_user_fkey': foreignKey({ name: 'CommunityMember_user_fkey', columns: [t.citizenUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'CommunityMember_user_key': uniqueIndex('CommunityMember_user_key').on(t.citizenUserId),
+	'CommunityMember_pseudonym_key': uniqueIndex('CommunityMember_pseudonym_key').on(sql`lower(${t.pseudonym})`),
+	'CommunityMember_pseudonym_check': check('CommunityMember_pseudonym_check', sql`char_length(${t.pseudonym}) BETWEEN 3 AND 24 AND ${t.pseudonym} !~ '[@[:space:]]'`)
+}));
+
+/**
+ * X01 (0055) — a story (« histoire ») written by a community member, published only after moderation and with the person's explicit consent (one ConsentLog
+ * row, purpose COMMUNITY_STORY_PUBLICATION, the story id in policy_hash). The title and the text exist ONLY while the story is pending or published: a
+ * withdrawal (by the person, at any time), a rejection or a takedown erases both (CHECK). Keyed on the PSEUDONYMOUS member, not on the account. Deleted with
+ * the member (leaving the community) and so with the account (cascade). No image, no link, no contact (refused by the service).
+ */
+export const CommunityStory = pgTable('CommunityStory', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	memberId: text('memberId').notNull(),
+	status: text('status').notNull().default('pending'),
+	title: text('title'),
+	body: text('body'),
+	lang: text('lang').notNull(),
+	consentVersion: text('consentVersion').notNull(),
+	moderationReason: text('moderationReason'),
+	moderatedBy: text('moderatedBy'),
+	moderatedAt: timestamp('moderatedAt', { precision: 3 }),
+	submittedAt: timestamp('submittedAt', { precision: 3 }).notNull().defaultNow(),
+	publishedAt: timestamp('publishedAt', { precision: 3 }),
+	withdrawnAt: timestamp('withdrawnAt', { precision: 3 }),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'CommunityStory_member_fkey': foreignKey({ name: 'CommunityStory_member_fkey', columns: [t.memberId], foreignColumns: [CommunityMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'CommunityStory_member_idx': index('CommunityStory_member_idx').on(t.memberId, t.submittedAt),
+	'CommunityStory_public_idx': index('CommunityStory_public_idx').on(t.status, t.publishedAt),
+	'CommunityStory_status_check': check('CommunityStory_status_check', sql`${t.status} IN ('pending', 'published', 'rejected', 'withdrawn', 'taken_down')`),
+	'CommunityStory_lang_check': check('CommunityStory_lang_check', sql`${t.lang} IN ('fr', 'en', 'de', 'tr', 'ar', 'uk')`),
+	'CommunityStory_text_state_check': check('CommunityStory_text_state_check', sql`(${t.status} IN ('pending', 'published') AND ${t.title} IS NOT NULL AND ${t.body} IS NOT NULL) OR (${t.status} NOT IN ('pending', 'published') AND ${t.title} IS NULL AND ${t.body} IS NULL)`),
+	'CommunityStory_length_check': check('CommunityStory_length_check', sql`(${t.title} IS NULL OR char_length(${t.title}) BETWEEN 5 AND 120) AND (${t.body} IS NULL OR char_length(${t.body}) BETWEEN 50 AND 3000)`),
+	'CommunityStory_published_check': check('CommunityStory_published_check', sql`${t.status} <> 'published' OR (${t.publishedAt} IS NOT NULL AND ${t.moderatedBy} IS NOT NULL)`),
+	'CommunityStory_reason_check': check('CommunityStory_reason_check', sql`${t.moderationReason} IS NULL OR ${t.moderationReason} IN ('HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSIVE', 'MISLEADING', 'ADVERTISING', 'OFF_TOPIC')`)
+}));
+
+/**
+ * X01 (0055) — a report of abuse on a published story by a signed-in citizen: the story, the reporting account, ONE reason from a closed list (no free text),
+ * the time. One report per account and story. The moderator sees counts per reason, never who reported. Deleted when the story leaves public view
+ * (withdrawal, takedown) or when the moderator dismisses the reports, and with either account (ON DELETE CASCADE).
+ */
+export const CommunityStoryReport = pgTable('CommunityStoryReport', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	storyId: text('storyId').notNull(),
+	reporterUserId: text('reporterUserId').notNull(),
+	reason: text('reason').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'CommunityStoryReport_story_fkey': foreignKey({ name: 'CommunityStoryReport_story_fkey', columns: [t.storyId], foreignColumns: [CommunityStory.id] }).onDelete('cascade').onUpdate('cascade'),
+	'CommunityStoryReport_user_fkey': foreignKey({ name: 'CommunityStoryReport_user_fkey', columns: [t.reporterUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'CommunityStoryReport_once_key': uniqueIndex('CommunityStoryReport_once_key').on(t.storyId, t.reporterUserId),
+	'CommunityStoryReport_reporter_idx': index('CommunityStoryReport_reporter_idx').on(t.reporterUserId, t.createdAt),
+	'CommunityStoryReport_reason_check': check('CommunityStoryReport_reason_check', sql`${t.reason} IN ('HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSIVE', 'MISLEADING', 'ADVERTISING', 'OFF_TOPIC')`)
+}));
+
+/**
  * PKG-2 / C09 — Mon Coffre: the person's own documents. Bytes are envelope-encrypted server-side (api/lib/data-keys.js) before the storage adapter sees them; the file name is
  * encrypted too. scanStatus states honestly that no antivirus scan exists yet (NOT_SCANNED); the type is checked from the content, not from the declared name.
  */

@@ -96,6 +96,10 @@ export const SURFACES = {
   // deployment: it needs this name in ADA_BETA_OPEN_SURFACES AND « community.testimonials » in ADA_CAPABILITIES_OPEN (outside the AIPD until its line is
   // signed). Longer prefixes than « citizen » / « admin »: opening accounts or admin does not open them.
   testimonials: ['testimonials', 'citizen/testimonials', 'admin/testimonials'],
+  // X01 (expansion, 19/11/2026): community stories — the public reading, the person's pseudonym / stories / withdrawals / reports and the moderation. Opened
+  // by NO deployment: it needs this name in ADA_BETA_OPEN_SURFACES AND « community.stories » in ADA_CAPABILITIES_OPEN (outside the AIPD until its line is
+  // signed). Longer prefixes than « citizen » / « admin »: opening accounts or admin does not open them.
+  stories: ['stories', 'citizen/stories', 'admin/stories'],
 };
 /** surfaces that ADA_BETA_OPEN_SURFACES never opens (R40 / G2) */
 export const NOT_OPENABLE = Object.freeze(['jobs']);

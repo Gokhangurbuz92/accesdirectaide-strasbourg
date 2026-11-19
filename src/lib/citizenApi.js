@@ -78,6 +78,9 @@ export const citizenApi = {
   // X02 (expansion): the person's testimonials, withdrawal, reports (closed by default: capability community.testimonials)
   myTestimonials: () => call('/api/citizen/testimonials'),
   testimonialAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/testimonials', { method: 'POST', body }),
+  // X01 (expansion): the person's community pseudonym and stories, withdrawal, reports (closed by default: capability community.stories)
+  myStories: () => call('/api/citizen/stories'),
+  storyAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/stories', { method: 'POST', body }),
   addFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'POST', body: { entityType, entityId } }),
   removeFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'DELETE', body: { entityType, entityId } }),
   getHistory: () => call('/api/citizen/history'),
