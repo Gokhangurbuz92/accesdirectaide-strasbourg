@@ -26,6 +26,9 @@ const kindLabels = (t) => ({
   REFERRAL_DECISION_NEEDED: t('compte:notifications.kind.referral_decision_needed', 'Une structure propose de transmettre votre dossier : votre accord est demandé.'),
   REFERRAL_ANSWER: t('compte:notifications.kind.referral_answer', 'Une structure a répondu à une de vos orientations ou l’a fait avancer.'),
   REFERRAL_ENDED: t('compte:notifications.kind.referral_ended', 'Une orientation a été annulée ou n’est plus valable.'),
+  // X04 (expansion): the person's event registrations — kind, time and link only (no title, no place, no accessibility need)
+  EVENT_REMINDER: t('compte:notifications.kind.event_reminder', 'Rappel : un événement auquel vous êtes inscrit ou inscrite a lieu dans moins de 48 heures.'),
+  EVENT_CANCELLED: t('compte:notifications.kind.event_cancelled', 'Un événement auquel vous êtes inscrit ou inscrite a été annulé par l’organisateur.'),
 });
 
 /**

@@ -2572,6 +2572,78 @@ export const CitizenHistoryEntry = pgTable('CitizenHistoryEntry', {
 }));
 
 /**
+ * X04 (expansion, migration 0053) — Academy and events. AcademyItem: an editorial page (LESSON) or a dated public event (EVENT), written by a named
+ * administrator and published only through draft → review → published (api/_services/academy-events.js, the only writer). It holds NO personal data: the
+ * organizer is an organisation name, the place a public venue. Closed by default: capability « community.events », surface « events ».
+ */
+export const AcademyItem = pgTable('AcademyItem', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	kind: text('kind').notNull(),
+	status: text('status').notNull().default('draft'),
+	slug: text('slug'),
+	title: text('title').notNull(),
+	summary: text('summary').notNull().default(''),
+	body: text('body').notNull().default(''),
+	// checked human translations only: { en: { title, summary, body }, … } — a language without one shows the French text marked lang="fr"
+	translations: jsonb('translations').notNull().default({}),
+	organizerName: text('organizerName'),
+	startsAt: timestamp('startsAt', { precision: 3 }),
+	endsAt: timestamp('endsAt', { precision: 3 }),
+	registrationClosesAt: timestamp('registrationClosesAt', { precision: 3 }),
+	venueName: text('venueName'),
+	venueAddress: text('venueAddress'),
+	venueCommune: text('venueCommune'),
+	capacity: integer('capacity'),
+	accessibilityFeatures: text('accessibilityFeatures').array().notNull().default(sql`ARRAY[]::text[]`),
+	accessibilityNote: text('accessibilityNote'),
+	reviewNote: text('reviewNote'),
+	statusNote: text('statusNote'),
+	createdBy: text('createdBy').notNull(),
+	updatedBy: text('updatedBy').notNull(),
+	submittedBy: text('submittedBy'),
+	approvedBy: text('approvedBy'),
+	approvedAt: timestamp('approvedAt', { precision: 3 }),
+	publishedAt: timestamp('publishedAt', { precision: 3 }),
+	cancelledAt: timestamp('cancelledAt', { precision: 3 }),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'AcademyItem_slug_key': uniqueIndex('AcademyItem_slug_key').on(t.slug),
+	'AcademyItem_public_idx': index('AcademyItem_public_idx').on(t.kind, t.status, t.startsAt),
+	'AcademyItem_kind_check': check('AcademyItem_kind_check', sql`${t.kind} IN ('LESSON', 'EVENT')`),
+	'AcademyItem_status_check': check('AcademyItem_status_check', sql`${t.status} IN ('draft', 'review', 'published', 'cancelled', 'withdrawn')`),
+	'AcademyItem_capacity_check': check('AcademyItem_capacity_check', sql`${t.capacity} IS NULL OR (${t.capacity} >= 1 AND ${t.capacity} <= 5000)`),
+	'AcademyItem_dates_check': check('AcademyItem_dates_check', sql`${t.startsAt} IS NULL OR ${t.endsAt} IS NULL OR ${t.endsAt} > ${t.startsAt}`),
+	'AcademyItem_published_check': check('AcademyItem_published_check', sql`${t.status} IN ('draft', 'review') OR (${t.slug} IS NOT NULL AND ${t.publishedAt} IS NOT NULL AND ${t.approvedBy} IS NOT NULL)`),
+	'AcademyItem_event_check': check('AcademyItem_event_check', sql`${t.kind} = 'LESSON' OR ${t.status} IN ('draft', 'review') OR (${t.startsAt} IS NOT NULL AND ${t.endsAt} IS NOT NULL AND ${t.capacity} IS NOT NULL AND ${t.venueName} IS NOT NULL)`)
+}));
+
+/**
+ * X04 (0053) — a signed-in adult citizen's registration to a published EVENT. Minimal: the account, the event, the state, the times and — optional, only
+ * with the person's explicit choice — ONE accessibility need from a closed list (no free text). Cancelling clears the need. Deleted with the account
+ * (ON DELETE CASCADE: account deletion, DSR erasure, step 6c) and with the event. The organizer sees counts only (api/_services/academy-events.js).
+ */
+export const EventRegistration = pgTable('EventRegistration', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	itemId: text('itemId').notNull(),
+	citizenUserId: text('citizenUserId').notNull(),
+	status: text('status').notNull().default('REGISTERED'),
+	accessibilityNeed: text('accessibilityNeed'),
+	accessibilityNeedAt: timestamp('accessibilityNeedAt', { precision: 3 }),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull(),
+	cancelledAt: timestamp('cancelledAt', { precision: 3 })
+}, (t) => ({
+	'EventRegistration_item_fkey': foreignKey({ name: 'EventRegistration_item_fkey', columns: [t.itemId], foreignColumns: [AcademyItem.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EventRegistration_user_fkey': foreignKey({ name: 'EventRegistration_user_fkey', columns: [t.citizenUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EventRegistration_item_user_key': uniqueIndex('EventRegistration_item_user_key').on(t.itemId, t.citizenUserId),
+	'EventRegistration_user_idx': index('EventRegistration_user_idx').on(t.citizenUserId),
+	'EventRegistration_status_check': check('EventRegistration_status_check', sql`${t.status} IN ('REGISTERED', 'CANCELLED')`),
+	'EventRegistration_need_check': check('EventRegistration_need_check', sql`${t.accessibilityNeed} IS NULL OR ${t.accessibilityNeed} IN ('STEP_FREE_ACCESS', 'LSF_INTERPRETATION', 'LIVE_CAPTIONS', 'HEARING_LOOP', 'FALC_MATERIALS', 'LARGE_PRINT_MATERIALS', 'QUIET_SPACE', 'ACCOMPANYING_PERSON')`),
+	'EventRegistration_need_state_check': check('EventRegistration_need_state_check', sql`(${t.accessibilityNeed} IS NULL) = (${t.accessibilityNeedAt} IS NULL) AND (${t.status} = 'REGISTERED' OR ${t.accessibilityNeed} IS NULL)`)
+}));
+
+/**
  * PKG-2 / C09 — Mon Coffre: the person's own documents. Bytes are envelope-encrypted server-side (api/lib/data-keys.js) before the storage adapter sees them; the file name is
  * encrypted too. scanStatus states honestly that no antivirus scan exists yet (NOT_SCANNED); the type is checked from the content, not from the declared name.
  */

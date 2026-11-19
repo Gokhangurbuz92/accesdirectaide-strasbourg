@@ -4,7 +4,9 @@
  */
 const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointments', '/rdv', '/share', '/passport', '/institution', '/r',
   '/contact', '/demande-aide', '/proposer-une-structure', '/orientation', '/diagnostic', '/assistant', '/mon-assistant',
-  '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches', '/sentry-test', '/__sentry_test'];
+  '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches', '/sentry-test', '/__sentry_test',
+  // X04 (expansion): academy pages and events, the person's registrations and their administration — surface « events », opened by no build
+  '/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements'];
 
 /**
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
@@ -15,6 +17,7 @@ export const SCREEN_SURFACES = {
   accounts: ['/login', '/auth', '/compte'], pro: ['/pro'], institution: ['/institution'], appointments: ['/appointments', '/rdv', '/r'],
   communications: ['/contact', '/demande-aide', '/proposer-une-structure'], documents: ['/share', '/passport'],
   diagnostic: ['/diagnostic', '/assistant', '/mon-assistant', '/orientation'], admin: ['/admin', '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches'],
+  events: ['/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements'],
 };
 const builtOpen = () => {
   let v = '';
@@ -64,6 +67,8 @@ const under = (p, x) => p === x || p.startsWith(`${x}/`);
 /** @param {string} pathname @param {string[]} [open] surfaces opened in this build @param {BetaSubSwitches} [sub] sub-switches of this build */
 export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSub()) {
   const p = String(pathname || '/').toLowerCase().split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+  // X04: the events screens follow ONLY the « events » surface — they sit under /compte and /admin, whose openings must not open them
+  if (SCREEN_SURFACES.events.some((x) => under(p, x))) return !open.includes('events');
   // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
   if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
   const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));
@@ -107,4 +112,13 @@ export function shareOpened(beta, open = builtOpen(), sub = builtSub()) {
  */
 export function openLinks(links, beta, pathOf) {
   return beta ? links.filter((l) => !isBetaRestrictedPath(pathOf(l))) : links;
+}
+
+/**
+ * X04 (expansion) — are the academy and event screens usable in this build: outside the beta, or when the build opens the « events » surface. Links to
+ * them (Mon Espace, the administration menu) are offered only then; the server keeps the capability « community.events » closed anyway.
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function eventsOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/evenements', open, sub);
 }

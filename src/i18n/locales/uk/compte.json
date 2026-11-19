@@ -599,6 +599,8 @@
   "notifications.kind.booked_by_structure": "Організація призначила вам зустріч.",
   "notifications.kind.booked_by_citizen": "Вашу зустріч зареєстровано.",
   "notifications.kind.cancelled_by_structure": "Організація скасувала зустріч.",
+  "notifications.kind.event_cancelled": "Організатор скасував подію, на яку ви зареєстровані.",
+  "notifications.kind.event_reminder": "Нагадування: подія, на яку ви зареєстровані, відбудеться менш ніж за 48 годин.",
   "notifications.kind.rescheduled": "Зустріч перенесено.",
   "notifications.kind.reminder_j1": "Нагадування: завтра у вас зустріч.",
   "notifications.kind.visio_approved": "Відеозустріч погоджено.",

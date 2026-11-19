@@ -599,6 +599,8 @@
   "notifications.kind.booked_by_structure": "An organisation has set an appointment with you.",
   "notifications.kind.booked_by_citizen": "Your appointment is booked.",
   "notifications.kind.cancelled_by_structure": "An organisation has cancelled an appointment.",
+  "notifications.kind.event_cancelled": "An event you are registered for has been cancelled by the organiser.",
+  "notifications.kind.event_reminder": "Reminder: an event you are registered for takes place in less than 48 hours.",
   "notifications.kind.rescheduled": "An appointment has been moved.",
   "notifications.kind.reminder_j1": "Reminder: you have an appointment tomorrow.",
   "notifications.kind.visio_approved": "The video appointment has been accepted.",

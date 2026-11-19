@@ -13,6 +13,8 @@
  *   REFERRAL_ANSWER             E7: the receiving organisation answered or moved a referral of such a dossier (acknowledged, accepted, declined — with or
  *                               without a suggestion —, asked for information, started, completed): one item per ReferralEvent by the RECEIVER
  *   REFERRAL_ENDED              E7: the sender cancelled a referral, or it expired without an answer (ReferralEvent by SENDER / SYSTEM)
+ *   EVENT_REMINDER              X04: an event the person registered to starts within 48 hours                                (community.events)
+ *   EVENT_CANCELLED             X04: the organizer cancelled an event the person is registered to (api/_services/academy-events.js)
  *   Before E7 the answer of a referral reached the person only by e-mail (when service e-mails are consented AND a provider delivers) or by opening the
  *   orientations page: with e-mails off — or MAILER_PROVIDER=noop — nothing in Mon Espace said that an answer or a consent request was waiting.
  * Minimisation: an item carries a kind, a time, an in-app link and an opaque id — never a message body, a name, an organisation, an e-mail or a title
@@ -29,7 +31,7 @@ import { capabilityOpen } from '../_utils/capabilities.js';
 export const INBOX_LIMIT = 50;
 export const APPOINTMENT_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'REQUEST_ACCEPTED', 'REQUEST_REFUSED', 'BOOKED_BY_CITIZEN', 'REQUEST_RECEIVED'];
 export const INBOX_KINDS = [...APPOINTMENT_KINDS.map((k) => `APPOINTMENT_${k}`), 'MESSAGE_FROM_STRUCTURE', 'DOSSIER_MESSAGE', 'PARCOURS_DEADLINE_SOON', 'DOCUMENT_EXPIRING', 'GUARDIAN_REQUEST',
-  'REFERRAL_DECISION_NEEDED', 'REFERRAL_ANSWER', 'REFERRAL_ENDED'];
+  'REFERRAL_DECISION_NEEDED', 'REFERRAL_ANSWER', 'REFERRAL_ENDED', 'EVENT_REMINDER', 'EVENT_CANCELLED'];
 /** E7: the referral transitions the person is told about in the centre (ReferralEvent, append-only), by who made them */
 export const REFERRAL_ANSWER_STATUSES = Object.freeze(['ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'DECLINED', 'IN_PROGRESS', 'COMPLETED']);
 export const REFERRAL_ENDED_STATUSES = Object.freeze(['CANCELLED', 'EXPIRED']);
@@ -94,6 +96,11 @@ export async function listInbox(userId, db = defaultDb, opts = {}) {
         ORDER BY e."createdAt" DESC LIMIT ${INBOX_LIMIT}`)) {
       items.push({ ref: `re:${r.id}`, kind: r.actor === 'RECEIVER' ? 'REFERRAL_ANSWER' : 'REFERRAL_ENDED', at: r.at, link: REFERRALS_LINK });
     }
+  }
+  if (isOpen('community.events')) {
+    // X04 (expansion): derived from the person's own registrations — kind, time, link; never the event's title, place or the accessibility need
+    const { eventInboxItems } = await import('./academy-events.js');
+    items.push(...await eventInboxItems(userId, { db, now, limit: INBOX_LIMIT }));
   }
   const seenAt = await seenUpTo(userId, db);
   const list = items.sort((a, b) => new Date(b.at) - new Date(a.at)).slice(0, INBOX_LIMIT)
