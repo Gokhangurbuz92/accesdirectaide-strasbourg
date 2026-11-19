@@ -11,6 +11,8 @@ import ClearDeviceAnswers from '@/components/privacy/ClearDeviceAnswers';
 import { frontendEnv } from "@/config/env";
 import { Link } from 'react-router-dom';
 import { accountsOpened } from '@/lib/publicBeta';
+import { orientationBrowserOnly } from '@/lib/orientationBrowserOnly';
+import { LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH, approvedVersionOf, currentDraftContext } from '@/config/legal-drafts';
 import i18n, { useLanguage, useT } from '@/i18n';
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/02_POLITIQUE_CONFIDENTIALITE.md and FAITS_TECHNIQUES.md
@@ -57,6 +59,7 @@ export default function Confidentialite() {
   const { t } = useT('legal');
   const { isSource } = useLanguage();
   const fr = isSource ? {} : { lang: 'fr', dir: 'ltr' };
+  const noticeVersion = approvedVersionOf('notice-confidentialite', currentDraftContext().approved);
   const contact = LEGAL_PLACEHOLDERS.dataProtectionContact;
   const contactValue = (/** @type {string} */ key) => <em key={key} {...fr}>{contact}</em>;
   const title = t('legal:privacy.title', 'Politique de confidentialité');
@@ -131,8 +134,14 @@ export default function Confidentialite() {
                   {t('legal:privacy.data.reading.securityLogs', "Les journaux de sécurité contiennent l'adresse IP ; ils sont gardés 365 jours.")}
                 </Item>
                 <Item title={t('legal:privacy.data.questionnaire.title', '2. Le questionnaire')}>
-                  {t('legal:privacy.data.questionnaire.text', 'Vos réponses sont envoyées à notre serveur pour le calcul, sans y être conservées. Votre appareil les garde 24 heures, puis les efface à votre visite suivante ; sur un appareil partagé, effacez-les tout de suite. Si vous partagez votre dossier avec une structure, une copie chiffrée de vos réponses est conservée pour ce partage.')}
-                  <ClearDeviceAnswers />
+                  {/* G8 (live check 19/11): since the G4 opening the questionnaire runs in the browser — the server/24 h text was no longer true. The text shown
+                      is the APPROVED privacy notice v8 paragraph (P3, legaldraft privacyNotice.purposes.p3_v8), not new wording. */}
+                  {orientationBrowserOnly()
+                    ? <span data-testid="privacy-questionnaire-browser-only">{t('legaldraft:privacyNotice.purposes.p3_v8', LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH)}</span>
+                    : <>
+                      {t('legal:privacy.data.questionnaire.text', 'Vos réponses sont envoyées à notre serveur pour le calcul, sans y être conservées. Votre appareil les garde 24 heures, puis les efface à votre visite suivante ; sur un appareil partagé, effacez-les tout de suite. Si vous partagez votre dossier avec une structure, une copie chiffrée de vos réponses est conservée pour ce partage.')}
+                      <ClearDeviceAnswers />
+                    </>}
                 </Item>
                 <Item title={t('legal:privacy.data.account.title', '3. Votre compte')}>
                   {t('legal:privacy.data.account.text', "Les contenus sensibles (messages, notes, documents, réponses partagées) sont chiffrés à l'enregistrement (pas de chiffrement de bout en bout). Votre compte est conservé tant que vous l'utilisez. La suppression automatique des comptes inactifs n'est pas encore en place.")}
@@ -255,6 +264,13 @@ export default function Confidentialite() {
                 <p className="text-sm mt-8 text-slate-500 border-t border-slate-100 pt-4" data-legal-version={LEGAL_DOCS_VERSION.version} {...fr}>
                   {LEGAL_DOCS_LABEL}
                 </p>
+                {/* G8: the review status stays explicit; the approved, in-force reference text is named (VITE_LEGAL_DOCS_APPROVED_VERSION) */}
+                {noticeVersion && (
+                  <p className="text-sm text-slate-500" data-testid="privacy-reference-notice" {...fr}>
+                    {`Cette page résume nos traitements. Le texte approuvé et en vigueur est la notice de confidentialité (version ${noticeVersion}) : `}
+                    <Link to="/confidentialite/notice" className="underline">{'Notice de confidentialité (RGPD, articles 13 et 14)'}</Link>.
+                  </p>
+                )}
               </div>
             </section>
 
