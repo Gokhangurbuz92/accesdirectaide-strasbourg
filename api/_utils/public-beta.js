@@ -112,6 +112,7 @@ export const PRO_SELF_REGISTRATION_PATH = 'pro/auth/register';
  * their rights (sign-up, sign-in, e-mail verification, password reset, sign-out, account deletion, data export, profile, adult statement, contact-data
  * rectification, e-mail preferences, restriction, the Mon Espace summary). The rest of the citizen space (household C03, guardians C05, Web Push, shares,
  * Mon Parcours, favourites, history, delegations, referrals) opens only with ADA_BETA_ACCOUNTS_SCOPE=full (exact value). Unknown value = narrow.
+ * G4: one module of it can be added to the narrow scope by name (ADA_BETA_ACCOUNTS_EXTRA, below).
  */
 export const ACCOUNTS_BOOKING_SCOPE = Object.freeze([
   'auth', 'login-pro-guard',
@@ -130,10 +131,41 @@ export function inAccountsBookingScope(path) {
   return ACCOUNTS_BOOKING_SCOPE.some((x) => p === x || p.startsWith(`${x}/`));
 }
 
+/**
+ * G4 (founder directive 19/11/2026, « Mon Parcours as soon as it is safe ») — named additions to the NARROW accounts scope, one module at a time, without
+ * opening the rest of the full scope (household, guardians, push, shares, favourites, history, delegations, referrals stay closed at surface level).
+ * ADA_BETA_ACCOUNTS_EXTRA is a comma list of the exact names below; an unknown name adds nothing, there is no wildcard, and it has no effect when the
+ * accounts surface is closed or already in the full scope. An addition opens its routes at this gate AND lets its out-of-AIPD capability pass the
+ * « full scope » condition of api/_utils/capabilities.js — the capability must STILL be named in ADA_CAPABILITIES_OPEN (AIPD extension), so the
+ * addition alone opens nothing. The browser mirrors it with VITE_PUBLIC_BETA_ACCOUNTS_EXTRA (src/lib/publicBeta.js).
+ *   parcours  Mon Parcours (C07): GET / POST / DELETE citizen/parcours — capability citizen.parcours. Its in-app deadline notices come through
+ *             citizen/notifications (already narrow); the plan import from a shared dossier stays refused while citizen.shared_dossier (HDS) is closed;
+ *             its e-mail reminders are the category C job « parcours-reminder » (ADA_BETA_OPEN_JOBS + ADA_JOBS_APPROVED, separately).
+ * @type {Readonly<Record<string, Readonly<{ routes: readonly string[], capabilities: readonly string[] }>>>}
+ */
+export const ACCOUNTS_EXTRAS = Object.freeze({
+  parcours: Object.freeze({ routes: Object.freeze(['citizen/parcours']), capabilities: Object.freeze(['citizen.parcours']) }),
+});
+/** the additions to the narrow accounts scope named in this environment (empty in the full scope) @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
+export function accountsExtras(envVars = process.env) {
+  if (accountsScope(envVars) === 'full') return new Set();
+  return new Set(String(envVars.ADA_BETA_ACCOUNTS_EXTRA || '').split(',').map((x) => x.trim().toLowerCase())
+    .filter((x) => Object.prototype.hasOwnProperty.call(ACCOUNTS_EXTRAS, x)));
+}
+/** the capabilities whose « full scope » condition an addition satisfies @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
+export function accountsExtraCapabilities(envVars = process.env) {
+  return new Set([...accountsExtras(envVars)].flatMap((x) => ACCOUNTS_EXTRAS[x].capabilities));
+}
+/** is this `accounts` route one of the named additions @param {string} path @param {Record<string, string | undefined>} [envVars] */
+export function inAccountsExtras(path, envVars = process.env) {
+  const p = String(path || '');
+  return [...accountsExtras(envVars)].some((x) => ACCOUNTS_EXTRAS[x].routes.some((r) => p === r || p.startsWith(`${r}/`)));
+}
+
 /** may this route of an OPENED surface be served (the R43 sub-switches) @param {string} surface @param {string} path @param {Record<string, string | undefined>} envVars */
 function subSwitchAllows(surface, path, envVars) {
   if (surface === 'pro' && path === PRO_SELF_REGISTRATION_PATH) return proSelfRegistrationOpen(envVars);
-  if (surface === 'accounts' && accountsScope(envVars) !== 'full') return inAccountsBookingScope(path);
+  if (surface === 'accounts' && accountsScope(envVars) !== 'full') return inAccountsBookingScope(path) || inAccountsExtras(path, envVars);
   return true;
 }
 

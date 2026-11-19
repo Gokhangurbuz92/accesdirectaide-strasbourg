@@ -16,7 +16,7 @@ import { protectedStore as defaultStorage } from '../lib/protected-store/index.j
 import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js';
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';
-import { capabilityOpen } from '../_utils/capabilities.js';
+import { CAPABILITY_NOT_OPEN, CAPABILITY_NOT_OPEN_MESSAGE, capabilityOpen } from '../_utils/capabilities.js';
 import { parcoursItemTable, parcoursPlanStepSchema } from '../_utils/schema-features.js';
 import { mergePlanStep, planNeeds, planStepFits, planStepFromPlan, readPlanStep, validatePlanStepInput } from '../lib/parcours-plan-step.js';
 import { PLAN_CLOSURES, PLAN_DONE_STATUSES, closureOf, dependencyCycle } from '../../src/lib/parcoursPlan.js';
@@ -27,6 +27,8 @@ const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
 // ───────────── Mon Parcours
 export const PARCOURS_STATUSES = ['NOT_STARTED', 'IN_PROGRESS', 'DOCUMENTS_REQUIRED', 'READY', 'SUBMITTED', 'WAITING_ORGANIZATION', 'ADDITIONAL_INFORMATION', 'DECISION_POSITIVE', 'DECISION_NEGATIVE', 'CLOSED'];
 export const MAX_PARCOURS_ITEMS = 100;
+/** the longest personal note kept (longer text is cut; the screen stops typing at the same length: src/pages/CompteParcours.jsx NOTE_MAX) */
+export const MAX_PARCOURS_NOTE = 500;
 const planKeyOf = (shareId, step) => crypto.createHash('sha256').update(JSON.stringify([shareId, step.kind, step.who || '', [...(step.itemCodes || [])].sort()])).digest('hex').slice(0, 40);
 // M1: `status` stays one of the ten self-declared states; `closure` says why a CLOSED step ended when the person said so (ABANDONED | OUTCOME_UNKNOWN), else null
 const itemView = (r) => ({ id: r.id, origin: r.origin, sourceShareId: r.sourceShareId, stepKind: r.stepKind, itemCodes: r.itemCodes, title: r.title, status: r.status, closure: closureOf(r),
@@ -95,7 +97,8 @@ async function recordsOf(rows, db) {
  */
 async function planStepsOf(userId, rows, db) {
   const shareIds = [...new Set(rows.filter((r) => r.origin === 'PLAN' && r.sourceShareId && r.planKey).map((r) => r.sourceShareId))];
-  const out = new Map(); if (!shareIds.length) return out;
+  // G4: reading a dossier back belongs to the shared dossier (HDS-bound): not while citizen.shared_dossier is closed — the step keeps its own copy or its title
+  const out = new Map(); if (!shareIds.length || !planImportOpen()) return out;
   const shares = await db.select({ id: SharedDiagnostic.id, results: SharedDiagnostic.results }).from(SharedDiagnostic)
     .where(and(inArray(SharedDiagnostic.id, shareIds), eq(SharedDiagnostic.ownerCitizenId, userId)));
   for (const sh of shares) {
@@ -171,8 +174,17 @@ async function newPlanStep(userId, plan, db, has, T) {
   return { values: value ? { planStep: value } : {}, saved: true };
 }
 
+/**
+ * G4 — importing the plan of a shared dossier reads that dossier (SharedDiagnostic: the person's answers and results, possibly health data). It is part of
+ * the shared dossier (capability citizen.shared_dossier, HDS-bound), not of Mon Parcours alone: while that capability is closed the import is refused
+ * before anything is read, even where Mon Parcours itself is open (e.g. the narrow accounts scope + ADA_BETA_ACCOUNTS_EXTRA=parcours).
+ * @param {Record<string, string | undefined>} [env]
+ */
+export const planImportOpen = (env = process.env) => capabilityOpen('citizen.shared_dossier', env);
+
 /** The steps of the account-free plan of a dossier the ACCOUNT owns become tracked items; re-importing the same plan adds nothing twice (planKey). */
 export async function importPlan(userId, shareId, db = defaultDb) {
+  if (!planImportOpen()) return bad(CAPABILITY_NOT_OPEN, CAPABILITY_NOT_OPEN_MESSAGE, 503);
   const [shared] = await db.select({ id: SharedDiagnostic.id, results: SharedDiagnostic.results, ownerCitizenId: SharedDiagnostic.ownerCitizenId, expiresAt: SharedDiagnostic.expiresAt })
     .from(SharedDiagnostic).where(eq(SharedDiagnostic.id, String(shareId || ''))).limit(1);
   if (!shared || shared.ownerCitizenId !== userId) return bad('not_found', 'Ce dossier est introuvable ou n’est pas rattaché à votre compte.', 404);
@@ -315,7 +327,7 @@ export async function setDeadline(userId, id, input, db = defaultDb) {
 export async function setNote(userId, id, note, db = defaultDb) {
   const { T } = await parcoursSchema(db);
   const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
-  const v = note == null ? null : String(note).trim().slice(0, 500) || null;
+  const v = note == null ? null : String(note).trim().slice(0, MAX_PARCOURS_NOTE) || null;
   const [up] = await db.update(T).set({ note: v }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
   await event(db, row, 'NOTE');
   return { ok: true, status: 200, item: itemView(up) };
