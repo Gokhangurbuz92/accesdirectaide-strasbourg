@@ -6,7 +6,9 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
   '/contact', '/demande-aide', '/proposer-une-structure', '/orientation', '/diagnostic', '/assistant', '/mon-assistant',
   '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches', '/sentry-test', '/__sentry_test',
   // X04 (expansion): academy pages and events, the person's registrations and their administration — surface « events », opened by no build
-  '/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements'];
+  '/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements',
+  // X02 (expansion): testimonials, the person's own testimonials and their moderation — surface « testimonials », opened by no build
+  '/temoignages', '/compte/temoignages', '/admin/temoignages'];
 
 /**
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
@@ -18,6 +20,7 @@ export const SCREEN_SURFACES = {
   communications: ['/contact', '/demande-aide', '/proposer-une-structure'], documents: ['/share', '/passport'],
   diagnostic: ['/diagnostic', '/assistant', '/mon-assistant', '/orientation'], admin: ['/admin', '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches'],
   events: ['/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements'],
+  testimonials: ['/temoignages', '/compte/temoignages', '/admin/temoignages'],
 };
 const builtOpen = () => {
   let v = '';
@@ -89,6 +92,8 @@ export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSu
   if (browserOnly && under(p, BROWSER_ONLY_SCREEN)) return false;
   // X04: the events screens follow ONLY the « events » surface — they sit under /compte and /admin, whose openings must not open them
   if (SCREEN_SURFACES.events.some((x) => under(p, x))) return !open.includes('events');
+  // X02: the testimonial screens follow ONLY the « testimonials » surface, for the same reason
+  if (SCREEN_SURFACES.testimonials.some((x) => under(p, x))) return !open.includes('testimonials');
   // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
   if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
   const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));
@@ -156,4 +161,13 @@ export function publicIndicatorsOpened(value = undefined) {
  */
 export function eventsOpened(beta, open = builtOpen(), sub = builtSub()) {
   return !beta || !isBetaRestrictedPath('/evenements', open, sub);
+}
+
+/**
+ * X02 (expansion) — are the testimonial screens usable in this build: outside the beta, or when the build opens the « testimonials » surface. Links to them
+ * (the administration menu) are offered only then; the server keeps the capability « community.testimonials » closed anyway.
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function testimonialsOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/temoignages', open, sub);
 }

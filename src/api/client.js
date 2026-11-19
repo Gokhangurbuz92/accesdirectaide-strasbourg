@@ -248,6 +248,10 @@ export const apiClient = {
         getAcademy: function (id) { return apiRequest('/api/admin/events?id=' + encodeURIComponent(String(id))); },
         /** @param {Record<string, unknown>} body { action: save|submit|reject|approve|cancel|withdraw, id?, draft?, note? } */
         academyAction: function (body) { return apiRequest('/api/admin/events', { method: 'POST', body: body }); },
+        /** X02 (expansion) — testimonial moderation (closed by default: 503 CAPABILITY_NOT_OPEN). @param {string} queue pending | reported | published */
+        listTestimonials: function (queue) { return apiRequest('/api/admin/testimonials?queue=' + encodeURIComponent(queue || 'pending')); },
+        /** @param {Record<string, unknown>} body { action: approve|reject|takedown|dismiss_reports, id, reason? } */
+        testimonialAction: function (body) { return apiRequest('/api/admin/testimonials', { method: 'POST', body: body }); },
         /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q @param {string=} decision never | hold | rejected | verified */
         getOrganizations: function (q, decision) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '') + (decision ? '&decision=' + encodeURIComponent(decision) : '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */

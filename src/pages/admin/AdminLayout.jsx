@@ -16,7 +16,7 @@ import ServiceUnavailable from '@/components/ServiceUnavailable';
 import useMainHeadingText from '@/hooks/useMainHeadingText';
 import { useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
-import { eventsOpened } from '@/lib/publicBeta';
+import { eventsOpened, testimonialsOpened } from '@/lib/publicBeta';
 
 
 /**
@@ -54,6 +54,8 @@ const SIDEBAR_SECTIONS = [
             { label: 'Documents de la page Ressources', to: '/admin/ressources-publication', icon: FileText },
             // X04 (expansion): shown only when this build opens the « events » surface (or outside the beta) — the server keeps it closed otherwise
             ...(eventsOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Académie et événements', to: '/admin/academie-evenements', icon: FileText }] : []),
+            // X02 (expansion): same rule for the moderation of the testimonials
+            ...(testimonialsOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Modération des témoignages', to: '/admin/temoignages', icon: FileText }] : []),
         ]
     },
     {
