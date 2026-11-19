@@ -600,6 +600,8 @@
   "notifications.kind.booked_by_structure": "حدّدت إحدى الجهات موعدًا معك.",
   "notifications.kind.booked_by_citizen": "تم تسجيل موعدك.",
   "notifications.kind.cancelled_by_structure": "ألغت إحدى الجهات موعدًا.",
+  "notifications.kind.event_cancelled": "ألغى المنظم فعالية أنت مسجّل فيها.",
+  "notifications.kind.event_reminder": "تذكير: فعالية مسجّل فيها تُقام خلال أقل من 48 ساعة.",
   "notifications.kind.rescheduled": "تم تغيير موعد أحد المواعيد.",
   "notifications.kind.reminder_j1": "تذكير: لديك موعد غدًا.",
   "notifications.kind.visio_approved": "تم قبول الموعد عبر الفيديو.",

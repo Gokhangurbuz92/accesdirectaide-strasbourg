@@ -71,6 +71,11 @@ export const CAPABILITIES = Object.freeze({
   'ai.processing': { description: 'assistant, AI recommendations, FALC summaries, AI discovery agents, AI dossier synthesis', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row: no (the AI policy and art. 9 apply separately)`, surface: 'diagnostic', aipdRef: 'AIPD § 2.1 « assistant »' },
   'institution.portal': { description: 'territory / institution space and the creation of institution accounts', aipd: 'out', requiresHds: false, surface: 'institution', aipdRef: 'AIPD § 2.1 « institution »' },
   video: { description: 'video appointments: offering the VIDEO modality, consent, approval, joining (its own VIDEO_* switches still apply)', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row: no (transient stream, no recording)`, surface: 'video', aipdRef: 'AIPD § 2.1 « visio »' },
+  // X04 (EXPANSION, founder 19/11/2026 — not one of the 173): academy pages and events, the registration of a signed-in adult citizen (optional closed-list
+  // accessibility need), cancellation, in-app reminder, the editorial side (admin, MFA writes). A new personal-data processing: outside the AIPD until its
+  // own AIPD line is signed (CONTROL/master/completion/G4_X04_ACADEMY_EVENTS_2026-11-19.md), on its own surface « events » that nothing opens.
+  'community.events': { description: 'academy pages and public events (X04 expansion): public reading, registration of a signed-in adult citizen, cancellation, in-app reminder, editorial administration',
+    aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (an accessibility need from a closed list, no care or ESSMS follow-up; art. 9 may apply — explicit choice)', surface: 'events', aipdRef: 'X04 (AIPD line to sign)' },
   // ── never opened by a switch
   'citizen.minor_accounts': { description: 'independent accounts of minors (closed by the age policy; R42-A07)', aipd: 'out', requiresHds: false, surface: 'accounts', openable: false, aipdRef: 'AIPD § 2.2' },
 });
@@ -124,6 +129,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'admin/guardianships': ['citizen.guardians'],   // R46 / C05 verifier side
   institution: ['institution.portal'], 'admin/institutions': ['institution.portal'],
   'pro/appointments/visio': ['video'], 'rdv/appointments/visio': ['video'],
+  // X04 (expansion): every route of the « events » surface — public reading included — is refused 503 before its handler while the capability is closed
+  events: ['community.events'], 'citizen/events': ['community.events'], 'admin/events': ['community.events'],
 });
 const ROUTE_PREFIXES = Object.keys(ROUTE_CAPABILITIES).sort((a, b) => b.length - a.length);
 

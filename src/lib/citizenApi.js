@@ -72,6 +72,9 @@ export const citizenApi = {
   parcours: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/parcours', { method: 'POST', body }),
   removeParcours: (/** @type {string} */ id) => call('/api/citizen/parcours', { method: 'DELETE', body: { id } }),
   listFavorites: () => call('/api/citizen/favorites'),
+  // X04 (expansion): the person's event registrations (closed by default: capability community.events)
+  myEvents: () => call('/api/citizen/events'),
+  eventAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/events', { method: 'POST', body }),
   addFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'POST', body: { entityType, entityId } }),
   removeFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'DELETE', body: { entityType, entityId } }),
   getHistory: () => call('/api/citizen/history'),

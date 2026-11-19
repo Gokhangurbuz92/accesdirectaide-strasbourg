@@ -242,6 +242,12 @@ export const apiClient = {
         getResource: function (id) { return apiRequest('/api/admin/resources?id=' + encodeURIComponent(String(id))); },
         /** @param {Record<string, unknown>} body { action: create|edit|verify|publish|withdraw, id?, draft?, expectedVersion?, note?, reason? } */
         resourceAction: function (body) { return apiRequest('/api/admin/resources', { method: 'POST', body: body }); },
+        /** X04 (expansion) — academy pages and events (closed by default: 503 CAPABILITY_NOT_OPEN). @param {string=} status */
+        listAcademy: function (status) { return apiRequest('/api/admin/events' + (status ? '?status=' + encodeURIComponent(status) : '')); },
+        /** @param {string} id */
+        getAcademy: function (id) { return apiRequest('/api/admin/events?id=' + encodeURIComponent(String(id))); },
+        /** @param {Record<string, unknown>} body { action: save|submit|reject|approve|cancel|withdraw, id?, draft?, note? } */
+        academyAction: function (body) { return apiRequest('/api/admin/events', { method: 'POST', body: body }); },
         /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q @param {string=} decision never | hold | rejected | verified */
         getOrganizations: function (q, decision) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '') + (decision ? '&decision=' + encodeURIComponent(decision) : '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */

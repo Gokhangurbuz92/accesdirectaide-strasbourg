@@ -600,6 +600,8 @@
   "notifications.kind.booked_by_structure": "Bir kuruluş sizinle bir randevu belirledi.",
   "notifications.kind.booked_by_citizen": "Randevunuz kaydedildi.",
   "notifications.kind.cancelled_by_structure": "Bir kuruluş bir randevuyu iptal etti.",
+  "notifications.kind.event_cancelled": "Kayıtlı olduğunuz bir etkinlik düzenleyici tarafından iptal edildi.",
+  "notifications.kind.event_reminder": "Hatırlatma: kayıtlı olduğunuz bir etkinlik 48 saatten kısa süre içinde gerçekleşecek.",
   "notifications.kind.rescheduled": "Bir randevunun zamanı değiştirildi.",
   "notifications.kind.reminder_j1": "Hatırlatma: yarın bir randevunuz var.",
   "notifications.kind.visio_approved": "Görüntülü randevu kabul edildi.",

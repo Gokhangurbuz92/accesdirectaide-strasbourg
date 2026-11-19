@@ -600,6 +600,8 @@
   "notifications.kind.booked_by_structure": "Eine Einrichtung hat einen Termin mit Ihnen festgelegt.",
   "notifications.kind.booked_by_citizen": "Ihr Termin ist eingetragen.",
   "notifications.kind.cancelled_by_structure": "Eine Einrichtung hat einen Termin abgesagt.",
+  "notifications.kind.event_cancelled": "Eine Veranstaltung, für die Sie angemeldet sind, wurde vom Veranstalter abgesagt.",
+  "notifications.kind.event_reminder": "Erinnerung: Eine Veranstaltung, für die Sie angemeldet sind, findet in weniger als 48 Stunden statt.",
   "notifications.kind.rescheduled": "Ein Termin wurde verschoben.",
   "notifications.kind.reminder_j1": "Erinnerung: Sie haben morgen einen Termin.",
   "notifications.kind.visio_approved": "Der Videotermin wurde angenommen.",

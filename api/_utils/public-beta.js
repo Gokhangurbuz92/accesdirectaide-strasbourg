@@ -88,6 +88,10 @@ export const SURFACES = {
   // R40 / G2: « jobs » classifies the cron and monitor routes but can NOT be opened as a whole (NOT_OPENABLE below): it used to open every cron and monitor
   // route at once — the legacy importers and hive-scan (a cloud AI provider that is not approved) included. Jobs open one at a time (ADA_BETA_OPEN_JOBS).
   jobs: ['cron', 'monitor'],
+  // X04 (expansion, 19/11/2026): academy pages and events — the public reading, the citizen registrations and the editorial administration. Opened by NO
+  // deployment: it needs this name in ADA_BETA_OPEN_SURFACES AND « community.events » in ADA_CAPABILITIES_OPEN (outside the AIPD until its line is signed).
+  // The citizen and administration routes are longer prefixes than « citizen » / « admin »: opening accounts or admin does not open them.
+  events: ['events', 'citizen/events', 'admin/events'],
 };
 /** surfaces that ADA_BETA_OPEN_SURFACES never opens (R40 / G2) */
 export const NOT_OPENABLE = Object.freeze(['jobs']);

@@ -74,6 +74,11 @@ const Demarches = lazy(() => import("./Demarches.jsx"));
 const DispositifDetail = lazy(() => import("./DispositifDetail.jsx"));
 const Dispositifs = lazy(() => import("./Dispositifs.jsx"));
 const Ressources = lazy(() => import("./Ressources.jsx"));
+// X04 (expansion): academy pages and events (closed by default: surface « events », capability community.events)
+const AcademyEvents = lazy(() => import("./AcademyEvents.jsx"));
+const AcademyEventDetail = lazy(() => import("./AcademyEventDetail.jsx"));
+const CompteEvenements = lazy(() => import("./CompteEvenements.jsx"));
+const AdminAcademyEvents = lazy(() => import("./admin/AcademyEventsAdmin.jsx"));
 const RessourceDetail = lazy(() => import("./RessourceDetail.jsx"));
 const Guides = lazy(() => import("./Guides.jsx"));
 const GuideDetail = lazy(() => import("./GuideDetail.jsx"));
@@ -379,6 +384,7 @@ function PagesContent() {
                                     <Route path="veille" element={<AdminVeille />} />
                                     <Route path="actualites-redaction" element={<AdminNewsEditorial />} />
                                     <Route path="ressources-publication" element={<AdminResourcePublication />} />
+                                    <Route path="academie-evenements" element={<AdminAcademyEvents />} />
                                     <Route path="ws2" element={<AdminWs2Queue />} />
                                     <Route path="operations" element={<AdminOperations />} />
                                     <Route path="fournisseurs" element={<AdminProviders />} />
@@ -526,6 +532,7 @@ function PagesContent() {
                                 <Route path="/compte/parcours" element={<CompteParcours />} />
                                 <Route path="/compte/coffre" element={<CompteCoffre />} />
                                 <Route path="/compte/favoris" element={<CompteFavoris />} />
+                                <Route path="/compte/evenements" element={<CompteEvenements />} />
                                 <Route path="/compte/historique" element={<CompteHistorique />} />
                                 <Route path="/compte/delegations" element={<CompteDelegations />} />
                                 <Route path="/compte/delegations/:id" element={<CompteDelegationVue />} />
@@ -621,6 +628,10 @@ function PagesContent() {
                                 <Route path="/dispositifs/view" element={<DispositifDetail />} />
 
                                 <Route path="/ressources" element={<Ressources />} />
+                                <Route path="/academie" element={<AcademyEvents kind="LESSON" />} />
+                                <Route path="/academie/:slug" element={<AcademyEventDetail kind="LESSON" />} />
+                                <Route path="/evenements" element={<AcademyEvents kind="EVENT" />} />
+                                <Route path="/evenements/:slug" element={<AcademyEventDetail kind="EVENT" />} />
                                 <Route path="/ressources/:slug" element={<RessourceDetail />} />
                                 <Route path="/ressources/view" element={<RessourceDetail />} />
 

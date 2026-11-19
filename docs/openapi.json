@@ -576,6 +576,37 @@
         "responses": { "200": { "description": "Liste des ressources" }, "404": { "description": "Document inconnu ou non public" }, "410": { "description": "Document retiré" } }
       }
     },
+    "/events": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Académie et événements publiés (X04, extension — fermé par défaut)",
+        "description": "?kind=LESSON|EVENT : pages de l'académie publiées, ou événements publiés non terminés (les annulés marqués), avec les informations d'accessibilité et le nombre de places restantes ; aucune donnée personnelle. Refusé 503 CAPABILITY_NOT_OPEN tant que la capacité community.events est fermée (surface events). Sans la migration 0053 : liste vide.",
+        "parameters": [ { "name": "kind", "in": "query", "required": false, "schema": { "type": "string", "enum": ["LESSON", "EVENT"] } } ],
+        "responses": { "200": { "description": "{ items }" }, "400": { "description": "BAD_KIND" }, "503": { "description": "CAPABILITY_NOT_OPEN ou bêta restreinte" } }
+      }
+    },
+    "/events/{slug}": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Une page de l'académie ou un événement publié (X04, fermé par défaut)",
+        "parameters": [ { "name": "slug", "in": "path", "required": true, "schema": { "type": "string" } } ],
+        "responses": { "200": { "description": "{ item }" }, "404": { "description": "Inconnu ou non publié" }, "410": { "description": "Page retirée" }, "503": { "description": "CAPABILITY_NOT_OPEN ou bêta restreinte" } }
+      }
+    },
+    "/citizen/events": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Mes inscriptions aux événements (X04, fermé par défaut)",
+        "description": "Session citoyenne vérifiée ; uniquement les inscriptions du compte. { available, registrations }.",
+        "responses": { "200": { "description": "{ available, registrations }" }, "401": { "description": "Session requise" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+      },
+      "post": {
+        "tags": ["Auth"],
+        "summary": "S'inscrire, annuler, changer le besoin d'accessibilité (X04, fermé par défaut)",
+        "description": "{ action: register | cancel | need, itemId (ou slug pour register), accessibilityNeed?, accessibilityNeedConsent? } — compte majeur (déclaration) ; un besoin d'accessibilité (liste fermée, pas de texte libre) n'est transmis qu'avec accessibilityNeedConsent === true ; l'annulation efface le besoin ; capacité respectée.",
+        "responses": { "200": { "description": "Annulation / besoin modifié / réinscription" }, "201": { "description": "Inscription" }, "400": { "description": "NEED_CONSENT_REQUIRED, UNKNOWN_ACCESSIBILITY_NEED" }, "401": { "description": "Session requise" }, "403": { "description": "ADULT_ACCOUNT_REQUIRED" }, "404": { "description": "EVENT_NOT_FOUND, REGISTRATION_NOT_FOUND" }, "409": { "description": "EVENT_FULL, ALREADY_REGISTERED, REGISTRATION_CLOSED" }, "503": { "description": "CAPABILITY_NOT_OPEN, ACADEMY_NOT_AVAILABLE" } }
+      }
+    },
     "/tools": {
       "get": {
         "tags": ["Core Data"],
@@ -838,6 +869,22 @@
         "description": "{ action: create | edit | verify | publish | withdraw, id?, draft?, expectedVersion?, note?, reason? } — session administrateur nominative avec MFA ; chaque étape est inscrite au registre en ajout seul. Rien n'est publié automatiquement.",
         "security": [{ "AdminToken": [] }],
         "responses": { "200": { "description": "Étape enregistrée" }, "201": { "description": "Brouillon créé" }, "400": { "description": "Note ou motif manquant" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "409": { "description": "STALE_REVIEW, WITHDRAW_BEFORE_EDITING, NOT_A_DRAFT, LEGACY_ROW_EDIT_FIRST" }, "422": { "description": "Contrat non respecté (problems)" }, "503": { "description": "MIGRATION_0050_REQUIRED" } }
+      }
+    },
+    "/admin/events": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Académie et événements : rédaction (X04, fermé par défaut)",
+        "description": "Liste (?status=) ou un élément (?id=) avec les manques avant approbation ; pour un événement, les COMPTES de l'organisateur (inscrits, places restantes, nombre par besoin d'accessibilité) — jamais une personne.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "{ items } ou un élément" }, "401": { "description": "Session administrateur requise" }, "404": { "description": "Inconnu" }, "503": { "description": "CAPABILITY_NOT_OPEN, ACADEMY_NOT_AVAILABLE" } }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Brouillon, relecture, approbation, annulation, retrait (X04)",
+        "description": "{ action: save | submit | reject | approve | cancel | withdraw, id?, draft?, note? } — session administrateur nominative avec MFA ; rien n'est publié sans l'étape approve ; chaque étape est journalisée.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Étape enregistrée" }, "201": { "description": "Brouillon créé" }, "400": { "description": "Note manquante, KIND_REQUIRED" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "409": { "description": "NOT_A_DRAFT, NOT_IN_REVIEW, PUBLISHED_ITEM_NOT_EDITABLE" }, "422": { "description": "APPROVAL_REFUSED (problems)" }, "503": { "description": "CAPABILITY_NOT_OPEN, ACADEMY_NOT_AVAILABLE" } }
       }
     },
     "/admin/inbox": {

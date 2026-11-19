@@ -60,7 +60,12 @@ function syntheticVapid() {
 export const LEGAL_IDENTITY_VARS = ['VITE_LEGAL_PUBLISHER_IDENTITY', 'VITE_LEGAL_CONTROLLER_IDENTITY', 'VITE_LEGAL_PUBLICATION_DIRECTOR', 'VITE_LEGAL_DATA_PROTECTION_CONTACT',
   'VITE_LEGAL_SECURITY_CONTACT', 'VITE_LEGAL_RIGHTS_HOLDER'];
 const OPENABLE_SURFACES = Object.keys(SURFACES).filter((s) => !NOT_OPENABLE.includes(s));
-const OUT_OF_AIPD = Object.entries(CAPABILITIES).filter(([, c]) => c.aipd === 'out' && c.openable !== false).map(([n]) => n);
+// X04 (19/11/2026): the EXPANSION items (founder authorization for engineering only, separate register CONTROL/master/EXPANSION_REGISTER_15.md) are not
+// part of the 173-feature activation: the final configuration does not open them; each one opens by its own owner decision (AIPD line first)
+export const EXPANSION_SURFACES = Object.freeze(['events']);
+const FINAL_SURFACES = OPENABLE_SURFACES.filter((s) => !EXPANSION_SURFACES.includes(s));
+const OUT_OF_AIPD = Object.entries(CAPABILITIES).filter(([, c]) => c.aipd === 'out' && c.openable !== false && !EXPANSION_SURFACES.includes(c.surface)).map(([n]) => n);
+const EXPANSION_NOTE = 'EXTENSION (hors des 173) : non ouverte par la configuration finale ; ouverture = décision séparée du propriétaire après la ligne AIPD';
 const OPENABLE_JOBS = Object.entries(SCHEDULED_JOBS).filter(([, c]) => c !== 'D').map(([j]) => j);
 const C_JOBS = Object.entries(SCHEDULED_JOBS).filter(([, c]) => c === 'C').map(([j]) => j);
 const legalVersions = () => LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`).join(',');
@@ -87,7 +92,7 @@ export function finalConfig(opts = {}) {
     DATABASE_URL: profile === 'production' ? `postgres://synthetic:${SYNTHETIC}@db.example.test/ada` : '',
     KV_REST_API_URL: profile === 'production' ? 'https://kv.example.test' : '', KV_REST_API_TOKEN: profile === 'production' ? `${SYNTHETIC}-${rnd(12)}` : '',
     // surfaces: server and the build (screens)
-    ADA_BETA_OPEN_SURFACES: OPENABLE_SURFACES.join(','), VITE_PUBLIC_BETA_OPEN_SURFACES: OPENABLE_SURFACES.join(','),
+    ADA_BETA_OPEN_SURFACES: FINAL_SURFACES.join(','), VITE_PUBLIC_BETA_OPEN_SURFACES: FINAL_SURFACES.join(','),
     ADA_BETA_ACCOUNTS_SCOPE: 'full', VITE_PUBLIC_BETA_ACCOUNTS_SCOPE: 'full',
     // capabilities outside the AIPD, HDS
     ADA_CAPABILITIES_OPEN: OUT_OF_AIPD.join(','), ADA_HDS_CERTIFIED_HOSTING: syntheticHdsToken(),
@@ -156,6 +161,7 @@ const SURFACE_PROBES = {
   documents: { route: 'citizen/coffre', method: 'GET', screen: '/share', features: ['C09', 'C14', 'C15', 'C16', 'C17', 'R13'] },
   diagnostic: { route: 'diagnostic', method: 'POST', screen: '/diagnostic', features: ['P13', 'P16', 'P17', 'D10', 'D20'] },
   admin: { route: 'admin/provider-status', method: 'GET', screen: '/admin', features: ['A01', 'A02', 'A03', 'A04', 'A05', 'A06', 'A07', 'A08', 'A09', 'A10', 'A12', 'A13', 'A14', 'A15', 'A16', 'A19', 'M04'] },
+  events: { route: 'events', method: 'GET', screen: '/evenements', features: ['X04'] },
 };
 const SURFACE_OTHER = {
   accounts: [
@@ -192,6 +198,7 @@ export function buildItems() {
     items.push({ id: `surface.${s}`, kind: 'surface', label: `Surface « ${s} »`, features: p.features,
       env: [tok('ADA_BETA_OPEN_SURFACES', s), ...(p.screen ? [tok('VITE_PUBLIC_BETA_OPEN_SURFACES', s)] : [])],
       requires: SURFACE_REQUIRES[s] || [], other: SURFACE_OTHER[s] || [],
+      ...(EXPANSION_SURFACES.includes(s) ? { finalExpected: /** @type {'closed'} */ ('closed'), note: EXPANSION_NOTE } : {}),
       rollback: `retirer « ${s} » de ADA_BETA_OPEN_SURFACES (effet immédiat côté API ; l’écran se referme au build suivant sans VITE_PUBLIC_BETA_OPEN_SURFACES)`,
       probe: (env) => {
         if (!isAllowedInPublicBeta(p.method, p.route, env)) return no('PUBLIC_BETA_RESTRICTED');
@@ -215,7 +222,8 @@ export function buildItems() {
     'citizen.franceconnect': ['C26', 'N08'], 'citizen.delegations': ['C23'], 'citizen.orientation_records': ['R09', 'R10'], 'citizen.vault': ['C09'],
     'citizen.shared_dossier': ['C14', 'C15', 'C16', 'C17', 'R13', 'R15'], 'citizen.saved_diagnostic': ['C12'], 'diagnostic.questionnaire': ['P13', 'D10', 'D20'],
     'pro.case_management': ['R03', 'R05', 'R06', 'R07', 'R08', 'R11', 'R12'], 'pro.referrals': ['R09', 'R10', 'E06'], 'pro.orientation_selections': ['R18'], 'pro.siao_interop': ['R22'], 'partner.referral_adapter': ['R09', 'R10', 'E06'],
-    'ai.processing': ['P17', 'D17', 'D18', 'R17', 'R23', 'P18'], 'institution.portal': ['I01', 'I02', 'I03', 'I04'], video: ['B07', 'N06'], 'citizen.minor_accounts': [] };
+    'ai.processing': ['P17', 'D17', 'D18', 'R17', 'R23', 'P18'], 'institution.portal': ['I01', 'I02', 'I03', 'I04'], video: ['B07', 'N06'], 'citizen.minor_accounts': [],
+    'community.events': ['X04'] };
   for (const [name, cap] of Object.entries(CAPABILITIES)) {
     const env = [tok('ADA_BETA_OPEN_SURFACES', cap.surface)];
     if (cap.accountsFull) env.push(eqv('ADA_BETA_ACCOUNTS_SCOPE', 'full'));
@@ -232,7 +240,8 @@ export function buildItems() {
     if (name === 'partner.referral_adapter') other.push({ type: 'partner', what: 'convention avec une structure partenaire réelle, secret partagé, membre délégué désigné ; ADA_PARTNER_ADAPTERS + ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED', ref: 'api/_services/partner-adapter.js' });
     if (name === 'citizen.franceconnect') other.push({ type: 'provider_account', what: 'habilitation DataPass FranceConnect', ref: 'api/lib/franceconnect/oidc-client.js' });
     items.push({ id: `capability.${name}`, kind: 'capability', label: cap.description, features: CAP_FEATURES[name] || [], env, requires: CAP_REQUIRES[name] || [], other,
-      finalExpected: cap.openable === false ? 'closed' : 'open', note: cap.openable === false ? 'NOT_OPENABLE : aucun interrupteur (politique d’âge)' : undefined,
+      finalExpected: cap.openable === false || EXPANSION_SURFACES.includes(cap.surface) ? 'closed' : 'open',
+      note: cap.openable === false ? 'NOT_OPENABLE : aucun interrupteur (politique d’âge)' : EXPANSION_SURFACES.includes(cap.surface) ? EXPANSION_NOTE : undefined,
       rollback: cap.aipd === 'out' ? `retirer « ${name} » de ADA_CAPABILITIES_OPEN` : `fermer la surface « ${cap.surface} »`,
       probe: (e) => { const s = capabilityState(name, e); return s.open ? ok : no(s.reason); } });
   }

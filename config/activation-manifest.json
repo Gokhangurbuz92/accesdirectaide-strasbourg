@@ -1944,6 +1944,12 @@
       "format": "^(on)?$",
       "note": "Actualités v2: the approver of an ADA article must not be its author"
     },
+    "ACADEMY_EDITORIAL_FOUR_EYES": {
+      "class": "optional",
+      "nature": "config",
+      "format": "^(on)?$",
+      "note": "X04 (expansion): the approver of an academy page or event must not be its author or submitter"
+    },
     "TOMBSTONE_COPY_S3_ENDPOINT": {
       "class": "optional",
       "nature": "config",
