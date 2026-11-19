@@ -271,5 +271,9 @@
  "humanHelp.mairie": "Find a town hall (official directory of public services)",
  "humanHelp.directory": "See the France services offices in our directory",
  "catalog.results_heading": "Results",
- "falc.draft.label": "Provisional simplified text, in French: not yet proofread by people with an intellectual disability"
+ "falc.draft.label": "Provisional simplified text, in French: not yet proofread by people with an intellectual disability",
+ "parcours_add.consent_body": "This step seems to reveal sensitive information (health, disability, addiction, right of residence, justice…). Nothing has been recorded. It will be recorded only with your consent: visible to you only, never shown to a trusted person, can be deleted at any time.",
+ "parcours_add.consent_check": "I accept that this step is recorded in Mon Parcours.",
+ "parcours_add.consent_confirm": "Record with my consent",
+ "parcours_add.consent_cancel": "Do not record"
 }

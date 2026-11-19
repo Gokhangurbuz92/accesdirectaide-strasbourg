@@ -20,6 +20,7 @@ import { CAPABILITY_NOT_OPEN, CAPABILITY_NOT_OPEN_MESSAGE, capabilityOpen } from
 import { parcoursItemTable, parcoursPlanStepSchema } from '../_utils/schema-features.js';
 import { mergePlanStep, planNeeds, planStepFits, planStepFromPlan, readPlanStep, validatePlanStepInput } from '../lib/parcours-plan-step.js';
 import { PLAN_CLOSURES, PLAN_DONE_STATUSES, closureOf, dependencyCycle } from '../../src/lib/parcoursPlan.js';
+import { classifyParcoursStep, parcoursNotesOpen, parcoursSensitiveMode } from '../lib/parcours-sensitivity.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
@@ -44,6 +45,52 @@ async function parcoursSchema(db) {
   return { has, T: parcoursItemTable(has) };
 }
 const PLAN_UNAVAILABLE = () => bad('PLAN_STEP_UNAVAILABLE', 'Cette fonction n’est pas encore disponible.', 409);
+
+// ───────────── G8: sensitive steps (api/lib/parcours-sensitivity.js) — the smallest legal surface while counsel has not answered
+/**
+ * What this deployment does with a step that reveals health, disability, addiction, right of residence, justice, legal protection, sex life or violence:
+ * « excluded » (refused, nothing stored: the default) or « consent » (kept only with the person's explicit consent for THAT step, art. 9.2.a). « consent »
+ * needs ADA_PARCOURS_SENSITIVE_STEPS=consent AND the "planStep" column (migration 0046) where the consent is recorded; otherwise « excluded ».
+ * @param {boolean} hasPlanStep @param {Record<string, string | undefined>} [env] @returns {'excluded' | 'consent'}
+ */
+export const sensitiveStepsMode = (hasPlanStep, env = process.env) => (hasPlanStep && parcoursSensitiveMode(env) === 'consent' ? 'consent' : 'excluded');
+const SENSITIVE_EXCLUDED = () => bad('SENSITIVE_STEP_EXCLUDED', 'Mon Parcours n’enregistre pas, pour le moment, ce qui concerne la santé, le handicap, une addiction, le droit au séjour, la justice, une mesure de protection, la vie sexuelle ou des violences subies. Rien n’a été enregistré : décrivez l’étape sans cette information.', 422);
+const SENSITIVE_CONSENT_REQUIRED = () => bad('SENSITIVE_STEP_CONSENT_REQUIRED', 'Cette étape semble révéler une information sensible (santé, handicap…). Elle n’est enregistrée qu’avec votre accord explicite pour cette étape. Rien n’a été enregistré.', 409);
+/**
+ * The decision for one write. `already` = the step already carries the person's consent (consent mode only). Returns a refusal, or the consent marker to
+ * record with the step (null when nothing sensitive is written or the consent is already there).
+ * @returns {{ refusal?: object, marker: { at: string } | null }}
+ */
+function sensitiveGate(classification, { has, consent, already = false }) {
+  if (!classification.sensitive) return { marker: null };
+  if (sensitiveStepsMode(has) !== 'consent') return { refusal: SENSITIVE_EXCLUDED(), marker: null };
+  if (already) return { marker: null };
+  if (consent !== true) return { refusal: SENSITIVE_CONSENT_REQUIRED(), marker: null };
+  return { marker: { at: new Date().toISOString() } };
+}
+/** the texts of plan data a step would store or show: the organisation's name and the link labels */
+const planTexts = (ps) => [ps && ps.actor ? ps.actor.name : null, ...((ps && Array.isArray(ps.links) ? ps.links : []).map((l) => l && l.label))];
+/** what a catalogue record reveals about a step pointing at it: its title (or a place's name), a place's type, its category */
+const recordFacts = (type, r) => ({ texts: [recordTitle(type, r), r.type_structure], categories: [r.categorie] });
+const hasConsent = (has, row) => Boolean(has && readPlanStep(row.planStep)?.sensitive);
+
+/**
+ * G8: the ids of the steps that are sensitive — consented as such, or revealing it through their title, need, organisation name, link labels or records.
+ * Used to keep them out of every view given to another person (the delegate's read-only view). `rows` carry id, title, itemCodes and, where the database
+ * has it, planStep.
+ */
+export async function sensitiveItemIds(rows, db = defaultDb) {
+  const raw = await recordRowsOf(rows, db);
+  const out = new Set();
+  for (const r of rows) {
+    const ps = r.planStep !== undefined ? readPlanStep(r.planStep) : null;
+    const recs = [...new Set(r.itemCodes || [])].map((c) => raw.get(c)).filter((x) => x && x.r);
+    const c = classifyParcoursStep({ texts: [r.title, ...planTexts(ps), ...recs.flatMap((x) => recordFacts(x.type, x.r).texts)], need: ps ? ps.need : null,
+      recordCategories: recs.flatMap((x) => recordFacts(x.type, x.r).categories) });
+    if ((ps && ps.sensitive) || c.sensitive) out.add(r.id);
+  }
+  return out;
+}
 
 async function event(db, item, kind, fromStatus = null, toStatus = null) {
   await db.insert(ParcoursEvent).values({ itemId: item.id, userId: item.userId, kind, fromStatus, toStatus });
@@ -72,8 +119,8 @@ const recordView = (code, type, r) => {
 };
 const recordKeyOf = (codes) => crypto.createHash('sha256').update(JSON.stringify(['record', codes])).digest('hex').slice(0, 40);
 
-/** the records the items point at, by code. A typed code that no longer resolves is « no longer available »; a bare plan code ADA holds no record for is not listed at all. */
-async function recordsOf(rows, db) {
+/** the catalogue rows the items point at, by code: { type, r } (r null for a typed code that no longer resolves; a bare plan code ADA holds no record for is absent) */
+async function recordRowsOf(rows, db) {
   const typed = Object.fromEntries(PARCOURS_RECORD_TYPES.map((t) => [t, new Set()])); const bare = new Set();
   for (const code of rows.flatMap((r) => r.itemCodes || [])) {
     const m = RECORD_CODE.exec(String(code));
@@ -84,10 +131,14 @@ async function recordsOf(rows, db) {
     const T = RECORD_TABLES[type]; const ids = [...typed[type]]; const keys = type === 'aide' ? [...bare] : [];
     if (!ids.length && !keys.length) continue;
     const found = await db.select().from(T).where(keys.length ? or(inArray(T.id, [...ids, ...keys]), inArray(T.slug, keys)) : inArray(T.id, ids));
-    for (const id of ids) out.set(`${type}:${id}`, recordView(`${type}:${id}`, type, found.find((x) => x.id === id) || null));
-    for (const k of keys) { const r = found.find((x) => x.slug === k) || found.find((x) => x.id === k); if (r) out.set(k, recordView(k, 'aide', r)); }
+    for (const id of ids) out.set(`${type}:${id}`, { type, r: found.find((x) => x.id === id) || null });
+    for (const k of keys) { const r = found.find((x) => x.slug === k) || found.find((x) => x.id === k); if (r) out.set(k, { type: 'aide', r }); }
   }
   return out;
+}
+/** the records the items point at, by code. A typed code that no longer resolves is « no longer available »; a bare plan code ADA holds no record for is not listed at all. */
+async function recordsOf(rows, db) {
+  return new Map([...(await recordRowsOf(rows, db))].map(([code, { type, r }]) => [code, recordView(code, type, r)]));
 }
 
 /**
@@ -141,7 +192,7 @@ export async function listParcours(userId, db = defaultDb) {
     const dep = ps && ps.dependsOnItemId && ps.dependsOnItemId !== r.id ? byId.get(ps.dependsOnItemId) : null;
     const dependsOn = dep ? { id: dep.id, title: dep.title, status: dep.status, closure: closureOf(dep), done: PLAN_DONE_STATUSES.includes(dep.status) } : null;
     // `available: false` = at least one record of the step is withdrawn or no longer visible (same decision as a favourite)
-    return { ...itemView(r), records: recs, available: recs.every((x) => x.available),
+    return { ...itemView(r), ...(ps && ps.sensitive ? { sensitive: true } : {}), records: recs, available: recs.every((x) => x.available),
       // the step's own copy first (it outlives the dossier); a step imported before 0046 is still read back from the dossier the account owns
       plan: (r.origin === 'PLAN' ? planOfStep(ps) : null) || plans.get(`${r.sourceShareId}:${r.planKey}`) || null,
       step: stepView(ps), dependsOn, waiting: Boolean(dependsOn && !dependsOn.done && !PLAN_DONE_STATUSES.includes(r.status)) };
@@ -166,12 +217,16 @@ function planInput(input) {
   const v = validatePlanStepInput(input.planStep);
   return v.ok ? { change: v } : { refusal: bad('INVALID_PLAN_STEP', 'Les informations de l’étape ne sont pas valides.') };
 }
-/** the value to store with a NEW step ({} = nothing), or a refusal. On a database without the column the step is still created, without plan data (`planSaved: false`). */
-async function newPlanStep(userId, plan, db, has, T) {
-  if (plan.none || !has) return { values: {}, saved: plan.none ? undefined : false };
-  if (plan.change.set.dependsOnItemId) { const no = await dependencyRefusal(userId, null, plan.change.set.dependsOnItemId, db, T); if (no) return { refusal: no }; }
-  const value = mergePlanStep(null, plan.change);
-  return { values: value ? { planStep: value } : {}, saved: true };
+/**
+ * the value to store with a NEW step ({} = nothing), or a refusal. On a database without the column the step is still created, without plan data (`planSaved: false`).
+ * G8: `marker` = the person's consent to keep this sensitive step (never set without the column: sensitiveGate refuses first).
+ */
+async function newPlanStep(userId, plan, db, has, T, marker = null) {
+  if (!has || (plan.none && !marker)) return { values: {}, saved: plan.none ? undefined : false };
+  if (!plan.none && plan.change.set.dependsOnItemId) { const no = await dependencyRefusal(userId, null, plan.change.set.dependsOnItemId, db, T); if (no) return { refusal: no }; }
+  const change = plan.none ? { set: {}, clear: [] } : plan.change;
+  const value = mergePlanStep(null, marker ? { ...change, set: { ...change.set, sensitive: marker } } : change);
+  return { values: value ? { planStep: value } : {}, saved: plan.none ? undefined : true };
 }
 
 /**
@@ -193,8 +248,10 @@ export async function importPlan(userId, shareId, db = defaultDb) {
   const [{ n }] = (await db.execute(sql`SELECT count(*)::int AS n FROM "ParcoursItem" WHERE "userId" = ${userId}`)).rows;
   if (n + plan.steps.length > MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
   const { has, T } = await parcoursSchema(db);
-  let added = 0;
+  let added = 0; let skippedSensitive = 0;
   for (const step of plan.steps) {
+    // G8: a step of the plan that reveals a sensitive fact is never copied into Mon Parcours (the person may add it alone, where the deployment allows it)
+    if (classifyParcoursStep({ texts: [step.title, step.who, step.detail, ...(step.links || []).map((l) => l && l.label)] }).sensitive) { skippedSensitive += 1; continue; }
     // M1: who acts, the explanation, the internal links and the next action are COPIED into the step (planStep): they no longer depend on the dossier
     const copy = has ? planStepFromPlan(step) : null;
     const rows = await db.insert(T).values({ userId, origin: 'PLAN', sourceShareId: shared.id, planKey: planKeyOf(shared.id, step), stepKind: step.kind,
@@ -202,7 +259,7 @@ export async function importPlan(userId, shareId, db = defaultDb) {
       .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
     if (rows.length) { added += 1; await event(db, rows[0], 'CREATED', null, 'NOT_STARTED'); }
   }
-  return { ok: true, status: 200, added, ...(await listParcours(userId, db)) };
+  return { ok: true, status: 200, added, skippedSensitive, ...(await listParcours(userId, db)) };
 }
 
 const parcoursCount = async (userId, db) => (await db.execute(sql`SELECT count(*)::int AS n FROM "ParcoursItem" WHERE "userId" = ${userId}`)).rows[0].n;
@@ -238,8 +295,13 @@ async function addRecordItem(userId, input, db) {
   const existing = async () => (await db.select().from(T).where(and(eq(ParcoursItem.userId, userId), eq(ParcoursItem.planKey, planKey))).limit(1))[0];
   const already = await existing();
   if (already) return { ok: true, status: 200, added: false, item: itemView(already) };   // the step that exists keeps its own plan data
+  // G8: the records' titles / types / categories, the person's title and the plan data decide whether the step is sensitive
+  const set = plan.change ? plan.change.set : {};
+  const gate = sensitiveGate(classifyParcoursStep({ texts: [title, ...planTexts(set), ...found.flatMap((f) => recordFacts(f.type, f.r).texts)], need: set.need,
+    recordCategories: found.flatMap((f) => recordFacts(f.type, f.r).categories) }), { has, consent: input.sensitiveConsent });
+  if (gate.refusal) return gate.refusal;
   if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
-  const ps = await newPlanStep(userId, plan, db, has, T); if (ps.refusal) return ps.refusal;
+  const ps = await newPlanStep(userId, plan, db, has, T, gate.marker); if (ps.refusal) return ps.refusal;
   const [row] = await db.insert(T).values({ userId, origin: 'MANUAL', planKey, stepKind: 'custom', itemCodes: codes, title: title || String(recordTitle(found[0].type, found[0].r)).trim().slice(0, 200), ...ps.values })
     .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
   if (!row) return { ok: true, status: 200, added: false, item: itemView(await existing()) };   // two clicks at once: the other request created it
@@ -252,9 +314,12 @@ export async function addManualItem(userId, input, db = defaultDb) {
   const title = String(input?.title || '').trim();
   if (title.length < 3 || title.length > 200) return bad('INVALID_TITLE', 'Décrivez l’étape en 3 à 200 caractères.');
   const plan = planInput(input); if (plan.refusal) return plan.refusal;
-  if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
   const { has, T } = await parcoursSchema(db);
-  const ps = await newPlanStep(userId, plan, db, has, T); if (ps.refusal) return ps.refusal;
+  const set = plan.change ? plan.change.set : {};
+  const gate = sensitiveGate(classifyParcoursStep({ texts: [title, ...planTexts(set)], need: set.need }), { has, consent: input.sensitiveConsent });   // G8
+  if (gate.refusal) return gate.refusal;
+  if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
+  const ps = await newPlanStep(userId, plan, db, has, T, gate.marker); if (ps.refusal) return ps.refusal;
   const [row] = await db.insert(T).values({ userId, origin: 'MANUAL', stepKind: 'custom', title, ...ps.values }).returning();
   await event(db, row, 'CREATED', null, 'NOT_STARTED');
   return { ok: true, status: 201, item: itemView(row), ...(ps.saved === undefined ? {} : { planSaved: ps.saved }) };
@@ -271,14 +336,17 @@ async function ownedItem(userId, id, db, T = ParcoursItem) {
  * (api/lib/parcours-plan-step.js); the dependency must be another step of the same account and must not close a loop. It changes no status and writes
  * no history line (the history records statuses, deadlines and notes: its kinds are fixed by the database).
  */
-export async function setPlanStep(userId, id, input, db = defaultDb) {
+export async function setPlanStep(userId, id, input, db = defaultDb, opts = {}) {
   const v = validatePlanStepInput(input);
   if (!v.ok) return bad('INVALID_PLAN_STEP', 'Les informations de l’étape ne sont pas valides.');
   const { has, T } = await parcoursSchema(db);
   const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
   if (!has) return PLAN_UNAVAILABLE();
+  // G8: a sensitive need or organisation name follows the same rule as a sensitive step
+  const gate = sensitiveGate(classifyParcoursStep({ texts: planTexts(v.set), need: v.set.need }), { has, consent: opts.sensitiveConsent, already: hasConsent(has, row) });
+  if (gate.refusal) return gate.refusal;
   if (v.set.dependsOnItemId) { const no = await dependencyRefusal(userId, row.id, v.set.dependsOnItemId, db, T); if (no) return no; }
-  const value = mergePlanStep(row.planStep, v);
+  const value = mergePlanStep(row.planStep, gate.marker ? { ...v, set: { ...v.set, sensitive: gate.marker } } : v);
   if (!planStepFits(value)) return bad('INVALID_PLAN_STEP', 'Les informations de l’étape ne sont pas valides.');
   const [up] = await db.update(T).set({ planStep: value }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
   return { ok: true, status: 200, item: itemView(up) };
@@ -324,11 +392,19 @@ export async function setDeadline(userId, id, input, db = defaultDb) {
   return { ok: true, status: 200, item: itemView(up) };
 }
 
-export async function setNote(userId, id, note, db = defaultDb) {
-  const { T } = await parcoursSchema(db);
+/**
+ * The person's private note (500 characters at most). G8: a note that reveals a sensitive fact follows the rule of a sensitive step — refused by default,
+ * kept with the person's consent for that step where the deployment allows it. The note is never shown to a delegate.
+ */
+export async function setNote(userId, id, note, db = defaultDb, opts = {}) {
+  const { has, T } = await parcoursSchema(db);
   const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
   const v = note == null ? null : String(note).trim().slice(0, MAX_PARCOURS_NOTE) || null;
-  const [up] = await db.update(T).set({ note: v }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
+  if (v && !parcoursNotesOpen()) return bad('NOTES_CLOSED', 'Les notes personnelles ne sont plus proposées sur ce service. Vous pouvez effacer une note existante.', 409);   // G8: ADA_PARCOURS_NOTES=off
+  const gate = sensitiveGate(classifyParcoursStep({ texts: [v] }), { has, consent: opts.sensitiveConsent, already: hasConsent(has, row) });
+  if (gate.refusal) return gate.refusal;
+  const marked = gate.marker ? { planStep: mergePlanStep(row.planStep, { set: { sensitive: gate.marker } }) } : {};
+  const [up] = await db.update(T).set({ note: v, ...marked }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
   await event(db, row, 'NOTE');
   return { ok: true, status: 200, item: itemView(up) };
 }

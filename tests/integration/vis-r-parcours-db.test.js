@@ -97,9 +97,9 @@ describe.skipIf(!hasDatabase)('VIS-R Mon Parcours (real DB)', () => {
       const dem = await record('demarche', 'logement', { ou_faire: 'En mairie' }); const dis = await record('dispositif', 'fonds'); const g1 = await record('guide', 'g1'); const g2 = await record('guide', 'g2');
       expect((await add(A, { records: [{ type: 'demarche', id: dem }] })).statusCode).toBe(201);
       expect((await add(A, { records: [{ type: 'dispositif', id: `${dis}-slug` }] })).statusCode).toBe(201);
-      const need = await add(A, { records: [{ type: 'guide', id: `${g2}-slug` }, { type: 'guide', id: `${g1}-slug` }], title: '  Se soigner sans titre de séjour  ' });
+      const need = await add(A, { records: [{ type: 'guide', id: `${g2}-slug` }, { type: 'guide', id: `${g1}-slug` }], title: '  Payer moins cher ses transports  ' });   // G8: an orientation title that reveals no sensitive fact (« … sans titre de séjour » is now refused by default)
       expect(need.statusCode, JSON.stringify(need.body)).toBe(201);
-      expect(need.body.item).toMatchObject({ title: 'Se soigner sans titre de séjour', itemCodes: [`guide:${g1}`, `guide:${g2}`] });
+      expect(need.body.item).toMatchObject({ title: 'Payer moins cher ses transports', itemCodes: [`guide:${g1}`, `guide:${g2}`] });
       expect((await add(A, { records: [{ type: 'guide', id: g1 }, { type: 'guide', id: g2 }] })).body.added, 'the same set in another order').toBe(false);
       const items = await list(A);
       const of = (code) => items.find((i) => i.itemCodes.includes(code));
@@ -129,7 +129,7 @@ describe.skipIf(!hasDatabase)('VIS-R Mon Parcours (real DB)', () => {
     it('is flagged in the list without its title or address — on hold, unpublished, or deleted; the step itself stays', async () => {
       const items = await list(A);
       const aide = items.find((i) => i.title === 'Fiche aide apl'); const aid = aide.itemCodes[0].slice('aide:'.length);
-      const guides = items.find((i) => i.title === 'Se soigner sans titre de séjour'); const [g1, g2] = guides.itemCodes.map((c) => c.slice('guide:'.length));
+      const guides = items.find((i) => i.title === 'Payer moins cher ses transports'); const [g1, g2] = guides.itemCodes.map((c) => c.slice('guide:'.length));
       const dis = items.find((i) => i.title === 'Fiche dispositif fonds'); const did = dis.itemCodes[0].slice('dispositif:'.length);
       await db.execute(sql`UPDATE "Aide" SET publication_hold = 'PRIVACY_REVIEW' WHERE id = ${aid}`);
       await db.execute(sql`UPDATE "Guide" SET statut = 'brouillon' WHERE id = ${g2}`);

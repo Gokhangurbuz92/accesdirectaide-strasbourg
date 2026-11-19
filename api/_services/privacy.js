@@ -93,7 +93,8 @@ export const USER_PERSONAL_DATA_LINEAGE = Object.freeze({
         action: 'DELETE',
         // PKG-1: profile, household and notification preferences are deleted with the account (ON DELETE CASCADE from CitizenUser) and included in the export.
         // PKG-2: Mon Parcours (+ history), favourites, opt-in history and Mon Coffre rows cascade the same way; the Coffre's encrypted blobs are purged after commit.
-        storageEntities: ['CitizenUser', 'CitizenProfile', 'HouseholdMember', 'NotificationPreference', 'ParcoursItem', 'ParcoursEvent', 'CitizenFavorite', 'CitizenHistoryEntry', 'CitizenDocument', 'CitizenDelegation', 'DelegationAccessEvent']
+        // G8: the Mon Parcours reminder ledger (ParcoursReminder) cascades with its step — listed so the lineage names every Mon Parcours table
+        storageEntities: ['CitizenUser', 'CitizenProfile', 'HouseholdMember', 'NotificationPreference', 'ParcoursItem', 'ParcoursEvent', 'ParcoursReminder', 'CitizenFavorite', 'CitizenHistoryEntry', 'CitizenDocument', 'CitizenDelegation', 'DelegationAccessEvent']
     },
     CitizenSession: {
         action: 'DELETE',

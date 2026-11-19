@@ -9,7 +9,8 @@ import crypto from 'node:crypto';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { CitizenDelegation, CitizenUser, DelegationAccessEvent, ParcoursItem, ProAppointment, Structure } from '../../src/db/schema.js';
-import { listCoffre } from './mon-espace.js';
+import { listCoffre, sensitiveItemIds } from './mon-espace.js';
+import { parcoursItemTable, parcoursPlanStepSchema } from '../_utils/schema-features.js';
 import { mailLedgerStatus } from '../_utils/mailer.js';
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';
@@ -154,10 +155,14 @@ export async function delegateView(userId, id, what, db = defaultDb, opts = {}) 
   if (await isRestricted(owner, db)) return bad('PROCESSING_RESTRICTED', 'La personne a demandé la limitation du traitement de ses données : la consultation est suspendue.', 409);
   let data;
   if (what === 'parcours') {
-    // M1: only the columns shown are read — the delegate never gets the plan data, and the view works on a database without "planStep" (migration 0046)
-    const rows = await db.select({ id: ParcoursItem.id, title: ParcoursItem.title, status: ParcoursItem.status, dueDate: ParcoursItem.dueDate, dueSourceUrl: ParcoursItem.dueSourceUrl })
-      .from(ParcoursItem).where(eq(ParcoursItem.userId, owner)).orderBy(asc(ParcoursItem.createdAt));
-    data = { items: rows.map((i) => ({ id: i.id, title: i.title, status: i.status, dueDate: i.dueDate, dueSourceUrl: i.dueSourceUrl })) }; // private notes never leave
+    // M1: only the columns shown are returned — the delegate never gets the plan data, and the view works on a database without "planStep" (migration 0046)
+    // G8: a SENSITIVE step (consented as such, or revealing health, disability, addiction, residence, justice… through its title, need or records) is never
+    // shown to a delegate, whatever the mode and whatever the scope granted: its plan data and records are read here only to decide that
+    const has = await parcoursPlanStepSchema(db); const T = parcoursItemTable(has);
+    const rows = await db.select({ id: ParcoursItem.id, title: ParcoursItem.title, status: ParcoursItem.status, dueDate: ParcoursItem.dueDate, dueSourceUrl: ParcoursItem.dueSourceUrl,
+      itemCodes: ParcoursItem.itemCodes, ...(has ? { planStep: T.planStep } : {}) }).from(T).where(eq(ParcoursItem.userId, owner)).orderBy(asc(ParcoursItem.createdAt));
+    const hidden = await sensitiveItemIds(rows, db);
+    data = { items: rows.filter((i) => !hidden.has(i.id)).map((i) => ({ id: i.id, title: i.title, status: i.status, dueDate: i.dueDate, dueSourceUrl: i.dueSourceUrl })) }; // private notes never leave
   } else if (what === 'coffre') {
     data = { documents: (await listCoffre(owner, db)).documents.map((d) => ({ name: d.name, category: d.category, byteLength: d.byteLength, createdAt: d.createdAt, expired: d.expired })) };
   } else {

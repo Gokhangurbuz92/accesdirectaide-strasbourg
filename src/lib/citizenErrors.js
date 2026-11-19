@@ -31,6 +31,10 @@ const byCode = () => ({
   INVALID_TITLE: i18n.t('common:api_error.invalid_title', 'Décrivez l’étape en 3 à 200 caractères.'),
   DEADLINE_SOURCE_REQUIRED: i18n.t('common:api_error.deadline_source', 'Une échéance doit citer sa source officielle (adresse https d’un site public reconnu).'),
   PARCOURS_FULL: i18n.t('common:api_error.parcours_full', 'Mon Parcours a atteint le nombre maximal d’étapes.'),
+  // G8: a sensitive step / note (api/lib/parcours-sensitivity.js) — refused by default; in « consent » mode, kept only with the person's explicit consent
+  SENSITIVE_STEP_EXCLUDED: i18n.t('common:api_error.sensitive_step_excluded', 'Mon Parcours n’enregistre pas, pour le moment, ce qui concerne la santé, le handicap, une addiction, le droit au séjour, la justice, une mesure de protection, la vie sexuelle ou des violences subies. Rien n’a été enregistré : décrivez l’étape sans cette information.'),
+  NOTES_CLOSED: i18n.t('common:api_error.notes_closed', 'Les notes personnelles ne sont plus proposées sur ce service. Vous pouvez effacer une note existante.'),
+  SENSITIVE_STEP_CONSENT_REQUIRED: i18n.t('common:api_error.sensitive_step_consent', 'Cette étape semble révéler une information sensible. Elle n’est enregistrée qu’avec votre accord explicite. Rien n’a été enregistré.'),
   NO_PLAN: i18n.t('common:api_error.no_plan', 'Ce dossier ne contient pas encore de plan d’action à suivre.'),
   NO_ACTIVE_GRANT: i18n.t('common:api_error.no_active_grant', 'Cette organisation n’a pas (ou plus) accès à ce dossier.'),
   PROCESSING_RESTRICTED: i18n.t('common:api_error.processing_restricted', 'La limitation du traitement des données est en place : cette action est suspendue tant qu’elle dure.'),

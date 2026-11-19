@@ -718,5 +718,15 @@
   "access_action.synthesis_approved": "hat eine automatische Zusammenfassung freigegeben",
   "access_action.parcours_viewed": "hat „Mein Weg“ eingesehen",
   "access_action.coffre_listed": "hat die Liste von „Mein Tresor“ eingesehen",
-  "access_action.rdv_viewed": "hat die Termine eingesehen"
+  "access_action.rdv_viewed": "hat die Termine eingesehen",
+  "parcours.sensitive_item": "Sensible Information, mit Ihrer Einwilligung gespeichert: nur für Sie sichtbar, nie einer Vertrauensperson gezeigt. Löschen Sie den Schritt, um Ihre Einwilligung zu widerrufen.",
+  "parcours.sensitive_notice_consent": "Ein Schritt zu Gesundheit, Behinderung, einer Sucht, dem Aufenthaltsrecht, der Justiz, einer Schutzmaßnahme, dem Sexualleben oder erlittener Gewalt wird nur mit Ihrer ausdrücklichen Einwilligung gespeichert, Schritt für Schritt. Er wird nie einer Vertrauensperson gezeigt.",
+  "parcours.sensitive_notice_excluded": "Mon Parcours speichert derzeit nichts zu Gesundheit, Behinderung, einer Sucht, dem Aufenthaltsrecht, der Justiz, einer Schutzmaßnahme, dem Sexualleben oder erlittener Gewalt. Für diese Verfahren können Sie mit einer Person sprechen, die Sie begleitet.",
+  "parcours.consent_title": "Ihre Einwilligung ist nötig",
+  "parcours.consent_body": "Dieser Schritt scheint eine sensible Information zu enthalten (Gesundheit, Behinderung, Sucht, Aufenthaltsrecht, Justiz…). Es wurde nichts gespeichert. Er wird nur gespeichert, wenn Sie zustimmen: Er bleibt nur für Sie sichtbar, wird nie einer Vertrauensperson gezeigt, und Sie können ihn jederzeit löschen.",
+  "parcours.consent_check": "Ich bin einverstanden, dass dieser Schritt mit dieser Information in Mon Parcours gespeichert wird.",
+  "parcours.consent_confirm": "Mit meiner Einwilligung speichern",
+  "parcours.consent_cancel": "Nicht speichern",
+  "parcours.title_hint": "Beschreiben Sie das Verfahren ohne Angaben zu Ihrer Gesundheit oder Ihrer persönlichen Situation (zum Beispiel: „Wohngeld beantragen“).",
+  "delegation_view.sensitive_hidden": "Schritte zu Gesundheit oder anderen sensiblen Informationen werden hier nie angezeigt."
 }

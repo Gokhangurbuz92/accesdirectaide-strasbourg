@@ -718,5 +718,15 @@
   "access_action.synthesis_approved": "approved an automatic summary",
   "access_action.parcours_viewed": "viewed My Journey",
   "access_action.coffre_listed": "viewed the list of My Vault",
-  "access_action.rdv_viewed": "viewed the appointments"
+  "access_action.rdv_viewed": "viewed the appointments",
+  "parcours.sensitive_item": "Sensitive information kept with your consent: visible to you only, never shown to a trusted person. Delete the step to withdraw your consent.",
+  "parcours.sensitive_notice_consent": "A step about health, disability, an addiction, the right of residence, justice, a protection measure, sex life or violence suffered is recorded only with your explicit consent, step by step. It is never shown to a trusted person.",
+  "parcours.sensitive_notice_excluded": "For now, Mon Parcours does not record anything about health, disability, an addiction, the right of residence, justice, a protection measure, sex life or violence suffered. For these procedures, you can talk to a person who supports you.",
+  "parcours.consent_title": "Your consent is needed",
+  "parcours.consent_body": "This step seems to reveal sensitive information (health, disability, addiction, right of residence, justice…). Nothing has been recorded. It will be recorded only if you accept: it will stay visible to you only, will never be shown to a trusted person, and you can delete it at any time.",
+  "parcours.consent_check": "I accept that this step, with this information, is recorded in Mon Parcours.",
+  "parcours.consent_confirm": "Record with my consent",
+  "parcours.consent_cancel": "Do not record",
+  "parcours.title_hint": "Describe the procedure without information about your health or your personal situation (for example: “Apply for housing benefit”).",
+  "delegation_view.sensitive_hidden": "Steps about health or other sensitive information are never shown here."
 }
