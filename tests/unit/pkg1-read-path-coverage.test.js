@@ -71,6 +71,7 @@ const REVIEWED_NOT_PUBLIC = {
   'scripts/search-eval.mjs': 'PKG-11 / D16: LAB measurement on its own synthetic fixtures (refuses a non-local database); no public output',
   'api/_handlers/pro/orientation-baskets.js': 'R18 (R31): reads only the nom of the caller\'s own organization for the summary heading; the catalogue items go through visibleSql (api/_services/orientation-basket.js)',
   'api/_services/link-check.js': 'PKG-11 / A05: link check of the D-5-VISIBLE records only (visibleSql), allow-listed official hosts; no public output',
+  'api/_services/job-board.js': 'X05 (expansion, closed by default): reads only id / nom / statut / verification_status of the EMPLOYER organization — its own listings (pro side), the review queue (MFA admin), and the public board, which names only the employer of a listing that employer itself published (active and E01-verified); no content record is served',
   'api/_services/org-closure.js': 'PKG-11 / E08: the organization\'s own closure request and the ADA two-person MFA review (organization name, counts); never public',
   'api/_services/admin-content.js': 'PKG-11 / A02: the administrators\' catalogue editing (only through /api/admin/content: admin session + MFA); found by the R11 table-map detection, never a public read',
   'scripts/q11-multi-instance.mjs': 'R11: Q11 local SIMULATION on a DISPOSABLE local database (refuses another): inserts and deletes its own synthetic rows, never served',

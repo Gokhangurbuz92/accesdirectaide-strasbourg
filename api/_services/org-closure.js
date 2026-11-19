@@ -16,12 +16,14 @@
  *   - open cases are closed; referrals it received end and those it sent that nobody accepted yet are cancelled (an accepted one stays: the other organization keeps
  *     supporting the person); the other organization and the person keep their history; future appointments are cancelled
  *     and the person is told (the notice ledger records the outcome), online booking is unpublished and the services deactivated, pending profile proposals withdrawn;
+ *     X05: its open job listings are withdrawn;
  *   - A02: after the commit the other organization of each ended referral and each person whose dossier access or referral ended are told (tellClosure);
  *     A03: the members' Outlook links (tokens, Outlook address) are deleted;
  *   - kept on purpose: citizen-visible notes and case outcomes (part of the person's follow-up, erasable through the person's own request), the messages exchanged
  *     with people, the consent ledger, the audit trails, and the public directory record (public-source information; online booking is switched off).
  */
 import { releaseSenderCase } from './referrals.js';
+import { withdrawForClosedOrganization } from './job-board.js';
 import { endReferentsForClosedOrganization } from './dossier-referent.js';
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
@@ -170,6 +172,8 @@ async function execute(tx, sid, requestId, reviewer) {
   summary.servicesDeactivated = await n(sql`UPDATE "ProRdvService" SET "isActive" = false, "updatedAt" = NOW() WHERE "structureId" = ${sid} AND "isActive" = true`);
   await tx.execute(sql`UPDATE "StructureRdvSettings" SET "isPublished" = false, "contactEmail" = NULL, "contactPhone" = NULL, "updatedAt" = NOW() WHERE "structureId" = ${sid}`);
   summary.proposalsWithdrawn = await n(sql`UPDATE "StructureProposal" SET status = 'WITHDRAWN' WHERE "structureId" = ${sid} AND status = 'PENDING'`);
+  // X05 (expansion): the organization's job listings that are still open are withdrawn (out of the public board at once); skipped without migration 0056
+  summary.jobListingsWithdrawn = await withdrawForClosedOrganization(tx, sid);
   summary.memberInvitationsErased = await n(sql`DELETE FROM "Invitation" WHERE "structureId" = ${sid} AND used_at IS NULL`);
   summary.notificationsErased = await n(sql`DELETE FROM "ProNotification" WHERE "structureId" = ${sid}`);
   await tx.execute(sql`UPDATE "ProProfile" SET "displayName" = NULL, "jobTitle" = NULL, "descriptionPublic" = NULL, "photoUrl" = NULL, "isPubliclyVisible" = false, "updatedAt" = NOW()

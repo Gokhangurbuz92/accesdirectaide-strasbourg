@@ -87,6 +87,11 @@ export const CAPABILITIES = Object.freeze({
   // surface « stories » that nothing opens.
   'community.stories': { description: 'community stories (X01 expansion): public reading of moderated stories under a pseudonym, joining / posting / withdrawal by a signed-in adult citizen, reports, moderation and takedown',
     aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (free text written by the person under a pseudonym, health detail discouraged and moderated out; no care follow-up)', surface: 'stories', aipdRef: 'X01 (AIPD line to sign)' },
+  // X05 (EXPANSION, founder 19/11/2026 — not one of the 173): the inclusive job board — listings of employers ADA verified (E01), written by a STRUCTURE_ADMIN,
+  // moderated (admin, MFA, audited), published until their end date. Applicants apply through the employer's own channel: ADA stores nothing about them.
+  // Outside the AIPD until its own AIPD line is signed (CONTROL/master/completion/G6_X05_JOB_BOARD_2026-11-19.md), on its own surface « employment » that nothing opens.
+  'community.employment': { description: 'inclusive job board (X05 expansion): public reading of moderated listings of verified employers, listings written by a structure administrator, moderation and takedown; no applicant data',
+    aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (organization listings; no applicant data is received or stored)', surface: 'employment', aipdRef: 'X05 (AIPD line to sign)' },
   // ── never opened by a switch
   'citizen.minor_accounts': { description: 'independent accounts of minors (closed by the age policy; R42-A07)', aipd: 'out', requiresHds: false, surface: 'accounts', openable: false, aipdRef: 'AIPD § 2.2' },
 });
@@ -146,6 +151,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   testimonials: ['community.testimonials'], 'citizen/testimonials': ['community.testimonials'], 'admin/testimonials': ['community.testimonials'],
   // X01 (expansion): every route of the « stories » surface — public reading included — is refused 503 before its handler while the capability is closed
   stories: ['community.stories'], 'citizen/stories': ['community.stories'], 'admin/stories': ['community.stories'],
+  // X05 (expansion): every route of the « employment » surface — public reading included — is refused 503 before its handler while the capability is closed
+  employment: ['community.employment'], 'pro/employment': ['community.employment'], 'admin/employment': ['community.employment'],
 });
 const ROUTE_PREFIXES = Object.keys(ROUTE_CAPABILITIES).sort((a, b) => b.length - a.length);
 

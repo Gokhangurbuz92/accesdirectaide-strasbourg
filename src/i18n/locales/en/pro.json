@@ -361,6 +361,7 @@
  "layout.selections_orientation": "Referral selections",
  "layout.services_rdv": "Appointment services",
  "layout.structure": "My organisation",
+ "layout.job_listings": "Job offers",
  "layout.tableau_bord": "Dashboard",
  "login.bad_code": "Incorrect or expired code: enter the code your app is showing now.",
  "login.bad_credentials": "Incorrect address or password.",

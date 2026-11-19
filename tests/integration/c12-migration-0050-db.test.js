@@ -28,9 +28,9 @@ describe.skipIf(!hasDatabase)('migration 0050: up → down → up on a throwaway
   const check = async () => (await q(`SELECT count(*)::int AS n FROM pg_constraint WHERE conname = 'ResourceAccessibility_verification_check'`))[0].n;
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
-  // drizzle re-applies only what is later than the NEWEST recorded migration: the later ones (0055 X01, 0054 X02, 0053 X04, 0052 C8, 0051 P19) are rolled back first, newest first,
+  // drizzle re-applies only what is later than the NEWEST recorded migration: the later ones (0056 X05, 0055 X01, 0054 X02, 0053 X04, 0052 C8, 0051 P19) are rolled back first, newest first,
   // then 0050 — otherwise the next `up` would never re-apply 0050 (each rollback file is idempotent and forgets its own journal row)
-  const LATER_DOWNS = ['drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql', 'drizzle/rollback/0053_down.sql', 'drizzle/rollback/0052_down.sql', 'drizzle/rollback/0051_down.sql'].filter((f) => fs.existsSync(f));
+  const LATER_DOWNS = ['drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql', 'drizzle/rollback/0053_down.sql', 'drizzle/rollback/0052_down.sql', 'drizzle/rollback/0051_down.sql'].filter((f) => fs.existsSync(f));
   const down = async () => { for (const f of [...LATER_DOWNS, 'drizzle/rollback/0050_down.sql']) await pool.query(fs.readFileSync(f, 'utf8')); };
   const legacyRows = () => q(`SELECT id, slug, title, type, content, source_url, territory_scope, status, "createdAt", "updatedAt" FROM "ResourceAccessibility" ORDER BY id`);
 

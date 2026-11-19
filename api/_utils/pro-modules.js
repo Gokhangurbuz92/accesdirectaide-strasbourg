@@ -25,6 +25,8 @@ export const PRO_MODULE_ROUTES = Object.freeze({
   reports: 'pro/reports',
   regional: 'pro/regional-stats',
   audit: 'pro/audit',
+  // X05 (expansion): the employer's job listings — closed unless the « employment » surface AND « community.employment » are open
+  employment: 'pro/employment',
 });
 
 /** is this route served here (both gates, as api/index.js and api/routes.js apply them to a GET) @param {string} path @param {Record<string, string | undefined>} [envVars] */

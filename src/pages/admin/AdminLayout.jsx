@@ -16,7 +16,7 @@ import ServiceUnavailable from '@/components/ServiceUnavailable';
 import useMainHeadingText from '@/hooks/useMainHeadingText';
 import { useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
-import { eventsOpened, storiesOpened, testimonialsOpened } from '@/lib/publicBeta';
+import { employmentOpened, eventsOpened, storiesOpened, testimonialsOpened } from '@/lib/publicBeta';
 
 
 /**
@@ -58,6 +58,8 @@ const SIDEBAR_SECTIONS = [
             ...(testimonialsOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Modération des témoignages', to: '/admin/temoignages', icon: FileText }] : []),
             // X01 (expansion): same rule for the moderation of the community stories
             ...(storiesOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Modération des histoires', to: '/admin/histoires', icon: FileText }] : []),
+            // X05 (expansion): same rule for the review of the job listings
+            ...(employmentOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Relecture des offres d’emploi', to: '/admin/offres-emploi', icon: FileText }] : []),
         ]
     },
     {

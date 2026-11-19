@@ -629,6 +629,14 @@
         "responses": { "200": { "description": "Retrait" }, "201": { "description": "Témoignage envoyé / signalement enregistré" }, "400": { "description": "CONSENT_REQUIRED, DISPLAY_NAME_INVALID, BODY_TOO_SHORT, CONTACT_OR_LINK_IN_TEXT, PHONE_IN_TEXT, UNKNOWN_REASON" }, "401": { "description": "Session requise" }, "403": { "description": "ADULT_ACCOUNT_REQUIRED" }, "404": { "description": "TESTIMONIAL_NOT_FOUND" }, "409": { "description": "ALREADY_SUBMITTED, ALREADY_REPORTED, OWN_TESTIMONIAL" }, "429": { "description": "REPORT_LIMIT" }, "503": { "description": "CAPABILITY_NOT_OPEN, TESTIMONIALS_NOT_AVAILABLE" } }
       }
     },
+    "/employment": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Offres d'emploi inclusives publiées (X05, extension — fermé par défaut)",
+        "description": "Offres approuvées par la relecture, date de fin non passée, d'employeurs actifs et vérifiés par ADA (E01) : intitulé, contrat, lieu, description, aménagements (liste fermée), moyen de candidature PROPRE à l'employeur (adresse https ou e-mail), nom de l'employeur, dates. ADA ne reçoit ni ne conserve aucune candidature. Cache-Control: no-store. Refusé 503 CAPABILITY_NOT_OPEN tant que la capacité community.employment est fermée (surface employment). Sans la migration 0056 : liste vide. Aucune offre d'exemple.",
+        "responses": { "200": { "description": "{ items }" }, "405": { "description": "GET seulement" }, "503": { "description": "CAPABILITY_NOT_OPEN ou bêta restreinte" } }
+      }
+    },
     "/stories": {
       "get": {
         "tags": ["Core Data"],
@@ -933,6 +941,20 @@
         "description": "{ action: approve | reject | takedown | dismiss_reports, id, reason? } — MFA ; refus et retrait effacent le texte et le nom, avec un motif d'une liste fermée ; chaque décision est journalisée.",
         "security": [{ "AdminToken": [] }],
         "responses": { "200": { "description": "Décision enregistrée" }, "400": { "description": "ID_REQUIRED, REASON_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "404": { "description": "NOT_FOUND" }, "409": { "description": "NOT_PENDING, NOT_PUBLISHED, STATE_CHANGED" }, "422": { "description": "APPROVAL_REFUSED (problems)" }, "503": { "description": "CAPABILITY_NOT_OPEN, TESTIMONIALS_NOT_AVAILABLE" } }
+      }
+    },
+    "/admin/employment": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "File de relecture des offres d'emploi (X05, fermé par défaut)",
+        "description": "Session administrateur nominative AVEC MFA, même en lecture ; chaque lecture est journalisée (JOB_QUEUE_READ). queue=pending|published. Montre l'offre, l'employeur (nom, vérification) et les problèmes qui bloquent la publication — jamais l'auteur.",
+        "responses": { "200": { "description": "{ items }" }, "400": { "description": "BAD_QUEUE" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "503": { "description": "CAPABILITY_NOT_OPEN, JOBS_NOT_AVAILABLE" } }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Publier, refuser, retirer une offre (X05, fermé par défaut)",
+        "description": "{ action: approve|reject|takedown, id, reason? } — revérification à la publication (champs, date de fin, formulation de droit, employeur actif et vérifié) ; refus et retrait avec un motif d'une liste fermée ; journalisé.",
+        "responses": { "200": { "description": "Décision enregistrée" }, "400": { "description": "ID_REQUIRED, REASON_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "404": { "description": "NOT_FOUND" }, "409": { "description": "NOT_PENDING, NOT_PUBLISHED, STATE_CHANGED" }, "422": { "description": "APPROVAL_REFUSED (problems)" }, "503": { "description": "CAPABILITY_NOT_OPEN, JOBS_NOT_AVAILABLE" } }
       }
     },
     "/admin/stories": {
@@ -3358,6 +3380,20 @@
             "BearerAuth": []
           }
         ]
+      }
+    },
+    "/pro/employment": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Offres d'emploi de la structure (X05, fermé par défaut)",
+        "description": "Session professionnelle (règle MFA de la console). { available, canManage, employerVerified, employer, limits, listings } — uniquement les offres de la structure de la session.",
+        "responses": { "200": { "description": "{ available, canManage, employerVerified, employer, limits, listings }" }, "401": { "description": "Session requise" }, "403": { "description": "PRO_MFA_REQUIRED" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+      },
+      "post": {
+        "tags": ["Pro"],
+        "summary": "Créer, modifier, envoyer, retirer, supprimer une offre (X05, fermé par défaut)",
+        "description": "Administrateur de structure seulement. { action: create, title, contractType, city, postalCode, description, accommodations, applyMethod, applyTarget, expiresOn } — champs requis seulement ; tout champ désignant un critère de l'article L1132-1 du Code du travail est refusé (FORBIDDEN_CRITERION), tout autre champ non prévu aussi (UNKNOWN_FIELD). { action: update, id, ... } (brouillon ou refusée). { action: submit, id } — structure active ET vérifiée (E01). { action: withdraw, id }. { action: delete, id } (brouillon). Aucune donnée de candidat.",
+        "responses": { "200": { "description": "Modifiée / envoyée / retirée / supprimée" }, "201": { "description": "Brouillon créé" }, "400": { "description": "FORBIDDEN_CRITERION, UNKNOWN_FIELD, TITLE_TOO_SHORT, CONTRACT_TYPE_REQUIRED, POSTAL_CODE_INVALID, ACCOMMODATION_REQUIRED, APPLY_TARGET_INVALID, EXPIRY_IN_PAST, EXPIRY_TOO_FAR, CONTACT_IN_TEXT, ENTITLEMENT_WORDING, ID_REQUIRED" }, "401": { "description": "Session requise" }, "403": { "description": "STRUCTURE_ADMIN_REQUIRED, EMPLOYER_NOT_VERIFIED, PRO_MFA_REQUIRED" }, "404": { "description": "LISTING_NOT_FOUND" }, "409": { "description": "NOT_EDITABLE, NOT_DRAFT, STATE_CHANGED, TOO_MANY_OPEN" }, "503": { "description": "CAPABILITY_NOT_OPEN, JOBS_NOT_AVAILABLE" } }
       }
     },
     "/pro/structure": {
