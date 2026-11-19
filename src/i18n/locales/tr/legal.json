@@ -114,7 +114,6 @@
  "privacy.cookies.notMeasured": "Ziyaretçi ölçümü yok; teknik bir hata kaydı var: ayrıntılar ve seçenekler <0>Çerezler</0> sayfasında.",
  "privacy.retention.title": "Saklama süreleri",
  "privacy.retention.intro": "Öngörülen süreler. Bunlar haftalık bir otomatik görevle (her pazar saat 3'te, UTC saatiyle) uygulanacaktır; bu görev henüz etkin değildir: etkinleştirilene kadar hiçbir şey otomatik olarak silinmez.",
- "privacy.retention.introDaily": "Öngörülen süreler. Bunlar günlük bir otomatik görevle (her gün saat 3'te, UTC saatiyle) uygulanacaktır; bu görev henüz etkin değildir: etkinleştirilene kadar hiçbir şey otomatik olarak silinmez.",
  "privacy.retention.data": "Veriler",
  "privacy.retention.duration": "Öngörülen süre",
  "privacy.retention.notValidated": "Bu süreler kod tarafından önerilen değerlerdir. Henüz veri sorumlusu tarafından onaylanmamışlardır ve hesaplar açılmadan önce değişebilirler.",
@@ -313,5 +312,6 @@
  "mentions.reply.a2": "Talebi yukarıdaki yayın iletişim adresine veya barındırma sağlayıcısına gönderin: yayıncı anonim kaldığı için barındırma sağlayıcısı talebi gecikmeden yayın yönetmenine iletir.",
  "mentions.reply.a1": "Talebi yukarıdaki e-posta adresinden yayın yönetmenine gönderin.",
  "mentions.reply.delay": "Cevap, talebin alınmasından sonraki üç gün içinde yayımlanır (loi n° 2004-575 du 21 juin 2004, art. 1-1, III).",
- "terms.service.accountsOpen": "Reşit kişiler kişisel bir hesap oluşturabilir. Randevu alma henüz açık değil: açıldığında randevu almak için kişisel bir hesap gerekecek."
+ "terms.service.accountsOpen": "Reşit kişiler kişisel bir hesap oluşturabilir. Randevu alma henüz açık değil: açıldığında randevu almak için kişisel bir hesap gerekecek.",
+ "privacy.retention.introDaily": "Öngörülen süreler. Bunlar günlük bir otomatik görevle (her gün saat 3'te, UTC saatiyle) uygulanacaktır; bu görev henüz etkin değildir: etkinleştirilene kadar hiçbir şey otomatik olarak silinmez."
 }

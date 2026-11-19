@@ -174,7 +174,7 @@ describe('privacy notice v9-2026-11-19 — professional accounts of ADA Pro', ()
     const names = (/** @type {string} */ v) => ['{{contact}}', 'ADA', 'P4p', 'Mailjet', 'Upstash', 'IP'].filter((n) => v.includes(n));
     for (const lang of LANGS) {
       const tr = locale(lang);
-      for (const [k, frText] of draftTextKeys(v9)) expect(tr[`${v9.key}.${k}`], `${lang} ${k}`).toBeTruthy();
+      for (const [k] of draftTextKeys(v9)) expect(tr[`${v9.key}.${k}`], `${lang} ${k}`).toBeTruthy();
       for (const k of V9_KEYS) {
         const t = tr[`${v9.key}.${k}`];
         expect(figures(t), `${lang} ${k}`).toEqual(figures(fr[k]));

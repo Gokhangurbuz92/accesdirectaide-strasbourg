@@ -114,7 +114,6 @@
  "privacy.cookies.notMeasured": "No audience measurement; a technical error log: details and choices on the <0>Cookies</0> page.",
  "privacy.retention.title": "Retention periods",
  "privacy.retention.intro": "Planned periods. They will be applied by a weekly automatic task (every Sunday at 3 a.m., UTC time), which is not switched on yet: until it is, nothing is deleted automatically.",
- "privacy.retention.introDaily": "Planned periods. They will be applied by a daily automatic task (every day at 3 a.m., UTC time), which is not switched on yet: until it is, nothing is deleted automatically.",
  "privacy.retention.data": "Data",
  "privacy.retention.duration": "Planned period",
  "privacy.retention.notValidated": "These periods are values proposed by the code. They have not yet been approved by the data controller and may change before accounts are opened.",
@@ -313,5 +312,6 @@
  "mentions.reply.a2": "Send the request to the publication contact address above, or to the host: as the publisher has kept their anonymity, the host forwards the request to the publication director without delay.",
  "mentions.reply.a1": "Send the request to the publication director, at the e-mail address above.",
  "mentions.reply.delay": "The reply is inserted within three days after the request is received (loi n° 2004-575 du 21 juin 2004, art. 1-1, III).",
- "terms.service.accountsOpen": "Adults can create a personal account. Appointment booking is not open yet: once it opens, a personal account will be needed to book an appointment."
+ "terms.service.accountsOpen": "Adults can create a personal account. Appointment booking is not open yet: once it opens, a personal account will be needed to book an appointment.",
+ "privacy.retention.introDaily": "Planned periods. They will be applied by a daily automatic task (every day at 3 a.m., UTC time), which is not switched on yet: until it is, nothing is deleted automatically."
 }

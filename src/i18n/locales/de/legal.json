@@ -114,7 +114,6 @@
  "privacy.cookies.notMeasured": "Keine Reichweitenmessung; ein technisches Fehlerprotokoll: Einzelheiten und Wahlmöglichkeiten auf der Seite <0>Cookies</0>.",
  "privacy.retention.title": "Aufbewahrungsfristen",
  "privacy.retention.intro": "Vorgesehene Fristen. Sie werden durch eine wöchentliche automatische Aufgabe angewendet (jeden Sonntag um 3 Uhr, UTC), die noch nicht eingeschaltet ist: Solange sie es nicht ist, wird nichts automatisch gelöscht.",
- "privacy.retention.introDaily": "Vorgesehene Fristen. Sie werden durch eine tägliche automatische Aufgabe angewendet (jeden Tag um 3 Uhr, UTC), die noch nicht eingeschaltet ist: Solange sie es nicht ist, wird nichts automatisch gelöscht.",
  "privacy.retention.data": "Daten",
  "privacy.retention.duration": "Vorgesehene Frist",
  "privacy.retention.notValidated": "Diese Fristen sind vom Code vorgeschlagene Werte. Sie wurden vom Verantwortlichen noch nicht genehmigt und können sich vor der Öffnung der Konten ändern.",
@@ -313,5 +312,6 @@
  "mentions.reply.a2": "Senden Sie die Anfrage an die oben genannte Kontaktadresse der Veröffentlichung oder an den Hoster: Da der Herausgeber anonym geblieben ist, leitet der Hoster die Anfrage unverzüglich an die für die Veröffentlichung verantwortliche Person weiter.",
  "mentions.reply.a1": "Senden Sie die Anfrage an die für die Veröffentlichung verantwortliche Person, an die oben genannte E-Mail-Adresse.",
  "mentions.reply.delay": "Die Gegendarstellung wird innerhalb von drei Tagen nach Eingang der Anfrage aufgenommen (loi n° 2004-575 du 21 juin 2004, art. 1-1, III).",
- "terms.service.accountsOpen": "Volljährige Personen können ein persönliches Konto anlegen. Die Terminbuchung ist noch nicht geöffnet: Sobald sie öffnet, ist für eine Terminbuchung ein persönliches Konto nötig."
+ "terms.service.accountsOpen": "Volljährige Personen können ein persönliches Konto anlegen. Die Terminbuchung ist noch nicht geöffnet: Sobald sie öffnet, ist für eine Terminbuchung ein persönliches Konto nötig.",
+ "privacy.retention.introDaily": "Vorgesehene Fristen. Sie werden durch eine tägliche automatische Aufgabe angewendet (jeden Tag um 3 Uhr, UTC), die noch nicht eingeschaltet ist: Solange sie es nicht ist, wird nichts automatisch gelöscht."
 }
