@@ -452,7 +452,10 @@ export const LEGAL_DRAFTS_V8_CHANGES = Object.freeze({
     },
   },
 });
-/** @param {Record<number, string[]> | undefined} ch @param {string[] | undefined} list @param {Record<number, string> | undefined} keys */
+/**
+ * @param {Record<number, string[]> | undefined} ch @param {string[] | undefined} list @param {Record<number, string> | undefined} keys
+ * @returns {[string[] | undefined, Record<number, string> | undefined]}
+ */
 const applyV8 = (ch, list, keys) => (ch && list
   ? [list.map((x, i) => (ch[i] ? ch[i][0] : x)), { ...(keys || {}), ...Object.fromEntries(Object.entries(ch).map(([i, a]) => [Number(i), a[1]])) }]
   : [list, keys]);
