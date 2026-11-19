@@ -79,6 +79,10 @@ const AcademyEvents = lazy(() => import("./AcademyEvents.jsx"));
 const AcademyEventDetail = lazy(() => import("./AcademyEventDetail.jsx"));
 const CompteEvenements = lazy(() => import("./CompteEvenements.jsx"));
 const AdminAcademyEvents = lazy(() => import("./admin/AcademyEventsAdmin.jsx"));
+// X02 (expansion): testimonials (closed by default: surface « testimonials », capability community.testimonials)
+const Testimonials = lazy(() => import("./Testimonials.jsx"));
+const CompteTemoignages = lazy(() => import("./CompteTemoignages.jsx"));
+const AdminTestimonials = lazy(() => import("./admin/TestimonialsAdmin.jsx"));
 const RessourceDetail = lazy(() => import("./RessourceDetail.jsx"));
 const Guides = lazy(() => import("./Guides.jsx"));
 const GuideDetail = lazy(() => import("./GuideDetail.jsx"));
@@ -385,6 +389,7 @@ function PagesContent() {
                                     <Route path="actualites-redaction" element={<AdminNewsEditorial />} />
                                     <Route path="ressources-publication" element={<AdminResourcePublication />} />
                                     <Route path="academie-evenements" element={<AdminAcademyEvents />} />
+                                    <Route path="temoignages" element={<AdminTestimonials />} />
                                     <Route path="ws2" element={<AdminWs2Queue />} />
                                     <Route path="operations" element={<AdminOperations />} />
                                     <Route path="fournisseurs" element={<AdminProviders />} />
@@ -533,6 +538,7 @@ function PagesContent() {
                                 <Route path="/compte/coffre" element={<CompteCoffre />} />
                                 <Route path="/compte/favoris" element={<CompteFavoris />} />
                                 <Route path="/compte/evenements" element={<CompteEvenements />} />
+                                <Route path="/compte/temoignages" element={<CompteTemoignages />} />
                                 <Route path="/compte/historique" element={<CompteHistorique />} />
                                 <Route path="/compte/delegations" element={<CompteDelegations />} />
                                 <Route path="/compte/delegations/:id" element={<CompteDelegationVue />} />
@@ -632,6 +638,7 @@ function PagesContent() {
                                 <Route path="/academie/:slug" element={<AcademyEventDetail kind="LESSON" />} />
                                 <Route path="/evenements" element={<AcademyEvents kind="EVENT" />} />
                                 <Route path="/evenements/:slug" element={<AcademyEventDetail kind="EVENT" />} />
+                                <Route path="/temoignages" element={<Testimonials />} />
                                 <Route path="/ressources/:slug" element={<RessourceDetail />} />
                                 <Route path="/ressources/view" element={<RessourceDetail />} />
 

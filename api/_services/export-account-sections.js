@@ -11,6 +11,8 @@
  *   parcoursReminders       ParcoursReminder        (itemId -> ParcoursItem.userId)
  *   appointmentNotices      AppointmentNotice       (appointmentId -> ProAppointment.citizenUserId), recipient 'citizen' only (a notice sent to the professional is not theirs)
  *   eventRegistrations      EventRegistration       (citizenUserId) X04: event, state, times, the accessibility need the person chose — only on a database with 0053
+ *   testimonials            Testimonial             (citizenUserId) X02: state, chosen name and text while they exist, language, moderation reason, times — with 0054
+ *   testimonialReports      TestimonialReport       (reporterUserId) X02: the reports the person made (testimonial id, reason, time) — with 0054
  *
  * EXPORT_SECTION_TABLES is the contract read by tests/unit/a14-export-covers-account-tables.test.js: a new table with a foreign key to CitizenUser must be
  * exported (here or in privacy.js) or the test fails.
@@ -21,6 +23,7 @@ import { openText } from '../lib/data-keys.js';
 export const EXPORT_SECTION_TABLES = Object.freeze({
   pushSubscriptions: 'PushSubscription', emailChangeRequests: 'EmailChangeRequest', ownershipRecoveryCases: 'OwnershipRecoveryCase',
   parcoursReminders: 'ParcoursReminder', appointmentNotices: 'AppointmentNotice', eventRegistrations: 'EventRegistration',
+  testimonials: 'Testimonial', testimonialReports: 'TestimonialReport',
 });
 
 /** columns that must never appear in these sections */
@@ -29,7 +32,8 @@ export const EXPORT_FORBIDDEN_FIELDS = Object.freeze(['endpoint', 'endpointHash'
 /**
  * @param {string} userId
  * @param {(query: import('drizzle-orm').SQL) => Promise<any[]>} rows reads rows and counts a failed read (privacy.js safeRows)
- * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean> }} [deps] hasEventTables: migration 0053 present (X04)
+ * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean> }} [deps]
+ *   hasEventTables: migration 0053 present (X04); hasTestimonialTables: migration 0054 present (X02)
  */
 export async function accountLinkedSections(userId, rows, deps = {}) {
   const open = deps.open || ((id, sealed) => openText(sealed, { purpose: 'email-change', context: `email-change:${id}` }));
@@ -44,5 +48,11 @@ export async function accountLinkedSections(userId, rows, deps = {}) {
   const events = await import('./academy-events.js');
   const hasEventTables = deps.hasEventTables || (() => events.academySchemaAvailable());
   const eventRegistrations = (await hasEventTables()) ? await rows(events.eventRegistrationsExportSql(userId)) : [];
-  return { pushSubscriptions, emailChangeRequests, ownershipRecoveryCases, parcoursReminders, appointmentNotices, eventRegistrations };
+  // X02: same rule for a database without 0054
+  const testimonialsSvc = await import('./testimonials.js');
+  const hasTestimonialTables = deps.hasTestimonialTables || (() => testimonialsSvc.testimonialsSchemaAvailable());
+  const withTestimonials = await hasTestimonialTables();
+  const testimonials = withTestimonials ? await rows(testimonialsSvc.testimonialsExportSql(userId)) : [];
+  const testimonialReports = withTestimonials ? await rows(testimonialsSvc.testimonialReportsExportSql(userId)) : [];
+  return { pushSubscriptions, emailChangeRequests, ownershipRecoveryCases, parcoursReminders, appointmentNotices, eventRegistrations, testimonials, testimonialReports };
 }

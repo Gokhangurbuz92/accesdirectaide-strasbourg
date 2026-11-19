@@ -2644,6 +2644,59 @@ export const EventRegistration = pgTable('EventRegistration', {
 }));
 
 /**
+ * X02 (expansion, migration 0054) — a testimonial written by a signed-in adult citizen, published only after moderation and only with the person's explicit
+ * consent (one ConsentLog row, purpose TESTIMONIAL_PUBLICATION, the testimonial id in policy_hash). The text and the chosen first name / pseudonym exist ONLY
+ * while the testimonial is pending or published: a withdrawal (by the person, at any time), a rejection or a takedown erases both (CHECK). At most one
+ * pending or published testimonial per account. Deleted with the account (ON DELETE CASCADE: account deletion, DSR erasure, step 6c). Only writer:
+ * api/_services/testimonials.js. Closed by default: capability « community.testimonials », surface « testimonials ».
+ */
+export const Testimonial = pgTable('Testimonial', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	citizenUserId: text('citizenUserId').notNull(),
+	status: text('status').notNull().default('pending'),
+	displayName: text('displayName'),
+	body: text('body'),
+	lang: text('lang').notNull(),
+	consentVersion: text('consentVersion').notNull(),
+	moderationReason: text('moderationReason'),
+	moderatedBy: text('moderatedBy'),
+	moderatedAt: timestamp('moderatedAt', { precision: 3 }),
+	submittedAt: timestamp('submittedAt', { precision: 3 }).notNull().defaultNow(),
+	publishedAt: timestamp('publishedAt', { precision: 3 }),
+	withdrawnAt: timestamp('withdrawnAt', { precision: 3 }),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'Testimonial_user_fkey': foreignKey({ name: 'Testimonial_user_fkey', columns: [t.citizenUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'Testimonial_active_user_key': uniqueIndex('Testimonial_active_user_key').on(t.citizenUserId).where(sql`status IN ('pending', 'published')`),
+	'Testimonial_public_idx': index('Testimonial_public_idx').on(t.status, t.publishedAt),
+	'Testimonial_status_check': check('Testimonial_status_check', sql`${t.status} IN ('pending', 'published', 'rejected', 'withdrawn', 'taken_down')`),
+	'Testimonial_lang_check': check('Testimonial_lang_check', sql`${t.lang} IN ('fr', 'en', 'de', 'tr', 'ar', 'uk')`),
+	'Testimonial_text_state_check': check('Testimonial_text_state_check', sql`(${t.status} IN ('pending', 'published') AND ${t.body} IS NOT NULL AND ${t.displayName} IS NOT NULL) OR (${t.status} NOT IN ('pending', 'published') AND ${t.body} IS NULL AND ${t.displayName} IS NULL)`),
+	'Testimonial_length_check': check('Testimonial_length_check', sql`(${t.body} IS NULL OR char_length(${t.body}) BETWEEN 30 AND 1500) AND (${t.displayName} IS NULL OR char_length(${t.displayName}) BETWEEN 2 AND 40)`),
+	'Testimonial_published_check': check('Testimonial_published_check', sql`${t.status} <> 'published' OR (${t.publishedAt} IS NOT NULL AND ${t.moderatedBy} IS NOT NULL)`),
+	'Testimonial_reason_check': check('Testimonial_reason_check', sql`${t.moderationReason} IS NULL OR ${t.moderationReason} IN ('HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSIVE', 'MISLEADING', 'ADVERTISING', 'OFF_TOPIC')`)
+}));
+
+/**
+ * X02 (0054) — a report of abuse on a published testimonial by a signed-in citizen: the testimonial, the reporting account, ONE reason from a closed list (no
+ * free text), the time. One report per account and testimonial. The moderator sees counts per reason, never who reported. Deleted when the testimonial
+ * leaves public view (withdrawal, takedown) or when the moderator dismisses the reports, and with either account (ON DELETE CASCADE).
+ */
+export const TestimonialReport = pgTable('TestimonialReport', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	testimonialId: text('testimonialId').notNull(),
+	reporterUserId: text('reporterUserId').notNull(),
+	reason: text('reason').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'TestimonialReport_testimonial_fkey': foreignKey({ name: 'TestimonialReport_testimonial_fkey', columns: [t.testimonialId], foreignColumns: [Testimonial.id] }).onDelete('cascade').onUpdate('cascade'),
+	'TestimonialReport_user_fkey': foreignKey({ name: 'TestimonialReport_user_fkey', columns: [t.reporterUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'TestimonialReport_once_key': uniqueIndex('TestimonialReport_once_key').on(t.testimonialId, t.reporterUserId),
+	'TestimonialReport_reporter_idx': index('TestimonialReport_reporter_idx').on(t.reporterUserId, t.createdAt),
+	'TestimonialReport_reason_check': check('TestimonialReport_reason_check', sql`${t.reason} IN ('HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSIVE', 'MISLEADING', 'ADVERTISING', 'OFF_TOPIC')`)
+}));
+
+/**
  * PKG-2 / C09 — Mon Coffre: the person's own documents. Bytes are envelope-encrypted server-side (api/lib/data-keys.js) before the storage adapter sees them; the file name is
  * encrypted too. scanStatus states honestly that no antivirus scan exists yet (NOT_SCANNED); the type is checked from the content, not from the declared name.
  */

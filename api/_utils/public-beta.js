@@ -82,6 +82,10 @@ export const SURFACES = {
   // deployment: it needs this name in ADA_BETA_OPEN_SURFACES AND « community.events » in ADA_CAPABILITIES_OPEN (outside the AIPD until its line is signed).
   // The citizen and administration routes are longer prefixes than « citizen » / « admin »: opening accounts or admin does not open them.
   events: ['events', 'citizen/events', 'admin/events'],
+  // X02 (expansion, 19/11/2026): testimonials — the public reading, the person's submissions / withdrawals / reports and the moderation. Opened by NO
+  // deployment: it needs this name in ADA_BETA_OPEN_SURFACES AND « community.testimonials » in ADA_CAPABILITIES_OPEN (outside the AIPD until its line is
+  // signed). Longer prefixes than « citizen » / « admin »: opening accounts or admin does not open them.
+  testimonials: ['testimonials', 'citizen/testimonials', 'admin/testimonials'],
 };
 /** surfaces that ADA_BETA_OPEN_SURFACES never opens (R40 / G2) */
 export const NOT_OPENABLE = Object.freeze(['jobs']);

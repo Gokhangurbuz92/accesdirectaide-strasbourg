@@ -95,7 +95,9 @@ export const USER_PERSONAL_DATA_LINEAGE = Object.freeze({
         // PKG-2: Mon Parcours (+ history), favourites, opt-in history and Mon Coffre rows cascade the same way; the Coffre's encrypted blobs are purged after commit.
         storageEntities: ['CitizenUser', 'CitizenProfile', 'HouseholdMember', 'NotificationPreference', 'ParcoursItem', 'ParcoursEvent', 'CitizenFavorite', 'CitizenHistoryEntry', 'CitizenDocument', 'CitizenDelegation', 'DelegationAccessEvent',
             // X04 (0053): event registrations cascade with the account too (and are in the export, export-account-sections.js)
-            'EventRegistration']
+            'EventRegistration',
+            // X02 (0054): testimonials and the reports the person made cascade with the account too (in the export; the consent rows stay in ConsentLog)
+            'Testimonial', 'TestimonialReport']
     },
     CitizenSession: {
         action: 'DELETE',
