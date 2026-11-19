@@ -13,6 +13,8 @@
  *   nextActionKey   one of PLAN_NEXT_ACTIONS — a text key translated on screen, never free text
  *   detail          the plan's own explanation (from a plan only)
  *   closure         'ABANDONED' | 'OUTCOME_UNKNOWN', set by the status action only, meaningful while the status is CLOSED
+ *   sensitive       G8: { at } — the person's explicit consent (art. 9.2.a) to keep THIS step although it reveals a sensitive fact
+ *                   (api/lib/parcours-sensitivity.js); set by the server only, never accepted from the request (not in PLAN_STEP_INPUT_KEYS)
  * Nothing here states or decides a right: the content is the person's own organisation of their steps.
  */
 import fs from 'node:fs';
@@ -114,7 +116,7 @@ export function validatePlanStepInput(input, env = process.env) {
 /**
  * What is stored, read defensively: only the valid parts, null when nothing valid is left (NULL column, another version, anything unexpected).
  * @param {unknown} raw @param {NodeJS.ProcessEnv} [env]
- * @returns {{ need: string | null, actor: { kind: string, name: string | null } | null, links: ({ url: string, label: string } | { to: string, label: string })[], dependsOnItemId: string | null, nextActionKey: string | null, detail: string | null, closure: string | null } | null}
+ * @returns {{ need: string | null, actor: { kind: string, name: string | null } | null, links: ({ url: string, label: string } | { to: string, label: string })[], dependsOnItemId: string | null, nextActionKey: string | null, detail: string | null, closure: string | null, sensitive?: { at: string } } | null}
  */
 export function readPlanStep(raw, env = process.env) {
   if (!plain(raw)) return null;
@@ -138,6 +140,9 @@ export function readPlanStep(raw, env = process.env) {
     nextActionKey: PLAN_NEXT_ACTIONS.includes(o.nextActionKey) ? String(o.nextActionKey) : null,
     detail: text(o.detail, 1, 1000),
     closure: PLAN_CLOSURES.includes(o.closure) ? String(o.closure) : null };
+  // G8: the consent to keep a sensitive step — a key of its own only when it is there (the former shape is unchanged for every other step)
+  const sensitive = plain(o.sensitive) && typeof o.sensitive.at === 'string' && !Number.isNaN(Date.parse(o.sensitive.at)) ? { at: String(o.sensitive.at) } : null;
+  if (sensitive) return { ...out, sensitive };
   return out.need || out.actor || out.links.length || out.dependsOnItemId || out.nextActionKey || out.detail || out.closure ? out : null;
 }
 

@@ -271,5 +271,9 @@
  "humanHelp.mairie": "Ein Rathaus finden (offizielles Behördenverzeichnis)",
  "humanHelp.directory": "France-services-Büros in unserem Verzeichnis ansehen",
  "catalog.results_heading": "Ergebnisse",
- "falc.draft.label": "Vorläufiger vereinfachter Text, auf Französisch: noch nicht von Menschen mit geistiger Behinderung gegengelesen"
+ "falc.draft.label": "Vorläufiger vereinfachter Text, auf Französisch: noch nicht von Menschen mit geistiger Behinderung gegengelesen",
+ "parcours_add.consent_body": "Dieser Schritt scheint eine sensible Information zu enthalten (Gesundheit, Behinderung, Sucht, Aufenthaltsrecht, Justiz…). Es wurde nichts gespeichert. Er wird nur mit Ihrer Einwilligung gespeichert: nur für Sie sichtbar, nie einer Vertrauensperson gezeigt, jederzeit löschbar.",
+ "parcours_add.consent_check": "Ich bin einverstanden, dass dieser Schritt in Mon Parcours gespeichert wird.",
+ "parcours_add.consent_confirm": "Mit meiner Einwilligung speichern",
+ "parcours_add.consent_cancel": "Nicht speichern"
 }

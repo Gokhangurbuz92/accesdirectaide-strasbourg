@@ -47,6 +47,8 @@ export default function CompteDelegationVue() {
             <Card><CardHeader><CardTitle className="text-lg">{DELEGATION_SCOPE_LABELS.PARCOURS_READ}</CardTitle></CardHeader><CardContent>
               {parts.parcours.items.length ? <ul className="space-y-1 text-sm" data-testid="delegate-parcours">{parts.parcours.items.map((i) => <li key={i.id} data-testid="delegate-parcours-item">{i.title} — {PARCOURS_STATUS_LABELS[i.status] || i.status}{i.dueDate ? ` — ${t('compte:parcours.due_on', 'échéance le {{date}}', { date: formatDate(i.dueDate) })}` : ''}</li>)}</ul>
                 : <p className="text-sm text-slate-700">{t('compte:delegation_view.aucune_etape', 'Aucune étape.')}</p>}
+              {/* G8: the server never sends a sensitive step to a delegate (api/_services/delegation.js) — said, without saying whether there is one */}
+              <p className="mt-2 text-xs text-slate-700" data-testid="delegate-parcours-sensitive">{t('compte:delegation_view.sensitive_hidden', 'Les étapes qui concernent la santé ou une autre information sensible ne sont jamais montrées ici.')}</p>
             </CardContent></Card>
           ) : null}
           {parts.coffre ? (

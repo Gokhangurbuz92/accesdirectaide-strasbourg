@@ -68,7 +68,9 @@ function maskIdentifiers(s) {
 /** @param {unknown} value @param {{ maxLen?: number }=} options */
 function sanitizeString(value, { maxLen = DEFAULT_MAX_STRING } = {}) {
   if (value == null) return value;
-  let s = maskIdentifiers(String(value));
+  // G8: a failed database query reports its bound values (drizzle « Failed query: … \nparams: … »): a Mon Parcours title or note, a message, an answer —
+  // personal and possibly health data. The statement stays (it says what failed); the values never reach a log line.
+  let s = maskIdentifiers(String(value).replace(/(\bparams: )[^\n]*/g, '$1[redacted]'));
   s = s.replace(EMAIL_REGEX, (m) => maskEmail(m));
   s = s.replace(PHONE_REGEX, (m) => maskPhone(m));
   return truncateString(s, maxLen);

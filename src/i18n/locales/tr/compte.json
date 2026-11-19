@@ -718,5 +718,15 @@
   "access_action.synthesis_approved": "otomatik bir özeti onayladı",
   "access_action.parcours_viewed": "Sürecim’i görüntüledi",
   "access_action.coffre_listed": "Kasam’ın listesini görüntüledi",
-  "access_action.rdv_viewed": "randevuları görüntüledi"
+  "access_action.rdv_viewed": "randevuları görüntüledi",
+  "parcours.sensitive_item": "İzninizle saklanan hassas bilgi: yalnızca siz görebilirsiniz, güvendiğiniz bir kişiye asla gösterilmez. İzninizi geri çekmek için adımı silin.",
+  "parcours.sensitive_notice_consent": "Sağlık, engellilik, bir bağımlılık, oturma hakkı, adalet, bir koruma tedbiri, cinsel yaşam veya maruz kalınan şiddetle ilgili bir adım yalnızca açık izninizle, adım adım kaydedilir. Güvendiğiniz bir kişiye asla gösterilmez.",
+  "parcours.sensitive_notice_excluded": "Mon Parcours şimdilik sağlık, engellilik, bir bağımlılık, oturma hakkı, adalet, bir koruma tedbiri, cinsel yaşam veya maruz kalınan şiddetle ilgili hiçbir şeyi kaydetmez. Bu işlemler için size eşlik eden bir kişiyle konuşabilirsiniz.",
+  "parcours.consent_title": "İzniniz gerekiyor",
+  "parcours.consent_body": "Bu adım hassas bir bilgi içeriyor gibi görünüyor (sağlık, engellilik, bağımlılık, oturma hakkı, adalet…). Hiçbir şey kaydedilmedi. Yalnızca kabul ederseniz kaydedilecek: yalnızca siz görebileceksiniz, güvendiğiniz bir kişiye asla gösterilmeyecek ve istediğiniz zaman silebileceksiniz.",
+  "parcours.consent_check": "Bu adımın bu bilgiyle birlikte Mon Parcours’a kaydedilmesini kabul ediyorum.",
+  "parcours.consent_confirm": "İznimle kaydet",
+  "parcours.consent_cancel": "Kaydetme",
+  "parcours.title_hint": "İşlemi sağlığınız veya kişisel durumunuz hakkında bilgi vermeden tanımlayın (örneğin: “Konut yardımı başvurusu yapmak”).",
+  "delegation_view.sensitive_hidden": "Sağlık veya başka bir hassas bilgiyle ilgili adımlar burada asla gösterilmez."
 }

@@ -71,5 +71,8 @@
  "api_error.status_429": "Too many requests, please wait a moment.",
  "api_error.status_5xx": "The service ran into a problem. Try again in a moment.",
  "api_error.status_400": "This request could not be accepted: check what you entered.",
- "api_error.generic": "An error occurred."
+ "api_error.generic": "An error occurred.",
+ "api_error.sensitive_step_excluded": "For now, Mon Parcours does not record anything about health, disability, an addiction, the right of residence, justice, a protection measure, sex life or violence suffered. Nothing has been recorded: describe the step without this information.",
+ "api_error.sensitive_step_consent": "This step seems to reveal sensitive information. It is recorded only with your explicit consent. Nothing has been recorded.",
+ "api_error.notes_closed": "Personal notes are no longer offered on this service. You can clear an existing note."
 }

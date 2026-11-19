@@ -71,5 +71,8 @@
  "api_error.status_429": "Zu viele Anfragen, bitte warten Sie einen Moment.",
  "api_error.status_5xx": "Beim Dienst ist ein Problem aufgetreten. Versuchen Sie es gleich noch einmal.",
  "api_error.status_400": "Diese Anfrage konnte nicht angenommen werden: Prüfen Sie Ihre Eingaben.",
- "api_error.generic": "Ein Fehler ist aufgetreten."
+ "api_error.generic": "Ein Fehler ist aufgetreten.",
+ "api_error.sensitive_step_excluded": "Mon Parcours speichert derzeit nichts zu Gesundheit, Behinderung, einer Sucht, dem Aufenthaltsrecht, der Justiz, einer Schutzmaßnahme, dem Sexualleben oder erlittener Gewalt. Es wurde nichts gespeichert: Beschreiben Sie den Schritt ohne diese Information.",
+ "api_error.sensitive_step_consent": "Dieser Schritt scheint eine sensible Information zu enthalten. Er wird nur mit Ihrer ausdrücklichen Einwilligung gespeichert. Es wurde nichts gespeichert.",
+ "api_error.notes_closed": "Persönliche Notizen werden auf diesem Dienst nicht mehr angeboten. Sie können eine vorhandene Notiz löschen."
 }

@@ -71,5 +71,8 @@
  "api_error.status_429": "Çok fazla istek, lütfen biraz bekleyin.",
  "api_error.status_5xx": "Hizmette bir sorun oluştu. Biraz sonra yeniden deneyin.",
  "api_error.status_400": "Bu istek kabul edilemedi: girdiklerinizi kontrol edin.",
- "api_error.generic": "Bir hata oluştu."
+ "api_error.generic": "Bir hata oluştu.",
+ "api_error.sensitive_step_excluded": "Mon Parcours şimdilik sağlık, engellilik, bir bağımlılık, oturma hakkı, adalet, bir koruma tedbiri, cinsel yaşam veya maruz kalınan şiddetle ilgili hiçbir şeyi kaydetmez. Hiçbir şey kaydedilmedi: adımı bu bilgi olmadan tanımlayın.",
+ "api_error.sensitive_step_consent": "Bu adım hassas bir bilgi içeriyor gibi görünüyor. Yalnızca açık izninizle kaydedilir. Hiçbir şey kaydedilmedi.",
+ "api_error.notes_closed": "Kişisel notlar bu hizmette artık sunulmuyor. Mevcut bir notu silebilirsiniz."
 }

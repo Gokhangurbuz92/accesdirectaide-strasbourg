@@ -271,5 +271,9 @@
  "humanHelp.mairie": "Bir belediye bulun (resmî kamu hizmetleri rehberi)",
  "humanHelp.directory": "Rehberimizdeki France services ofislerini görün",
  "catalog.results_heading": "Sonuçlar",
- "falc.draft.label": "Geçici sadeleştirilmiş metin, Fransızca: zihinsel engelli kişiler tarafından henüz okunup kontrol edilmedi"
+ "falc.draft.label": "Geçici sadeleştirilmiş metin, Fransızca: zihinsel engelli kişiler tarafından henüz okunup kontrol edilmedi",
+ "parcours_add.consent_body": "Bu adım hassas bir bilgi içeriyor gibi görünüyor (sağlık, engellilik, bağımlılık, oturma hakkı, adalet…). Hiçbir şey kaydedilmedi. Yalnızca izninizle kaydedilecek: yalnızca siz görebilirsiniz, güvendiğiniz bir kişiye asla gösterilmez, istediğiniz zaman silinebilir.",
+ "parcours_add.consent_check": "Bu adımın Mon Parcours’a kaydedilmesini kabul ediyorum.",
+ "parcours_add.consent_confirm": "İznimle kaydet",
+ "parcours_add.consent_cancel": "Kaydetme"
 }

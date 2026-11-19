@@ -358,6 +358,24 @@
       "format": "^(parcours)?$",
       "note": "G4 (19/11/2026): modules added by name to the NARROW accounts scope without opening the rest of the full scope (comma list, exact names, unknown = nothing; no effect with ADA_BETA_ACCOUNTS_SCOPE=full). « parcours » = Mon Parcours (citizen/parcours); its capability citizen.parcours must still be named in ADA_CAPABILITIES_OPEN (AIPD extension). The plan import from a shared dossier stays closed (citizen.shared_dossier, HDS)"
     },
+    "ADA_PARCOURS_SENSITIVE_STEPS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(consent)?$",
+      "note": "G8 (19/11/2026): Mon Parcours steps revealing health, disability, addiction, right of residence, justice, legal protection, sex life or violence (api/lib/parcours-sensitivity.js). Unset = excluded (refused, nothing stored); « consent » = kept only with the person's explicit per-step consent (art. 9.2.a) and needs migration 0046. Set only after counsel's answer (CONTROL/master/completion/G8_MON_PARCOURS_COUNSEL_QUESTIONS_FR.md); a sensitive step is never shown to a delegate in any mode"
+    },
+    "ADA_PARCOURS_NOTES": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(off)?$",
+      "note": "G8 (19/11/2026): the free-text note of a Mon Parcours step. Unset = kept (500 characters, warning, sensitive-words guard, never shown to a delegate); « off » = no new note, an existing one can still be read, exported and cleared. Set only on counsel's answer (CONTROL/master/completion/G8_MON_PARCOURS_COUNSEL_QUESTIONS_FR.md)"
+    },
     "ADA_CAPABILITIES_OPEN": {
       "class": "decision",
       "nature": "config",

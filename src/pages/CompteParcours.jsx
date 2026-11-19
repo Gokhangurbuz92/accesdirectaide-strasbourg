@@ -32,6 +32,10 @@ const NOTE_MAX = 500;
  * notice, never a lock: its state can always be changed; a step whose record is no longer available also gets the « Parler à une personne » block; a step
  * the person gave up, or whose outcome they never learnt, is closed with that reason and gets the same « Que faire ensuite ? » block. A link is only a
  * link: following one never changes a step's state. Where the database does not store plan data yet (`planSteps: false`) the screen is the former one.
+ * G8: the screen says what this deployment does with SENSITIVE steps (`sensitiveSteps`: « excluded » by default — health, disability, addiction, right of
+ * residence, justice, legal protection, sex life, violence are not recorded — or « consent »: recorded only with the person's explicit consent for that
+ * step). When the server asks for that consent (409 SENSITIVE_STEP_CONSENT_REQUIRED), the request is NOT resent until the person ticks and confirms; a
+ * step kept that way is labelled. The title and the note both ask not to write such information.
  */
 export default function CompteParcours() {
   const { t } = useT('compte');
@@ -43,6 +47,8 @@ export default function CompteParcours() {
   const [open, setOpen] = useState(null);   // id of the step whose details are shown
   const [history, setHistory] = useState({});
   const [due, setDue] = useState({ date: '', source: '' });
+  const [consent, setConsent] = useState(null);   // G8: { body, ok, after } of a request the server will only accept with the person's explicit consent
+  const [consentTicked, setConsentTicked] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -51,12 +57,23 @@ export default function CompteParcours() {
       // hides Mon Parcours itself. A server without the flag (before G4) keeps the former behaviour.
       const importOpen = p.planImport !== false;
       const s = importOpen ? await citizenApi.listShares().catch(() => ({ shares: [] })) : { shares: [] };
-      setState({ loading: false, error: '', items: p.items || [], shares: importOpen ? s.shares || [] : [], planSteps: p.planSteps === true, emailReminders: p.emailReminders !== false });
+      setState({ loading: false, error: '', items: p.items || [], shares: importOpen ? s.shares || [] : [], planSteps: p.planSteps === true, emailReminders: p.emailReminders !== false,
+        sensitiveSteps: p.sensitiveSteps === 'consent' ? 'consent' : 'excluded', notes: p.notes !== false });
     } catch (err) { setState({ loading: false, unauth: err.status === 401, error: err.status === 401 ? t('compte:parcours.login_required', 'Connectez-vous pour accéder à Mon Parcours.') : err.message, items: [], shares: [] }); }
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
 
-  const run = async (fn, ok) => { setMessage(''); setProblem(''); try { const out = await fn(); if (ok) setMessage(typeof ok === 'function' ? ok(out) : ok); await load(); return out; } catch (err) { setProblem(err.message); return null; } };
+  const run = async (fn, ok, retry = null) => {
+    setMessage(''); setProblem('');
+    try { const out = await fn(); if (ok) setMessage(typeof ok === 'function' ? ok(out) : ok); await load(); return out; } catch (err) {
+      // G8: nothing was stored; the same request is offered again, with the consent, only after the person ticked and confirmed
+      if (retry && err.code === 'SENSITIVE_STEP_CONSENT_REQUIRED') { setConsentTicked(false); setConsent({ ...retry, ok }); return null; }
+      setProblem(err.message); return null;
+    }
+  };
+  /** a Mon Parcours request that may need the person's consent for a sensitive step; `after` runs once it is stored */
+  const send = (body, ok, after = null) => run(async () => { const out = await citizenApi.parcours(body); if (after) after(); return out; }, ok, { body, after });
+  const confirmConsent = () => { const c = consent; setConsent(null); setConsentTicked(false); if (c) send({ ...c.body, sensitiveConsent: true }, c.ok, c.after); };
   const toggle = async (id) => {
     if (open === id) { setOpen(null); return; }
     setOpen(id); setDue({ date: '', source: '' });
@@ -104,10 +121,10 @@ export default function CompteParcours() {
   };
   const newWindow = t('compte:parcours.link_new_window', ' (nouvelle fenêtre)');
   const directoryOpen = openLinks([{ to: HUMAN_HELP_DIRECTORY }], frontendEnv.flags.publicBeta, (l) => l.to).length > 0;
-  const savePlan = (i) => run(() => citizenApi.parcours({ action: 'plan', id: i.id, planStep: {
+  const savePlan = (i) => send({ action: 'plan', id: i.id, planStep: {
     actor: organise.actor === 'organisation' ? { kind: 'organisation', name: organise.name.trim() } : organise.actor ? { kind: organise.actor } : null,
     dependsOnItemId: organise.dependsOn || null,
-  } }), t('compte:parcours.organise_saved', 'Organisation de l’étape enregistrée.'));
+  } }, t('compte:parcours.organise_saved', 'Organisation de l’étape enregistrée.'));
   const renderItem = (i) => {
     // who acts / the explanation / the links: the step's own durable plan data, else (a step imported before it existed) what is read back from its dossier
     const actor = i.step?.actor || (i.plan?.who ? { kind: 'organisation', name: i.plan.who } : null);
@@ -124,6 +141,11 @@ export default function CompteParcours() {
         </div>
         <Button type="button" size="sm" variant="outline" aria-expanded={open === i.id} aria-controls={`parcours-detail-${i.id}`} onClick={() => toggle(i.id)}>{open === i.id ? t('compte:parcours.close', 'Fermer') : t('compte:parcours.update', 'Mettre à jour')}</Button>
       </div>
+      {i.sensitive ? (
+        <p className="mt-2 rounded-md border border-slate-300 bg-slate-50 p-2 text-sm text-slate-800" data-testid="parcours-sensitive-item">
+          {t('compte:parcours.sensitive_item', 'Information sensible gardée avec votre accord : visible par vous seul, jamais montrée à une personne de confiance. Supprimez l’étape pour retirer votre accord.')}
+        </p>
+      ) : null}
       {i.waiting && i.dependsOn ? (
         <p className="mt-2 rounded-md border border-slate-300 bg-slate-50 p-2 text-sm text-slate-800" data-testid="parcours-waiting">
           {t('compte:parcours.waiting', 'En attente de l’étape « {{title}} » ({{status}}). Vous pouvez quand même mettre cette étape à jour.', { title: i.dependsOn.title, status: stateLabel(i.dependsOn) })}
@@ -229,13 +251,15 @@ export default function CompteParcours() {
             ? t('compte:parcours.reminder_channels', 'Rappel d’échéance : par e-mail, selon vos réglages de notification (page Mon profil). Aucun rappel d’échéance n’est envoyé par SMS.')
             : t('compte:parcours.reminder_channels_inapp', 'Rappel d’échéance : dans les notifications de Mon Espace, 7 jours avant. Aucun rappel n’est envoyé par e-mail ni par SMS pour le moment.')}</p>
           {i.dueDate ? <Button type="button" size="sm" variant="outline" onClick={() => run(() => citizenApi.parcours({ action: 'deadline', id: i.id, dueDate: null }), t('compte:parcours.due_removed', 'Échéance retirée.'))}>{t('compte:parcours.retirer_echeance', 'Retirer l’échéance')}</Button> : null}
-          <div>
+          {/* G8: where notes are closed (ADA_PARCOURS_NOTES=off) the field is shown only to clear an existing note */}
+          {state.notes || i.note ? <div>
             <label htmlFor={`nt-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.note_personnelle_visible_par', 'Note personnelle (visible par vous seul)')}</label>
-            {/* G4 (data minimisation): the note is free text — the person is asked not to write health information there; nothing is checked or blocked */}
+            {/* G4 (data minimisation): the note is free text — the person is asked not to write health information there. G8: the server also refuses a note
+                whose words reveal it (or, in « consent » mode, asks for the person's consent for that step) — a guard against the obvious cases, not a guarantee */}
             <p id={`nt-hint-${i.id}`} className="mt-1 text-xs text-slate-700" data-testid="parcours-note-hint">{t('compte:parcours.note_no_health', 'N’écrivez pas d’informations sur votre santé (maladie, handicap, traitement…) : cette note sert seulement à suivre votre démarche. 500 caractères au plus.')}</p>
             <textarea id={`nt-${i.id}`} data-testid="parcours-note" maxLength={NOTE_MAX} aria-describedby={`nt-hint-${i.id}`} className="mt-1 w-full rounded-md border border-slate-300 p-2" defaultValue={i.note || ''}
-              onBlur={(e) => { if ((e.target.value || '') !== (i.note || '')) run(() => citizenApi.parcours({ action: 'note', id: i.id, note: e.target.value }), t('compte:parcours.note_saved', 'Note enregistrée.')); }} />
-          </div>
+              onBlur={(e) => { if ((e.target.value || '') !== (i.note || '')) send({ action: 'note', id: i.id, note: e.target.value }, t('compte:parcours.note_saved', 'Note enregistrée.')); }} />
+          </div> : null}
           <div>
             <h3 className="text-sm font-medium text-slate-800">{t('compte:parcours.historique_etape', 'Historique de l’étape')}</h3>
             <ol className="mt-1 space-y-1 text-sm text-slate-700" data-testid="parcours-history">
@@ -259,6 +283,23 @@ export default function CompteParcours() {
       <p className="text-sm text-slate-700">{t('compte:parcours.suivez_vos_demarches_etape', 'Suivez vos démarches étape par étape. Vous indiquez vous-même où vous en êtes : AccesDirectAide ne prend aucune décision sur vos droits.')}</p>
       <div aria-live="polite" role="status" data-testid="parcours-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {problem ? <p role="alert" data-testid="parcours-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
+      <p className="rounded-md border border-slate-300 bg-slate-50 p-3 text-sm text-slate-800" data-testid="parcours-sensitive-notice">{state.sensitiveSteps === 'consent'
+        ? t('compte:parcours.sensitive_notice_consent', 'Une étape qui concerne la santé, le handicap, une addiction, le droit au séjour, la justice, une mesure de protection, la vie sexuelle ou des violences subies n’est enregistrée qu’avec votre accord explicite, étape par étape. Elle n’est jamais montrée à une personne de confiance.')
+        : t('compte:parcours.sensitive_notice_excluded', 'Mon Parcours n’enregistre pas, pour le moment, ce qui concerne la santé, le handicap, une addiction, le droit au séjour, la justice, une mesure de protection, la vie sexuelle ou des violences subies. Pour ces démarches, vous pouvez en parler à une personne qui vous accompagne.')}</p>
+      {consent ? (
+        <section role="alertdialog" aria-labelledby="parcours-consent-title" aria-describedby="parcours-consent-body" className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950" data-testid="parcours-consent">
+          <h2 id="parcours-consent-title" className="font-semibold">{t('compte:parcours.consent_title', 'Votre accord est nécessaire')}</h2>
+          <p id="parcours-consent-body" className="mt-1">{t('compte:parcours.consent_body', 'Cette étape semble révéler une information sensible (santé, handicap, addiction, droit au séjour, justice…). Rien n’a été enregistré. Elle ne le sera que si vous l’acceptez : elle restera visible par vous seul, ne sera jamais montrée à une personne de confiance, et vous pourrez la supprimer à tout moment.')}</p>
+          <label className="mt-2 flex items-start gap-2">
+            <input type="checkbox" className="mt-1" data-testid="parcours-consent-check" checked={consentTicked} onChange={(e) => setConsentTicked(e.target.checked)} />
+            <span>{t('compte:parcours.consent_check', 'J’accepte que cette étape, avec cette information, soit enregistrée dans Mon Parcours.')}</span>
+          </label>
+          <div className="mt-2 flex flex-wrap gap-2">
+            <Button type="button" size="sm" data-testid="parcours-consent-confirm" disabled={!consentTicked} onClick={confirmConsent}>{t('compte:parcours.consent_confirm', 'Enregistrer avec mon accord')}</Button>
+            <Button type="button" size="sm" variant="outline" data-testid="parcours-consent-cancel" onClick={() => { setConsent(null); setConsentTicked(false); }}>{t('compte:parcours.consent_cancel', 'Ne pas enregistrer')}</Button>
+          </div>
+        </section>
+      ) : null}
 
       {state.shares.length ? (
         <Card>
@@ -291,8 +332,12 @@ export default function CompteParcours() {
               ))}
             </div>
           ) : active.length ? <ul className="space-y-3" data-testid="parcours-active">{active.map(renderItem)}</ul> : <p className="text-sm text-slate-700" data-testid="parcours-empty">{t('compte:parcours.aucune_etape_cours', 'Aucune étape en cours.')}</p>}
-          <form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); run(async () => { await citizenApi.parcours({ action: 'add', title: newTitle }); setNewTitle(''); }, t('compte:parcours.step_added', 'Étape ajoutée.')); }}>
-            <div className="min-w-[240px] flex-1"><label htmlFor="pc-new" className="block text-sm text-slate-800">{t('compte:parcours.ajouter_une_etape', 'Ajouter une étape')}</label><input id="pc-new" data-testid="parcours-new-title" maxLength={200} className="mt-1 w-full rounded-md border border-slate-300 p-2" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} /></div>
+          <form className="flex flex-wrap items-end gap-2" onSubmit={(e) => { e.preventDefault(); send({ action: 'add', title: newTitle }, t('compte:parcours.step_added', 'Étape ajoutée.'), () => setNewTitle('')); }}>
+            <div className="min-w-[240px] flex-1">
+              <label htmlFor="pc-new" className="block text-sm text-slate-800">{t('compte:parcours.ajouter_une_etape', 'Ajouter une étape')}</label>
+              <p id="pc-new-hint" className="mt-1 text-xs text-slate-700" data-testid="parcours-title-hint">{t('compte:parcours.title_hint', 'Décrivez la démarche sans information sur votre santé ou votre situation personnelle (par exemple : « Demander l’aide au logement »).')}</p>
+              <input id="pc-new" data-testid="parcours-new-title" maxLength={200} aria-describedby="pc-new-hint" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} />
+            </div>
             <Button type="submit" data-testid="parcours-add" disabled={newTitle.trim().length < 3}>{t('compte:parcours.ajouter', 'Ajouter')}</Button>
           </form>
         </CardContent>
