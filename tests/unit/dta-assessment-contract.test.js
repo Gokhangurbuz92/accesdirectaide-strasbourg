@@ -162,7 +162,7 @@ describe('wording and determinism', () => {
     expect(b).toBe(a);
   });
   it('module is pure: no imports, no clock, no randomness, no I/O, no env', () => {
-    const src = readFileSync(new URL('../../api/lib/assessmentContract.js', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+    const src = readFileSync(new URL('../../src/lib/rules/assessmentContract.js', import.meta.url), 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
     expect(src.match(/^\s*import\s.*$/gm).map((l) => l.trim())).toEqual(["import { TERRITORY_SCOPES, territoryStatus } from './territoryScopes.js';", "import { ageFromBand } from './ageBands.js';"]);   // S2A/S2B: the ONLY imports are the two pure data modules (territory scopes, age bands)
     expect(src).not.toMatch(/Date\.now|new Date|Math\.random|fetch\(|process\.env|require\(|fs\.|crypto/);
   });

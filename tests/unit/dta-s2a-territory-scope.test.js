@@ -68,7 +68,7 @@ describe('assessment of FAJ\'EMS by territory', () => {
 });
 
 describe('N17 — no untagged Strasbourg regex; the engine uses the same scope data and its label/text match it', () => {
-  const src = readFileSync('api/lib/LocalRulesEngine.js', 'utf8');
+  const src = readFileSync('src/lib/rules/LocalRulesEngine.js', 'utf8');
   it('the engine has no hard-coded /^67…/ territory regex and imports the scope data', () => {
     expect(src).not.toMatch(/\/\^67/); expect(src).toContain("from './territoryScopes.js'");
   });

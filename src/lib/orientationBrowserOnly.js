@@ -11,9 +11,9 @@
  * No request carries the answers, nothing is written to any storage (not even the tab's session storage), nothing is measured. The answers live in React
  * state only and disappear with « Effacer mes réponses », a reload or the tab's closing. The record for the owner / counsel: G4_ORIENTATION_BROWSER_2026-11-19.md.
  */
-import { runLocalSimulation } from '../../api/lib/LocalRulesEngine.js';
-import { simulationResponse } from '../../api/lib/diagnosticAssessment.js';
-import { validatedReadings } from '../../api/lib/validatedRules.js';
+import { runLocalSimulation } from './rules/LocalRulesEngine.js';
+import { simulationResponse } from './rules/diagnosticAssessment.js';
+import { validatedReadings } from './rules/validatedRules.js';
 import register from '../../data/rules/rights-rules.v1.json';
 import { buildWizardDiagnostic } from './wizardDiagnostic.js';
 import { NEEDS } from './rightsPublicView.js';
