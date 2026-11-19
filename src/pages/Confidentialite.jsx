@@ -6,13 +6,13 @@ import LegalTranslationNotice from '@/components/legal/LegalTranslationNotice';
 import LegalDraftLinks from '@/components/legal/LegalDraftLinks';
 import { EyeOff, UserCheck, ShieldAlert, Database, HelpCircle, Bot, BarChart3 } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
-import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
+import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS, PRIVACY_NOTICE_LINK_LABEL, privacyPageReferenceSentence } from '@/config/legal-documents';
 import ClearDeviceAnswers from '@/components/privacy/ClearDeviceAnswers';
 import { frontendEnv } from "@/config/env";
 import { Link } from 'react-router-dom';
 import { accountsOpened } from '@/lib/publicBeta';
 import { orientationBrowserOnly } from '@/lib/orientationBrowserOnly';
-import { LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH, approvedVersionOf, currentDraftContext } from '@/config/legal-drafts';
+import { approvedVersionOf, currentDraftContext } from '@/config/legal-drafts';
 import i18n, { useLanguage, useT } from '@/i18n';
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/02_POLITIQUE_CONFIDENTIALITE.md and FAITS_TECHNIQUES.md
@@ -137,7 +137,7 @@ export default function Confidentialite() {
                   {/* G8 (live check 19/11): since the G4 opening the questionnaire runs in the browser — the server/24 h text was no longer true. The text shown
                       is the APPROVED privacy notice v8 paragraph (P3, legaldraft privacyNotice.purposes.p3_v8), not new wording. */}
                   {orientationBrowserOnly()
-                    ? <span data-testid="privacy-questionnaire-browser-only">{t('legaldraft:privacyNotice.purposes.p3_v8', LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH)}</span>
+                    ? <span data-testid="privacy-questionnaire-browser-only">{t('legaldraft:privacyNotice.purposes.p3_v8', "La page publique « Explorer les droits par besoin » (/droits) et le questionnaire d'orientation (/orientation), lorsqu'il fonctionne entièrement dans votre navigateur, font leurs calculs dans votre navigateur : ils n'envoient aucune de vos réponses à AccesDirectAide et n'enregistrent rien, ni chez nous ni sur votre appareil. Seuls subsistent, comme pour toute page du site, les journaux techniques habituels de l'hébergeur sur les pages demandées (P1 ci-dessus ; durée en section 4, « Journaux techniques des prestataires »).")}</span>
                     : <>
                       {t('legal:privacy.data.questionnaire.text', 'Vos réponses sont envoyées à notre serveur pour le calcul, sans y être conservées. Votre appareil les garde 24 heures, puis les efface à votre visite suivante ; sur un appareil partagé, effacez-les tout de suite. Si vous partagez votre dossier avec une structure, une copie chiffrée de vos réponses est conservée pour ce partage.')}
                       <ClearDeviceAnswers />
@@ -267,8 +267,8 @@ export default function Confidentialite() {
                 {/* G8: the review status stays explicit; the approved, in-force reference text is named (VITE_LEGAL_DOCS_APPROVED_VERSION) */}
                 {noticeVersion && (
                   <p className="text-sm text-slate-500" data-testid="privacy-reference-notice" {...fr}>
-                    {`Cette page résume nos traitements. Le texte approuvé et en vigueur est la notice de confidentialité (version ${noticeVersion}) : `}
-                    <Link to="/confidentialite/notice" className="underline">{'Notice de confidentialité (RGPD, articles 13 et 14)'}</Link>.
+                    {privacyPageReferenceSentence(noticeVersion)}{' '}
+                    <Link to="/confidentialite/notice" className="underline">{PRIVACY_NOTICE_LINK_LABEL}</Link>.
                   </p>
                 )}
               </div>
