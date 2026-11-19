@@ -8,6 +8,7 @@ import { FileCheck, Users, ShieldCheck, AlertTriangle, Ban, RefreshCw, Mail } fr
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL } from '@/config/legal-documents';
 import i18n, { useLanguage, useT } from '@/i18n';
+import { accountsOpened } from '@/lib/publicBeta';
 
 // R32: translated (namespace « legal »); the French text stays the legal reference (the version label of the configuration is shown as written).
 export default function CGU() {
@@ -69,9 +70,9 @@ export default function CGU() {
                   <li><Trans i18n={i18n} i18nKey="legal:terms.service.procedures" defaults="Des <strong>fiches démarches</strong> détaillant les procédures administratives." /></li>
                   <li><Trans i18n={i18n} i18nKey="legal:terms.service.pro" defaults="Un <strong>espace professionnel</strong> pour les travailleurs sociaux (gestion de rendez-vous, dossiers)." /></li>
                 </ul>
-                {/* R42-LEGAL: decided product rules (DEC-R42-01, R42-A02, R42-A07), stated as planned — accounts and appointments are closed */}
-                <p className="mt-3">
-                  {t('legal:terms.service.accountsPlanned', "La création de compte et la prise de rendez-vous ne sont pas encore ouvertes. À leur ouverture, un compte personnel sera nécessaire pour prendre rendez-vous, et seules les personnes majeures pourront créer un compte.")}
+                {/* R42-LEGAL: decided product rules (DEC-R42-01, R42-A02, R42-A07); 19/11/2026: once 6B opens the accounts, the adult-only account rule is stated as in force (appointments stay planned) */}
+                <p className="mt-3" data-testid="cgu-accounts">
+                  {accountsOpened() ? t('legal:terms.service.accountsOpen', "Les personnes majeures peuvent créer un compte personnel. La prise de rendez-vous n'est pas encore ouverte : à son ouverture, un compte personnel sera nécessaire pour prendre rendez-vous.") : t('legal:terms.service.accountsPlanned', "La création de compte et la prise de rendez-vous ne sont pas encore ouvertes. À leur ouverture, un compte personnel sera nécessaire pour prendre rendez-vous, et seules les personnes majeures pourront créer un compte.")}
                 </p>
                 <p className="mt-3">
                   <Trans i18n={i18n} i18nKey="legal:terms.service.free" defaults="Le Service est <strong>gratuit</strong>, <strong>sans publicité</strong> et <strong>sans revente de données</strong>." />

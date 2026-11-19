@@ -4,6 +4,7 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import VerifiedCatalogue from '@/components/layout/VerifiedCatalogue';
 import i18n, { useT } from '@/i18n';
+import { accountsOpened } from '@/lib/publicBeta';
 
 /**
  * PKG-11 / P25: only measured figures. R26: what is measured today is what is published — the live counts of verified records, read from the public
@@ -29,7 +30,7 @@ export default function Impact() {
                     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-testid="impact-no-figures">
                         <h2 id="impact-not-measured" className="text-lg font-semibold text-slate-900">{t('about:impact.not_measured.title', 'Ce que nous ne mesurons pas encore')}</h2>
                         <p className="mt-2 text-slate-700">
-                            {t('about:impact.not_measured.text_v2', 'Pendant la bêta publique, nous ne mesurons pas l’audience et aucun compte n’est ouvert : nous ne connaissons ni le nombre de visites, ni le nombre de personnes aidées. Une visite ou une recherche n’est pas une personne aidée, et nous ne présenterons jamais l’une comme l’autre. Qu’une personne ait obtenu une aide n’est enregistré nulle part dans la plateforme : ce chiffre ne sera pas publié tant qu’une source ne l’établit pas.')}
+                            {accountsOpened() ? t('about:impact.not_measured.text_accounts', 'Pendant la bêta publique, nous ne mesurons pas l’audience : nous ne connaissons ni le nombre de visites, ni le nombre de personnes aidées. Les comptes personnels sont ouverts, mais un compte créé n’est pas une personne aidée. Une visite ou une recherche n’est pas une personne aidée, et nous ne présenterons jamais l’une comme l’autre. Qu’une personne ait obtenu une aide n’est enregistré nulle part dans la plateforme : ce chiffre ne sera pas publié tant qu’une source ne l’établit pas.') : t('about:impact.not_measured.text_v2', 'Pendant la bêta publique, nous ne mesurons pas l’audience et aucun compte n’est ouvert : nous ne connaissons ni le nombre de visites, ni le nombre de personnes aidées. Une visite ou une recherche n’est pas une personne aidée, et nous ne présenterons jamais l’une comme l’autre. Qu’une personne ait obtenu une aide n’est enregistré nulle part dans la plateforme : ce chiffre ne sera pas publié tant qu’une source ne l’établit pas.')}
                         </p>
                     </div>
                     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
