@@ -15,7 +15,7 @@ import { sql } from 'drizzle-orm';
 import { db } from '../../src/db/index.js';
 import { getMailerStatus } from '../_utils/mailer.js';
 import { AIProviderPolicy, LOCALITY } from '../lib/ai-policy.js';
-import { isPublicBetaRestricted } from '../_utils/public-beta.js';
+import { isPublicBetaRestricted, openSurfaces } from '../_utils/public-beta.js';
 
 const TTL_MS = 30000;
 let cache = null;
@@ -54,12 +54,22 @@ function donnees() {
  */
 async function betaStatus() {
   const c = await database();
+  // 19/11/2026: after the 6B opening (ADA_BETA_OPEN_SURFACES contains « accounts », narrow scope) the page still said that accounts were closed and that no
+  // e-mail was sent — both false. With accounts open: personal accounts follow the database check, appointments and dossier sharing stay announced as closed
+  // (their surfaces are separate), and the e-mails follow the real mail configuration but only for what is sent (account e-mails, no reminders).
+  const accounts = openSurfaces().has('accounts');
+  const comptes = !accounts ? { state: 'info', text: 'Pendant la bêta publique, les comptes, les rendez-vous et le partage de dossier ne sont pas encore ouverts.' }
+    : c.state === 'operational' ? { state: 'operational', text: 'Les comptes personnels fonctionnent (création, connexion, Mon Espace, suppression du compte). Les rendez-vous et le partage de dossier ne sont pas encore ouverts.' }
+      : { state: 'unavailable', text: 'Les comptes personnels sont indisponibles pour le moment. Les rendez-vous et le partage de dossier ne sont pas encore ouverts.' };
+  const m = accounts ? emails() : null;
+  const mail = !accounts ? { state: 'info', text: 'Pendant la bêta publique, aucun e-mail n\'est envoyé.' }
+    : m.state === 'operational' ? { state: 'operational', text: 'Les e-mails du compte (confirmation de l\'adresse, mot de passe oublié, suppression) sont envoyés.' } : m;
   return {
     checkedAt: new Date().toISOString(),
     components: [
       { id: 'site', label: 'Site', ...(c.state === 'operational' ? { state: 'operational', text: 'Le site répond et les fiches publiées peuvent être consultées.' } : { state: 'unavailable', text: 'Les fiches ne peuvent pas être consultées pour le moment.' }) },
-      { id: 'comptes', label: 'Comptes et rendez-vous', state: 'info', text: 'Pendant la bêta publique, les comptes, les rendez-vous et le partage de dossier ne sont pas encore ouverts.' },
-      { id: 'emails', label: 'E-mails', state: 'info', text: 'Pendant la bêta publique, aucun e-mail n\'est envoyé.' },
+      { id: 'comptes', label: 'Comptes et rendez-vous', ...comptes },
+      { id: 'emails', label: 'E-mails', ...mail },
       { id: 'assistant', label: 'Assistant', state: 'info', text: 'Pendant la bêta publique, l\'assistant n\'est pas ouvert.' },
       { id: 'donnees', label: 'Informations sur les aides', state: 'info', text: 'Chaque fiche publiée a été vérifiée automatiquement sur sa source officielle, à la date indiquée sur la fiche. Seul l\'organisme concerné décide de vos droits.' },
     ],
