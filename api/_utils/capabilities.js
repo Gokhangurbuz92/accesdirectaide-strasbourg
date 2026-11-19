@@ -92,6 +92,14 @@ export const CAPABILITIES = Object.freeze({
   // Outside the AIPD until its own AIPD line is signed (CONTROL/master/completion/G6_X05_JOB_BOARD_2026-11-19.md), on its own surface « employment » that nothing opens.
   'community.employment': { description: 'inclusive job board (X05 expansion): public reading of moderated listings of verified employers, listings written by a structure administrator, moderation and takedown; no applicant data',
     aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (organization listings; no applicant data is received or stored)', surface: 'employment', aipdRef: 'X05 (AIPD line to sign)' },
+  // X03 (EXPANSION, founder 19/11/2026 — not one of the 173): ENTRAIDE, peer support between adults under a PSEUDONYMOUS principal of its own (EntraideMember),
+  // closed lists of practical help categories and coarse areas, anonymous offers browsed by the person (no score, no automatic matching), double opt-in, e-mail
+  // shown only after mutual acceptance (explicit, revocable), charter (ConsentLog), reports, blocks, moderation (admin, MFA, audited) able to suspend.
+  // ⚠ AIPD GUARD: matching people on their needs is a SENSITIVE INFERENCE — a DEDICATED AIPD (draft: CONTROL/master/completion/G6_X03_ENTRAIDE_2026-11-19.md
+  // § 3) MUST be signed by the controller BEFORE ANY OPENING, together with the charter text and the safeguarding policy. Until then: outside the AIPD, on its
+  // own surface « entraide » that nothing opens; never add it to an opening list, a simulator final state or a release configuration.
+  'community.entraide': { description: 'Entraide (X03 expansion): peer support between signed-in adults under a pseudonym — anonymous offers in closed categories and areas, double opt-in, e-mail shown only after mutual acceptance, reports, blocks, moderation and suspension',
+    aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (practical help only; no health, disability or other sensitive category exists; logistics note with a health warning)', surface: 'entraide', aipdRef: 'X03 (DEDICATED AIPD mandatory before any opening)' },
   // ── never opened by a switch
   'citizen.minor_accounts': { description: 'independent accounts of minors (closed by the age policy; R42-A07)', aipd: 'out', requiresHds: false, surface: 'accounts', openable: false, aipdRef: 'AIPD § 2.2' },
 });
@@ -153,6 +161,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   stories: ['community.stories'], 'citizen/stories': ['community.stories'], 'admin/stories': ['community.stories'],
   // X05 (expansion): every route of the « employment » surface — public reading included — is refused 503 before its handler while the capability is closed
   employment: ['community.employment'], 'pro/employment': ['community.employment'], 'admin/employment': ['community.employment'],
+  // X03 (expansion): every route of the « entraide » surface is refused 503 before its handler while the capability is closed (dedicated AIPD first)
+  'citizen/entraide': ['community.entraide'], 'admin/entraide': ['community.entraide'],
 });
 const ROUTE_PREFIXES = Object.keys(ROUTE_CAPABILITIES).sort((a, b) => b.length - a.length);
 

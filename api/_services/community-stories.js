@@ -101,7 +101,15 @@ export function contentProblems({ title, body }) {
   if (t.length > TITLE_MAX) p.push('TITLE_TOO_LONG');
   if (b.length < BODY_MIN) p.push('BODY_TOO_SHORT');
   if (b.length > BODY_MAX) p.push('BODY_TOO_LONG');
-  const all = `${t}\n${b}`;
+  p.push(...textSafetyProblems(`${t}\n${b}`));
+  return p;
+}
+/**
+ * markup or an image, a contact or a link (e-mail, web address, social handle), a phone number in a text — REFUSED, never cleaned. Shared with the X03
+ * Entraide notes (api/_services/entraide.js). @param {string} all @returns {string[]}
+ */
+export function textSafetyProblems(all) {
+  const p = [];
   if (MARKUP_OR_IMAGE.test(all)) p.push('IMAGE_OR_MARKUP');
   if (EMAIL.test(all) || URL_LIKE.test(all) || HANDLE.test(all)) p.push('CONTACT_OR_LINK_IN_TEXT');
   if (PHONE.test(all)) p.push('PHONE_IN_TEXT');

@@ -27,7 +27,7 @@ describe.skipIf(!hasDatabase)('migration 0054: up → down → code without it �
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
   // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0055 (X01) is rolled back first, then 0054
-  const down = async () => { for (const f of ['drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
+  const down = async () => { for (const f of ['drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
 
   beforeAll(async () => {
     when = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries.find((e) => e.tag === TAG).when;
@@ -86,7 +86,9 @@ describe.skipIf(!hasDatabase)('migration 0054: up → down → code without it �
     // X01: the later 0055 is rolled back too here — its sections are asked of THIS database, not of the default one
     const cs = await import('../../api/_services/community-stories.js');
     const out = await accountLinkedSections('keep', rows, { hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => t.testimonialsSchemaAvailable(db),
-      hasCommunityTables: () => cs.communitySchemaAvailable(db) });
+      hasCommunityTables: () => cs.communitySchemaAvailable(db),
+      // X03: the later 0057 is rolled back too here — its sections are asked of THIS database
+      hasEntraideTables: async () => (await import('../../api/_services/entraide.js')).entraideSchemaAvailable(db) });
     expect(out.testimonials).toEqual([]); expect(out.testimonialReports).toEqual([]); expect(failed).toBe(0);
   });
 

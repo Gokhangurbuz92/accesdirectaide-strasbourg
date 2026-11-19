@@ -91,6 +91,9 @@ const AdminStories = lazy(() => import("./admin/StoriesAdmin.jsx"));
 const JobBoard = lazy(() => import("./JobBoard.jsx"));
 const ProJobListings = lazy(() => import("./pro/JobListings.jsx"));
 const AdminJobBoard = lazy(() => import("./admin/JobBoardAdmin.jsx"));
+// X03 (expansion): Entraide (closed by default: surface « entraide », capability community.entraide — dedicated AIPD first)
+const CompteEntraide = lazy(() => import("./CompteEntraide.jsx"));
+const AdminEntraide = lazy(() => import("./admin/EntraideAdmin.jsx"));
 const RessourceDetail = lazy(() => import("./RessourceDetail.jsx"));
 const Guides = lazy(() => import("./Guides.jsx"));
 const GuideDetail = lazy(() => import("./GuideDetail.jsx"));
@@ -400,6 +403,7 @@ function PagesContent() {
                                     <Route path="temoignages" element={<AdminTestimonials />} />
                                     <Route path="histoires" element={<AdminStories />} />
                                     <Route path="offres-emploi" element={<AdminJobBoard />} />
+                                    <Route path="entraide" element={<AdminEntraide />} />
                                     <Route path="ws2" element={<AdminWs2Queue />} />
                                     <Route path="operations" element={<AdminOperations />} />
                                     <Route path="fournisseurs" element={<AdminProviders />} />
@@ -551,6 +555,7 @@ function PagesContent() {
                                 <Route path="/compte/evenements" element={<CompteEvenements />} />
                                 <Route path="/compte/temoignages" element={<CompteTemoignages />} />
                                 <Route path="/compte/histoires" element={<CompteHistoires />} />
+                                <Route path="/compte/entraide" element={<CompteEntraide />} />
                                 <Route path="/compte/historique" element={<CompteHistorique />} />
                                 <Route path="/compte/delegations" element={<CompteDelegations />} />
                                 <Route path="/compte/delegations/:id" element={<CompteDelegationVue />} />

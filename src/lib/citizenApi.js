@@ -81,6 +81,10 @@ export const citizenApi = {
   // X01 (expansion): the person's community pseudonym and stories, withdrawal, reports (closed by default: capability community.stories)
   myStories: () => call('/api/citizen/stories'),
   storyAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/stories', { method: 'POST', body }),
+  // X03 (expansion): Entraide — the person's membership, offers, requests, contacts, reports, blocks (closed by default: capability community.entraide)
+  myEntraide: () => call('/api/citizen/entraide'),
+  browseEntraide: (/** @type {string} */ category, /** @type {string} */ area) => call('/api/citizen/entraide?view=browse&category=' + encodeURIComponent(category || '') + '&area=' + encodeURIComponent(area || '')),
+  entraideAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/entraide', { method: 'POST', body }),
   addFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'POST', body: { entityType, entityId } }),
   removeFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'DELETE', body: { entityType, entityId } }),
   getHistory: () => call('/api/citizen/history'),

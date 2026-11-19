@@ -12,7 +12,9 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
   // X01 (expansion): community stories, the person's pseudonym and stories and their moderation — surface « stories », opened by no build
   '/histoires', '/compte/histoires', '/admin/histoires',
   // X05 (expansion): the job board, an employer's listings and their moderation — surface « employment », opened by no build
-  '/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'];
+  '/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi',
+  // X03 (expansion): Entraide, the member side and its moderation — surface « entraide », opened by no build (dedicated AIPD first)
+  '/compte/entraide', '/admin/entraide'];
 
 /**
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
@@ -27,6 +29,7 @@ export const SCREEN_SURFACES = {
   testimonials: ['/temoignages', '/compte/temoignages', '/admin/temoignages'],
   stories: ['/histoires', '/compte/histoires', '/admin/histoires'],
   employment: ['/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'],
+  entraide: ['/compte/entraide', '/admin/entraide'],
 };
 const builtOpen = () => {
   let v = '';
@@ -84,6 +87,8 @@ export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSu
   if (SCREEN_SURFACES.stories.some((x) => under(p, x))) return !open.includes('stories');
   // X05: the job board screens follow ONLY the « employment » surface (the employer screen sits under /pro but « pro » does not open it)
   if (SCREEN_SURFACES.employment.some((x) => under(p, x))) return !open.includes('employment');
+  // X03: the Entraide screens follow ONLY the « entraide » surface (they sit under /compte and /admin, which do not open them)
+  if (SCREEN_SURFACES.entraide.some((x) => under(p, x))) return !open.includes('entraide');
   // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
   if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
   const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));
@@ -163,4 +168,13 @@ export function storiesOpened(beta, open = builtOpen(), sub = builtSub()) {
  */
 export function employmentOpened(beta, open = builtOpen(), sub = builtSub()) {
   return !beta || !isBetaRestrictedPath('/offres-emploi', open, sub);
+}
+
+/**
+ * X03 (expansion) — are the Entraide screens usable in this build: outside the beta, or when the build opens the « entraide » surface. Links to them (the
+ * administration menu) are offered only then; the server keeps the capability « community.entraide » closed anyway (dedicated AIPD first).
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function entraideOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/compte/entraide', open, sub);
 }
