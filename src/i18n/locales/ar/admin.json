@@ -2185,5 +2185,10 @@
  "organizations.members.done_disabled": "تم تعطيل الحساب: انتهت جلساته.",
  "organizations.members.disable": "تعطيل هذا الحساب",
  "organizations.members.done_erased": "تم حذف الحساب: أُزيل العنوان وكلمة المرور والمصادقة الثنائية.",
- "organizations.members.erase": "حذف هذا الحساب (طلب الشخص)"
+ "organizations.members.erase": "حذف هذا الحساب (طلب الشخص)",
+ "layout.nav.x04_events": "الأكاديمية والفعاليات",
+ "layout.nav.x02_testimonials": "الإشراف على الشهادات",
+ "layout.nav.x01_stories": "الإشراف على القصص",
+ "layout.nav.x05_employment": "مراجعة عروض العمل",
+ "layout.nav.x03_entraide": "الإشراف على التعاون"
 }

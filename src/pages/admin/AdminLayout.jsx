@@ -196,6 +196,12 @@ function navLabel(t, label) {
         'Journaux techniques': t('admin:layout.nav.logs', 'Journaux techniques'),
         'Mur des améliorations': t('admin:layout.nav.audit', 'Mur des améliorations'),
         'Paramètres': t('admin:layout.nav.settings', 'Paramètres'),
+        // X04 / X02 / X01 / X05 / X03 (expansion): the menu entries shown only when their surface is opened in this build
+        'Académie et événements': t('admin:layout.nav.x04_events', 'Académie et événements'),
+        'Modération des témoignages': t('admin:layout.nav.x02_testimonials', 'Modération des témoignages'),
+        'Modération des histoires': t('admin:layout.nav.x01_stories', 'Modération des histoires'),
+        'Relecture des offres d’emploi': t('admin:layout.nav.x05_employment', 'Relecture des offres d’emploi'),
+        'Modération de l’entraide': t('admin:layout.nav.x03_entraide', 'Modération de l’entraide'),
     };
     return labels[label] || label;
 }

@@ -2176,5 +2176,10 @@
  "organizations.members.done_disabled": "Обліковий запис вимкнено: його сеанси завершено.",
  "organizations.members.disable": "Вимкнути цей обліковий запис",
  "organizations.members.done_erased": "Обліковий запис видалено: адресу, пароль і двофакторну автентифікацію вилучено.",
- "organizations.members.erase": "Видалити цей обліковий запис (прохання особи)"
+ "organizations.members.erase": "Видалити цей обліковий запис (прохання особи)",
+ "layout.nav.x04_events": "Академія та події",
+ "layout.nav.x02_testimonials": "Модерація відгуків",
+ "layout.nav.x01_stories": "Модерація історій",
+ "layout.nav.x05_employment": "Перевірка пропозицій роботи",
+ "layout.nav.x03_entraide": "Модерація взаємодопомоги"
 }

@@ -2166,5 +2166,10 @@
  "organizations.members.done_disabled": "Hesap devre dışı bırakıldı: oturumları sona erdi.",
  "organizations.members.disable": "Bu hesabı devre dışı bırak",
  "organizations.members.done_erased": "Hesap silindi: adres, parola ve iki adımlı doğrulama kaldırıldı.",
- "organizations.members.erase": "Bu hesabı sil (kişinin talebi)"
+ "organizations.members.erase": "Bu hesabı sil (kişinin talebi)",
+ "layout.nav.x04_events": "Akademi ve etkinlikler",
+ "layout.nav.x02_testimonials": "Görüşlerin moderasyonu",
+ "layout.nav.x01_stories": "Hikâye moderasyonu",
+ "layout.nav.x05_employment": "İş ilanlarının incelenmesi",
+ "layout.nav.x03_entraide": "Dayanışma moderasyonu"
 }

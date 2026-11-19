@@ -2166,5 +2166,10 @@
  "organizations.members.done_disabled": "Account disabled: its sessions have ended.",
  "organizations.members.disable": "Disable this account",
  "organizations.members.done_erased": "Account erased: address, password and two-factor authentication removed.",
- "organizations.members.erase": "Erase this account (person’s request)"
+ "organizations.members.erase": "Erase this account (person’s request)",
+ "layout.nav.x04_events": "Academy and events",
+ "layout.nav.x02_testimonials": "Testimonial moderation",
+ "layout.nav.x01_stories": "Story moderation",
+ "layout.nav.x05_employment": "Review of job offers",
+ "layout.nav.x03_entraide": "Mutual help moderation"
 }

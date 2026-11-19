@@ -37,6 +37,21 @@ describe('R47 activation simulator — proof as Production evaluates it', () => 
     expect(rep.results.find((r) => r.id === 'job.gdpr-purge').final.code).toBe('STEP_NOT_APPROVED_IN_POLICY');   // policy approved (phase 1), no step record yet
     expect(rep.results.find((r) => r.id === 'booking.unreviewed_service').final.code).toBe('SERVICE_SENSITIVITY_UNREVIEWED');
   });
+  it('G10: the five expansion capabilities (X01–X05) are outside the AIPD and stay closed in the final 173 configuration, with their surfaces', () => {
+    const five = ['community.events', 'community.testimonials', 'community.stories', 'community.employment', 'community.entraide'];
+    expect(Object.keys(CAPABILITIES).filter((c) => /expansion/i.test(CAPABILITIES[c].description)).sort()).toEqual([...five].sort());
+    const items = buildItems();
+    const finalSurfaces = env.ADA_BETA_OPEN_SURFACES.split(',');
+    const finalCaps = (env.ADA_CAPABILITIES_OPEN || '').split(',');
+    for (const c of five) {
+      expect(CAPABILITIES[c], c).toMatchObject({ aipd: 'out', requiresHds: false });
+      expect(items.find((i) => i.id === `capability.${c}`), c).toMatchObject({ finalExpected: 'closed' });
+      expect(rep.summary.closedByDesign, c).toContain(`capability.${c}`);
+      expect(finalCaps, c).not.toContain(c);
+      expect(finalSurfaces, c).not.toContain(CAPABILITIES[c].surface);
+      expect(items.find((i) => i.id === `surface.${CAPABILITIES[c].surface}`), c).toMatchObject({ finalExpected: 'closed' });
+    }
+  });
   it('gdpr-purge: with an approved policy record the three variables are each necessary', () => {
     expect(rep.gdprPurgeWithApprovedPolicyRecord.execute).toBe(true);
     expect(rep.gdprPurgeWithApprovedPolicyRecord.minusOne.map((m) => m.reason)).toEqual(['GDPR_PURGE_DISABLED', 'POLICY_VERSION_NOT_PINNED', 'NO_APPROVED_STEPS']);
