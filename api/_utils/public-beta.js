@@ -15,6 +15,9 @@ const EXACT = new Set([
   'territory/postal', 'territory/qpv',
   // read by the shell on every page: answers « not signed in » and creates nothing
   'auth/me',
+  // G3 (19/11/2026, founder directive « safe public openings »): the API description — during the beta the handler serves ONLY the public subset
+  // (api/lib/openapi-public.js: operations this gate opens to an anonymous visitor; never admin/cron/monitor/pro/institution, never a secured operation)
+  'docs/openapi.json',
 ]);
 // R32: « translations » serves the checked translations of the same public records (read-only, same D-5 rule)
 // R36: « pdf/aides », « pdf/demarches » = the PDF of a published aide or démarche (api/_handlers/pdf.js: GET only, D-5 visible records only, writes nothing,

@@ -44,7 +44,7 @@ describe('publicOpenApiSpec (Production beta configuration)', () => {
 
   it('drops the closed routes: diagnostic, assistant, share, documents, messages, contact, rdv, docs itself, the authenticated /auth/me and /health/deep', () => {
     for (const o of ['POST /diagnostic', 'POST /assistant/chat', 'POST /share/create', 'GET /share/get', 'GET /pdf', 'GET /download', 'POST /secure-messages',
-      'POST /contact', 'GET /rdv', 'GET /docs/openapi.json', 'GET /auth/me', 'GET /health/deep', 'GET /drees', 'POST /public/assistant/orient']) expect(list).not.toContain(o);
+      'POST /contact', 'GET /rdv', 'GET /auth/me', 'GET /health/deep', 'GET /drees', 'POST /public/assistant/orient']) expect(list).not.toContain(o);
   });
 
   it('keeps only referenced schemas and security schemes, and no webhook', () => {
@@ -92,5 +92,15 @@ describe('handler', () => {
     vi.stubEnv('ADA_PUBLIC_BETA_RESTRICTED', '');
     const { spec } = await call();
     expect(spec).toEqual(FULL);
+  });
+});
+
+describe('G3 activation: the public subset is reachable during the beta (GET only)', () => {
+  it('GET /api/docs/openapi.json is allowed; other methods and other docs paths are not', () => {
+    const env = { ADA_PUBLIC_BETA_RESTRICTED: 'true', ADA_BETA_OPEN_SURFACES: 'admin,accounts' };
+    expect(isAllowedInPublicBeta('GET', 'docs/openapi.json', env)).toBe(true);
+    expect(isAllowedInPublicBeta('POST', 'docs/openapi.json', env)).toBe(false);
+    expect(isAllowedInPublicBeta('GET', 'docs', env)).toBe(false);
+    expect(isAllowedInPublicBeta('GET', 'docs/openapi.yaml', env)).toBe(false);
   });
 });
