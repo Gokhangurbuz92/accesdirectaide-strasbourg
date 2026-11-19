@@ -225,12 +225,14 @@ describe.skipIf(!hasDatabase)(`FA-D1 golden journey — one synthetic case (${'f
       const links = n.sheets.map((s) => o.sources[s]).filter((s) => s.url.startsWith('https://www.service-public.gouv.fr/')).slice(0, 5).map((s) => ({ url: s.url, label: s.title }));
       const add = await call('POST', '/api/citizen/parcours', { as: { cit: true }, body: { action: 'add', title: n.label, ...(published.length ? { records: published.map((s) => ({ type: 'guide', id: o.sources[s].slug })) } : {}),
         planStep: { need: id, links, nextActionKey: 'read_record' } } });
+      // G9 (Mon Parcours safeguards, ADA_PARCOURS_SENSITIVE_STEPS unset = « excluded »): a disability step (MDPH) can reveal health data — refused, nothing kept
+      if (id === 'mdph-droits') { expect(add.statusCode, 'sensitive step refused by default').toBe(422); expect(add.body?.error || add.body?.code).toMatch(/SENSITIVE_STEP_EXCLUDED/); continue; }
       J.steps[id] = ok(add, 201).item.id;
     }
     ok(await call('POST', '/api/citizen/parcours', { as: { cit: true }, body: { action: 'plan', id: J.steps['expulsion-impayes'], planStep: { actor: { kind: 'professional' }, nextActionKey: 'share_dossier' } } }));
     ok(await call('POST', '/api/citizen/parcours', { as: { cit: true }, body: { action: 'status', id: J.steps['expulsion-impayes'], status: 'IN_PROGRESS' } }));
     const items = ok(await call('GET', '/api/citizen/parcours', { as: { cit: true } })).items;
-    expect(items.filter((i) => Object.values(J.steps).includes(i.id))).toHaveLength(3);
+    expect(items.filter((i) => Object.values(J.steps).includes(i.id))).toHaveLength(2);   // G9: the MDPH step is not kept
     const housing = items.find((i) => i.id === J.steps['expulsion-impayes']);
     expect(housing).toMatchObject({ status: 'IN_PROGRESS', step: { need: { id: 'expulsion-impayes' }, actor: { kind: 'professional' }, nextActionKey: 'share_dossier' } });
     expect(housing.records[0]).toMatchObject({ type: 'guide', available: true, href: `/bonnes-pratiques/${J.orientation.sources.F31272.slug}` });
@@ -242,7 +244,7 @@ describe.skipIf(!hasDatabase)(`FA-D1 golden journey — one synthetic case (${'f
     expect((await call('GET', '/api/citizen/parcours', { as: { forged: true } })).statusCode).toBe(401);
     expect((await call('POST', '/api/citizen/parcours', { as: { cit: true }, noCsrf: true, body: { action: 'add', title: 'sans jeton' } })).statusCode).toBe(403);
     const rows = (await db.execute(sql`SELECT id FROM "ParcoursItem" WHERE "userId" = ${CIT.id}`)).rows.map((r) => r.id);
-    expect(rows).toHaveLength(3);
+    expect(rows).toHaveLength(2);
     trace('G3 Mon Parcours plan', 'POST /api/citizen/parcours', { ParcoursItem: rows });
   });
 
