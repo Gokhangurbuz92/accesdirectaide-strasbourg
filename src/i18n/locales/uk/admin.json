@@ -2161,5 +2161,20 @@
  "k5.submissions.kind.all": "Усі",
  "k5.submissions.kind_filter": "Тип вмісту",
  "k5.submissions.legacy_dispositif": "Зареєстровано як « Допомога » (попередня класифікація програм).",
- "layout.title_area": "Адміністрування"
+ "layout.title_area": "Адміністрування",
+ "organizations.identifier": "Ідентифікатор (щоб запросити першого адміністратора ADA Pro)",
+ "organizations.slug": "коротка адреса",
+ "organizations.members.role_admin": "Адміністратор організації",
+ "organizations.members.role_pro": "Фахівець",
+ "organizations.members.load_impossible": "Не вдалося завантажити облікові записи.",
+ "organizations.members.title": "Облікові записи ADA Pro",
+ "organizations.members.intro": "Адміністратор організації керує командою. ADA може вимкнути обліковий запис у разі інциденту (якщо за ним більше немає справ, пропозицій, зустрічей чи ролі контактної особи) і видалити вже вимкнений обліковий запис на прохання особи. Причину, вказану вище, зберігають у журналі.",
+ "organizations.members.none": "Для цієї організації немає облікових записів ADA Pro.",
+ "organizations.members.erased": "Видалений обліковий запис",
+ "organizations.members.active": "активний",
+ "organizations.members.disabled": "вимкнений",
+ "organizations.members.done_disabled": "Обліковий запис вимкнено: його сеанси завершено.",
+ "organizations.members.disable": "Вимкнути цей обліковий запис",
+ "organizations.members.done_erased": "Обліковий запис видалено: адресу, пароль і двофакторну автентифікацію вилучено.",
+ "organizations.members.erase": "Видалити цей обліковий запис (прохання особи)"
 }

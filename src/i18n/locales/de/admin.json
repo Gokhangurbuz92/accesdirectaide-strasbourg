@@ -2151,5 +2151,20 @@
  "k5.submissions.kind.all": "Alle",
  "k5.submissions.kind_filter": "Inhaltstyp",
  "k5.submissions.legacy_dispositif": "Unter « Hilfe » abgelegt (frühere Einordnung der Programme).",
- "layout.title_area": "Verwaltung"
+ "layout.title_area": "Verwaltung",
+ "organizations.identifier": "Kennung (zur Einladung der ersten ADA-Pro-Administration)",
+ "organizations.slug": "Kurzadresse",
+ "organizations.members.role_admin": "Administration der Einrichtung",
+ "organizations.members.role_pro": "Fachkraft",
+ "organizations.members.load_impossible": "Die Konten konnten nicht geladen werden.",
+ "organizations.members.title": "ADA-Pro-Konten",
+ "organizations.members.intro": "Die Administration der Einrichtung verwaltet ihr Team. ADA kann ein Konto bei einem Vorfall deaktivieren (wenn es keine Fallakte, keinen Vorschlag, keinen Termin und keine Ansprechpartnerrolle mehr hat) und ein bereits deaktiviertes Konto auf Wunsch der Person löschen. Der obige Grund wird im Protokoll aufbewahrt.",
+ "organizations.members.none": "Kein ADA-Pro-Konto für diese Einrichtung.",
+ "organizations.members.erased": "Gelöschtes Konto",
+ "organizations.members.active": "aktiv",
+ "organizations.members.disabled": "deaktiviert",
+ "organizations.members.done_disabled": "Konto deaktiviert: Seine Sitzungen sind beendet.",
+ "organizations.members.disable": "Dieses Konto deaktivieren",
+ "organizations.members.done_erased": "Konto gelöscht: Adresse, Passwort und Zwei-Faktor-Authentifizierung entfernt.",
+ "organizations.members.erase": "Dieses Konto löschen (Anfrage der Person)"
 }

@@ -267,6 +267,10 @@ export const apiClient = {
         getWs2Queue: function () { return apiRequest('/api/admin/ws2-queue'); },
         /** @param {string} id @param {'SUSPEND'|'REACTIVATE'} action @param {string} reason */
         setOrganizationActivity: function (id, action, reason) { return apiRequest('/api/admin/organizations', { method: 'POST', body: { id: id, action: action, reason: reason } }); },
+        /** G8 — the organization's ADA Pro accounts (no secret). @param {string} id */
+        getOrganizationMembers: function (id) { return apiRequest('/api/admin/organizations?members=' + encodeURIComponent(id || '')); },
+        /** G8 — ADA's action on one professional account (MFA, reason). @param {string} userId @param {'DISABLE_PRO_ACCOUNT' | 'ERASE_PRO_ACCOUNT'} action @param {string} reason */
+        administerProAccount: function (userId, action, reason) { return apiRequest('/api/admin/organizations', { method: 'POST', body: { userId: userId, action: action, reason: reason } }); },
         /** identity verification = the existing MFA content-verification flow @param {{ entityId: string, action: string, sourceUrl?: string, evidenceNote?: string, territoryConfirmed?: boolean, holdReason?: string }} input */
         verifyContent: function (input) { return apiRequest('/api/admin/content-verification', { method: 'POST', body: Object.assign({ entityType: 'structure' }, input) }); },
         /** owner LAB audit: the public content of a record, in full, and the `version` a VERIFY / RELEASE_HOLD is bound to (+ the decision history) */

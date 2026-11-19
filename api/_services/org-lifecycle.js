@@ -36,7 +36,8 @@ export async function listOrganizations({ q = '', decision = '' } = {}, db = def
   const [{ total }] = (await db.execute(sql`SELECT count(*)::int AS total FROM "Structure" s WHERE ${where}`)).rows;
   return { ok: true, total: Number(total), limit: ORG_LIST_LIMIT, organizations: rows.map((s) => {
     const pub = publicDecision(s, 'structure');
-    return { id: s.id, nom: s.nom, ville: s.ville, statut: s.statut,
+    // G8: the identifier and short address are shown — the platform invitation of the first ADA Pro administrator asks for one of them
+    return { id: s.id, slug: s.slug || null, nom: s.nom, ville: s.ville, statut: s.statut,
       identity: s.verification_status, identityVerifiedBy: s.verified_by ? 'ADA' : null, identityVerifiedAt: s.date_verification,
       canReceiveNew: s.statut === 'actif' && s.verification_status === 'VERIFIED' && s.activeMembers > 0,
       public: { visible: pub.visible, reasons: pub.reasons }, activeMembers: s.activeMembers, publicationHold: s.publication_hold || null };

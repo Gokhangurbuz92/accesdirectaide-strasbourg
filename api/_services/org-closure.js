@@ -171,6 +171,9 @@ async function execute(tx, sid, requestId, reviewer) {
   await tx.execute(sql`UPDATE "StructureRdvSettings" SET "isPublished" = false, "contactEmail" = NULL, "contactPhone" = NULL, "updatedAt" = NOW() WHERE "structureId" = ${sid}`);
   summary.proposalsWithdrawn = await n(sql`UPDATE "StructureProposal" SET status = 'WITHDRAWN' WHERE "structureId" = ${sid} AND status = 'PENDING'`);
   summary.memberInvitationsErased = await n(sql`DELETE FROM "Invitation" WHERE "structureId" = ${sid} AND used_at IS NULL`);
+  // G8: a redeemed invitation still held the member's address after the members were « anonymised »: it is anonymised the same way (the row stays for
+  // the journals that cite its id; the token is only a hash)
+  await tx.execute(sql`UPDATE "Invitation" SET email = 'closed-' || id || '@closed.invalid' WHERE "structureId" = ${sid} AND email NOT LIKE 'closed-%@closed.invalid'`);
   summary.notificationsErased = await n(sql`DELETE FROM "ProNotification" WHERE "structureId" = ${sid}`);
   await tx.execute(sql`UPDATE "ProProfile" SET "displayName" = NULL, "jobTitle" = NULL, "descriptionPublic" = NULL, "photoUrl" = NULL, "isPubliclyVisible" = false, "updatedAt" = NOW()
     WHERE "proUserId" IN (SELECT id FROM "ProUser" WHERE "structureId" = ${sid})`);
