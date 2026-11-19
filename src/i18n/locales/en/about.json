@@ -240,5 +240,7 @@
  "indicators.communes.text": "From the declared address. A municipality with fewer than {{k}} places is not shown.",
  "indicators.communes.masked": "Municipalities not shown",
  "indicators.communes.not_located": "Places not located",
- "indicators.masked": "hidden"
+ "indicators.masked": "hidden",
+ "indicators.domains.unclassified": "Not measurable yet: the {{n}} published benefits are not yet classified by area in the catalogue. This breakdown will be shown once they are.",
+ "indicators.scopes.unclassified": "Not measurable yet: the {{n}} published benefits do not yet state their level (national, regional, departmental, municipal) in the catalogue. This breakdown will be shown once they do."
 }
