@@ -68,6 +68,15 @@ export default function Wizard() {
     // G4: in the browser-only mode nothing is written; a copy left in this tab by the server mode is removed, never read
     useEffect(() => { if (local) storage.clearWizard(); }, [local]);
 
+    // G7 (RGAA 12.8 / 7.1, live check 19/11): the button that was activated unmounts with its step, so keyboard focus fell back to <body> and a keyboard or
+    // screen-reader user restarted from the top of the page. After a step or phase change caused by the user, focus returns to the questionnaire container
+    // (tabIndex -1); the live region still announces the step. Never on the first render (no focus theft on page load).
+    const firstRender = useRef(true);
+    useEffect(() => {
+        if (firstRender.current) { firstRender.current = false; return; }
+        topRef.current?.focus({ preventScroll: false });
+    }, [step, phase]);
+
     useEffect(() => {
         return () => {
             abortRef.current?.abort();
