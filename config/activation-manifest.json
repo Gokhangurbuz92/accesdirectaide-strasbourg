@@ -1150,6 +1150,10 @@
       "class": "lab",
       "nature": "config"
     },
+    "AI_TRUSTED_INTERNAL_HOSTS": {
+      "class": "lab",
+      "nature": "config"
+    },
     "ADA_TRANSLATION_CACHE": {
       "class": "lab",
       "nature": "config"
