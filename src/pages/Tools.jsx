@@ -7,7 +7,7 @@ import LoadError from '@/components/LoadError';
 import PageHeader from '@/components/layout/PageHeader';
 import { OFFICIAL_TOOLS, OFFICIAL_TOOLS_CHECKED_AT, toolText } from '@/config/officialTools';
 import OfficialServices from '@/components/OfficialServices';
-import { Compass, ExternalLink, Gavel, GraduationCap, HeartPulse, Home, Hourglass, IdCard, Landmark, Scale } from 'lucide-react';
+import { ArrowRight, Compass, ExternalLink, Gavel, GraduationCap, HeartPulse, Home, Hourglass, IdCard, Landmark, Scale } from 'lucide-react';
 import { CONTAINER, ChoiceChips, FilterField, SELECT } from '@/components/layout/catalog';
 import { formatDate, useLanguage, useT } from '@/i18n';
 
@@ -127,7 +127,12 @@ export default function Tools() {
                 path="/outils"
             />
 
-            <PageHeader title={t('tools:header.title', 'Boîte à outils')} description={t('tools:header.description', 'Simulateurs et services en ligne utiles pour vos démarches, choisis sur les sites des organismes publics.')} />
+            <PageHeader title={t('tools:header.title', 'Boîte à outils')} description={t('tools:header.description', 'Simulateurs et services en ligne utiles pour vos démarches, choisis sur les sites des organismes publics.')}>
+                {/* G3: the public Rights Graph view (/droits): per need, the official fiches, who decides and what to do next — no question asked */}
+                <Link to="/droits" className="inline-flex min-h-11 items-center gap-1.5 rounded-lg bg-white px-4 py-2 font-semibold text-blue-900 hover:bg-blue-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" data-testid="tools-rights-link">
+                    {t('tools:rights.link', 'Explorer les droits par besoin')}<ArrowRight className="h-4 w-4 rtl:-scale-x-100" aria-hidden="true" />
+                </Link>
+            </PageHeader>
 
             <div className={`${CONTAINER} space-y-12 py-6 sm:py-8`}>
             {failed && <LoadError what={t('tools:error.what', 'les outils')} onRetry={() => setAttempt((n) => n + 1)} testId="tools-error" />}
