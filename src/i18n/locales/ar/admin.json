@@ -2170,5 +2170,20 @@
  "k5.submissions.kind.all": "الكل",
  "k5.submissions.kind_filter": "نوع المحتوى",
  "k5.submissions.legacy_dispositif": "مسجّل تحت « مساعدة » (التصنيف السابق للبرامج).",
- "layout.title_area": "الإدارة"
+ "layout.title_area": "الإدارة",
+ "organizations.identifier": "المعرّف (لدعوة أول مسؤول في ADA Pro)",
+ "organizations.slug": "العنوان المختصر",
+ "organizations.members.role_admin": "مسؤول الهيكل",
+ "organizations.members.role_pro": "مهني",
+ "organizations.members.load_impossible": "تعذّر تحميل الحسابات.",
+ "organizations.members.title": "حسابات ADA Pro",
+ "organizations.members.intro": "يدير مسؤول الهيكل فريقه. يمكن لـ ADA تعطيل حساب عند وقوع حادث (إذا لم يعد يحمل أي ملف أو اقتراح أو موعد أو دور شخص مرجعي) وحذف حساب معطّل مسبقًا بناءً على طلب الشخص. يُحفظ السبب المذكور أعلاه في السجل.",
+ "organizations.members.none": "لا يوجد حساب ADA Pro لهذا الهيكل.",
+ "organizations.members.erased": "حساب محذوف",
+ "organizations.members.active": "نشط",
+ "organizations.members.disabled": "معطّل",
+ "organizations.members.done_disabled": "تم تعطيل الحساب: انتهت جلساته.",
+ "organizations.members.disable": "تعطيل هذا الحساب",
+ "organizations.members.done_erased": "تم حذف الحساب: أُزيل العنوان وكلمة المرور والمصادقة الثنائية.",
+ "organizations.members.erase": "حذف هذا الحساب (طلب الشخص)"
 }

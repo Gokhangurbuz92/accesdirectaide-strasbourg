@@ -2151,5 +2151,20 @@
  "k5.submissions.kind.all": "All",
  "k5.submissions.kind_filter": "Content type",
  "k5.submissions.legacy_dispositif": "Filed under « Aid » (earlier classification of schemes).",
- "layout.title_area": "Administration"
+ "layout.title_area": "Administration",
+ "organizations.identifier": "Identifier (to invite the first ADA Pro administrator)",
+ "organizations.slug": "short address",
+ "organizations.members.role_admin": "Organisation administrator",
+ "organizations.members.role_pro": "Professional",
+ "organizations.members.load_impossible": "The accounts could not be loaded.",
+ "organizations.members.title": "ADA Pro accounts",
+ "organizations.members.intro": "The organisation administrator manages the team. ADA can disable an account after an incident (if it no longer holds any case, proposal, appointment or contact-person role) and erase an account that is already disabled at the person’s request. The reason above is kept in the log.",
+ "organizations.members.none": "No ADA Pro account for this organisation.",
+ "organizations.members.erased": "Erased account",
+ "organizations.members.active": "active",
+ "organizations.members.disabled": "disabled",
+ "organizations.members.done_disabled": "Account disabled: its sessions have ended.",
+ "organizations.members.disable": "Disable this account",
+ "organizations.members.done_erased": "Account erased: address, password and two-factor authentication removed.",
+ "organizations.members.erase": "Erase this account (person’s request)"
 }

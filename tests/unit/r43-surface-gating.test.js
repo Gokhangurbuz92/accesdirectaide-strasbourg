@@ -180,6 +180,7 @@ describe('a self-registered citizen never obtains a professional, structure, ter
       'api/_utils/totp-guard.js': 'TOTP replay guard of an existing account',
       'api/_utils/auth.js': 'ends the sessions of an existing professional account (sessionsValidAfter only)',
       'api/_services/org-closure.js': 'anonymises the members of a closed organisation (administration)',
+      'api/_services/pro-account-admin.js': 'G8: disables / erases ONE existing professional account (administration, MFA; status and anonymisation only, never a role)',
     };
     const files = []; const walk = (d) => { for (const n of readdirSync(d)) { const f = join(d, n); if (statSync(f).isDirectory()) { if (n !== 'tests' && n !== 'node_modules') walk(f); } else if (/\.(m?js|ts)$/.test(n) && !/\.test\./.test(n)) files.push(f); } };
     walk(resolve(process.cwd(), 'api'));

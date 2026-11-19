@@ -2151,5 +2151,20 @@
  "k5.submissions.kind.all": "Tümü",
  "k5.submissions.kind_filter": "İçerik türü",
  "k5.submissions.legacy_dispositif": "« Yardım » altında kaydedildi (programların önceki sınıflandırması).",
- "layout.title_area": "Yönetim"
+ "layout.title_area": "Yönetim",
+ "organizations.identifier": "Tanımlayıcı (ilk ADA Pro yöneticisini davet etmek için)",
+ "organizations.slug": "kısa adres",
+ "organizations.members.role_admin": "Kuruluş yöneticisi",
+ "organizations.members.role_pro": "Profesyonel",
+ "organizations.members.load_impossible": "Hesaplar yüklenemedi.",
+ "organizations.members.title": "ADA Pro hesapları",
+ "organizations.members.intro": "Kuruluş yöneticisi ekibini yönetir. ADA bir olay durumunda bir hesabı devre dışı bırakabilir (artık dosya, öneri, randevu veya referans kişi rolü yoksa) ve zaten devre dışı olan bir hesabı kişinin talebi üzerine silebilir. Yukarıdaki gerekçe kayıtta saklanır.",
+ "organizations.members.none": "Bu kuruluş için ADA Pro hesabı yok.",
+ "organizations.members.erased": "Silinmiş hesap",
+ "organizations.members.active": "etkin",
+ "organizations.members.disabled": "devre dışı",
+ "organizations.members.done_disabled": "Hesap devre dışı bırakıldı: oturumları sona erdi.",
+ "organizations.members.disable": "Bu hesabı devre dışı bırak",
+ "organizations.members.done_erased": "Hesap silindi: adres, parola ve iki adımlı doğrulama kaldırıldı.",
+ "organizations.members.erase": "Bu hesabı sil (kişinin talebi)"
 }

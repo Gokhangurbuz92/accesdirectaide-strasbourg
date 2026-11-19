@@ -24,6 +24,45 @@ const explain = (e) => {
  * dossier access or NEW bookings. Every write needs an administrator session with MFA; the reason is kept in the audit log.
  */
 const DECISIONS = ['never', 'hold', 'rejected', 'verified'];
+const ROLE_LABEL = () => ({ STRUCTURE_ADMIN: i18n.t('admin:organizations.members.role_admin', 'Administrateur de la structure'), PRO: i18n.t('admin:organizations.members.role_pro', 'Professionnel') });
+
+/**
+ * G8 (pilot onboarding) — the organization's ADA Pro accounts, and ADA's own two actions on ONE account (api/_services/pro-account-admin.js): disable an active
+ * account (incident, lost device while the structure administrator is away — refused while the member still holds work to hand over) and erase a disabled
+ * one (a former member's erasure request). Same reason field and MFA rule as the activity actions.
+ */
+function MembersPanel({ orgId, busy, reasonOk, reason, run }) {
+  const { t } = useT('admin');
+  const [state, setState] = useState({ loading: true, error: '', members: [] });
+  const load = useCallback(async () => {
+    try { const out = await apiClient.admin.getOrganizationMembers(orgId); setState({ loading: false, error: '', members: out.members || [] }); }
+    catch { setState({ loading: false, error: t('admin:organizations.members.load_impossible', 'Les comptes n’ont pas pu être chargés.'), members: [] }); }
+  }, [orgId]);   // eslint-disable-line react-hooks/exhaustive-deps -- the message follows the language at load time
+  useEffect(() => { load(); }, [load]);
+  const act = (action, userId, ok) => reasonOk() && run(async () => { await apiClient.admin.administerProAccount(userId, action, reason); await load(); }, ok);
+  return (
+    <section aria-label={t('admin:organizations.members.title', 'Comptes ADA Pro')} className="space-y-1" data-testid="admin-org-members">
+      <h2 className="text-base font-semibold">{t('admin:organizations.members.title', 'Comptes ADA Pro')}</h2>
+      <p className="text-slate-700">{t('admin:organizations.members.intro', 'L’administrateur de la structure gère son équipe. ADA peut désactiver un compte en cas d’incident (s’il ne détient plus de dossier, de proposition, de rendez-vous ni de rôle de référent) et effacer un compte déjà désactivé à la demande de la personne. Le motif ci-dessus est conservé dans le journal.')}</p>
+      {state.loading ? <p role="status">{t('admin:organizations.loading', 'Chargement…')}</p> : state.error ? <p role="alert" className="text-red-800">{state.error}</p> : state.members.length === 0
+        ? <p className="text-slate-700" data-testid="admin-org-members-empty">{t('admin:organizations.members.none', 'Aucun compte ADA Pro pour cette organisation.')}</p>
+        : (
+          <ul className="space-y-1">
+            {state.members.map((m) => (
+              <li key={m.id} className="flex flex-wrap items-center gap-2" data-testid="admin-org-member">
+                <span>{m.erased ? t('admin:organizations.members.erased', 'Compte effacé') : m.email}</span>
+                <span className="text-slate-700">— {ROLE_LABEL()[m.role] || m.role} · {m.status === 'active' ? t('admin:organizations.members.active', 'actif') : t('admin:organizations.members.disabled', 'désactivé')}</span>
+                {m.status === 'active' ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-member-disable"
+                  onClick={() => act('DISABLE_PRO_ACCOUNT', m.id, t('admin:organizations.members.done_disabled', 'Compte désactivé : ses sessions sont terminées.'))}>{t('admin:organizations.members.disable', 'Désactiver ce compte')}</Button> : null}
+                {m.status !== 'active' && !m.erased ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-member-erase"
+                  onClick={() => act('ERASE_PRO_ACCOUNT', m.id, t('admin:organizations.members.done_erased', 'Compte effacé : adresse, mot de passe et double authentification supprimés.'))}>{t('admin:organizations.members.erase', 'Effacer ce compte (demande de la personne)')}</Button> : null}
+              </li>
+            ))}
+          </ul>
+        )}
+    </section>
+  );
+}
 
 export default function AdminOrganizations() {
   const { t } = useT('admin');
@@ -84,6 +123,8 @@ export default function AdminOrganizations() {
                 <div><dt className="text-slate-700">{t('admin:organizations.can_receive', 'Peut recevoir')}</dt><dd data-testid="admin-org-can-receive">{o.canReceiveNew ? t('admin:organizations.yes', 'Oui') : t('admin:organizations.no', 'Non')} {t('admin:organizations.active_members', '({{n}} membre(s) actif(s))', { n: o.activeMembers })}</dd></div>
               </dl>
               {o.publicationHold ? <p className="text-slate-800" data-testid="admin-org-hold-reason">{t('admin:organizations.hold_reason', 'Motif de l’attente : {{reason}}', { reason: o.publicationHold })}</p> : null}
+              {/* G8: the platform invitation of the first ADA Pro administrator (ADA Pro → Équipe → « Structure partenaire ») asks for one of these */}
+              <p className="text-slate-800" data-testid="admin-org-identifier">{t('admin:organizations.identifier', 'Identifiant (pour inviter le premier administrateur ADA Pro)')} : <code className="break-all">{o.id}</code>{o.slug && o.slug !== o.id ? <> · {t('admin:organizations.slug', 'adresse courte')} : <code className="break-all">{o.slug}</code></> : null}</p>
               <p><Link className="text-blue-800 underline" to={`/admin/structures/${o.id}`}>{t('admin:organizations.fix_in_editor', 'Corriger la fiche dans l’éditeur')}</Link></p>
               <details onToggle={(e) => setF(o.id, { open: e.currentTarget.open })}>
                 <summary className="cursor-pointer text-blue-800">{t('admin:organizations.act', 'Agir')}</summary>
@@ -106,6 +147,7 @@ export default function AdminOrganizations() {
                       ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-suspend" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'SUSPEND', f(o.id).reason || ''), t('admin:organizations.done.suspended', 'Organisation suspendue.'))}>{t('admin:organizations.suspend', 'Suspendre')}</Button>
                       : <Button size="sm" variant="outline" disabled={busy} data-testid="admin-org-reactivate" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'REACTIVATE', f(o.id).reason || ''), t('admin:organizations.done.reactivated', 'Organisation réactivée.'))}>{t('admin:organizations.reactivate', 'Réactiver')}</Button>}
                   </div>
+                  {f(o.id).open ? <MembersPanel orgId={o.id} busy={busy} reason={f(o.id).reason || ''} reasonOk={() => reasonOk(o.id)} run={run} /> : null}
                 </div>
               </details>
             </li>
