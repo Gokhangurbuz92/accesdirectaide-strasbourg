@@ -81,6 +81,12 @@ export const CAPABILITIES = Object.freeze({
   // own AIPD line is signed (CONTROL/master/completion/G5_X02_TESTIMONIALS_2026-11-19.md), on its own surface « testimonials » that nothing opens.
   'community.testimonials': { description: 'testimonials (X02 expansion): public reading of moderated testimonials, submission with consent and withdrawal by a signed-in adult citizen, reports, moderation',
     aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (free text written by the person, health detail discouraged and moderated out; no care follow-up)', surface: 'testimonials', aipdRef: 'X02 (AIPD line to sign)' },
+  // X01 (EXPANSION, founder 19/11/2026 — not one of the 173): community stories under a PSEUDONYMOUS principal (CommunityMember, R47 § 8) of signed-in adult
+  // citizens, explicit consent per story (ConsentLog), withdrawal at any time (text erased), moderation (admin, MFA, audited), reports of abuse, takedown.
+  // A new personal-data processing: outside the AIPD until its own AIPD line is signed (CONTROL/master/completion/G6_X01_COMMUNITY_2026-11-19.md), on its own
+  // surface « stories » that nothing opens.
+  'community.stories': { description: 'community stories (X01 expansion): public reading of moderated stories under a pseudonym, joining / posting / withdrawal by a signed-in adult citizen, reports, moderation and takedown',
+    aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (free text written by the person under a pseudonym, health detail discouraged and moderated out; no care follow-up)', surface: 'stories', aipdRef: 'X01 (AIPD line to sign)' },
   // ── never opened by a switch
   'citizen.minor_accounts': { description: 'independent accounts of minors (closed by the age policy; R42-A07)', aipd: 'out', requiresHds: false, surface: 'accounts', openable: false, aipdRef: 'AIPD § 2.2' },
 });
@@ -138,6 +144,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   events: ['community.events'], 'citizen/events': ['community.events'], 'admin/events': ['community.events'],
   // X02 (expansion): every route of the « testimonials » surface — public reading included — is refused 503 before its handler while the capability is closed
   testimonials: ['community.testimonials'], 'citizen/testimonials': ['community.testimonials'], 'admin/testimonials': ['community.testimonials'],
+  // X01 (expansion): every route of the « stories » surface — public reading included — is refused 503 before its handler while the capability is closed
+  stories: ['community.stories'], 'citizen/stories': ['community.stories'], 'admin/stories': ['community.stories'],
 });
 const ROUTE_PREFIXES = Object.keys(ROUTE_CAPABILITIES).sort((a, b) => b.length - a.length);
 

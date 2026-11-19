@@ -25,8 +25,8 @@ describe.skipIf(!hasDatabase)('migration 0053: up → down → code without it �
   const tables = async () => (await q(`SELECT to_regclass('public."AcademyItem"') IS NOT NULL AS a, to_regclass('public."EventRegistration"') IS NOT NULL AS r`))[0];
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
-  // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0054 (X02) is rolled back first, then 0053
-  const down = async () => { for (const f of ['drizzle/rollback/0054_down.sql', 'drizzle/rollback/0053_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
+  // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0055 (X01) and 0054 (X02) are rolled back first, then 0053
+  const down = async () => { for (const f of ['drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql', 'drizzle/rollback/0053_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
 
   beforeAll(async () => {
     when = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries.find((e) => e.tag === TAG).when;
@@ -78,11 +78,13 @@ describe.skipIf(!hasDatabase)('migration 0053: up → down → code without it �
     const rows = async (query) => { try { return (await db.execute(query)).rows; } catch { failed += 1; return []; } };
     // X02: the later 0054 is rolled back too here — its sections are asked of THIS database, not of the default one
     const tm = await import('../../api/_services/testimonials.js');
-    const out = await accountLinkedSections('keep', rows, { hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => tm.testimonialsSchemaAvailable(db) });
+    const cs = await import('../../api/_services/community-stories.js');   // X01: the later 0055 too
+    const out = await accountLinkedSections('keep', rows, { hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => tm.testimonialsSchemaAvailable(db),
+      hasCommunityTables: () => cs.communitySchemaAvailable(db) });
     expect(out.eventRegistrations).toEqual([]); expect(failed).toBe(0);
   });
 
-  it('up again applies 0053 (and the later 0054) only, on the rows as they are', async () => {
+  it('up again applies 0053 (and the later 0054, 0055) only, on the rows as they are', async () => {
     await up();
     expect(await tables()).toEqual({ a: true, r: true }); expect(await journalRow()).toBe(1);
     expect((await q(`SELECT id FROM "CitizenUser"`)).map((r) => r.id)).toEqual(['keep']);

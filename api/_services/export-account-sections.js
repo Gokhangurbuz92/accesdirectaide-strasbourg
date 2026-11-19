@@ -13,6 +13,9 @@
  *   eventRegistrations      EventRegistration       (citizenUserId) X04: event, state, times, the accessibility need the person chose — only on a database with 0053
  *   testimonials            Testimonial             (citizenUserId) X02: state, chosen name and text while they exist, language, moderation reason, times — with 0054
  *   testimonialReports      TestimonialReport       (reporterUserId) X02: the reports the person made (testimonial id, reason, time) — with 0054
+ *   communityMember         CommunityMember         (citizenUserId) X01: the pseudonym and the date the person joined — with 0055
+ *   communityStories        CommunityStory          (memberId -> CommunityMember.citizenUserId) X01: state, title and text while they exist, language, reason, times — with 0055
+ *   communityStoryReports   CommunityStoryReport    (reporterUserId) X01: the reports the person made (story id, reason, time) — with 0055
  *
  * EXPORT_SECTION_TABLES is the contract read by tests/unit/a14-export-covers-account-tables.test.js: a new table with a foreign key to CitizenUser must be
  * exported (here or in privacy.js) or the test fails.
@@ -24,6 +27,7 @@ export const EXPORT_SECTION_TABLES = Object.freeze({
   pushSubscriptions: 'PushSubscription', emailChangeRequests: 'EmailChangeRequest', ownershipRecoveryCases: 'OwnershipRecoveryCase',
   parcoursReminders: 'ParcoursReminder', appointmentNotices: 'AppointmentNotice', eventRegistrations: 'EventRegistration',
   testimonials: 'Testimonial', testimonialReports: 'TestimonialReport',
+  communityMember: 'CommunityMember', communityStories: 'CommunityStory', communityStoryReports: 'CommunityStoryReport',
 });
 
 /** columns that must never appear in these sections */
@@ -32,8 +36,8 @@ export const EXPORT_FORBIDDEN_FIELDS = Object.freeze(['endpoint', 'endpointHash'
 /**
  * @param {string} userId
  * @param {(query: import('drizzle-orm').SQL) => Promise<any[]>} rows reads rows and counts a failed read (privacy.js safeRows)
- * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean> }} [deps]
- *   hasEventTables: migration 0053 present (X04); hasTestimonialTables: migration 0054 present (X02)
+ * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean>, hasCommunityTables?: () => Promise<boolean> }} [deps]
+ *   hasEventTables: migration 0053 present (X04); hasTestimonialTables: migration 0054 present (X02); hasCommunityTables: migration 0055 present (X01)
  */
 export async function accountLinkedSections(userId, rows, deps = {}) {
   const open = deps.open || ((id, sealed) => openText(sealed, { purpose: 'email-change', context: `email-change:${id}` }));
@@ -54,5 +58,13 @@ export async function accountLinkedSections(userId, rows, deps = {}) {
   const withTestimonials = await hasTestimonialTables();
   const testimonials = withTestimonials ? await rows(testimonialsSvc.testimonialsExportSql(userId)) : [];
   const testimonialReports = withTestimonials ? await rows(testimonialsSvc.testimonialReportsExportSql(userId)) : [];
-  return { pushSubscriptions, emailChangeRequests, ownershipRecoveryCases, parcoursReminders, appointmentNotices, eventRegistrations, testimonials, testimonialReports };
+  // X01: same rule for a database without 0055
+  const community = await import('./community-stories.js');
+  const hasCommunityTables = deps.hasCommunityTables || (() => community.communitySchemaAvailable());
+  const withCommunity = await hasCommunityTables();
+  const communityMember = withCommunity ? await rows(community.communityMemberExportSql(userId)) : [];
+  const communityStories = withCommunity ? await rows(community.communityStoriesExportSql(userId)) : [];
+  const communityStoryReports = withCommunity ? await rows(community.communityStoryReportsExportSql(userId)) : [];
+  return { pushSubscriptions, emailChangeRequests, ownershipRecoveryCases, parcoursReminders, appointmentNotices, eventRegistrations, testimonials, testimonialReports,
+    communityMember, communityStories, communityStoryReports };
 }

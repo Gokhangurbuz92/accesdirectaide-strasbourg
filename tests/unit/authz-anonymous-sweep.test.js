@@ -51,7 +51,9 @@ describe('anonymous authorization sweep (all routes)', () => {
       'auth/forgot-password', 'auth/logout', 'auth/resend-verification',
       'contact',   // R46 / P20, reviewed 2026-11-05 — GET answers the channel state only (CONNECTED / TEST / NOT_CONNECTED), no provider name, no data
       'docs/openapi.json', 'drees/*', 'glossaire', 'health', 'health/live', 'healthz',
-      'monitor/cron/actualites', 'monitor/csp-report', 'robots', 'robots.txt', 'status', 'taxonomy',   // 'status': P24 overlay v1 — public status, reviewed 2026-10-21 (no internals, no personal data)
+      'monitor/cron/actualites', 'monitor/csp-report', 'robots', 'robots.txt', 'status',   // 'status': P24 overlay v1 — public status, reviewed 2026-10-21 (no internals, no personal data)
+      'stories',   // X01 (expansion), reviewed 2026-11-19 — the published community stories (pseudonym, title, text, language, date; no account, no member id); the router refuses it 503 while community.stories is closed
+      'taxonomy',
       'testimonials',   // X02 (expansion), reviewed 2026-11-19 — the published testimonials (chosen name, text, language, date; no account); the router refuses it 503 while community.testimonials is closed
       // 'monitor/csp-report': launch-readiness item 49, reviewed 2026-10-25 — browsers post CSP violation reports anonymously; 204, nothing stored, only the
       // directive / blocked origin / page path are logged (tests/unit/csp-hardening.test.js)

@@ -26,7 +26,8 @@ describe.skipIf(!hasDatabase)('migration 0054: up → down → code without it �
   const tables = async () => (await q(`SELECT to_regclass('public."Testimonial"') IS NOT NULL AS t, to_regclass('public."TestimonialReport"') IS NOT NULL AS r, to_regclass('public."AcademyItem"') IS NOT NULL AS x04`))[0];
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
-  const down = () => pool.query(fs.readFileSync('drizzle/rollback/0054_down.sql', 'utf8'));
+  // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0055 (X01) is rolled back first, then 0054
+  const down = async () => { for (const f of ['drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
 
   beforeAll(async () => {
     when = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries.find((e) => e.tag === TAG).when;
@@ -82,11 +83,14 @@ describe.skipIf(!hasDatabase)('migration 0054: up → down → code without it �
     let failed = 0;
     const rows = async (query) => { try { return (await db.execute(query)).rows; } catch { failed += 1; return []; } };
     const ev = await import('../../api/_services/academy-events.js');
-    const out = await accountLinkedSections('keep', rows, { hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => t.testimonialsSchemaAvailable(db) });
+    // X01: the later 0055 is rolled back too here — its sections are asked of THIS database, not of the default one
+    const cs = await import('../../api/_services/community-stories.js');
+    const out = await accountLinkedSections('keep', rows, { hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => t.testimonialsSchemaAvailable(db),
+      hasCommunityTables: () => cs.communitySchemaAvailable(db) });
     expect(out.testimonials).toEqual([]); expect(out.testimonialReports).toEqual([]); expect(failed).toBe(0);
   });
 
-  it('up again applies 0054 only, on the rows as they are', async () => {
+  it('up again applies 0054 (and the later 0055) only, on the rows as they are', async () => {
     await up();
     expect(await tables()).toEqual({ t: true, r: true, x04: true }); expect(await journalRow()).toBe(1);
     expect((await q(`SELECT id FROM "CitizenUser"`)).map((r) => r.id)).toEqual(['keep']);
