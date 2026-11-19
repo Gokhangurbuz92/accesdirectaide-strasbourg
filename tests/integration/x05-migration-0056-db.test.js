@@ -3,7 +3,7 @@
  *   up      every migration through drizzle's own migrator: the table, its CHECKs (closed lists, lengths, the https application channel, published ⇒ moderator),
  *           the cascading foreign key to Structure, the indexes; 0056 recorded and the newest; NO listing exists after the migration (nothing seeded); no
  *           applicant table, no column for a discriminatory criterion, no author column
- *   down    drizzle/rollback/0056_down.sql: the table gone, the journal row forgotten, 0055 / 0054 / 0053 and everything else untouched (idempotent)
+ *   down    drizzle/rollback/0056_down.sql: the table gone, the journal row forgotten, 0055 / 0054 / 0053 and everything else untouched (idempotent; the later 0057 is rolled back first)
  *   without the code on a database behind it: the public list is empty, the employer side says « not available », writes and moderation answer 503
  *           JOBS_NOT_AVAILABLE, the organization closure skips the step
  *   up again only 0056 is applied
@@ -30,7 +30,8 @@ describe.skipIf(!hasDatabase)('migration 0056: up → down → code without it �
     to_regclass('public."Testimonial"') IS NOT NULL AS x02, to_regclass('public."AcademyItem"') IS NOT NULL AS x04`))[0];
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
-  const down = () => pool.query(fs.readFileSync('drizzle/rollback/0056_down.sql', 'utf8'));
+  // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0057 (X03) is rolled back first, then 0056
+  const down = async () => { for (const f of ['drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
   const insert = (id, over = {}) => {
     const v = { status: 'draft', title: 'Agent d’accueil', contractType: 'CDI', city: 'Strasbourg', postalCode: '67000', description: DESC, accommodations: ['FLEXIBLE_HOURS'],
       applyMethod: 'url', applyTarget: 'https://employeur.example.test/x', publishedAt: null, moderatedBy: null, ...over };
@@ -57,7 +58,8 @@ describe.skipIf(!hasDatabase)('migration 0056: up → down → code without it �
   it('up: the table, its CHECKs, the cascading foreign key and the indexes exist; 0056 is the newest recorded; nothing seeded; no applicant or criterion column', async () => {
     expect(await tables()).toEqual({ j: true, x01: true, x02: true, x04: true }); expect(await journalRow()).toBe(1);
     const journal = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries;
-    expect(journal.at(-1)).toMatchObject({ idx: 56, tag: TAG }); expect(journal.at(-2).tag).toBe('0055_x01_community_stories'); expect(when).toBeGreaterThan(journal.at(-2).when);
+    const at = journal.findIndex((e) => e.tag === TAG);   // X03: 0057 comes after it now
+    expect(journal[at]).toMatchObject({ idx: 56, tag: TAG }); expect(journal[at - 1].tag).toBe('0055_x01_community_stories'); expect(when).toBeGreaterThan(journal[at - 1].when);
     expect(await q(`SELECT conname, confdeltype FROM pg_constraint WHERE conrelid = '"JobListing"'::regclass AND contype = 'f'`)).toEqual([{ conname: 'JobListing_structure_fkey', confdeltype: 'c' }]);
     expect((await q(`SELECT conname FROM pg_constraint WHERE conrelid = '"JobListing"'::regclass AND contype = 'c' ORDER BY 1`)).map((r) => r.conname)).toEqual([
       'JobListing_accommodations_check', 'JobListing_apply_check', 'JobListing_contract_check', 'JobListing_length_check', 'JobListing_postal_check',
@@ -100,7 +102,7 @@ describe.skipIf(!hasDatabase)('migration 0056: up → down → code without it �
     expect(await db.transaction((tx) => j.withdrawForClosedOrganization(tx, 'keep'))).toBe(0);
   });
 
-  it('up again applies 0056 only, on the rows as they are', async () => {
+  it('up again applies 0056 (and the later 0057) only, on the rows as they are', async () => {
     await up();
     expect(await tables()).toEqual({ j: true, x01: true, x02: true, x04: true }); expect(await journalRow()).toBe(1);
     expect((await q(`SELECT id FROM "Structure"`)).map((r) => r.id)).toEqual(['keep']);

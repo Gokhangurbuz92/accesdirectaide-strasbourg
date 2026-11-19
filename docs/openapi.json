@@ -969,6 +969,163 @@
         "responses": { "200": { "description": "Décision enregistrée" }, "400": { "description": "ID_REQUIRED, REASON_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "404": { "description": "NOT_FOUND" }, "409": { "description": "NOT_PENDING, NOT_PUBLISHED, STATE_CHANGED" }, "422": { "description": "APPROVAL_REFUSED (problems)" }, "503": { "description": "CAPABILITY_NOT_OPEN, JOBS_NOT_AVAILABLE" } }
       }
     },
+    "/citizen/entraide": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Entraide : ma participation, ou les offres anonymes (X03, fermé par défaut — AIPD dédiée obligatoire avant toute ouverture)",
+        "description": "Session citoyenne vérifiée. Sans ?view : { available, member, offers, sent, received, blocks, charterVersion, contactVersion, limits } — uniquement les lignes du compte ; le pseudonyme de l'autre personne et l'adresse qu'elle a choisi de montrer n'apparaissent que sur une demande acceptée des deux côtés. ?view=browse&category=&area= : offres ouvertes anonymes { id, category, area, note, createdOn, requested } filtrées par catégorie et secteur (listes fermées), de la plus récente à la plus ancienne — aucun pseudonyme, aucun score, aucune mise en relation automatique. Compte majeur, charte en vigueur, pseudonyme non suspendu.",
+        "parameters": [
+          {
+            "name": "view",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "browse"
+              ]
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "area",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ available, member, … } ou { items }"
+          },
+          "400": {
+            "description": "UNKNOWN_CATEGORY, UNKNOWN_AREA"
+          },
+          "401": {
+            "description": "Session requise"
+          },
+          "403": {
+            "description": "ADULT_ACCOUNT_REQUIRED, MEMBER_SUSPENDED"
+          },
+          "409": {
+            "description": "MEMBER_REQUIRED, CHARTER_UPDATE_REQUIRED"
+          },
+          "503": {
+            "description": "CAPABILITY_NOT_OPEN, ENTRAIDE_NOT_AVAILABLE"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Rejoindre, proposer, demander, accepter, communiquer une adresse, signaler, bloquer, quitter (X03, fermé par défaut)",
+        "description": "{ action: join, pseudonym, charter: true, charterVersion } — compte majeur, charte « projet » (ConsentLog ENTRAIDE_VOLUNTEER_CHARTER), pseudonyme choisi, différent de l'e-mail et du pseudonyme des histoires. { action: accept_charter }. { action: offer_create, category, area, note? } — listes fermées (aucune catégorie de santé, handicap, addiction, statut administratif, religion, sexualité ou origine), note ≤ 280 sans coordonnées, lien, téléphone ni argent ; 3 offres en cours, 3 par jour. { action: offer_pause | offer_reopen | offer_close, id }. { action: request_create, offerId, note? } — 3 en attente, 5 par jour. { action: request_accept | request_decline | request_end, id } — double accord : les pseudonymes n'apparaissent qu'après l'acceptation. { action: contact_share, requestId, email, consent: true, consentVersion } — demande acceptée seulement (ConsentLog ENTRAIDE_CONTACT_SHARE), révocable : { action: contact_revoke, requestId }. { action: report, offerId | requestId, reason } — liste fermée, une fois par personne, 5 par jour. { action: block, offerId | requestId } / { action: unblock, id }. { action: leave } — tout est effacé. Pas de messagerie.",
+        "responses": {
+          "200": {
+            "description": "Action enregistrée"
+          },
+          "201": {
+            "description": "Membre / offre / demande / adresse / signalement enregistré"
+          },
+          "400": {
+            "description": "CHARTER_REQUIRED, PSEUDONYM_*, UNKNOWN_CATEGORY, UNKNOWN_AREA, NOTE_TOO_LONG, CONTACT_OR_LINK_IN_TEXT, PHONE_IN_TEXT, MONEY_IN_NOTE, CONTACT_CONSENT_REQUIRED, EMAIL_INVALID, UNKNOWN_REASON, ID_REQUIRED, UNKNOWN_ACTION"
+          },
+          "401": {
+            "description": "Session requise"
+          },
+          "403": {
+            "description": "ADULT_ACCOUNT_REQUIRED, MEMBER_SUSPENDED"
+          },
+          "404": {
+            "description": "OFFER_NOT_FOUND, REQUEST_NOT_FOUND, NOT_SHARED, NOT_FOUND"
+          },
+          "409": {
+            "description": "MEMBER_REQUIRED, ALREADY_MEMBER, PSEUDONYM_TAKEN, CHARTER_UPDATE_REQUIRED, TOO_MANY_OFFERS, TOO_MANY_PENDING, ALREADY_REQUESTED, OWN_OFFER, NOT_PENDING, NOT_ACCEPTED, NOT_ACTIVE, ALREADY_SHARED, ALREADY_REPORTED"
+          },
+          "429": {
+            "description": "OFFER_LIMIT, REQUEST_LIMIT, REPORT_LIMIT"
+          },
+          "503": {
+            "description": "CAPABILITY_NOT_OPEN, ENTRAIDE_NOT_AVAILABLE"
+          }
+        }
+      }
+    },
+    "/admin/entraide": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Modération de l'entraide : pseudonymes signalés ou suspendus (X03, fermé par défaut)",
+        "description": "?queue=reported|suspended — pseudonyme, état, motif de suspension, mois d'adhésion, nombre de signalements par motif, offres ouvertes ; jamais le compte, son e-mail, l'identifiant du membre, l'auteur d'un signalement, les notes des demandes ni les adresses communiquées. Lecture : session administrateur nominative avec MFA, journalisée.",
+        "security": [
+          {
+            "AdminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "{ items }"
+          },
+          "400": {
+            "description": "BAD_QUEUE"
+          },
+          "401": {
+            "description": "Session administrateur requise"
+          },
+          "403": {
+            "description": "HUMAN_MFA_SESSION_REQUIRED"
+          },
+          "503": {
+            "description": "CAPABILITY_NOT_OPEN, ENTRAIDE_NOT_AVAILABLE"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Suspendre, réintégrer, classer les signalements, fermer une offre (X03)",
+        "description": "{ action: suspend, pseudonym, reason } — motif d'une liste fermée ; offres fermées, demandes en cours terminées, adresses communiquées effacées. { action: reinstate | dismiss_reports, pseudonym }. { action: close_offer, offerId, reason }. MFA ; chaque décision est journalisée.",
+        "security": [
+          {
+            "AdminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Décision enregistrée"
+          },
+          "400": {
+            "description": "ID_REQUIRED, REASON_REQUIRED, PSEUDONYM_REQUIRED, UNKNOWN_ACTION"
+          },
+          "403": {
+            "description": "HUMAN_MFA_SESSION_REQUIRED"
+          },
+          "404": {
+            "description": "NOT_FOUND"
+          },
+          "409": {
+            "description": "ALREADY_SUSPENDED, NOT_SUSPENDED, STATE_CHANGED"
+          },
+          "503": {
+            "description": "CAPABILITY_NOT_OPEN, ENTRAIDE_NOT_AVAILABLE"
+          }
+        }
+      }
+    },
     "/admin/stories": {
       "get": {
         "tags": ["Admin"],

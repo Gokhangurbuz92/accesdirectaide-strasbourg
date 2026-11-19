@@ -3338,3 +3338,120 @@ export const JobListing = pgTable('JobListing', {
 	'JobListing_published_check': check('JobListing_published_check', sql`${t.status} <> 'published' OR (${t.publishedAt} IS NOT NULL AND ${t.moderatedBy} IS NOT NULL)`),
 	'JobListing_reason_check': check('JobListing_reason_check', sql`${t.moderationReason} IS NULL OR ${t.moderationReason} IN ('DISCRIMINATORY_CRITERION', 'MISLEADING_OR_ENTITLEMENT', 'HEALTH_DATA_REQUESTED', 'APPLICATION_CHANNEL', 'NOT_A_JOB_OFFER', 'INCOMPLETE')`)
 }));
+
+/*
+ * X03 (expansion, migration 0057) — ENTRAIDE: peer support between adults, under a PSEUDONYMOUS principal of its own (EntraideMember — never the X01 story
+ * pseudonym, never the account). ⚠ A DEDICATED AIPD IS MANDATORY BEFORE ANY OPENING (matching people on their needs is a sensitive inference): capability
+ * « community.entraide » (outside the AIPD), surface « entraide » opened by nothing. Privacy by design: CLOSED lists of practical help categories (no health,
+ * disability, addiction, legal-status, religion, sexuality or ethnicity category) and of coarse areas (commune / quartier — never an address or a position); a
+ * short logistics note only (≤ 280, no contact, no link, no money); NO scoring and no automatic matching: a person browses anonymous offers and asks; the
+ * volunteer accepts; only then each side sees the other's pseudonym and MAY share an e-mail (explicit, revocable). No messaging. Everything is deleted with
+ * the member (leaving Entraide) and so with the account (cascade). Only writer: api/_services/entraide.js.
+ */
+export const EntraideMember = pgTable('EntraideMember', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	citizenUserId: text('citizenUserId').notNull(),
+	pseudonym: text('pseudonym').notNull(),
+	status: text('status').notNull().default('active'),
+	charterVersion: text('charterVersion').notNull(),
+	charterAcceptedAt: timestamp('charterAcceptedAt', { precision: 3 }).notNull(),
+	suspendedAt: timestamp('suspendedAt', { precision: 3 }),
+	suspensionReason: text('suspensionReason'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'EntraideMember_user_fkey': foreignKey({ name: 'EntraideMember_user_fkey', columns: [t.citizenUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideMember_user_key': uniqueIndex('EntraideMember_user_key').on(t.citizenUserId),
+	'EntraideMember_pseudonym_key': uniqueIndex('EntraideMember_pseudonym_key').on(sql`lower(${t.pseudonym})`),
+	'EntraideMember_pseudonym_check': check('EntraideMember_pseudonym_check', sql`char_length(${t.pseudonym}) BETWEEN 3 AND 24 AND ${t.pseudonym} !~ '[@[:space:]]'`),
+	'EntraideMember_status_check': check('EntraideMember_status_check', sql`(${t.status} = 'active' AND ${t.suspendedAt} IS NULL AND ${t.suspensionReason} IS NULL) OR (${t.status} = 'suspended' AND ${t.suspendedAt} IS NOT NULL AND ${t.suspensionReason} IS NOT NULL AND ${t.suspensionReason} IN ('HARASSMENT', 'MONEY_REQUEST', 'UNSAFE_BEHAVIOUR', 'INAPPROPRIATE_CONTENT', 'SENSITIVE_DATA', 'SPAM'))`)
+}));
+
+/** X03 (0057) — an offer of practical help by a member: a category and an area from closed lists, an optional logistics note (erased when it closes). */
+export const EntraideOffer = pgTable('EntraideOffer', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	memberId: text('memberId').notNull(),
+	category: text('category').notNull(),
+	area: text('area').notNull(),
+	note: text('note'),
+	status: text('status').notNull().default('open'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	closedAt: timestamp('closedAt', { precision: 3 }),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'EntraideOffer_member_fkey': foreignKey({ name: 'EntraideOffer_member_fkey', columns: [t.memberId], foreignColumns: [EntraideMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideOffer_member_idx': index('EntraideOffer_member_idx').on(t.memberId, t.createdAt),
+	'EntraideOffer_browse_idx': index('EntraideOffer_browse_idx').on(t.status, t.category, t.area),
+	'EntraideOffer_status_check': check('EntraideOffer_status_check', sql`${t.status} IN ('open', 'paused', 'closed')`),
+	'EntraideOffer_category_check': check('EntraideOffer_category_check', sql`${t.category} IN ('ADMIN_APPOINTMENT', 'SHOPPING', 'DIGITAL_HELP', 'FRENCH_CONVERSATION', 'PET_CARE', 'MOVING_HELP')`),
+	'EntraideOffer_area_check': check('EntraideOffer_area_check', sql`${t.area} IN ('STRASBOURG_CENTRE', 'STRASBOURG_GARE', 'STRASBOURG_KRUTENAU_ESPLANADE', 'STRASBOURG_ORANGERIE_CONSEIL_DES_XV', 'STRASBOURG_ROBERTSAU_WACKEN', 'STRASBOURG_CRONENBOURG', 'STRASBOURG_HAUTEPIERRE_POTERIES', 'STRASBOURG_KOENIGSHOFFEN_MONTAGNE_VERTE_ELSAU', 'STRASBOURG_MEINAU', 'STRASBOURG_NEUDORF_PORT_DU_RHIN', 'STRASBOURG_NEUHOF', 'SCHILTIGHEIM', 'BISCHHEIM', 'HOENHEIM', 'ILLKIRCH_GRAFFENSTADEN', 'LINGOLSHEIM', 'OSTWALD', 'AUTRE_EUROMETROPOLE')`),
+	'EntraideOffer_note_check': check('EntraideOffer_note_check', sql`(${t.note} IS NULL OR char_length(${t.note}) BETWEEN 1 AND 280) AND (${t.status} <> 'closed' OR (${t.note} IS NULL AND ${t.closedAt} IS NOT NULL))`)
+}));
+
+/**
+ * X03 (0057) — a request for help, sent by a member ON ONE OFFER (never a published need): an optional logistics note, the state of the double opt-in
+ * (pending → accepted by the volunteer, or declined / withdrawn / ended). The note exists only while pending or accepted. One active request per offer and person.
+ */
+export const EntraideRequest = pgTable('EntraideRequest', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	offerId: text('offerId').notNull(),
+	requesterId: text('requesterId').notNull(),
+	note: text('note'),
+	status: text('status').notNull().default('pending'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	decidedAt: timestamp('decidedAt', { precision: 3 }),
+	closedAt: timestamp('closedAt', { precision: 3 }),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'EntraideRequest_offer_fkey': foreignKey({ name: 'EntraideRequest_offer_fkey', columns: [t.offerId], foreignColumns: [EntraideOffer.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideRequest_requester_fkey': foreignKey({ name: 'EntraideRequest_requester_fkey', columns: [t.requesterId], foreignColumns: [EntraideMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideRequest_active_key': uniqueIndex('EntraideRequest_active_key').on(t.offerId, t.requesterId).where(sql`${t.status} IN ('pending', 'accepted')`),
+	'EntraideRequest_requester_idx': index('EntraideRequest_requester_idx').on(t.requesterId, t.createdAt),
+	'EntraideRequest_status_check': check('EntraideRequest_status_check', sql`${t.status} IN ('pending', 'accepted', 'declined', 'withdrawn', 'ended')`),
+	'EntraideRequest_note_check': check('EntraideRequest_note_check', sql`(${t.note} IS NULL OR char_length(${t.note}) BETWEEN 1 AND 280) AND (${t.note} IS NULL OR ${t.status} IN ('pending', 'accepted'))`)
+}));
+
+/** X03 (0057) — the e-mail ONE side chose to show to the other on an ACCEPTED request (explicit, revocable: revoking deletes the row; ending the request too). */
+export const EntraideContactShare = pgTable('EntraideContactShare', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	requestId: text('requestId').notNull(),
+	memberId: text('memberId').notNull(),
+	email: text('email').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'EntraideContactShare_request_fkey': foreignKey({ name: 'EntraideContactShare_request_fkey', columns: [t.requestId], foreignColumns: [EntraideRequest.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideContactShare_member_fkey': foreignKey({ name: 'EntraideContactShare_member_fkey', columns: [t.memberId], foreignColumns: [EntraideMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideContactShare_once_key': uniqueIndex('EntraideContactShare_once_key').on(t.requestId, t.memberId),
+	'EntraideContactShare_email_check': check('EntraideContactShare_email_check', sql`char_length(${t.email}) BETWEEN 6 AND 254 AND ${t.email} ~ '^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$'`)
+}));
+
+/** X03 (0057) — a report of one member about another (reason from a closed list, no free text), once per pair; the moderator sees counts, never who. */
+export const EntraideReport = pgTable('EntraideReport', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	reporterId: text('reporterId').notNull(),
+	targetId: text('targetId').notNull(),
+	reason: text('reason').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'EntraideReport_reporter_fkey': foreignKey({ name: 'EntraideReport_reporter_fkey', columns: [t.reporterId], foreignColumns: [EntraideMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideReport_target_fkey': foreignKey({ name: 'EntraideReport_target_fkey', columns: [t.targetId], foreignColumns: [EntraideMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideReport_once_key': uniqueIndex('EntraideReport_once_key').on(t.reporterId, t.targetId),
+	'EntraideReport_target_idx': index('EntraideReport_target_idx').on(t.targetId),
+	'EntraideReport_reporter_idx': index('EntraideReport_reporter_idx').on(t.reporterId, t.createdAt),
+	'EntraideReport_reason_check': check('EntraideReport_reason_check', sql`${t.reason} IN ('HARASSMENT', 'MONEY_REQUEST', 'UNSAFE_BEHAVIOUR', 'INAPPROPRIATE_CONTENT', 'SENSITIVE_DATA', 'SPAM')`),
+	'EntraideReport_self_check': check('EntraideReport_self_check', sql`${t.reporterId} <> ${t.targetId}`)
+}));
+
+/** X03 (0057) — a block: the two members no longer see each other's offers and cannot ask each other; active requests between them end. */
+export const EntraideBlock = pgTable('EntraideBlock', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	blockerId: text('blockerId').notNull(),
+	blockedId: text('blockedId').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'EntraideBlock_blocker_fkey': foreignKey({ name: 'EntraideBlock_blocker_fkey', columns: [t.blockerId], foreignColumns: [EntraideMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideBlock_blocked_fkey': foreignKey({ name: 'EntraideBlock_blocked_fkey', columns: [t.blockedId], foreignColumns: [EntraideMember.id] }).onDelete('cascade').onUpdate('cascade'),
+	'EntraideBlock_pair_key': uniqueIndex('EntraideBlock_pair_key').on(t.blockerId, t.blockedId),
+	'EntraideBlock_blocked_idx': index('EntraideBlock_blocked_idx').on(t.blockedId),
+	'EntraideBlock_self_check': check('EntraideBlock_self_check', sql`${t.blockerId} <> ${t.blockedId}`)
+}));

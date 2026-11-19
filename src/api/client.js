@@ -260,6 +260,10 @@ export const apiClient = {
         listJobListings: function (queue) { return apiRequest('/api/admin/employment?queue=' + encodeURIComponent(queue || 'pending')); },
         /** @param {Record<string, unknown>} body { action: approve|reject|takedown, id, reason? } */
         jobListingAction: function (body) { return apiRequest('/api/admin/employment', { method: 'POST', body: body }); },
+        /** X03 (expansion) — Entraide moderation (closed by default: 503 CAPABILITY_NOT_OPEN; dedicated AIPD first). @param {string} queue reported | suspended */
+        listEntraide: function (queue) { return apiRequest('/api/admin/entraide?queue=' + encodeURIComponent(queue || 'reported')); },
+        /** @param {Record<string, unknown>} body { action: suspend|reinstate|dismiss_reports|close_offer, pseudonym?, offerId?, reason? } */
+        entraideAction: function (body) { return apiRequest('/api/admin/entraide', { method: 'POST', body: body }); },
         /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q @param {string=} decision never | hold | rejected | verified */
         getOrganizations: function (q, decision) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '') + (decision ? '&decision=' + encodeURIComponent(decision) : '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */

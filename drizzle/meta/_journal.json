@@ -400,6 +400,13 @@
       "when": 1794980000000,
       "tag": "0056_x05_job_board",
       "breakpoints": true
+    },
+    {
+      "idx": 57,
+      "version": "7",
+      "when": 1794990000000,
+      "tag": "0057_x03_entraide",
+      "breakpoints": true
     }
   ]
 }

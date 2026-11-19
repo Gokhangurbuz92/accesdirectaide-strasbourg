@@ -104,6 +104,10 @@ export const SURFACES = {
   // deployment: it needs this name in ADA_BETA_OPEN_SURFACES AND « community.employment » in ADA_CAPABILITIES_OPEN (outside the AIPD until its line is
   // signed). Longer prefixes than « pro » / « admin »: opening pro or admin does not open them (and the employer side needs « pro » open to sign in).
   employment: ['employment', 'pro/employment', 'admin/employment'],
+  // X03 (expansion, 19/11/2026): Entraide — the member side and the moderation. Opened by NO deployment: it needs this name in ADA_BETA_OPEN_SURFACES AND
+  // « community.entraide » in ADA_CAPABILITIES_OPEN — and, before either, a DEDICATED AIPD signed by the controller (sensitive inference). Longer prefixes
+  // than « citizen » / « admin »: opening accounts or admin does not open them. No public (anonymous) route exists.
+  entraide: ['citizen/entraide', 'admin/entraide'],
 };
 /** surfaces that ADA_BETA_OPEN_SURFACES never opens (R40 / G2) */
 export const NOT_OPENABLE = Object.freeze(['jobs']);
