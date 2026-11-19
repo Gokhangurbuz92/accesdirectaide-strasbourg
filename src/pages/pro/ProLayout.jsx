@@ -17,6 +17,8 @@ import ServiceUnavailable from '@/components/ServiceUnavailable';
 import { useProLabels } from '@/lib/proLabelsI18n';
 import ProSessionExpiry from '@/components/pro/ProSessionExpiry';
 import { useT } from '@/i18n';
+import { moduleOfScreen, moduleOpen } from '@/lib/proModules';
+import { NotYetOpenNotice, NotYetOpenBadge } from '@/components/pro/NotYetOpen';
 
 export default function ProLayout() {
     const { t } = useT('pro');
@@ -26,6 +28,7 @@ export default function ProLayout() {
     const heading = useMainHeadingText(location.pathname);   // FA-D4 (RGAA 8.6): each screen's own title, from its h1, unless the page sets one
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState(null);
+    const [modules, setModules] = useState(null);   // G3: the console modules the server serves (/api/pro/me `modules`); null = unknown = all shown
     const [showOnboarding, setShowOnboarding] = useState(false);
     const [unavailable, setUnavailable] = useState(false);   // Q10: the session could not be checked (outage)
     const [menuOpen, setMenuOpen] = useState(false);   // PKG-9 / M04: phone navigation (before: no navigation at all below md)
@@ -62,6 +65,7 @@ export default function ProLayout() {
             .then(data => {
                 if (!current) return;
                 setUser(data.user);
+                setModules(data.modules && typeof data.modules === 'object' ? data.modules : null);
                 // R34: where ADA Pro requires the second factor (production), a password-only session can only set it up — every other route refuses it
                 if (data.session?.mfaRequired && !data.session.mfa && location.pathname !== '/pro/mfa-settings') {
                     navigate('/pro/mfa-settings', { replace: true, state: { mfaRequired: true } });
@@ -147,7 +151,7 @@ export default function ProLayout() {
                     {user && <NotificationCenter proId={user.id} />}
                 </div>
                 <nav className="flex-1 p-4 space-y-1" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')}>
-                    <ProNavItems role={user?.role} unreadMessages={unreadMessages} />
+                    <ProNavItems role={user?.role} unreadMessages={unreadMessages} modules={modules} />
                 </nav>
                 <div className="p-4 border-t border-slate-200">
                     <div className="mb-4">
@@ -186,12 +190,13 @@ export default function ProLayout() {
                 </header>
                 {menuOpen && (
                     <nav id="pro-mobile-nav" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')} className="md:hidden border-b border-slate-200 bg-white p-3 space-y-1" data-testid="pro-mobile-nav">
-                        <ProNavItems role={user?.role} unreadMessages={unreadMessages} />
+                        <ProNavItems role={user?.role} unreadMessages={unreadMessages} modules={modules} />
                     </nav>
                 )}
                 <div className="p-4 md:p-8">
                     <ProBreadcrumb />
-                    <Outlet context={{ user }} />
+                    {/* G3: a screen of a module the server does not serve says « pas encore ouvert » (not an outage) and is not loaded */}
+                    {moduleOpen(modules, moduleOfScreen(location.pathname)) ? <Outlet context={{ user, modules }} /> : <NotYetOpenNotice />}
                 </div>
             </main>
         </div>
@@ -199,24 +204,30 @@ export default function ProLayout() {
 }
 
 /** The navigation entries, shared by the desktop sidebar and the phone menu. */
-function ProNavItems({ role, unreadMessages = null }) {
+function ProNavItems({ role, unreadMessages = null, modules = null }) {
     const { t } = useT('pro');
+    // G3: an entry of a module the server does not serve is shown as text marked « pas encore ouvert » (no link); the agenda's sub-entries are left out
+    const open = (/** @type {string} */ m) => moduleOpen(modules, m);
     return (
         <>
             <NavLink to="/pro/dashboard" icon={LayoutDashboard}>{t('pro:layout.tableau_bord', 'Tableau de bord')}</NavLink>
-            <NavLink to="/pro/dossiers" icon={FileText}>{t('pro:layout.dossiers_suivis', 'Dossiers suivis')}</NavLink>
+            <ModuleNavLink modules={modules} module="cases" to="/pro/dossiers" icon={FileText}>{t('pro:layout.dossiers_suivis', 'Dossiers suivis')}</ModuleNavLink>
             {/* R18 (R31): working baskets of verified aides, démarches and lieux */}
-            <NavLink to="/pro/selections" icon={ListChecks}>{t('pro:layout.selections_orientation', 'Sélections d’orientation')}</NavLink>
-            <NavLink to="/pro/orientations" icon={Users}>{t('pro:layout.orientations', 'Orientations')}</NavLink>
-            <NavLink to="/pro/rdv/agenda" icon={CalendarDays}>{t('pro:layout.agenda_rdv', 'Agenda RDV')}</NavLink>
-            <NavLink to="/pro/rdv/new" icon={FileText}>{t('pro:layout.nouveau_rdv', 'Nouveau RDV')}</NavLink>
-            <NavLink to="/pro/rdv/services" icon={FileText}>{t('pro:layout.services_rdv', 'Services RDV')}</NavLink>
-            <NavLink to="/pro/rdv/disponibilites" icon={Clock3}>{t('pro:layout.disponibilites', 'Disponibilités')}</NavLink>
-            <NavLink to="/pro/rdv/absences" icon={Clock3}>{t('pro:layout.absences', 'Absences')}</NavLink>
+            <ModuleNavLink modules={modules} module="selections" to="/pro/selections" icon={ListChecks}>{t('pro:layout.selections_orientation', 'Sélections d’orientation')}</ModuleNavLink>
+            <ModuleNavLink modules={modules} module="referrals" to="/pro/orientations" icon={Users}>{t('pro:layout.orientations', 'Orientations')}</ModuleNavLink>
+            <ModuleNavLink modules={modules} module="agenda" to="/pro/rdv/agenda" icon={CalendarDays}>{t('pro:layout.agenda_rdv', 'Agenda RDV')}</ModuleNavLink>
+            {open('agenda') ? (
+                <>
+                    <NavLink to="/pro/rdv/new" icon={FileText}>{t('pro:layout.nouveau_rdv', 'Nouveau RDV')}</NavLink>
+                    <NavLink to="/pro/rdv/services" icon={FileText}>{t('pro:layout.services_rdv', 'Services RDV')}</NavLink>
+                    <NavLink to="/pro/rdv/disponibilites" icon={Clock3}>{t('pro:layout.disponibilites', 'Disponibilités')}</NavLink>
+                    <NavLink to="/pro/rdv/absences" icon={Clock3}>{t('pro:layout.absences', 'Absences')}</NavLink>
+                </>
+            ) : null}
             {/* B02: the member's unread conversations (a number only when the database keeps read markers) */}
-            <NavLink to="/pro/messages" icon={MessageCircle} badge={unreadMessages} badgeLabel={unreadMessages ? t('pro:layout.messages_unread', 'Messages, non lus : {{count}}', { count: unreadMessages }) : undefined}>{t('pro:layout.messages', 'Messages')}</NavLink>
+            <ModuleNavLink modules={modules} module="messages" to="/pro/messages" icon={MessageCircle} badge={unreadMessages} badgeLabel={unreadMessages ? t('pro:layout.messages_unread', 'Messages, non lus : {{count}}', { count: unreadMessages }) : undefined}>{t('pro:layout.messages', 'Messages')}</ModuleNavLink>
             {/* R20: the territorial observatory (k-anonymous aggregates over verified organizations, ANONYMITY_REVIEW) was reachable only by its address */}
-            <NavLink to="/pro/regional" icon={Globe}>{t('pro:layout.observatoire_territorial', 'Observatoire territorial')}</NavLink>
+            <ModuleNavLink modules={modules} module="regional" to="/pro/regional" icon={Globe}>{t('pro:layout.observatoire_territorial', 'Observatoire territorial')}</ModuleNavLink>
             {/* owner usefulness pass (2026-10-25): the video room opens from each video appointment (its page); /pro/visio was a « bientôt disponible » page */}
             {role === 'STRUCTURE_ADMIN' || role === 'SUPERADMIN' ? (
                 <>
@@ -229,6 +240,24 @@ function ProNavItems({ role, unreadMessages = null }) {
             {/* Paramètres (notifications, MFA) was only in the phone menu: unreachable on a computer */}
             <NavLink to="/pro/parametres" icon={Settings}>{t('pro:layout.parametres', 'Paramètres')}</NavLink>
         </>
+    );
+}
+
+/** G3: the entry of a module — a link when the server serves it, else a closed entry */
+// @ts-ignore
+function ModuleNavLink({ modules, module, ...props }) {
+    return moduleOpen(modules, module) ? <NavLink {...props} /> : <ClosedNavItem icon={props.icon}>{props.children}</ClosedNavItem>;
+}
+
+/** G3: a closed module's entry — not a link, marked « pas encore ouvert » */
+// @ts-ignore
+function ClosedNavItem({ icon: Icon, children }) {
+    return (
+        <p className="flex min-h-11 items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-slate-600" data-testid="pro-nav-closed">
+            <Icon className="h-5 w-5" aria-hidden="true" />
+            {children}
+            <NotYetOpenBadge />
+        </p>
     );
 }
 

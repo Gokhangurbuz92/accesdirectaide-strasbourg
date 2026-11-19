@@ -24,7 +24,7 @@ describe.skipIf(!hasDatabase)('R20 invitations follow their sender (real DB)', (
   const call = async (h, req) => { const r = mk(); await h({ query: {}, socket: {}, ...req }, r); return r; };
   const invite = (u, email) => call(H.invite, { method: 'POST', url: '/api/pro/invite', body: { email, role: 'PRO' }, headers: hdr(u) });
   const check = (token) => call(H.register, { method: 'GET', url: `/api/pro/auth/register-invite?token=${encodeURIComponent(token)}`, headers: { host: 'localhost' } });
-  const redeem = (token) => call(H.register, { method: 'POST', url: '/api/pro/auth/register-invite', body: { token, password: PASSWORD }, headers: { host: 'localhost' } });
+  const redeem = (token) => call(H.register, { method: 'POST', url: '/api/pro/auth/register-invite', body: { token, password: PASSWORD, termsAccepted: true }, headers: { host: 'localhost' } });
   const tokenFromMail = (to) => { const m = mailer.__getTestOutbox().filter((x) => x.to === to).pop(); expect(m, 'invitation e-mail handed to the mailer').toBeTruthy(); return new URL(m.text.match(/https?:\/\/\S+/)[0]).searchParams.get('token'); };
   const invId = async (email) => (await db.execute(sql`SELECT id FROM "Invitation" WHERE email = ${email}`)).rows[0].id;
   const accounts = async (email) => (await db.execute(sql`SELECT count(*)::int n FROM "ProUser" WHERE email = ${email}`)).rows[0].n;

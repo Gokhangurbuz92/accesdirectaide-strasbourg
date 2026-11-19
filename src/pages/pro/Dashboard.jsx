@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useProLabels } from '@/lib/proLabelsI18n';
 import { formatDate, useT } from '@/i18n';
+import { isNotOpenRefusal, moduleOpen } from '@/lib/proModules';
+import { NotYetOpenBadge } from '@/components/pro/NotYetOpen';
 
 /**
  * ProDashboard — Hub central de l'Espace Professionnel
@@ -33,7 +35,10 @@ import { formatDate, useT } from '@/i18n';
 export default function ProDashboard() {
     const { t } = useT('pro');
     const { proRole } = useProLabels();
-    const { user } = useOutletContext();
+    const { user, modules } = useOutletContext();
+    // G3: the modules this deployment serves (from /api/pro/me) — a closed one is said « pas encore ouvert » and not requested (no 503 shown as an outage)
+    const casesOpen = moduleOpen(modules, 'cases'); const referralsOpen = moduleOpen(modules, 'referrals'); const agendaOpen = moduleOpen(modules, 'agenda');
+    const outlookOpen = moduleOpen(modules, 'outlook'); const videoOpen = moduleOpen(modules, 'video'); const messagesOpen = moduleOpen(modules, 'messages');
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [appointments, setAppointments] = useState([]);
@@ -44,18 +49,19 @@ export default function ProDashboard() {
     // PKG-11 audit pass 2: the Outlook state comes from the server (it used to follow any ?outlook=connected in the address)
     const [outlook, setOutlook] = useState({ status: 'unknown', message: '' });
     const outlookConnected = outlook.status === 'connected';
-    const outlookOff = ['not_configured', 'disabled'].includes(outlook.status);
+    const outlookOff = ['not_configured', 'disabled', 'not_open'].includes(outlook.status);
     // PKG-4 / R03: the work queue (the same server rules as the Dossiers suivis / Orientations screens; counts only, no dossier content)
-    const [queue, setQueue] = useState({ loading: true, error: '', mine: null, unassigned: null, toHandle: null, overdue: null });
+    const [queue, setQueue] = useState({ loading: true, error: '', notOpen: false, mine: null, unassigned: null, toHandle: null, overdue: null });
     useEffect(() => {
         let alive = true;
-        Promise.all([proRdvRequest('/api/pro/cases', { query: { scope: 'mine' } }), proRdvRequest('/api/pro/referrals', { query: { box: 'inbox' } })])
+        if (!casesOpen && !referralsOpen) { setQueue((q) => ({ ...q, loading: false, notOpen: true })); return () => { alive = false; }; }
+        Promise.all([casesOpen ? proRdvRequest('/api/pro/cases', { query: { scope: 'mine' } }) : null, referralsOpen ? proRdvRequest('/api/pro/referrals', { query: { box: 'inbox' } }) : null])
             .then(([cases, refs]) => {
                 if (!alive) return;
-                const open = (refs.referrals || []).filter((r) => ['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO'].includes(r.status));
-                setQueue({ loading: false, error: '', mine: cases.counts?.mine ?? 0, unassigned: cases.counts?.unassigned ?? 0, toHandle: open.length, overdue: open.filter((r) => r.overdue).length });
+                const open = (refs?.referrals || []).filter((r) => ['SENT', 'ACKNOWLEDGED', 'NEEDS_INFO'].includes(r.status));
+                setQueue({ loading: false, error: '', notOpen: false, mine: cases?.counts?.mine ?? 0, unassigned: cases?.counts?.unassigned ?? 0, toHandle: open.length, overdue: open.filter((r) => r.overdue).length });
             })
-            .catch((e) => alive && setQueue((q) => ({ ...q, loading: false,
+            .catch((e) => alive && setQueue((q) => (isNotOpenRefusal(e) ? { ...q, loading: false, notOpen: true } : { ...q, loading: false,
                 // R18: an organization not (or no longer) activated by ADA has no work queue yet — said as such, not as an outage
                 error: e?.status === 403 ? t('pro:dashboard.queue_inactive', 'La file de travail s’ouvrira quand ADA aura activé votre structure (voir « Ma structure »).') : t('pro:dashboard.queue_unavailable', 'File de travail indisponible.') })));
         return () => { alive = false; };
@@ -63,11 +69,12 @@ export default function ProDashboard() {
 
     useEffect(() => {
         let alive = true;
+        if (!outlookOpen) { setOutlook({ status: 'not_open', message: '' }); return undefined; }
         proRdvRequest('/api/pro/outlook', { query: { action: 'status' } })
             .then((d) => { if (alive) setOutlook({ status: d?.ok === false ? (d.status || 'not_configured') : (d?.status || 'not_connected'), message: d?.message || '' }); })
             .catch(() => { if (alive) setOutlook({ status: 'unknown', message: '' }); });
         return () => { alive = false; };
-    }, [searchParams]);
+    }, [searchParams, outlookOpen]);
 
     const fetchDashboardData = useCallback(async () => {
         setLoading(true);
@@ -79,7 +86,7 @@ export default function ProDashboard() {
             // owner usefulness pass (2026-10-25): « à venir » = from now on, every active status (citizen bookings are 'confirmed', structure-created ones
             // 'booked'); the query asked for 'booked' only, oldest first and with no date, so citizen bookings never showed and past ones counted as « à venir »
             const [apptRes, teamRes, structRes] = await Promise.allSettled([
-                fetch(`/api/pro/appointments?limit=20&from=${encodeURIComponent(new Date().toISOString())}`, { headers }),
+                agendaOpen ? fetch(`/api/pro/appointments?limit=20&from=${encodeURIComponent(new Date().toISOString())}`, { headers }) : Promise.reject(new Error('not open')),
                 fetch('/api/pro/team?limit=50', { headers }),
                 fetch('/api/pro/structure', { headers }),
             ]);
@@ -103,7 +110,7 @@ export default function ProDashboard() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [agendaOpen]);
 
     useEffect(() => {
         fetchDashboardData();
@@ -131,9 +138,11 @@ export default function ProDashboard() {
             {/* PKG-4 / R03: work queue */}
             <section aria-labelledby="pro-queue-title" data-testid="pro-dashboard-queue" className="order-first">
                 <h2 id="pro-queue-title" className="sr-only">{t('pro:dashboard.file_travail', 'File de travail')}</h2>
-                {queue.error ? <p role="alert" className="text-sm text-red-800">{queue.error}</p> : (
+                {queue.notOpen ? (
+                    <p className="text-sm text-slate-800" data-testid="pro-queue-not-open">{t('pro:dashboard.queue_not_open', 'Dossiers suivis et orientations : pas encore ouverts. Ils le seront lorsque leur cadre de protection des données (et un hébergement certifié des données de santé) sera en place.')}</p>
+                ) : queue.error ? <p role="alert" className="text-sm text-red-800">{queue.error}</p> : (
                     <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                        {[['mine', t('pro:dashboard.q_mine', 'Mes dossiers'), '/pro/dossiers'], ['unassigned', t('pro:dashboard.q_unassigned', 'Dossiers à attribuer'), '/pro/dossiers'], ['toHandle', t('pro:dashboard.q_to_handle', 'Orientations à traiter'), '/pro/orientations'], ['overdue', t('pro:dashboard.q_overdue', 'Orientations en retard'), '/pro/orientations']].map(([k, label, to]) => (
+                        {[['mine', t('pro:dashboard.q_mine', 'Mes dossiers'), '/pro/dossiers', casesOpen], ['unassigned', t('pro:dashboard.q_unassigned', 'Dossiers à attribuer'), '/pro/dossiers', casesOpen], ['toHandle', t('pro:dashboard.q_to_handle', 'Orientations à traiter'), '/pro/orientations', referralsOpen], ['overdue', t('pro:dashboard.q_overdue', 'Orientations en retard'), '/pro/orientations', referralsOpen]].filter((x) => x[3]).map(([k, label, to]) => (
                             <li key={k}><Link to={to} data-testid={`pro-queue-${k}`} className="block rounded-lg border border-slate-200 bg-white p-3 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-600">
                                 <span className="block text-xs text-slate-600">{label}</span>
                                 <span className="text-2xl font-bold text-slate-900" data-testid={`pro-queue-${k}-value`}>{queue.loading ? '…' : queue[k]}</span>
@@ -152,6 +161,7 @@ export default function ProDashboard() {
                         {t('pro:dashboard.welcome', 'Bienvenue, {{email}}', { email: user?.email })}
                     </p>
                 </div>
+                {agendaOpen ? (
                 <div className="flex gap-3">
                     <Button
                         variant="outline"
@@ -171,6 +181,7 @@ export default function ProDashboard() {
                         {outlookConnected ? t('pro:dashboard.outlook_connected', 'Outlook connecté') : outlookOff ? t('pro:dashboard.outlook_pending', 'Outlook (pas encore activé)') : t('pro:dashboard.outlook_connect', 'Connecter Outlook')}
                     </Button>
                 </div>
+                ) : null}
             </div>
 
             {/* Outlook success banner */}
@@ -191,8 +202,12 @@ export default function ProDashboard() {
                         <Calendar className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">{appointments.length}</div>
-                        <p className="text-xs text-muted-foreground">{t('pro:dashboard.venir', 'À venir')}</p>
+                        {agendaOpen ? (
+                            <>
+                                <div className="text-2xl font-bold">{appointments.length}</div>
+                                <p className="text-xs text-muted-foreground">{t('pro:dashboard.venir', 'À venir')}</p>
+                            </>
+                        ) : <NotYetOpenBadge />}
                     </CardContent>
                 </Card>
                 <Card>
@@ -225,6 +240,7 @@ export default function ProDashboard() {
                         <Video className="h-4 w-4 text-indigo-500" />
                     </CardHeader>
                     <CardContent>
+                        {videoOpen ? (
                         <Button
                             size="sm"
                             variant="outline"
@@ -233,6 +249,7 @@ export default function ProDashboard() {
                         >
                             <Video className="me-2 h-3 w-3" /> {t('pro:dashboard.comment_fonctionne_visio', 'Comment fonctionne la visio')}
                         </Button>
+                        ) : <NotYetOpenBadge />}
                     </CardContent>
                 </Card>
             </div>
@@ -254,7 +271,13 @@ export default function ProDashboard() {
                         </Link>
                     </div>
 
-                    {loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : appointments.length === 0 ? (
+                    {!agendaOpen ? (
+                        <Card className="border-dashed" data-testid="pro-dashboard-agenda-not-open">
+                            <CardContent className="py-8 text-center text-sm text-slate-800">
+                                {t('pro:dashboard.agenda_not_open', 'Les rendez-vous ne sont pas encore ouverts sur l’espace professionnel.')}
+                            </CardContent>
+                        </Card>
+                    ) : loading ? <div className="p-6"><SkeletonList count={3} variant="card" /></div> : appointments.length === 0 ? (
                         <Card className="border-dashed">
                             <CardContent className="flex flex-col items-center justify-center py-12 text-center">
                                 <Calendar className="text-slate-300 mb-4" size={40} />
@@ -386,8 +409,8 @@ export default function ProDashboard() {
                         </CardContent>
                     </Card>
 
-                    {/* Messages shortcut */}
-                    <Card className="cursor-pointer hover:border-indigo-200 transition-colors" onClick={() => navigate('/pro/messages')}>
+                    {/* Messages shortcut (G3: not offered while messaging is not open) */}
+                    <Card className={messagesOpen ? 'cursor-pointer hover:border-indigo-200 transition-colors' : ''} onClick={messagesOpen ? () => navigate('/pro/messages') : undefined} data-testid="pro-dashboard-messages">
                         <CardContent className="flex items-center gap-3 p-4">
                             <div className="p-2 bg-indigo-50 rounded-lg">
                                 <MessageCircle className="text-indigo-600" size={18} />
@@ -400,7 +423,7 @@ export default function ProDashboard() {
                                     {t('pro:dashboard.messages_chiffres_enregistrement', 'Messages chiffrés à l’enregistrement')}
                                 </p>
                             </div>
-                            <ChevronRight className="ms-auto text-slate-300 rtl:-scale-x-100" size={16} />
+                            {messagesOpen ? <ChevronRight className="ms-auto text-slate-300 rtl:-scale-x-100" size={16} /> : <NotYetOpenBadge />}
                         </CardContent>
                     </Card>
 

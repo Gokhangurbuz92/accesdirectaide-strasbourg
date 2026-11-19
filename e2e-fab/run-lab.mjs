@@ -11,12 +11,16 @@
  *        FAB_PORT_PROD  (5212) the PRODUCTION configuration of today: restricted beta, only « admin » open (ADA_BETA_OPEN_SURFACES=admin), no capability
  *                              named, no HDS attestation — the closed-surface refusals are asserted HERE (« the gate holds » is the capability test);
  *        FAB_PORT_TWIN  (5213) a second instance of the open configuration on the same database and secrets (Q11 multi-instance);
+ *        FAB_PORT_PRO   (5216) G3 « pro open + every out-of-AIPD / HDS capability closed »: the Production configuration plus the accounts and pro surfaces
+ *                              (ADA_BETA_OPEN_SURFACES=admin,accounts,pro), no capability named, no HDS attestation, the second factor required
+ *                              (PRO_MFA_REQUIRED=true, as VERCEL_ENV=production does), its own build (VITE_PUBLIC_BETA_OPEN_SURFACES=admin,accounts,pro) —
+ *                              the partial ADA Pro opening of SD Track 2/3 (e2e-fab/pro-partial.pw.mjs);
  *   4. runs the Playwright suite e2e-fab/*.pw.mjs (one file per surface).
  * Fresh random secrets per run (never printed, never written to the tree). MAILER_PROVIDER=test (in-memory outbox, nothing delivered). The application's
  * API is never mocked.
  * One command (fresh database created, both builds made, ~4 min):
  *   FAB_CREATE_DB=1 DATABASE_URL=postgres://ada_test@127.0.0.1:55434/ada_fab_test node --import tsx e2e-fab/run-lab.mjs [-- <playwright args>]
- * (FAB_DIST / FAB_DIST_PROD reuse existing builds; FAB_LOG_DIR keeps the server logs; FAB_REPORT writes the JSON report.)
+ * (FAB_DIST / FAB_DIST_PROD / FAB_DIST_PRO reuse existing builds; FAB_LOG_DIR keeps the server logs; FAB_REPORT writes the JSON report.)
  */
 import { spawn, spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
@@ -28,7 +32,8 @@ import { fileURLToPath } from 'node:url';
 const t0 = Date.now();
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PORT = Number(process.env.FAB_PORT || 5211), PORT_PROD = Number(process.env.FAB_PORT_PROD || 5212), PORT_TWIN = Number(process.env.FAB_PORT_TWIN || 5213);
-if ([PORT, PORT_PROD, PORT_TWIN].includes(3000)) throw new Error('port 3000 is the owner LAB');
+const PORT_PRO = Number(process.env.FAB_PORT_PRO || 5216);
+if ([PORT, PORT_PROD, PORT_TWIN, PORT_PRO].includes(3000)) throw new Error('port 3000 is the owner LAB');
 const dbUrl = new URL(process.env.DATABASE_URL || 'postgres://none/none');
 if (!['127.0.0.1', 'localhost'].includes(dbUrl.hostname) || !dbUrl.pathname.endsWith('_test')) throw new Error('local *_test database only');
 const pwArgs = process.argv.includes('--') ? process.argv.slice(process.argv.indexOf('--') + 1) : [];
@@ -45,6 +50,8 @@ function build(dir, extra) {
 }
 const DIST = build(path.resolve(process.env.FAB_DIST || path.join(tmp, 'dist-open')), {});
 const DIST_PROD = build(path.resolve(process.env.FAB_DIST_PROD || path.join(tmp, 'dist-prod')), { VITE_PUBLIC_BETA: 'true', VITE_PUBLIC_BETA_OPEN_SURFACES: 'admin', VITE_VERCEL_ENV: 'production' });
+// G3: the build of the partial pro opening (the screens of accounts and pro are served; the console reads the open modules from /api/pro/me)
+const DIST_PRO = build(path.resolve(process.env.FAB_DIST_PRO || path.join(tmp, 'dist-pro')), { VITE_PUBLIC_BETA: 'true', VITE_PUBLIC_BETA_OPEN_SURFACES: 'admin,accounts,pro', VITE_VERCEL_ENV: 'production' });
 console.log(`builds ready (${Math.round((Date.now() - t0) / 1000)} s)`);
 
 // FAB_CREATE_DB=1: (re)create the named loopback *_test database with the extensions the schema needs (one-command run)
@@ -118,6 +125,8 @@ const PROD_ENV = { ADA_BETA_OPEN_SURFACES: 'admin',
   // the jobs Production opens (names only, MASTER_CHECKPOINT 15/11: health-alert, actualites, ingest-structures, veille, gdpr-purge; gdpr-purge approved,
   // GDPR_PURGE_ENABLED unset) — the suite calls only health-alert and gdpr-purge (no network); the deployed commit as Vercel gives it (Q08)
   ADA_BETA_OPEN_JOBS: 'health-alert,actualites,ingest-structures,veille,gdpr-purge', ADA_JOBS_APPROVED: 'gdpr-purge', VERCEL_GIT_COMMIT_SHA: HEAD_SHA };
+/** G3: « pro open + every out-of-AIPD / HDS capability closed » — Production plus accounts and pro, nothing named, no HDS, the second factor required */
+const PRO_ONLY_ENV = { ...PROD_ENV, ADA_BETA_OPEN_SURFACES: 'admin,accounts,pro', PRO_MFA_REQUIRED: 'true' };
 const creds = path.join(tmp, 'creds.json');
 const { seed } = await import('../e2e-fa1/seed.mjs');
 const seeded = await seed(process.env.DATABASE_URL);
@@ -145,6 +154,8 @@ for (const [k, p] of Object.entries(seeded.pros)) tokens[`pro_${k}`] = signProTo
   const { PROS } = await import('../scripts/lab/seed-cdgg-conseil.mjs');
   for (const [k, p] of Object.entries(PROS)) tokens[`cdgg_${k}`] = signProToken({ id: p.id, email: p.email, structureId: p.sid, role: p.role });
 }
+// G3: the platform operator of the partial-opening spec (its ProUser row is written by e2e-fab/pro-partial.pw.mjs), session with the second factor
+tokens.g3_op = signProToken({ id: 'fab-g3-op', email: 'fab-g3-op@pros.example.test', structureId: 'fab-g3-platform', role: 'SUPERADMIN' }, { mfa: true });
 tokens.cron = SECRETS.CRON_SECRET; tokens.jitsi = JITSI_SECRET;   // the jobs' secret and the sandbox video secret, for the tests' own calls / offline checks
 fs.writeFileSync(path.join(tmp, 'tokens.json'), JSON.stringify(tokens), { mode: 0o600 });
 
@@ -162,16 +173,17 @@ const at = (port) => ({ R47_PORT: String(port), R47_DIST: DIST, APP_BASE_URL: `h
 start({ ...OPEN_ENV, ...at(PORT), PROCONNECT_REDIRECT_URI: `http://127.0.0.1:${PORT}/api/pro/auth/proconnect/callback` }, 'server-open');
 start({ ...PROD_ENV, ...at(PORT_PROD), R47_DIST: DIST_PROD }, 'server-prod');
 start({ ...OPEN_ENV, ...at(PORT_TWIN), PROCONNECT_REDIRECT_URI: `http://127.0.0.1:${PORT_TWIN}/api/pro/auth/proconnect/callback` }, 'server-twin');
-for (const port of [PORT, PORT_PROD, PORT_TWIN]) {
+start({ ...PRO_ONLY_ENV, ...at(PORT_PRO), R47_DIST: DIST_PRO }, 'server-pro-only');
+for (const port of [PORT, PORT_PROD, PORT_TWIN, PORT_PRO]) {
   const u = `http://127.0.0.1:${port}/__lab/health`; let up = false;
   for (let i = 0; i < 120 && !up; i += 1) { up = await fetch(u).then((r) => r.ok, () => false); if (!up) await new Promise((r) => setTimeout(r, 500)); }
   if (!up) { stopAll(); throw new Error(`${u} did not start`); }
 }
-console.log(`up: open ${PORT}, production-configuration ${PORT_PROD}, twin ${PORT_TWIN} (${Math.round((Date.now() - t0) / 1000)} s)`);
+console.log(`up: open ${PORT}, production-configuration ${PORT_PROD}, twin ${PORT_TWIN}, pro-only ${PORT_PRO} (${Math.round((Date.now() - t0) / 1000)} s)`);
 const pw = spawnSync('npx', ['--no-install', 'playwright', 'test', '-c', 'e2e-fab/playwright.config.mjs', ...pwArgs], {
   cwd: ROOT, stdio: 'inherit',
   env: { PATH: process.env.PATH, HOME: process.env.HOME, LANG: 'fr_FR.UTF-8', TZ: 'UTC',
-    FA1_BASE: `http://127.0.0.1:${PORT}`, FA1_BASE_CLOSED: `http://127.0.0.1:${PORT_PROD}`, FAB_BASE_TWIN: `http://127.0.0.1:${PORT_TWIN}`,
+    FA1_BASE: `http://127.0.0.1:${PORT}`, FA1_BASE_CLOSED: `http://127.0.0.1:${PORT_PROD}`, FAB_BASE_TWIN: `http://127.0.0.1:${PORT_TWIN}`, FAB_BASE_PRO: `http://127.0.0.1:${PORT_PRO}`,
     FA1_CREDS: creds, FA1_TOKENS: path.join(tmp, 'tokens.json'), FA1_DB: process.env.DATABASE_URL,
     ...(process.env.FAB_REPORT ? { FAB_REPORT: process.env.FAB_REPORT } : {}), ...(process.env.FAB_OUT ? { FAB_OUT: process.env.FAB_OUT } : {}) },
 });

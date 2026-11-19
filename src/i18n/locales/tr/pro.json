@@ -1463,5 +1463,19 @@
  "cases.note_author": "yazan: {{author}}",
  "cases.inactive_account": "etkin olmayan hesap",
  "messages.unread": "Okunmadı",
- "layout.messages_unread": "Mesajlar, okunmamış: {{count}}"
+ "layout.messages_unread": "Mesajlar, okunmamış: {{count}}",
+ "not_open.title": "Henüz açılmadı",
+ "not_open.body": "Profesyonel alanın bu bölümü henüz açılmadı. Veri koruma çerçevesi (ve gerekiyorsa sertifikalı sağlık verisi barındırma) hazır olduğunda açılacak. Bu bir arıza değildir: hiçbir veri okunmadı.",
+ "not_open.badge": "henüz açılmadı",
+ "dashboard.queue_not_open": "Takip edilen dosyalar ve yönlendirmeler: henüz açılmadı. Veri koruma çerçeveleri (ve sertifikalı sağlık verisi barındırma) hazır olduğunda açılacaklar.",
+ "dashboard.agenda_not_open": "Randevular profesyonel alanda henüz açılmadı.",
+ "register_pro.terms_not_in_force": "Profesyonel erişiminizin oluşturulması henüz açılmadı: profesyoneller için kullanım koşulları henüz yürürlükte değil. Davetiniz kullanılmadı.",
+ "register_pro.terms_before": "Erişimimi oluşturarak",
+ "register_pro.terms_link": "profesyoneller için kullanım koşullarını",
+ "register_pro.terms_and": "ve kuruluşum adına",
+ "register_pro.terms_structures_link": "kuruluşlar için koşulları",
+ "register_pro.terms_after": " kabul ediyorum.",
+ "register_pro.privacy_before": "Verilerim",
+ "register_pro.privacy_link": "gizlilik bildiriminde",
+ "register_pro.privacy_after": " açıklandığı şekilde işlenir."
 }

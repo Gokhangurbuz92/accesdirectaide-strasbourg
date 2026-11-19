@@ -99,7 +99,7 @@ export default function RegisterPro() {
                 method: 'POST',
                 // R7: a first visit has no __csrf cookie yet — ask the server for one first (it was refused « Forbidden »)
                 headers: { 'Content-Type': 'application/json', ...((await ensureCsrfHeaders()) || getCsrfHeaders()) },
-                body: JSON.stringify({ token, password }),
+                body: JSON.stringify({ token, password, termsAccepted: true }),   // G3: pressing « Créer mon accès » under the terms sentence accepts them
             });
 
             const data = await res.json();
@@ -252,7 +252,14 @@ export default function RegisterPro() {
                     </CardContent>
                 </Card>
 
-                {/* Registration form */}
+                {/* G3: no access is created while the professional terms are not in force here (the server refuses it too) */}
+                {invitation?.terms?.inForce === false ? (
+                    <Card data-testid="pro-register-terms-not-in-force">
+                        <CardContent className="p-6 text-sm text-slate-800">
+                            {t('pro:register_pro.terms_not_in_force', 'La création de votre accès professionnel n’est pas encore ouverte : les conditions d’utilisation des professionnels ne sont pas encore en vigueur. Votre invitation n’a pas été utilisée.')}
+                        </CardContent>
+                    </Card>
+                ) : (
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-lg">{t('pro:register_pro.creer_votre_acces', 'Créer votre accès')}</CardTitle>
@@ -306,10 +313,31 @@ export default function RegisterPro() {
                                 </div>
                             )}
 
+                            {/* G3: the professional terms are accepted by creating the access (a contract acceptance recorded with its version, not a GDPR consent) */}
+                            <div className="space-y-1 text-sm text-slate-800" data-testid="pro-register-terms-statement">
+                                <p id="pro-register-terms">
+                                    {t('pro:register_pro.terms_before', 'En créant mon accès, j’accepte les')}{' '}
+                                    <Link className="text-blue-900 underline" to="/cgu/professionnel">{t('pro:register_pro.terms_link', 'conditions d’utilisation des professionnels')}</Link>
+                                    {invitation?.role === 'STRUCTURE_ADMIN' ? (
+                                        <>
+                                            {' '}{t('pro:register_pro.terms_and', 'et, pour ma structure, les')}{' '}
+                                            <Link className="text-blue-900 underline" to="/conditions-structures">{t('pro:register_pro.terms_structures_link', 'conditions pour les structures')}</Link>
+                                        </>
+                                    ) : null}
+                                    {t('pro:register_pro.terms_after', '.')}
+                                </p>
+                                <p>
+                                    {t('pro:register_pro.privacy_before', 'Mes données sont traitées comme expliqué dans la')}{' '}
+                                    <Link className="text-blue-900 underline" to="/confidentialite/notice">{t('pro:register_pro.privacy_link', 'notice de confidentialité')}</Link>
+                                    {t('pro:register_pro.privacy_after', '.')}
+                                </p>
+                            </div>
+
                             <Button
                                 type="submit"
                                 disabled={submitting}
                                 className="w-full"
+                                aria-describedby="pro-register-terms"
                             >
                                 {submitting ? (
                                     <Loader2 className="me-2 h-4 w-4 animate-spin" />
@@ -321,6 +349,7 @@ export default function RegisterPro() {
                         </form>
                     </CardContent>
                 </Card>
+                )}
 
                 {/* Security notice */}
                 <div className="flex items-center gap-2 text-xs text-emerald-800 bg-emerald-50 p-3 rounded-lg border border-emerald-100">

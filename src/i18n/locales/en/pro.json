@@ -1463,5 +1463,19 @@
  "cases.note_author": "by {{author}}",
  "cases.inactive_account": "inactive account",
  "messages.unread": "Unread",
- "layout.messages_unread": "Messages, unread: {{count}}"
+ "layout.messages_unread": "Messages, unread: {{count}}",
+ "not_open.title": "Not open yet",
+ "not_open.body": "This part of the professional space is not open yet. It will be once its data-protection framework (and, where needed, certified health-data hosting) is in place. This is not an outage: no data was read.",
+ "not_open.badge": "not open yet",
+ "dashboard.queue_not_open": "Followed cases and referrals: not open yet. They will be once their data-protection framework (and certified health-data hosting) is in place.",
+ "dashboard.agenda_not_open": "Appointments are not open yet in the professional space.",
+ "register_pro.terms_not_in_force": "Creating your professional access is not open yet: the terms of use for professionals are not in force yet. Your invitation has not been used.",
+ "register_pro.terms_before": "By creating my access, I accept the",
+ "register_pro.terms_link": "terms of use for professionals",
+ "register_pro.terms_and": "and, for my organisation, the",
+ "register_pro.terms_structures_link": "conditions for organisations",
+ "register_pro.terms_after": ".",
+ "register_pro.privacy_before": "My data are processed as explained in the",
+ "register_pro.privacy_link": "privacy notice",
+ "register_pro.privacy_after": "."
 }
