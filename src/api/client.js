@@ -256,6 +256,10 @@ export const apiClient = {
         listStories: function (queue) { return apiRequest('/api/admin/stories?queue=' + encodeURIComponent(queue || 'pending')); },
         /** @param {Record<string, unknown>} body { action: approve|reject|takedown|dismiss_reports, id, reason? } */
         storyAction: function (body) { return apiRequest('/api/admin/stories', { method: 'POST', body: body }); },
+        /** X05 (expansion) — job listing review (closed by default: 503 CAPABILITY_NOT_OPEN). @param {string} queue pending | published */
+        listJobListings: function (queue) { return apiRequest('/api/admin/employment?queue=' + encodeURIComponent(queue || 'pending')); },
+        /** @param {Record<string, unknown>} body { action: approve|reject|takedown, id, reason? } */
+        jobListingAction: function (body) { return apiRequest('/api/admin/employment', { method: 'POST', body: body }); },
         /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q @param {string=} decision never | hold | rejected | verified */
         getOrganizations: function (q, decision) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '') + (decision ? '&decision=' + encodeURIComponent(decision) : '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */

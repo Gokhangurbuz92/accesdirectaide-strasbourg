@@ -62,7 +62,7 @@ export const LEGAL_IDENTITY_VARS = ['VITE_LEGAL_PUBLISHER_IDENTITY', 'VITE_LEGAL
 const OPENABLE_SURFACES = Object.keys(SURFACES).filter((s) => !NOT_OPENABLE.includes(s));
 // X04 (19/11/2026): the EXPANSION items (founder authorization for engineering only, separate register CONTROL/master/EXPANSION_REGISTER_15.md) are not
 // part of the 173-feature activation: the final configuration does not open them; each one opens by its own owner decision (AIPD line first)
-export const EXPANSION_SURFACES = Object.freeze(['events', 'testimonials', 'stories']);   // X04, X02, X01
+export const EXPANSION_SURFACES = Object.freeze(['events', 'testimonials', 'stories', 'employment']);   // X04, X02, X01, X05
 const FINAL_SURFACES = OPENABLE_SURFACES.filter((s) => !EXPANSION_SURFACES.includes(s));
 const OUT_OF_AIPD = Object.entries(CAPABILITIES).filter(([, c]) => c.aipd === 'out' && c.openable !== false && !EXPANSION_SURFACES.includes(c.surface)).map(([n]) => n);
 const EXPANSION_NOTE = 'EXTENSION (hors des 173) : non ouverte par la configuration finale ; ouverture = décision séparée du propriétaire après la ligne AIPD';
@@ -164,6 +164,7 @@ const SURFACE_PROBES = {
   events: { route: 'events', method: 'GET', screen: '/evenements', features: ['X04'] },
   testimonials: { route: 'testimonials', method: 'GET', screen: '/temoignages', features: ['X02'] },
   stories: { route: 'stories', method: 'GET', screen: '/histoires', features: ['X01'] },
+  employment: { route: 'employment', method: 'GET', screen: '/offres-emploi', features: ['X05'] },
 };
 const SURFACE_OTHER = {
   accounts: [
@@ -225,7 +226,7 @@ export function buildItems() {
     'citizen.shared_dossier': ['C14', 'C15', 'C16', 'C17', 'R13', 'R15'], 'citizen.saved_diagnostic': ['C12'], 'diagnostic.questionnaire': ['P13', 'D10', 'D20'],
     'pro.case_management': ['R03', 'R05', 'R06', 'R07', 'R08', 'R11', 'R12'], 'pro.referrals': ['R09', 'R10', 'E06'], 'pro.orientation_selections': ['R18'], 'pro.siao_interop': ['R22'], 'partner.referral_adapter': ['R09', 'R10', 'E06'],
     'ai.processing': ['P17', 'D17', 'D18', 'R17', 'R23', 'P18'], 'institution.portal': ['I01', 'I02', 'I03', 'I04'], video: ['B07', 'N06'], 'citizen.minor_accounts': [],
-    'community.events': ['X04'], 'community.testimonials': ['X02'], 'community.stories': ['X01'] };
+    'community.events': ['X04'], 'community.testimonials': ['X02'], 'community.stories': ['X01'], 'community.employment': ['X05'] };
   for (const [name, cap] of Object.entries(CAPABILITIES)) {
     const env = [tok('ADA_BETA_OPEN_SURFACES', cap.surface)];
     if (cap.accountsFull) env.push(eqv('ADA_BETA_ACCOUNTS_SCOPE', 'full'));

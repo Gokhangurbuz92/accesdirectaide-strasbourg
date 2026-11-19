@@ -235,6 +235,8 @@ function ProNavItems({ role, unreadMessages = null, modules = null }) {
                     <NavLink to="/pro/audit" icon={Shield}>{t('pro:layout.journal_audit', 'Journal d\'audit')}</NavLink>
                     <NavLink to="/pro/reports" icon={BarChart3}>{t('pro:layout.impact', 'Impact')}</NavLink>
                     <NavLink to="/pro/structure" icon={Building2}>{t('pro:layout.structure', 'Ma structure')}</NavLink>
+                    {/* X05 (expansion): shown only when the server says the job board is served (never a « pas encore ouvert » entry for an expansion) */}
+                    {modules?.employment === true ? <NavLink to="/pro/offres-emploi" icon={FileText}>{t('pro:layout.job_listings', 'Offres d’emploi')}</NavLink> : null}
                 </>
             ) : null}
             {/* Paramètres (notifications, MFA) was only in the phone menu: unreachable on a computer */}

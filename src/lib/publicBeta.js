@@ -10,7 +10,9 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
   // X02 (expansion): testimonials, the person's own testimonials and their moderation — surface « testimonials », opened by no build
   '/temoignages', '/compte/temoignages', '/admin/temoignages',
   // X01 (expansion): community stories, the person's pseudonym and stories and their moderation — surface « stories », opened by no build
-  '/histoires', '/compte/histoires', '/admin/histoires'];
+  '/histoires', '/compte/histoires', '/admin/histoires',
+  // X05 (expansion): the job board, an employer's listings and their moderation — surface « employment », opened by no build
+  '/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'];
 
 /**
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
@@ -24,6 +26,7 @@ export const SCREEN_SURFACES = {
   events: ['/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements'],
   testimonials: ['/temoignages', '/compte/temoignages', '/admin/temoignages'],
   stories: ['/histoires', '/compte/histoires', '/admin/histoires'],
+  employment: ['/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'],
 };
 const builtOpen = () => {
   let v = '';
@@ -99,6 +102,8 @@ export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSu
   if (SCREEN_SURFACES.testimonials.some((x) => under(p, x))) return !open.includes('testimonials');
   // X01: the community story screens follow ONLY the « stories » surface, for the same reason
   if (SCREEN_SURFACES.stories.some((x) => under(p, x))) return !open.includes('stories');
+  // X05: the job board screens follow ONLY the « employment » surface (the employer screen sits under /pro but « pro » does not open it)
+  if (SCREEN_SURFACES.employment.some((x) => under(p, x))) return !open.includes('employment');
   // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
   if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
   const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));
@@ -184,4 +189,13 @@ export function testimonialsOpened(beta, open = builtOpen(), sub = builtSub()) {
  */
 export function storiesOpened(beta, open = builtOpen(), sub = builtSub()) {
   return !beta || !isBetaRestrictedPath('/histoires', open, sub);
+}
+
+/**
+ * X05 (expansion) — are the job board screens usable in this build: outside the beta, or when the build opens the « employment » surface. Links to them
+ * (the administration menu) are offered only then; the server keeps the capability « community.employment » closed anyway.
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function employmentOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/offres-emploi', open, sub);
 }

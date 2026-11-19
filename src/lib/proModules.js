@@ -21,6 +21,7 @@ export const PRO_SCREEN_MODULES = Object.freeze({
   '/pro/reports': 'reports',
   '/pro/regional': 'regional',
   '/pro/audit': 'audit',
+  '/pro/offres-emploi': 'employment',   // X05 (expansion)
 });
 const PREFIXES = Object.keys(PRO_SCREEN_MODULES).sort((a, b) => b.length - a.length);
 

@@ -87,6 +87,10 @@ const AdminTestimonials = lazy(() => import("./admin/TestimonialsAdmin.jsx"));
 const CommunityStories = lazy(() => import("./CommunityStories.jsx"));
 const CompteHistoires = lazy(() => import("./CompteHistoires.jsx"));
 const AdminStories = lazy(() => import("./admin/StoriesAdmin.jsx"));
+// X05 (expansion): inclusive job board (closed by default: surface « employment », capability community.employment)
+const JobBoard = lazy(() => import("./JobBoard.jsx"));
+const ProJobListings = lazy(() => import("./pro/JobListings.jsx"));
+const AdminJobBoard = lazy(() => import("./admin/JobBoardAdmin.jsx"));
 const RessourceDetail = lazy(() => import("./RessourceDetail.jsx"));
 const Guides = lazy(() => import("./Guides.jsx"));
 const GuideDetail = lazy(() => import("./GuideDetail.jsx"));
@@ -395,6 +399,7 @@ function PagesContent() {
                                     <Route path="academie-evenements" element={<AdminAcademyEvents />} />
                                     <Route path="temoignages" element={<AdminTestimonials />} />
                                     <Route path="histoires" element={<AdminStories />} />
+                                    <Route path="offres-emploi" element={<AdminJobBoard />} />
                                     <Route path="ws2" element={<AdminWs2Queue />} />
                                     <Route path="operations" element={<AdminOperations />} />
                                     <Route path="fournisseurs" element={<AdminProviders />} />
@@ -482,6 +487,7 @@ function PagesContent() {
                                     <Route path="appointments" element={<Navigate to="/pro/rdv/agenda" replace />} />
                                     <Route path="team" element={<ProGuard><ProTeam /></ProGuard>} />
                                     <Route path="structure" element={<ProGuard><ProStructure /></ProGuard>} />
+                                    <Route path="offres-emploi" element={<ProGuard><ProJobListings /></ProGuard>} />
                                     <Route path="appointments/:id" element={<ProGuard><ProAppointmentDetail /></ProGuard>} />
                                     <Route path="dossier/:shareId" element={<ProGuard><SharedDossier /></ProGuard>} />
                                     <Route path="dossiers" element={<ProGuard><ProCases /></ProGuard>} />
@@ -646,6 +652,7 @@ function PagesContent() {
                                 <Route path="/evenements/:slug" element={<AcademyEventDetail kind="EVENT" />} />
                                 <Route path="/temoignages" element={<Testimonials />} />
                                 <Route path="/histoires" element={<CommunityStories />} />
+                                <Route path="/offres-emploi" element={<JobBoard />} />
                                 <Route path="/ressources/:slug" element={<RessourceDetail />} />
                                 <Route path="/ressources/view" element={<RessourceDetail />} />
 

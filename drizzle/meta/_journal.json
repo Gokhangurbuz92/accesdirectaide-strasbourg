@@ -393,6 +393,13 @@
       "when": 1794970000000,
       "tag": "0055_x01_community_stories",
       "breakpoints": true
+    },
+    {
+      "idx": 56,
+      "version": "7",
+      "when": 1794980000000,
+      "tag": "0056_x05_job_board",
+      "breakpoints": true
     }
   ]
 }

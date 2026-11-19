@@ -1,6 +1,6 @@
 import crypto from 'node:crypto';
 import { relations, sql } from 'drizzle-orm'
-import { boolean, check, doublePrecision, foreignKey, index, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, timestamp, uniqueIndex, vector } from 'drizzle-orm/pg-core'
+import { boolean, check, date, doublePrecision, foreignKey, index, integer, jsonb, pgEnum, pgTable, primaryKey, serial, text, timestamp, uniqueIndex, vector } from 'drizzle-orm/pg-core'
 import { sealedJson } from './sealed-json.js'
 
 // P19 (0051): DISPOSITIF — a database before 0051 lacks it; writers ask api/_utils/schema-features.js contentTypeSchema() first
@@ -3293,4 +3293,48 @@ export const PilotSession = pgTable('PilotSession', {
 }, (t) => ({
 	'PilotSession_journey_idx': index('PilotSession_journey_idx').on(t.journeyCode, t.protocolVersion),
 	'PilotSession_consent_check': check('PilotSession_consent_check', sql`${t.consentRecorded} = true`)
+}));
+
+/**
+ * X05 (expansion, migration 0056) — an inclusive job listing of an EMPLOYER = an existing Structure that ADA verified (E01: statut 'actif' AND
+ * verification_status 'VERIFIED', checked again at submission, at approval and on every public read). Lifecycle: draft → pending (moderation) → published →
+ * expired (its own end date) — or rejected (back to the employer, editable), withdrawn (by the employer) or taken_down (by the moderation). Required fields
+ * only; the inclusive accommodations come from a closed list; the application goes through the EMPLOYER'S OWN channel (an https address or an e-mail): ADA
+ * stores NOTHING about applicants (no table, no form, no click count). No column for a discriminatory criterion exists (Code du travail L1132-1; the service
+ * refuses such fields). No column names the professional who wrote it (the audit trail does). Deleted with the Structure row (cascade).
+ * Only writer: api/_services/job-board.js.
+ */
+export const JobListing = pgTable('JobListing', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	structureId: text('structureId').notNull(),
+	status: text('status').notNull().default('draft'),
+	title: text('title').notNull(),
+	contractType: text('contractType').notNull(),
+	city: text('city').notNull(),
+	postalCode: text('postalCode').notNull(),
+	description: text('description').notNull(),
+	accommodations: text('accommodations').array().notNull(),
+	applyMethod: text('applyMethod').notNull(),
+	applyTarget: text('applyTarget').notNull(),
+	expiresOn: date('expiresOn', { mode: 'string' }).notNull(),
+	moderationReason: text('moderationReason'),
+	moderatedBy: text('moderatedBy'),
+	moderatedAt: timestamp('moderatedAt', { precision: 3 }),
+	submittedAt: timestamp('submittedAt', { precision: 3 }),
+	publishedAt: timestamp('publishedAt', { precision: 3 }),
+	withdrawnAt: timestamp('withdrawnAt', { precision: 3 }),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'JobListing_structure_fkey': foreignKey({ name: 'JobListing_structure_fkey', columns: [t.structureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
+	'JobListing_structure_idx': index('JobListing_structure_idx').on(t.structureId, t.createdAt),
+	'JobListing_public_idx': index('JobListing_public_idx').on(t.status, t.expiresOn),
+	'JobListing_status_check': check('JobListing_status_check', sql`${t.status} IN ('draft', 'pending', 'published', 'rejected', 'withdrawn', 'taken_down', 'expired')`),
+	'JobListing_contract_check': check('JobListing_contract_check', sql`${t.contractType} IN ('CDI', 'CDD', 'CDDI', 'INTERIM', 'APPRENTISSAGE', 'PROFESSIONNALISATION', 'STAGE')`),
+	'JobListing_length_check': check('JobListing_length_check', sql`char_length(${t.title}) BETWEEN 5 AND 120 AND char_length(${t.city}) BETWEEN 2 AND 80 AND char_length(${t.description}) BETWEEN 50 AND 3000`),
+	'JobListing_postal_check': check('JobListing_postal_check', sql`${t.postalCode} ~ '^[0-9]{5}$'`),
+	'JobListing_accommodations_check': check('JobListing_accommodations_check', sql`cardinality(${t.accommodations}) BETWEEN 1 AND 10 AND ${t.accommodations} <@ ARRAY['STEP_FREE_ACCESS', 'ADAPTED_WORKSTATION', 'FLEXIBLE_HOURS', 'PART_TIME_POSSIBLE', 'TUTOR_SUPPORT', 'EASY_READ_INSTRUCTIONS', 'SIGN_LANGUAGE_INTERPRETING', 'NO_DIPLOMA_REQUIRED', 'BEGINNERS_WELCOME', 'PUBLIC_TRANSPORT_ACCESS']::text[]`),
+	'JobListing_apply_check': check('JobListing_apply_check', sql`${t.applyMethod} IN ('url', 'email') AND char_length(${t.applyTarget}) BETWEEN 6 AND 300 AND (${t.applyMethod} <> 'url' OR ${t.applyTarget} ~ '^https://')`),
+	'JobListing_published_check': check('JobListing_published_check', sql`${t.status} <> 'published' OR (${t.publishedAt} IS NOT NULL AND ${t.moderatedBy} IS NOT NULL)`),
+	'JobListing_reason_check': check('JobListing_reason_check', sql`${t.moderationReason} IS NULL OR ${t.moderationReason} IN ('DISCRIMINATORY_CRITERION', 'MISLEADING_OR_ENTITLEMENT', 'HEALTH_DATA_REQUESTED', 'APPLICATION_CHANNEL', 'NOT_A_JOB_OFFER', 'INCOMPLETE')`)
 }));

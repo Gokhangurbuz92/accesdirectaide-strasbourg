@@ -2,7 +2,7 @@
  * X01 — migration 0055 (community pseudonyms, stories, reports) on a THROWAWAY database of the local cluster: up → down → code without 0055 → up.
  *   up      every migration through drizzle's own migrator: the three tables, their CHECKs, the four cascading foreign keys, the indexes (pseudonym unique
  *           without regard to case); 0055 recorded; NO member or story row exists after the migration (nothing seeded)
- *   down    drizzle/rollback/0055_down.sql: the three tables gone, the journal row forgotten, 0054 / 0053 and everything else untouched (idempotent)
+ *   down    drizzle/rollback/0055_down.sql: the three tables gone, the journal row forgotten, 0054 / 0053 and everything else untouched (idempotent; the later 0056 is rolled back first)
  *   without the code on a database behind it: the public list is empty, the person's list says « not available », writes answer 503
  *           STORIES_NOT_AVAILABLE, the moderation answers the same, the export sections are empty (not a failed read)
  *   up again only 0055 is applied
@@ -28,7 +28,8 @@ describe.skipIf(!hasDatabase)('migration 0055: up → down → code without it �
     to_regclass('public."CommunityStoryReport"') IS NOT NULL AS r, to_regclass('public."Testimonial"') IS NOT NULL AS x02, to_regclass('public."AcademyItem"') IS NOT NULL AS x04`))[0];
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
-  const down = () => pool.query(fs.readFileSync('drizzle/rollback/0055_down.sql', 'utf8'));
+  // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0056 (X05) is rolled back first, then 0055
+  const down = async () => { for (const f of ['drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
   const REL = `('"CommunityMember"'::regclass, '"CommunityStory"'::regclass, '"CommunityStoryReport"'::regclass)`;
 
   beforeAll(async () => {
@@ -50,7 +51,8 @@ describe.skipIf(!hasDatabase)('migration 0055: up → down → code without it �
   it('up: the three tables, the CHECKs, the unique indexes and the cascading foreign keys exist; 0055 is the newest recorded; nothing is seeded', async () => {
     expect(await tables()).toEqual({ m: true, s: true, r: true, x02: true, x04: true }); expect(await journalRow()).toBe(1);
     const journal = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries;
-    expect(journal.at(-1)).toMatchObject({ idx: 55, tag: TAG }); expect(journal.at(-2).tag).toBe('0054_x02_testimonials'); expect(when).toBeGreaterThan(journal.at(-2).when);
+    const at = journal.findIndex((e) => e.tag === TAG);   // X05: 0056 comes after it now
+    expect(journal[at]).toMatchObject({ idx: 55, tag: TAG }); expect(journal[at - 1].tag).toBe('0054_x02_testimonials'); expect(when).toBeGreaterThan(journal[at - 1].when);
     const fks = await q(`SELECT conname, confdeltype FROM pg_constraint WHERE conrelid IN ${REL} AND contype = 'f' ORDER BY 1`);
     expect(fks).toEqual([{ conname: 'CommunityMember_user_fkey', confdeltype: 'c' }, { conname: 'CommunityStoryReport_story_fkey', confdeltype: 'c' },
       { conname: 'CommunityStoryReport_user_fkey', confdeltype: 'c' }, { conname: 'CommunityStory_member_fkey', confdeltype: 'c' }]);
@@ -101,7 +103,7 @@ describe.skipIf(!hasDatabase)('migration 0055: up → down → code without it �
     expect(out.communityMember).toEqual([]); expect(out.communityStories).toEqual([]); expect(out.communityStoryReports).toEqual([]); expect(failed).toBe(0);
   });
 
-  it('up again applies 0055 only, on the rows as they are', async () => {
+  it('up again applies 0055 (and the later 0056) only, on the rows as they are', async () => {
     await up();
     expect(await tables()).toEqual({ m: true, s: true, r: true, x02: true, x04: true }); expect(await journalRow()).toBe(1);
     expect((await q(`SELECT id FROM "CitizenUser"`)).map((r) => r.id)).toEqual(['keep']);
