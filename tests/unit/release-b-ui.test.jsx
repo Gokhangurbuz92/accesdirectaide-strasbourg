@@ -67,6 +67,10 @@ describe('Release B — sign-up: acceptance of the terms by a clear action', () 
     fireEvent.change(screen.getByLabelText('Email'), { target: { value: 'nom@exemple.fr' } });
     fireEvent.change(screen.getByLabelText('Mot de passe', { exact: true }), { target: { value: 'Qa-Passw0rd-1' } });
     await act(async () => { fireEvent.click(screen.getByRole('button', { name: 'Se connecter' })); });
+    // G7: the loop below passed vacuously when no request was sent — the sign-in must really POST once
+    const logins = calls.filter((x) => x.method === 'POST' && x.url.endsWith('/api/auth/login'));
+    expect(logins).toHaveLength(1);
+    expect(logins[0].body?.email).toBe('nom@exemple.fr');
     for (const c of calls.filter((x) => x.method === 'POST')) expect(c.body?.termsAccepted).toBeUndefined();
   });
 
