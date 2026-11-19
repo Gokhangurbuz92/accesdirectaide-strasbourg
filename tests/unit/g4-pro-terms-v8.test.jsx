@@ -75,7 +75,7 @@ describe('legal drafts v8-2026-11-19 — the professional documents only', () =>
     expect(proUser).toContain("email: text('email')");
     expect(proUser).not.toMatch(/\b(name|nom|prenom|firstName|lastName|displayName)\s*:/i);
     const p1 = v8('cgu-professionnel').sections.find((/** @type {any} */ s) => s.id === 'data').paras[0];
-    for (const part of ['adresse électronique professionnelle', 'votre rôle', 'votre structure', 'mot de passe chiffré', 'secret de votre double authentification', 'journal de vos actions', 'préférences de notification']) expect(p1).toContain(part);
+    for (const part of ['adresse électronique professionnelle', 'votre rôle', 'votre structure', 'mot de passe sous forme hachée', 'secret de votre double authentification', 'journal de vos actions', 'préférences de notification']) expect(p1).toContain(part);
     expect(p1).toMatch(/Lorsque la prise de rendez-vous est ouverte pour votre structure, elle traite aussi vos créneaux\./);
   });
 

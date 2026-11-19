@@ -68,7 +68,7 @@
  "cguPro.appointments.p2_v8": "Platform hiçbir hak hakkında karar vermez: yalnızca yetkili kurum karar verir.",
  "cguPro.data.title": "5. Kendi verileriniz",
  "cguPro.data.p1": "Hesabınız için platform adınızı, mesleki e-posta adresinizi, rolünüzü, randevu saatlerinizi ve işlemlerinizin kaydını işler. Gizlilik bildirimi bu işlemeleri, önerilen hukuki dayanaklarını ve saklama sürelerini açıklar.",
- "cguPro.data.p1_v8": "Hesabınız için platform mesleki e-posta adresinizi, rolünüzü, kurumunuzu, şifrelenmiş parolanızı, iki aşamalı kimlik doğrulamanızın gizli anahtarını, işlemlerinizin kaydını ve bildirim tercihlerinizi işler. Randevu alma kurumunuz için açıldığında randevu saatlerinizi de işler. Gizlilik bildirimi bu işlemeleri, önerilen hukuki dayanaklarını ve saklama sürelerini açıklar.",
+ "cguPro.data.p1_v8": "Hesabınız için platform mesleki e-posta adresinizi, rolünüzü, kurumunuzu, parolanızın geri döndürülemez özetini (hash), iki aşamalı kimlik doğrulamanızın gizli anahtarını, işlemlerinizin kaydını ve bildirim tercihlerinizi işler. Randevu alma kurumunuz için açıldığında randevu saatlerinizi de işler. Gizlilik bildirimi bu işlemeleri, önerilen hukuki dayanaklarını ve saklama sürelerini açıklar.",
  "cguPro.data.p2": "İşlemleriniz güvenlik ve erişim denetimi için kayıt altına alınır.",
  "cguPro.incident.title": "6. Güvenlik olayı",
  "cguPro.incident.p1": "Bir giriş aracının kaybını, şüpheli bir erişimi veya bir gönderim hatasını gecikmeden {{contact}} adresine bildirin.",

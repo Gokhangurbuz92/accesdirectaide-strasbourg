@@ -432,7 +432,7 @@ export const LEGAL_DRAFTS_V8_CHANGES = Object.freeze({
       },
     },
     data: { paras: {
-      0: ["Pour votre compte, la plateforme traite votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe chiffré, le secret de votre double authentification, le journal de vos actions et vos préférences de notification. Lorsque la prise de rendez-vous est ouverte pour votre structure, elle traite aussi vos créneaux. La notice de confidentialité décrit ces traitements, leurs bases légales proposées et leurs durées.", 'p1_v8'],
+      0: ["Pour votre compte, la plateforme traite votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification. Lorsque la prise de rendez-vous est ouverte pour votre structure, elle traite aussi vos créneaux. La notice de confidentialité décrit ces traitements, leurs bases légales proposées et leurs durées.", 'p1_v8'],
     } },
   } },
   'conditions-structures': {
