@@ -468,7 +468,7 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
             // organization's own assessment), but they are NOT silently excluded either — they are listed below as organization-held records awaiting a HUMAN review,
             // and the request is then recorded as PARTIALLY_COMPLETED with an ACCESS_REVIEW request (never "completed" while that review is open).
             const safeRows = async (q) => { if (typeof db.execute !== 'function') return []; try { return (await db.execute(q)).rows || []; } catch { noteReadFailure(); return []; } };
-            const caseFollowUps = await safeRows(sql`SELECT c."sharedDiagnosticId" AS "dossierId", s.nom AS organization, c.status, c.outcome, c."outcomeCitizenSummary" AS summary, c."openedAt", c."closedAt"
+            const caseFollowUpRows = await safeRows(sql`SELECT c.id AS "caseRef", c."sharedDiagnosticId" AS "dossierId", s.nom AS organization, c.status, c.outcome, c."outcomeCitizenSummary" AS summary, c."openedAt", c."closedAt"
               FROM "ProCase" c JOIN "SharedDiagnostic" d ON d.id = c."sharedDiagnosticId" JOIN "Structure" s ON s.id = c."structureId" WHERE d."ownerCitizenId" = ${userId}`);
             // C7 / M2 (art. 15 completeness): what the person sees of a referral in Mon Espace (api/_services/referrals.js citizenList) — the sender's message, the
             // controlled answer code and its dates, and with migration 0047 the chain (previous referral, organization suggested by a declining receiver)
@@ -482,7 +482,10 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
             const { openText } = await import('../lib/data-keys.js');
             const referralCtx = (/** @type {string} */ id) => ({ purpose: 'referral-message', context: `referral:${id}` });
             const openReferralText = (/** @type {string} */ id, /** @type {string | null} */ enc) => { if (!enc) return null; try { return openText(enc, referralCtx(id)); } catch { noteReadFailure(); return null; } };
-            const referrals = referralRows.map(({ messageEncrypted, ...r }) => ({ ...r, message: openReferralText(r.id, messageEncrypted) }));
+            // G10: the two outcome messages written for the person are sealed at rest (a value written before that change is read as it is)
+            const openSealed = (/** @type {string | null} */ v, /** @type {(x: string) => string | null} */ open) => { if (!v) return null; if (!String(v).startsWith('v2:')) return String(v); try { return open(String(v)); } catch { noteReadFailure(); return null; } };
+            const referrals = referralRows.map(({ messageEncrypted, ...r }) => ({ ...r, message: openReferralText(r.id, messageEncrypted), summary: openSealed(r.summary, (v) => openText(v, referralCtx(r.id))) }));
+            const caseFollowUps = caseFollowUpRows.map(({ caseRef, ...c }) => ({ ...c, summary: openSealed(c.summary, (v) => openText(v, { purpose: 'case-note', context: `case:${caseRef}` })) }));
             // M2 / 0048: the history of the SENDER's texts (written for the person to read). The RECEIVER's texts are not shown to the person in Mon Espace: they are
             // listed below as organization-held records (count per organization), never silently left out.
             const referralTextHistory = m2.messages ? (await safeRows(sql`SELECT m.id, m."referralId", m.side, m."bodyEncrypted", m."createdAt" FROM "ReferralMessage" m JOIN "Referral" r ON r.id = m."referralId"
@@ -545,7 +548,13 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
             const accountLinked = await accountLinkedSections(userId, safeRows);
             const userProfile = stripKeys(user, ['passwordHash']);
             const authTokens = records.tokens.map((token) => stripKeys(token, ['tokenHash']));
-            const diagnostics = records.diagnostics.map((diagnostic) => stripKeys(diagnostic, ['rightsSecretHash', 'shareTokenHash']));
+            // G10: the documents of a dossier are given as the person sees them in Mon Espace (decrypted name, type, size, date) — never the object-storage key nor
+            // the sealed name (before, results._files leaked both: internal locators, unreadable to the person; the Coffre already strips its keys)
+            const openFileName = (/** @type {string} */ shareId, /** @type {any} */ f) => { try { return openText(f.filenameEncrypted, { purpose: 'dossier-filename', context: `file:${shareId}:${f.id}` }) || null; } catch { noteReadFailure(); return null; } };
+            const presentFiles = (/** @type {any} */ d) => (Array.isArray(d?.results?._files) ? { ...d, results: { ...d.results, _files: d.results._files.map((/** @type {any} */ f) => ({
+                id: f?.id ?? null, name: f?.filenameEncrypted ? openFileName(d.id, f) : null, mimeType: f?.mimeType ?? null, byteLength: f?.byteLength ?? null, uploadedAt: f?.uploadedAt ?? null,
+                structureId: f?.structureId ?? null, source: f?.source ?? null })) } } : d);
+            const diagnostics = records.diagnostics.map((diagnostic) => presentFiles(stripKeys(diagnostic, ['rightsSecretHash', 'shareTokenHash'])));
             const legalHolds = relevantHolds.map((hold) => stripKeys(hold, ['createdBy']));
 
             return {
