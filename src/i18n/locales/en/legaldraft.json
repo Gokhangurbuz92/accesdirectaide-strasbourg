@@ -133,6 +133,7 @@
  "privacyNotice.purposes.i10": "P16 — Technical providers: for your data, they act on instructions (art. 28) and have no basis of their own; what some of them also process on their own behalf is their own responsibility (section 6).",
  "privacyNotice.purposes.p1": "No purpose is based on a task carried out in the public interest. No decision producing legal effects is taken by automated means: the service decides no right.",
  "privacyNotice.purposes.p2": "Without an e-mail address no account can be created; optional fields can be left empty.",
+ "privacyNotice.purposes.p3_v8": "The public page « Explore rights by need » (/droits) and the orientation questionnaire (/orientation), when it runs entirely in your browser, do their calculations in your browser: they send none of your answers to AccesDirectAide and store nothing, neither with us nor on your device. All that remains, as for any page of the site, are the host's usual technical logs of the pages requested (P1 above; retention in section 4, « Providers' technical logs »).",
  "privacyNotice.purposes-later.title": "3a. Functions not open yet (proposed bases)",
  "privacyNotice.purposes-later.i1": "P4 — Searching for an appointment and showing the names of professionals: for you, performance of the terms (art. 6(1)(b)); for professionals, legitimate interest of the operator and of their structure (art. 6(1)(f)).",
  "privacyNotice.purposes-later.i2": "P4p — Professionals' accounts, including their two-step verification: legitimate interest (art. 6(1)(f)); performance of the professional terms they accept (art. 6(1)(b)).",
@@ -199,6 +200,7 @@
  "privacyNotice.art14.p2": "Purpose: informing the public about the services that exist. Basis: legitimate interest (GDPR Article 6(1)(f)). Period: as long as the official source publishes the information; updated at each import.",
  "privacyNotice.art14.p3": "If your structure creates a professional account for you, it provides your name and professional address: sections 3 to 8 also apply to you.",
  "privacyNotice.art14.p4": "You can ask for a correction or object to the display of data about you: {{contact}}.",
+ "privacyNotice.art14.p3_v8": "If a professional account is opened for you, it is through an invitation sent to your professional e-mail address by an administrator of your structure or by the operator. This account holds your professional e-mail address, your role, your structure, your password in hashed form (one-way), the secret of your two-factor authentication, the log of your actions and your notification preferences. Your acceptance of the terms of use for professionals (and, for a structure administrator, of the conditions for structures) is recorded with their version in the consent register; it is not a consent within the meaning of the GDPR. Sections 3 to 8 also apply to you.",
  "privacyNotice.language.title": "12. Reference language",
  "privacyNotice.language.p1": "Only the French version of this notice is legally authoritative; translations are an aid to understanding."
 }

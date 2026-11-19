@@ -404,8 +404,8 @@ export const LEGAL_NOTICE_VARIANT_DOCUMENT_V7 = Object.freeze({ ...LEGAL_NOTICE_
 
 /*
  * v8-2026-11-19 — G4 (19/11/2026): planned opening of the ADA Pro accounts (invitation only, double authentication, structure administration only; cases,
- * referrals, dossiers, appointments, messages and the assistant CLOSED). v8 exists for the TWO professional documents only (LEGAL_DRAFTS_V8_DOCUMENT_IDS):
- * the citizen terms, the privacy notice and the A-I / A-II variant stay at v7 (no v8 of them exists, so « cgu-citoyen@v8-… » approves nothing). v8 = v7
+ * referrals, dossiers, appointments, messages and the assistant CLOSED). v8 exists for the TWO professional documents only (LEGAL_DRAFTS_V8_DOCUMENT_IDS;
+ * the privacy notice joined v8 later the same day, see below): the citizen terms and the A-I / A-II variant stay at v7 (no v8 of them exists, so « cgu-citoyen@v8-… » approves nothing). v8 = v7
  * (= v6 byte for byte for these two documents) with the factual errors corrected, nothing else (diff: CONTROL/v2/V8_METIN_FARKI_FR.md; French masters:
  * CONTROL/r45/R45_CGU_PROFESSIONNEL_FR_v8-2026-11-19.md and R45_CONDITIONS_STRUCTURES_FR_v8-2026-11-19.md):
  *  cgu-professionnel § 5  « votre nom » removed — ProUser has no name column (src/db/schema.ts: email, password_hash, role, status, structureId, notification
@@ -420,7 +420,23 @@ export const LEGAL_NOTICE_VARIANT_DOCUMENT_V7 = Object.freeze({ ...LEGAL_NOTICE_
  * keys keep the v6 translations, which v6 and v7 still render.
  */
 export const LEGAL_DRAFTS_V8 = 'v8-2026-11-19';
-export const LEGAL_DRAFTS_V8_DOCUMENT_IDS = Object.freeze(['cgu-professionnel', 'conditions-structures']);
+export const LEGAL_DRAFTS_V8_DOCUMENT_IDS = Object.freeze(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
+/*
+ * notice-confidentialite v8 (G4 notice, 19/11/2026; diff CONTROL/v2/V8_NOTICE_FARKI_FR.md, master CONTROL/r45/R45_NOTICE_CONFIDENTIALITE_FR_v8-2026-11-19.md).
+ * v8 = v7 + exactly two changes; the citizen terms and the A-I / A-II variant stay at v7, v6 / v7 of the notice unchanged byte for byte.
+ *  § 11 p3  « elle fournit votre nom » removed: ProUser has no name column (src/db/schema.ts: email, password_hash, role, status, structureId,
+ *           notificationEmailEnabled / notificationPrefs, mfa_secret). The invitation (Invitation.email) is sent by a structure administrator or by the
+ *           platform (api/_handlers/pro/invite.js: STRUCTURE_ADMIN or SUPERADMIN, authorizePlatformInvitation); the password is a one-way scrypt hash
+ *           (api/_utils/password-hash.js); actions go to AuditLog (logProAudit, api/_utils/auth.js); the acceptance of cgu-professionnel (and
+ *           conditions-structures for a STRUCTURE_ADMIN) is recorded « document@version » in ConsentLog, proof level CONTRACT_ACCEPTANCE
+ *           (api/_utils/pro-terms.js) — not a GDPR consent.
+ *  § 3 p3   (new) /droits (static view bundled at build time, no field, no request of its own: G3_RIGHTS_VIEW) and /orientation in the browser-only
+ *           mode (VITE_ORIENTATION_BROWSER_ONLY=1: computed in the page, no answer sent, no storage: G4_ORIENTATION_BROWSER). What remains is the
+ *           host's ordinary logs of page requests, already described: P1 (§ 3) and « Journaux techniques des prestataires » (§ 4) — Vercel runtime
+ *           logs include static requests served from its cache (https://vercel.com/docs/logs/runtime, « Available log types », read 19/11/2026).
+ */
+export const LEGAL_DRAFTS_V8_PRO_ACCOUNT_PARAGRAPH = "Si un compte professionnel vous est ouvert, c'est sur invitation envoyée à votre adresse électronique professionnelle par un administrateur de votre structure ou par l'exploitant. Ce compte contient votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification. Votre acceptation des conditions d'utilisation des professionnels (et, pour un administrateur de structure, des conditions des structures) est enregistrée avec leur version dans le registre des consentements ; ce n'est pas un consentement au sens du RGPD. Les sections 3 à 8 s'appliquent aussi à vous.";
+export const LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH = "La page publique « Explorer les droits par besoin » (/droits) et le questionnaire d'orientation (/orientation), lorsqu'il fonctionne entièrement dans votre navigateur, font leurs calculs dans votre navigateur : ils n'envoient aucune de vos réponses à AccesDirectAide et n'enregistrent rien, ni chez nous ni sur votre appareil. Seuls subsistent, comme pour toute page du site, les journaux techniques habituels de l'hébergeur sur les pages demandées (P1 ci-dessus ; durée en section 4, « Journaux techniques des prestataires »).";
 /** v8 changes: document → { intro?: [text, key], sections: { section → { title?: [text, key], paras?: { index → [text, key] }, items?: { index → [text, key] } } } } */
 export const LEGAL_DRAFTS_V8_CHANGES = Object.freeze({
   'cgu-professionnel': { sections: {
@@ -451,14 +467,23 @@ export const LEGAL_DRAFTS_V8_CHANGES = Object.freeze({
       } },
     },
   },
+  'notice-confidentialite': { sections: {
+    purposes: { paras: {
+      2: [LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH, 'p3_v8'],
+    } },
+    art14: { paras: {
+      2: [LEGAL_DRAFTS_V8_PRO_ACCOUNT_PARAGRAPH, 'p3_v8'],
+    } },
+  } },
 });
 /**
  * @param {Record<number, string[]> | undefined} ch @param {string[] | undefined} list @param {Record<number, string> | undefined} keys
  * @returns {[string[] | undefined, Record<number, string> | undefined]}
  */
 const applyV8 = (ch, list, keys) => (ch && list
-  ? [list.map((x, i) => (ch[i] ? ch[i][0] : x)), { ...(keys || {}), ...Object.fromEntries(Object.entries(ch).map(([i, a]) => [Number(i), a[1]])) }]
-  : [list, keys]);
+  ? [[...list.map((x, i) => (ch[i] ? ch[i][0] : x)), ...Object.keys(ch).map(Number).filter((i) => i >= list.length).sort((a, b) => a - b).map((i) => ch[i][0])],
+    { ...(keys || {}), ...Object.fromEntries(Object.entries(ch).map(([i, a]) => [Number(i), a[1]])) }]
+  : [list, keys]);   // an index at or past the end of the list appends a new text (notice v8: § 3 p3)
 /** @param {DraftDocument} d @returns {DraftDocument} */
 const toV8 = (d) => {
   const c = /** @type {any} */ (LEGAL_DRAFTS_V8_CHANGES)[d.id];
@@ -470,12 +495,12 @@ const toV8 = (d) => {
     return { ...s, ...(sc.title ? { title: sc.title[0], titleKey: sc.title[1] } : {}), ...(paras ? { paras, paraKeys } : {}), ...(items ? { items, itemKeys } : {}) };
   }) };
 };
-/** @type {DraftDocument[]} the two professional documents only */
+/** @type {DraftDocument[]} the two professional documents and the privacy notice */
 export const LEGAL_DRAFT_DOCUMENTS_V8 = LEGAL_DRAFT_DOCUMENTS_V7.filter((d) => LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id)).map(toV8);
 
 /**
- * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms, the privacy
- * notice and the A-I / A-II variant (v7); the professional documents are at LEGAL_DRAFTS_V8. LEGAL_DRAFT_DOCUMENTS = the newest draft of each document
+ * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
+ * A-I / A-II variant (v7); the professional documents and the privacy notice are at LEGAL_DRAFTS_V8. LEGAL_DRAFT_DOCUMENTS = the newest draft of each document
  * (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;

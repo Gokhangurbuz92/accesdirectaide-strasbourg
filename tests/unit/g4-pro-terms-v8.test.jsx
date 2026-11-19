@@ -5,7 +5,8 @@
  *  - cgu-professionnel § 5: no « votre nom » (ProUser has no name column) — the exact list of what the account holds; « vos créneaux » only once open.
  *  - cgu-professionnel § 4: appointments conditional, no assistant claim (no AI runs in Production).
  *  - conditions-structures: intro / § 2 / § 3 p1 / § 4 i1 i5 no longer describe closed functions as working.
- *  - v6 and v7 unchanged byte for byte; the citizen terms, the notice and the A-I / A-II variant stay at v7 (no v8 of them exists).
+ *  - v6 and v7 unchanged byte for byte; the citizen terms and the A-I / A-II variant stay at v7 (no v8 of them exists; the privacy notice joined v8
+ *    later the same day: tests/unit/g4-notice-v8.test.jsx).
  *  - Production: v8 in force only when VITE_LEGAL_DOCS_APPROVED_VERSION names it; proTermsInForce follows.
  * Diff: CONTROL/v2/V8_METIN_FARKI_FR.md.
  */
@@ -27,6 +28,8 @@ import { citizenTermsInForce } from '../../api/_utils/terms-in-force.js';
 import { claimsEntitlement } from '../../api/lib/entitlementWording.js';
 import { checkLegalPublisher } from '../../scripts/check-legal-publisher.mjs';
 
+/** the two professional documents (the privacy notice joined v8 later: tests/unit/g4-notice-v8.test.jsx) */
+const PRO_IDS = ['cgu-professionnel', 'conditions-structures'];
 const PROD_NOW = 'cgu-citoyen@v7-2026-11-18,notice-confidentialite@v7-2026-11-18';
 const WITH_V8 = `${PROD_NOW},cgu-professionnel@v8-2026-11-19,conditions-structures@v8-2026-11-19`;
 const LANGS = ['en', 'de', 'tr', 'ar', 'uk'];
@@ -44,12 +47,12 @@ afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.resetModules(); vi.stubEnv('
 describe('legal drafts v8-2026-11-19 — the professional documents only', () => {
   it('three approvable versions; v8 has exactly the two professional documents, still drafts; the others stay at v7', () => {
     expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19']);
-    expect(LEGAL_DRAFT_DOCUMENTS_V8.map((d) => d.id)).toEqual(['cgu-professionnel', 'conditions-structures']);
-    expect([...LEGAL_DRAFTS_V8_DOCUMENT_IDS]).toEqual(['cgu-professionnel', 'conditions-structures']);
+    expect(LEGAL_DRAFT_DOCUMENTS_V8.map((d) => d.id)).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
+    expect([...LEGAL_DRAFTS_V8_DOCUMENT_IDS]).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     for (const d of LEGAL_DRAFT_DOCUMENTS_V8) { expect(d.version).toBe(LEGAL_DRAFTS_V8); expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); }
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v7-2026-11-18', 'cgu-professionnel@v8-2026-11-19', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v7-2026-11-18']);
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v7-2026-11-18', 'cgu-professionnel@v8-2026-11-19', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v8-2026-11-19']);
     expect(LEGAL_NOTICE_VARIANT_DOCUMENT.version).toBe(LEGAL_DRAFTS_V7);
-    for (const id of ['cgu-citoyen', 'notice-confidentialite', LEGAL_NOTICE_VARIANT_DOCUMENT.id]) expect(latestDraftVersionOf(id)).toBe(LEGAL_DRAFTS_V7);
+    for (const id of ['cgu-citoyen', LEGAL_NOTICE_VARIANT_DOCUMENT.id]) expect(latestDraftVersionOf(id)).toBe(LEGAL_DRAFTS_V7);
   });
 
   it('v6 and v7 are unchanged byte for byte (hashes taken from the commit before v8)', () => {
@@ -66,7 +69,7 @@ describe('legal drafts v8-2026-11-19 — the professional documents only', () =>
     };
     expect(diff('cgu-professionnel')).toEqual(['appointments.p1_v8', 'appointments.p2_v8', 'appointments.title_v8', 'data.p1_v8']);
     expect(diff('conditions-structures')).toEqual(['agreement.p1_v8', 'agreement.title_v8', 'commitments.i1_v8', 'commitments.i5_v8', 'intro_v8', 'roles.p1_v8']);
-    for (const id of LEGAL_DRAFTS_V8_DOCUMENT_IDS) expect(draftTextKeys(v8(id)).length).toBe(draftTextKeys(v7(id)).length);
+    for (const id of PRO_IDS) expect(draftTextKeys(v8(id)).length).toBe(draftTextKeys(v7(id)).length);
   });
 
   it('cgu-professionnel § 5 lists exactly what a professional account holds — no name (ProUser has no name column)', () => {
@@ -100,7 +103,7 @@ describe('legal drafts v8-2026-11-19 — the professional documents only', () =>
   });
 
   it('no « votre nom » in the v8 professional documents, in any language; every key translated with the same placeholders; no entitlement claim', () => {
-    for (const id of LEGAL_DRAFTS_V8_DOCUMENT_IDS) {
+    for (const id of PRO_IDS) {
       expect(frText(v8(id))).not.toMatch(NAME.fr);
       expect(claimsEntitlement(frText(v8(id)))).toBe(false);
       for (const lang of LANGS) {
@@ -120,13 +123,13 @@ describe('legal drafts v8-2026-11-19 — the professional documents only', () =>
 
 describe('v8 approval: Production, LAB, professional sign-up', () => {
   it('Production today (citizen + notice v7): the professional documents are not in force and proTermsInForce fails', () => {
-    for (const id of LEGAL_DRAFTS_V8_DOCUMENT_IDS) expect(draftVisibility(/** @type {any} */ (draftFor(id, prod(PROD_NOW))), prod(PROD_NOW))).toBe('HIDDEN');
+    for (const id of PRO_IDS) expect(draftVisibility(/** @type {any} */ (draftFor(id, prod(PROD_NOW))), prod(PROD_NOW))).toBe('HIDDEN');
     expect(proTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: PROD_NOW })).toBe(false);
     expect(citizenTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: PROD_NOW })).toBe(true);
   });
 
   it('with v8 added: in force at v8, proTermsInForce passes, the sign-up records v8; the citizen documents stay at v7', () => {
-    for (const id of LEGAL_DRAFTS_V8_DOCUMENT_IDS) {
+    for (const id of PRO_IDS) {
       const d = /** @type {any} */ (draftFor(id, prod(WITH_V8)));
       expect(d.version).toBe(LEGAL_DRAFTS_V8); expect(draftVisibility(d, prod(WITH_V8))).toBe('IN_FORCE');
       expect(approvedVersionOf(id, WITH_V8)).toBe(LEGAL_DRAFTS_V8);

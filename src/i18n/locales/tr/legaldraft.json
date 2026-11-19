@@ -133,6 +133,7 @@
  "privacyNotice.purposes.i10": "P16 — Teknik hizmet sağlayıcılar: verileriniz bakımından talimat üzerine hareket ederler (md. 28) ve kendi dayanakları yoktur; bazılarının ayrıca kendi adına işledikleri, kendi sorumluluklarındadır (bölüm 6).",
  "privacyNotice.purposes.p1": "Hiçbir amaç kamu yararına yürütülen bir göreve dayanmaz. Hukuki sonuç doğuran hiçbir karar otomatik olarak alınmaz: hizmet hiçbir hak hakkında karar vermez.",
  "privacyNotice.purposes.p2": "E-posta adresi olmadan hesap oluşturulamaz; isteğe bağlı alanlar boş bırakılabilir.",
+ "privacyNotice.purposes.p3_v8": "Kamuya açık « Hakları ihtiyaca göre keşfedin » sayfası (/droits) ve tamamen tarayıcınızda çalıştığında yönlendirme anketi (/orientation), hesaplamalarını tarayıcınızda yapar: yanıtlarınızın hiçbirini AccesDirectAide'e göndermez ve ne bizde ne de cihazınızda hiçbir şey kaydetmez. Sitenin her sayfasında olduğu gibi, yalnızca barındırıcının istenen sayfalara ilişkin olağan teknik günlükleri kalır (yukarıda P1; süre 4. bölümde, « Sağlayıcıların teknik günlükleri »).",
  "privacyNotice.purposes-later.title": "3a. Henüz açık olmayan işlevler (önerilen dayanaklar)",
  "privacyNotice.purposes-later.i1": "P4 — Randevu arama ve profesyonellerin adlarının gösterilmesi: sizin için koşulların ifası (md. 6(1)(b)); profesyoneller için işletmecinin ve kurumlarının meşru menfaati (md. 6(1)(f)).",
  "privacyNotice.purposes-later.i2": "P4p — Profesyonellerin hesapları, iki adımlı doğrulamaları dahil: meşru menfaat (md. 6(1)(f)); kabul ettikleri profesyonel koşulların ifası (md. 6(1)(b)).",
@@ -199,6 +200,7 @@
  "privacyNotice.art14.p2": "Amaç: kamuoyunu var olan hizmetler hakkında bilgilendirmek. Dayanak: meşru menfaat (GDPR md. 6(1)(f)). Süre: resmî kaynak bilgiyi yayımladığı sürece; her içe aktarımda güncellenir.",
  "privacyNotice.art14.p3": "Kurumunuz sizin için bir mesleki hesap oluşturursa, adınızı ve mesleki adresinizi sağlar: 3 ile 8. bölümler sizin için de geçerlidir.",
  "privacyNotice.art14.p4": "Sizinle ilgili bir verinin düzeltilmesini isteyebilir veya gösterilmesine itiraz edebilirsiniz: {{contact}}.",
+ "privacyNotice.art14.p3_v8": "Sizin için bir mesleki hesap açılırsa, bu, kurumunuzun bir yöneticisi veya işletmeci tarafından mesleki e-posta adresinize gönderilen bir davet üzerine olur. Bu hesap mesleki e-posta adresinizi, rolünüzü, kurumunuzu, karma biçimdeki (geri döndürülemez) parolanızı, iki aşamalı doğrulamanızın gizli anahtarını, işlemlerinizin kaydını ve bildirim tercihlerinizi içerir. Mesleki kullanım koşullarını (ve bir kurum yöneticisi için kurum koşullarını) kabulünüz, sürümleriyle birlikte onay kayıt defterine kaydedilir; bu, GDPR anlamında bir rıza değildir. 3 ile 8. bölümler sizin için de geçerlidir.",
  "privacyNotice.language.title": "12. Esas dil",
  "privacyNotice.language.p1": "Bu bildirimin hukuken esas alınan tek sürümü Fransızcadır; çeviriler anlamaya yardımcı olmak içindir."
 }

@@ -264,7 +264,8 @@ describe('R45 draft documents rendering', () => {
     vi.stubEnv('VITE_LEGAL_DRAFT_PREVIEW', '1'); vi.stubEnv('VITE_LEGAL_CONTROLLER_IDENTITY', 'Personne Test');
     const { container } = await renderPage('LegalDraftDocument.jsx', '/confidentialite/notice');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');
-    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent(`notice-confidentialite@${LEGAL_DRAFTS_VERSION}`);
+    // G4 notice (19/11/2026): the privacy notice has a v8 draft (§ 3 p3, § 11 p3); LAB preview shows the newest draft of the document
+    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent(`notice-confidentialite@${LEGAL_DRAFTS_V8}`);
     expect(screen.getAllByTestId('legal-proposed-badge').length).toBe(LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === 'notice-confidentialite').sections.filter((s) => s.proposed).reduce((n, s) => n + (s.items || []).length, 0));
     expect(screen.getAllByTestId('legal-proposed-badge')[0]).toHaveTextContent('proposé — en attente de validation du responsable');
     expect(container.textContent).toContain('1 an après la date du rendez-vous, puis anonymisation');

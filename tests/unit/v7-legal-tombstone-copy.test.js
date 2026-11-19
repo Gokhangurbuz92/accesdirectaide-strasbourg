@@ -83,7 +83,7 @@ describe('v7 — approval by name, coexistence with v6', () => {
     expect(draftFor('notice-confidentialite', ctx(V7)).version).toBe(LEGAL_DRAFTS_V7);
     expect(draftFor('notice-confidentialite', ctx(`${V6},${V7}`)).version).toBe(LEGAL_DRAFTS_V7);
     expect(draftByPath('/confidentialite/notice', ctx(V6)).version).toBe(LEGAL_DRAFTS_V6);
-    expect(draftByPath('/confidentialite/notice').version).toBe(LEGAL_DRAFTS_V7);
+    expect(draftByPath('/confidentialite/notice').version).toBe('v8-2026-11-19');   // G4 notice (19/11/2026): the newest draft is v8 (tests/unit/g4-notice-v8.test.jsx)
     expect(approvedVersionOf('notice-confidentialite', V6)).toBe(LEGAL_DRAFTS_V6);
     expect(approvedVersionOf('notice-confidentialite', 'v5-2026-11-15')).toBe(null);
   });

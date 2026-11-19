@@ -18,6 +18,7 @@ import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../../api/_servi
 import { citizenTermsInForce } from '../../api/_utils/terms-in-force.js';
 
 const LANGS = ['en', 'tr', 'ar', 'de', 'uk'];
+// G4 notice (19/11/2026): the notice's newest draft is v8 (the citizen terms stay at LEGAL_DRAFTS_VERSION = v7): its approval names its own version
 const notice = LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === 'notice-confidentialite');
 const section = (/** @type {string} */ s) => notice.sections.find((x) => x.id === s);
 const textOf = (/** @type {any} */ s) => [s.title, ...(s.items || []), ...(s.paras || [])].join('\n');
@@ -33,7 +34,7 @@ describe('legal drafts: what the v5 provider verification (15/11/2026) changed s
 
   it('Production keeps hiding the drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names the current version — an approval of v4 or v5 does not carry over', () => {
     const v4 = 'cgu-citoyen@v4-2026-11-15,notice-confidentialite@v4-2026-11-15';
-    const v5 = `cgu-citoyen@${LEGAL_DRAFTS_VERSION},notice-confidentialite@${LEGAL_DRAFTS_VERSION}`;
+    const v5 = `cgu-citoyen@${LEGAL_DRAFTS_VERSION},notice-confidentialite@${notice.version}`;
     for (const approved of [undefined, '', v4, 'v4-2026-11-15', 'cgu-citoyen@v5-2026-11-15,notice-confidentialite@v5-2026-11-15', 'v5-2026-11-15']) {
       expect(draftVisibility(notice, { approved, production: true, preview: '1' })).toBe('HIDDEN');
       expect(citizenTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: approved })).toBe(false);
