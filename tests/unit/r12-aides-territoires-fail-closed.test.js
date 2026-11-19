@@ -5,6 +5,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 vi.mock('../../api/lib/logger.js', () => { const m = () => {}; return { logger: { info: m, warn: m, error: m, debug: m } }; });
 import { AidesTerritoiresConnector } from '../../api/lib/ingestion/AidesTerritoiresConnector.js';
+// G7: these tests replace global fetch; with KV_REST_API_* set (QA/launcher env) KV calls (rate limiter, connector cursor) went through the fake fetch and
+// consumed its mocked answers (7 environment-only failures). This file tests the provider calls, not KV: KV is unset for this file only.
+vi.hoisted(() => { delete process.env.KV_REST_API_URL; delete process.env.KV_REST_API_TOKEN; });
 
 const ENV = { ...process.env };
 afterEach(() => { process.env = { ...ENV }; vi.unstubAllGlobals(); });

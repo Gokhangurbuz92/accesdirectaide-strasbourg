@@ -22,6 +22,9 @@ vi.mock('../../src/db/index.js', () => ({
 import handler from '../../api/_handlers/pro/outlook-availability.js';
 import { signProToken } from '../../api/_utils/auth.js';
 import { decryptToken, encryptToken, envelopeIv } from '../../api/_utils/outlook-token-crypto.js';
+// G7: these tests replace global fetch; with KV_REST_API_* set (QA/launcher env) KV calls (rate limiter, connector cursor) went through the fake fetch and
+// consumed its mocked answers (7 environment-only failures). This file tests the provider calls, not KV: KV is unset for this file only.
+vi.hoisted(() => { delete process.env.KV_REST_API_URL; delete process.env.KV_REST_API_TOKEN; });
 
 const mk = () => ({ statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, setHeader(k, v) { this.headers[k] = v; }, end() { return this; } });
 const token = `Bearer ${signProToken({ id: 'pro-1', email: 'pro1@example.test', structureId: 'S-1', role: 'STRUCTURE_ADMIN' })}`;

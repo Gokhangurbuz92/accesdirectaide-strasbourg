@@ -9,6 +9,11 @@ import { readFileSync } from 'node:fs';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+// R1 PDF block mocks: vitest hoists vi.mock / vi.hoisted to the file top anyway (they always applied to the whole file); written here so the code says so (G7).
+const S = vi.hoisted(() => ({ aide: null }));
+vi.mock('../../src/db/index.js', () => ({ db: { query: { Aide: { findFirst: async () => S.aide }, Demarche: { findFirst: async () => null } } } }));
+vi.mock('../../api/lib/logger.js', () => { const m = () => {}; return { logger: { info: m, warn: m, error: m, debug: m } }; });
+vi.mock('@sentry/node', () => ({ captureException: () => {}, withScope: () => {}, default: {} }));
 
 const read = (p) => readFileSync(p, 'utf8');
 
@@ -65,10 +70,6 @@ describe('R1 — every consumer treats a null verification date as UNKNOWN', () 
 });
 
 describe('R1 — PDF export with a null verification date', () => {
-  const S = vi.hoisted(() => ({ aide: null }));
-  vi.mock('../../src/db/index.js', () => ({ db: { query: { Aide: { findFirst: async () => S.aide }, Demarche: { findFirst: async () => null } } } }));
-  vi.mock('../../api/lib/logger.js', () => { const m = () => {}; return { logger: { info: m, warn: m, error: m, debug: m } }; });
-  vi.mock('@sentry/node', () => ({ captureException: () => {}, withScope: () => {}, default: {} }));
   const mk = () => ({ statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, setHeader(k, v) { this.headers[k] = v; }, send(d) { this.body = d; return this; } });
   const base = { id: 'a1', slug: 'apl', titre: 'APL', categorie: 'logement', cest_quoi: 'x', pour_qui: 'y', ce_que_ca_aide: 'z', documents_necessaires: '', etapes: '', ou_demander: '', apply_url: null, lien_demande: null, source_name: null, source_url: null, sourceDocument: null };
   beforeEach(() => { S.aide = null; });
