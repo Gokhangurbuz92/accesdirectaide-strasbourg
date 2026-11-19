@@ -18,6 +18,8 @@ const FR = { lang: 'fr', dir: 'ltr' };
 const searchFor = (/** @type {string} */ title) => `/recherche?q=${encodeURIComponent(String(title || '').slice(0, 100))}`;
 /** where a record says whom to contact: « Où demander » of an aide (its heading has an anchor), the page itself otherwise */
 const contactHref = (r) => (r.type === 'aide' ? `${r.href}#heading-ou-demander` : r.href);
+/** the longest personal note the server keeps (api/_services/mon-espace.js setNote) */
+const NOTE_MAX = 500;
 
 /**
  * PKG-2 / C07 — Mon Parcours (/compte/parcours): the steps the person follows, kept across sessions. The plan d'action of a dossier attached to the account becomes tracked steps;
@@ -44,8 +46,12 @@ export default function CompteParcours() {
 
   const load = useCallback(async () => {
     try {
-      const [p, s] = await Promise.all([citizenApi.listParcours(), citizenApi.listShares()]);
-      setState({ loading: false, error: '', items: p.items || [], shares: s.shares || [], planSteps: p.planSteps === true });
+      const p = await citizenApi.listParcours();
+      // G4: the dossiers are listed only where the server says the plan import is open (it belongs to the HDS-bound shared dossier); a refusal there never
+      // hides Mon Parcours itself. A server without the flag (before G4) keeps the former behaviour.
+      const importOpen = p.planImport !== false;
+      const s = importOpen ? await citizenApi.listShares().catch(() => ({ shares: [] })) : { shares: [] };
+      setState({ loading: false, error: '', items: p.items || [], shares: importOpen ? s.shares || [] : [], planSteps: p.planSteps === true, emailReminders: p.emailReminders !== false });
     } catch (err) { setState({ loading: false, unauth: err.status === 401, error: err.status === 401 ? t('compte:parcours.login_required', 'Connectez-vous pour accéder à Mon Parcours.') : err.message, items: [], shares: [] }); }
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
@@ -219,11 +225,15 @@ export default function CompteParcours() {
             <div className="flex items-end"><Button type="submit" size="sm" data-testid="parcours-due-save">{t('compte:parcours.enregistrer', 'Enregistrer')}</Button></div>
           </form>
           {/* A-19: only the channels that can really carry this reminder are named */}
-          <p className="text-xs text-slate-700" data-testid="parcours-reminder-channels">{t('compte:parcours.reminder_channels', 'Rappel d’échéance : par e-mail, selon vos réglages de notification (page Mon profil). Aucun rappel d’échéance n’est envoyé par SMS.')}</p>
+          <p className="text-xs text-slate-700" data-testid="parcours-reminder-channels">{state.emailReminders
+            ? t('compte:parcours.reminder_channels', 'Rappel d’échéance : par e-mail, selon vos réglages de notification (page Mon profil). Aucun rappel d’échéance n’est envoyé par SMS.')
+            : t('compte:parcours.reminder_channels_inapp', 'Rappel d’échéance : dans les notifications de Mon Espace, 7 jours avant. Aucun rappel n’est envoyé par e-mail ni par SMS pour le moment.')}</p>
           {i.dueDate ? <Button type="button" size="sm" variant="outline" onClick={() => run(() => citizenApi.parcours({ action: 'deadline', id: i.id, dueDate: null }), t('compte:parcours.due_removed', 'Échéance retirée.'))}>{t('compte:parcours.retirer_echeance', 'Retirer l’échéance')}</Button> : null}
           <div>
             <label htmlFor={`nt-${i.id}`} className="block text-sm text-slate-800">{t('compte:parcours.note_personnelle_visible_par', 'Note personnelle (visible par vous seul)')}</label>
-            <textarea id={`nt-${i.id}`} data-testid="parcours-note" maxLength={500} className="mt-1 w-full rounded-md border border-slate-300 p-2" defaultValue={i.note || ''}
+            {/* G4 (data minimisation): the note is free text — the person is asked not to write health information there; nothing is checked or blocked */}
+            <p id={`nt-hint-${i.id}`} className="mt-1 text-xs text-slate-700" data-testid="parcours-note-hint">{t('compte:parcours.note_no_health', 'N’écrivez pas d’informations sur votre santé (maladie, handicap, traitement…) : cette note sert seulement à suivre votre démarche. 500 caractères au plus.')}</p>
+            <textarea id={`nt-${i.id}`} data-testid="parcours-note" maxLength={NOTE_MAX} aria-describedby={`nt-hint-${i.id}`} className="mt-1 w-full rounded-md border border-slate-300 p-2" defaultValue={i.note || ''}
               onBlur={(e) => { if ((e.target.value || '') !== (i.note || '')) run(() => citizenApi.parcours({ action: 'note', id: i.id, note: e.target.value }), t('compte:parcours.note_saved', 'Note enregistrée.')); }} />
           </div>
           <div>

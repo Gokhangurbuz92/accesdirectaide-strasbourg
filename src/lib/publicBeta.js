@@ -46,13 +46,21 @@ export function accountEntriesShown(beta, open = builtOpen()) {
 /**
  * R43 — the sub-switches of the server (api/_utils/public-beta.js), mirrored for the screens: the build names them in VITE_PUBLIC_BETA_ACCOUNTS_SCOPE
  * (« full »; anything else = the narrow booking scope) and VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION (« open »; anything else = closed).
- * @typedef {{ accountsScope: 'booking' | 'full', proSelfRegistration: boolean }} BetaSubSwitches
+ * G4: VITE_PUBLIC_BETA_ACCOUNTS_EXTRA names the modules added to the narrow scope (same exact names as ADA_BETA_ACCOUNTS_EXTRA; unknown = nothing).
+ * @typedef {{ accountsScope: 'booking' | 'full', proSelfRegistration: boolean, accountsExtras?: string[] }} BetaSubSwitches
  */
+/** G4: the screens of each module that can be added by name to the narrow accounts scope (server: ACCOUNTS_EXTRAS) @type {Readonly<Record<string, readonly string[]>>} */
+export const ACCOUNTS_EXTRA_SCREENS = Object.freeze({ parcours: Object.freeze(['/compte/parcours']) });
+/** @param {unknown} v @returns {string[]} */
+const extrasOf = (v) => String(v || '').split(',').map((x) => x.trim().toLowerCase()).filter((x) => Object.prototype.hasOwnProperty.call(ACCOUNTS_EXTRA_SCREENS, x));
 /** @returns {BetaSubSwitches} */
 const builtSub = () => {
-  let scope = ''; let reg = '';
-  try { scope = String(import.meta.env.VITE_PUBLIC_BETA_ACCOUNTS_SCOPE || ''); reg = String(import.meta.env.VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION || ''); } catch { scope = ''; reg = ''; }
-  return { accountsScope: scope.trim().toLowerCase() === 'full' ? 'full' : 'booking', proSelfRegistration: reg.trim().toLowerCase() === 'open' };
+  let scope = ''; let reg = ''; let extra = '';
+  try {
+    scope = String(import.meta.env.VITE_PUBLIC_BETA_ACCOUNTS_SCOPE || ''); reg = String(import.meta.env.VITE_PUBLIC_BETA_PRO_SELF_REGISTRATION || '');
+    extra = String(import.meta.env.VITE_PUBLIC_BETA_ACCOUNTS_EXTRA || '');
+  } catch { scope = ''; reg = ''; extra = ''; }
+  return { accountsScope: scope.trim().toLowerCase() === 'full' ? 'full' : 'booking', proSelfRegistration: reg.trim().toLowerCase() === 'open', accountsExtras: extrasOf(extra) };
 };
 /** the account screens of the narrow (booking) scope: sign-in and sign-up, the Mon Espace home, appointments and the account settings (rights) */
 export const ACCOUNTS_BOOKING_SCREENS = Object.freeze({ prefixes: ['/login', '/auth', '/compte/rendez-vous', '/compte/parametres'], exact: ['/compte'] });
@@ -83,12 +91,16 @@ export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSu
   // R43 (E2): accounts opened in the narrow scope show only its screens
   if (open.includes('accounts') && sub.accountsScope !== 'full'
     && (ACCOUNTS_BOOKING_SCREENS.exact.includes(p) || ACCOUNTS_BOOKING_SCREENS.prefixes.some((x) => under(p, x)))) return false;
+  // G4: a module added by name to the narrow scope (e.g. Mon Parcours) shows its own screens, and only those
+  if (open.includes('accounts') && sub.accountsScope !== 'full'
+    && extrasOf((sub.accountsExtras || []).join(',')).some((name) => ACCOUNTS_EXTRA_SCREENS[name].some((x) => under(p, x)))) return false;
   return RESTRICTED.some((x) => under(p, x));
 }
 
 /**
  * VIS-R — is Mon Parcours usable in this build: outside the beta, or when the build opens the accounts surface in its full scope (the server gate is
- * api/_utils/public-beta.js: `citizen/parcours` is outside the narrow booking scope). « Ajouter à mon parcours » is offered only then.
+ * api/_utils/public-beta.js: `citizen/parcours` is outside the narrow booking scope) or adds « parcours » to the narrow scope (G4). « Ajouter à mon
+ * parcours » is offered only then.
  * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
  */
 export function parcoursOpened(beta, open = builtOpen(), sub = builtSub()) {

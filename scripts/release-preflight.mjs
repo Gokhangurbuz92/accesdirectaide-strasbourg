@@ -8,7 +8,7 @@
  */
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
-import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope } from '../api/_utils/public-beta.js';
+import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
 import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
@@ -124,7 +124,8 @@ export function evaluateReleasePreflight(env, opts = {}) {
   }
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'
-    : 'accounts in the booking scope: sign-up/in, verification, password, profile, adult statement, rectification, preferences, restriction, deletion, export, Mon Espace summary');
+    : `accounts in the booking scope: sign-up/in, verification, password, profile, adult statement, rectification, preferences, restriction, deletion, export, Mon Espace summary${
+      accountsExtras(env).size ? ` + named additions (ADA_BETA_ACCOUNTS_EXTRA): ${[...accountsExtras(env)].sort().join(', ')}` : ''}`);
   // R45 / ENG-LR-6: capabilities outside the AIPD (api/_utils/capabilities.js) — evaluated as Production does (enforced). PASS when none is open; WARN when
   // one is named or open (an AIPD extension and, for the HDS ones, a certified host are needed); a malformed HDS token is a FAIL (it would open nothing)
   {

@@ -1,7 +1,7 @@
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { accountsScope, isPublicBetaRestricted, openJobs, openSurfaces, proSelfRegistrationOpen } from '../_utils/public-beta.js';
+import { accountsExtras, accountsScope, isPublicBetaRestricted, openJobs, openSurfaces, proSelfRegistrationOpen } from '../_utils/public-beta.js';
 import { publicOpenApiSpec } from '../lib/openapi-public.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -33,7 +33,7 @@ export default async function handler(req, res) {
     // G3: during the restricted beta only the public subset is described (never the admin / cron / monitor / pro / institution routes)
     let body = cachedSpec;
     if (isPublicBetaRestricted()) {
-      const key = [[...openSurfaces()].sort().join(','), accountsScope(), proSelfRegistrationOpen(), [...openJobs()].sort().join(',')].join('|');
+      const key = [[...openSurfaces()].sort().join(','), accountsScope(), [...accountsExtras()].sort().join(','), proSelfRegistrationOpen(), [...openJobs()].sort().join(',')].join('|');
       if (!cachedPublic.has(key)) cachedPublic.set(key, JSON.stringify(publicOpenApiSpec(JSON.parse(cachedSpec))));
       body = /** @type {string} */ (cachedPublic.get(key));
     }

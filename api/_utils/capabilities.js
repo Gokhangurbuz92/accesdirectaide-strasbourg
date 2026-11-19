@@ -22,7 +22,7 @@
  * saved diagnostic uncertain, leaning no (it stays closed anyway: outside the AIPD). There is no platform-wide « HDS everything » switch. A token is a
  * statement recorded by the controller that a certificate exists, not a verification of it.
  */
-import { accountsScope, isPublicBetaRestricted, openSurfaces } from './public-beta.js';
+import { accountsExtraCapabilities, accountsScope, isPublicBetaRestricted, openSurfaces } from './public-beta.js';
 
 export const CAPABILITY_NOT_OPEN = 'CAPABILITY_NOT_OPEN';
 export const CAPABILITY_NOT_OPEN_MESSAGE = 'Cette fonction n’est pas encore ouverte : elle sera disponible lorsque son analyse d’impact sur la protection des données '
@@ -172,11 +172,12 @@ export function hdsAttestation(envVars = process.env, now = new Date()) {
   return { valid: true, reason: null };
 }
 
-/** is the capability's surface open @param {Capability} cap @param {Record<string, string | undefined>} envVars */
-function surfaceOpen(cap, envVars) {
+/** is the capability's surface open @param {string} key @param {Capability} cap @param {Record<string, string | undefined>} envVars */
+function surfaceOpen(key, cap, envVars) {
   if (!isPublicBetaRestricted(envVars)) return true;   // outside the beta every surface is served (the capability rule still applies)
   if (!openSurfaces(envVars).has(cap.surface)) return false;
-  return !cap.accountsFull || accountsScope(envVars) === 'full';
+  // G4: a capability of the full scope also passes when its module is added by name to the narrow scope (ADA_BETA_ACCOUNTS_EXTRA, e.g. citizen.parcours)
+  return !cap.accountsFull || accountsScope(envVars) === 'full' || accountsExtraCapabilities(envVars).has(key);
 }
 
 /**
@@ -191,7 +192,7 @@ export function capabilityState(name, envVars = process.env, opts = {}) {
   if (!capabilityEnforced(envVars)) return { open: true, reason: 'ENFORCEMENT_OFF' };   // development / test LAB only
   const cap = CAPABILITIES[key];
   if (cap.openable === false) return { open: false, reason: 'NOT_OPENABLE' };
-  if (!surfaceOpen(cap, envVars)) return { open: false, reason: 'SURFACE_CLOSED' };
+  if (!surfaceOpen(key, cap, envVars)) return { open: false, reason: 'SURFACE_CLOSED' };
   if (cap.aipd !== 'in' && !listedCapabilities(envVars).has(key)) return { open: false, reason: 'NOT_LISTED_IN_ADA_CAPABILITIES_OPEN' };
   // a structure-dependent HDS need (ESSMS or not) is waived only for a structure positively classified NOT_ESSMS; unknown = HDS needed (fail-closed)
   const hdsNeeded = cap.requiresHds && !(cap.hdsDependsOnStructure && opts.structureCategory === 'NOT_ESSMS');
