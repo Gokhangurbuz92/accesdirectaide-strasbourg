@@ -60,3 +60,21 @@ describe('G8: cookies page shared-device warning follows the orientation mode', 
     expect(screen.getByTestId('cookies-shared-device')).toBeInTheDocument();
   });
 });
+
+describe('G9: retention paragraph matches the schedule and the approval', () => {
+  it('daily purge at 3 a.m. UTC (vercel.json « 0 3 * * * »), never « hebdomadaire »; « pas encore validées » hidden once the notice is approved', async () => {
+    const vercel = JSON.parse((await import('node:fs')).readFileSync('vercel.json', 'utf8'));
+    expect(vercel.crons.find((c) => c.path === '/api/cron/gdpr-purge').schedule).toBe('0 3 * * *');
+    vi.stubEnv('VITE_LEGAL_DOCS_APPROVED_VERSION', APPROVED);
+    const { container } = await renderPrivacy();
+    expect(container.textContent).toContain('tâche automatique quotidienne (chaque jour à 3 h, heure UTC)');
+    expect(container.textContent).not.toMatch(/hebdomadaire|chaque dimanche/);
+    expect(container.textContent).not.toContain("n'ont pas encore été validées par le responsable de traitement");
+  });
+  it('nothing approved: the « not validated » sentence stays', async () => {
+    vi.stubEnv('VITE_LEGAL_DOCS_APPROVED_VERSION', '');
+    const { container } = await renderPrivacy();
+    expect(container.textContent).toContain("n'ont pas encore été validées par le responsable de traitement");
+  });
+});
+

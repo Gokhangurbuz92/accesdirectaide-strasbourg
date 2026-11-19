@@ -114,6 +114,7 @@
  "privacy.cookies.notMeasured": "Ziyaretçi ölçümü yok; teknik bir hata kaydı var: ayrıntılar ve seçenekler <0>Çerezler</0> sayfasında.",
  "privacy.retention.title": "Saklama süreleri",
  "privacy.retention.intro": "Öngörülen süreler. Bunlar haftalık bir otomatik görevle (her pazar saat 3'te, UTC saatiyle) uygulanacaktır; bu görev henüz etkin değildir: etkinleştirilene kadar hiçbir şey otomatik olarak silinmez.",
+ "privacy.retention.introDaily": "Öngörülen süreler. Bunlar günlük bir otomatik görevle (her gün saat 3'te, UTC saatiyle) uygulanacaktır; bu görev henüz etkin değildir: etkinleştirilene kadar hiçbir şey otomatik olarak silinmez.",
  "privacy.retention.data": "Veriler",
  "privacy.retention.duration": "Öngörülen süre",
  "privacy.retention.notValidated": "Bu süreler kod tarafından önerilen değerlerdir. Henüz veri sorumlusu tarafından onaylanmamışlardır ve hesaplar açılmadan önce değişebilirler.",

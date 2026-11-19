@@ -229,7 +229,7 @@ export default function Confidentialite() {
             <section className="space-y-4">
               <SectionTitle icon={Database}>{t('legal:privacy.retention.title', 'Durées de conservation')}</SectionTitle>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2 text-sm">
-                <p>{t('legal:privacy.retention.intro', "Durées prévues. Elles seront appliquées par une tâche automatique hebdomadaire (chaque dimanche à 3 h, heure UTC), qui n'est pas encore activée : tant qu'elle ne l'est pas, rien n'est supprimé automatiquement.")}</p>
+                <p>{t('legal:privacy.retention.introDaily', "Durées prévues. Elles seront appliquées par une tâche automatique quotidienne (chaque jour à 3 h, heure UTC), qui n'est pas encore activée : tant qu'elle ne l'est pas, rien n'est supprimé automatiquement.")}</p>
                 <div className="relative overflow-x-auto">
                   <table className="w-full text-sm text-start border border-slate-200 rounded-lg overflow-hidden">
                     <thead className="bg-slate-50">
@@ -245,7 +245,8 @@ export default function Confidentialite() {
                     </tbody>
                   </table>
                 </div>
-                <p>{t('legal:privacy.retention.notValidated', "Ces durées sont des valeurs proposées par le code. Elles n'ont pas encore été validées par le responsable de traitement et peuvent changer avant l'ouverture des comptes.")}</p>
+                {/* G9: the retention periods were approved by the controller (09/11) and are in the approved notice § 4: « pas encore validées » was no longer true */}
+                {!noticeVersion && <p>{t('legal:privacy.retention.notValidated', "Ces durées sont des valeurs proposées par le code. Elles n'ont pas encore été validées par le responsable de traitement et peuvent changer avant l'ouverture des comptes.")}</p>}
                 <p><strong>{t('legal:privacy.retention.notYetLabel', 'Pas encore appliqué automatiquement :')}</strong> {t('legal:privacy.retention.notYet', "suppression des comptes inactifs ; durée des messages et documents du Coffre (conservés jusqu'à leur suppression ou celle du compte) ; dossiers de suivi des structures ; demandes de contact.")}</p>
                 <p>{t('legal:privacy.retention.deletion', 'Pour supprimer votre compte : la demande est enregistrée tout de suite, puis exécutée après une vérification humaine.')}</p>
                 <p><Trans i18n={i18n} i18nKey="legal:privacy.retention.contact" defaults="Contact protection des données : <0/>." components={[contactValue('contact')]} /></p>
