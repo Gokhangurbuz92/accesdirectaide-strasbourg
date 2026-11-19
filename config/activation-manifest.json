@@ -456,6 +456,14 @@
       ],
       "note": "R43: shows the /pro/register screen during the beta (rebuild); must match ADA_PRO_SELF_REGISTRATION"
     },
+    "VITE_ORIENTATION_BROWSER_ONLY": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "note": "G4: exactly 1 = browser-only orientation on /orientation (no request with the answers, no storage; /api/diagnostic stays closed); rebuild"
+    },
     "MAINTENANCE_MODE": {
       "class": "optional",
       "nature": "config",

@@ -61,9 +61,21 @@ export const PRO_SELF_REGISTRATION_SCREEN = '/pro/register';
 /** @param {string} p normalized path @param {string} x screen prefix */
 const under = (p, x) => p === x || p.startsWith(`${x}/`);
 
-/** @param {string} pathname @param {string[]} [open] surfaces opened in this build @param {BetaSubSwitches} [sub] sub-switches of this build */
-export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSub()) {
+/**
+ * G4 — the browser-only orientation (src/lib/orientationBrowserOnly.js, VITE_ORIENTATION_BROWSER_ONLY=1 exactly): /orientation then runs entirely in the
+ * browser and never calls /api/diagnostic, so it is not a closed screen. /diagnostic and the server surface `diagnostic` are unchanged.
+ */
+export const BROWSER_ONLY_SCREEN = '/orientation';
+const builtBrowserOnly = () => {
+  let v = '';
+  try { v = String(import.meta.env.VITE_ORIENTATION_BROWSER_ONLY ?? ''); } catch { v = ''; }
+  return v === '1';
+};
+
+/** @param {string} pathname @param {string[]} [open] surfaces opened in this build @param {BetaSubSwitches} [sub] sub-switches of this build @param {boolean} [browserOnly] G4 flag of this build */
+export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSub(), browserOnly = builtBrowserOnly()) {
   const p = String(pathname || '/').toLowerCase().split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+  if (browserOnly && under(p, BROWSER_ONLY_SCREEN)) return false;
   // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
   if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
   const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));

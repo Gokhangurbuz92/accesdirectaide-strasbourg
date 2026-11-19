@@ -255,5 +255,19 @@
   "orientation.voir_toutes_les_aides": "Tüm yardımları gör",
   "orientation.voir_les_demarches": "İşlemleri gör",
   "orientation.voir_l_annuaire": "Rehberi gör",
-  "wizard.privacy.browser": "Bu cihazda, ilk adımlardaki seçimleriniz yalnızca bu sekmede tutulur; sayfa yeniden yüklenirse devam edebilirsiniz. Sonuç gösterildiğinde, “{{restart}}” düğmesine tıkladığınızda veya sekmeyi kapattığınızda silinir. Doğum tarihiniz, gelirleriniz ve konut bilgileriniz tarayıcıda tutulmaz."
+  "wizard.privacy.browser": "Bu cihazda, ilk adımlardaki seçimleriniz yalnızca bu sekmede tutulur; sayfa yeniden yüklenirse devam edebilirsiniz. Sonuç gösterildiğinde, “{{restart}}” düğmesine tıkladığınızda veya sekmeyi kapattığınızda silinir. Doğum tarihiniz, gelirleriniz ve konut bilgileriniz tarayıcıda tutulmaz.",
+  "wizard.local.topics_title": "Seçimlerinizle ilgili konular",
+  "wizard.local.topics_intro": "Her konu için: resmî bilgi sayfaları, kime başvurulacağı ve ne yapılacağı. Bu konular bir yardımın sizi ilgilendirip ilgilendirmediğini söylemez: yalnızca başvuruyu alan kurum karar verir.",
+  "wizard.local.bodies": "Başvurulabilecek kurumlar",
+  "wizard.local.topic_more": "Bu konuyla ilgili her şey",
+  "wizard.local.erase": "Cevaplarımı sil",
+  "wizard.local.privacy": "Bu anket tamamen tarayıcınızda çalışır. Cevaplarınız hiçbir sunucuya gönderilmez, hiçbir yerde kaydedilmez (ne bizde ne de tarayıcının belleğinde) ve ölçülmez.",
+  "wizard.local.privacy_erase": "« {{erase}} » düğmesine tıkladığınızda, sayfayı yenilediğinizde veya sekmeyi kapattığınızda silinirler. Hesap gerekmez.",
+  "wizard.local.privacy_topics": "« Engellilik durumu » gibi seçimler yalnızca okunacak konuları seçmek için kullanılır: sağlığınızla ilgili hiçbir ayrıntı sorulmaz.",
+  "wizard.local.diag_intro": "Hesaplama tarayıcınızda yapılır: bu cevaplar hiçbir yere gönderilmez ve kaydedilmez. Bilmediğiniz alanları boş bırakabilirsiniz.",
+  "wizard.local.diag_voice": "Son olarak doğum tarihinizi veya yaş aralığınızı, aylık net gelirinizi ve konut durumunuzu belirtin. Bilmediğiniz alanları boş bırakabilirsiniz. Hesaplama tarayıcınızda yapılır: cevaplarınız hiçbir yere gönderilmez.",
+  "wizard.local.region": "Yönlendirme anketi (tarayıcınızda)",
+  "wizard.local.erased": "Cevaplarınız silindi. Hiçbir şey gönderilmedi veya kaydedilmedi.",
+  "wizard.local.result_note": "Bu sonuç tarayıcınızda hazırlandı. Hiçbir şey gönderilmedi veya kaydedilmedi. Hiçbir ipucu bir uzman tarafından doğrulanmadı: başvuruyu alan kurum karar verir.",
+  "wizard.local.profile_intro": "Bu bilgiler tarayıcınızda kalır: ne gönderilir ne de kaydedilir (« {{erase}} » onları siler)."
 }

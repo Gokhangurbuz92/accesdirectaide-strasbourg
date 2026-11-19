@@ -255,5 +255,19 @@
   "orientation.voir_toutes_les_aides": "See all aids",
   "orientation.voir_les_demarches": "See the procedures",
   "orientation.voir_l_annuaire": "See the directory",
-  "wizard.privacy.browser": "On this device, your choices from the first steps are kept only in this tab, so you can resume if the page reloads. They are erased when the result is shown, when you click “{{restart}}” or when you close the tab. Your date of birth, income and housing are not kept in the browser."
+  "wizard.privacy.browser": "On this device, your choices from the first steps are kept only in this tab, so you can resume if the page reloads. They are erased when the result is shown, when you click “{{restart}}” or when you close the tab. Your date of birth, income and housing are not kept in the browser.",
+  "wizard.local.topics_title": "Topics linked to your choices",
+  "wizard.local.topics_intro": "For each topic: the official information sheets, who to contact and what to do. These topics do not say whether an aid concerns you: only the organisation that receives the application decides.",
+  "wizard.local.bodies": "Organisations to contact",
+  "wizard.local.topic_more": "Everything on this topic",
+  "wizard.local.erase": "Erase my answers",
+  "wizard.local.privacy": "This questionnaire works entirely in your browser. Your answers are not sent to any server, are not saved anywhere (neither by us nor in the browser’s memory) and are not measured.",
+  "wizard.local.privacy_erase": "They disappear when you click « {{erase}} », when you reload the page or when you close the tab. No account is needed.",
+  "wizard.local.privacy_topics": "Choices such as « Disability » are only used to pick topics to read: no detail about your health is asked.",
+  "wizard.local.diag_intro": "The calculation is done in your browser: these answers are not sent anywhere and are not saved. You can leave blank what you do not know.",
+  "wizard.local.diag_voice": "Finally, give your date of birth or your age group, your net monthly income and your housing. You can leave blank what you do not know. The calculation is done in your browser: your answers are not sent anywhere.",
+  "wizard.local.region": "Orientation questionnaire (in your browser)",
+  "wizard.local.erased": "Your answers have been erased. Nothing was sent or saved.",
+  "wizard.local.result_note": "This result was prepared in your browser. Nothing was sent or saved. No lead has been validated by an expert: the organisation that receives the application decides.",
+  "wizard.local.profile_intro": "This information stays in your browser: it is neither sent nor saved (« {{erase}} » erases it)."
 }
