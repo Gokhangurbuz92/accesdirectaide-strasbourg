@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
 import { AUDIENCE_OBJECTION_KEY, hasObjectedToAudience, setAudienceObjection } from '@/lib/audienceObjection';
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL } from '@/config/legal-documents';
+import { orientationBrowserOnly } from '@/lib/orientationBrowserOnly';
 import { frontendEnv } from "@/config/env";
 import i18n, { useLanguage, useT } from '@/i18n';
 
@@ -178,9 +179,13 @@ export default function Cookies() {
                 <TrackerTable caption={t('legal:cookies.needed.cookies', 'Cookies')} rows={cookieRows(t)} />
                 <TrackerTable caption={t('legal:cookies.needed.localStorage', 'Stockage local du navigateur (localStorage)')} rows={localStorageRows(t)} />
                 <TrackerTable caption={t('legal:cookies.needed.sessionStorage', 'Stockage de session (sessionStorage)')} rows={sessionStorageRows(t)} />
-                <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded border border-amber-100">
-                  {t('legal:cookies.needed.sharedDevice', "Appareil partagé (médiathèque, structure, famille) : vos réponses au questionnaire restent sur l'appareil. Déconnectez-vous à la fin et effacez les données du site dans votre navigateur.")}
-                </p>
+                {/* G8: in browser-only orientation (G4) the questionnaire keeps nothing on the device (approved notice v8, P3); the warning applied to the
+                    server questionnaire only, which is closed — not shown then, no new wording */}
+                {!orientationBrowserOnly() && (
+                  <p className="text-sm text-amber-700 bg-amber-50 p-3 rounded border border-amber-100" data-testid="cookies-shared-device">
+                    {t('legal:cookies.needed.sharedDevice', "Appareil partagé (médiathèque, structure, famille) : vos réponses au questionnaire restent sur l'appareil. Déconnectez-vous à la fin et effacez les données du site dans votre navigateur.")}
+                  </p>
+                )}
               </div>
             </section>
 
