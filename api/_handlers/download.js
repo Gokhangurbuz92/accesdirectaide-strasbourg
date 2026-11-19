@@ -2,12 +2,12 @@ import logger from '../_utils/logger.js';
 import crypto from 'node:crypto';
 import { db } from '../../src/db/index.js';
 import { SharedDiagnostic, AuditLog, ProUser } from '../../src/db/schema.js';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { verifyAttachmentToken } from '../lib/crypto.js';
 import { openBuffer, openText } from '../lib/data-keys.js';
 // R46 (C17): dossier attachments are read through the HDS-ready storage boundary
 import { protectedStore as storage } from '../lib/protected-store/index.js';
-import { findGrant } from '../_utils/share-access.js';
+import { activeGrantExists, findGrant } from '../_utils/share-access.js';
 import { isDossierRestricted } from '../_services/processing-restriction.js';
 
 /**
@@ -76,9 +76,16 @@ export default async function handler(/** @type {import('../_utils/http-types').
         }
         // R18: the professional the token was issued to must still be an active member of the file-owning organization (a departure cuts it at once)
         if (binding.memberId) {
-            const [member] = await db.select({ id: ProUser.id }).from(ProUser).where(and(eq(ProUser.id, binding.memberId), eq(ProUser.status, 'active'),
+            const [member] = await db.select({ id: ProUser.id, role: ProUser.role }).from(ProUser).where(and(eq(ProUser.id, binding.memberId), eq(ProUser.status, 'active'),
                 ...(typeof ownerStructureId === 'string' && ownerStructureId ? [eq(ProUser.structureId, ownerStructureId)] : []))).limit(1);
             if (!member) return res.status(404).json({ error: 'Document not found' });
+            // G10: the holder must still be allowed to OPEN the dossier — the rule of GET /api/pro/dossier (activeGrantExists: grant not revoked nor lapsed with
+            // its referral, case not assigned to a colleague, processing not restricted). Before, a link issued to a member kept working for its hour after the
+            // case was assigned to someone else or the referral grant lapsed.
+            if (typeof ownerStructureId === 'string' && ownerStructureId) {
+                const open = await db.execute(sql`SELECT 1 AS ok WHERE ${activeGrantExists(binding.shareId, { structureId: ownerStructureId, userId: member.id, role: member.role })}`);
+                if (!open.rows.length) return res.status(404).json({ error: 'Document not found' });
+            }
         }
         // PKG-11 audit: a token minted before the person restricted processing (art. 18) stops working too
         if (await isDossierRestricted(binding.shareId)) return res.status(404).json({ error: 'Document not found' });

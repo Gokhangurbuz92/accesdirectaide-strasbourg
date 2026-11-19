@@ -62,6 +62,12 @@ const inList = (values) => sql.join(values.map((v) => sql`${v}`), sql`, `);
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('not_found', 'Orientation introuvable.', 404);
 const ctxOf = (id) => ({ purpose: 'referral-message', context: `referral:${id}` });
+/**
+ * G10 — the outcome message written FOR the person (Referral.outcomeCitizenSummary) is free text about them, like the two other texts of a referral: it is
+ * sealed at rest under the same purpose and context (before: stored in clear). A value written before this change (not « v2: ») is read as it is.
+ */
+export const sealSummary = (id, text) => (text ? sealText(text, ctxOf(id)) : null);
+export const openSummary = (id, stored) => (!stored ? null : String(stored).startsWith('v2:') ? openText(String(stored), ctxOf(id)) : String(stored));
 /** A05: the line between the message the person authorized and a later reply of the sender (the date is ISO: the text is read in every language) */
 export const REPLY_SEPARATOR = (at = new Date()) => `— Précisions apportées le ${at.toISOString().slice(0, 10)} —`;
 const unavailable = () => bad('REDIRECT_UNAVAILABLE', 'La suggestion d’une autre structure n’est pas encore disponible sur ce service.', 409);
@@ -243,7 +249,7 @@ export async function citizenList(userId, db = defaultDb) {
   const nextOf = new Map();
   for (const r of [...rows].reverse()) if (r.previousReferralId && r.status !== 'CANCELLED') nextOf.set(r.previousReferralId, r.id);
   return { ok: true, status: 200, referrals: rows.map((r) => ({ id: r.id, dossierId: r.sharedDiagnosticId, from: r.fromName, to: r.toName, status: r.status, reasonCode: r.reasonCode,
-    message: r.messageEncrypted ? openText(r.messageEncrypted, ctxOf(r.id)) : '', outcome: r.outcome, outcomeSummary: r.outcomeCitizenSummary, createdAt: r.createdAt, sentAt: r.sentAt,
+    message: r.messageEncrypted ? openText(r.messageEncrypted, ctxOf(r.id)) : '', outcome: r.outcome, outcomeSummary: openSummary(r.id, r.outcomeCitizenSummary), createdAt: r.createdAt, sentAt: r.sentAt,
     // A09: what the e-mail promises (« détails dans Mon Espace »): the controlled motive of the answer — never the receiver's free text — and when it was given
     responseCode: r.responseCode || null, respondedAt: r.respondedAt || null, closedAt: r.closedAt || null,
     suggested: r.suggestedName || null, previousId: r.previousReferralId || null, nextId: nextOf.get(r.id) || null, ...nextActionOf(r, { hasNext: nextOf.has(r.id) }) })) };
@@ -367,7 +373,7 @@ export async function getReferral(ctx, id, db = defaultDb) {
   const live = (await db.execute(sql`SELECT 1 AS ok FROM "Referral" WHERE ${f.chain ? sql`"previousReferralId" = ${r.id}` : sql`FALSE`} AND status IN (${inList(LIVE_STATUSES)})`)).rows.length > 0;
   return { ok: true, status: 200, side, referral: { id: r.id, status: r.status, reasonCode: caseOpen ? r.reasonCode : null, from: nameOf(r.fromStructureId), to: nameOf(r.toStructureId),
     message: textsOpen && r.messageEncrypted ? openText(r.messageEncrypted, ctxOf(r.id)) : '', responseCode: r.responseCode,
-    responseMessage: textsOpen && r.responseMessageEncrypted ? openText(r.responseMessageEncrypted, ctxOf(r.id)) : '', textsHidden: !textsOpen, outcome: r.outcome, outcomeSummary: caseOpen ? r.outcomeCitizenSummary : null,
+    responseMessage: textsOpen && r.responseMessageEncrypted ? openText(r.responseMessageEncrypted, ctxOf(r.id)) : '', textsHidden: !textsOpen, outcome: r.outcome, outcomeSummary: caseOpen ? openSummary(r.id, r.outcomeCitizenSummary) : null,
     createdAt: r.createdAt, sentAt: r.sentAt, dueAt: r.dueAt, acknowledgedAt: r.acknowledgedAt, respondedAt: r.respondedAt, closedAt: r.closedAt, appointment,
     dossierId: side === 'RECEIVER' && dossierOpen ? r.sharedDiagnosticId : side === 'SENDER' && caseOpen ? r.sharedDiagnosticId : null,
     messages: history, suggested, previous, next, nextAction: flag.nextAction, needsFollowUp: flag.needsFollowUp,
@@ -459,7 +465,7 @@ export async function act(ctx, id, action, input = {}, deps = {}) {
     const outcome = String(input.outcome || ''); const summary = String(input.citizenSummary || '').trim();
     if (!OUTCOMES.includes(outcome)) return bad('INVALID_OUTCOME', 'Choisissez le résultat de l’accompagnement.');
     if (summary.length > 1000) return bad('INVALID_SUMMARY', 'Le message à la personne fait 1000 caractères au plus.');
-    const out = await go(['ACCEPTED', 'IN_PROGRESS'], { status: 'COMPLETED', outcome, outcomeCitizenSummary: summary || null }, 'RECEIVER', 'COMPLETED', receiverGrant);
+    const out = await go(['ACCEPTED', 'IN_PROGRESS'], { status: 'COMPLETED', outcome, outcomeCitizenSummary: sealSummary(r.id, summary) }, 'RECEIVER', 'COMPLETED', receiverGrant);
     if (out.ok) {
       await notifyOrg(db, r.fromStructureId, 'referral_completed', 'Orientation terminée', 'La structure destinataire a indiqué le résultat de l’accompagnement.', { referralId: r.id });
       await tellCitizen(db, r, deps.sendMail || defaultSendMail, 'Votre accompagnement est terminé', `La structure a indiqué le résultat de votre accompagnement. Consultez-le dans Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'COMPLETED');

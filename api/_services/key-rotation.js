@@ -5,7 +5,7 @@
  * retire the old key. Payloads are never decrypted to disk nor re-encrypted.
  *
  * PKG-5 coverage (was: dossier-thread messages only):
- *   text columns  SharedDossierMessage.body, ProCaseNote.bodyEncrypted, Referral.messageEncrypted / responseMessageEncrypted, ReferralMessage.bodyEncrypted (0048), CitizenDocument.filenameEncrypted,
+ *   text columns  SharedDossierMessage.body, ProCaseNote.bodyEncrypted, Referral.messageEncrypted / responseMessageEncrypted / outcomeCitizenSummary (G10), ProCase.outcomeCitizenSummary (G10), ReferralMessage.bodyEncrypted (0048), CitizenDocument.filenameEncrypted,
  *                 RdvMessageAttachment.filenameEncrypted, SharedDiagnostic.results._files[].filenameEncrypted, DSRRequest.reviewOutcome.extractEncrypted
  *   blobs         CitizenDocument (Mon Coffre), RdvMessageAttachment (message attachments), SharedDiagnostic.results._files[] (dossier documents)
  * Text: compare-and-set UPDATE on the old value (a concurrent writer or a second run cannot clobber data).
@@ -66,6 +66,9 @@ const TEXT_COLUMNS = [
   { table: 'ProCaseNote', idCol: 'id', col: 'bodyEncrypted', purpose: 'case-note', ctx: (r) => `case:${r.caseId}`, select: '"caseId"' },
   { table: 'Referral', idCol: 'id', col: 'messageEncrypted', purpose: 'referral-message', ctx: (r) => `referral:${r.id}`, select: '1 AS one' },
   { table: 'Referral', idCol: 'id', col: 'responseMessageEncrypted', purpose: 'referral-message', ctx: (r) => `referral:${r.id}`, select: '1 AS one' },
+  // G10: the outcome messages written for the person, sealed since G10 (a value written in clear before is not a v2 value: skipped, nothing depends on a key)
+  { table: 'Referral', idCol: 'id', col: 'outcomeCitizenSummary', purpose: 'referral-message', ctx: (r) => `referral:${r.id}`, select: '1 AS one' },
+  { table: 'ProCase', idCol: 'id', col: 'outcomeCitizenSummary', purpose: 'case-note', ctx: (r) => `case:${r.id}`, select: '1 AS one' },
   { table: 'CitizenDocument', idCol: 'id', col: 'filenameEncrypted', purpose: 'coffre-filename', ctx: (r) => `coffre:${r.userId}:${r.id}`, select: '"userId"' },
   { table: 'RdvMessageAttachment', idCol: 'id', col: 'filenameEncrypted', purpose: 'message-attachment-name', ctx: (r) => `rdvatt:${r.conversationId}:${r.id}`, select: '"conversationId"' },
   // PKG-5 batch 2: support requests (message + optional contact) and assisted ownership-recovery addresses

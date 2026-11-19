@@ -9,6 +9,7 @@
 import { referentForCase } from './dossier-referent.js';
 import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
+import { openText, sealText } from '../lib/data-keys.js';
 import { ProCase, ProCaseEvent, ProCaseNote, ProUser } from '../../src/db/schema.js';
 import { activeGrantExists, activeMemberSql, referralGrantLapsedSql } from '../_utils/share-access.js';
 import { restrictedDossierSql } from './processing-restriction.js';
@@ -73,6 +74,14 @@ async function openCase(id, ctx, db) {
   return ok ? c : null;
 }
 
+/**
+ * G10 — the closing message written FOR the person (ProCase.outcomeCitizenSummary) is sealed at rest like the case notes (purpose « case-note », context
+ * « case:<id> »; before: stored in clear). A value written before this change (not « v2: ») is read as it is.
+ */
+const summaryCtx = (caseId) => ({ purpose: 'case-note', context: `case:${caseId}` });
+export const sealCaseSummary = (caseId, text) => (text ? sealText(text, summaryCtx(caseId)) : null);
+export const openCaseSummary = (caseId, stored) => (!stored ? null : String(stored).startsWith('v2:') ? openText(String(stored), summaryCtx(caseId)) : String(stored));
+
 export async function getCase(id, ctx, db = defaultDb) {
   if (!proProtectedRecords.state().ok) return protectedRecordsRefusal();
   const c = await openCase(id, ctx, db);
@@ -82,7 +91,7 @@ export async function getCase(id, ctx, db = defaultDb) {
   const notes = await db.select().from(ProCaseNote).where(eq(ProCaseNote.caseId, c.id)).orderBy(desc(ProCaseNote.createdAt)).limit(200);
   const members = (await db.execute(sql`SELECT id, email, role FROM "ProUser" WHERE "structureId" = ${ctx.structureId} AND status = 'active' AND upper(role) IN ('PRO', 'STRUCTURE_ADMIN') ORDER BY email`)).rows;
   const assignee = members.find((m) => m.id === c.assigneeProUserId) || (c.assigneeProUserId ? { id: c.assigneeProUserId, email: '(compte inactif)' } : null);
-  return { ok: true, status: 200, case: { id: c.id, dossierId: c.sharedDiagnosticId, status: c.status, outcome: c.outcome, outcomeCitizenSummary: c.outcomeCitizenSummary, openedAt: c.openedAt, closedAt: c.closedAt, assignee },
+  return { ok: true, status: 200, case: { id: c.id, dossierId: c.sharedDiagnosticId, status: c.status, outcome: c.outcome, outcomeCitizenSummary: openCaseSummary(c.id, c.outcomeCitizenSummary), openedAt: c.openedAt, closedAt: c.closedAt, assignee },
     notes: notes.map((n) => ({ id: n.id, visibility: n.visibility, body: proProtectedRecords.openCaseNote(c.id, n.bodyEncrypted), authorId: n.authorProUserId, mentions: n.mentions, at: n.createdAt })),
     events, members: members.map((m) => ({ id: m.id, email: m.email, role: m.role })), canAssignOthers: isAdmin(ctx),
     // M2 / G5: the contact person the PERSON agreed to (a name and an organization) — shown because the caller already holds access; the record itself opens nothing
@@ -154,7 +163,7 @@ export async function close(id, input, ctx, db = defaultDb) {
   if (summary.length > 1000) return bad('INVALID_SUMMARY', 'Le message à la personne fait 1000 caractères au plus.');
   const c = await openCase(id, ctx, db);
   if (!c) return notFound();
-  const rows = await db.update(ProCase).set({ status: 'CLOSED', outcome, outcomeCitizenSummary: summary || null, closedAt: new Date() }).where(and(eq(ProCase.id, c.id), sql`${ProCase.status} <> 'CLOSED'`)).returning();
+  const rows = await db.update(ProCase).set({ status: 'CLOSED', outcome, outcomeCitizenSummary: sealCaseSummary(c.id, summary), closedAt: new Date() }).where(and(eq(ProCase.id, c.id), sql`${ProCase.status} <> 'CLOSED'`)).returning();
   if (!rows.length) return bad('CASE_CLOSED', 'Ce dossier est déjà clôturé.', 409);
   await event(db, c, ctx, 'OUTCOME', null, outcome);
   await event(db, c, ctx, 'CLOSED', c.status, 'CLOSED');
@@ -197,7 +206,7 @@ export async function citizenFollowUps(ownerCitizenId, dossierId, db = defaultDb
   const readable = proProtectedRecords.state().ok;   // R46: without the protected store the person still sees status and summary; notes are withheld, never shown sealed
   for (const r of rows) {
     const notes = !readable ? [] : await db.select().from(ProCaseNote).where(and(eq(ProCaseNote.caseId, r.id), eq(ProCaseNote.visibility, 'CITIZEN'))).orderBy(desc(ProCaseNote.createdAt)).limit(50);
-    out.push({ organization: r.organization, status: r.status, outcome: r.outcome, summary: r.summary, openedAt: r.openedAt, closedAt: r.closedAt,
+    out.push({ organization: r.organization, status: r.status, outcome: r.outcome, summary: openCaseSummary(r.id, r.summary), openedAt: r.openedAt, closedAt: r.closedAt,
       notes: notes.map((n) => ({ body: proProtectedRecords.openCaseNote(r.id, n.bodyEncrypted), at: n.createdAt })) });
   }
   return out;
