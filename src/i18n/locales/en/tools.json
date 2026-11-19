@@ -61,5 +61,6 @@
  "services.site": "Official website",
  "services.login": "Login required",
  "services.pdf": "PDF to download",
- "services.forPro": "Companies and associations"
+ "services.forPro": "Companies and associations",
+ "rights.link": "Explore rights by need"
 }

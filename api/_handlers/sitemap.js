@@ -7,6 +7,7 @@ import { eq, and, isNotNull, desc } from 'drizzle-orm';
 import { getCanonicalOrigin } from '../_utils/site-origin.js';
 import { isPublicBetaRestricted } from '../_utils/public-beta.js';
 import { isBetaRestrictedPath } from '../../src/lib/publicBeta.js';
+import { NEED_DEFINITIONS } from '../lib/multi-need.js';
 
 const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
 const MAX_DYNAMIC_URLS = 10000;
@@ -20,6 +21,7 @@ const STATIC_PUBLIC_PATHS = [
   '/actualites',
   '/bonnes-pratiques',
   '/outils',
+  '/droits',
   '/orientation',
   '/mentions-legales',
   '/accessibilite',
@@ -79,7 +81,9 @@ export function buildSitemapXml(baseUrl, aides, demarches, structures, dispositi
 
   // Static pages
   // public beta: a closed screen (assistant, contact…) answers with a notice, not with content — it is not offered to crawlers
-  for (const path of STATIC_PUBLIC_PATHS.filter((x) => !(isPublicBetaRestricted() && isBetaRestrictedPath(x)))) {
+  // G3: the public rights view, one page per need of the orientation (src/pages/Droits.jsx, data/reference/rights-public-view.v1.json)
+  const rightsPaths = NEED_DEFINITIONS.map((/** @type {{ id: string }} */ n) => `/droits/${n.id}`);
+  for (const path of [...STATIC_PUBLIC_PATHS, ...rightsPaths].filter((x) => !(isPublicBetaRestricted() && isBetaRestrictedPath(x)))) {
     nodes.push(buildUrlNode(baseUrl, path, null));
   }
 

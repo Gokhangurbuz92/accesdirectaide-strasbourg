@@ -63,5 +63,6 @@
  "services.site": "Офіційний сайт",
  "services.login": "Потрібен вхід",
  "services.pdf": "PDF для завантаження",
- "services.forPro": "Підприємства та асоціації"
+ "services.forPro": "Підприємства та асоціації",
+ "rights.link": "Огляд прав за потребами"
 }
