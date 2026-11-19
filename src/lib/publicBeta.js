@@ -132,3 +132,14 @@ export function shareOpened(beta, open = builtOpen(), sub = builtSub()) {
 export function openLinks(links, beta, pathOf) {
   return beta ? links.filter((l) => !isBetaRestrictedPath(pathOf(l))) : links;
 }
+
+/**
+ * G8 — the public indicators section of /impact (src/components/impact/PublicIndicators.jsx) is shown only when the build sets VITE_PUBLIC_INDICATORS=open
+ * (exact value; anything else = hidden). The server answers only under ADA_PUBLIC_INDICATORS=open (api/lib/public-indicators.js): both stay closed by default.
+ * @param {unknown} [value]
+ */
+export function publicIndicatorsOpened(value = undefined) {
+  let v = value;
+  if (v === undefined) { try { v = import.meta.env.VITE_PUBLIC_INDICATORS; } catch { v = ''; } }
+  return String(v ?? '').trim().toLowerCase() === 'open';
+}

@@ -633,6 +633,18 @@
         }
       }
     },
+    "/public/indicators": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Indicateurs publics de l'Observatoire (G8) : agrégats du catalogue public (fiches publiées, fraîcheur des vérifications, liens officiels, traductions, lieux par commune masqués sous 5) — aucune donnée personnelle, aucun chiffre de non-recours. Fermé (404) sauf ADA_PUBLIC_INDICATORS=open",
+        "responses": {
+          "200": { "description": "schema ada.public-indicators.v1, computedAt, rules, catalogue, aidesByDomain, aidesByScope, structuresByCommune, freshness, linkHealth, translations, structuresInformation, rightsNeeds" },
+          "404": { "description": "Fermé : ADA_PUBLIC_INDICATORS n'est pas « open »" },
+          "429": { "description": "Trop de demandes" },
+          "500": { "description": "INDICATORS_UNAVAILABLE" }
+        }
+      }
+    },
     "/contact": {
       "get": {
         "tags": ["Core Data"],

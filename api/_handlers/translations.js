@@ -25,7 +25,7 @@ const SUMMARY = { aide: ['titre', 'description', 'cest_quoi'], demarche: ['titre
 const SLUG = /^[a-z0-9][a-z0-9-]{0,199}$/;
 const files = new Map();
 
-function translationFile(kind, slug) {
+export function translationFile(kind, slug) {   // G8: also read by api/_services/public-indicators.js
   const key = `${kind}/${slug}`;
   if (!files.has(key)) {
     let v = null;

@@ -4,13 +4,15 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import VerifiedCatalogue from '@/components/layout/VerifiedCatalogue';
 import i18n, { useT } from '@/i18n';
-import { accountsOpened } from '@/lib/publicBeta';
+import PublicIndicators from '@/components/impact/PublicIndicators';
+import { accountsOpened, publicIndicatorsOpened } from '@/lib/publicBeta';
 
 /**
  * PKG-11 / P25: only measured figures. R26: what is measured today is what is published — the live counts of verified records, read from the public
  * lists themselves. Usage figures (visits, people helped, appointments) are not measured during the public beta, and the page says so instead of
  * showing empty counters (it used to call a figures endpoint the beta refuses). FA-D9: it no longer promises to publish « people helped » once visits are
  * measured — a visit is not a person helped, and no recorded fact says that a person obtained an aid (api/lib/observatory-metrics.js).
+ * G8: the public indicators (catalogue, freshness, official links, translations — aggregates of public records only) follow the catalogue, behind a closed flag.
  */
 export default function Impact() {
     const { t } = useT('about');
@@ -25,6 +27,9 @@ export default function Impact() {
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
                 <VerifiedCatalogue heading={t('about:impact.published_today', 'Publié aujourd’hui (chiffres en direct)')} />
+
+                {/* G8: the public indicators of the Observatoire — closed unless the build sets VITE_PUBLIC_INDICATORS=open (owner decision C8/D4) */}
+                {publicIndicatorsOpened() && <PublicIndicators />}
 
                 <section aria-labelledby="impact-not-measured" className="grid gap-6 lg:grid-cols-2">
                     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-testid="impact-no-figures">

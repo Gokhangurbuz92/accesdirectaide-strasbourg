@@ -26,6 +26,8 @@ const GUARDED = [
   'api/_services/page-head.js',
   // PKG-2: favourites only accept/show records that pass decide(); the access log / document list name organisations that HOLD a grant on the person's dossier (sharing domain)
   'api/_services/mon-espace.js',
+  // G8: public indicators — counts only, every content query goes through visibleSql(kind, { mode: 'strict' }) or decide(…, { mode: 'strict' })
+  'api/_services/public-indicators.js',
 ];
 /** reviewed: not a citizen-facing content read path (reason in the comment) */
 const REVIEWED_NOT_PUBLIC = {
