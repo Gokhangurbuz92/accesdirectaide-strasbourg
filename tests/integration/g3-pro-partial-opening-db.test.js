@@ -105,10 +105,10 @@ describe.skipIf(!hasDatabase)('G3 — ADA Pro opened alone: accounts, MFA and st
     expect(reg.statusCode, JSON.stringify(reg.body)).toBe(201);
     J.admin = { id: reg.body.user.id, email: ADMIN_EMAIL, st: PILOT, role: 'STRUCTURE_ADMIN' };
     expect(reg.body.user).toMatchObject({ role: 'STRUCTURE_ADMIN', structureId: PILOT });
-    const { LEGAL_DRAFTS_VERSION } = await import('../../src/config/legal-drafts.js');
+    const { LEGAL_DRAFTS_V8 } = await import('../../src/config/legal-drafts.js');
     expect(await ledger(J.admin.id)).toEqual([
-      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CGU_PROFESSIONNEL', decision: true, policy_version: `cgu-professionnel@${LEGAL_DRAFTS_VERSION}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
-      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CONDITIONS_STRUCTURES', decision: true, policy_version: `conditions-structures@${LEGAL_DRAFTS_VERSION}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
+      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CGU_PROFESSIONNEL', decision: true, policy_version: `cgu-professionnel@${LEGAL_DRAFTS_V8}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
+      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CONDITIONS_STRUCTURES', decision: true, policy_version: `conditions-structures@${LEGAL_DRAFTS_V8}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
     ]);
 
     // the password-only session can only enrol the factor: /api/pro/me says so; every other console route refuses it

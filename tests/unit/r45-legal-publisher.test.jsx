@@ -12,7 +12,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { checkLegalPublisher, findAddressPatterns, readLegalDefaults } from '../../scripts/check-legal-publisher.mjs';
 import { resolvePublisherConfig, HOST, A_I_APPROVAL_TOKEN } from '../../src/config/legal-publisher.js';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftVisibility } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftTextKeys, draftVisibility } from '../../src/config/legal-drafts.js';
 import { ENTITLEMENT_CLAIMS } from '../../scripts/i18n-check.mjs';
 
 const FAKE_ADDRESS = "1 rue de l'Exemple 00000 Testville";
@@ -117,7 +117,8 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
   it('every draft is DRAFT_PENDING_OWNER_APPROVAL with the shared version, and four documents exist', () => {
     expect(LEGAL_DRAFT_DOCUMENTS.map((d) => d.id)).toEqual(['cgu-citoyen', 'cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) {
-      expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); expect(d.version).toBe(LEGAL_DRAFTS_VERSION);
+      // G4 (19/11/2026): v8 covers the two professional documents only; the others keep the shared version
+      expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); expect(d.version).toBe(LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
     }
   });
   it('visibility: hidden in Production unless approved; preview only outside Production; an approval names id@version or the version', () => {
@@ -171,12 +172,8 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
       const tr = JSON.parse(readFileSync(`src/i18n/locales/${lang}/legaldraft.json`, 'utf8'));
       expect(tr['frenchReference'], lang).toBeTruthy(); expect(tr['badge.proposed'], lang).toBeTruthy();
       for (const d of LEGAL_DRAFT_DOCUMENTS) {
-        const pairs = [[`${d.key}.title`, d.title], [`${d.key}.intro`, d.intro]];
-        for (const s of d.sections) {
-          pairs.push([`${d.key}.${s.id}.title`, s.title]);
-          (s.items || []).forEach((x, i) => pairs.push([`${d.key}.${s.id}.i${i + 1}`, x]));
-          (s.paras || []).forEach((x, i) => pairs.push([`${d.key}.${s.id}.p${i + 1}`, x]));
-        }
+        // G4: the keys the page renders (a text changed in a later version has its own key — draftTextKeys)
+        const pairs = draftTextKeys(d).map(([k, fr]) => [`${d.key}.${k}`, fr]);
         for (const [k, fr] of pairs) {
           expect(tr[k], `${lang} ${k}`).toBeTruthy();
           const ph = (/** @type {string} */ v) => (v.match(/\{\{\w+\}\}/g) || []).sort();

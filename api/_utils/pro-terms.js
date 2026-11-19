@@ -12,7 +12,7 @@
  *     accepted « document@version », proof level CONTRACT_ACCEPTANCE (a contract acceptance, never read as a GDPR consent).
  */
 import { ConsentLog } from '../../src/db/schema.js';
-import { LEGAL_DRAFTS_VERSION, approvedVersionOf, draftFor, draftVisibility } from '../../src/config/legal-drafts.js';
+import { approvedVersionOf, draftFor, draftVisibility, latestDraftVersionOf } from '../../src/config/legal-drafts.js';
 import { CONTRACT_ACCEPTANCE, termsAcceptanceGiven } from './terms-acceptance.js';
 
 export { termsAcceptanceGiven };
@@ -36,8 +36,12 @@ export function proTermsInForce(env = process.env) {
 /** the documents a role accepts at sign-up @param {string} role */
 export const proTermsDocumentsFor = (role) => (role === 'STRUCTURE_ADMIN' ? ['cgu-professionnel', 'conditions-structures'] : ['cgu-professionnel']);
 
-/** « id@version » as recorded: in Production the approved version, elsewhere the newest draft @param {string} id @param {Record<string, string | undefined>} [env] */
-export const proTermsReference = (id, env = process.env) => `${id}@${(isProduction(env) && approvedVersionOf(id, env.VITE_LEGAL_DOCS_APPROVED_VERSION)) || LEGAL_DRAFTS_VERSION}`;
+/**
+ * « id@version » as recorded: in Production the approved version, elsewhere the newest draft OF THAT DOCUMENT (G4, 19/11/2026: since v8 the professional
+ * documents are at v8 while the citizen terms and the notice stay at v7 — the shared LEGAL_DRAFTS_VERSION would record a version the screen did not show)
+ * @param {string} id @param {Record<string, string | undefined>} [env]
+ */
+export const proTermsReference = (id, env = process.env) => `${id}@${(isProduction(env) && approvedVersionOf(id, env.VITE_LEGAL_DOCS_APPROVED_VERSION)) || latestDraftVersionOf(id)}`;
 
 export const PRO_TERMS_NOT_IN_FORCE_REFUSAL = Object.freeze({
   error: 'La création de votre accès professionnel n’est pas encore ouverte : les conditions d’utilisation des professionnels ne sont pas encore en vigueur. Votre invitation n’a pas été utilisée.',

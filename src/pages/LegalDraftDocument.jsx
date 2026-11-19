@@ -23,6 +23,7 @@ export default function LegalDraftDocument({ path: forcedPath }) {
   const location = useLocation();
   const ctx = currentDraftContext();
   // v7: the newest APPROVED version of this document (v6 and v7 can both be approved by name), else the newest draft
+  // v8: a changed text has its own translation key (titleKey / introKey / paraKeys / itemKeys), so an older version keeps its own translation
   const doc = draftByPath(forcedPath || location.pathname, ctx);
   const state = doc ? draftVisibility(doc, ctx) : 'HIDDEN';
 
@@ -55,7 +56,7 @@ export default function LegalDraftDocument({ path: forcedPath }) {
   return (
     <div className="min-h-screen bg-slate-50 pb-20" data-legal-draft={doc.id} data-legal-draft-state={state}>
       <SEO title={t(k('title'), doc.title)} path={doc.path || undefined} noindex={state !== 'IN_FORCE'} />
-      <PageHeader width="reading" title={t(k('title'), doc.title)} description={t(k('intro'), doc.intro)} />
+      <PageHeader width="reading" title={t(k('title'), doc.title)} description={t(k(doc.introKey || 'intro'), doc.intro)} />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {state === 'PREVIEW' && <LegalDraftBanner version={`${doc.id}@${doc.version}`} />}
         <LegalTranslationNotice />
@@ -68,7 +69,7 @@ export default function LegalDraftDocument({ path: forcedPath }) {
           <CardContent className="p-6 md:p-10 space-y-10">
             {doc.sections.map((s) => (
               <section key={s.id} className="space-y-3" aria-labelledby={`${doc.id}-${s.id}`}>
-                <h2 id={`${doc.id}-${s.id}`} className="text-xl md:text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3">{t(k(`${s.id}.title`), s.title)}</h2>
+                <h2 id={`${doc.id}-${s.id}`} className="text-xl md:text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3">{t(k(`${s.id}.${s.titleKey || 'title'}`), s.title)}</h2>
                 {s.items && (
                   <ul className="list-disc ps-5 space-y-2 text-slate-700 leading-relaxed">
                     {s.items.map((txt, i) => (
@@ -80,7 +81,7 @@ export default function LegalDraftDocument({ path: forcedPath }) {
                   </ul>
                 )}
                 {(s.paras || []).map((txt, i) => (
-                  <p key={i} className="text-slate-700 leading-relaxed">{t(k(`${s.id}.p${i + 1}`), txt, values)}</p>
+                  <p key={i} className="text-slate-700 leading-relaxed">{t(k(`${s.id}.${s.paraKeys?.[i] || `p${i + 1}`}`), txt, values)}</p>
                 ))}
               </section>
             ))}

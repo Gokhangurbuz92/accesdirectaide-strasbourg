@@ -17,7 +17,7 @@ import ProDashboard from '../../src/pages/pro/Dashboard.jsx';
 import { moduleOfScreen, moduleOpen, isNotOpenRefusal } from '../../src/lib/proModules.js';
 import { PRO_MODULE_ROUTES, proModuleStates } from '../../api/_utils/pro-modules.js';
 import { proTermsInForce, proTermsReference, proTermsDocumentsFor } from '../../api/_utils/pro-terms.js';
-import { LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS } from '../../src/config/legal-drafts.js';
 
 vi.mock('@/components/NotificationCenter', () => ({ default: () => null }));
 vi.mock('@/components/OnboardingTour', () => ({ default: () => null }));
@@ -124,7 +124,8 @@ describe('G3 professional terms', () => {
   });
   it('records the approved version in Production, the newest draft elsewhere; an administrator also accepts the structure conditions', () => {
     expect(proTermsReference('cgu-professionnel', { VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: `cgu-professionnel@${LEGAL_DRAFTS_V6}` })).toBe(`cgu-professionnel@${LEGAL_DRAFTS_V6}`);
-    expect(proTermsReference('cgu-professionnel', { VERCEL_ENV: 'development' })).toBe(`cgu-professionnel@${LEGAL_DRAFTS_V7}`);
+    // G4 (19/11/2026): the newest draft of THAT document (v8), not the shared citizen / notice version (v7)
+    expect(proTermsReference('cgu-professionnel', { VERCEL_ENV: 'development' })).toBe(`cgu-professionnel@${LEGAL_DRAFTS_V8}`);
     expect(proTermsDocumentsFor('STRUCTURE_ADMIN')).toEqual(['cgu-professionnel', 'conditions-structures']);
     expect(proTermsDocumentsFor('PRO')).toEqual(['cgu-professionnel']);
   });

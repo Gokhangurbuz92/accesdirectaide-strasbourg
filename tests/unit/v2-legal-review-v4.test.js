@@ -9,7 +9,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_NOTICE_VARIANT_DOCUMENT } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT } from '../../src/config/legal-drafts.js';
 import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../../api/_services/retention-policy.js';
 
 const LANGS = ['en', 'tr', 'ar', 'de', 'uk'];
@@ -22,7 +22,8 @@ describe('legal drafts: what the v4 review (15/11/2026) changed still holds', ()
   it('every document carries the one current version, v4 or later', () => {
     expect(LEGAL_DRAFTS_VERSION).toMatch(/^v\d+-\d{4}-\d{2}-\d{2}$/);
     expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(4);
-    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_VERSION);
+    // G4 (19/11/2026): v8 covers the two professional documents only; the others keep the shared version
+    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
   });
 
   it('§ 4: the retention periods are approved — no « proposé » badge; § 3 bis keeps it', () => {

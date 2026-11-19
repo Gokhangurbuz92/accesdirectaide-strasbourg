@@ -22,13 +22,14 @@ export const LEGAL_DRAFT_STATUS = Object.freeze({
  * the version shared by the R45 drafts; a change of any French text below needs a new version (the owner approves a version, not a file).
  * Since v7 (18/11/2026) TWO versions coexist, each approvable by name: v6 (texts below, unchanged byte for byte) and v7 = v6 + one sentence of the
  * privacy notice § 4 (LEGAL_DRAFTS_V7_SENTENCE). The build shows the NEWEST version that VITE_LEGAL_DOCS_APPROVED_VERSION names (draftFor), the
- * newest draft in LAB preview. LEGAL_DRAFTS_VERSION = the newest draft (v7).
+ * newest draft in LAB preview. LEGAL_DRAFTS_VERSION = v7, the version shared by the citizen terms, the notice and the A-I / A-II variant. Since v8
+ * (19/11/2026) a version may cover only some documents: v8 exists for the two professional documents only (see LEGAL_DRAFTS_V8 below).
  */
 export const LEGAL_DRAFTS_V6 = 'v6-2026-11-17';   // Owner conditions N2 / C3 / C4 / C6 on v5 (17/11/2026, CONTROL/v2/V6_METIN_FARKI_FR.md): § 4 the Mailjet deletion sentence describes the real outcomes (asked before our erasure, retried 3 days at most inside the one-month deadline, then erased anyway and flagged for a person; 6c and the old address of a change: one attempt), Vercel logs by criterion (1 day on Pro, 30 days with Observability Plus — the option's state is NOT verified); § 3 P16, § 5, § 6 provider roles made consistent (processor for your data; Vercel, Sinch and Upstash also controllers for some technical data, « notamment »); § 7 framework list re-read 17/11/2026. NOT approved: Production keeps hiding the drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names v6; v5 was never in force. v5-2026-11-15 = provider verification (15/11/2026, CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md): § 4 Mailjet retention by objective criterion (90 days free plan / 13 months paid plan), recipient address kept as a contact and deleted at Mailjet when the account is erased, Vercel logs 1 day, Neon history tied to the free plan; § 6 Vercel and Sinch also act as controllers for some technical data; § 7 clauses incorporated, official Data Privacy Framework list (see the comment above the notice). v4-2026-11-15 = final review (15/11/2026): approved retention periods without the « proposé » badge, § 7 transfers rewritten from primary sources, § 11 basis and period no longer « proposées », § 4 consent / support lines, § 6 Vercel network, § 8 post-mortem directives (see the comment above the notice). v3-2026-11-14 = V2 legal review (14/11/2026): booking, assistant, contact form and rendez-vous recipients marked « pas encore ouvert »; Mon Espace self-service rights. v2-2026-11-09 = V2 final candidate (09/11/2026): + security review D3/D6 (erasure on request, hashed counters, unactivated accounts 7 days). Release B (D2 V2, 08/11/2026): notice split V2 / later waves, A7 preference, no phone, Mailjet
 
 /**
- * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean, itemKeys?: Record<number, string> }} DraftSection
- * @typedef {{ id: string, key: string, path: string | null, version: string, status: string, title: string, intro: string, sections: DraftSection[] }} DraftDocument
+ * @typedef {{ id: string, title: string, paras?: string[], items?: string[], proposed?: boolean, itemKeys?: Record<number, string>, paraKeys?: Record<number, string>, titleKey?: string }} DraftSection
+ * @typedef {{ id: string, key: string, path: string | null, version: string, status: string, title: string, intro: string, introKey?: string, sections: DraftSection[] }} DraftDocument
  */
 
 const V2_STATUS_NOTE = 'Cette notice décrit les traitements des comptes personnels (section 3). Les rendez-vous, les messages, les rappels et le partage de dossiers ne sont pas encore ouverts : leurs bases légales sont indiquées à titre de proposition (section 3 bis) et seront confirmées avant leur ouverture.';
@@ -401,13 +402,110 @@ const toV7 = (d) => ({ ...d, version: LEGAL_DRAFTS_V7, sections: d.sections.map(
 export const LEGAL_DRAFT_DOCUMENTS_V7 = LEGAL_DRAFT_DOCUMENTS_V6.map(toV7);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT_V7 = Object.freeze({ ...LEGAL_NOTICE_VARIANT_DOCUMENT_V6, version: LEGAL_DRAFTS_V7 });
 
-/** the newest draft version and its documents (LAB preview, tests); approvable versions oldest first */
+/*
+ * v8-2026-11-19 — G4 (19/11/2026): planned opening of the ADA Pro accounts (invitation only, double authentication, structure administration only; cases,
+ * referrals, dossiers, appointments, messages and the assistant CLOSED). v8 exists for the TWO professional documents only (LEGAL_DRAFTS_V8_DOCUMENT_IDS):
+ * the citizen terms, the privacy notice and the A-I / A-II variant stay at v7 (no v8 of them exists, so « cgu-citoyen@v8-… » approves nothing). v8 = v7
+ * (= v6 byte for byte for these two documents) with the factual errors corrected, nothing else (diff: CONTROL/v2/V8_METIN_FARKI_FR.md; French masters:
+ * CONTROL/r45/R45_CGU_PROFESSIONNEL_FR_v8-2026-11-19.md and R45_CONDITIONS_STRUCTURES_FR_v8-2026-11-19.md):
+ *  cgu-professionnel § 5  « votre nom » removed — ProUser has no name column (src/db/schema.ts: email, password_hash, role, status, structureId, notification
+ *                         preferences, MFA); the list is exactly what the account holds; « vos créneaux » only once appointments are open for the structure.
+ *  cgu-professionnel § 4  appointments are closed: conditional (« lorsqu'elle est ouverte pour votre structure ») and « (pas encore ouverts) » in the title;
+ *                         the assistant sentence removed (no AI runs in Production: capability ai.processing is out of the AIPD, api/_utils/capabilities.js).
+ *  conditions-structures  intro: structures do not receive appointment requests today, and a structure administrator accepts these conditions at the invited
+ *                         sign-up (api/_utils/pro-terms.js) — the scope names the ADA Pro accounts; § 2, § 3 p1 and § 4 i1 / i5: appointments and the message
+ *                         are closed — conditional. § 1 (directory: public listings carry their official source and verification date, api/lib/publicVisibility.js),
+ *                         § 5, § 6, § 7 and the other items are true as written: unchanged.
+ * Translations: the changed texts have their own keys (« title_v8 », « intro_v8 », « p1_v8 », « i1_v8 »… : titleKey / introKey / paraKeys / itemKeys); the v6
+ * keys keep the v6 translations, which v6 and v7 still render.
+ */
+export const LEGAL_DRAFTS_V8 = 'v8-2026-11-19';
+export const LEGAL_DRAFTS_V8_DOCUMENT_IDS = Object.freeze(['cgu-professionnel', 'conditions-structures']);
+/** v8 changes: document → { intro?: [text, key], sections: { section → { title?: [text, key], paras?: { index → [text, key] }, items?: { index → [text, key] } } } } */
+export const LEGAL_DRAFTS_V8_CHANGES = Object.freeze({
+  'cgu-professionnel': { sections: {
+    appointments: {
+      title: ['4. Rendez-vous (pas encore ouverts)', 'title_v8'],
+      paras: {
+        0: ["La prise de rendez-vous n'est pas encore ouverte. Lorsqu'elle est ouverte pour votre structure, vous confirmez, proposez un autre créneau ou refusez les demandes qui vous sont adressées, dans un délai raisonnable, et vous tenez vos créneaux à jour.", 'p1_v8'],
+        1: ["La plateforme ne décide d'aucun droit : seul l'organisme compétent décide.", 'p2_v8'],
+      },
+    },
+    data: { paras: {
+      0: ["Pour votre compte, la plateforme traite votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe chiffré, le secret de votre double authentification, le journal de vos actions et vos préférences de notification. Lorsque la prise de rendez-vous est ouverte pour votre structure, elle traite aussi vos créneaux. La notice de confidentialité décrit ces traitements, leurs bases légales proposées et leurs durées.", 'p1_v8'],
+    } },
+  } },
+  'conditions-structures': {
+    intro: ["Ces conditions décrivent les règles proposées aux structures (associations, services publics, établissements) qui figurent dans l'annuaire, dont l'équipe utilise des comptes ADA Pro ou qui recevront des demandes de rendez-vous lorsque cette fonction sera ouverte ; elle ne l'est pas encore. Aucune structure ne les a signées à ce jour.", 'intro_v8'],
+    sections: {
+      agreement: {
+        title: ['2. Raccordement aux rendez-vous (pas encore ouvert)', 'title_v8'],
+        paras: { 0: ["La prise de rendez-vous n'est pas encore ouverte. Lorsqu'elle le sera, une structure ne recevra des demandes de rendez-vous qu'après la signature d'une convention écrite avec l'exploitant, qui désignera un référent. Le raccordement sera gratuit : aucune somme ne sera versée par la structure ni à la structure.", 'p1_v8'] },
+      },
+      roles: { paras: {
+        0: ["Lorsque la prise de rendez-vous sera ouverte, la structure sera responsable de son propre traitement pour ce qu'elle recevra (demandes, coordonnées, message accepté par la personne), dans ses dossiers et selon ses obligations.", 'p1_v8'],
+      } },
+      commitments: { items: {
+        0: ['Lorsque la prise de rendez-vous sera ouverte : répondre aux demandes dans un délai raisonnable et tenir ses créneaux à jour.', 'i1_v8'],
+        4: ["Lorsque le message joint à une demande sera ouvert : appliquer le retrait par une personne de son accord à ce message, c'est-à-dire effacer toute copie, ou la garder sous sa propre responsabilité en l'en informant.", 'i5_v8'],
+      } },
+    },
+  },
+});
+/** @param {Record<number, string[]> | undefined} ch @param {string[] | undefined} list @param {Record<number, string> | undefined} keys */
+const applyV8 = (ch, list, keys) => (ch && list
+  ? [list.map((x, i) => (ch[i] ? ch[i][0] : x)), { ...(keys || {}), ...Object.fromEntries(Object.entries(ch).map(([i, a]) => [Number(i), a[1]])) }]
+  : [list, keys]);
+/** @param {DraftDocument} d @returns {DraftDocument} */
+const toV8 = (d) => {
+  const c = /** @type {any} */ (LEGAL_DRAFTS_V8_CHANGES)[d.id];
+  return { ...d, version: LEGAL_DRAFTS_V8, ...(c.intro ? { intro: c.intro[0], introKey: c.intro[1] } : {}), sections: d.sections.map((s) => {
+    const sc = c.sections[s.id];
+    if (!sc) return s;
+    const [paras, paraKeys] = applyV8(sc.paras, s.paras, s.paraKeys);
+    const [items, itemKeys] = applyV8(sc.items, s.items, s.itemKeys);
+    return { ...s, ...(sc.title ? { title: sc.title[0], titleKey: sc.title[1] } : {}), ...(paras ? { paras, paraKeys } : {}), ...(items ? { items, itemKeys } : {}) };
+  }) };
+};
+/** @type {DraftDocument[]} the two professional documents only */
+export const LEGAL_DRAFT_DOCUMENTS_V8 = LEGAL_DRAFT_DOCUMENTS_V7.filter((d) => LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id)).map(toV8);
+
+/**
+ * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms, the privacy
+ * notice and the A-I / A-II variant (v7); the professional documents are at LEGAL_DRAFTS_V8. LEGAL_DRAFT_DOCUMENTS = the newest draft of each document
+ * (LAB preview, tests); latestDraftVersionOf(id) = its version.
+ */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7;
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
-const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7] });
+const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
+  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8] });
+
+/** the newest draft of a document (whatever is approved), or null @param {string} id */
+const latestDraftOf = (id) => {
+  for (const v of [...LEGAL_DRAFT_VERSIONS].reverse()) { const doc = SETS[v].find((d) => d.id === id); if (doc) return doc; }
+  return null;
+};
+/** the newest draft version of a document (the version a LAB / Preview acceptance records), or null @param {string} id */
+export const latestDraftVersionOf = (id) => latestDraftOf(id)?.version ?? null;
+/** does an approval token (« id@version » or a bare version) name a document version that exists? @param {string} token */
+export const knownApprovalToken = (token) => LEGAL_DRAFT_VERSIONS.some((v) => token === v || SETS[v].some((d) => token === `${d.id}@${v}`));
+
+/**
+ * the translation key suffixes of a document and their French text: [« title » | « intro » | « <section>.<title|iN|pN or its versioned key> », French]
+ * @param {DraftDocument} doc @returns {Array<[string, string]>}
+ */
+export function draftTextKeys(doc) {
+  /** @type {Array<[string, string]>} */ const out = [['title', doc.title], [doc.introKey || 'intro', doc.intro]];
+  for (const s of doc.sections) {
+    out.push([`${s.id}.${s.titleKey || 'title'}`, s.title]);
+    (s.items || []).forEach((x, i) => out.push([`${s.id}.${s.itemKeys?.[i] || `i${i + 1}`}`, x]));
+    (s.paras || []).forEach((x, i) => out.push([`${s.id}.${s.paraKeys?.[i] || `p${i + 1}`}`, x]));
+  }
+  return out;
+}
 
 export const ALL_LEGAL_DRAFT_IDS = Object.freeze([...LEGAL_DRAFT_DOCUMENTS.map((d) => d.id), LEGAL_NOTICE_VARIANT_DOCUMENT.id]);
 
@@ -454,7 +552,7 @@ export function draftFor(id, ctx = {}) {
     const doc = SETS[v].find((d) => d.id === id);
     if (doc && draftVisibility(doc, ctx) === 'IN_FORCE') return /** @type {DraftDocument} */ (doc);
   }
-  return /** @type {DraftDocument | null} */ (SETS[LEGAL_DRAFTS_VERSION].find((d) => d.id === id) || null);
+  return /** @type {DraftDocument | null} */ (latestDraftOf(id));
 }
 
 /** the newest approved version of a document, or null @param {string} id @param {string | undefined} approved */
