@@ -1,6 +1,8 @@
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { accountsScope, isPublicBetaRestricted, openJobs, openSurfaces, proSelfRegistrationOpen } from '../_utils/public-beta.js';
+import { publicOpenApiSpec } from '../lib/openapi-public.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -8,6 +10,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * @type {string | null}
  */
 let cachedSpec = null;
+/** G3: the public subset served during the beta, per beta configuration (the environment is fixed for a deployment) @type {Map<string, string>} */
+const cachedPublic = new Map();
 
 /**
  * Serves the OpenAPI specification as JSON.
@@ -26,6 +30,14 @@ export default async function handler(req, res) {
       cachedSpec = readFileSync(specPath, 'utf-8');
     }
 
+    // G3: during the restricted beta only the public subset is described (never the admin / cron / monitor / pro / institution routes)
+    let body = cachedSpec;
+    if (isPublicBetaRestricted()) {
+      const key = [[...openSurfaces()].sort().join(','), accountsScope(), proSelfRegistrationOpen(), [...openJobs()].sort().join(',')].join('|');
+      if (!cachedPublic.has(key)) cachedPublic.set(key, JSON.stringify(publicOpenApiSpec(JSON.parse(cachedSpec))));
+      body = /** @type {string} */ (cachedPublic.get(key));
+    }
+
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Cache-Control', 'public, max-age=3600');
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -35,7 +47,7 @@ export default async function handler(req, res) {
       return;
     }
 
-    res.status(200).end(cachedSpec);
+    res.status(200).end(body);
   } catch (err) {
     res.status(500).json({
       error: 'Failed to load OpenAPI specification',
