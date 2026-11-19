@@ -498,18 +498,117 @@ const toV8 = (d) => {
 /** @type {DraftDocument[]} the two professional documents and the privacy notice */
 export const LEGAL_DRAFT_DOCUMENTS_V8 = LEGAL_DRAFT_DOCUMENTS_V7.filter((d) => LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id)).map(toV8);
 
+/*
+ * v9-2026-11-19 — G8 (19/11/2026): the privacy notice that must be in force before ADA Pro opens to a pilot structure (surfaces admin,accounts,pro; NO
+ * capability open; no data about the people a structure accompanies). v9 exists for the privacy notice ONLY (LEGAL_DRAFTS_V9_DOCUMENT_IDS): the citizen
+ * terms and the A-I / A-II variant stay v7, the professional terms and the structure conditions stay v8; v6 / v7 / v8 of the notice unchanged byte for byte.
+ * Diff: CONTROL/v2/V9_NOTICE_FARKI_FR.md; master CONTROL/r45/R45_NOTICE_CONFIDENTIALITE_FR_v9-2026-11-19.md. Why: v8 § 3 bis lists P4p (professional accounts)
+ * among the functions « pas en service », § 2 says the notice covers personal accounts only, § 4 gives no retention for a professional account, § 8 offers
+ * self-service rights that ADA Pro does not have, and § 11 p3_v8 sends the professional to §§ 3–8 as if they applied unchanged. Code facts per text:
+ *  § 2 p1_v9     the narrow opening: api/_utils/capabilities.js (pro.account / pro.structure_admin, aipd in, no HDS) — referrals, cases, dossiers,
+ *                appointments, messages behind closed capabilities / surfaces (tests/integration/g8-pro-pilot-onboarding-db.test.js: every such route 503).
+ *  § 3 p4p_v9    (moved from § 3 bis, basis no longer « proposée »): invitation api/_handlers/pro/invite.js; MFA mandatory in Production
+ *                (proMfaRequired, api/_utils/auth.js); team / invitations / structure record proposals / reports (ROUTE_CAPABILITIES pro.structure_admin);
+ *                display name and job title optional (api/_services/pro-public-profile.js); notifications (api/_services/pro-notifications.js, e.g.
+ *                structure-proposals.js); journal logProAudit → AuditLog. The acceptance of cgu-professionnel is recorded (api/_utils/pro-terms.js).
+ *  § 3 bis       P4p removed (it is now in § 3); P4 (display of professionals' names for a booking) stays: appointments are closed.
+ *  § 4 proAccount_v9  ProUser columns (src/db/schema.ts) + ProProfile.displayName / jobTitle; departure = disable (api/_handlers/pro/team.js, sessions end);
+ *                PRO_USER_DISABLED_DAYS = 365 in the APPROVED policy (api/_services/retention-policy.js) but the purge step disabledProUsersReport is
+ *                kind « report » (api/_handlers/cron/gdpr-purge.js): « pas encore automatisé », done by the operator with ERASE_PRO_ACCOUNT
+ *                (api/_services/pro-account-admin.js: only an already disabled account; address, password hash, factor, preferences, public profile,
+ *                notifications, invitations erased / anonymised; the row keeps id, role, structure); closure of the structure's space: same erasure for
+ *                every member (api/_services/org-closure.js, incl. redeemed invitations since f661851). Proof of the terms acceptance: ConsentLog
+ *                subject PRO_USER (id + document@version, no address) — NO purge step covers it (CONSENT_AFTER_ERASURE_DAYS only for CITIZEN_USER rows,
+ *                anchored on a citizen DSRRequest): « 12 mois », the citizen figure, is an OWNER DECISION and « pas encore automatisée ».
+ *  § 4 proLinks_v9    invitation 7 days single use, only its hash stored (invite.js, api/_utils/invite-token.js); MFA activation link 72 h
+ *                (mfa-invitation.js); password reset 1 hour in KV = Upstash (forgot-password.js, key « reset:pro:<sha256> », ex 3600);
+ *                INVITATION_GRACE_DAYS = 30 (step deletedInvitationsCount NOT among approvedSteps: not automated); session 12 h at most
+ *                (PRO_SESSION_MAX_AGE_SECONDS); LOGIN_PRO 5 per 15 min per IP and per address (rateLimit.js, address keyed-hashed).
+ *  § 4 proLogs_v9     PRO_NOTIFICATION_DAYS = 180 and AUDIT_LOG_DAYS = 365, steps not approved (not automated); logProAudit stores the IP (AuditLog.ip)
+ *                and never the address (R47); the Mailjet contact deletion (api/_services/mail-contact-erasure.js) is NOT called by pro-account-admin.js
+ *                nor org-closure.js — said as such.
+ *  § 4 i14_v9    « notifications des professionnels » no longer « pas encore ouvertes » (in-app notices exist: proLogs_v9); orientations named instead.
+ *  § 5 pro_v9    the structure administrator sees and exports the team (email, role, status, notification preferences) and the structure journal
+ *                (exportOrganization, api/_services/structure-proposals.js); display name / title: not published (the professional search endpoint is in no surface list and booking is closed).
+ *  § 6 i3_v9 / i4_v9  Upstash also holds the pro reset links (1 h); Mailjet also sends the invitations and notices of professional accounts.
+ *  § 8 pro_v9    no self-service export / erasure in ADA Pro: by writing; self-service of display name, title (pro-public-profile.js) and
+ *                notification preferences (setPreferences, pro-notifications.js).
+ *  § 11 p3_v9    p3_v8 + display name / job title + which sections carry the professional rules.
+ * Translations: every changed or new text has its own « …_v9 » key; inserted / removed list entries keep the keys of the other entries (explicit keys).
+ */
+export const LEGAL_DRAFTS_V9 = 'v9-2026-11-19';
+export const LEGAL_DRAFTS_V9_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
+export const LEGAL_DRAFTS_V9_STATUS_PARAGRAPH = "Cette notice décrit les traitements des comptes personnels (section 3) et des comptes professionnels ADA Pro (section 3, P4p, et section 11). Dans ADA Pro, seules sont ouvertes les fonctions de compte, d'équipe et de fiche de la structure (avec son journal et ses statistiques) : les fonctions qui traiteraient des informations sur les personnes accompagnées sont fermées. Les rendez-vous, les messages, les rappels, les orientations entre professionnels et le partage de dossiers ne sont pas encore ouverts : leurs bases légales sont indiquées à titre de proposition (section 3 bis) et seront confirmées avant leur ouverture.";
+export const LEGAL_DRAFTS_V9_P4P = "P4p — Comptes professionnels ADA Pro (création sur invitation, connexion avec double authentification obligatoire, gestion de l'équipe et des invitations par l'administrateur de la structure, propositions de mise à jour de la fiche de la structure, nom affiché et fonction facultatifs, notifications et e-mails de service, journal des actions) : exécution des conditions d'utilisation des professionnels acceptées à l'inscription (art. 6, 1, b) ; sécurité des comptes et journal des actions : intérêt légitime de l'exploitant et de la structure à protéger les accès (art. 6, 1, f).";
+export const LEGAL_DRAFTS_V9_PRO_ACCOUNT_RETENTION = "Compte professionnel ADA Pro (adresse électronique professionnelle, rôle, structure, mot de passe sous forme hachée, secret de double authentification, préférences de notification et, si vous les indiquez, nom affiché et fonction) : tant que vous êtes membre de l'équipe de votre structure. Lorsque vous la quittez, l'administrateur de votre structure, ou l'exploitant, désactive le compte : vos sessions prennent fin aussitôt. Un compte désactivé est gardé 12 mois au plus, pour permettre sa réactivation et la preuve des actions, puis effacé ; cet effacement n'est pas encore automatisé : l'exploitant le fait depuis sa console d'administration. Vous pouvez demander l'effacement plus tôt en écrivant à {{contact}}. L'effacement supprime votre adresse, votre mot de passe, votre double authentification, vos préférences, votre nom affiché et votre fonction, vos notifications et votre adresse dans les invitations qui vous ont été envoyées ; le compte ne garde que son identifiant technique, son rôle et sa structure, auxquels renvoient les journaux. Lorsque l'espace de votre structure est fermé, les comptes de son équipe sont effacés de la même façon. La preuve de votre acceptation des conditions des professionnels (identifiant du compte, document, version et date, sans votre adresse) est gardée 12 mois après l'effacement ; cette suppression n'est pas encore automatisée.";
+export const LEGAL_DRAFTS_V9_PRO_LINKS_RETENTION = "Compte professionnel — invitations, liens et sessions : l'invitation est valable 7 jours et une seule fois, le lien d'activation de la double authentification 72 heures, le lien de réinitialisation du mot de passe 1 heure (il est gardé chez Upstash, à Francfort, pendant cette heure). D'un lien d'invitation, nous ne gardons qu'une empreinte, avec l'adresse invitée et le rôle ; une invitation expirée est supprimée 30 jours après son expiration — cette suppression n'est pas encore automatisée — et elle est dans tous les cas effacée ou anonymisée avec votre compte. Session de connexion : 12 heures au plus. Au-delà de 5 tentatives de connexion en 15 minutes depuis la même adresse IP ou pour la même adresse électronique, les tentatives suivantes sont refusées pendant 15 minutes au plus.";
+export const LEGAL_DRAFTS_V9_PRO_LOGS_RETENTION = "Compte professionnel — notifications, journal et e-mails : les notifications affichées dans ADA Pro sont gardées 180 jours ; le journal de vos actions (date, action, structure, adresse IP de connexion ; sans votre adresse électronique) suit la règle des journaux d'administration et de sécurité ci-dessous (12 mois). Ces suppressions ne sont pas encore automatisées. Les e-mails qui vous sont envoyés (invitation, mot de passe, avis) suivent la règle « E-mails de service » ci-dessous ; toutefois, la demande de suppression de l'adresse chez Mailjet n'est pas encore faite pour un compte professionnel : l'adresse enregistrée chez Mailjet lors de ces envois peut y rester selon la règle « Journaux techniques des prestataires ».";
+export const LEGAL_DRAFTS_V9_PRO_RECIPIENTS = "Pour un compte professionnel, les administrateurs de votre structure voient aussi votre adresse professionnelle, votre rôle, l'état de votre compte, vos préférences de notification et le journal des actions de la structure, et peuvent les exporter (export des données de la structure). Votre nom affiché et votre fonction, si vous les indiquez, ne sont pas publiés sur le site public.";
+export const LEGAL_DRAFTS_V9_PRO_RIGHTS = "Pour un compte professionnel, ces fonctions de libre-service n'existent pas : écrivez à {{contact}} pour accéder à vos données, en obtenir une copie, les faire corriger ou effacer, ou en demander la limitation. Dans ADA Pro, vous pouvez vous-même modifier votre nom affiché, votre fonction et vos préférences de notification.";
+export const LEGAL_DRAFTS_V9_PRO_ACCOUNT_PARAGRAPH = "Si un compte professionnel vous est ouvert, c'est sur invitation envoyée à votre adresse électronique professionnelle par un administrateur de votre structure ou par l'exploitant. Ce compte contient votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification, ainsi que, si vous les indiquez, votre nom affiché et votre fonction. Votre acceptation des conditions d'utilisation des professionnels (et, pour un administrateur de structure, des conditions des structures) est enregistrée avec leur version dans le registre des consentements ; ce n'est pas un consentement au sens du RGPD. Les sections 3 à 8 s'appliquent aussi à vous, avec les règles propres aux comptes professionnels qu'elles indiquent : finalité et base en section 3 (P4p), durées en section 4, destinataires en section 5, exercice de vos droits en section 8.";
+/**
+ * v9 changes (notice-confidentialite only): section → { title?: [text, key], paras? / items?: { replace?: { index → [text, key] },
+ * insertAfter?: { index → [[text, key], …] }, remove?: index[] } } — indexes are those of the v8 list.
+ */
+export const LEGAL_DRAFTS_V9_CHANGES = Object.freeze({
+  'notice-confidentialite': { sections: {
+    status: { paras: { replace: { 0: [LEGAL_DRAFTS_V9_STATUS_PARAGRAPH, 'p1_v9'] } } },
+    purposes: { title: ['3. Finalités et bases légales des comptes personnels et professionnels', 'title_v9'], items: { insertAfter: { 3: [[LEGAL_DRAFTS_V9_P4P, 'p4p_v9']] } } },
+    'purposes-later': { items: { remove: [1] } },
+    retention: { items: {
+      insertAfter: { 0: [[LEGAL_DRAFTS_V9_PRO_ACCOUNT_RETENTION, 'proAccount_v9'], [LEGAL_DRAFTS_V9_PRO_LINKS_RETENTION, 'proLinks_v9'], [LEGAL_DRAFTS_V9_PRO_LOGS_RETENTION, 'proLogs_v9']] },
+      replace: { 13: ["Fonctions pas encore ouvertes (notamment rendez-vous, message facultatif, orientations entre professionnels, assistant, membres du foyer, historique de consultation, favoris, suivi des démarches) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.", 'i14_v9'] },
+    } },
+    recipients: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V9_PRO_RECIPIENTS, 'pro_v9']] } } },
+    processors: { items: { replace: {
+      2: ["Upstash, Inc. : compteurs de sécurité et limitation du nombre de requêtes, à Francfort. Upstash garde aussi, à Francfort, les traces d'effacement (section 4) et, pendant 1 heure, les liens de réinitialisation du mot de passe des comptes professionnels.", 'i3_v9'],
+      3: ["Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte, invitations et avis des comptes professionnels) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).", 'i4_v9'],
+    } } },
+    rights: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V9_PRO_RIGHTS, 'pro_v9']] } } },
+    art14: { paras: { replace: { 2: [LEGAL_DRAFTS_V9_PRO_ACCOUNT_PARAGRAPH, 'p3_v9'] } } },
+  } },
+});
+/**
+ * applies one v9 list change; every entry of the result gets an explicit key (the v8 key of a kept entry, so an insertion or a removal never shifts a
+ * translation onto another text)
+ * @param {any} ch @param {string[] | undefined} list @param {Record<number, string> | undefined} keys @param {'i' | 'p'} prefix
+ * @returns {[string[] | undefined, Record<number, string> | undefined]}
+ */
+const applyV9 = (ch, list, keys, prefix) => {
+  if (!ch || !list) return [list, keys];
+  /** @type {Array<[string, string]>} */ const out = [];
+  list.forEach((x, i) => {
+    if (!(ch.remove || []).includes(i)) out.push(ch.replace?.[i] ? [ch.replace[i][0], ch.replace[i][1]] : [x, keys?.[i] || `${prefix}${i + 1}`]);
+    for (const [t, k] of ch.insertAfter?.[i] || []) out.push([t, k]);
+  });
+  return [out.map((e) => e[0]), Object.fromEntries(out.map((e, i) => [i, e[1]]))];
+};
+/** @param {DraftDocument} d @returns {DraftDocument} */
+const toV9 = (d) => {
+  const c = /** @type {any} */ (LEGAL_DRAFTS_V9_CHANGES)[d.id];
+  return { ...d, version: LEGAL_DRAFTS_V9, sections: d.sections.map((s) => {
+    const sc = c.sections[s.id];
+    if (!sc) return s;
+    const [paras, paraKeys] = applyV9(sc.paras, s.paras, s.paraKeys, 'p');
+    const [items, itemKeys] = applyV9(sc.items, s.items, s.itemKeys, 'i');
+    return { ...s, ...(sc.title ? { title: sc.title[0], titleKey: sc.title[1] } : {}), ...(paras ? { paras, paraKeys } : {}), ...(items ? { items, itemKeys } : {}) };
+  }) };
+};
+/** @type {DraftDocument[]} the privacy notice only */
+export const LEGAL_DRAFT_DOCUMENTS_V9 = LEGAL_DRAFT_DOCUMENTS_V8.filter((d) => LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id)).map(toV9);
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
- * A-I / A-II variant (v7); the professional documents and the privacy notice are at LEGAL_DRAFTS_V8. LEGAL_DRAFT_DOCUMENTS = the newest draft of each document
- * (LAB preview, tests); latestDraftVersionOf(id) = its version.
+ * A-I / A-II variant (v7); the professional documents are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9. LEGAL_DRAFT_DOCUMENTS = the newest draft
+ * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
-  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8] });
+  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {
