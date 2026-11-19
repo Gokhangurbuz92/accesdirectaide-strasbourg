@@ -24,7 +24,7 @@ async function handler(req, res) {
   const svc = employerListings({ audit: (action, c, details) => logProAudit(action, c.userId, c.structureId, details, ip) });
   const send = (out) => (out.ok === false
     ? res.status(out.status || 400).json({ error: out.code, message: out.message, ...(out.problems ? { problems: out.problems } : {}), ...(out.fields ? { fields: out.fields } : {}), ...(out.legalBasis ? { legalBasis: out.legalBasis } : {}) })
-    : res.status(out.status || 200).json((({ ok, status, ...b }) => b)(out)));
+    : res.status(out.status || 200).json(Object.fromEntries(Object.entries(out).filter(([k]) => k !== 'ok' && k !== 'status'))));
   if (req.method === 'GET') return send(await svc.mine(ctx));
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const b = req.body && typeof req.body === 'object' ? req.body : {};

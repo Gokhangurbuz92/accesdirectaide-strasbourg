@@ -218,7 +218,7 @@ export function employerListings({ db = defaultDb, now = () => new Date(), audit
       await expireDue(db, parisDay(now()));
       const listings = canManage ? await db.select().from(JobListing).where(eq(JobListing.structureId, ctx.structureId)).orderBy(desc(JobListing.createdAt)).limit(LIST_LIMIT) : [];
       return { ...base, available: true, canManage, employerVerified: isVerifiedActive(s), employer: s ? { name: s.nom } : null,
-        listings: listings.map(({ structureId, moderatedBy, ...l }) => l) };
+        listings: listings.map((l) => Object.fromEntries(Object.entries(l).filter(([k]) => k !== 'structureId' && k !== 'moderatedBy'))) };
     },
     /** a new draft @param {any} ctx @param {Record<string, unknown>} body */
     async create(ctx, body = {}) {
