@@ -255,5 +255,19 @@
   "orientation.voir_toutes_les_aides": "Alle Hilfen ansehen",
   "orientation.voir_les_demarches": "Behördengänge ansehen",
   "orientation.voir_l_annuaire": "Verzeichnis ansehen",
-  "wizard.privacy.browser": "Auf diesem Gerät werden Ihre Angaben aus den ersten Schritten nur in diesem Tab aufbewahrt, damit Sie fortfahren können, wenn die Seite neu geladen wird. Sie werden gelöscht, wenn das Ergebnis angezeigt wird, wenn Sie auf „{{restart}}“ klicken oder wenn Sie den Tab schließen. Ihr Geburtsdatum, Ihr Einkommen und Ihre Wohnsituation werden nicht im Browser aufbewahrt."
+  "wizard.privacy.browser": "Auf diesem Gerät werden Ihre Angaben aus den ersten Schritten nur in diesem Tab aufbewahrt, damit Sie fortfahren können, wenn die Seite neu geladen wird. Sie werden gelöscht, wenn das Ergebnis angezeigt wird, wenn Sie auf „{{restart}}“ klicken oder wenn Sie den Tab schließen. Ihr Geburtsdatum, Ihr Einkommen und Ihre Wohnsituation werden nicht im Browser aufbewahrt.",
+  "wizard.local.topics_title": "Themen zu Ihrer Auswahl",
+  "wizard.local.topics_intro": "Zu jedem Thema: die offiziellen Merkblätter, an wen Sie sich wenden können und was zu tun ist. Diese Themen sagen nicht, ob eine Hilfe Sie betrifft: Nur die Stelle, die den Antrag erhält, entscheidet.",
+  "wizard.local.bodies": "Stellen, an die Sie sich wenden können",
+  "wizard.local.topic_more": "Alles zu diesem Thema",
+  "wizard.local.erase": "Meine Antworten löschen",
+  "wizard.local.privacy": "Dieser Fragebogen läuft vollständig in Ihrem Browser. Ihre Antworten werden an keinen Server gesendet, nirgends gespeichert (weder bei uns noch im Speicher des Browsers) und nicht gemessen.",
+  "wizard.local.privacy_erase": "Sie verschwinden, wenn Sie auf « {{erase}} » klicken, die Seite neu laden oder den Tab schließen. Kein Konto nötig.",
+  "wizard.local.privacy_topics": "Angaben wie « Behinderung » dienen nur dazu, Themen zum Lesen auszuwählen: Es wird nichts über Ihre Gesundheit gefragt.",
+  "wizard.local.diag_intro": "Die Berechnung erfolgt in Ihrem Browser: Diese Antworten werden nirgendwohin gesendet und nicht gespeichert. Was Sie nicht wissen, können Sie leer lassen.",
+  "wizard.local.diag_voice": "Geben Sie zum Schluss Ihr Geburtsdatum oder Ihre Altersgruppe, Ihr monatliches Nettoeinkommen und Ihre Wohnsituation an. Was Sie nicht wissen, können Sie leer lassen. Die Berechnung erfolgt in Ihrem Browser: Ihre Antworten werden nirgendwohin gesendet.",
+  "wizard.local.region": "Orientierungsfragebogen (in Ihrem Browser)",
+  "wizard.local.erased": "Ihre Antworten wurden gelöscht. Nichts wurde gesendet oder gespeichert.",
+  "wizard.local.result_note": "Dieses Ergebnis wurde in Ihrem Browser erstellt. Nichts wurde gesendet oder gespeichert. Kein Hinweis wurde von einer Fachperson bestätigt: Die Stelle, die den Antrag erhält, entscheidet.",
+  "wizard.local.profile_intro": "Diese Angaben bleiben in Ihrem Browser: Sie werden weder gesendet noch gespeichert (« {{erase}} » löscht sie)."
 }

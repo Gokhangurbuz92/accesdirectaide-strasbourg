@@ -102,13 +102,14 @@ function useStepTexts(results) {
  * FALC sentence first, fuller text in <details>; printable (src/index.css isolates this section when printing).
  * audience="pro": read-only view of the plan proposed to the person (inside the organization-bound dossier): no print button, no citizen-only steps, no in-page anchors.
  */
-export default function ActionPlan({ results, audience = 'citizen', structureLoader }) {
+/* G4: `hideShareStep` (browser-only orientation, src/lib/orientationBrowserOnly.js) leaves out the optional « Partager » step when no sharing button is offered */
+export default function ActionPlan({ results, audience = 'citizen', structureLoader, hideShareStep = false }) {
     const { t } = useT('diagnostic');
     const { dataStatusBanner } = useAssessmentLabels();
     const textsOf = useStepTexts(results);
     const pro = audience === 'pro';
     const plan = buildActionPlan(results);
-    const steps = pro ? plan.steps.filter((s) => !CITIZEN_ONLY.includes(s.kind)) : plan.steps;
+    const steps = (pro ? plan.steps.filter((s) => !CITIZEN_ONLY.includes(s.kind)) : plan.steps).filter((s) => !(hideShareStep && s.kind === 'share'));
     if (!steps.length) return null;
     return (
         <section id="action-plan" data-testid="action-plan" aria-labelledby="action-plan-title" className="rounded-2xl border-2 border-slate-200 bg-white p-5">

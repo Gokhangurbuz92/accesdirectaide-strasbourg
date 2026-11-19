@@ -20,7 +20,9 @@ import { shareOpened } from '@/lib/publicBeta';
  * The RC5 sharing flow (owner secret, organization-bound passport link, CSRF header) is unchanged.
  * R40: the texts are in the interface language (namespace `diagnostic`); a failure is kept as a code, so its message follows a language change.
  */
-export default function DiagnosticOutcome({ results, situation, structureLoader }) {
+/* G4: `local` = the result was computed in the browser (src/lib/orientationBrowserOnly.js): no question to the assistant (it would send the leads to a
+   server), no request id line, and the plan's « Partager » step only when the sharing button is offered (documents surface open) */
+export default function DiagnosticOutcome({ results, situation, structureLoader, local = false }) {
     const { period, meta } = results;
     const exportable = shareableResults(results);
     // G3: /api/share/create belongs to the documents surface; a beta build that keeps it closed does not offer a button that could only fail
@@ -84,9 +86,9 @@ export default function DiagnosticOutcome({ results, situation, structureLoader 
         <div className="space-y-6">
             <AssessmentView results={results} linkAides />
 
-            <ActionPlan results={results} structureLoader={structureLoader} />
+            <ActionPlan results={results} structureLoader={structureLoader} hideShareStep={local && !canShare} />
 
-            {readAssessment(results).usable && (
+            {!local && readAssessment(results).usable && (
                 <div className="rounded-xl border border-teal-200 bg-teal-50 p-4">
                     <button
                         type="button"
@@ -188,7 +190,7 @@ export default function DiagnosticOutcome({ results, situation, structureLoader 
                 </div>
             )}
 
-            {meta && (
+            {meta && !local && (
                 <p className="text-center text-xs text-slate-700">
                     {t('diagnostic:outcome.meta', 'ID : {{id}} • Durée : {{duration}}', { id: meta.requestId, duration: formatNumber(meta.duration_ms, { style: 'unit', unit: 'millisecond', unitDisplay: 'short' }) })}
                     {period ? ` • ${t('diagnostic:outcome.meta_period', 'Période : {{period}}', { period })}` : ''}

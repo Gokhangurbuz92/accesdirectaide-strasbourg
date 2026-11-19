@@ -12,7 +12,7 @@ import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
  * R40: in the interface language — the /diagnostic form's keys (namespace `diagnostic`, same housing and age-band labels) plus `wizard.*`.
  */
 // @ts-ignore
-export default function StepDiagnostic({ onNext, onBack, initialHousehold = '' }) {
+export default function StepDiagnostic({ onNext, onBack, initialHousehold = '', local = false }) {
     const { t, i18n } = useT('diagnostic');
     const { housing } = useDiagnosticLabels();
     const { ageBand: AGE } = useAssessmentLabels();
@@ -41,10 +41,15 @@ export default function StepDiagnostic({ onNext, onBack, initialHousehold = '' }
             </h2>
             <div className="flex items-center justify-between mb-5">
                 <p className="text-sm text-slate-600">
-                    {t('diagnostic:wizard.diag.intro', 'Vos réponses sont envoyées sans votre nom au moteur de calcul, qui ne les conserve pas. Elles restent 24 heures au plus sur cet appareil (« {{restart}} » les efface).', { restart })}
+                    {/* G4: in the browser-only orientation the answers never leave this page (src/lib/orientationBrowserOnly.js) */}
+                    {local
+                        ? t('diagnostic:wizard.local.diag_intro', 'Le calcul se fait dans votre navigateur : ces réponses ne sont envoyées nulle part et ne sont pas enregistrées. Vous pouvez laisser vide ce que vous ne savez pas.')
+                        : t('diagnostic:wizard.diag.intro', 'Vos réponses sont envoyées sans votre nom au moteur de calcul, qui ne les conserve pas. Elles restent 24 heures au plus sur cet appareil (« {{restart}} » les efface).', { restart })}
                 </p>
                 <VoiceAssistant
-                    text={t('diagnostic:wizard.diag.voice', "Pour finir, indiquez votre date de naissance ou votre tranche d'âge, vos revenus mensuels nets et votre logement. Vous pouvez laisser vide ce que vous ne savez pas. Le moteur de calcul ne conserve pas vos réponses ; elles restent 24 heures au plus sur cet appareil.")}
+                    text={local
+                        ? t('diagnostic:wizard.local.diag_voice', "Pour finir, indiquez votre date de naissance ou votre tranche d'âge, vos revenus mensuels nets et votre logement. Vous pouvez laisser vide ce que vous ne savez pas. Le calcul se fait dans votre navigateur : vos réponses ne sont envoyées nulle part.")
+                        : t('diagnostic:wizard.diag.voice', "Pour finir, indiquez votre date de naissance ou votre tranche d'âge, vos revenus mensuels nets et votre logement. Vous pouvez laisser vide ce que vous ne savez pas. Le moteur de calcul ne conserve pas vos réponses ; elles restent 24 heures au plus sur cet appareil.")}
                     lang={i18n.language}
                 />
             </div>

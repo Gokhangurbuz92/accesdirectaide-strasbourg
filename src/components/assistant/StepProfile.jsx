@@ -9,7 +9,7 @@ const SITUATIONS = ['seul', 'couple', 'famille'];
 const STATUTS = ['emploi', 'chomage', 'etudiant', 'retraite', 'hebergement'];
 
 // @ts-ignore
-export default function StepProfile({ onNext, onBack }) {
+export default function StepProfile({ onNext, onBack, local = false }) {
     const { t } = useT('diagnostic');
     const LABELS = {
         seul: t('diagnostic:wizard.profile.alone', 'Seul(e)'),
@@ -29,7 +29,9 @@ export default function StepProfile({ onNext, onBack }) {
     return (
         <div>
             <h2 className="mb-1 text-lg font-semibold text-slate-900">{t('diagnostic:wizard.profile.title', 'Votre situation')}</h2>
-            <p className="mb-4 text-sm text-slate-600">{t('diagnostic:wizard.profile.intro', 'Ces informations ne sont pas conservées sur nos serveurs ; elles restent 24 heures au plus sur cet appareil (« {{restart}} » les efface).', { restart: t('diagnostic:wizard.restart', 'Recommencer') })}</p>
+            <p className="mb-4 text-sm text-slate-600">{local
+                ? t('diagnostic:wizard.local.profile_intro', 'Ces informations restent dans votre navigateur : elles ne sont ni envoyées ni enregistrées (« {{erase}} » les efface).', { erase: t('diagnostic:wizard.local.erase', 'Effacer mes réponses') })
+                : t('diagnostic:wizard.profile.intro', 'Ces informations ne sont pas conservées sur nos serveurs ; elles restent 24 heures au plus sur cet appareil (« {{restart}} » les efface).', { restart: t('diagnostic:wizard.restart', 'Recommencer') })}</p>
 
             <fieldset className="mb-4">
                 <legend className="mb-2 text-sm font-medium text-slate-700">{t('diagnostic:wizard.profile.family', 'Situation familiale')}</legend>
