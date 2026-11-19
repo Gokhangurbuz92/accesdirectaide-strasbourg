@@ -41,6 +41,7 @@ const CONFIG = {
     FEEDBACK: { limit: 6, window: 600 },    // 6 per 10 min
     CONTACT_FORM: { limit: 5, window: 3600 }, // PKG-11 / P20: public contact form, 5 per hour per IP
     CSP_REPORT: { limit: 20, window: 60 },
+    PUBLIC_INDICATORS: { limit: 30, window: 60 },   // G8: public indicators (cached 6 h on the server; a page asks once)
     TRANSLATION_READ: { limit: 120, window: 60 },   // R32: public translations of verified content (a page asks once or twice)
     EMAIL_CHANGE: { limit: 3, window: 3600 },  // launch-readiness item 66: address change requests, 3 per hour per account    // launch-readiness item 49: browser CSP violation reports, 20 per minute per IP (logged, never stored)
     DSR_EXPORT: { limit: 10, window: 3600 },  // PKG-11 audit: each export files a DSR request
@@ -119,7 +120,7 @@ function hashKey(/** @type {string} */ key) {
 const PUBLIC_READ_ACTIONS = new Set([
     'SEARCH_AIDES', 'SEARCH_STRUCTURES', 'SEARCH_RESSOURCES', 
     'DREES_API', 'TAXONOMY', 'RDV_PUBLIC_READ', 'MESSAGE_USER_READ', 
-    'MESSAGE_PRO_READ', 'ASSISTANT_CHAT', 'ASSISTANT_RECOS', 'DIAGNOSTIC', 'PDF_EXPORT', 'TERRITORY_LOOKUP'
+    'MESSAGE_PRO_READ', 'ASSISTANT_CHAT', 'ASSISTANT_RECOS', 'DIAGNOSTIC', 'PDF_EXPORT', 'TERRITORY_LOOKUP', 'PUBLIC_INDICATORS'
 ]);
 
 // R43: the former AUTH_OR_SENSITIVE_MUTATION list was never read: shouldFailClosed() fails closed for EVERY action outside PUBLIC_READ_ACTIONS (unknown ones included)

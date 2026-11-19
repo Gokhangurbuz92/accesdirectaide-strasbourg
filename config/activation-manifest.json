@@ -481,6 +481,23 @@
       ],
       "note": "G4: exactly 1 = browser-only orientation on /orientation (no request with the answers, no storage; /api/diagnostic stays closed); rebuild"
     },
+    "ADA_PUBLIC_INDICATORS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(open)?$",
+      "note": "G8 (owner decision C8/D4, new public metrics): exactly « open » = GET /api/public/indicators answers (aggregates of the public catalogue only: published records, verification freshness, official-link health, translations, places by commune masked below 5; no personal data, no non-recours figure). Unset = 404, during the beta and outside it. Must match VITE_PUBLIC_INDICATORS"
+    },
+    "VITE_PUBLIC_INDICATORS": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "note": "G8: exactly « open » = the « Indicateurs publics » section of /impact (rebuild); must match ADA_PUBLIC_INDICATORS"
+    },
     "MAINTENANCE_MODE": {
       "class": "optional",
       "nature": "config",

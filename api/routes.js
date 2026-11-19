@@ -37,6 +37,7 @@ const routeTable = [
     { path: 'robots', match: 'exact', handler: () => import('./_handlers/robots.js') },
     { path: 'sitemap.xml', match: 'exact', handler: () => import('./_handlers/sitemap.js') },
     { path: 'public/page', match: 'exact', handler: () => import('./_handlers/public/page.js') },   // P22: the record pages' initial HTML (canonical, title, 404 / 410)
+    { path: 'public/indicators', match: 'exact', handler: () => import('./_handlers/public/indicators.js') },   // G8: public indicators of the Observatoire (closed unless ADA_PUBLIC_INDICATORS=open)
     { path: 'sitemap', match: 'exact', handler: () => import('./_handlers/sitemap.js') },
     { path: 'login-pro-guard', match: 'exact', handler: () => import('./_handlers/login-pro-guard.js') },
     { path: 'taxonomy', match: 'exact', handler: () => import('./_handlers/taxonomy.js') },
