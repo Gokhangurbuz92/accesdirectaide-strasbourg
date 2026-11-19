@@ -22,7 +22,10 @@ const URL_FIXED = `https://www.service-public.fr/${P}/fixed`;
 const URL_HIDDEN = `https://www.service-public.fr/${P}/hidden`;
 const URL_OLD = `https://www.service-public.fr/${P}/old`;
 const URL_NULL = `https://example.org/${P}/outside`;
-const TRANSLATED_SLUG = fs.readdirSync('data/translations/aide').filter((f) => f.endsWith('.json'))[0].slice(0, -5);
+// QA v59 (19/11): the first translation slug (« aah ») may already exist in a shared, seeded test DB (Aide.slug is unique) — the hook then failed and
+// every test was skipped. The slug is now chosen in beforeAll among translation files whose slug is not in the DB.
+const TRANSLATION_SLUGS = fs.readdirSync('data/translations/aide').filter((f) => f.endsWith('.json')).map((f) => f.slice(0, -5));
+let TRANSLATED_SLUG;
 const PERSONAL_TABLES = ['CitizenUser', 'ProUser', 'AdminUser', 'ProAppointment', 'Referral', 'ReferralEvent', 'AuditLog', 'ConversationLog', 'CitizenHistoryEntry', 'ParcoursItem',
   'SharedDiagnostic', 'ObservatoryQuarterSnapshot', 'AiMetric', 'CitizenProfile', 'SupportRequest', 'ConsentLog', 'ContentVerification'];
 
@@ -47,6 +50,9 @@ describe.skipIf(!hasDatabase)('G8 public indicators (real DB)', () => {
     ({ computePublicIndicators: compute } = await import('../../api/_services/public-indicators.js'));
     ({ default: handler, _resetIndicatorsCache: reset } = await import('../../api/_handlers/public/indicators.js'));
     ({ assertAggregateOnly } = await import('../../api/lib/public-indicators.js'));
+    const taken = new Set(((await db.execute(sql`SELECT slug FROM "Aide" WHERE slug IS NOT NULL`)).rows || []).map((r) => r.slug));
+    TRANSLATED_SLUG = TRANSLATION_SLUGS.find((x) => !taken.has(x));
+    if (!TRANSLATED_SLUG) throw new Error('every translated slug already exists in this DB: the T case cannot be built');
     before = await compute({ db });
     const ids = (s) => `${P}-${s}`;
     await db.execute(aide(ids('a1'), { days: 5, scope: 'NATIONAL', url: URL_OK }));
