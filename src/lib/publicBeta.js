@@ -93,6 +93,15 @@ export function bookingOpened(beta, open = builtOpen(), sub = builtSub()) {
 }
 
 /**
+ * G3 — can a dossier be shared (POST /api/share/create) in this build: outside the beta, or when the build opens the documents surface (the server keeps
+ * `share` closed with it). The diagnostic's « Partager le dossier » is offered only then; the PDF download is local and stays.
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function shareOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/share', open, sub);
+}
+
+/**
  * The links a beta visitor can follow: a link to a closed screen (assistant, simulator, contact…) is not offered at all, rather than leading to the notice.
  * @template T @param {T[]} links @param {boolean} beta @param {(link: T) => string} pathOf
  */

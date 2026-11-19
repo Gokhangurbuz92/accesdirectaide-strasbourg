@@ -11,6 +11,8 @@ import { openAssistantWithAssessment } from '@/lib/assistantBridge';
 import AssessmentView from '@/components/diagnostic/AssessmentView';
 import ActionPlan from '@/components/diagnostic/ActionPlan';
 import { formatNumber, useT } from '@/i18n';
+import { frontendEnv } from '@/config/env';
+import { shareOpened } from '@/lib/publicBeta';
 
 /**
  * DTA S1 stage 2b — result area of the diagnostic page, built on the assessment contract only.
@@ -21,6 +23,8 @@ import { formatNumber, useT } from '@/i18n';
 export default function DiagnosticOutcome({ results, situation, structureLoader }) {
     const { period, meta } = results;
     const exportable = shareableResults(results);
+    // G3: /api/share/create belongs to the documents surface; a beta build that keeps it closed does not offer a button that could only fail
+    const canShare = shareOpened(frontendEnv.flags.publicBeta);
     const { t, i18n } = useT('diagnostic');
     const SHARE_ERRORS = {
         rate: t('diagnostic:outcome.share_error_rate', 'Trop de partages en peu de temps : réessayez dans quelques minutes.'),
@@ -111,7 +115,7 @@ export default function DiagnosticOutcome({ results, situation, structureLoader 
             </p>
 
             {pdfProblem ? <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-900" data-testid="pdf-problem">{t('diagnostic:outcome.pdf_problem', 'Le PDF n’a pas pu être créé. Vous pouvez réessayer, ou imprimer cette page.')}</p> : null}
-            <div id="share-actions" className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div id="share-actions" className={`grid grid-cols-1 gap-3${canShare ? ' sm:grid-cols-2' : ''}`}>
                 <button
                     type="button"
                     onClick={handleDownloadPDF}
@@ -120,7 +124,7 @@ export default function DiagnosticOutcome({ results, situation, structureLoader 
                     <FileDown className="h-5 w-5" aria-hidden="true" />
                     {t('diagnostic:outcome.download_pdf', 'Télécharger PDF')}
                 </button>
-                <button
+                {canShare && <button
                     type="button"
                     onClick={handleShare}
                     disabled={shareState.loading}
@@ -136,7 +140,7 @@ export default function DiagnosticOutcome({ results, situation, structureLoader 
                     ) : (
                         <><Share2 className="h-5 w-5" aria-hidden="true" /> {t('diagnostic:outcome.share', 'Partager le dossier')}</>
                     )}
-                </button>
+                </button>}
             </div>
 
             <div className="mt-6">
