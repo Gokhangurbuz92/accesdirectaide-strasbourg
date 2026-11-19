@@ -18,7 +18,7 @@ describe.skipIf(!hasDatabase)('PKG-4 D8 team invitations (real DB)', () => {
   let db, auth, mailer, H;
   const asAdmin = async (body) => { const r = mk(); await H.invite({ method: 'POST', url: '/api/pro/invite', query: {}, body, headers: { host: 'localhost', authorization: `Bearer ${auth.signProToken({ id: ADMIN.id, email: ADMIN.email, structureId: ST, role: 'STRUCTURE_ADMIN' })}` }, socket: {} }, r); return r; };
   const check = async (token) => { const r = mk(); await H.register({ method: 'GET', url: `/api/pro/auth/register-invite?token=${encodeURIComponent(token)}`, query: { token }, headers: { host: 'localhost' } }, r); return r; };
-  const redeem = async (token) => { const r = mk(); await H.register({ method: 'POST', url: '/api/pro/auth/register-invite', query: {}, body: { token, password: PASSWORD }, headers: { host: 'localhost' }, socket: {} }, r); return r; };
+  const redeem = async (token) => { const r = mk(); await H.register({ method: 'POST', url: '/api/pro/auth/register-invite', query: {}, body: { token, password: PASSWORD, termsAccepted: true }, headers: { host: 'localhost' }, socket: {} }, r); return r; };
   const tokenFromMail = (to) => { const m = mailer.__getTestOutbox().filter((x) => x.to === to).pop(); expect(m, 'invitation e-mail handed to the mailer').toBeTruthy(); return new URL(m.text.match(/https?:\/\/\S+/)[0]).searchParams.get('token'); };
 
   beforeAll(async () => {

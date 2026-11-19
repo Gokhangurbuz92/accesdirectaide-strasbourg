@@ -71,7 +71,7 @@ test('E01 fr: the platform administrator verifies the identity (stale version an
   // the invited person sets a password, then enrols the second factor bound to that invitation
   const link = linkIn(await outbox(A.email), /\/pro\/register-invite\?token=([^\s]+)/);
   expect(link).not.toBeNull();
-  const reg = await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: A.password });
+  const reg = await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: A.password, termsAccepted: true });
   expect(reg.status, JSON.stringify(reg.json)).toBe(201);
   expect(reg.json.user).toMatchObject({ role: 'STRUCTURE_ADMIN', structureId: ORG.id });
   A.id = reg.json.user.id;
@@ -86,14 +86,14 @@ test('E01 fr: the platform administrator verifies the identity (stale version an
   CREDS.pros.r47admin = { email: A.email, password: A.password, totpSecret: A.totpSecret };
   expect((await db(`SELECT role, status, mfa_enabled FROM "ProUser" WHERE id = $1`, [A.id]))[0]).toMatchObject({ role: 'STRUCTURE_ADMIN', status: 'active', mfa_enabled: true });
   // the same link cannot be used twice
-  expect((await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: A.password })).status).toBe(410);
+  expect((await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: A.password, termsAccepted: true })).status).toBe(410);
 });
 
 test('E03 E04 fr: team — a member invited and registered, roles changed (a member cannot change roles); services created (a member cannot)', async () => {
   const inv = await papi('r47admin', 'POST', '/api/pro/invite', { email: M.email, role: 'PRO' });
   expect(inv.status).toBe(201);
   const link = linkIn(await outbox(M.email), /\/pro\/register-invite\?token=([^\s]+)/);
-  const reg = await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: M.password });
+  const reg = await adminP.api('POST', '/api/pro/auth/register-invite', { token: decodeURIComponent(link[1]), password: M.password, termsAccepted: true });
   expect(reg.status).toBe(201);
   M.id = reg.json.user.id;
   const grant = reg.json.mfaEnrolment.token;

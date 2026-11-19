@@ -30,7 +30,7 @@ test('E03 R01 fr: an invited member (invitation, password, MFA bound to the invi
   expect([200, 201]).toContain(inv.status);
   await expect.poll(async () => (await outbox(N.email)).length, { timeout: 20000 }).toBeGreaterThanOrEqual(1);
   const link = new URL(linkIn(await outbox(N.email), /(https?:\/\/[^\s]+\/pro\/register-invite\?token=[^\s]+)/)[1]);
-  const reg = await pro.api('POST', '/api/pro/auth/register-invite', { token: link.searchParams.get('token'), password: N.password });
+  const reg = await pro.api('POST', '/api/pro/auth/register-invite', { token: link.searchParams.get('token'), password: N.password, termsAccepted: true });
   expect(reg.status, JSON.stringify(reg.json)).toBe(201);
   N.id = reg.json.user.id;
   const grant = reg.json.mfaEnrolment.token;

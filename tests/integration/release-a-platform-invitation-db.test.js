@@ -24,7 +24,7 @@ describe.skipIf(!hasDatabase)('Release A / G-1 — platform invitation of a part
   const hdr = (u, mfa = true) => ({ host: 'localhost', authorization: `Bearer ${auth.signProToken({ id: u.id, email: u.email, structureId: u.sid, role: u.role }, { mfa })}` });
   const call = async (h, req) => { const r = mk(); await h({ query: {}, socket: {}, ...req }, r); return r; };
   const invite = (u, body, mfa = true) => call(H.invite, { method: 'POST', url: '/api/pro/invite', body, headers: hdr(u, mfa) });
-  const redeem = (token) => call(H.register, { method: 'POST', url: '/api/pro/auth/register-invite', body: { token, password: PASSWORD }, headers: { host: 'localhost' } });
+  const redeem = (token) => call(H.register, { method: 'POST', url: '/api/pro/auth/register-invite', body: { token, password: PASSWORD, termsAccepted: true }, headers: { host: 'localhost' } });
   const tokenFromMail = (to) => { const m = mailer.__getTestOutbox().filter((x) => x.to === to).pop(); expect(m, 'invitation e-mail handed to the mailer').toBeTruthy(); return new URL(m.text.match(/https?:\/\/\S+/)[0]).searchParams.get('token'); };
   const n = async (q) => (await db.execute(q)).rows[0].n;
 

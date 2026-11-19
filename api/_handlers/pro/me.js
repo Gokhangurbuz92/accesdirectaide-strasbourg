@@ -4,6 +4,7 @@ import { db } from '../../../src/db/index.js';
 import { ProUser } from '../../../src/db/schema.js';
 import { eq, and } from 'drizzle-orm';
 import { withProRateLimit } from '../../_utils/pro-rate-limit.js';
+import { proModuleStates } from '../../_utils/pro-modules.js';
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
@@ -39,6 +40,8 @@ async function handler(req, res) {
             structure: user.structure,
             // R34: whether this session passed the second factor, and whether ADA Pro requires it here (production) — the screens send the person to set it up
             session: { mfa: req.user?.mfa === true, mfaRequired: proMfaRequired() },
+            // G3: which console modules this deployment serves (surface + capability gates; booleans only) — closed ones are shown « pas encore ouvert »
+            modules: proModuleStates(),
         });
 
     } catch (e) {

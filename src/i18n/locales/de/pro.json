@@ -1463,5 +1463,19 @@
  "cases.note_author": "von {{author}}",
  "cases.inactive_account": "inaktives Konto",
  "messages.unread": "Ungelesen",
- "layout.messages_unread": "Nachrichten, ungelesen: {{count}}"
+ "layout.messages_unread": "Nachrichten, ungelesen: {{count}}",
+ "not_open.title": "Noch nicht geöffnet",
+ "not_open.body": "Dieser Teil des Bereichs für Fachkräfte ist noch nicht geöffnet. Er wird geöffnet, sobald sein Datenschutzrahmen (und, falls nötig, ein zertifiziertes Hosting für Gesundheitsdaten) besteht. Dies ist keine Störung: Es wurden keine Daten gelesen.",
+ "not_open.badge": "noch nicht geöffnet",
+ "dashboard.queue_not_open": "Betreute Fälle und Vermittlungen: noch nicht geöffnet. Sie werden geöffnet, sobald ihr Datenschutzrahmen (und ein zertifiziertes Hosting für Gesundheitsdaten) besteht.",
+ "dashboard.agenda_not_open": "Termine sind im Bereich für Fachkräfte noch nicht geöffnet.",
+ "register_pro.terms_not_in_force": "Das Anlegen Ihres Zugangs für Fachkräfte ist noch nicht geöffnet: Die Nutzungsbedingungen für Fachkräfte sind noch nicht in Kraft. Ihre Einladung wurde nicht verwendet.",
+ "register_pro.terms_before": "Mit dem Anlegen meines Zugangs akzeptiere ich die",
+ "register_pro.terms_link": "Nutzungsbedingungen für Fachkräfte",
+ "register_pro.terms_and": "und für meine Einrichtung die",
+ "register_pro.terms_structures_link": "Bedingungen für Einrichtungen",
+ "register_pro.terms_after": ".",
+ "register_pro.privacy_before": "Meine Daten werden so verarbeitet, wie es in den",
+ "register_pro.privacy_link": "Datenschutzhinweisen",
+ "register_pro.privacy_after": " erklärt ist."
 }

@@ -334,7 +334,7 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
       const inv = await call(H.invite, { url: '/api/pro/invite', body: { email, role: 'PRO' }, headers: bearer(P.admA) });
       expect(inv.statusCode).toBe(201);
       const token = linkOf(lastMail(email, 'pro-invitation')).searchParams.get('token');
-      const reg = await call(H.registerInvite, { url: '/api/pro/auth/register-invite', body: { token, password: PASSWORD } });
+      const reg = await call(H.registerInvite, { url: '/api/pro/auth/register-invite', body: { token, password: PASSWORD, termsAccepted: true } });
       expect(reg.statusCode, JSON.stringify(reg.body)).toBe(201);
       expect(reg.body.mfaEnrolment.expiresInSeconds).toBe(1800);
       const me = { id: reg.body.user.id, email, role: 'PRO', st: STA };
@@ -345,7 +345,7 @@ describe.skipIf(!hasDatabase)('R42-AUTH accounts and professional MFA (real DB)'
       // an enrolment invitation for an existing member presented to register-invite: 409, and it stays usable for that member
       expect((await issue(P.admA, { memberId: P.adm2A.id, lostDevice: true })).statusCode).toBe(201);
       const raw = invitationToken(P.adm2A.email);
-      const r = await call(H.registerInvite, { url: '/api/pro/auth/register-invite', body: { token: raw, password: PASSWORD } });
+      const r = await call(H.registerInvite, { url: '/api/pro/auth/register-invite', body: { token: raw, password: PASSWORD, termsAccepted: true } });
       expect(r.statusCode).toBe(409); expect(r.body.code).toBe('ACCOUNT_EXISTS');
       expect((await db.execute(sql`SELECT used_at FROM "Invitation" WHERE token = ${`sha256:${crypto.createHash('sha256').update(raw).digest('hex')}`}`)).rows[0].used_at).toBeNull();
     });

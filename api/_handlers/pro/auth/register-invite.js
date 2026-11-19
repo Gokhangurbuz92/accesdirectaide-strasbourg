@@ -11,12 +11,13 @@ import { Invitation, ProUser } from '../../../../src/db/schema.js';
 import { eq, and, gt, isNull, sql } from 'drizzle-orm';
 import { clientIp } from '../../../_utils/client-ip.js';
 import { MFA_ENROLMENT_GRANT_SECONDS, signMfaEnrolmentGrant } from '../../../_utils/pro-mfa-enrolment.js';
+import { PRO_TERMS_NOT_IN_FORCE_REFUSAL, PRO_TERMS_REQUIRED_REFUSAL, proTermsDocumentsFor, proTermsInForce, recordProTermsAcceptance, termsAcceptanceGiven } from '../../../_utils/pro-terms.js';
 
 /**
  * Register via Invitation Token
  *
  * POST /api/pro/auth/register-invite
- * Body: { token, password }
+ * Body: { token, password, termsAccepted: true }
  *
  * 1. Validates the invitation token (not expired, not used)
  * 2. Creates the ProUser linked to the invitation's structure
@@ -59,12 +60,17 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
             email: invitation.email,
             role: invitation.role,
             structureName: invitation.structure.nom,
+            // G3: the terms the screen states above « Créer mon accès » (ids only), and whether they are in force here (else the screen says the sign-up is not open)
+            terms: { inForce: proTermsInForce(), documents: proTermsDocumentsFor(invitation.role) },
         });
     }
 
     if (req.method !== 'POST') {
         return res.status(405).json({ error: 'Méthode non autorisée' });
     }
+
+    // G3: no professional account under terms that are not in force (Production): refused before anything is read, the invitation is not consumed
+    if (!proTermsInForce()) return res.status(503).json({ ...PRO_TERMS_NOT_IN_FORCE_REFUSAL });
 
     const ip = getClientIp(req);
 
@@ -84,6 +90,10 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
     const pwProblems = passwordProblems(password);
     if (pwProblems.length) {
         return res.status(400).json({ error: passwordMessage(pwProblems) });
+    }
+    // G3: the professional terms are accepted at sign-up (a contract acceptance, recorded with its version — api/_utils/pro-terms.js); before any lookup
+    if (!termsAcceptanceGiven(req.body?.termsAccepted)) {
+        return res.status(400).json({ ...PRO_TERMS_REQUIRED_REFUSAL });
     }
 
     try {
@@ -136,6 +146,7 @@ export default async function handler(/** @type {import('../../../_utils/http-ty
                 status: 'active',
                 structureId: invitation.structureId,
             }).returning();
+            await recordProTermsAcceptance(tx, created.id, created.role);   // G3: the proof with the account (same transaction)
             return created;
         });
         if (!user) return res.status(410).json({ error: 'Cette invitation a déjà été utilisée.' });

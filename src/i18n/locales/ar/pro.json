@@ -1491,5 +1491,19 @@
  "cases.note_author": "بقلم {{author}}",
  "cases.inactive_account": "حساب غير نشط",
  "messages.unread": "غير مقروءة",
- "layout.messages_unread": "الرسائل، غير المقروءة: {{count}}"
+ "layout.messages_unread": "الرسائل، غير المقروءة: {{count}}",
+ "not_open.title": "غير مفتوح بعد",
+ "not_open.body": "هذا الجزء من الفضاء المهني غير مفتوح بعد. سيُفتح عندما يكون إطار حماية البيانات الخاص به (وعند الحاجة، استضافة معتمدة للبيانات الصحية) جاهزًا. هذا ليس عطلًا: لم تُقرأ أي بيانات.",
+ "not_open.badge": "غير مفتوح بعد",
+ "dashboard.queue_not_open": "الملفات المتابَعة والتوجيهات: غير مفتوحة بعد. ستُفتح عندما يكون إطار حماية البيانات الخاص بها (واستضافة معتمدة للبيانات الصحية) جاهزًا.",
+ "dashboard.agenda_not_open": "المواعيد غير مفتوحة بعد في الفضاء المهني.",
+ "register_pro.terms_not_in_force": "إنشاء وصولك المهني غير مفتوح بعد: شروط الاستخدام الخاصة بالمهنيين لم تدخل حيز التنفيذ بعد. لم تُستخدم دعوتك.",
+ "register_pro.terms_before": "بإنشاء وصولي، أوافق على",
+ "register_pro.terms_link": "شروط الاستخدام الخاصة بالمهنيين",
+ "register_pro.terms_and": "وعلى، باسم مؤسستي،",
+ "register_pro.terms_structures_link": "الشروط الخاصة بالمؤسسات",
+ "register_pro.terms_after": ".",
+ "register_pro.privacy_before": "تُعالَج بياناتي كما هو موضّح في",
+ "register_pro.privacy_link": "إشعار الخصوصية",
+ "register_pro.privacy_after": "."
 }
