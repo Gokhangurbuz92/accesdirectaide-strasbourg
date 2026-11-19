@@ -25,6 +25,11 @@ export function formatLegalDate(iso = LEGAL_DOCS_VERSION.date) {
   return `${d === 1 ? '1er' : d} ${MONTHS_FR[m - 1]} ${y}`;
 }
 
+/** G8: under the privacy page's status line (French, like LEGAL_DOCS_LABEL): names the approved privacy notice in force (VITE_LEGAL_DOCS_APPROVED_VERSION). */
+export const PRIVACY_NOTICE_LINK_LABEL = 'Notice de confidentialité (RGPD, articles 13 et 14)';
+/** @param {string} version */
+export const privacyPageReferenceSentence = (version) => `Cette page résume nos traitements. Le texte approuvé et en vigueur est la notice de confidentialité (version ${version}) :`;
+
 /** Text shown at the bottom of each legal page. */
 export const LEGAL_DOCS_LABEL = `Version projet du ${formatLegalDate(LEGAL_DOCS_VERSION.date)} — relecture juridique en cours`;
 
