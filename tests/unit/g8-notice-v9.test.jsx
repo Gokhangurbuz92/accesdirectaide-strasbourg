@@ -17,7 +17,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_DRAFT_DOCUMENTS_V8, LEGAL_DRAFT_DOCUMENTS_V9, LEGAL_DRAFT_STATUS,
-  LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V9_P4P, LEGAL_DRAFTS_V9_PRO_ACCOUNT_PARAGRAPH,
+  LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V9_P4P, LEGAL_DRAFTS_V9_PRO_ACCOUNT_PARAGRAPH,
   LEGAL_DRAFTS_V9_PRO_ACCOUNT_RETENTION, LEGAL_DRAFTS_V9_PRO_LINKS_RETENTION, LEGAL_DRAFTS_V9_PRO_LOGS_RETENTION, LEGAL_DRAFTS_V9_PRO_RIGHTS,
   LEGAL_DRAFTS_V9_STATUS_PARAGRAPH, approvedAtLeast, approvedVersionOf, draftFor, draftTextKeys, draftVisibility, latestDraftVersionOf,
 } from '../../src/config/legal-drafts.js';
@@ -191,8 +191,7 @@ describe('/politique-confidentialite and the i18n gate', () => {
     const file = 'src/pages/Confidentialite.jsx';
     expect(extractKeys(src(file), file).filter((k) => !Object.keys(k.defaults).length).map((k) => k.key)).toEqual([]);
     // the browser-only paragraph is still the approved v8 text and its translations
-    expect(src(file)).toContain("const NOTICE_V8_P3_KEY = 'legaldraft:privacyNotice.purposes.p3_v8';");
-    expect(src(file)).toContain('t(NOTICE_V8_P3_KEY, LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH)');
+    expect(src(file)).toContain(`t('legaldraft:privacyNotice.purposes.p3_v8', ${JSON.stringify(LEGAL_DRAFTS_V8_BROWSER_ONLY_PARAGRAPH)})`);   // literal default = the approved constant
   });
 });
 
