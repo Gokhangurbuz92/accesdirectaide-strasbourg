@@ -19,8 +19,8 @@ const show = async (page, open) => {
   if (open !== undefined) vi.stubEnv('VITE_PUBLIC_BETA_OPEN_SURFACES', open);
   vi.resetModules();
   const Page = (await import(`../../src/pages/${page}.jsx`)).default;
-  render(createElement(HelmetProvider, null, createElement(MemoryRouter, null, createElement(Page))));
-  return document.body.textContent;
+  const { container } = render(createElement(HelmetProvider, null, createElement(MemoryRouter, null, createElement(Page))));
+  return container.textContent;
 };
 
 describe('CGU and Impact follow the accounts opening', () => {
