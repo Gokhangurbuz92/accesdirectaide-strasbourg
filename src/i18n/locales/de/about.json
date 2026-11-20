@@ -240,5 +240,7 @@
  "indicators.communes.text": "Nach der angegebenen Adresse. Eine Gemeinde mit weniger als {{k}} Orten wird nicht angezeigt.",
  "indicators.communes.masked": "Nicht angezeigte Gemeinden",
  "indicators.communes.not_located": "Nicht zugeordnete Orte",
- "indicators.masked": "ausgeblendet"
+ "indicators.masked": "ausgeblendet",
+ "indicators.domains.unclassified": "Noch nicht messbar: Die {{n}} veröffentlichten Leistungen sind im Katalog noch keinem Bereich zugeordnet. Die Aufteilung wird angezeigt, sobald dies geschehen ist.",
+ "indicators.scopes.unclassified": "Noch nicht messbar: Bei den {{n}} veröffentlichten Leistungen ist die Ebene (national, regional, departemental, kommunal) im Katalog noch nicht angegeben. Die Aufteilung wird angezeigt, sobald dies geschehen ist."
 }

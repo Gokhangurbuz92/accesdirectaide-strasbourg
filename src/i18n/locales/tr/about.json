@@ -240,5 +240,7 @@
  "indicators.communes.text": "Beyan edilen adrese göre. {{k}} yerden az yeri olan bir belediye gösterilmez.",
  "indicators.communes.masked": "Gösterilmeyen belediyeler",
  "indicators.communes.not_located": "Konumu belirlenemeyen yerler",
- "indicators.masked": "gizlendi"
+ "indicators.masked": "gizlendi",
+ "indicators.domains.unclassified": "Henüz ölçülemiyor: yayımlanan {{n}} yardım katalogda henüz alana göre sınıflandırılmadı. Sınıflandırıldığında bu dağılım gösterilecek.",
+ "indicators.scopes.unclassified": "Henüz ölçülemiyor: yayımlanan {{n}} yardımın düzeyi (ulusal, bölgesel, il, belediye) katalogda henüz belirtilmedi. Belirtildiğinde bu dağılım gösterilecek."
 }

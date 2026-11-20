@@ -32,6 +32,7 @@ import { AuditLog } from '../../src/db/schema.js';
 import { snapshotRow } from './content-versions.js';
 import { formatParis, noticeCitizen } from './appointment-notices.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
+import { SOLE_ADMIN_DELAY_MS, selfConfirmation } from './sole-admin.js';
 import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
 import { ACCESS_ENDED_BY, recordAccessEnded } from '../lib/consent-ledger.js';
 import { logger } from '../lib/logger.js';
@@ -81,7 +82,8 @@ export async function listOpenClosures(db = defaultDb) {
   return { ok: true, requests: rows.map((r) => ({ id: r.id, status: r.status, createdAt: r.createdAt, structureId: r.sid, structureNom: r.nom,
     origin: r.o?.request?.admin ? 'ADA' : 'ORGANIZATION', requestReason: r.o?.request?.reason || null,
     stage: r.status === 'BLOCKED' ? 'BLOCKED_BY_LEGAL_HOLD' : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
-    proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null })) };
+    proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null,
+    soleAdministratorConfirmableFrom: r.o?.proposal?.proposedAt ? new Date(Date.parse(r.o.proposal.proposedAt) + SOLE_ADMIN_DELAY_MS).toISOString() : null })) };
 }
 
 async function counts(db, sid) {
@@ -246,7 +248,7 @@ async function tellClosure(db, sid, result, deps = {}) {
   return out;
 }
 
-/** The second reviewer: confirm (APPROVE runs the closure now) or send back. The proposer can never confirm their own proposal. */
+/** The second reviewer: confirm (APPROVE runs the closure now) or send back. The proposer confirms their own proposal only as the SOLE administrator (G12). */
 export async function confirmClosure(id, input, reviewer, db = defaultDb, deps = {}) {
   const action = String(input?.action || '').toLowerCase();
   if (!['confirm', 'send_back'].includes(action)) return bad('invalid_action', 'Action invalide.');
@@ -255,9 +257,12 @@ export async function confirmClosure(id, input, reviewer, db = defaultDb, deps =
   const [r] = (await db.execute(sql`SELECT id, status, "subjectId" AS sid, "reviewOutcome" AS o FROM "DSRRequest" WHERE id = ${String(id || '')} AND "requestType" = ${REQUEST_TYPE} AND status = 'IN_REVIEW'`)).rows;
   const p = r?.o?.proposal;
   if (!p) return bad('not_found', 'Aucune proposition à confirmer.', 404);
-  if (p.proposedBy === reviewer) return bad('second_reviewer_required', 'La confirmation doit venir d’une autre personne que celle qui a proposé.', 403);
+  // G12: the proposer confirms their own proposal only as the SOLE MFA administrator, after 24 h and a reading made after that delay (sole-admin.js)
+  const self = await selfConfirmation(db, { reviewer, proposedBy: p.proposedBy, proposedAt: p.proposedAt, applying: action === 'confirm', check: deps.soleAdministratorCheck });
+  if (!self.ok) return self;
+  const soleAdministrator = self.soleAdministrator;
   if (String(input?.proposedAt || '') !== String(p.proposedAt || '')) return bad('version_changed', 'La proposition a changé depuis votre lecture : rechargez et relisez-la.', 409);
-  if (action === 'confirm' && !(await readSince(db, 'ORGANIZATION_CLOSURE_REVIEW_READ', r.id, reviewer, p.proposedAt))) return READ_REQUIRED;   // owner LAB audit: confirm what was read
+  if (action === 'confirm' && !(await readSince(db, 'ORGANIZATION_CLOSURE_REVIEW_READ', r.id, reviewer, self.readFrom))) return READ_REQUIRED;   // owner LAB audit: confirm what was read
   const now = new Date().toISOString();
   const same = sql`"reviewOutcome" = ${JSON.stringify(r.o)}::jsonb`;
   if (action === 'send_back') {
@@ -267,7 +272,7 @@ export async function confirmClosure(id, input, reviewer, db = defaultDb, deps =
     await audit(db, 'ORGANIZATION_CLOSURE_SENT_BACK', reviewer, r.id);
     return { ok: true, request: { id: r.id, status: 'IN_REVIEW' } };
   }
-  const outcome = { request: r.o.request, decision: p.decision === 'APPROVE' ? 'APPROVED' : 'REJECTED', decidedAt: now, proposedBy: p.proposedBy, confirmedBy: reviewer, confirmationNote: note, ...(p.reason ? { reason: p.reason } : {}) };
+  const outcome = { request: r.o.request, decision: p.decision === 'APPROVE' ? 'APPROVED' : 'REJECTED', decidedAt: now, proposedBy: p.proposedBy, confirmedBy: reviewer, confirmationNote: note, ...(p.reason ? { reason: p.reason } : {}), ...(soleAdministrator ? { soleAdministrator } : {}) };
   if (p.decision === 'REJECT') {
     const done = (await db.execute(sql`UPDATE "DSRRequest" SET status = 'REJECTED', "reviewOutcome" = ${JSON.stringify(outcome)}::jsonb, "completedAt" = NOW() WHERE id = ${r.id} AND status = 'IN_REVIEW' AND ${same} RETURNING id`)).rows;
     if (!done.length) return bad('conflict', 'La demande a changé entre-temps.', 409);

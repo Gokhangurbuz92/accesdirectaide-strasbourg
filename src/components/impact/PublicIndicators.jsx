@@ -24,6 +24,14 @@ function Card({ title, isNot, children, testId }) {
 }
 Card.propTypes = { title: PropTypes.string.isRequired, isNot: PropTypes.string.isRequired, children: PropTypes.node, testId: PropTypes.string.isRequired };
 
+/**
+ * G11: a breakdown where every published benefit sits in the catch-all bucket (« autre ou non classé », « échelon non précisé ») is not a measurement: the
+ * zeros would read as « no housing benefit ». @param {Array<Record<string, any>>} rows @param {string} key @param {string} catchAll
+ */
+function classifiedCount(rows, key, catchAll) {
+  return (rows || []).reduce((sum, r) => sum + (r[key] === catchAll ? 0 : Number(r.count) || 0), 0);
+}
+
 /** @param {{ rows: string[][] }} props (label, value) */
 function Pairs({ rows }) {
   return (
@@ -116,12 +124,16 @@ export default function PublicIndicators({ load = loadPublicIndicators }) {
 
             <Card testId="ind-domains" title={t('about:indicators.domains.title', 'Aides publiées par domaine')}
               isNot={t('about:indicators.domains.is_not', 'Ce n’est pas l’importance des besoins dans un domaine : seulement le nombre de fiches du catalogue.')}>
-              <Pairs rows={data.aidesByDomain.map((d) => [domain[d.domain] || d.domain, n(d.count)])} />
+              {classifiedCount(data.aidesByDomain, 'domain', 'AUTRE') > 0
+                ? <Pairs rows={data.aidesByDomain.map((d) => [domain[d.domain] || d.domain, n(d.count)])} />
+                : <p data-testid="ind-domains-unclassified" className="text-slate-700">{t('about:indicators.domains.unclassified', 'Pas encore mesurable : les {{n}} aides publiées ne sont pas encore classées par domaine dans le catalogue. Cette répartition sera affichée quand elles le seront.', { n: n(data.catalogue.aides) })}</p>}
             </Card>
 
             <Card testId="ind-scopes" title={t('about:indicators.scopes.title', 'Aides publiées par échelon')}
               isNot={t('about:indicators.scopes.is_not', 'Ce n’est pas une couverture du territoire : une aide nationale s’applique partout.')}>
-              <Pairs rows={data.aidesByScope.map((s) => [scope[s.scope] || s.scope, n(s.count)])} />
+              {classifiedCount(data.aidesByScope, 'scope', 'UNSPECIFIED') > 0
+                ? <Pairs rows={data.aidesByScope.map((s) => [scope[s.scope] || s.scope, n(s.count)])} />
+                : <p data-testid="ind-scopes-unclassified" className="text-slate-700">{t('about:indicators.scopes.unclassified', 'Pas encore mesurable : les {{n}} aides publiées n’indiquent pas encore leur échelon (national, régional, départemental, communal) dans le catalogue. Cette répartition sera affichée quand elles l’indiqueront.', { n: n(data.catalogue.aides) })}</p>}
             </Card>
 
             <Card testId="ind-communes" title={t('about:indicators.communes.title', 'Lieux d’accueil publiés par commune')}
