@@ -136,6 +136,7 @@ function navLabel(t, label) {
     const labels = {
         'À traiter': t('admin:layout.nav.to_handle', 'À traiter'),
         'Veille automatique': t('admin:layout.nav.veille', 'Veille automatique'),
+        'Rédaction des actualités': t('admin:news.title', 'Rédaction des actualités'),   // G12: same text as the page title (translated in 6 languages)
         'Documents de la page Ressources': t('admin:layout.nav.resources', 'Documents de la page Ressources'),
         'Contrôles manuels (facultatifs)': t('admin:layout.nav.manual_checks', 'Contrôles manuels (facultatifs)'),
         'Fiches du lancement (WS2)': t('admin:layout.nav.ws2', 'Fiches du lancement (WS2)'),
