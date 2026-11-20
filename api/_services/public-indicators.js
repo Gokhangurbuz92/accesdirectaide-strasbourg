@@ -16,7 +16,7 @@ import { TARGET_LANGUAGES } from '../../src/i18n/languages.js';
 import { translationFile } from '../_handlers/translations.js';
 import { complementColumn, primaryCell } from './territorial-stats.js';
 import { K_MIN } from './org-stats.js';
-import { LINK_WINDOW_DAYS, SCHEMA } from '../lib/public-indicators.js';
+import { LINK_WINDOW_DAYS, SCHEMA, assertAggregateOnly } from '../lib/public-indicators.js';
 
 const STRICT = Object.freeze({ mode: /** @type {'strict'} */ ('strict') });
 const KINDS = Object.freeze({ aide: 'Aide', demarche: 'Demarche', structure: 'Structure', dispositif: 'Dispositif' });
@@ -48,11 +48,17 @@ async function aidesByDomain(db) {
 
 /** G12: the source's OWN theme (Service-Public « Famille - Scolarité », « Logement »…), as published on the record; no inference. Cells below K_MIN are kept: a
  * theme is not a person. Themes that are empty on the record are counted as « non indiqué » (theme: null). */
+/** G12.1: a source theme the aggregate-only guard would refuse must not take the whole answer down — the theme breakdown is then omitted (null). */
+export function safeSourceThemes(rows) {
+  try { assertAggregateOnly({ aidesBySourceTheme: rows }); return rows; } catch { return null; }
+}
+
 async function aidesBySourceTheme(db) {
   const rows = await rowsOf(db, sql`SELECT NULLIF(btrim(theme), '') AS theme, count(*)::int AS n FROM "Aide" WHERE ${visibleSql('aide', STRICT)} GROUP BY 1`);
   return rows.map((r) => ({ theme: r.theme == null ? null : String(r.theme).slice(0, 120), count: int(r.n) }))
     .sort((a, b) => (a.theme === null) - (b.theme === null) || b.count - a.count || String(a.theme).localeCompare(String(b.theme), 'fr'));
 }
+const aidesBySourceThemeSafe = async (db) => safeSourceThemes(await aidesBySourceTheme(db));
 
 async function aidesByScope(db) {
   const rows = await rowsOf(db, sql`SELECT upper(btrim(COALESCE(territory_scope, ''))) AS scope, count(*)::int AS n FROM "Aide" WHERE ${visibleSql('aide', STRICT)} GROUP BY 1`);
@@ -153,7 +159,7 @@ export function rightsNeeds(root = process.cwd()) {
 
 /** @param {{ db?: any, now?: Date }} [opts] */
 export async function computePublicIndicators({ db = defaultDb, now = new Date() } = {}) {
-  const [cat, domains, scopes, struct, links, tr, themes] = await Promise.all([catalogue(db), aidesByDomain(db), aidesByScope(db), structures(db), linkHealth(db), translations(db), aidesBySourceTheme(db)]);
+  const [cat, domains, scopes, struct, links, tr, themes] = await Promise.all([catalogue(db), aidesByDomain(db), aidesByScope(db), structures(db), linkHealth(db), translations(db), aidesBySourceThemeSafe(db)]);
   const share = (n, d) => (d > 0 ? Math.round((1000 * n) / d) / 10 : null);
   return {
     schema: SCHEMA,
