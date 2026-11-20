@@ -53,3 +53,19 @@ describe('G11: an unclassified breakdown is not shown as zeros', () => {
     expect(screen.getByTestId('ind-scopes')).toHaveTextContent('Échelon non précisé');
   });
 });
+
+describe('G12: aides by the official source\'s own theme', () => {
+  it('lists the source themes in French (lang=fr), the empty theme as « non indiqué »; absent from older answers', async () => {
+    render(createElement(PublicIndicators, { load: async () => ({ ...body({ AUTRE: 109 }, { UNSPECIFIED: 109 }),
+      aidesBySourceTheme: [{ theme: 'Famille - Scolarité', count: 38 }, { theme: 'Logement', count: 11 }, { theme: null, count: 13 }] }) }));
+    const card = await screen.findByTestId('ind-themes');
+    expect(card).toHaveTextContent('Famille - Scolarité38');
+    expect(card).toHaveTextContent('Thème non indiqué par la source13');
+    expect(screen.getByText('Logement').getAttribute('lang')).toBe('fr');
+    expect(screen.getByText('Thème non indiqué par la source').getAttribute('lang')).toBeNull();
+    cleanup();
+    render(createElement(PublicIndicators, { load: async () => body({ AUTRE: 109 }, { UNSPECIFIED: 109 }) }));
+    await screen.findByTestId('ind-domains');
+    expect(screen.queryByTestId('ind-themes')).toBeNull();
+  });
+});

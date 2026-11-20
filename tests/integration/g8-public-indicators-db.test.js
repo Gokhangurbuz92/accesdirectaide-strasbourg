@@ -33,10 +33,10 @@ describe.skipIf(!hasDatabase)('G8 public indicators (real DB)', () => {
   let db, compute, handler, reset, assertAggregateOnly;
   let before, after; const queries = [];
 
-  const aide = (id, { days = 5, origin = 'official', cat = 'LOGEMENT', scope = 'NATIONAL', url = null, provider = null, slug = null } = {}) => sql`INSERT INTO "Aide"
-    (id, slug, titre, statut, launch_eligible, verification_status, verified_by, territory_verified, date_verification, data_origin, source_url, category_code, territory_scope, "providerName", "updatedAt")
+  const aide = (id, { days = 5, origin = 'official', cat = 'LOGEMENT', scope = 'NATIONAL', url = null, provider = null, slug = null, theme = null } = {}) => sql`INSERT INTO "Aide"
+    (id, slug, titre, statut, launch_eligible, verification_status, verified_by, territory_verified, date_verification, data_origin, source_url, category_code, territory_scope, "providerName", theme, "updatedAt")
     VALUES (${id}, ${slug || id}, ${'Aide ' + id}, 'publie', true, 'VERIFIED', 'reviewer-g8@example.test', true, NOW() - make_interval(days => ${days}), ${origin},
-      ${url || `https://www.service-public.fr/${P}/${id}`}, ${cat}::"AidCategoryCode", ${scope}, ${provider}, NOW())`;
+      ${url || `https://www.service-public.fr/${P}/${id}`}, ${cat}::"AidCategoryCode", ${scope}, ${provider}, ${theme}, NOW())`;
   const structure = (id, ville, cp, { pmr = false, hours = null, visible = true } = {}) => sql`INSERT INTO "Structure"
     (id, slug, nom, ville, code_postal, adresse, email, telephone, services, publics_accueillis, categories_aidees, statut, launch_eligible, verification_status, verified_by,
      territory_verified, date_verification, data_origin, source_url, accessibilite_pmr, horaires, "updatedAt")
@@ -55,10 +55,10 @@ describe.skipIf(!hasDatabase)('G8 public indicators (real DB)', () => {
     if (!TRANSLATED_SLUG) throw new Error('every translated slug already exists in this DB: the T case cannot be built');
     before = await compute({ db });
     const ids = (s) => `${P}-${s}`;
-    await db.execute(aide(ids('a1'), { days: 5, scope: 'NATIONAL', url: URL_OK }));
-    await db.execute(aide(ids('a2'), { days: 10, scope: 'COMMUNAL', cat: 'SANTE', url: URL_404 }));
-    await db.execute(aide(ids('a3'), { days: 120, scope: 'something-else', url: URL_FIXED }));                // visible, « à revoir »
-    await db.execute(aide(ids('stale'), { days: 200, url: URL_HIDDEN }));                                     // not visible (> 180 days)
+    await db.execute(aide(ids('a1'), { days: 5, scope: 'NATIONAL', url: URL_OK, theme: 'Logement' }));
+    await db.execute(aide(ids('a2'), { days: 10, scope: 'COMMUNAL', cat: 'SANTE', url: URL_404, theme: 'Social - Santé' }));
+    await db.execute(aide(ids('a3'), { days: 120, scope: 'something-else', url: URL_FIXED, theme: '   ' }));                // visible, « à revoir »
+    await db.execute(aide(ids('stale'), { days: 200, url: URL_HIDDEN, theme: 'Logement' }));                                     // not visible (> 180 days)
     await db.execute(aide(ids('lab'), { origin: 'synthetic_fixture' }));                                      // LAB fixture: never a verified record
     await db.execute(aide(ids('fund'), { provider: 'aides-territoires' }));                                   // C11 / D08: never a citizen aide
     await db.execute(aide(ids('tr'), { slug: TRANSLATED_SLUG, cat: 'FAMILLE' }));                             // visible, its translation file is of another text
@@ -101,6 +101,13 @@ describe.skipIf(!hasDatabase)('G8 public indicators (real DB)', () => {
     expect(sc(after, 'NATIONAL') - sc(before, 'NATIONAL')).toBe(2);
     expect(sc(after, 'COMMUNAL') - sc(before, 'COMMUNAL')).toBe(1);
     expect(sc(after, 'UNSPECIFIED') - sc(before, 'UNSPECIFIED')).toBe(1);
+    // G12: the source's own theme, visible records only; blank = « non indiqué » (null), listed last
+    const th = (b, x) => (b.aidesBySourceTheme.find((r) => r.theme === x) || { count: 0 }).count;
+    expect(th(after, 'Logement') - th(before, 'Logement')).toBe(1);
+    expect(th(after, 'Social - Santé') - th(before, 'Social - Santé')).toBe(1);
+    expect(th(after, null) - th(before, null)).toBe(2);   // a3 blank + tr without theme
+    expect(after.aidesBySourceTheme.at(-1).theme).toBeNull();
+    expect(after.aidesBySourceTheme.reduce((n, r) => n + r.count, 0)).toBe(after.catalogue.aides);
   });
 
   it('C structures: practical information and the commune table with its suppression', () => {

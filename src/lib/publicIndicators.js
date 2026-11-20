@@ -2,7 +2,7 @@
  * G8 — reads the public indicators of the Observatoire (GET /api/public/indicators, api/lib/public-indicators.js) for /impact
  * (src/components/impact/PublicIndicators.jsx). No credentials are sent; any failure, a closed route (404) or another schema gives null.
  */
-/** @typedef {{ schema: string, computedAt: string, rules: any, catalogue: Record<string, number>, aidesByDomain: { domain: string, count: number }[], aidesByScope: { scope: string, count: number }[],
+/** @typedef {{ schema: string, computedAt: string, rules: any, catalogue: Record<string, number>, aidesByDomain: { domain: string, count: number }[], aidesBySourceTheme?: { theme: string | null, count: number }[], aidesByScope: { scope: string, count: number }[],
  *   structuresByCommune: { cells: { commune: string, label: string, count: number }[], maskedCommunes: number, notLocated: number | null, kMin: number },
  *   freshness: Record<string, { visible: number, current: number, updateNeeded: number, currentShare: number | null }>,
  *   linkHealth: { measured: boolean, windowDays: number, lastCheckedOn?: string, addresses?: number, reachable?: number, redirected?: number, broken?: number, inconclusive?: number },
