@@ -114,7 +114,8 @@ const EMAIL = /[^\s@]+@[^\s@]+\.[^\s@]+/;
 const LINK = /\b(?:https?:\/\/|www\.)/i;
 const PHONE = /(?:\+33|\b0)[1-9](?:[\s.-]?\d{2}){4}\b/;
 /** an ISO date or date-time, a code (UPPER_CASE, digits) or a commune name: the only strings a response may hold */
-const ALLOWED_STRING = /^(?:\d{4}-\d{2}-\d{2}(?:T[\d:.]+Z)?|[A-Za-z0-9_.-]{1,40}|[\p{L}' ’()-]{1,80}(?: [\p{L}' ’()-]{1,80}){0,3})$/u;
+// G12.1: a comma is admitted inside a label (Service-Public theme « Social - Santé, Financement »); e-mails, links and phone numbers stay refused above
+const ALLOWED_STRING = /^(?:\d{4}-\d{2}-\d{2}(?:T[\d:.]+Z)?|[A-Za-z0-9_.-]{1,40}|[\p{L}' ’(),-]{1,80}(?: [\p{L}' ’(),-]{1,80}){0,3})$/u;
 
 /**
  * Fail closed: throws when the body holds anything that is not an aggregate — a forbidden key, an e-mail, a link, a phone number, a long free text, or an

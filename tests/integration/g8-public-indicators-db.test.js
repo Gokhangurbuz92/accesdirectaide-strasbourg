@@ -56,7 +56,7 @@ describe.skipIf(!hasDatabase)('G8 public indicators (real DB)', () => {
     before = await compute({ db });
     const ids = (s) => `${P}-${s}`;
     await db.execute(aide(ids('a1'), { days: 5, scope: 'NATIONAL', url: URL_OK, theme: 'Logement' }));
-    await db.execute(aide(ids('a2'), { days: 10, scope: 'COMMUNAL', cat: 'SANTE', url: URL_404, theme: 'Social - Santé' }));
+    await db.execute(aide(ids('a2'), { days: 10, scope: 'COMMUNAL', cat: 'SANTE', url: URL_404, theme: 'Social - Santé, Financement' }));
     await db.execute(aide(ids('a3'), { days: 120, scope: 'something-else', url: URL_FIXED, theme: '   ' }));                // visible, « à revoir »
     await db.execute(aide(ids('stale'), { days: 200, url: URL_HIDDEN, theme: 'Logement' }));                                     // not visible (> 180 days)
     await db.execute(aide(ids('lab'), { origin: 'synthetic_fixture' }));                                      // LAB fixture: never a verified record
@@ -104,7 +104,7 @@ describe.skipIf(!hasDatabase)('G8 public indicators (real DB)', () => {
     // G12: the source's own theme, visible records only; blank = « non indiqué » (null), listed last
     const th = (b, x) => (b.aidesBySourceTheme.find((r) => r.theme === x) || { count: 0 }).count;
     expect(th(after, 'Logement') - th(before, 'Logement')).toBe(1);
-    expect(th(after, 'Social - Santé') - th(before, 'Social - Santé')).toBe(1);
+    expect(th(after, 'Social - Santé, Financement') - th(before, 'Social - Santé, Financement')).toBe(1);   // G12.1: the Production theme with a comma
     expect(th(after, null) - th(before, null)).toBe(2);   // a3 blank + tr without theme
     expect(after.aidesBySourceTheme.at(-1).theme).toBeNull();
     expect(after.aidesBySourceTheme.reduce((n, r) => n + r.count, 0)).toBe(after.catalogue.aides);
