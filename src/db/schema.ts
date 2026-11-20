@@ -2412,7 +2412,9 @@ export const LegalHold = pgTable('LegalHold', {
 	releaseProposedBy: text('releaseProposedBy'),
 	releaseProposedAt: timestamp('releaseProposedAt', { precision: 3 }),
 	releaseReason: text('releaseReason'),
-	releasedBy: text('releasedBy')
+	releasedBy: text('releasedBy'),
+	/** G12 (0058): released by the proposer as the SOLE MFA administrator, after 24 h (the CHECK admits proposer = releaser only then) */
+	releaseSoleAdministrator: boolean('releaseSoleAdministrator').notNull().default(false)
 });
 
 /** PKG-1 / D-5: append-only ledger of human content verifications (a trigger forbids UPDATE and DELETE). The entity columns are a denormalised projection written by the same transaction. */
@@ -3165,7 +3167,9 @@ export const OwnershipRecoveryCase = pgTable('OwnershipRecoveryCase', {
 	proposedAt: timestamp('proposedAt', { precision: 3 }).notNull().defaultNow(),
 	decidedBy: text('decidedBy'),
 	decidedAt: timestamp('decidedAt', { precision: 3 }),
-	decisionNote: text('decisionNote')
+	decisionNote: text('decisionNote'),
+	/** G12 (0058): decided by the proposer as the SOLE MFA administrator, after 24 h (the CHECK admits proposer = decider only then) */
+	soleAdministrator: boolean('soleAdministrator').notNull().default(false)
 }, (t) => ({
 	'OwnershipRecoveryCase_user_fkey': foreignKey({ name: 'OwnershipRecoveryCase_user_fkey', columns: [t.citizenUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade')
 }));

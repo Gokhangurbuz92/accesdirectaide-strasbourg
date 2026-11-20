@@ -3,9 +3,9 @@
  * PKG-5 / A12 — privacy console (DPO / administrators with MFA). Every action is written to AuditLog; destructive or protection-removing actions need TWO people.
  *   - overview: open access requests (the existing two-person DSR review), active legal holds, retention rules with their known conflicts, recovery cases.
  *   - legal hold: placing a hold protects a record from automated deletion at once (one MFA administrator, reason); RELEASING it re-enables deletion, so one
- *     administrator proposes with a reason and a DIFFERENT one confirms (also enforced by a database CHECK).
+ *     administrator proposes with a reason and a DIFFERENT one confirms — or the SOLE MFA administrator after 24 h (G12, 0058; enforced by a database CHECK).
  *   - assisted ownership recovery (the person lost access to their e-mail): one administrator proposes the new address with the identity evidence checked in
- *     person; a DIFFERENT administrator approves or rejects. Approval changes the account address (unverified), makes the old password unusable and removes
+ *     person; a DIFFERENT administrator (or the sole one after 24 h, G12) approves or rejects. Approval changes the account address (unverified), makes the old password unusable and removes
  *     pending e-mail tokens; the person then sets a password through "mot de passe oublié" on the new address. No dossier content is shown.
  */
 import crypto from 'node:crypto';
@@ -24,6 +24,7 @@ import { buildAppUrl, generateAuthToken, hashAuthToken, isValidEmail, normalizeE
 import { sendMail as defaultSendMail, mailLedgerStatus } from '../_utils/mailer.js';
 import { citizenMailLanguage } from './mail-language.js';
 import { templates } from '../lib/email-service.js';
+import { selfConfirmation } from './sole-admin.js';
 
 export const HOLD_CATEGORIES = { SharedDiagnostic: 'SharedDiagnostic', CitizenUser: 'CitizenUser', ProCase: 'ProCase', Structure: 'Structure' };   // PKG-11 / E08: a hold on an organization blocks its closure
 const bad = (status, code, message) => ({ ok: false, status, code, message });
@@ -74,14 +75,16 @@ export async function proposeRelease(id, reason, actor, db = defaultDb) {
   return { ok: true };
 }
 
-export async function confirmRelease(id, actor, db = defaultDb, seenProposedAt = undefined) {
+export async function confirmRelease(id, actor, db = defaultDb, seenProposedAt = undefined, deps = {}) {
   const [h] = (await db.execute(sql`SELECT "releaseProposedBy" AS p, "releaseProposedAt" AS at FROM "LegalHold" WHERE id = ${String(id || '')} AND status = 'ACTIVE'`)).rows;
   if (!h) return bad(404, 'not_found', 'Conservation introuvable ou déjà levée.');
   if (!h.p) return bad(409, 'NO_PROPOSAL', 'La levée doit d’abord être proposée.');
-  if (String(h.p).toLowerCase() === String(actor).toLowerCase()) return bad(403, 'TWO_PERSON_RULE', 'La levée doit être confirmée par un autre administrateur.');
+  // G12 (0058): the sole MFA administrator releases their own proposal after 24 h; with two or more administrators another one confirms
+  const self = await selfConfirmation(db, { reviewer: actor, proposedBy: h.p, proposedAt: h.at ? new Date(h.at).toISOString() : null, check: deps.soleAdministratorCheck, code: 'TWO_PERSON_RULE' });
+  if (!self.ok) return self.code === 'TWO_PERSON_RULE' ? bad(403, 'TWO_PERSON_RULE', 'La levée doit être confirmée par un autre administrateur.') : self;
   if (!seenProposedAt || new Date(seenProposedAt).getTime() !== new Date(h.at).getTime()) return bad(409, 'VERSION_CHANGED', 'La proposition de levée a changé depuis votre lecture : rechargez et relisez-la.');   // bound to the proposal read
-  await db.execute(sql`UPDATE "LegalHold" SET status = 'RELEASED', "releasedAt" = NOW(), "releasedBy" = ${actor} WHERE id = ${String(id)} AND status = 'ACTIVE'`);
-  await audit(db, 'LEGAL_HOLD_RELEASED', actor, 'LegalHold', String(id), { proposedBy: h.p });
+  await db.execute(sql`UPDATE "LegalHold" SET status = 'RELEASED', "releasedAt" = NOW(), "releasedBy" = ${actor}, "releaseSoleAdministrator" = ${self.soleAdministrator} WHERE id = ${String(id)} AND status = 'ACTIVE'`);
+  await audit(db, 'LEGAL_HOLD_RELEASED', actor, 'LegalHold', String(id), { proposedBy: h.p, ...(self.soleAdministrator ? { soleAdministrator: true } : {}) });
   return { ok: true };
 }
 
@@ -100,15 +103,17 @@ export async function proposeRecovery({ currentEmail, newEmail, evidenceNote }, 
   return { ok: true, id: cid };
 }
 
-export async function decideRecovery(id, { decision, note }, actor, db = defaultDb, { sendMail = defaultSendMail } = {}) {
+export async function decideRecovery(id, { decision, note }, actor, db = defaultDb, { sendMail = defaultSendMail, soleAdministratorCheck = undefined } = {}) {
   const d = String(decision || '').toUpperCase();
   if (!['APPROVE', 'REJECT'].includes(d)) return bad(400, 'invalid_decision', 'Décision invalide.');
   if (String(note || '').trim().length < 10) return bad(400, 'NOTE_REQUIRED', 'Motivez la décision (au moins 10 caractères).');
   let mails = null;
   const out = await db.transaction(async (tx) => {
-    const [c] = (await tx.execute(sql`SELECT id, "citizenUserId" AS uid, "newEmailEncrypted" AS enc, "proposedBy" AS p FROM "OwnershipRecoveryCase" WHERE id = ${String(id || '')} AND status = 'PROPOSED' FOR UPDATE`)).rows;
+    const [c] = (await tx.execute(sql`SELECT id, "citizenUserId" AS uid, "newEmailEncrypted" AS enc, "proposedBy" AS p, "proposedAt" AS at FROM "OwnershipRecoveryCase" WHERE id = ${String(id || '')} AND status = 'PROPOSED' FOR UPDATE`)).rows;
     if (!c) return bad(404, 'not_found', 'Demande introuvable ou déjà décidée.');
-    if (String(c.p).toLowerCase() === String(actor).toLowerCase()) return bad(403, 'TWO_PERSON_RULE', 'La décision doit être prise par un autre administrateur.');
+    // G12 (0058): the sole MFA administrator decides their own proposal after 24 h; with two or more administrators another one decides
+    const self = await selfConfirmation(tx, { reviewer: actor, proposedBy: c.p, proposedAt: c.at ? new Date(c.at).toISOString() : null, check: soleAdministratorCheck, code: 'TWO_PERSON_RULE' });
+    if (!self.ok) return self.code === 'TWO_PERSON_RULE' ? bad(403, 'TWO_PERSON_RULE', 'La décision doit être prise par un autre administrateur.') : self;
     if (d === 'APPROVE') {
       const next = openText(c.enc, { purpose: 'ownership-recovery', context: `recovery:${c.id}` });
       if (!next) return bad(409, 'UNREADABLE', 'Adresse illisible (clé de chiffrement).');
@@ -123,8 +128,8 @@ export async function decideRecovery(id, { decision, note }, actor, db = default
       await tx.execute(sql`INSERT INTO "AuthToken" (id, "userId", type, "tokenHash", "expiresAt") VALUES (${crypto.randomUUID()}, ${c.uid}, 'EMAIL_VERIFY', ${hashAuthToken(raw)}, NOW() + interval '2 hours')`);
       mails = { uid: c.uid, next, previous: prev?.email || null, link: buildAppUrl(`/api/auth/verify-email?token=${encodeURIComponent(raw)}&next=${encodeURIComponent('/compte')}`) };
     }
-    await tx.execute(sql`UPDATE "OwnershipRecoveryCase" SET status = ${d === 'APPROVE' ? 'APPROVED' : 'REJECTED'}, "decidedBy" = ${actor}, "decidedAt" = NOW(), "decisionNote" = ${String(note).trim().slice(0, 1000)} WHERE id = ${c.id}`);
-    await tx.insert(AuditLog).values({ action: d === 'APPROVE' ? 'OWNERSHIP_RECOVERY_APPROVED' : 'OWNERSHIP_RECOVERY_REJECTED', actor, actor_id: actor, entity: 'OwnershipRecoveryCase', entity_id: c.id, details: { proposedBy: c.p } });
+    await tx.execute(sql`UPDATE "OwnershipRecoveryCase" SET status = ${d === 'APPROVE' ? 'APPROVED' : 'REJECTED'}, "decidedBy" = ${actor}, "decidedAt" = NOW(), "decisionNote" = ${String(note).trim().slice(0, 1000)}, "soleAdministrator" = ${self.soleAdministrator} WHERE id = ${c.id}`);
+    await tx.insert(AuditLog).values({ action: d === 'APPROVE' ? 'OWNERSHIP_RECOVERY_APPROVED' : 'OWNERSHIP_RECOVERY_REJECTED', actor, actor_id: actor, entity: 'OwnershipRecoveryCase', entity_id: c.id, details: { proposedBy: c.p, ...(self.soleAdministrator ? { soleAdministrator: true } : {}) } });
     return { ok: true };
   });
   if (!out.ok || !mails) return out;

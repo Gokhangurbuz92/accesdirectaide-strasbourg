@@ -407,6 +407,13 @@
       "when": 1794990000000,
       "tag": "0057_x03_entraide",
       "breakpoints": true
+    },
+    {
+      "idx": 58,
+      "version": "7",
+      "when": 1795000000000,
+      "tag": "0058_g12_sole_admin_checks",
+      "breakpoints": true
     }
   ]
 }
