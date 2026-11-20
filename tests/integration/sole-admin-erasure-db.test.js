@@ -89,7 +89,9 @@ describe('owner decision 18/11: sole-administrator erasure confirmation (real DB
     expect((await call('GET', `/api/admin/dsr-erasure?id=${id}`, { bearer: mfa(S) })).statusCode).toBe(200);   // reading before proposing
     expect((await call('POST', '/api/admin/dsr-erasure', { bearer: mfa(S), body: { id, decision: 'APPROVE' } })).statusCode).toBe(200);
     let p = await proposal(id);
-    const list = (await svc.listOpenErasures(db)).requests.find((r) => r.id === id);
+    // G13: the date is listed only while the proposer is the sole enabled MFA administrator (S has no AdminUser row → the real check says not sole)
+    expect((await svc.listOpenErasures(db)).requests.find((r) => r.id === id).soleAdministratorConfirmableFrom, 'unregistered proposer: no date').toBeNull();
+    const list = (await svc.listOpenErasures(db, SOLE)).requests.find((r) => r.id === id);
     expect(list.soleAdministratorConfirmableFrom).toBe(new Date(Date.parse(p.proposedAt) + svc.SOLE_ADMIN_DELAY_MS).toISOString());
     const early = await svc.confirmErasure(id, { action: 'confirm', note: 'Seul administrateur, identité vérifiée', proposedAt: p.proposedAt }, S, db, undefined, SOLE);
     expect([early.status, early.code]).toEqual([409, 'sole_admin_delay']);
