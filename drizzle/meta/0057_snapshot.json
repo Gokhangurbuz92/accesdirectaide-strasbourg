@@ -6975,7 +6975,7 @@
           "name": "applyTarget",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "expiresOn": {
           "name": "expiresOn",
@@ -7118,7 +7118,7 @@
         },
         "JobListing_apply_check": {
           "name": "JobListing_apply_check",
-          "value": "\"JobListing\".\"applyMethod\" IN ('url', 'email') AND char_length(\"JobListing\".\"applyTarget\") BETWEEN 6 AND 300 AND (\"JobListing\".\"applyMethod\" <> 'url' OR \"JobListing\".\"applyTarget\" ~ '^https://')"
+          "value": "\"JobListing\".\"applyMethod\" IN ('url', 'email') AND ((\"JobListing\".\"applyTarget\" IS NULL AND \"JobListing\".\"status\" IN ('withdrawn', 'taken_down', 'expired')) OR (\"JobListing\".\"applyTarget\" IS NOT NULL AND char_length(\"JobListing\".\"applyTarget\") BETWEEN 6 AND 300 AND (\"JobListing\".\"applyMethod\" <> 'url' OR \"JobListing\".\"applyTarget\" ~ '^https://')))"
         },
         "JobListing_published_check": {
           "name": "JobListing_published_check",

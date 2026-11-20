@@ -356,7 +356,8 @@ export async function publicListings({ db = defaultDb, now = () => new Date() } 
 }
 
 /**
- * PKG-11 / E08 — the closure of an organization withdraws its listings that are still open (inside the closure transaction). Skipped without 0056.
+ * PKG-11 / E08 — the closure of an organization withdraws its listings that are still open and erases every application channel (G13), inside the
+ * closure transaction. Skipped without 0056.
  * @param {any} tx @param {string} structureId @returns {Promise<number>}
  */
 export async function withdrawForClosedOrganization(tx, structureId) {
@@ -364,5 +365,7 @@ export async function withdrawForClosedOrganization(tx, structureId) {
   if (!has) return 0;
   const r = await tx.execute(sql`UPDATE "JobListing" SET status = 'withdrawn', "withdrawnAt" = NOW(), "updatedAt" = NOW()
     WHERE "structureId" = ${structureId} AND status IN ('draft', 'pending', 'published', 'rejected')`);
+  // G13: the application channel can be a named recruiter's e-mail — erased at closure for EVERY listing of the organisation (as StructureRdvSettings.contactEmail)
+  await tx.execute(sql`UPDATE "JobListing" SET "applyTarget" = NULL, "updatedAt" = NOW() WHERE "structureId" = ${structureId} AND "applyTarget" IS NOT NULL`);
   return r?.rowCount ?? 0;
 }

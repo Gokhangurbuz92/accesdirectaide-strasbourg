@@ -3319,7 +3319,8 @@ export const JobListing = pgTable('JobListing', {
 	description: text('description').notNull(),
 	accommodations: text('accommodations').array().notNull(),
 	applyMethod: text('applyMethod').notNull(),
-	applyTarget: text('applyTarget').notNull(),
+	/** G13: erased (NULL) once the listing has ended — at organisation closure at once; the « end + 30 days » purge step is in the X05 opening package */
+	applyTarget: text('applyTarget'),
 	expiresOn: date('expiresOn', { mode: 'string' }).notNull(),
 	moderationReason: text('moderationReason'),
 	moderatedBy: text('moderatedBy'),
@@ -3338,7 +3339,7 @@ export const JobListing = pgTable('JobListing', {
 	'JobListing_length_check': check('JobListing_length_check', sql`char_length(${t.title}) BETWEEN 5 AND 120 AND char_length(${t.city}) BETWEEN 2 AND 80 AND char_length(${t.description}) BETWEEN 50 AND 3000`),
 	'JobListing_postal_check': check('JobListing_postal_check', sql`${t.postalCode} ~ '^[0-9]{5}$'`),
 	'JobListing_accommodations_check': check('JobListing_accommodations_check', sql`cardinality(${t.accommodations}) BETWEEN 1 AND 10 AND ${t.accommodations} <@ ARRAY['STEP_FREE_ACCESS', 'ADAPTED_WORKSTATION', 'FLEXIBLE_HOURS', 'PART_TIME_POSSIBLE', 'TUTOR_SUPPORT', 'EASY_READ_INSTRUCTIONS', 'SIGN_LANGUAGE_INTERPRETING', 'NO_DIPLOMA_REQUIRED', 'BEGINNERS_WELCOME', 'PUBLIC_TRANSPORT_ACCESS']::text[]`),
-	'JobListing_apply_check': check('JobListing_apply_check', sql`${t.applyMethod} IN ('url', 'email') AND char_length(${t.applyTarget}) BETWEEN 6 AND 300 AND (${t.applyMethod} <> 'url' OR ${t.applyTarget} ~ '^https://')`),
+	'JobListing_apply_check': check('JobListing_apply_check', sql`${t.applyMethod} IN ('url', 'email') AND ((${t.applyTarget} IS NULL AND ${t.status} IN ('withdrawn', 'taken_down', 'expired')) OR (${t.applyTarget} IS NOT NULL AND char_length(${t.applyTarget}) BETWEEN 6 AND 300 AND (${t.applyMethod} <> 'url' OR ${t.applyTarget} ~ '^https://')))`),
 	'JobListing_published_check': check('JobListing_published_check', sql`${t.status} <> 'published' OR (${t.publishedAt} IS NOT NULL AND ${t.moderatedBy} IS NOT NULL)`),
 	'JobListing_reason_check': check('JobListing_reason_check', sql`${t.moderationReason} IS NULL OR ${t.moderationReason} IN ('DISCRIMINATORY_CRITERION', 'MISLEADING_OR_ENTITLEMENT', 'HEALTH_DATA_REQUESTED', 'APPLICATION_CHANNEL', 'NOT_A_JOB_OFFER', 'INCOMPLETE')`)
 }));

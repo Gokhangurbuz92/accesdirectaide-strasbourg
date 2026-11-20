@@ -21,7 +21,7 @@ CREATE TABLE "JobListing" (
 	"description" text NOT NULL,
 	"accommodations" text[] NOT NULL,
 	"applyMethod" text NOT NULL,
-	"applyTarget" text NOT NULL,
+	"applyTarget" text,
 	"expiresOn" date NOT NULL,
 	"moderationReason" text,
 	"moderatedBy" text,
@@ -36,7 +36,7 @@ CREATE TABLE "JobListing" (
 	CONSTRAINT "JobListing_length_check" CHECK (char_length("JobListing"."title") BETWEEN 5 AND 120 AND char_length("JobListing"."city") BETWEEN 2 AND 80 AND char_length("JobListing"."description") BETWEEN 50 AND 3000),
 	CONSTRAINT "JobListing_postal_check" CHECK ("JobListing"."postalCode" ~ '^[0-9]{5}$'),
 	CONSTRAINT "JobListing_accommodations_check" CHECK (cardinality("JobListing"."accommodations") BETWEEN 1 AND 10 AND "JobListing"."accommodations" <@ ARRAY['STEP_FREE_ACCESS', 'ADAPTED_WORKSTATION', 'FLEXIBLE_HOURS', 'PART_TIME_POSSIBLE', 'TUTOR_SUPPORT', 'EASY_READ_INSTRUCTIONS', 'SIGN_LANGUAGE_INTERPRETING', 'NO_DIPLOMA_REQUIRED', 'BEGINNERS_WELCOME', 'PUBLIC_TRANSPORT_ACCESS']::text[]),
-	CONSTRAINT "JobListing_apply_check" CHECK ("JobListing"."applyMethod" IN ('url', 'email') AND char_length("JobListing"."applyTarget") BETWEEN 6 AND 300 AND ("JobListing"."applyMethod" <> 'url' OR "JobListing"."applyTarget" ~ '^https://')),
+	CONSTRAINT "JobListing_apply_check" CHECK ("JobListing"."applyMethod" IN ('url', 'email') AND (("JobListing"."applyTarget" IS NULL AND "JobListing"."status" IN ('withdrawn', 'taken_down', 'expired')) OR ("JobListing"."applyTarget" IS NOT NULL AND char_length("JobListing"."applyTarget") BETWEEN 6 AND 300 AND ("JobListing"."applyMethod" <> 'url' OR "JobListing"."applyTarget" ~ '^https://')))),
 	CONSTRAINT "JobListing_published_check" CHECK ("JobListing"."status" <> 'published' OR ("JobListing"."publishedAt" IS NOT NULL AND "JobListing"."moderatedBy" IS NOT NULL)),
 	CONSTRAINT "JobListing_reason_check" CHECK ("JobListing"."moderationReason" IS NULL OR "JobListing"."moderationReason" IN ('DISCRIMINATORY_CRITERION', 'MISLEADING_OR_ENTITLEMENT', 'HEALTH_DATA_REQUESTED', 'APPLICATION_CHANNEL', 'NOT_A_JOB_OFFER', 'INCOMPLETE'))
 );

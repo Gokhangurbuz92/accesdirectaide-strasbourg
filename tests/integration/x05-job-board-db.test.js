@@ -244,6 +244,11 @@ describe.skipIf(!hasDatabase)('X05 inclusive job board (real DB, real API entry)
       const n = await db.transaction((tx) => withdrawForClosedOrganization(tx, OTHER));
       expect(n).toBe(2); expect(await statusOf(live)).toBe('withdrawn'); expect(await statusOf(draft)).toBe('withdrawn');
       expect(await publicIds()).not.toContain(live);
+      // G13: every application channel of the closed organisation is erased (it can be a named recruiter's e-mail); other organisations keep theirs
+      const left = (await db.execute(sql`SELECT count(*)::int AS n FROM "JobListing" WHERE "structureId" = ${OTHER} AND "applyTarget" IS NOT NULL`)).rows[0].n;
+      expect(left).toBe(0);
+      const others = (await db.execute(sql`SELECT count(*)::int AS n FROM "JobListing" WHERE "structureId" <> ${OTHER} AND "applyTarget" IS NOT NULL`)).rows[0].n;
+      expect(others).toBeGreaterThan(0);
     });
   });
 });

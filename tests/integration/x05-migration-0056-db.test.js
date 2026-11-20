@@ -31,7 +31,7 @@ describe.skipIf(!hasDatabase)('migration 0056: up → down → code without it �
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
   // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0057 (X03) is rolled back first, then 0056
-  const down = async () => { for (const f of ['drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
+  const down = async () => { for (const f of ['drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
   const insert = (id, over = {}) => {
     const v = { status: 'draft', title: 'Agent d’accueil', contractType: 'CDI', city: 'Strasbourg', postalCode: '67000', description: DESC, accommodations: ['FLEXIBLE_HOURS'],
       applyMethod: 'url', applyTarget: 'https://employeur.example.test/x', publishedAt: null, moderatedBy: null, ...over };
@@ -76,6 +76,10 @@ describe.skipIf(!hasDatabase)('migration 0056: up → down → code without it �
     await expect(insert('j4', { status: 'published', publishedAt: new Date() })).rejects.toThrow(/JobListing_published_check/);
     await expect(insert('j5', { postalCode: '6700' })).rejects.toThrow(/JobListing_postal_check/);
     await insert('j6');
+    // G13: the application channel may be erased (NULL) only on an ENDED listing
+    await expect(insert('j7', { applyTarget: null })).rejects.toThrow(/JobListing_apply_check/);
+    await insert('j8', { status: 'withdrawn', applyTarget: null });
+    await expect(pool.query(`UPDATE "JobListing" SET "applyTarget" = NULL WHERE id = 'j6'`)).rejects.toThrow(/JobListing_apply_check/);
     await pool.query(`DELETE FROM "Structure" WHERE id = 's1'`);
     expect((await q(`SELECT count(*)::int AS n FROM "JobListing"`))[0].n).toBe(0);
   });
