@@ -4,7 +4,7 @@
  *   - adminLogin: the SEPARATE administrator login surface (POST /api/admin/login). Named AdminUser accounts (scrypt hash, lockout); the single env identity
  *     (ADMIN_EMAIL / ADMIN_PASSWORD_HASH) still signs in but has no MFA secret, so it can never write, elevate or confirm a two-person action.
  *   - elevate (JIT): a superadmin with an MFA session + a FRESH TOTP code + a written reason gets a 15-minute elevation claim.
- *   - breakGlass: any named MFA administrator, fresh TOTP + reason, 30 minutes, flagged BREAK_GLASS and listed until a DIFFERENT administrator reviews it.
+ *   - breakGlass: any named MFA administrator, fresh TOTP + reason, 30 minutes, flagged BREAK_GLASS and listed until a DIFFERENT administrator (or the sole administrator, G12) reviews it.
  *   - Neither elevation grants dossier access: no dossier / case / Coffre / share handler accepts an administrator session (tests/integration/pkg5-a16-ops-db.test.js).
  *   - Every step is written to AuditLog (no password, code or token is ever stored).
  *   - PKG-11 / ADM-10: sessions are checked against AdminUser on every request (api/_utils/auth.js adminSessionRefused); an administrator ends all of their
@@ -21,6 +21,7 @@ import { decryptToken } from '../_utils/vault.js';
 import { signAdminSessionToken } from '../_utils/auth.js';
 import { verifyPassword } from '../_utils/user-auth.js';
 import { claimAdminStep } from '../_utils/totp-guard.js';
+import { selfConfirmation } from './sole-admin.js';
 
 export const JIT_MINUTES = 15;
 export const BREAK_GLASS_MINUTES = 30;
@@ -120,16 +121,18 @@ export async function pendingBreakGlass({ db = defaultDb } = {}) {
   return rows;
 }
 
-/** A DIFFERENT MFA administrator reviews a break-glass use (what was done is in the audit log). */
-export async function reviewBreakGlass(auth, { id, note }, { db = defaultDb } = {}) {
+/** A DIFFERENT MFA administrator — or, while there is only one, that sole administrator (G12) — reviews a break-glass use (what was done is in the audit log). */
+export async function reviewBreakGlass(auth, { id, note }, { db = defaultDb, soleCheck = undefined } = {}) {
   if (!auth || auth.authType !== 'admin_jwt' || auth.mfa_verified !== true || !auth.email) return bad(403, 'HUMAN_MFA_SESSION_REQUIRED', 'Une session administrateur nominative avec MFA est requise.');
   const [o] = (await db.execute(sql`SELECT actor FROM "AuditLog" WHERE action = 'BREAK_GLASS_OPENED' AND entity_id = ${String(id || '')} LIMIT 1`)).rows;
   if (!o) return bad(404, 'not_found', 'Accès d’urgence introuvable.');
-  if (String(o.actor).toLowerCase() === String(auth.email).toLowerCase()) return bad(403, 'TWO_PERSON_RULE', 'L’accès d’urgence doit être revu par un autre administrateur.');
+  // G12: the sole MFA administrator reviews their own break-glass use (no delay: a review changes no data); with two or more administrators, another one reviews
+  const self = await selfConfirmation(db, { reviewer: auth.email, proposedBy: o.actor, proposedAt: null, delay: false, check: soleCheck, code: 'TWO_PERSON_RULE' });
+  if (!self.ok) return bad(403, 'TWO_PERSON_RULE', 'L’accès d’urgence doit être revu par un autre administrateur.');
   if (String(note || '').trim().length < 10) return bad(400, 'NOTE_REQUIRED', 'Décrivez la revue (au moins 10 caractères).');
   const [done] = (await db.execute(sql`SELECT 1 AS x FROM "AuditLog" WHERE action = 'BREAK_GLASS_REVIEWED' AND entity_id = ${String(id)} LIMIT 1`)).rows;
   if (done) return bad(409, 'already_reviewed', 'Déjà revu.');
-  await db.insert(AuditLog).values({ action: 'BREAK_GLASS_REVIEWED', actor: auth.email, actor_id: auth.email, entity: 'AdminElevation', entity_id: String(id), details: { note: String(note).trim().slice(0, 1000) } });
+  await db.insert(AuditLog).values({ action: 'BREAK_GLASS_REVIEWED', actor: auth.email, actor_id: auth.email, entity: 'AdminElevation', entity_id: String(id), details: { note: String(note).trim().slice(0, 1000), ...(self.soleAdministrator ? { soleAdministrator: true } : {}) } });
   return { ok: true };
 }
 

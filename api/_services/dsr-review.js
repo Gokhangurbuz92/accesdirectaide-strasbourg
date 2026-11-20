@@ -11,6 +11,7 @@ import { AuditLog } from '../../src/db/schema.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
 import { dsrDeadline } from './dsr-deadline.js';
+import { SOLE_ADMIN_DELAY_MS, selfConfirmation } from './sole-admin.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 // owner LAB audit: never swallowed — the notes are returned only once their reading is journalised, and a decision is journalised in its own transaction
@@ -19,7 +20,8 @@ const audit = (db, action, reviewer, requestId) => db.insert(AuditLog).values({ 
 export async function listOpen(db = defaultDb) {
   const rows = (await db.execute(sql`SELECT id, "subjectId", status, "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'ACCESS_REVIEW' AND status IN ('IN_REVIEW') ORDER BY "createdAt" LIMIT 200`)).rows;
   return { ok: true, requests: rows.map((r) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt), stage: r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL', proposed: r.o?.proposal?.decision || null,
-    proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null })) };   // PKG-6 / D22: the version the second reviewer confirms (no content here: the basis and the extract are in the audited MFA reading)
+    proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null,
+    soleAdministratorConfirmableFrom: r.o?.proposal?.proposedAt ? new Date(Date.parse(r.o.proposal.proposedAt) + SOLE_ADMIN_DELAY_MS).toISOString() : null })) };   // PKG-6 / D22: the version the second reviewer confirms (no content here: the basis and the extract are in the audited MFA reading)
 }
 
 /** The notes under review (decrypted) — MFA reviewer only; the reading is audited. */
@@ -63,8 +65,8 @@ export async function propose(id, input, reviewer, db = defaultDb) {
   });
 }
 
-/** The second reviewer: confirm (final) or send back (the proposal is cleared). The proposer can never confirm their own proposal. */
-export async function confirm(id, input, reviewer, db = defaultDb) {
+/** The second reviewer: confirm (final) or send back (the proposal is cleared). The proposer confirms their own proposal only as the SOLE administrator (G12). */
+export async function confirm(id, input, reviewer, db = defaultDb, deps = {}) {
   const action = String(input?.action || '').toLowerCase();
   if (!['confirm', 'send_back'].includes(action)) return bad('invalid_action', 'Action invalide.');
   const note = String(input?.note || '').trim().slice(0, 2000);
@@ -72,9 +74,10 @@ export async function confirm(id, input, reviewer, db = defaultDb) {
   const [r] = (await db.execute(sql`SELECT id, "reviewOutcome" AS o FROM "DSRRequest" WHERE id = ${String(id || '')} AND "requestType" = 'ACCESS_REVIEW' AND status = 'IN_REVIEW'`)).rows;
   const p = r?.o?.proposal;
   if (!p) return bad('not_found', 'Aucune proposition à confirmer.', 404);
-  if (p.proposedBy === reviewer) return bad('second_reviewer_required', 'La confirmation doit venir d’une autre personne que celle qui a proposé.', 403);
+  const self = await selfConfirmation(db, { reviewer, proposedBy: p.proposedBy, proposedAt: p.proposedAt, applying: action === 'confirm', check: deps.soleAdministratorCheck });   // G12
+  if (!self.ok) return self;
   if (String(input?.proposedAt || '') !== String(p.proposedAt || '')) return bad('version_changed', 'La proposition a changé depuis votre lecture : rechargez et relisez-la.', 409);   // PKG-6 / D22: bound to the version read
-  if (action === 'confirm' && !(await readSince(db, 'DSR_ACCESS_REVIEW_READ', r.id, reviewer, p.proposedAt))) return READ_REQUIRED;
+  if (action === 'confirm' && !(await readSince(db, 'DSR_ACCESS_REVIEW_READ', r.id, reviewer, self.readFrom))) return READ_REQUIRED;
   const now = new Date();
   if (action === 'send_back') {
     return db.transaction(async (tx) => {
@@ -85,7 +88,7 @@ export async function confirm(id, input, reviewer, db = defaultDb) {
       return { ok: true, request: { id: r.id, status: 'IN_REVIEW' } };
     });
   }
-  const outcome = { decision: p.decision, decidedAt: now.toISOString(), basis: p.basis, proposedBy: p.proposedBy, confirmedBy: reviewer, confirmationNote: note,
+  const outcome = { decision: p.decision, decidedAt: now.toISOString(), basis: p.basis, proposedBy: p.proposedBy, confirmedBy: reviewer, confirmationNote: note, ...(self.soleAdministrator ? { soleAdministrator: true } : {}),
     ...(p.decision === 'RELEASED' ? { releasedAt: now.toISOString(), extractEncrypted: p.extractEncrypted } : {}) };
   const status = p.decision === 'RELEASED' ? 'COMPLETED' : 'REJECTED_WITH_REASON';
   return db.transaction(async (tx) => {

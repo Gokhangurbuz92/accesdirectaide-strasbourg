@@ -22,8 +22,8 @@ describe('PKG-11 / E08 organization closure', () => {
     expect(svc).toMatch(/DELETE FROM "ProCaseNote" WHERE "structureId" = \$\{sid\} AND visibility = 'INTERNAL'/);
     for (const t of ['Structure', 'ProUser', 'ProAuditLog', 'Referral', 'SharedDiagnostic', 'SharedDossierThread', 'SharedDossierMessage', 'ConsentLog']) expect(deletes).not.toContain(t);
   });
-  it('two people, bound to the proposal read; a legal hold blocks', () => {
-    expect(svc).toMatch(/p\.proposedBy === reviewer\) return bad\('second_reviewer_required'/);
+  it('two people (or the sole administrator after 24 h, G12), bound to the proposal read; a legal hold blocks', () => {
+    expect(svc).toMatch(/selfConfirmation\(db, \{ reviewer, proposedBy: p\.proposedBy, proposedAt: p\.proposedAt, applying: action === 'confirm'/);
     expect(svc).toMatch(/String\(input\?\.proposedAt \|\| ''\) !== String\(p\.proposedAt \|\| ''\)/);
     expect(svc).toMatch(/"dataCategory" = 'Structure' AND "recordId" = \$\{sid\}/);
   });

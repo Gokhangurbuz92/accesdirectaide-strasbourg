@@ -17,6 +17,7 @@ import { AuditLog } from '../../src/db/schema.js';
 import { createPrivacyRightsService } from './privacy.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
 import { dsrDeadline } from './dsr-deadline.js';
+import { SOLE_ADMIN_DELAY_MS, soleAdministratorCheck } from './sole-admin.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 /**
@@ -52,18 +53,7 @@ async function parkForMailContact(db, requestId, error, actor) {
 
 const audit = (db, action, reviewer, requestId, details = {}) => db.insert(AuditLog).values({ action, entity: 'DSR_REQUEST', entity_id: requestId, actor_id: reviewer, details: { requestId, ...details }, ip_hash: 'ADMIN_MFA' });
 
-export const SOLE_ADMIN_DELAY_MS = 24 * 3600 * 1000;
-
-/** Owner decision 18/11: is `email` a registered, enabled, MFA administrator, and how many OTHER such administrators exist? */
-export async function soleAdministratorCheck(db, email) {
-  const e = String(email || '').trim().toLowerCase();
-  const [row] = (await db.execute(sql`SELECT
-      count(*) FILTER (WHERE lower(email) = ${e})::int AS self,
-      count(*) FILTER (WHERE lower(email) <> ${e})::int AS others
-    FROM "AdminUser" WHERE "disabledAt" IS NULL AND "mfaEnabled" = true`)).rows;
-  const self = Number(row?.self || 0); const others = Number(row?.others || 0);
-  return { registered: self === 1, others, sole: self === 1 && others === 0 };
-}
+export { SOLE_ADMIN_DELAY_MS, soleAdministratorCheck };
 
 const blockedStage = (code) => (code === 'EXECUTION_FAILED' ? 'EXECUTION_FAILED_RETRYABLE' : code === 'MAIL_CONTACT_RETRY' ? 'MAIL_CONTACT_RETRY' : 'BLOCKED_BY_LEGAL_HOLD');
 
