@@ -11,17 +11,19 @@ import { AuditLog } from '../../src/db/schema.js';
 import { openText, sealText } from '../lib/data-keys.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
 import { dsrDeadline } from './dsr-deadline.js';
-import { SOLE_ADMIN_DELAY_MS, selfConfirmation } from './sole-admin.js';
+import { selfConfirmation, soleConfirmableFrom } from './sole-admin.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 // owner LAB audit: never swallowed — the notes are returned only once their reading is journalised, and a decision is journalised in its own transaction
 const audit = (db, action, reviewer, requestId) => db.insert(AuditLog).values({ action, entity: 'DSR_REQUEST', entity_id: requestId, actor_id: reviewer, details: { requestId }, ip_hash: 'ADMIN_MFA' });
 
-export async function listOpen(db = defaultDb) {
+export async function listOpen(db = defaultDb, deps = {}) {
   const rows = (await db.execute(sql`SELECT id, "subjectId", status, "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'ACCESS_REVIEW' AND status IN ('IN_REVIEW') ORDER BY "createdAt" LIMIT 200`)).rows;
-  return { ok: true, requests: rows.map((r) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt), stage: r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL', proposed: r.o?.proposal?.decision || null,
+  const soleFrom = soleConfirmableFrom(db, deps.soleAdministratorCheck);   // G13: only while the proposer is the sole enabled MFA administrator
+  const sole = await Promise.all(rows.map((r) => soleFrom(r.o?.proposal)));
+  return { ok: true, requests: rows.map((r, i) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt), stage: r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL', proposed: r.o?.proposal?.decision || null,
     proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null,
-    soleAdministratorConfirmableFrom: r.o?.proposal?.proposedAt ? new Date(Date.parse(r.o.proposal.proposedAt) + SOLE_ADMIN_DELAY_MS).toISOString() : null })) };   // PKG-6 / D22: the version the second reviewer confirms (no content here: the basis and the extract are in the audited MFA reading)
+    soleAdministratorConfirmableFrom: sole[i] })) };   // PKG-6 / D22: the version the second reviewer confirms (no content here: the basis and the extract are in the audited MFA reading)
 }
 
 /** The notes under review (decrypted) — MFA reviewer only; the reading is audited. */

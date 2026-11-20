@@ -23,6 +23,24 @@ export async function soleAdministratorCheck(db, email) {
 }
 
 /**
+ * G13: for the lists of open reviews — the date from which the PROPOSER may confirm their own proposal, only while they are currently the sole enabled MFA
+ * administrator; null otherwise (another administrator exists, the proposer is no longer an enabled MFA administrator, no proposal, or the check failed).
+ * Before, the lists announced that date for every proposal, even with a second administrator. One check per proposer per list (memoised).
+ * @param {any} db @param {(db: any, email: string) => Promise<{ sole: boolean }>} [check]
+ * @returns {(proposal: { proposedBy?: string|null, proposedAt?: string|null } | null | undefined) => Promise<string|null>}
+ */
+export function soleConfirmableFrom(db, check = soleAdministratorCheck) {
+  /** @type {Map<string, Promise<boolean>>} */ const memo = new Map();
+  return async (proposal) => {
+    const from = Date.parse(String(proposal?.proposedAt || '')) + SOLE_ADMIN_DELAY_MS;
+    const who = String(proposal?.proposedBy || '').trim().toLowerCase();
+    if (!who || !Number.isFinite(from)) return null;
+    if (!memo.has(who)) memo.set(who, Promise.resolve().then(() => check(db, who)).then((c) => Boolean(c?.sole), () => false));
+    return (await memo.get(who)) ? new Date(from).toISOString() : null;
+  };
+}
+
+/**
  * Decide whether `reviewer` may confirm a proposal made by `proposedBy` at `proposedAt`.
  * @returns {Promise<{ ok: true, soleAdministrator: boolean, readFrom: string|null } | { ok: false, status: number, code: string, message: string, confirmableFrom?: string|null }>}
  */

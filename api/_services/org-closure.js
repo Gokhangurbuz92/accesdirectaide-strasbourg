@@ -32,7 +32,7 @@ import { AuditLog } from '../../src/db/schema.js';
 import { snapshotRow } from './content-versions.js';
 import { formatParis, noticeCitizen } from './appointment-notices.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
-import { SOLE_ADMIN_DELAY_MS, selfConfirmation } from './sole-admin.js';
+import { selfConfirmation, soleConfirmableFrom } from './sole-admin.js';
 import { mailLedgerStatus, sendMail as defaultSendMail } from '../_utils/mailer.js';
 import { ACCESS_ENDED_BY, recordAccessEnded } from '../lib/consent-ledger.js';
 import { logger } from '../lib/logger.js';
@@ -76,14 +76,16 @@ export async function closureState(structureId, db = defaultDb) {
   return { ok: true, request: { id: r.id, status: r.status, createdAt: r.createdAt, completedAt: r.completedAt, ...(r.status === 'REJECTED' && r.o?.reason ? { reason: r.o.reason } : {}) } };
 }
 
-export async function listOpenClosures(db = defaultDb) {
+export async function listOpenClosures(db = defaultDb, deps = {}) {
   const rows = (await db.execute(sql`SELECT r.id, r.status, r."createdAt", r."reviewOutcome" AS o, s.nom, s.id AS sid FROM "DSRRequest" r JOIN "Structure" s ON s.id = r."subjectId"
     WHERE r."requestType" = ${REQUEST_TYPE} AND r.status IN (${list(OPEN)}) ORDER BY r."createdAt" LIMIT 100`)).rows;
-  return { ok: true, requests: rows.map((r) => ({ id: r.id, status: r.status, createdAt: r.createdAt, structureId: r.sid, structureNom: r.nom,
+  const soleFrom = soleConfirmableFrom(db, deps.soleAdministratorCheck);   // G13: only while the proposer is the sole enabled MFA administrator
+  const sole = await Promise.all(rows.map((r) => soleFrom(r.o?.proposal)));
+  return { ok: true, requests: rows.map((r, i) => ({ id: r.id, status: r.status, createdAt: r.createdAt, structureId: r.sid, structureNom: r.nom,
     origin: r.o?.request?.admin ? 'ADA' : 'ORGANIZATION', requestReason: r.o?.request?.reason || null,
     stage: r.status === 'BLOCKED' ? 'BLOCKED_BY_LEGAL_HOLD' : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
     proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null,
-    soleAdministratorConfirmableFrom: r.o?.proposal?.proposedAt ? new Date(Date.parse(r.o.proposal.proposedAt) + SOLE_ADMIN_DELAY_MS).toISOString() : null })) };
+    soleAdministratorConfirmableFrom: sole[i] })) };
 }
 
 async function counts(db, sid) {

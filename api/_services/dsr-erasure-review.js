@@ -17,7 +17,7 @@ import { AuditLog } from '../../src/db/schema.js';
 import { createPrivacyRightsService } from './privacy.js';
 import { READ_REQUIRED, readSince } from './review-reads.js';
 import { dsrDeadline } from './dsr-deadline.js';
-import { SOLE_ADMIN_DELAY_MS, soleAdministratorCheck } from './sole-admin.js';
+import { SOLE_ADMIN_DELAY_MS, soleAdministratorCheck, soleConfirmableFrom } from './sole-admin.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 /**
@@ -57,13 +57,15 @@ export { SOLE_ADMIN_DELAY_MS, soleAdministratorCheck };
 
 const blockedStage = (code) => (code === 'EXECUTION_FAILED' ? 'EXECUTION_FAILED_RETRYABLE' : code === 'MAIL_CONTACT_RETRY' ? 'MAIL_CONTACT_RETRY' : 'BLOCKED_BY_LEGAL_HOLD');
 
-export async function listOpenErasures(db = defaultDb) {
+export async function listOpenErasures(db = defaultDb, deps = {}) {
   const rows = (await db.execute(sql`SELECT id, status, "reasonCode", "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'DELETE' AND status IN ('IN_REVIEW', 'BLOCKED') ORDER BY "createdAt" LIMIT 100`)).rows;
-  return { ok: true, requests: rows.map((r) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt),
+  const soleFrom = soleConfirmableFrom(db, deps.soleAdministratorCheck);   // G13: only while the proposer is the sole enabled MFA administrator
+  const sole = await Promise.all(rows.map((r) => soleFrom(r.o?.proposal)));
+  return { ok: true, requests: rows.map((r, i) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt),
     stage: r.status === 'BLOCKED' ? blockedStage(r.reasonCode) : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
     ...(r.status === 'BLOCKED' && r.reasonCode === 'MAIL_CONTACT_RETRY' ? { mailContactRetry: { attempts: r.o?.mailContactRetry?.attempts ?? null, retryUntil: r.o?.mailContactRetry?.retryUntil ?? null } } : {}),
     proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null,
-    soleAdministratorConfirmableFrom: r.o?.proposal?.proposedAt ? new Date(Date.parse(r.o.proposal.proposedAt) + SOLE_ADMIN_DELAY_MS).toISOString() : null })) };
+    soleAdministratorConfirmableFrom: sole[i] })) };
 }
 
 /** What the deletion would touch (counts only) and the active legal holds — MFA reviewer; the reading is audited. */
