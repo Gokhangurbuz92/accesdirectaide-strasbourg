@@ -47,3 +47,13 @@ describe('G13 — two-person wording with the sole-administrator rule', () => {
     expect(src).toMatch(/sole: self === 1 && others === 0/);
   });
 });
+
+describe('G13 break-glass review wording (no delay for the sole administrator)', () => {
+  it('French fallback and the five locales name the sole-administrator case', () => {
+    expect(fr('src/pages/AdminDashboard.jsx', 'admin:dashboard.card.bg.todo')).toMatch(/seul administrateur actif avec MFA/);
+    for (const lang of ['en', 'de', 'tr', 'ar', 'uk']) {
+      const a = JSON.parse(fs.readFileSync(`src/i18n/locales/${lang}/admin.json`, 'utf8'));
+      expect(a['dashboard.card.bg.todo'], lang).toMatch(lang === 'ar' ? /المصادقة متعددة العوامل/ : /MFA/);
+    }
+  });
+});

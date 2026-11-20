@@ -180,7 +180,7 @@
  "dashboard.card.ai.todo": "A suggestion never applies by itself: accept or reject it with a note.",
  "dashboard.card.ai.unit": "to review",
  "dashboard.card.bg.title": "Emergency access to review",
- "dashboard.card.bg.todo": "An emergency access is reviewed afterwards by another person, together with the actions taken during the window.",
+ "dashboard.card.bg.todo": "An emergency access is reviewed afterwards, with the actions taken during the window, by another administrator — or by yourself while you are the only active administrator with MFA.",
  "dashboard.card.bg.unit": "to review",
  "dashboard.card.dup.title": "Proposed duplicates",
  "dashboard.card.dup.todo": "Compare the two records and decide based on an official source; nothing is merged automatically.",

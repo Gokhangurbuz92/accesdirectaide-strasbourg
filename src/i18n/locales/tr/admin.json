@@ -180,7 +180,7 @@
  "dashboard.card.ai.todo": "Bir öneri asla kendiliğinden uygulanmaz: bir notla kabul edin veya reddedin.",
  "dashboard.card.ai.unit": "incelenecek",
  "dashboard.card.bg.title": "İncelenecek acil erişimler",
- "dashboard.card.bg.todo": "Bir acil erişim, süre boyunca yapılan işlemlerle birlikte daha sonra başka bir kişi tarafından incelenir.",
+ "dashboard.card.bg.todo": "Bir acil erişim, süre boyunca yapılan işlemlerle birlikte daha sonra başka bir yönetici tarafından — MFA'lı tek etkin yönetici sizseniz sizin tarafınızdan — incelenir.",
  "dashboard.card.bg.unit": "incelenecek",
  "dashboard.card.dup.title": "Önerilen mükerrer kayıtlar",
  "dashboard.card.dup.todo": "İki kaydı karşılaştırın ve resmî bir kaynağa dayanarak karar verin; hiçbir şey otomatik olarak birleştirilmez.",

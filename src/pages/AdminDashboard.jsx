@@ -116,7 +116,7 @@ export default function AdminDashboard() {
             todo: t('admin:dashboard.card.privacy.todo', 'En principe deux personnes : l’une propose, une autre confirme après sa propre lecture journalisée. Seul administrateur actif avec MFA : il confirme sa propre proposition après 24 h et une nouvelle lecture.'),
         },
         { key: 'support', title: t('admin:dashboard.card.support.title', 'Demandes d’aide'), to: '/admin/support', count: n(tasks.support), unit: t('admin:dashboard.card.support.unit', 'ouverte(s)'), todo: t('admin:dashboard.card.support.todo', 'Répondre ou orienter ; les demandes liées aux données vont à la protection des données.') },
-        { key: 'bg', title: t('admin:dashboard.card.bg.title', 'Accès d’urgence à examiner'), to: '/admin/operations', count: n(tasks.breakGlass), unit: t('admin:dashboard.card.bg.unit', 'à examiner'), todo: t('admin:dashboard.card.bg.todo', 'Un accès d’urgence est examiné ensuite par une autre personne, avec les actions faites pendant la fenêtre.') },
+        { key: 'bg', title: t('admin:dashboard.card.bg.title', 'Accès d’urgence à examiner'), to: '/admin/operations', count: n(tasks.breakGlass), unit: t('admin:dashboard.card.bg.unit', 'à examiner'), todo: t('admin:dashboard.card.bg.todo', 'Un accès d’urgence est examiné ensuite, avec les actions faites pendant la fenêtre, par un autre administrateur — ou par vous-même tant que vous êtes le seul administrateur actif avec MFA.') },
     ];
     const waiting = cards.filter((c) => c.count > 0);
 

@@ -180,7 +180,7 @@
  "dashboard.card.ai.todo": "Ein Vorschlag wird nie von selbst übernommen: Nehmen Sie ihn mit einer Notiz an oder lehnen Sie ihn ab.",
  "dashboard.card.ai.unit": "zu prüfen",
  "dashboard.card.bg.title": "Zu prüfende Notfallzugriffe",
- "dashboard.card.bg.todo": "Ein Notfallzugriff wird anschließend von einer anderen Person geprüft, zusammen mit den in diesem Zeitfenster ausgeführten Aktionen.",
+ "dashboard.card.bg.todo": "Ein Notfallzugriff wird anschließend zusammen mit den in diesem Zeitfenster ausgeführten Aktionen von einer anderen Administratorin bzw. einem anderen Administrator geprüft – oder von Ihnen selbst, solange Sie die einzige aktive Administratorin bzw. der einzige aktive Administrator mit MFA sind.",
  "dashboard.card.bg.unit": "zu prüfen",
  "dashboard.card.dup.title": "Vorgeschlagene Dubletten",
  "dashboard.card.dup.todo": "Die beiden Einträge vergleichen und anhand einer amtlichen Quelle entscheiden; nichts wird automatisch zusammengeführt.",
