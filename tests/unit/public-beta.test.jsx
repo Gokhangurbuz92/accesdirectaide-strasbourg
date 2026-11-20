@@ -22,6 +22,10 @@ describe('server allowlist', () => {
     for (const p of ['health', 'aides', 'aides/aide-x', 'structures', 'demarches/d-1', 'dispositifs', 'search', 'glossaire', 'taxonomy', 'public/page', 'sitemap.xml', 'auth/me'])
       expect(isAllowedInPublicBeta('GET', p), p).toBe(true);
     expect(isAllowedInPublicBeta('HEAD', 'aides')).toBe(true);
+    // G13: the deep check is reachable for the admin Observabilité page — its handler answers 401 to anyone else before probing anything
+    // (tests/unit/g13-admin-observability.test.jsx); GET / HEAD only, exact path
+    expect(isAllowedInPublicBeta('GET', 'health/deep')).toBe(true);
+    expect(isAllowedInPublicBeta('POST', 'health/deep')).toBe(false);
   });
   it('refuses accounts, uploads, bookings, sharing, forms, the assistant, admin and crons, and every write', () => {
     for (const p of ['auth/login', 'auth/signup', 'pro/auth/register', 'institution/login', 'admin/login', 'citizen/coffre', 'pro/dossier/upload-secure', 'rdv/x',

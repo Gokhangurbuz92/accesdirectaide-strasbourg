@@ -19,6 +19,10 @@ const EXACT = new Set([
   // G3 (19/11/2026, founder directive « safe public openings »): the API description — during the beta the handler serves ONLY the public subset
   // (api/lib/openapi-public.js: operations this gate opens to an anonymous visitor; never admin/cron/monitor/pro/institution, never a secured operation)
   'docs/openapi.json',
+  // G13 (admin observability): the deep check — the handler (api/_handlers/health-deep.js) answers 401 to anyone who is neither a named administrator nor
+  // the cron secret BEFORE probing the database, cache, storage or scheduled jobs; GET / HEAD only (405 otherwise). Without it, the admin Observabilité
+  // page read 503 PUBLIC_BETA_RESTRICTED in Production.
+  'health/deep',
 ]);
 // R32: « translations » serves the checked translations of the same public records (read-only, same D-5 rule)
 // R36: « pdf/aides », « pdf/demarches » = the PDF of a published aide or démarche (api/_handlers/pdf.js: GET only, D-5 visible records only, writes nothing,

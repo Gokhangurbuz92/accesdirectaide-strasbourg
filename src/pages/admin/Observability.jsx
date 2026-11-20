@@ -45,6 +45,7 @@ export default function AdminObservability() {
   const [cronRuns, setCronRuns] = useState(/** @type {any[]} */ ([]));
   const [healthPublic, setHealthPublic] = useState(/** @type {any} */ (null));
   const [healthDeep, setHealthDeep] = useState(/** @type {any} */ (null));
+  const [runsRead, setRunsRead] = useState(false);
   const [adminStats, setAdminStats] = useState(/** @type {any} */ (null));
   const [selectedCron, setSelectedCron] = useState('actualites');
   const [loading, setLoading] = useState(true);
@@ -76,12 +77,17 @@ export default function AdminObservability() {
     if (deepRes.status === 'fulfilled') {
       setHealthDeep(deepRes.value);
     } else {
+      // G13: a deep check that could not be read must not leave an earlier reading on screen, nor be shown as « no run » / « no mailer »
+      setHealthDeep(null);
       nextError = nextError || t('admin:observability.error.deep', 'Le contrôle détaillé (base, cache, stockage) n’a pas pu être lu.');
     }
 
     if (runsRes.status === 'fulfilled') {
       setCronRuns(runsRes.value?.items || []);
+      setRunsRead(true);
     } else {
+      setCronRuns([]);
+      setRunsRead(false);
       nextError = nextError || t('admin:observability.error.runs', 'L’historique des tâches planifiées n’a pas pu être lu.');
     }
 
@@ -105,6 +111,10 @@ export default function AdminObservability() {
   const storage = healthDeep?.deps?.storage;
   const sentry = healthDeep?.deps?.sentry;
   const cronFreshness = healthDeep?.deps?.cron?.actualites;
+  // G13: /api/healthz answers neither the environment nor the release; both come from the deep check (« - » while it is not read)
+  const notRead = t('admin:observability.not_read', 'Non lu');
+  const mailer = healthDeep?.deps?.mailer;
+  const mailerOn = Boolean(mailer?.provider && mailer.provider !== 'noop');
 
   return (
     <div className="container mx-auto py-8 space-y-6">
@@ -140,11 +150,11 @@ export default function AdminObservability() {
             </div>
             <div className="flex items-center justify-between">
               <span>{t('admin:observability.environment', 'Environnement')}</span>
-              <span className="font-mono">{healthPublic?.vercelEnv || '-'}</span>
+              <span className="font-mono" data-testid="obs-public-env">{sentry?.environment || '-'}</span>
             </div>
             <div className="flex items-center justify-between">
               <span>{t('admin:observability.version', 'Version')}</span>
-              <span className="font-mono">{healthPublic?.release ? String(healthPublic.release).slice(0, 8) : '-'}</span>
+              <span className="font-mono" data-testid="obs-public-release">{sentry?.release ? String(sentry.release).slice(0, 8) : '-'}</span>
             </div>
             <div className="flex items-center justify-between">
               <span>RequestId</span>
@@ -227,8 +237,8 @@ export default function AdminObservability() {
         <CardContent className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
             <span>{t('admin:observability.state', 'État')}</span>
-            <Badge className={freshnessBadgeClass(cronFreshness?.state)}>
-              {(/** @type {Record<string, string>} */ ({ fresh: t('admin:observability.fresh', 'À jour'), stale: t('admin:observability.stale', 'En retard'), error: t('admin:observability.failed', 'En échec') }))[String(cronFreshness?.state)] || t('admin:observability.no_run_local', 'Aucune exécution (aucune tâche planifiée dans le LAB local)')}
+            <Badge className={freshnessBadgeClass(cronFreshness?.state)} data-testid="obs-freshness-state">
+              {!healthDeep ? notRead : (/** @type {Record<string, string>} */ ({ fresh: t('admin:observability.fresh', 'À jour'), stale: t('admin:observability.stale', 'En retard'), error: t('admin:observability.failed', 'En échec') }))[String(cronFreshness?.state)] || t('admin:observability.no_run_local', 'Aucune exécution enregistrée')}
             </Badge>
           </div>
           <div className="flex items-center justify-between">
@@ -305,17 +315,17 @@ export default function AdminObservability() {
         <CardContent className="space-y-2 text-sm">
           <div className="flex items-center justify-between">
             <span>{t('admin:observability.provider', 'Fournisseur')}</span>
-            <Badge className={healthDeep?.deps?.mailer?.provider && healthDeep.deps.mailer.provider !== 'noop'
+            <Badge data-testid="obs-mail-provider" className={!healthDeep ? badgeClassForOk(undefined) : mailerOn
               ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
               : 'border-amber-200 bg-amber-50 text-amber-900'
             }>
-              {healthDeep?.deps?.mailer?.provider && healthDeep.deps.mailer.provider !== 'noop' ? healthDeep.deps.mailer.provider : t('admin:observability.no_mailer', 'Aucun : aucun e-mail n’est envoyé')}
+              {!healthDeep ? notRead : mailerOn ? mailer.provider : t('admin:observability.no_mailer', 'Aucun : aucun e-mail n’est envoyé')}
             </Badge>
           </div>
           <div className="flex items-center justify-between">
             <span>{t('admin:observability.from_address', 'Adresse d’expédition configurée')}</span>
-            <Badge className={badgeClassForOk(Boolean(healthDeep?.deps?.mailer?.fromPresent))}>
-              {healthDeep?.deps?.mailer?.fromPresent ? t('admin:observability.yes_caps', 'OUI') : t('admin:observability.no_caps', 'NON')}
+            <Badge data-testid="obs-mail-from" className={badgeClassForOk(healthDeep ? Boolean(mailer?.fromPresent) : undefined)}>
+              {!healthDeep ? notRead : mailer?.fromPresent ? t('admin:observability.yes_caps', 'OUI') : t('admin:observability.no_caps', 'NON')}
             </Badge>
           </div>
         </CardContent>
@@ -353,8 +363,8 @@ export default function AdminObservability() {
             <TableBody>
               {cronRuns.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-sm text-slate-600">
-                    {t('admin:observability.no_runs', 'Aucune exécution (normal dans le LAB local : aucune tâche n’y est planifiée).')}
+                  <TableCell colSpan={6} className="text-sm text-slate-600" data-testid="obs-runs-empty">
+                    {runsRead ? t('admin:observability.no_runs', 'Aucune exécution enregistrée pour cette tâche.') : notRead}
                   </TableCell>
                 </TableRow>
               ) : (
