@@ -2171,5 +2171,13 @@
  "layout.nav.x02_testimonials": "Görüşlerin moderasyonu",
  "layout.nav.x01_stories": "Hikâye moderasyonu",
  "layout.nav.x05_employment": "İş ilanlarının incelenmesi",
- "layout.nav.x03_entraide": "Dayanışma moderasyonu"
+ "layout.nav.x03_entraide": "Dayanışma moderasyonu",
+ "k5.alerts.jobs_scope_all": "Her zamanlanmış görevin, tarihi ne olursa olsun, kayıtlı son çalıştırması. “hiç çalıştırılmadı”: bu görev için kayıtlı çalıştırma yok.",
+ "k5.alerts.s_never": "hiç çalıştırılmadı",
+ "k5.alerts.col_state": "Durum",
+ "k5.alerts.st_open": "açık",
+ "k5.alerts.st_closed": "kapalı (beta)",
+ "k5.alerts.st_awaiting": "onay bekliyor",
+ "k5.alerts.st_legacy": "eski görev, kapalı",
+ "k5.alerts.st_not_scheduled": "zamanlanmış görev listesinde değil"
 }

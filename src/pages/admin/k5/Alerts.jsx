@@ -5,17 +5,20 @@ import { Button } from '@/components/ui/button';
 import { apiClient } from '@/api/client';
 import { explain } from './helpers.js';
 import { useT, formatDateTime } from '@/i18n';
-import { alertKind, lastRunPerJob } from './alertsModel.js';
+import { alertKind, jobRows, STATE_KEY } from './alertsModel.js';
 
 /**
  * RA-03 (interface) — /admin/alertes : l'historique des alertes de santé que la vérification planifiée a déclenchées (GET /api/admin/alerts, les 50 plus
- * récentes gardées par le serveur) et la dernière exécution enregistrée de chaque tâche planifiée (GET /api/admin/cron-runs, 100 exécutions les plus
- * récentes). Lecture seule : la page ne déclenche, ne relance ni n'acquitte rien.
+ * récentes gardées par le serveur) et la dernière exécution enregistrée de chaque tâche planifiée (GET /api/admin/cron-runs?latest=1 : G13, une ligne par
+ * tâche planifiée avec son état dans la bêta, même sans exécution — avant, une tâche hebdomadaire ou fermée sortait des 100 exécutions les plus récentes).
+ * Lecture seule : la page ne déclenche, ne relance ni n'acquitte rien.
  */
 export default function AdminAlerts() {
   const { t } = useT('admin');
   const STATUS = { success: t('admin:k5.alerts.s_success', 'réussie'), partial: t('admin:k5.alerts.s_partial', 'partielle'), failed: t('admin:k5.alerts.s_failed', 'en échec'),
-    running: t('admin:k5.alerts.s_running', 'en cours ou interrompue'), skipped: t('admin:k5.alerts.s_skipped', 'non exécutée') };
+    running: t('admin:k5.alerts.s_running', 'en cours ou interrompue'), skipped: t('admin:k5.alerts.s_skipped', 'non exécutée'), never: t('admin:k5.alerts.s_never', 'jamais exécutée') };
+  const STATE = { open: t('admin:k5.alerts.st_open', 'ouverte'), closed: t('admin:k5.alerts.st_closed', 'fermée (bêta)'), awaiting: t('admin:k5.alerts.st_awaiting', 'en attente d’approbation'),
+    legacy: t('admin:k5.alerts.st_legacy', 'ancienne tâche, fermée'), not_scheduled: t('admin:k5.alerts.st_not_scheduled', 'hors liste des tâches planifiées') };
   const KIND = (a) => {
     const k = alertKind(a.name);
     if (k.kind === 'JOB_FAILED') return t('admin:k5.alerts.k_failed', 'Tâche planifiée en échec : {{job}}', { job: k.job });
@@ -23,12 +26,12 @@ export default function AdminAlerts() {
     return t('admin:k5.alerts.k_check', 'Contrôle de santé : {{name}}', { name: a.name });
   };
   const [alerts, setAlerts] = useState({ loading: true, error: '', list: [] });
-  const [runs, setRuns] = useState({ loading: true, error: '', list: [], read: 0 });
+  const [runs, setRuns] = useState({ loading: true, error: '', list: [] });
   const load = useCallback(async () => {
     setAlerts((s) => ({ ...s, loading: true, error: '' })); setRuns((s) => ({ ...s, loading: true, error: '' }));
-    const [a, r] = await Promise.allSettled([apiClient.admin.k5('alerts'), apiClient.admin.k5('cron-runs?limit=100')]);
+    const [a, r] = await Promise.allSettled([apiClient.admin.k5('alerts'), apiClient.admin.k5('cron-runs?latest=1')]);
     setAlerts(a.status === 'fulfilled' ? { loading: false, error: '', list: a.value?.alerts || [] } : { loading: false, error: explain(a.reason), list: [] });
-    setRuns(r.status === 'fulfilled' ? { loading: false, error: '', list: lastRunPerJob(r.value?.items), read: (r.value?.items || []).length } : { loading: false, error: explain(r.reason), list: [], read: 0 });
+    setRuns(r.status === 'fulfilled' ? { loading: false, error: '', list: jobRows(r.value?.jobs) } : { loading: false, error: explain(r.reason), list: [] });
   }, []);
   useEffect(() => { load(); }, [load]);
 
@@ -42,26 +45,28 @@ export default function AdminAlerts() {
         <h2 id="alerts-jobs" className="font-semibold">{t('admin:k5.alerts.jobs_heading', 'Dernière exécution de chaque tâche planifiée')}</h2>
         {runs.error ? <p role="alert" className="text-sm text-destructive" data-testid="admin-alerts-runs-problem">{runs.error}</p> : null}
         {runs.loading ? <p role="status" className="text-sm">{t('admin:k5.duplicates.loading', 'Chargement…')}</p> : null}
-        {!runs.loading && !runs.error ? <p className="text-sm">{t('admin:k5.alerts.jobs_scope', 'Parmi les {{n}} exécutions enregistrées les plus récentes. Une tâche qui n’apparaît pas n’a aucune exécution récente enregistrée : cela ne prouve pas qu’elle a tourné.', { n: runs.read })} <Link className="text-primary underline" to="/admin/sync">{t('admin:k5.alerts.history_link', 'Historique complet des exécutions')}</Link></p> : null}
+        {!runs.loading && !runs.error ? <p className="text-sm">{t('admin:k5.alerts.jobs_scope_all', 'La dernière exécution enregistrée de chaque tâche planifiée, quelle que soit sa date. « jamais exécutée » : aucune exécution n’est enregistrée pour cette tâche.')} <Link className="text-primary underline" to="/admin/sync">{t('admin:k5.alerts.history_link', 'Historique complet des exécutions')}</Link></p> : null}
         <div className="overflow-x-auto">
           <table className="w-full text-sm" data-testid="admin-alerts-jobs">
             <caption className="sr-only">{t('admin:k5.alerts.jobs_caption', 'Dernière exécution par tâche : statut, début, durée, motif')}</caption>
             <thead><tr className="border-b">
               <th scope="col" className="p-1 text-start">{t('admin:k5.alerts.col_job', 'Tâche')}</th>
+              <th scope="col" className="p-1 text-start">{t('admin:k5.alerts.col_state', 'État')}</th>
               <th scope="col" className="p-1 text-start">{t('admin:k5.alerts.col_status', 'Statut')}</th>
               <th scope="col" className="p-1 text-start">{t('admin:k5.alerts.col_started', 'Début')}</th>
               <th scope="col" className="p-1 text-start">{t('admin:k5.alerts.col_duration', 'Durée')}</th>
             </tr></thead>
             <tbody>
               {runs.list.map((r) => (
-                <tr key={r.job} className="border-b" data-testid="admin-alerts-job" data-status={r.status}>
+                <tr key={r.job} className="border-b" data-testid="admin-alerts-job" data-status={r.status} data-state={r.state || ''}>
                   <th scope="row" className="p-1 text-start font-normal">{r.job}</th>
+                  <td className="p-1">{STATE[STATE_KEY[r.state]] || '—'}</td>
                   <td className={`p-1 ${r.status === 'failed' ? 'font-semibold text-destructive' : ''}`}>{STATUS[r.status] || r.status}{r.skipReason ? ` (${r.skipReason})` : ''}</td>
                   <td className="p-1">{r.startedAt ? formatDateTime(r.startedAt) : '—'}</td>
                   <td className="p-1">{Number.isFinite(r.durationMs) ? t('admin:k5.alerts.seconds', '{{s}} s', { s: Math.round(r.durationMs / 100) / 10 }) : '—'}</td>
                 </tr>
               ))}
-              {!runs.loading && !runs.error && !runs.list.length ? <tr><td colSpan={4} className="p-2">{t('admin:k5.alerts.no_run', 'Aucune exécution enregistrée.')}</td></tr> : null}
+              {!runs.loading && !runs.error && !runs.list.length ? <tr><td colSpan={5} className="p-2">{t('admin:k5.alerts.no_run', 'Aucune exécution enregistrée.')}</td></tr> : null}
             </tbody>
           </table>
         </div>

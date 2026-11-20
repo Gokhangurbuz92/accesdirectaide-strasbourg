@@ -101,6 +101,28 @@ describe('P6-B+ Admin cron-runs API', () => {
     expect(item.trigger).toBe('manual');
   });
 
+  it('G13: latest=1 returns the newest run of every scheduled job, a weekly job included even behind 101 newer runs of another job', async () => {
+    const old = new Date(Date.now() - 6 * 24 * 3600_000);
+    const weekly = (await db.insert(schema.CronRun).values({ id: crypto.randomUUID(), job: 'link-check', status: 'success', trigger: 'cron', startedAt: old,
+      finishedAt: old, durationMs: 5, updatedAt: new Date() }).returning({ id: schema.CronRun.id }))[0];
+    createdIds.push(weekly.id);
+    const many = Array.from({ length: 105 }, (_, i) => ({ id: crypto.randomUUID(), job: 'actualites', status: 'success', trigger: 'cron',
+      startedAt: new Date(Date.now() - i * 60_000), finishedAt: new Date(), durationMs: 1, updatedAt: new Date() }));
+    await db.insert(schema.CronRun).values(many);
+    createdIds.push(...many.map((r) => r.id));
+
+    const { default: handler } = await import('../../api/_handlers/admin/cron-runs.js');
+    const req = mockReq({ url: '/api/admin/cron-runs?latest=1', query: { latest: '1' },
+      headers: { host: 'localhost:3000', 'x-forwarded-proto': 'http', authorization: `Bearer ${process.env.ADMIN_TOKEN}` } });
+    const res = mockRes();
+    await handler(req, res);
+    expect(res.statusCode).toBe(200);
+    const by = Object.fromEntries(res.body.jobs.map((j) => [j.job, j]));
+    expect(by['link-check'].lastRun?.id).toBe(weekly.id);
+    expect(by.actualites.lastRun?.id).toBe(many[0].id);
+    expect(by['gdpr-purge']).toBeTruthy();   // a scheduled job without any run still has its row
+  });
+
   it('returns a cron run detail when authorized', async () => {
     const run = await (await db.insert(schema.CronRun).values({
         id: crypto.randomUUID(),

@@ -2171,5 +2171,13 @@
  "layout.nav.x02_testimonials": "Moderation der Erfahrungsberichte",
  "layout.nav.x01_stories": "Moderation der Geschichten",
  "layout.nav.x05_employment": "Prüfung der Stellenangebote",
- "layout.nav.x03_entraide": "Moderation der gegenseitigen Hilfe"
+ "layout.nav.x03_entraide": "Moderation der gegenseitigen Hilfe",
+ "k5.alerts.jobs_scope_all": "Die letzte erfasste Ausführung jeder geplanten Aufgabe, unabhängig vom Datum. „nie ausgeführt“: Für diese Aufgabe ist keine Ausführung erfasst.",
+ "k5.alerts.s_never": "nie ausgeführt",
+ "k5.alerts.col_state": "Zustand",
+ "k5.alerts.st_open": "geöffnet",
+ "k5.alerts.st_closed": "geschlossen (Beta)",
+ "k5.alerts.st_awaiting": "wartet auf Genehmigung",
+ "k5.alerts.st_legacy": "frühere Aufgabe, geschlossen",
+ "k5.alerts.st_not_scheduled": "nicht in der Liste der geplanten Aufgaben"
 }

@@ -4,6 +4,7 @@ import { CronRun } from '../../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
 import { verifyAdmin } from '../../_utils/auth.js';
 import { parsePaginationParams } from '../../lib/geography/CursorPagination.js';
+import { latestRunPerScheduledJob } from '../../_services/cron-latest.js';
 
 /**
  * @param {string | undefined} url
@@ -29,6 +30,7 @@ function extractIdFromPath(url, host = 'localhost') {
  *
  * Routes:
  * - GET /api/admin/cron-runs?job=actualites&limit=50
+ * - GET /api/admin/cron-runs?latest=1  (G13) the newest run of EVERY scheduled job + its beta state ({ jobs }), a job with no run included
  * - GET /api/admin/cron-runs/:id
  *
  * @param {import('../../_utils/http-types').ApiRequest} req
@@ -58,6 +60,10 @@ export default async function handler(req, res) {
     if (!item) return res.status(404).json({ error: 'Not found' });
 
     return res.status(200).json({ item });
+  }
+
+  if (['1', 'true'].includes(String(req.query?.latest || ''))) {
+    return res.status(200).json({ jobs: await latestRunPerScheduledJob(db) });
   }
 
   const job = req.query?.job ? String(req.query.job) : undefined;

@@ -2181,5 +2181,13 @@
  "layout.nav.x02_testimonials": "Модерація відгуків",
  "layout.nav.x01_stories": "Модерація історій",
  "layout.nav.x05_employment": "Перевірка пропозицій роботи",
- "layout.nav.x03_entraide": "Модерація взаємодопомоги"
+ "layout.nav.x03_entraide": "Модерація взаємодопомоги",
+ "k5.alerts.jobs_scope_all": "Останній записаний запуск кожного запланованого завдання, незалежно від дати. «ніколи не запускалося»: для цього завдання не записано жодного запуску.",
+ "k5.alerts.s_never": "ніколи не запускалося",
+ "k5.alerts.col_state": "Стан",
+ "k5.alerts.st_open": "відкрите",
+ "k5.alerts.st_closed": "закрите (бета)",
+ "k5.alerts.st_awaiting": "очікує схвалення",
+ "k5.alerts.st_legacy": "давнє завдання, закрите",
+ "k5.alerts.st_not_scheduled": "поза списком запланованих завдань"
 }

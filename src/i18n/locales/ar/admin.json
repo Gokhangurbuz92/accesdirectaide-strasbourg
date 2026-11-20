@@ -2190,5 +2190,13 @@
  "layout.nav.x02_testimonials": "الإشراف على الشهادات",
  "layout.nav.x01_stories": "الإشراف على القصص",
  "layout.nav.x05_employment": "مراجعة عروض العمل",
- "layout.nav.x03_entraide": "الإشراف على التعاون"
+ "layout.nav.x03_entraide": "الإشراف على التعاون",
+ "k5.alerts.jobs_scope_all": "آخر تنفيذ مسجَّل لكل مهمة مجدولة، أيًّا كان تاريخه. «لم تُنفَّذ قط»: لا يوجد أي تنفيذ مسجَّل لهذه المهمة.",
+ "k5.alerts.s_never": "لم تُنفَّذ قط",
+ "k5.alerts.col_state": "الحالة",
+ "k5.alerts.st_open": "مفتوحة",
+ "k5.alerts.st_closed": "مغلقة (النسخة التجريبية)",
+ "k5.alerts.st_awaiting": "بانتظار الموافقة",
+ "k5.alerts.st_legacy": "مهمة قديمة، مغلقة",
+ "k5.alerts.st_not_scheduled": "خارج قائمة المهام المجدولة"
 }

@@ -1,6 +1,9 @@
 // @ts-nocheck
 /** RA-03 (interface) — reading GET /api/admin/alerts and GET /api/admin/cron-runs (pure functions). */
 
+/** G13: the beta state of a scheduled job (api/_utils/public-beta.js jobStates) → the label key of /admin/alertes */
+export const STATE_KEY = Object.freeze({ OPEN: 'open', OPEN_ALL_JOBS: 'open', CLOSED: 'closed', AWAITING_APPROVAL: 'awaiting', LEGACY_CLOSED: 'legacy', NOT_SCHEDULED: 'not_scheduled' });
+
 /** the alert kinds: « job.failed.<job> » / « job.stale.<job> » name a job; the others are the health checks of api/_handlers/cron/health-alert.js */
 export function alertKind(name) {
   const m = /^job\.(failed|stale)\.(.+)$/.exec(String(name || ''));
@@ -8,9 +11,12 @@ export function alertKind(name) {
   return { kind: 'CHECK', job: null };
 }
 
-/** the newest run of each job among the runs read (the answer is newest first), sorted by job name */
-export function lastRunPerJob(items) {
-  const byJob = new Map();
-  for (const r of items || []) if (r?.job && !byJob.has(r.job)) byJob.set(r.job, r);
-  return [...byJob.values()].sort((a, b) => String(a.job).localeCompare(String(b.job)));
+/**
+ * G13: the rows of GET /api/admin/cron-runs?latest=1 ({ jobs: [{ job, state, scheduled, lastRun }] }) — one per scheduled job, even without a run, then
+ * the recorded names that are not scheduled jobs. Flattened for the table: `status` is « never » when no run is recorded.
+ */
+export function jobRows(jobs) {
+  return (jobs || []).filter((j) => j?.job).map((j) => ({ job: String(j.job), state: j.state || null, scheduled: j.scheduled !== false, runId: j.lastRun?.id || null,
+    status: j.lastRun ? j.lastRun.status : 'never', skipReason: j.lastRun?.skipReason || null, startedAt: j.lastRun?.startedAt || null,
+    durationMs: Number.isFinite(j.lastRun?.durationMs) ? j.lastRun.durationMs : null }));
 }

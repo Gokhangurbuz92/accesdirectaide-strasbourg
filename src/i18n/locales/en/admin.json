@@ -2171,5 +2171,13 @@
  "layout.nav.x02_testimonials": "Testimonial moderation",
  "layout.nav.x01_stories": "Story moderation",
  "layout.nav.x05_employment": "Review of job offers",
- "layout.nav.x03_entraide": "Mutual help moderation"
+ "layout.nav.x03_entraide": "Mutual help moderation",
+ "k5.alerts.jobs_scope_all": "The last recorded run of each scheduled job, whatever its date. “never run”: no run is recorded for this job.",
+ "k5.alerts.s_never": "never run",
+ "k5.alerts.col_state": "State",
+ "k5.alerts.st_open": "open",
+ "k5.alerts.st_closed": "closed (beta)",
+ "k5.alerts.st_awaiting": "awaiting approval",
+ "k5.alerts.st_legacy": "former job, closed",
+ "k5.alerts.st_not_scheduled": "not in the scheduled job list"
 }
