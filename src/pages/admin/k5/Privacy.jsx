@@ -58,8 +58,8 @@ export default function AdminPrivacy() {
                   <Field id={`basis-${r.id}`} label={t('admin:k5.privacy.basis', 'Fondement de la décision')} value={v(`basis-${r.id}`)} onChange={(x) => set(`basis-${r.id}`, x)} rows={2} />
                   <Field id={`extract-${r.id}`} label={t('admin:k5.privacy.extract', 'Extrait à communiquer (si communication)')} value={v(`extract-${r.id}`)} onChange={(x) => set(`extract-${r.id}`, x)} rows={2} />
                   <div className="flex gap-2">
-                    <Button size="sm" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'RELEASE', basis: v(`basis-${r.id}`), extract: v(`extract-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : une autre personne doit confirmer.'), 'dsr-review')}>{t('admin:k5.privacy.propose_release', 'Proposer de communiquer')}</Button>
-                    <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'WITHHOLD', basis: v(`basis-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : une autre personne doit confirmer.'), 'dsr-review')}>{t('admin:k5.privacy.propose_withhold', 'Proposer de ne pas communiquer')}</Button>
+                    <Button size="sm" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'RELEASE', basis: v(`basis-${r.id}`), extract: v(`extract-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : un autre administrateur la confirme. Si vous êtes le seul administrateur actif avec MFA, vous pourrez la confirmer vous-même après 24 h et une nouvelle lecture journalisée.'), 'dsr-review')}>{t('admin:k5.privacy.propose_release', 'Proposer de communiquer')}</Button>
+                    <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'WITHHOLD', basis: v(`basis-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : un autre administrateur la confirme. Si vous êtes le seul administrateur actif avec MFA, vous pourrez la confirmer vous-même après 24 h et une nouvelle lecture journalisée.'), 'dsr-review')}>{t('admin:k5.privacy.propose_withhold', 'Proposer de ne pas communiquer')}</Button>
                   </div>
                 </div>
               ) : (
@@ -81,7 +81,7 @@ export default function AdminPrivacy() {
       </section>
       <section className="space-y-2 rounded border p-3" aria-labelledby="pv-erase">
         <h2 id="pv-erase" className="font-semibold">{t('admin:k5.privacy.erase_heading', 'Demandes d’effacement de compte')}</h2>
-        <p className="text-sm text-slate-700">{t('admin:k5.privacy.erase_intro', 'Deux personnes : l’une propose (exécuter ou refuser, avec la raison qui sera communiquée), une autre confirme. La confirmation d’une exécution supprime les données aussitôt ; une conservation légale active la bloque.')}</p>
+        <p className="text-sm text-slate-700">{t('admin:k5.privacy.erase_intro', 'En principe deux personnes : l’une propose (exécuter ou refuser, avec la raison qui sera communiquée), une autre confirme. Tant qu’un seul administrateur actif avec MFA existe, il peut confirmer sa propre proposition après 24 h et une nouvelle lecture journalisée. La confirmation d’une exécution supprime les données aussitôt ; une conservation légale active la bloque.')}</p>
         {(d?.erasureRequests?.requests || []).length === 0 ? <p className="text-sm">{t('admin:k5.privacy.no_request', 'Aucune demande en cours.')}</p> : null}
         <ul className="space-y-2">
           {(d?.erasureRequests?.requests || []).map((r) => (
@@ -94,8 +94,8 @@ export default function AdminPrivacy() {
                 <div className="space-y-1">
                   <Field id={`erase-reason-${r.id}`} label={t('admin:k5.privacy.refusal_reason', 'Raison du refus (si refus)')} value={v(`erase-reason-${r.id}`)} onChange={(x) => set(`erase-reason-${r.id}`, x)} rows={2} />
                   <div className="flex gap-2">
-                    <Button size="sm" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'APPROVE' }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : une autre personne doit confirmer.'), 'dsr-erasure')}>{t('admin:k5.privacy.propose_execute', 'Proposer d’exécuter')}</Button>
-                    <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'REJECT', reason: v(`erase-reason-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : une autre personne doit confirmer.'), 'dsr-erasure')}>{t('admin:k5.privacy.propose_refuse', 'Proposer de refuser')}</Button>
+                    <Button size="sm" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'APPROVE' }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : un autre administrateur la confirme. Si vous êtes le seul administrateur actif avec MFA, vous pourrez la confirmer vous-même après 24 h et une nouvelle lecture journalisée.'), 'dsr-erasure')}>{t('admin:k5.privacy.propose_execute', 'Proposer d’exécuter')}</Button>
+                    <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'REJECT', reason: v(`erase-reason-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : un autre administrateur la confirme. Si vous êtes le seul administrateur actif avec MFA, vous pourrez la confirmer vous-même après 24 h et une nouvelle lecture journalisée.'), 'dsr-erasure')}>{t('admin:k5.privacy.propose_refuse', 'Proposer de refuser')}</Button>
                   </div>
                 </div>
               ) : r.stage === 'AWAITING_SECOND_REVIEWER' ? (
@@ -150,11 +150,11 @@ export default function AdminPrivacy() {
       </section>
       <section className="space-y-2 rounded border p-3" aria-labelledby="pv-close">
         <h2 id="pv-close" className="font-semibold">{t('admin:k5.privacy.closure_heading', 'Fermetures d’espaces de structure')}</h2>
-        <p className="text-sm text-slate-700">{t('admin:k5.privacy.closure_intro', 'Deux personnes : l’une propose (exécuter ou refuser, avec la raison communiquée à la structure), une autre confirme. L’exécution retire les accès aux dossiers (les personnes gardent leurs dossiers), efface les notes internes, les notifications et les comptes des membres, clôt les suivis et les orientations en cours et annule les rendez-vous à venir en prévenant les personnes. Une conservation légale active sur la structure la bloque.')}</p>
+        <p className="text-sm text-slate-700">{t('admin:k5.privacy.closure_intro', 'En principe deux personnes : l’une propose (exécuter ou refuser, avec la raison communiquée à la structure), une autre confirme. Tant qu’un seul administrateur actif avec MFA existe, il peut confirmer sa propre proposition après 24 h et une nouvelle lecture journalisée. L’exécution retire les accès aux dossiers (les personnes gardent leurs dossiers), efface les notes internes, les notifications et les comptes des membres, clôt les suivis et les orientations en cours et annule les rendez-vous à venir en prévenant les personnes. Une conservation légale active sur la structure la bloque.')}</p>
         <div className="grid gap-2 sm:grid-cols-3">
           <Field id="close-sid" label={t('admin:k5.privacy.close_sid', 'Structure concernée (référence ; fermeture à l’initiative d’ADA)')} value={v('closeSid')} onChange={(x) => set('closeSid', x)} />
           <Field id="close-why" label={t('admin:k5.privacy.close_why', 'Raison de la fermeture décidée par ADA')} value={v('closeWhy')} onChange={(x) => set('closeWhy', x)} />
-          <div className="flex items-end"><Button size="sm" disabled={k.busy} onClick={() => k.act({ action: 'open', structureId: v('closeSid'), reason: v('closeWhy') }, t('admin:k5.privacy.closure_opened', 'Demande de fermeture ouverte : deux personnes doivent l’examiner.'), 'org-closure')}>{t('admin:k5.privacy.open_request', 'Ouvrir une demande')}</Button></div>
+          <div className="flex items-end"><Button size="sm" disabled={k.busy} onClick={() => k.act({ action: 'open', structureId: v('closeSid'), reason: v('closeWhy') }, t('admin:k5.privacy.closure_opened', 'Demande de fermeture ouverte : elle doit être proposée puis confirmée.'), 'org-closure')}>{t('admin:k5.privacy.open_request', 'Ouvrir une demande')}</Button></div>
         </div>
         {(d?.organizationClosures?.requests || []).length === 0 ? <p className="text-sm">{t('admin:k5.privacy.no_request', 'Aucune demande en cours.')}</p> : null}
         <ul className="space-y-2">
@@ -167,8 +167,8 @@ export default function AdminPrivacy() {
                 <div className="space-y-1">
                   <Field id={`close-reason-${r.id}`} label={t('admin:k5.privacy.refusal_reason', 'Raison du refus (si refus)')} value={v(`close-reason-${r.id}`)} onChange={(x) => set(`close-reason-${r.id}`, x)} rows={2} />
                   <div className="flex gap-2">
-                    <Button size="sm" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'APPROVE' }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : une autre personne doit confirmer.'), 'org-closure')}>{t('admin:k5.privacy.propose_close', 'Proposer de fermer')}</Button>
-                    <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'REJECT', reason: v(`close-reason-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : une autre personne doit confirmer.'), 'org-closure')}>{t('admin:k5.privacy.propose_refuse', 'Proposer de refuser')}</Button>
+                    <Button size="sm" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'APPROVE' }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : un autre administrateur la confirme. Si vous êtes le seul administrateur actif avec MFA, vous pourrez la confirmer vous-même après 24 h et une nouvelle lecture journalisée.'), 'org-closure')}>{t('admin:k5.privacy.propose_close', 'Proposer de fermer')}</Button>
+                    <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ id: r.id, decision: 'REJECT', reason: v(`close-reason-${r.id}`) }, t('admin:k5.privacy.proposal_saved', 'Proposition enregistrée : un autre administrateur la confirme. Si vous êtes le seul administrateur actif avec MFA, vous pourrez la confirmer vous-même après 24 h et une nouvelle lecture journalisée.'), 'org-closure')}>{t('admin:k5.privacy.propose_refuse', 'Proposer de refuser')}</Button>
                   </div>
                 </div>
               ) : r.stage === 'AWAITING_SECOND_REVIEWER' ? (
@@ -206,10 +206,10 @@ export default function AdminPrivacy() {
               <p>{h.dataCategory} {h.recordId} — {h.reasonCode} — {t('admin:k5.privacy.placed_by', 'posée par {{by}}', { by: h.createdBy })}</p>
               {h.releaseProposedBy ? (
                 <><p>{t('admin:k5.privacy.release_proposed_by', 'Levée proposée par {{by}} : {{reason}}', { by: h.releaseProposedBy, reason: h.releaseReason })}</p>
-                  <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ action: 'hold_confirm_release', id: h.id, proposedAt: h.releaseProposedAt }, t('admin:k5.privacy.hold_released', 'Conservation levée.'))}>{t('admin:k5.privacy.confirm_release', 'Confirmer la levée (autre personne)')}</Button></>
+                  <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ action: 'hold_confirm_release', id: h.id, proposedAt: h.releaseProposedAt }, t('admin:k5.privacy.hold_released', 'Conservation levée.'))}>{t('admin:k5.privacy.confirm_release', 'Confirmer la levée')}</Button></>
               ) : (
                 <><Field id={`rel-${h.id}`} label={t('admin:k5.privacy.release_reason', 'Motif de la levée')} value={v(`rel-${h.id}`)} onChange={(x) => set(`rel-${h.id}`, x)} />
-                  <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ action: 'hold_propose_release', id: h.id, reason: v(`rel-${h.id}`) }, t('admin:k5.privacy.release_proposed', 'Levée proposée : une autre personne doit confirmer.'))}>{t('admin:k5.privacy.propose_release_hold', 'Proposer la levée')}</Button></>
+                  <Button size="sm" variant="outline" disabled={k.busy} onClick={() => k.act({ action: 'hold_propose_release', id: h.id, reason: v(`rel-${h.id}`) }, t('admin:k5.privacy.release_proposed', 'Levée proposée : un autre administrateur la confirme. Si vous êtes le seul administrateur actif avec MFA, vous pourrez la confirmer vous-même après 24 h.'))}>{t('admin:k5.privacy.propose_release_hold', 'Proposer la levée')}</Button></>
               )}
             </li>
           ))}
@@ -223,7 +223,7 @@ export default function AdminPrivacy() {
           <Field id="rec-new" label={t('admin:k5.privacy.rec_new', 'Nouvelle adresse')} value={v('recNew')} onChange={(x) => set('recNew', x)} />
         </div>
         <Field id="rec-ev" label={t('admin:k5.privacy.rec_ev', 'Vérification d’identité faite (sans copier de pièce)')} value={v('recEv')} onChange={(x) => set('recEv', x)} rows={2} />
-        <Button size="sm" disabled={k.busy} onClick={() => k.act({ action: 'recovery_propose', currentEmail: v('recCur'), newEmail: v('recNew'), evidenceNote: v('recEv') }, t('admin:k5.privacy.rec_proposed', 'Demande enregistrée : une autre personne doit décider.'))}>{t('admin:k5.privacy.propose', 'Proposer')}</Button>
+        <Button size="sm" disabled={k.busy} onClick={() => k.act({ action: 'recovery_propose', currentEmail: v('recCur'), newEmail: v('recNew'), evidenceNote: v('recEv') }, t('admin:k5.privacy.rec_proposed', 'Demande enregistrée : un autre administrateur décide. Si vous êtes le seul administrateur actif avec MFA, vous pourrez décider vous-même après 24 h.'))}>{t('admin:k5.privacy.propose', 'Proposer')}</Button>
         <ul className="space-y-2">
           {(d?.recoveryCases || []).map((c) => (
             <li key={c.id} className="space-y-1 rounded border p-2 text-sm" data-testid="admin-privacy-recovery">

@@ -20,7 +20,7 @@ const shown = (field, v, t) => (v === null || v === undefined || v === '' ? '—
  * before anything is published (D-5). Every rule is enforced by /api/pro/structure. PKG-11 / E08: an administrator can ask ADA to close the space and erase the
  * organization's own data; two ADA reviewers decide, and the people keep their dossiers.
  */
-const closureStates = (t) => ({ IN_REVIEW: t('pro:structure.closure.in_review', 'en cours d’examen par l’équipe ADA (deux personnes)'), BLOCKED: t('pro:structure.closure.blocked', 'suspendue : une conservation légale s’applique'), EXECUTING: t('pro:structure.closure.executing', 'en cours d’exécution'), COMPLETED: t('pro:structure.closure.completed', 'exécutée'), REJECTED: t('pro:structure.closure.rejected', 'refusée') });
+const closureStates = (t) => ({ IN_REVIEW: t('pro:structure.closure.in_review', 'en cours d’examen par l’équipe ADA'), BLOCKED: t('pro:structure.closure.blocked', 'suspendue : une conservation légale s’applique'), EXECUTING: t('pro:structure.closure.executing', 'en cours d’exécution'), COMPLETED: t('pro:structure.closure.completed', 'exécutée'), REJECTED: t('pro:structure.closure.rejected', 'refusée') });
 export default function ProStructure() {
   const { t } = useT('pro');
   const fr = useFrAttrs();   // R47: the public record's own text (name, address, hours…) stays French (lang="fr" outside French)
@@ -54,9 +54,9 @@ export default function ProStructure() {
     e.preventDefault();
     const why = closeReason.trim(); const lbl = t('pro:structure.raison_fermeture', 'Raison de la fermeture');
     if (!closureErr.check(why.length >= 10 ? {} : { 'structure-closure-reason': why ? minLengthMessage(t, lbl, 10) : requiredMessage(t, lbl) })) return;
-    if (!window.confirm(t('pro:structure.closure_confirm', 'Demander la fermeture de l’espace de la structure ? Après examen par deux personnes d’ADA, les accès aux dossiers, les comptes des membres et les notes internes seront effacés. Les personnes gardent leurs dossiers.'))) return;
+    if (!window.confirm(t('pro:structure.closure_confirm', 'Demander la fermeture de l’espace de la structure ? Après examen par l’équipe ADA, les accès aux dossiers, les comptes des membres et les notes internes seront effacés. Les personnes gardent leurs dossiers.'))) return;
     setBusy(true); setMessage(''); setProblem('');
-    try { await proRdvRequest('/api/pro/structure', { method: 'POST', body: { action: 'request_closure', reason: closeReason } }); setCloseReason(''); setMessage(t('pro:structure.closure_sent', 'Demande de fermeture envoyée : deux personnes de l’équipe ADA vont l’examiner.')); await load(); }
+    try { await proRdvRequest('/api/pro/structure', { method: 'POST', body: { action: 'request_closure', reason: closeReason } }); setCloseReason(''); setMessage(t('pro:structure.closure_sent', 'Demande de fermeture envoyée : l’équipe ADA va l’examiner.')); await load(); }
     catch (err) { setProblem(msgOf(err, t('pro:structure.closure_failed', 'La demande n’a pas pu être envoyée.'))); } finally { setBusy(false); }
   };
   const exportData = async () => {
@@ -115,7 +115,7 @@ export default function ProStructure() {
       {state.canPropose ? <Button type="button" variant="outline" onClick={exportData} data-testid="structure-export">{t('pro:structure.exporter_les_donnees_structure', 'Exporter les données de la structure')}</Button> : null}
       {state.canPropose ? (
         <Card data-testid="structure-closure"><CardHeader><CardTitle as="h2" className="text-lg">{t('pro:structure.fermer_espace_structure', 'Fermer l’espace de la structure')}</CardTitle>
-          <CardDescription>{t('pro:structure.deux_personnes_equipe_ada', 'Deux personnes de l’équipe ADA examinent la demande. À l’exécution : les accès aux dossiers sont retirés (les personnes gardent leurs dossiers), les notes internes, les notifications et les comptes des membres sont effacés, les suivis et orientations en cours sont clos et les rendez-vous à venir annulés (les personnes sont prévenues). Exportez d’abord les données de la structure si vous en avez besoin.')}</CardDescription></CardHeader>
+          <CardDescription>{t('pro:structure.deux_personnes_equipe_ada', 'L’équipe ADA examine la demande : en principe deux personnes (l’une propose, l’autre confirme) ; tant qu’ADA n’a qu’un seul administrateur actif, il confirme seul après 24 h de réflexion et une nouvelle lecture. À l’exécution : les accès aux dossiers sont retirés (les personnes gardent leurs dossiers), les notes internes, les notifications et les comptes des membres sont effacés, les suivis et orientations en cours sont clos et les rendez-vous à venir annulés (les personnes sont prévenues). Exportez d’abord les données de la structure si vous en avez besoin.')}</CardDescription></CardHeader>
           <CardContent>
             {state.closure && ['IN_REVIEW', 'BLOCKED', 'EXECUTING'].includes(state.closure.status)
               ? <p data-testid="structure-closure-state">{t('pro:structure.closure_request', 'Demande du {{date}} : {{state}}.', { date: formatDate(state.closure.createdAt, { dateStyle: 'short' }), state: CLOSURE_STATE[state.closure.status] || state.closure.status })}</p>
