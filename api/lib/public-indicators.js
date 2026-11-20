@@ -41,6 +41,14 @@ export const PUBLIC_INDICATORS = Object.freeze([
     isNot: 'Ce n’est pas l’importance des besoins dans un domaine : cela dit seulement combien de fiches le catalogue contient.',
   },
   {
+    id: 'aidesBySourceTheme', label: 'Aides publiées par thème de la source officielle',
+    definition: 'Les aides visibles réparties selon le thème que leur source officielle leur donne (par exemple « Famille - Scolarité » ou « Logement » sur Service-Public), tel qu’il est recopié sur la fiche ; une fiche sans thème est comptée « thème non indiqué ».',
+    source: '"Aide".theme (recopié de la source), aides visibles',
+    refresh: 'Comme les fiches publiées.',
+    notPersonal: 'Classement de fiches publiques, fait par la source officielle elle-même.',
+    isNot: 'Ce n’est pas l’importance des besoins dans un domaine : seulement le nombre de fiches du catalogue, classées comme le fait la source.',
+  },
+  {
     id: 'aidesByScope', label: 'Aides publiées par échelon',
     definition: 'Les aides visibles réparties selon l’échelon qui les porte : nationales, régionales, départementales, communales, ou non précisé.',
     source: '"Aide".territory_scope (NATIONAL, REGIONAL, DEPARTMENTAL, COMMUNAL ; toute autre valeur = non précisé)',

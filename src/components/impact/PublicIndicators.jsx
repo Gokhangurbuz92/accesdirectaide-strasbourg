@@ -32,11 +32,11 @@ function classifiedCount(rows, key, catchAll) {
   return (rows || []).reduce((sum, r) => sum + (r[key] === catchAll ? 0 : Number(r.count) || 0), 0);
 }
 
-/** @param {{ rows: string[][] }} props (label, value) */
+/** @param {{ rows: string[][] }} props (label, value[, lang of the label — a French source term keeps lang="fr"]) */
 function Pairs({ rows }) {
   return (
     <dl className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1">
-      {rows.map(([k, v]) => (<div key={k} className="contents"><dt className="text-slate-700">{k}</dt><dd className="text-end font-semibold tabular-nums text-slate-900">{v}</dd></div>))}
+      {rows.map(([k, v, lang]) => (<div key={k} className="contents"><dt className="text-slate-700" lang={lang || undefined}>{k}</dt><dd className="text-end font-semibold tabular-nums text-slate-900">{v}</dd></div>))}
     </dl>
   );
 }
@@ -128,6 +128,14 @@ export default function PublicIndicators({ load = loadPublicIndicators }) {
                 ? <Pairs rows={data.aidesByDomain.map((d) => [domain[d.domain] || d.domain, n(d.count)])} />
                 : <p data-testid="ind-domains-unclassified" className="text-slate-700">{t('about:indicators.domains.unclassified', 'Pas encore mesurable : les {{n}} aides publiées ne sont pas encore classées par domaine dans le catalogue. Cette répartition sera affichée quand elles le seront.', { n: n(data.catalogue.aides) })}</p>}
             </Card>
+
+            {Array.isArray(data.aidesBySourceTheme) && data.aidesBySourceTheme.length > 0 && (
+              <Card testId="ind-themes" title={t('about:indicators.themes.title', 'Aides publiées par thème de la source officielle')}
+                isNot={t('about:indicators.themes.is_not', 'Ce n’est pas l’importance des besoins dans un domaine : seulement le nombre de fiches du catalogue, classées comme le fait la source.')}>
+                <p className="mb-2 text-slate-700">{t('about:indicators.themes.text', 'Le thème est celui que la source officielle (Service-Public…) donne à la fiche ; il reste en français.')}</p>
+                <Pairs rows={data.aidesBySourceTheme.map((r) => (r.theme === null ? [t('about:indicators.themes.none', 'Thème non indiqué par la source'), n(r.count)] : [r.theme, n(r.count), 'fr']))} />
+              </Card>
+            )}
 
             <Card testId="ind-scopes" title={t('about:indicators.scopes.title', 'Aides publiées par échelon')}
               isNot={t('about:indicators.scopes.is_not', 'Ce n’est pas une couverture du territoire : une aide nationale s’applique partout.')}>

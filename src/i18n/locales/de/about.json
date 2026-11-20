@@ -242,5 +242,9 @@
  "indicators.communes.not_located": "Nicht zugeordnete Orte",
  "indicators.masked": "ausgeblendet",
  "indicators.domains.unclassified": "Noch nicht messbar: Die {{n}} veröffentlichten Leistungen sind im Katalog noch keinem Bereich zugeordnet. Die Aufteilung wird angezeigt, sobald dies geschehen ist.",
- "indicators.scopes.unclassified": "Noch nicht messbar: Bei den {{n}} veröffentlichten Leistungen ist die Ebene (national, regional, departemental, kommunal) im Katalog noch nicht angegeben. Die Aufteilung wird angezeigt, sobald dies geschehen ist."
+ "indicators.scopes.unclassified": "Noch nicht messbar: Bei den {{n}} veröffentlichten Leistungen ist die Ebene (national, regional, departemental, kommunal) im Katalog noch nicht angegeben. Die Aufteilung wird angezeigt, sobald dies geschehen ist.",
+ "indicators.themes.title": "Veröffentlichte Leistungen nach Thema der offiziellen Quelle",
+ "indicators.themes.is_not": "Es ist nicht die Bedeutung des Bedarfs in einem Bereich, sondern nur die Zahl der Seiten im Katalog, so eingeordnet wie von der Quelle.",
+ "indicators.themes.text": "Das Thema ist das, das die offizielle Quelle (Service-Public…) der Seite gibt; es bleibt auf Französisch.",
+ "indicators.themes.none": "Thema von der Quelle nicht angegeben"
 }

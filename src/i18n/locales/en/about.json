@@ -242,5 +242,9 @@
  "indicators.communes.not_located": "Places not located",
  "indicators.masked": "hidden",
  "indicators.domains.unclassified": "Not measurable yet: the {{n}} published benefits are not yet classified by area in the catalogue. This breakdown will be shown once they are.",
- "indicators.scopes.unclassified": "Not measurable yet: the {{n}} published benefits do not yet state their level (national, regional, departmental, municipal) in the catalogue. This breakdown will be shown once they do."
+ "indicators.scopes.unclassified": "Not measurable yet: the {{n}} published benefits do not yet state their level (national, regional, departmental, municipal) in the catalogue. This breakdown will be shown once they do.",
+ "indicators.themes.title": "Published benefits by theme of the official source",
+ "indicators.themes.is_not": "It is not how important the needs are in an area: only the number of pages in the catalogue, classified as the source does.",
+ "indicators.themes.text": "The theme is the one the official source (Service-Public…) gives the page; it stays in French.",
+ "indicators.themes.none": "Theme not given by the source"
 }

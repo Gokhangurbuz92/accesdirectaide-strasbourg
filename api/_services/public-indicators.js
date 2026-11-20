@@ -46,6 +46,14 @@ async function aidesByDomain(db) {
   return AidCategoryCode.enumValues.map((domain) => ({ domain, count: by.get(domain) ?? 0 }));
 }
 
+/** G12: the source's OWN theme (Service-Public « Famille - Scolarité », « Logement »…), as published on the record; no inference. Cells below K_MIN are kept: a
+ * theme is not a person. Themes that are empty on the record are counted as « non indiqué » (theme: null). */
+async function aidesBySourceTheme(db) {
+  const rows = await rowsOf(db, sql`SELECT NULLIF(btrim(theme), '') AS theme, count(*)::int AS n FROM "Aide" WHERE ${visibleSql('aide', STRICT)} GROUP BY 1`);
+  return rows.map((r) => ({ theme: r.theme == null ? null : String(r.theme).slice(0, 120), count: int(r.n) }))
+    .sort((a, b) => (a.theme === null) - (b.theme === null) || b.count - a.count || String(a.theme).localeCompare(String(b.theme), 'fr'));
+}
+
 async function aidesByScope(db) {
   const rows = await rowsOf(db, sql`SELECT upper(btrim(COALESCE(territory_scope, ''))) AS scope, count(*)::int AS n FROM "Aide" WHERE ${visibleSql('aide', STRICT)} GROUP BY 1`);
   const by = Object.fromEntries(SCOPES.map((s) => [s, 0]));
@@ -145,7 +153,7 @@ export function rightsNeeds(root = process.cwd()) {
 
 /** @param {{ db?: any, now?: Date }} [opts] */
 export async function computePublicIndicators({ db = defaultDb, now = new Date() } = {}) {
-  const [cat, domains, scopes, struct, links, tr] = await Promise.all([catalogue(db), aidesByDomain(db), aidesByScope(db), structures(db), linkHealth(db), translations(db)]);
+  const [cat, domains, scopes, struct, links, tr, themes] = await Promise.all([catalogue(db), aidesByDomain(db), aidesByScope(db), structures(db), linkHealth(db), translations(db), aidesBySourceTheme(db)]);
   const share = (n, d) => (d > 0 ? Math.round((1000 * n) / d) / 10 : null);
   return {
     schema: SCHEMA,
@@ -154,6 +162,7 @@ export async function computePublicIndicators({ db = defaultDb, now = new Date()
     catalogue: { aides: cat.kinds.aide.visible, demarches: cat.kinds.demarche.visible, structures: cat.kinds.structure.visible, dispositifs: cat.kinds.dispositif.visible,
       guides: cat.guides, actualites: cat.actualites },
     aidesByDomain: domains,
+    aidesBySourceTheme: themes,
     aidesByScope: scopes,
     structuresByCommune: struct.byCommune,
     freshness: Object.fromEntries(Object.entries(cat.kinds).map(([k, v]) => [k, { ...v, currentShare: share(v.current, v.visible) }])),
