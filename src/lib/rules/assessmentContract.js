@@ -221,7 +221,7 @@ function readingItem(code, label, whoToAsk, facts, reading, local) {
   // G14: an owner-approved rule (OWNER_VALIDATED) is « relue par l'équipe ADA », never « par un expert »
   if (all) parts.push(`D’après vos réponses, les conditions de la règle relue par ${reading.validation === 'OWNER' ? 'l’équipe ADA' : 'un expert'} sont remplies.`);
   if (reading.notMet.length) parts.push(`D’après vos réponses, une condition de la règle relue ne semble pas remplie : ${reading.notMet.join(' ; ')}. Ce n’est pas un refus.`);
-  if (reading.unknown.length) parts.push(`Vos réponses ne permettent pas de vérifier : ${reading.unknown.join(' ; ')}.`);
+  if (reading.unknown.length) parts.push(`Vos réponses ne permettent pas de vérifier : ${reading.unknown.join(' ; ')}. À vérifier auprès de l'organisme compétent.`);   // G14 owner decision 22/11
   const falc = all ? 'Vos réponses correspondent à la règle.' : reading.notMet.length ? 'Une condition ne semble pas remplie. Ce n’est pas un refus.' : 'Certaines conditions sont à vérifier.';
   return item(code, label, state, {
     whoToAsk, basisFacts: facts,

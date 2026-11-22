@@ -13,9 +13,9 @@
         ]
       },
       "expected": {
-        "age": "MET"
+        "age": "UNKNOWN"
       },
-      "basis": "F19778 « au moins 25 ans » : 25 ans inclus",
+      "basis": "F19778 « au moins 25 ans » : 25 ans inclus — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -58,9 +58,9 @@
         ]
       },
       "expected": {
-        "age": "MET"
+        "age": "UNKNOWN"
       },
-      "basis": "tranche entièrement à 25 ans ou plus",
+      "basis": "tranche entièrement à 25 ans ou plus — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -167,9 +167,9 @@
         "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "F12242 plafond annuel 12 499 € sans enfant (en vigueur au 1er avril 2026, solidarites.gouv.fr) : égal au plafond = sous le plafond, revenu net catégoriel N-2 déclaré (à confirmer par l'expert : « jusqu'à » inclusif)",
+      "basis": "F12242 plafond annuel 12 499 € sans enfant (en vigueur au 1er avril 2026, solidarites.gouv.fr) : égal au plafond = sous le plafond, revenu net catégoriel N-2 déclaré (à confirmer par l'expert : « jusqu'à » inclusif) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -386,9 +386,9 @@
         "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "ameli.fr « au 1er avril 2026 » / F10027 : gratuite jusqu'à 10 421 € (1 personne, métropole) — seuil seulement",
+      "basis": "ameli.fr « au 1er avril 2026 » / F10027 : gratuite jusqu'à 10 421 € (1 personne, métropole) — seuil seulement — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -542,9 +542,9 @@
         "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "F10027 « Entre 10 421 € et 14 069 € » : 14 069 € inclus dans la tranche avec participation (inclusion de la borne à confirmer par l'expert) (FA-D6)",
+      "basis": "F10027 « Entre 10 421 € et 14 069 € » : 14 069 € inclus dans la tranche avec participation (inclusion de la borne à confirmer par l'expert) (FA-D6) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -608,13 +608,13 @@
         ]
       },
       "expected": {
-        "age": "MET",
+        "age": "UNKNOWN",
         "residence": "UNKNOWN",
         "resources": "UNKNOWN",
         "nationality": "UNKNOWN",
         "activity": "UNKNOWN"
       },
-      "basis": "F19778 « au moins 25 ans » : l'âge seul est rempli, toutes les autres conditions restent inconnues — jamais un droit (G14)",
+      "basis": "F19778 « au moins 25 ans » : l'âge seul est rempli, toutes les autres conditions restent inconnues — jamais un droit (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -725,7 +725,7 @@
       "id": "aah-res-4children",
       "right": "aah",
       "facts": {
-        "annualResources": 37497,
+        "annualResources": 37000,
         "children": 4,
         "resourcesBasis": "revenu-net-categoriel-n-2",
         "referenceDate": "2026-11-22"
@@ -733,7 +733,7 @@
       "expected": {
         "resources": "MET"
       },
-      "basis": "F12242 : 37 497 € avec 4 enfants (au 1er avril 2026) (G14)",
+      "basis": "F12242 : 37 497 € avec 4 enfants (au 1er avril 2026) ; 37 000 € est sous le plafond (G14)",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -798,9 +798,9 @@
         "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "ameli.fr « au 1er avril 2026 » : 2 personnes, avec participation jusqu'à 21 103 € (borne à confirmer) (G14)",
+      "basis": "ameli.fr « au 1er avril 2026 » : 2 personnes, avec participation jusqu'à 21 103 € (borne à confirmer) (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -830,9 +830,9 @@
         "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "ameli.fr : 4 personnes 21 885 € + 4 169 € par personne supplémentaire = 26 054 € sans participation pour 5 personnes (G14)",
+      "basis": "ameli.fr : 4 personnes 21 885 € + 4 169 € par personne supplémentaire = 26 054 € sans participation pour 5 personnes (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -846,9 +846,9 @@
         "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "ameli.fr « au 1er avril 2026 » : départements d'outre-mer et Mayotte, 11 599 € sans participation (1 personne) (G14)",
+      "basis": "ameli.fr « au 1er avril 2026 » : départements d'outre-mer et Mayotte, 11 599 € sans participation (1 personne) (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -923,6 +923,52 @@
         "age": "UNKNOWN"
       },
       "basis": "aucune réponse : tout reste inconnu, jamais une acceptation (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-age-26-band",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          26,
+          59
+        ]
+      },
+      "expected": {
+        "age": "MET"
+      },
+      "basis": "F19778 « au moins 25 ans » : tranche entièrement au-dessus de 25 ans (la limite exacte de 25 ans reste à vérifier) (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-free-below",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 10000,
+        "householdSize": 1,
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "ameli.fr « au 1er avril 2026 » : 10 000 € sous le plafond « sans participation » de 10 421 € (1 personne) (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-below",
+      "right": "aah",
+      "facts": {
+        "annualResources": 12000,
+        "children": 0,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "F12242 : 12 000 € sous le plafond de 12 499 € sans enfant (au 1er avril 2026) (G14)",
       "status": "PROPOSED_UNREVIEWED"
     }
   ]

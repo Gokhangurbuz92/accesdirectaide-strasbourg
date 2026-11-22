@@ -105,6 +105,10 @@ function ItemCard({ it, link }) {
             {it.state === 'MISSING_INFORMATION' && missing.length > 0 && (
                 <p className="mt-2 text-sm text-slate-800">{t('diagnostic:item.to_specify', 'À préciser : {{facts}}.', { facts: missing.map(missingFactLabel).join(', ') })}</p>
             )}
+            {/* G14 owner decision (22/11/2026): a reviewed rule that cannot settle a condition says so in the interface language */}
+            {it.state === 'CHECK_REQUIRED' && /** @type {any} */ (it.provenance)?.uncertainty === 'ORIENTATION_REGLE_RELUE' && (
+                <p className="mt-2 text-sm font-medium text-slate-900" data-testid={`verify-with-body-${it.code}`}>{t('diagnostic:item.verify_with_body', "À vérifier auprès de l'organisme compétent.")}</p>
+            )}
             {it.whoToAsk && <p className="mt-2 text-sm font-medium text-slate-900">{t('diagnostic:item.who_to_ask', 'À demander à :')} <span {...FR}>{it.whoToAsk}</span>.</p>}
             <details className="mt-3 text-sm text-slate-800">
                 <summary className="min-h-11 cursor-pointer py-2 font-semibold text-indigo-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">

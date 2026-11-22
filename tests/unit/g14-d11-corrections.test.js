@@ -170,13 +170,17 @@ describe('G14 — corrected readings (sources re-read on 22/11/2026)', () => {
       expect(age.result, String(a)).toBe('UNKNOWN');
       expect(age.note).toMatch(/L262-4 1°/); expect(age.note).toMatch(/L262-7-1/);
     }
-    expect(res('rsa', { ageRange: [25, 25] }).age.result).toBe('MET');
+    expect(res('rsa', { ageRange: [25, 25] }).age).toMatchObject({ result: 'UNKNOWN', note: expect.stringMatching(/À vérifier auprès de l'organisme compétent/) });   // owner decision 22/11
+    expect(res('rsa', { ageRange: [26, 26] }).age.result).toBe('MET');
     expect(reg.rights.find((r) => r.id === 'rsa').ambiguities.join(' ')).toMatch(/dix-huit ans au moins et vingt-cinq ans au plus/);
   });
 
   it('AAH ceilings (F12242, 1 April 2026): 0–4 children incl. 24 998 € for two; above = UNKNOWN (conjugalisation), wrong basis or date = UNKNOWN', () => {
     const aah = (n, children, extra = {}) => res('aah', { annualResources: n, children, resourcesBasis: 'revenu-net-categoriel-n-2', referenceDate: '2026-11-22', ...extra }).resources;
-    expect([aah(12499, 0), aah(24998, 2), aah(24999, 2), aah(37497, 4), aah(1000, 5)].map((x) => x.result)).toEqual(['MET', 'MET', 'UNKNOWN', 'MET', 'UNKNOWN']);
+    // owner decision 22/11 (option prudente): exactly at the ceiling = UNKNOWN « À vérifier auprès de l'organisme compétent »
+    expect([aah(12499, 0), aah(12498, 0), aah(24998, 2), aah(24997, 2), aah(24999, 2), aah(37497, 4), aah(37000, 4), aah(1000, 5)].map((x) => x.result))
+      .toEqual(['UNKNOWN', 'MET', 'UNKNOWN', 'MET', 'UNKNOWN', 'UNKNOWN', 'MET', 'UNKNOWN']);
+    expect(aah(24998, 2).note).toMatch(/À vérifier auprès de l'organisme compétent/);
     expect(aah(24999, 2).note).toMatch(/conjugalis/);
     expect(aah(1000, 0, { resourcesBasis: 'salaire brut' }).result).toBe('UNKNOWN');
     expect(aah(1000, 0, { referenceDate: '2026-03-31' }).result).toBe('UNKNOWN');
@@ -187,10 +191,13 @@ describe('G14 — corrected readings (sources re-read on 22/11/2026)', () => {
 
   it('C2S ceilings by household (ameli.fr « au 1er avril 2026 »): free vs participation is said in the note; extra persons added; overseas table; RSA automatic stays UNKNOWN', () => {
     const c2s = (n, hh, area = 'metropole') => res('c2s', { annualResources: n, householdSize: hh, area, resourcesBasis: 'ressources-foyer-12-mois-c2s', referenceDate: '2026-11-22' }).resources;
-    expect(c2s(15632, 2).note).toMatch(/sans participation/); expect(c2s(15633, 2).note).toMatch(/avec participation/);
-    expect([c2s(29544, 4).result, c2s(29545, 4).result, c2s(26054, 5).result, c2s(35172, 5).result, c2s(35173, 5).result]).toEqual(['MET', 'NOT_MET', 'MET', 'MET', 'NOT_MET']);
+    expect(c2s(15631, 2).note).toMatch(/sans participation/); expect(c2s(15633, 2).note).toMatch(/avec participation/);
+    // owner decision 22/11 (option prudente): a value exactly on a band limit is UNKNOWN
+    expect([c2s(15632, 2), c2s(29544, 4), c2s(26054, 5), c2s(35172, 5), c2s(11599, 1, 'outre-mer')].map((x) => x.result)).toEqual(['UNKNOWN', 'UNKNOWN', 'UNKNOWN', 'UNKNOWN', 'UNKNOWN']);
+    expect(c2s(15632, 2).note).toMatch(/À vérifier auprès de l'organisme compétent/);
+    expect([c2s(29543, 4).result, c2s(29545, 4).result, c2s(26053, 5).result, c2s(35171, 5).result, c2s(35173, 5).result]).toEqual(['MET', 'NOT_MET', 'MET', 'MET', 'NOT_MET']);
     expect(c2s(26055, 5).note).toMatch(/avec participation/);
-    expect([c2s(11599, 1, 'outre-mer').result, c2s(15660, 1, 'outre-mer').result]).toEqual(['MET', 'NOT_MET']);
+    expect([c2s(11598, 1, 'outre-mer').result, c2s(15660, 1, 'outre-mer').result]).toEqual(['MET', 'NOT_MET']);
     expect(c2s(9000, 0).result).toBe('UNKNOWN');
     expect(res('c2s', { annualResources: 0 }).automatic.result).toBe('UNKNOWN');
     expect(reg.rights.find((r) => r.id === 'c2s').conditions.find((c) => c.fact === 'resources').text).toMatch(/Alsace-Moselle : les 12 mois précédant la demande/);
@@ -246,6 +253,30 @@ describe('G14 — the hidden-instruction item is a source-ingestion control, not
   });
 });
 
+describe('G14 — owner decision of 22/11/2026 (option A, prudente, for the 9 questions)', () => {
+  it('is recorded in the register, and every open limit reads UNKNOWN with « À vérifier auprès de l\'organisme compétent »', () => {
+    expect(reg.ownerDecision).toMatchObject({ date: '2026-11-22', choice: expect.stringMatching(/option A/) });
+    expect(reg.ownerDecision.decisions).toHaveLength(9);
+    const V = /À vérifier auprès de l'organisme compétent/;
+    expect(res('rsa', { ageRange: [17, 17] }).age).toMatchObject({ result: 'UNKNOWN', note: expect.stringMatching(V) });            // Q1
+    expect(res('rsa', { ageRange: [25, 25] }).age).toMatchObject({ result: 'UNKNOWN', note: expect.stringMatching(V) });            // Q2
+    expect(res('apl', { housing: { status: 'subtenant' } })['housing.status']).toMatchObject({ result: 'UNKNOWN', note: expect.stringMatching(V) });   // Q3
+    for (const f of ['employment_loss', 'affiliation', 'registration', 'residence']) expect(res('are', { ageRange: [40, 40] })[f].result).toBe('UNKNOWN');   // Q6
+    expect(res('prime-activite', { ageRange: [20, 20] }).activity.result).toBe('UNKNOWN');                                            // Q7
+    expect(res('faj-strasbourg', { ageRange: [25, 25] }).age).toMatchObject({ result: 'UNKNOWN', note: expect.stringMatching(V) });  // Q8
+    expect(reg.rights.find((r) => r.id === 'faj-strasbourg').conditions.find((c) => c.fact === 'nature').text).toMatch(/à vérifier auprès de la Mission locale/);
+    expect(reg.rights.filter((r) => ['EXPERT_VALIDATED'].includes(r.status))).toEqual([]);
+  });
+  it('a reviewed rule that cannot settle a condition says « À vérifier auprès de l\'organisme compétent » in the explanation', () => {
+    const owned = applyForm(reg, evaluateForm(reg, proposed, acceptAll('rsa', { ...HUMAN, validation_kind: 'owner' })));
+    const answers = { birthDate: '2001-11-22', householdSize: 1, income: { salary: 900 }, housing: { status: 'tenant', rent: 517 }, territory: '67000' };
+    const item = buildAssessment({ answers, ruleReadings: validatedReadings(owned, answers, '2026-11-22') }).items.find((i) => i.code === 'rsa');
+    expect(item.state).toBe(STATES.CHECK_REQUIRED);
+    expect(item.explanation).toMatch(/À vérifier auprès de l'organisme compétent/);
+    expect(JSON.stringify(item)).not.toMatch(/éligible|vous avez droit|inéligible/i);
+  });
+});
+
 describe('G14 — public information (class A)', () => {
   it('complementary official pages are listed after the main ones, never as the basis of a result', () => {
     expect(officialInfoFor('rsa').pages.map((p) => p.url).at(-1)).toBe('https://www.service-public.gouv.fr/particuliers/vosdroits/F15553');
@@ -256,7 +287,7 @@ describe('G14 — public information (class A)', () => {
   it('the new interface key is appended at the end of the five translation files', () => {
     for (const lang of ['en', 'de', 'tr', 'ar', 'uk']) {
       const keys = Object.keys(JSON.parse(fs.readFileSync(`src/i18n/locales/${lang}/diagnostic.json`, 'utf8')));
-      expect(keys.slice(-2), lang).toEqual(['official.amounts_note', 'official.owner_reviewed']);
+      expect(keys.slice(-3), lang).toEqual(['official.amounts_note', 'official.owner_reviewed', 'item.verify_with_body']);
     }
   });
 });

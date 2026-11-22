@@ -21,6 +21,8 @@ import { buildAssessment } from '../../api/lib/assessmentContract.js';
 import { UNSUPPORTED_RIGHTS } from '../../api/lib/diagnosticAssessment.js';
 import { officialInfoFor } from '../../src/lib/rightsInfoSources.js';
 import AssessmentView from '../../src/components/diagnostic/AssessmentView.jsx';
+import { applyForm, evaluateForm, parseCsv, renderForm } from '../../scripts/d11-review.mjs';
+import { validatedReadings } from '../../api/lib/validatedRules.js';
 
 const reg = JSON.parse(fs.readFileSync('data/rules/rights-rules.v1.json', 'utf8'));
 const proposed = JSON.parse(fs.readFileSync('data/rules/reference-cases.proposed.v1.json', 'utf8'));
@@ -28,7 +30,7 @@ afterEach(cleanup);
 
 describe('PKG-6 / D11 draft reading of the register', () => {
   it('every proposed reference case (PROPOSED_UNREVIEWED, cited basis) agrees with the draft reading — consistency only', () => {
-    expect(proposed.cases.length).toBe(61);   // FA-D6 (18/11/2026): +9 proposed cases (boundaries, residence); G14 (22/11/2026): +22 edge and negative cases
+    expect(proposed.cases.length).toBe(64);   // FA-D6 (18/11/2026): +9 proposed cases (boundaries, residence); G14 (22/11/2026): +25 edge and negative cases
     for (const c of proposed.cases) {
       expect(c.status, c.id).toBe('PROPOSED_UNREVIEWED');
       expect(c.basis.length, c.id).toBeGreaterThan(10);
@@ -53,7 +55,7 @@ describe('PKG-6 / D11 draft reading of the register', () => {
     const at = (right, band) => readConditions(reg, right, { ageRange: ageRangeOfBand(band) }).conditions.find((c) => c.fact === 'age').result;
     expect(at('apa', '60-et-plus')).toBe('MET'); expect(at('apa', '25-59')).toBe('NOT_MET');
     expect(at('aah', '18-24')).toBe('UNKNOWN'); expect(at('faj-strasbourg', '25-59')).toBe('UNKNOWN'); expect(at('faj-strasbourg', '18-24')).toBe('MET');
-    expect(at('prime-activite', 'moins-de-18')).toBe('NOT_MET'); expect(at('rsa', '25-59')).toBe('MET');
+    expect(at('prime-activite', 'moins-de-18')).toBe('NOT_MET'); expect(at('rsa', '25-59')).toBe('UNKNOWN');   // G14 owner decision 22/11: the band contains exactly 25 (limit left open by the sources)
     expect(ageRangeOfBand('x')).toBeNull();
   });
 
@@ -85,6 +87,17 @@ describe('PKG-6 / D11 → D20: official pages in « Pourquoi ce résultat ? »',
       for (const p of i.pages) expect(p.url).toMatch(/^https:\/\/(www\.)?(service-public\.gouv\.fr|strasbourg\.eu|unedic\.org|ameli\.fr)\//);   // G14: + Unédic, ameli.fr
     }
     expect(officialInfoFor('impayes-loyer')).toBeNull();
+  });
+
+  it('G14 owner decision 22/11: an item read from an owner-approved rule shows « À vérifier auprès de l\'organisme compétent » and never says « expert »', () => {
+    const rows = parseCsv(renderForm(reg, proposed)).map((r) => (r.right !== 'rsa' ? r : { ...r, reviewer_name: 'Personne fictive (test)', reviewer_role: 'responsable fictif',
+      review_date: '2026-11-22', validation_kind: 'owner', decision: r.item_type === 'ambiguity' ? 'DECIDED' : 'ACCEPT', correction_or_decision: r.item_type === 'ambiguity' ? 'option prudente (test)' : '' }));
+    const owned = applyForm(reg, evaluateForm(reg, proposed, rows));
+    const answers = { birthDate: '1990-01-01', householdSize: 1, income: { salary: 800 }, housing: { status: 'tenant', rent: 400 }, territory: '67000' };
+    const assessment = buildAssessment({ answers, ruleReadings: validatedReadings(owned, answers, '2026-11-22') });
+    render(createElement(MemoryRouter, null, createElement(AssessmentView, { results: { assessment } })));
+    expect(screen.getByTestId('verify-with-body-rsa')).toHaveTextContent("À vérifier auprès de l'organisme compétent.");
+    expect(screen.queryByTestId('verify-with-body-apl')).toBeNull();   // only items read from a reviewed rule
   });
 
   it('each item shows the pages (new tab, noopener), who decides, and that the result is not computed from them; axe clean', async () => {

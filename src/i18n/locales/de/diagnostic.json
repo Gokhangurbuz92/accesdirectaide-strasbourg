@@ -271,5 +271,6 @@
   "wizard.local.result_note": "Dieses Ergebnis wurde in Ihrem Browser erstellt. Nichts wurde gesendet oder gespeichert. Kein Hinweis wurde von einer Fachperson bestätigt: Die Stelle, die den Antrag erhält, entscheidet.",
   "wizard.local.profile_intro": "Diese Angaben bleiben in Ihrem Browser: Sie werden weder gesendet noch gespeichert (« {{erase}} » löscht sie).",
   "official.amounts_note": "Beträge und Obergrenzen: Maßgeblich sind nur die Angaben der offiziellen Seite, zu dem dort genannten Datum. ADA verwendet sie nicht für das obige Ergebnis.",
-  "official.owner_reviewed": "Regel vom ADA-Team anhand dieser offiziellen Seiten geprüft (nicht von einer unabhängigen Fachperson). Die zuständige Stelle entscheidet."
+  "official.owner_reviewed": "Regel vom ADA-Team anhand dieser offiziellen Seiten geprüft (nicht von einer unabhängigen Fachperson). Die zuständige Stelle entscheidet.",
+  "item.verify_with_body": "Bei der zuständigen Stelle zu prüfen."
 }

@@ -48,7 +48,9 @@
             "kind": "ageAtLeast",
             "min": 25,
             "below": "UNKNOWN",
-            "note": "moins de 25 ans : non tranchable par l'âge seul — voie générale si la personne assume la charge d'un enfant né ou à naître (CASF L262-4 1°), ou RSA jeune actif de 18 à 25 ans avec condition d'activité (CASF L262-7-1)"
+            "note": "moins de 25 ans : non tranchable par l'âge seul — voie générale si la personne assume la charge d'un enfant né ou à naître (CASF L262-4 1°), ou RSA jeune actif de 18 à 25 ans avec condition d'activité (CASF L262-7-1) — À vérifier auprès de l'organisme compétent",
+            "atBoundary": "UNKNOWN",
+            "boundaryNote": "âge de 25 ans exactement (F19778 « au moins 25 ans », CASF L262-4 1° « plus de vingt-cinq ans »)"
           }
         },
         {
@@ -413,7 +415,7 @@
               "tenant_hlm"
             ],
             "otherwise": "UNKNOWN",
-            "note": "propriétaire, hébergé ou sans domicile : cas non couverts par cette condition (à vérifier)",
+            "note": "propriétaire, hébergé, sans domicile ou sous-locataire : cas non couverts par cette lecture — À vérifier auprès de l'organisme compétent",
             "metNote": "statut d'occupation seulement : le conventionnement du logement et les autres conditions restent à vérifier"
           }
         },
@@ -581,7 +583,8 @@
               "effectiveDateQuote": "Au 1er avril 2026, les prestations sociales suivantes seront ainsi revalorisées à hauteur de 0,8 %",
               "rule": "CSS D821-2 (LEGIARTI000047543983, en vigueur depuis le 01/10/2023)",
               "readAt": "2026-11-22"
-            }
+            },
+            "atBoundary": "UNKNOWN"
           }
         }
       ],
@@ -1054,7 +1057,8 @@
               "quote": "au 1er avril 2026",
               "confirmedBy": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10027 (vérifiée le 01/07/2026)",
               "readAt": "2026-11-22"
-            }
+            },
+            "atBoundary": "UNKNOWN"
           }
         },
         {
@@ -1164,7 +1168,7 @@
             "min": 16,
             "max": 25,
             "atMax": "UNKNOWN",
-            "note": "« 16 à 25 ans » : l'inclusion des 25 ans n'est pas précisée sur la page",
+            "note": "« 16 à 25 ans » : l'inclusion des 25 ans n'est pas précisée sur la page — À vérifier auprès de l'organisme compétent (Mission locale)",
             "metNote": "tranche d'âge annoncée par la page (« 16 à 25 ans ») : le règlement du FAJ'EMS n'a pas été lu"
           }
         },
@@ -1180,7 +1184,7 @@
         },
         {
           "fact": "nature",
-          "text": "aide ponctuelle, complémentaire des autres dispositifs ; ne constitue pas un revenu (information, pas une condition lue par ADA)",
+          "text": "aide ponctuelle, complémentaire des autres dispositifs ; ne constitue pas un revenu (information, pas une condition lue par ADA) ; ressources et résidence : à vérifier auprès de la Mission locale",
           "source": "strasbourg.eu"
         }
       ],
@@ -1257,5 +1261,22 @@
   "draftCheckStatement": "draftCheck = a machine-readable reading of the cited condition, written by ADA engineering (not by an expert). It is executed ONLY by api/lib/rulesDraft.js for the expert review pack and its tests; no user-facing assessment uses it while the right is not EXPERT_VALIDATED. A condition without draftCheck cannot be read from the answers ADA collects and always stays UNKNOWN. G14: amount-bearing checks carry effectiveFrom / staleAfter (source-dated window) and requiresBasis (the resources basis the source names); outside them the reading is UNKNOWN.",
   "datedPartsStatement": "FA-D6 (18/11/2026): conditions[].datedParts = a part of a condition that applies only from a date the fiche states (« Depuis le… », « À compter du… »), with the exact sentence; conflicts[] = official texts that disagree on a condition (each sentence quoted), for the ages they concern. Both are read by the rights graph (api/lib/rightsGraph.js) and re-checked against the DILA archive by scripts/rights-graph-sources.mjs; neither is read by rulesDraft.js nor by any user-facing answer.",
   "aiReviewStatement": "G14 (22/11/2026): docs/rules and the conditions above were corrected from an AI-assisted documentary review (CONTROL/master/d11_ai_review, AI_ONLY_UNVERIFIED_BY_HUMAN) ONLY where ADA engineering re-read the official source the same day (sourceRecheck). That review is an engineering input: it never fills the D11 form and never validates a right (scripts/d11-review.mjs and api/lib/validatedRules.js refuse a non-human reviewer).",
-  "statusStatement": "G14 (22/11/2026): OWNER_VALIDATED = relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant (ownerReview). Set only by scripts/d11-review.mjs from a form with validation_kind=owner and a named human reviewer; never EXPERT_VALIDATED. Public wording: « règle relue par l'équipe ADA ; l'organisme décide »."
+  "statusStatement": "G14 (22/11/2026): OWNER_VALIDATED = relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant (ownerReview). Set only by scripts/d11-review.mjs from a form with validation_kind=owner and a named human reviewer; never EXPERT_VALIDATED. Public wording: « règle relue par l'équipe ADA ; l'organisme décide ».",
+  "ownerDecision": {
+    "date": "2026-11-22",
+    "by": "propriétaire / responsable du traitement (décision transmise par l'orchestrateur, citée en turc)",
+    "choice": "option A (prudente) pour les 9 questions de D11_HUMAN_REVIEW_MINIMAL_PACKAGE_FR.md",
+    "rule": "sources contradictoires ou conditions juridiques non établies : « À vérifier auprès de l'organisme compétent » ; jamais une décision d'éligibilité ou d'inéligibilité ; aucune règle marquée EXPERT_VALIDATED",
+    "decisions": [
+      "1 RSA jeune actif : hors 18-25 ans et 16-17 ans → UNKNOWN (pas de lecture de la condition d'activité)",
+      "2 RSA droit commun, 25 ans exactement → UNKNOWN (atBoundary)",
+      "3 APL sous-location → toujours UNKNOWN",
+      "4 AAH ressources égales au plafond → UNKNOWN ; plafonds datés affichés comme information",
+      "5 C2S ressources égales à une limite de tranche → UNKNOWN ; Alsace-Moselle : note d'information seulement",
+      "6 ARE : aucune lecture ; F38881 et Unédic affichés ; France Travail décide",
+      "7 prime d'activité étudiants / apprentis : seuil en information seulement, jamais lu",
+      "8 FAJ : 25 ans exactement → UNKNOWN ; ressources et résidence à vérifier auprès de la Mission locale",
+      "9 les 9 fiches associations (droit local) restent non publiées"
+    ]
+  }
 }

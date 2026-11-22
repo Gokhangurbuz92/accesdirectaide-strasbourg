@@ -89,3 +89,24 @@ dans chaque résultat.
 - Texte public : « règle relue par l'équipe ADA … ; l'organisme décide » — jamais « validé par un expert », jamais « vous avez droit ».
 - Un formulaire prérempli avec les décisions appliquées le 22/11/2026, identité vide, est fourni hors dépôt
   (`CONTROL/master/d11_ai_review/D11_FORMULAIRE_PROPRIETAIRE_PREREMPLI.csv`).
+
+## 8. Décision du propriétaire du 22/11/2026 — option prudente (A) pour les neuf questions
+
+Règle générale : quand les sources se contredisent ou qu'une condition juridique ne peut pas être établie, le site affiche « À vérifier auprès de
+l'organisme compétent » ; les informations vérifiées sont présentées avec leur source ; une information incertaine ne devient jamais une décision
+d'éligibilité ou d'inéligibilité ; aucune règle n'est marquée `EXPERT_VALIDATED`.
+
+| # | Question | Traitement |
+|---|---|---|
+| 1 | RSA jeune actif (18–25 / 16–25 / 16–24) | condition jamais lue ; moins de 25 ans, dont 16–17 ans : « inconnu » |
+| 2 | RSA, 25 ans exactement | « inconnu » (`atBoundary`) ; 26 ans et plus : âge rempli |
+| 3 | APL, sous-location | toujours « inconnu » |
+| 4 | AAH, ressources égales au plafond | « inconnu » ; plafonds datés du 1er avril 2026 affichés comme information |
+| 5 | C2S, ressources égales à une limite de tranche | « inconnu » ; Alsace-Moselle : note d'information seulement |
+| 6 | ARE, primo-entrants | aucune lecture ; F38881 et Unédic affichés ; France Travail décide |
+| 7 | Prime d'activité, étudiants / apprentis | seuil en information seulement, jamais évalué |
+| 8 | FAJ'EMS | 25 ans exactement : « inconnu » ; ressources et résidence à vérifier auprès de la Mission locale |
+| 9 | Neuf fiches associations (droit local) | restent non publiées |
+
+Inscrit dans le registre (`ownerDecision`). Le formulaire du propriétaire (`D11_FORMULAIRE_PROPRIETAIRE_PREREMPLI.csv`, hors dépôt) porte ces décisions,
+`validation_kind=owner` et une identité vide : la signature et l'import (`apply --write`) restent un acte du propriétaire.

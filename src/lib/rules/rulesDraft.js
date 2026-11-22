@@ -13,7 +13,11 @@
  *   - requiresBasis: a resources check compares only a figure declared on the basis the source names (e.g. the AAH « revenu net catégoriel » N-2); any other
  *     figure (or none declared) is UNKNOWN, never MET nor NOT_MET;
  *   - metNote: a MET may carry a caveat (FAJ: « tranche d'âge annoncée par la page »), so a partial MET is never read as more than it is.
+ * G14 owner decision (22/11/2026, « option prudente »): a value exactly ON a limit the sources leave open (atBoundary: 'UNKNOWN') is UNKNOWN with the wording
+ *   « À vérifier auprès de l'organisme compétent » — RSA at exactly 25, AAH resources equal to the ceiling, C2S resources equal to a band limit.
  */
+export const VERIFY_WITH_BODY = "À vérifier auprès de l'organisme compétent";
+const boundary = (what) => `${what} : ${VERIFY_WITH_BODY}`;
 import { territoryStatus } from './territoryScopes.js';
 
 export const RESULTS = Object.freeze({ MET: 'MET', NOT_MET: 'NOT_MET', UNKNOWN: 'UNKNOWN' });
@@ -46,6 +50,7 @@ function check(c, facts) {
   if (k === 'ageAtLeast') {
     if (!age) return r('UNKNOWN', 'âge non renseigné');
     const [lo, hi] = age;
+    if (c.atBoundary === 'UNKNOWN' && lo <= c.min && hi >= c.min) return r('UNKNOWN', boundary(c.boundaryNote || `âge de ${c.min} ans exactement`));
     if (lo >= c.min) return met();
     if (hi < (c.softMin ?? c.min)) return r(c.below, c.below === 'UNKNOWN' ? c.note || null : null);
     return r('UNKNOWN', c.note || 'la tranche d\'âge déclarée chevauche le seuil');   // the declared range straddles the threshold, or lies in the soft zone
@@ -85,6 +90,7 @@ function check(c, facts) {
       }
     } else if (facts.householdSize === c.householdSize && (facts.area || 'metropole') === c.area) bands = c.bands;
     if (!bands) return r('UNKNOWN', c.note);
+    if (c.atBoundary === 'UNKNOWN' && bands.some((b) => facts.annualResources === b.max)) return r('UNKNOWN', boundary('ressources exactement égales à une limite du barème'));
     const band = bands.find((b) => facts.annualResources <= b.max);
     return band ? r(band.result, band.note) : r(c.above, c.aboveNote || null);
   }
@@ -94,6 +100,7 @@ function check(c, facts) {
     const basis = basisMismatch(c, facts); if (basis) return r('UNKNOWN', basis);
     const ceiling = c.byChildren[String(facts.children ?? 0)];
     if (ceiling === undefined) return r('UNKNOWN', c.note);
+    if (c.atBoundary === 'UNKNOWN' && facts.annualResources === ceiling) return r('UNKNOWN', boundary('ressources exactement égales au plafond'));
     return facts.annualResources <= ceiling ? met() : r(c.above, c.aboveNote || null);
   }
   return r('UNKNOWN', 'condition non lisible automatiquement');
