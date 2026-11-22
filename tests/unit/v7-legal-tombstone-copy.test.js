@@ -25,7 +25,7 @@ const COPY = { TOMBSTONE_COPY_S3_ENDPOINT: 'https://abc123.eu.r2.cloudflarestora
 describe('legal drafts v7-2026-11-18 — v6 + one sentence', () => {
   it('two approvable versions; v7 is the newest draft, still pending approval', () => {
     // G4 (19/11/2026): v8 follows, for the two professional documents only (g4-pro-terms-v8.test.js); v7 stays the citizen / notice version
-    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19']);   // G8: v9 = the privacy notice only
+    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v9-2026-11-22']);   // G8: v9 = the privacy notice only; G14: v9-2026-11-22 = the professional terms only
     expect(LEGAL_DRAFTS_VERSION).toBe('v7-2026-11-18');
     for (const d of [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7]) { expect(d.version).toBe(LEGAL_DRAFTS_V7); expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); }
     for (const d of [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6]) expect(d.version).toBe(LEGAL_DRAFTS_V6);

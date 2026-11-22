@@ -12,7 +12,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { checkLegalPublisher, findAddressPatterns, readLegalDefaults } from '../../scripts/check-legal-publisher.mjs';
 import { resolvePublisherConfig, HOST, A_I_APPROVAL_TOKEN } from '../../src/config/legal-publisher.js';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftTextKeys, draftVisibility } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftTextKeys, draftVisibility } from '../../src/config/legal-drafts.js';
 import { ENTITLEMENT_CLAIMS } from '../../scripts/i18n-check.mjs';
 
 const FAKE_ADDRESS = "1 rue de l'Exemple 00000 Testville";
@@ -119,7 +119,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) {
       // G4 (19/11/2026): v8 covers the two professional documents and the notice; G8 (19/11/2026): v9 covers the notice only; the others keep the shared version
       expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
-      expect(d.version).toBe(LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
+      expect(d.version).toBe(LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9_PRO : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
     }
   });
   it('visibility: hidden in Production unless approved; preview only outside Production; an approval names id@version or the version', () => {

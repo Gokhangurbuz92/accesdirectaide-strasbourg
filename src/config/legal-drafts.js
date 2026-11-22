@@ -597,18 +597,81 @@ const toV9 = (d) => {
 /** @type {DraftDocument[]} the privacy notice only */
 export const LEGAL_DRAFT_DOCUMENTS_V9 = LEGAL_DRAFT_DOCUMENTS_V8.filter((d) => LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id)).map(toV9);
 
+/*
+ * cgu-professionnel v9-2026-11-22 — G14 (22/11/2026; owner approved notice-confidentialite v9-2026-11-19 on 22/11/2026 with « pro kabul kanıtı 12 ay » and
+ * « devre dışı pro hesapları 12 ay sonra elle silinecek », and asked for this draft; owner sheet CONTROL/master/G14_CGU_PRO_V9_ONAY_TR.md, master
+ * CONTROL/r45/R45_CGU_PROFESSIONNEL_FR_v9-2026-11-22.md). v9-2026-11-22 exists for the professional terms ONLY (LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS): the
+ * structure conditions stay v8, the notice v9-2026-11-19, the citizen terms v7; v6 / v7 / v8 of cgu-professionnel unchanged byte for byte. NOT approved.
+ * v9 = v8 with the sentences that become false when the `pro` surface opens corrected, the two owner retention decisions, and nothing else:
+ *  intro_v9 / § 2 i1_v9  « créé(e) sur / à l'invitation de votre structure » — the FIRST administrator of a pilot structure (and the successor of a sole
+ *                administrator) is invited by the platform (SUPERADMIN, api/_services/platform-invitation.js, api/_handlers/pro/invite.js; runbook G8 § 5
+ *                step 4, § 6.2). Same wording as the notice v9 § 11 p3.
+ *  § 4 p3_v9     (new) video only « si la visioconférence est activée »: capability `video` closed and out of the AIPD (api/_utils/capabilities.js),
+ *                VIDEO_PROVIDER off by default. No provider named (8x8 JaaS has no DPA yet) and no promise: a reference to the notice (whose § 2 / § 4
+ *                already say functions not open yet are described there before opening).
+ *  § 5 p1_v9     « bases légales proposées » — the notice v9 § 3 P4p gives the bases as decided: art. 6, 1, b (these terms) and art. 6, 1, f (account
+ *                security, journal). + display name and job title, optional (ProProfile, api/_services/pro-public-profile.js), as in the notice v9.
+ *  § 7 p1_v9     « Vous et votre structure en êtes informés » — neither DISABLE_PRO_ACCOUNT (api/_services/pro-account-admin.js) nor the team screen
+ *                (api/_handlers/pro/team.js, USER_DISABLED) sends any notice to the person: a neutral, true statement, no new commitment (owner condition
+ *                22/11/2026: no obligation beyond his existing approvals).
+ *  § 7 p2_v9     (new) owner decisions 22/11/2026, word for word the notice v9 § 4 proAccount_v9: disabled account 12 months at most, then erased by the
+ *                operator (ERASE_PRO_ACCOUNT; purge step disabledProUsersReport is a report only: « pas encore automatisé »); closure of the structure's
+ *                space erases the team the same way (api/_services/org-closure.js); proof of acceptance (ConsentLog PRO_USER, id + document@version, no
+ *                address; api/_utils/pro-terms.js) 12 months after the erasure, no purge step: « pas encore automatisée ».
+ * The sole-administrator rule (api/_services/sole-admin.js) governs ADA's own « propose, then confirm » reviews; the professional terms name no review rule:
+ * nothing to change. Acceptance recording is unchanged: Production records the APPROVED version only (proTermsReference).
+ * Translations: every changed or new text has its own « …_v9 » key (explicit keys, as for the notice v9).
+ */
+export const LEGAL_DRAFTS_V9_PRO = 'v9-2026-11-22';
+export const LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS = Object.freeze(['cgu-professionnel']);
+export const LEGAL_DRAFTS_CGU_PRO_V9_INTRO = "Ces conditions s'appliquent aux professionnels qui utilisent un compte ADA Pro, créé sur invitation d'un administrateur de leur structure ou de l'exploitant.";
+export const LEGAL_DRAFTS_CGU_PRO_V9_INVITATION = "Le compte est créé sur invitation envoyée à votre adresse électronique professionnelle par un administrateur de votre structure ou par l'exploitant (par exemple pour le premier administrateur d'une structure). Il est personnel : ne le partagez pas.";
+export const LEGAL_DRAFTS_CGU_PRO_V9_VIDEO = "Si la visioconférence est activée pour votre structure (elle ne l'est pas à ce jour), son traitement et son prestataire sont décrits dans la notice de confidentialité.";
+export const LEGAL_DRAFTS_CGU_PRO_V9_DATA = "Pour votre compte, la plateforme traite votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification, ainsi que, si vous les indiquez, votre nom affiché et votre fonction. Lorsque la prise de rendez-vous est ouverte pour votre structure, elle traite aussi vos créneaux. Ces traitements reposent sur l'exécution des présentes conditions (article 6, 1, b du RGPD) et, pour la sécurité des comptes et le journal des actions, sur l'intérêt légitime de l'exploitant et de votre structure à protéger les accès (article 6, 1, f). La notice de confidentialité les décrit (section 3, P4p), avec leurs durées (section 4) et la façon d'exercer vos droits (section 8).";
+export const LEGAL_DRAFTS_CGU_PRO_V9_SUSPENSION = "En cas d'usage contraire à ces conditions ou d'incident de sécurité, l'administrateur de votre structure ou l'exploitant peut désactiver votre compte : vos sessions prennent fin aussitôt. Aucun avis automatique ne vous est envoyé lorsque votre compte est désactivé.";
+export const LEGAL_DRAFTS_CGU_PRO_V9_RETENTION = "Un compte désactivé est gardé 12 mois au plus, pour permettre sa réactivation et la preuve des actions, puis effacé par l'exploitant ; cet effacement n'est pas encore automatisé. Vous pouvez demander l'effacement plus tôt en écrivant à {{contact}}. Lorsque l'espace de votre structure est fermé, les comptes de son équipe sont effacés de la même façon. La preuve de votre acceptation de ces conditions (identifiant du compte, document, version et date, sans votre adresse) est gardée 12 mois après l'effacement ; cette suppression n'est pas encore automatisée.";
+/** the v8 sentences v9 corrects (kept here for the tests and the owner sheet; v8 itself is unchanged) */
+export const LEGAL_DRAFTS_CGU_PRO_V9_REPLACED = Object.freeze([
+  "Le compte est créé sur invitation de votre structure.",
+  'leurs bases légales proposées',
+  'Vous et votre structure en êtes informés',
+]);
+/** v9 changes (cgu-professionnel only): same shape as LEGAL_DRAFTS_V9_CHANGES (indexes are those of the v8 list) */
+export const LEGAL_DRAFTS_CGU_PRO_V9_CHANGES = Object.freeze({
+  'cgu-professionnel': { intro: [LEGAL_DRAFTS_CGU_PRO_V9_INTRO, 'intro_v9'], sections: {
+    account: { items: { replace: { 0: [LEGAL_DRAFTS_CGU_PRO_V9_INVITATION, 'i1_v9'] } } },
+    appointments: { paras: { insertAfter: { 1: [[LEGAL_DRAFTS_CGU_PRO_V9_VIDEO, 'p3_v9']] } } },
+    data: { paras: { replace: { 0: [LEGAL_DRAFTS_CGU_PRO_V9_DATA, 'p1_v9'] } } },
+    end: { paras: { replace: { 0: [LEGAL_DRAFTS_CGU_PRO_V9_SUSPENSION, 'p1_v9'] }, insertAfter: { 0: [[LEGAL_DRAFTS_CGU_PRO_V9_RETENTION, 'p2_v9']] } } },
+  } },
+});
+/** @param {DraftDocument} d @returns {DraftDocument} */
+const toV9Pro = (d) => {
+  const c = /** @type {any} */ (LEGAL_DRAFTS_CGU_PRO_V9_CHANGES)[d.id];
+  return { ...d, version: LEGAL_DRAFTS_V9_PRO, ...(c.intro ? { intro: c.intro[0], introKey: c.intro[1] } : {}), sections: d.sections.map((s) => {
+    const sc = c.sections[s.id];
+    if (!sc) return s;
+    const [paras, paraKeys] = applyV9(sc.paras, s.paras, s.paraKeys, 'p');
+    const [items, itemKeys] = applyV9(sc.items, s.items, s.itemKeys, 'i');
+    return { ...s, ...(paras ? { paras, paraKeys } : {}), ...(items ? { items, itemKeys } : {}) };
+  }) };
+};
+/** @type {DraftDocument[]} the professional terms only */
+export const LEGAL_DRAFT_DOCUMENTS_V9_PRO = LEGAL_DRAFT_DOCUMENTS_V8.filter((d) => LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS.includes(d.id)).map(toV9Pro);
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
- * A-I / A-II variant (v7); the professional documents are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9. LEGAL_DRAFT_DOCUMENTS = the newest draft
+ * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
+ * (draft; v8 stays approvable). LEGAL_DRAFT_DOCUMENTS = the newest draft
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
-  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9] });
+  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {

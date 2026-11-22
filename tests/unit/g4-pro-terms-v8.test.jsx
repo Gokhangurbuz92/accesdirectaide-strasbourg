@@ -46,11 +46,11 @@ afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.resetModules(); vi.stubEnv('
 
 describe('legal drafts v8-2026-11-19 — the professional documents only', () => {
   it('three approvable versions; v8 has exactly the two professional documents, still drafts; the others stay at v7', () => {
-    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19']);   // G8: v9 = the privacy notice only
+    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v9-2026-11-22']);   // G8: v9 = the privacy notice only; G14: v9-2026-11-22 = the professional terms only
     expect(LEGAL_DRAFT_DOCUMENTS_V8.map((d) => d.id)).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     expect([...LEGAL_DRAFTS_V8_DOCUMENT_IDS]).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     for (const d of LEGAL_DRAFT_DOCUMENTS_V8) { expect(d.version).toBe(LEGAL_DRAFTS_V8); expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); }
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v7-2026-11-18', 'cgu-professionnel@v8-2026-11-19', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v9-2026-11-19']);   // G8: the notice's newest draft is v9
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v7-2026-11-18', 'cgu-professionnel@v9-2026-11-22', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v9-2026-11-19']);   // G8: the notice's newest draft is v9; G14: the professional terms' is v9-2026-11-22 (tests/unit/g14-cgu-pro-v9.test.jsx)
     expect(LEGAL_NOTICE_VARIANT_DOCUMENT.version).toBe(LEGAL_DRAFTS_V7);
     for (const id of ['cgu-citoyen', LEGAL_NOTICE_VARIANT_DOCUMENT.id]) expect(latestDraftVersionOf(id)).toBe(LEGAL_DRAFTS_V7);
   });
@@ -136,7 +136,7 @@ describe('v8 approval: Production, LAB, professional sign-up', () => {
     }
     expect(proTermsInForce({ VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: WITH_V8 })).toBe(true);
     expect(proTermsReference('conditions-structures', { VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: WITH_V8 })).toBe('conditions-structures@v8-2026-11-19');
-    expect(proTermsReference('cgu-professionnel', { VERCEL_ENV: 'preview' })).toBe('cgu-professionnel@v8-2026-11-19');
+    expect(proTermsReference('conditions-structures', { VERCEL_ENV: 'preview' })).toBe('conditions-structures@v8-2026-11-19');   // G14: cgu-professionnel's newest draft is v9-2026-11-22
     expect(approvedVersionOf('cgu-citoyen', WITH_V8)).toBe(LEGAL_DRAFTS_V7);
     expect(approvedVersionOf('notice-confidentialite', WITH_V8)).toBe(LEGAL_DRAFTS_V7);
     // one professional document alone is not enough; an approval of v6 / v7 does not carry over to v8
@@ -146,7 +146,7 @@ describe('v8 approval: Production, LAB, professional sign-up', () => {
 
   it('LAB preview shows the v8 professional drafts and the v7 citizen drafts', () => {
     const lab = { preview: '1', production: false };
-    expect(draftFor('cgu-professionnel', lab)?.version).toBe(LEGAL_DRAFTS_V8);
+    expect(draftFor('conditions-structures', lab)?.version).toBe(LEGAL_DRAFTS_V8);   // G14: cgu-professionnel's newest draft is v9-2026-11-22
     expect(draftFor('cgu-citoyen', lab)?.version).toBe(LEGAL_DRAFTS_V7);
     expect(draftVisibility(/** @type {any} */ (draftFor('conditions-structures', lab)), lab)).toBe('PREVIEW');
   });
@@ -174,9 +174,9 @@ describe('v8 rendering (LegalDraftDocument.jsx)', () => {
     vi.stubEnv('VITE_LEGAL_DRAFT_PREVIEW', '1');
     const { container } = await renderPage('/cgu/professionnel');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');
-    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('cgu-professionnel@v8-2026-11-19');
+    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('cgu-professionnel@v9-2026-11-22');   // G14: the newest draft (v9 keeps the v8 § 4)
     expect(container.textContent).toContain('4. Rendez-vous (pas encore ouverts)');
-    expect(container.textContent).not.toMatch(/votre nom|assistant/);
+    expect(container.textContent).not.toMatch(/la plateforme traite votre nom|assistant/);
   });
 
   it('Production with v8 named: in force, no banner, v8 text; without it: hidden', async () => {
