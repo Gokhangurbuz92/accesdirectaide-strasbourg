@@ -53,7 +53,8 @@ export function videoChannel(env = process.env) {
   const base = { channel: 'video', provider: s.provider || 'off', missing: [] };
   if (s.reason === 'NOT_CONFIGURED') return { ...base, state: 'OFF', reason: s.reason, reachesPeople: false };
   if (s.reason === 'INCOMPLETE_CONFIGURATION' || s.reason === 'UNKNOWN_PROVIDER') {
-    const missing = ['VIDEO_JITSI_DOMAIN', 'VIDEO_JITSI_APP_ID', 'VIDEO_JITSI_SECRET'].filter((k) => !String(env[k] ?? '').trim());
+    const names = String(env.VIDEO_PROVIDER || '').trim() === 'jaas' ? ['VIDEO_JAAS_APP_ID', 'VIDEO_JAAS_KEY_ID', 'VIDEO_JAAS_PRIVATE_KEY'] : ['VIDEO_JITSI_DOMAIN', 'VIDEO_JITSI_APP_ID', 'VIDEO_JITSI_SECRET'];   // G14
+    const missing = names.filter((k) => !String(env[k] ?? '').trim());
     return { ...base, state: 'INCOMPLETE', reason: s.reason, missing, reachesPeople: false };
   }
   if (!s.bookable) return { ...base, state: 'BLOCKED', reason: s.reason, reachesPeople: false };   // production approval pending / sandbox in production

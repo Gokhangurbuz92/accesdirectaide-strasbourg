@@ -33,7 +33,7 @@ describe('video adapter activation gates', () => {
   });
 });
 
-describe('shipped security headers allow no video provider', () => {
+describe('shipped security headers allow no self-hosted video provider (G14: only 8x8 JaaS, see g14-jaas-video.test.js)', () => {
   const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'));
   const headers = vercel.headers.flatMap((h) => h.headers);
   const csp = headers.filter((h) => h.key === 'Content-Security-Policy').map((h) => h.value).join(' ');
@@ -41,7 +41,8 @@ describe('shipped security headers allow no video provider', () => {
   it('no video origin, no frame source, camera and microphone denied', () => {
     expect(csp).toContain("default-src 'self'");
     for (const src of Object.values(activationHeaderSources('video.example.org'))) expect(csp).not.toContain(src);
-    expect(csp).not.toMatch(/jit\.si|jitsi|8x8|frame-src/i);
+    expect(csp).not.toMatch(/jit\.si|jitsi/i);
+    for (const m of csp.matchAll(/frame-src ([^;]*)/g)) expect(m[1].trim()).toBe('https://8x8.vc');   // G14: the JaaS frame only
     expect(api).toContain("'Permissions-Policy', 'camera=(), microphone=(), geolocation=()'");
     expect(api).not.toMatch(/jit\.si|jitsi|frame-src/i);
   });
