@@ -730,5 +730,7 @@
   "parcours.consent_confirm": "Mit meiner Einwilligung speichern",
   "parcours.consent_cancel": "Nicht speichern",
   "parcours.title_hint": "Beschreiben Sie das Verfahren ohne Angaben zu Ihrer Gesundheit oder Ihrer persönlichen Situation (zum Beispiel: „Wohngeld beantragen“).",
-  "delegation_view.sensitive_hidden": "Schritte zu Gesundheit oder anderen sensiblen Informationen werden hier nie angezeigt."
+  "delegation_view.sensitive_hidden": "Schritte zu Gesundheit oder anderen sensiblen Informationen werden hier nie angezeigt.",
+  "space.tile.moderation": "Moderationsentscheidungen",
+  "space.tile.moderation_body": "Entscheidungen zu Ihren Inhalten oder Meldungen und Beschwerden."
 }

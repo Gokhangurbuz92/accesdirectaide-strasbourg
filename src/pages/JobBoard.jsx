@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { formatDate, useT } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
 import { accommodationLabel, contractLabel } from '@/lib/jobBoard';
+import ReportContentLink from '@/components/moderation/ReportContentLink';
 
 /** the employer's channel: an https address opens in a new tab without referrer; an e-mail opens the person's own mail program */
 function ApplyLink({ item }) {
@@ -91,6 +92,7 @@ export default function JobBoard() {
           ))}
         </ul>
       )}
+      <ReportContentLink />
     </div>
   );
 }

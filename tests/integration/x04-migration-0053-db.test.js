@@ -79,7 +79,7 @@ describe.skipIf(!hasDatabase)('migration 0053: up → down → code without it �
     // X02: the later 0054 is rolled back too here — its sections are asked of THIS database, not of the default one
     const tm = await import('../../api/_services/testimonials.js');
     const cs = await import('../../api/_services/community-stories.js');   // X01: the later 0055 too
-    const out = await accountLinkedSections('keep', rows, { hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => tm.testimonialsSchemaAvailable(db),
+    const out = await accountLinkedSections('keep', rows, { hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => tm.testimonialsSchemaAvailable(db),
       hasCommunityTables: () => cs.communitySchemaAvailable(db),
       // X03: the later 0057 is rolled back too here — its sections are asked of THIS database
       hasEntraideTables: async () => (await import('../../api/_services/entraide.js')).entraideSchemaAvailable(db) });

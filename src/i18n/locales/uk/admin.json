@@ -2189,5 +2189,6 @@
  "k5.alerts.st_closed": "закрите (бета)",
  "k5.alerts.st_awaiting": "очікує схвалення",
  "k5.alerts.st_legacy": "давнє завдання, закрите",
- "k5.alerts.st_not_scheduled": "поза списком запланованих завдань"
+ "k5.alerts.st_not_scheduled": "поза списком запланованих завдань",
+ "layout.nav.g14_moderation": "Модерація та повідомлення"
 }

@@ -37,8 +37,7 @@ export default async function handler(req, res) {
     else if (b.action === 'appeal') out = await noticeAppeal({}, { noticeId: b.noticeId, code: b.code, body: b.body });
     else out = { ok: false, status: 400, code: 'UNKNOWN_ACTION', message: 'Action inconnue.' };
     if (out.ok === false) return res.status(out.status || 400).json({ error: out.code, message: out.message, ...(out.problems ? { problems: out.problems } : {}) });
-    const { ok: _ok, status, ...body } = out;
-    return res.status(status || 200).json(body);
+    return res.status(out.status || 200).json(Object.fromEntries(Object.entries(out).filter(([k]) => k !== 'ok' && k !== 'status')));
   } catch (e) {
     logger.error({ error: String(e?.message || '').slice(0, 200) }, '[notices] failed');
     return res.status(500).json({ error: 'INTERNAL' });

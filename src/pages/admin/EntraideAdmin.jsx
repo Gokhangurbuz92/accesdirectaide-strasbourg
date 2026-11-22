@@ -9,6 +9,8 @@ import { useCallback, useEffect, useState } from 'react';
 import SEO from '@/components/SEO';
 import { apiClient } from '@/api/client';
 import { Button } from '@/components/ui/button';
+import StatementFields from '@/components/moderation/StatementFields';
+import { EMPTY_STATEMENT, statementBody, statementReady } from '@/lib/moderation';
 import { useT } from '@/i18n';
 import { REASONS, areaLabel, categoryLabel, reasonLabel } from '@/lib/entraide';
 
@@ -18,6 +20,9 @@ const QUEUES = ['reported', 'suspended'];
 function Item({ item, onAct, busy }) {
   const { t } = useT('entraide');
   const [reason, setReason] = useState('');
+  // G14 / DSA art. 17: the statement of reasons is written before any restriction or decision on reports (the server refuses it without facts)
+  const [st, setSt] = useState(EMPTY_STATEMENT);
+  const ok = statementReady(st);
   const sel = `entraide-reason-${item.pseudonym}`;
   return (
     <li className="space-y-2 rounded-xl border border-slate-200 bg-white p-4">
@@ -33,11 +38,12 @@ function Item({ item, onAct, busy }) {
           {item.offers.map((o) => (
             <li key={o.id}>
               {categoryLabel(o.category, t)} — {areaLabel(o.area, t)}{o.note ? ` — « ${o.note} »` : ''}
-              <Button size="sm" variant="outline" className="ms-2" disabled={busy || !reason} onClick={() => onAct({ action: 'close_offer', offerId: o.id, reason })}>{t('entraide:admin.close_offer', 'Fermer cette offre')}</Button>
+              <Button size="sm" variant="outline" className="ms-2" disabled={busy || !reason || !ok} onClick={() => onAct({ action: 'close_offer', offerId: o.id, reason, ...statementBody(st) })}>{t('entraide:admin.close_offer', 'Fermer cette offre')}</Button>
             </li>
           ))}
         </ul>
       )}
+      <StatementFields value={st} onChange={setSt} />
       <div className="flex flex-wrap items-end gap-2">
         <div>
           <label htmlFor={sel} className="block text-sm font-semibold text-slate-900">{t('entraide:admin.reason', 'Motif (suspension ou fermeture)')}</label>
@@ -48,10 +54,10 @@ function Item({ item, onAct, busy }) {
         </div>
         {item.status === 'active' ? (
           <>
-            <Button size="sm" variant="destructive" disabled={busy || !reason} onClick={() => onAct({ action: 'suspend', pseudonym: item.pseudonym, reason })}>{t('entraide:admin.suspend', 'Suspendre ce pseudonyme')}</Button>
-            {item.reports?.total > 0 && <Button size="sm" variant="outline" disabled={busy} onClick={() => onAct({ action: 'dismiss_reports', pseudonym: item.pseudonym })}>{t('entraide:admin.dismiss', 'Classer les signalements')}</Button>}
+            <Button size="sm" variant="destructive" disabled={busy || !reason || !ok} onClick={() => onAct({ action: 'suspend', pseudonym: item.pseudonym, reason, ...statementBody(st) })}>{t('entraide:admin.suspend', 'Suspendre ce pseudonyme')}</Button>
+            {item.reports?.total > 0 && <Button size="sm" variant="outline" disabled={busy || !ok} onClick={() => onAct({ action: 'dismiss_reports', pseudonym: item.pseudonym, ...statementBody(st) })}>{t('entraide:admin.dismiss', 'Classer les signalements')}</Button>}
           </>
-        ) : <Button size="sm" variant="outline" disabled={busy} onClick={() => onAct({ action: 'reinstate', pseudonym: item.pseudonym })}>{t('entraide:admin.reinstate', 'Lever la suspension')}</Button>}
+        ) : <Button size="sm" variant="outline" disabled={busy || !ok} onClick={() => onAct({ action: 'reinstate', pseudonym: item.pseudonym, ...statementBody(st) })}>{t('entraide:admin.reinstate', 'Lever la suspension')}</Button>}
       </div>
     </li>
   );

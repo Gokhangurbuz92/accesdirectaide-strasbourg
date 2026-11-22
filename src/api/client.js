@@ -169,6 +169,14 @@ export const apiClient = {
             return apiRequest('/api/taxonomy');
         }
     },
+    /** G14 / DSA art. 16 — the account-free notice form and the notifier's appeal (closed while no content capability is open: 503) */
+    notices: {
+        status: function () { return apiRequest('/api/notices'); },
+        /** @param {Record<string, unknown>} body */
+        submit: function (body) { return apiRequest('/api/notices', { method: 'POST', body: Object.assign({}, body, { action: 'submit' }) }); },
+        /** @param {{ noticeId: string, code: string, body: string }} body */
+        appeal: function (body) { return apiRequest('/api/notices', { method: 'POST', body: Object.assign({}, body, { action: 'appeal' }) }); },
+    },
     health: {
         check: function () {
             return apiRequest('/api/healthz');
@@ -264,6 +272,10 @@ export const apiClient = {
         listEntraide: function (queue) { return apiRequest('/api/admin/entraide?queue=' + encodeURIComponent(queue || 'reported')); },
         /** @param {Record<string, unknown>} body { action: suspend|reinstate|dismiss_reports|close_offer, pseudonym?, offerId?, reason? } */
         entraideAction: function (body) { return apiRequest('/api/admin/entraide', { method: 'POST', body: body }); },
+        /** G14 — the moderation desk: staffing, named roles, notices, appeals, transparency. @param {string} view staffing|roles|notices|appeals|transparency|misuse @param {Record<string, string>=} params */
+        moderation: function (view, params) { return apiRequest('/api/admin/moderation?view=' + encodeURIComponent(view || 'staffing') + Object.entries(params || {}).map(function (kv) { return '&' + encodeURIComponent(kv[0]) + '=' + encodeURIComponent(kv[1]); }).join('')); },
+        /** @param {Record<string, unknown>} body { action: role_assign|role_revoke|notice_record_email|notice_close|appeal_review|sanction|sanction_lift|authorities_informed, … } */
+        moderationAction: function (body) { return apiRequest('/api/admin/moderation', { method: 'POST', body: body }); },
         /** PKG-5 / E01 — organizations with identity / activity / public status kept apart. @param {string=} q @param {string=} decision never | hold | rejected | verified */
         getOrganizations: function (q, decision) { return apiRequest('/api/admin/organizations?q=' + encodeURIComponent(q || '') + (decision ? '&decision=' + encodeURIComponent(decision) : '')); },
         /** PKG-5 / A16 — elevation state, JIT elevation, break-glass, review. The returned token replaces the session. */

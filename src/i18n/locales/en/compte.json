@@ -730,5 +730,7 @@
   "parcours.consent_confirm": "Record with my consent",
   "parcours.consent_cancel": "Do not record",
   "parcours.title_hint": "Describe the procedure without information about your health or your personal situation (for example: “Apply for housing benefit”).",
-  "delegation_view.sensitive_hidden": "Steps about health or other sensitive information are never shown here."
+  "delegation_view.sensitive_hidden": "Steps about health or other sensitive information are never shown here.",
+  "space.tile.moderation": "Moderation decisions",
+  "space.tile.moderation_body": "Decisions on your content or your notices, and appeals."
 }

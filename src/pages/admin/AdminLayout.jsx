@@ -62,6 +62,8 @@ const SIDEBAR_SECTIONS = [
             ...(employmentOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Relecture des offres d’emploi', to: '/admin/offres-emploi', icon: FileText }] : []),
             // X03 (expansion): same rule for the moderation of Entraide
             ...(entraideOpened(frontendEnv.flags.publicBeta) ? [{ label: 'Modération de l’entraide', to: '/admin/entraide', icon: FileText }] : []),
+            // G14: always listed — the owner names the moderators here BEFORE any content function can open (server-side fail closed)
+            { label: 'Modération et signalements', to: '/admin/moderation', icon: Shield },
         ]
     },
     {
@@ -203,6 +205,7 @@ function navLabel(t, label) {
         'Modération des histoires': t('admin:layout.nav.x01_stories', 'Modération des histoires'),
         'Relecture des offres d’emploi': t('admin:layout.nav.x05_employment', 'Relecture des offres d’emploi'),
         'Modération de l’entraide': t('admin:layout.nav.x03_entraide', 'Modération de l’entraide'),
+        'Modération et signalements': t('admin:layout.nav.g14_moderation', 'Modération et signalements'),
     };
     return labels[label] || label;
 }

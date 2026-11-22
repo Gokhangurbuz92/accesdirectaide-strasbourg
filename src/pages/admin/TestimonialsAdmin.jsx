@@ -9,6 +9,8 @@ import { useCallback, useEffect, useState } from 'react';
 import SEO from '@/components/SEO';
 import { apiClient } from '@/api/client';
 import { Button } from '@/components/ui/button';
+import StatementFields from '@/components/moderation/StatementFields';
+import { EMPTY_STATEMENT, statementBody, statementReady } from '@/lib/moderation';
 import { formatDateTime, useT } from '@/i18n';
 import { REASONS, reasonLabel, textAttrs } from '@/lib/testimonials';
 
@@ -18,6 +20,9 @@ const QUEUES = ['pending', 'reported', 'published'];
 function Item({ item, queue, onAct, busy }) {
   const { t } = useT('testimonials');
   const [reason, setReason] = useState('');
+  // G14 / DSA art. 17: the statement of reasons is written before any restriction or decision on reports (the server refuses it without facts)
+  const [st, setSt] = useState(EMPTY_STATEMENT);
+  const ok = statementReady(st);
   const sel = `reason-${item.id}`;
   return (
     <li className="space-y-2 rounded-xl border border-slate-200 bg-white p-4">
@@ -34,6 +39,7 @@ function Item({ item, queue, onAct, busy }) {
           {t('testimonials:admin.reports', '{{n}} signalement(s) :', { n: item.reports.total })} {Object.entries(item.reports.reasons).map(([r, n]) => `${reasonLabel(r, t)} (${n})`).join(', ')}
         </p>
       )}
+      <StatementFields value={st} onChange={setSt} />
       <div className="flex flex-wrap items-end gap-2">
         <div>
           <label htmlFor={sel} className="block text-sm font-semibold text-slate-900">{t('testimonials:admin.reason', 'Motif (refus ou retrait)')}</label>
@@ -45,12 +51,12 @@ function Item({ item, queue, onAct, busy }) {
         {queue === 'pending' ? (
           <>
             <Button size="sm" disabled={busy || item.problems?.length > 0} onClick={() => onAct({ action: 'approve', id: item.id })}>{t('testimonials:admin.approve', 'Publier')}</Button>
-            <Button size="sm" variant="destructive" disabled={busy || !reason} onClick={() => onAct({ action: 'reject', id: item.id, reason })}>{t('testimonials:admin.reject', 'Refuser (le texte est effacé)')}</Button>
+            <Button size="sm" variant="destructive" disabled={busy || !reason || !ok} onClick={() => onAct({ action: 'reject', id: item.id, reason, ...statementBody(st) })}>{t('testimonials:admin.reject', 'Refuser (le texte est effacé)')}</Button>
           </>
         ) : (
           <>
-            <Button size="sm" variant="destructive" disabled={busy || !reason} onClick={() => onAct({ action: 'takedown', id: item.id, reason })}>{t('testimonials:admin.takedown', 'Retirer (le texte est effacé)')}</Button>
-            {item.reports?.total > 0 && <Button size="sm" variant="outline" disabled={busy} onClick={() => onAct({ action: 'dismiss_reports', id: item.id })}>{t('testimonials:admin.dismiss', 'Classer les signalements')}</Button>}
+            <Button size="sm" variant="destructive" disabled={busy || !reason || !ok} onClick={() => onAct({ action: 'takedown', id: item.id, reason, ...statementBody(st) })}>{t('testimonials:admin.takedown', 'Retirer (le texte est effacé)')}</Button>
+            {item.reports?.total > 0 && <Button size="sm" variant="outline" disabled={busy || !ok} onClick={() => onAct({ action: 'dismiss_reports', id: item.id, ...statementBody(st) })}>{t('testimonials:admin.dismiss', 'Classer les signalements')}</Button>}
           </>
         )}
       </div>
