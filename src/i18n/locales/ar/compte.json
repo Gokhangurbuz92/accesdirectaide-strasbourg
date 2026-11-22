@@ -731,6 +731,8 @@
   "parcours.consent_cancel": "عدم التسجيل",
   "parcours.title_hint": "صف الإجراء دون معلومات عن صحتك أو وضعك الشخصي (مثلًا: «طلب مساعدة السكن»).",
   "delegation_view.sensitive_hidden": "لا تُعرض هنا أبدًا الخطوات المتعلقة بالصحة أو بمعلومة حساسة أخرى.",
+  "space.tile.moderation": "قرارات الإشراف",
+  "space.tile.moderation_body": "القرارات المتعلقة بمحتوياتك أو بلاغاتك، والاعتراضات.",
   "parcours.limited.already": "هذه الخطوة موجودة بالفعل في Mon Parcours.",
   "parcours.limited.place": "المكان:",
   "parcours.limited.place_gone": "المكان المختار لم يعد منشورًا.",

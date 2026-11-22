@@ -3460,3 +3460,153 @@ export const EntraideBlock = pgTable('EntraideBlock', {
 	'EntraideBlock_blocked_idx': index('EntraideBlock_blocked_idx').on(t.blockedId),
 	'EntraideBlock_self_check': check('EntraideBlock_self_check', sql`${t.blockerId} <> ${t.blockedId}`)
 }));
+
+/**
+ * G14 (migration 0059) — moderation staffing and DSA flows for the expansion content (X01 stories, X02 testimonials, X05 job listings, X03 Entraide).
+ * Only writer: api/_services/moderation-dsa.js. Nothing here opens a feature: the capabilities stay closed until the owner opens them, and the services
+ * refuse (fail closed) while no NAMED person holds the role a function needs.
+ *   ModerationRole      a role held by an EXISTING administrator account (named, MFA): MODERATOR (X01, X02, X05, X03) or ENTRAIDE_SAFETY_OFFICER (X03).
+ *   ContentNotice       a notice sent WITHOUT an account (DSA art. 16): the public form, or an e-mail to the contact address recorded by a moderator.
+ *   ModerationDecision  the statement of reasons of every restriction and of every decision on a notice or a report (DSA art. 16(5), 17).
+ *   ModerationAppeal    the internal complaint against a decision, six months (DSA art. 20, owner decision 30).
+ *   ModerationSanction  a warning, then a time-limited suspension, for repeated misuse (DSA art. 23).
+ */
+export const ModerationRole = pgTable('ModerationRole', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	adminUserId: text('adminUserId').notNull(),
+	role: text('role').notNull(),
+	charterAcknowledgedAt: timestamp('charterAcknowledgedAt', { precision: 3 }).notNull(),
+	assignedBy: text('assignedBy').notNull(),
+	assignedAt: timestamp('assignedAt', { precision: 3 }).notNull().defaultNow(),
+	revokedAt: timestamp('revokedAt', { precision: 3 }),
+	revokedBy: text('revokedBy')
+}, (t) => ({
+	'ModerationRole_admin_fkey': foreignKey({ name: 'ModerationRole_admin_fkey', columns: [t.adminUserId], foreignColumns: [AdminUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ModerationRole_active_key': uniqueIndex('ModerationRole_active_key').on(t.adminUserId, t.role).where(sql`${t.revokedAt} IS NULL`),
+	'ModerationRole_role_check': check('ModerationRole_role_check', sql`${t.role} IN ('MODERATOR', 'ENTRAIDE_SAFETY_OFFICER')`),
+	'ModerationRole_revoke_check': check('ModerationRole_revoke_check', sql`(${t.revokedAt} IS NULL) = (${t.revokedBy} IS NULL)`)
+}));
+
+export const ContentNotice = pgTable('ContentNotice', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	channel: text('channel').notNull(),
+	contentType: text('contentType').notNull(),
+	contentRef: text('contentRef').notNull(),
+	category: text('category').notNull(),
+	explanation: text('explanation').notNull(),
+	notifierName: text('notifierName'),
+	notifierEmail: text('notifierEmail'),
+	notifierKey: text('notifierKey'),
+	goodFaith: boolean('goodFaith').notNull(),
+	declaredTrustedFlagger: boolean('declaredTrustedFlagger').notNull().default(false),
+	priority: text('priority').notNull().default('ordinary'),
+	status: text('status').notNull().default('received'),
+	outcome: text('outcome'),
+	decisionId: text('decisionId'),
+	appealTokenHash: text('appealTokenHash'),
+	acknowledgedAt: timestamp('acknowledgedAt', { precision: 3 }),
+	decidedAt: timestamp('decidedAt', { precision: 3 }),
+	decidedBy: text('decidedBy'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'ContentNotice_queue_idx': index('ContentNotice_queue_idx').on(t.status, t.priority, t.createdAt),
+	'ContentNotice_notifier_idx': index('ContentNotice_notifier_idx').on(t.notifierKey, t.createdAt),
+	'ContentNotice_channel_check': check('ContentNotice_channel_check', sql`${t.channel} IN ('public_form', 'email')`),
+	'ContentNotice_type_check': check('ContentNotice_type_check', sql`${t.contentType} IN ('testimonial', 'story', 'job_listing', 'entraide', 'other')`),
+	'ContentNotice_category_check': check('ContentNotice_category_check', sql`${t.category} IN ('ILLEGAL_CONTENT', 'TERMS_VIOLATION', 'SAFETY_THREAT', 'CHILD_SAFETY')`),
+	'ContentNotice_length_check': check('ContentNotice_length_check', sql`char_length(${t.contentRef}) BETWEEN 3 AND 500 AND char_length(${t.explanation}) BETWEEN 20 AND 3000 AND (${t.notifierName} IS NULL OR char_length(${t.notifierName}) BETWEEN 2 AND 120) AND (${t.notifierEmail} IS NULL OR (char_length(${t.notifierEmail}) BETWEEN 6 AND 254 AND ${t.notifierEmail} ~ '^[^@[:space:]]+@[^@[:space:]]+[.][^@[:space:]]+$'))`),
+	// DSA art. 16(2)(c): name and e-mail are required, except for a notice about the offences of Directive 2011/93/EU (CHILD_SAFETY)
+	'ContentNotice_identity_check': check('ContentNotice_identity_check', sql`${t.category} = 'CHILD_SAFETY' OR (${t.notifierName} IS NOT NULL AND ${t.notifierEmail} IS NOT NULL)`),
+	'ContentNotice_good_faith_check': check('ContentNotice_good_faith_check', sql`${t.goodFaith} = true`),
+	'ContentNotice_priority_check': check('ContentNotice_priority_check', sql`${t.priority} IN ('urgent', 'trusted', 'ordinary')`),
+	// null-safe (G14 QA v30 finding): a NULL outcome / response made the whole rule NULL, which a CHECK accepts
+	'ContentNotice_status_check': check('ContentNotice_status_check', sql`(${t.status} = 'received' AND ${t.outcome} IS NULL AND ${t.decidedAt} IS NULL) OR (${t.status} = 'decided' AND ${t.outcome} IS NOT NULL AND ${t.outcome} IN ('action_taken', 'no_action', 'not_processed') AND ${t.decidedAt} IS NOT NULL AND ${t.decidedBy} IS NOT NULL)`)
+}));
+
+export const ModerationDecision = pgTable('ModerationDecision', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	contentType: text('contentType').notNull(),
+	contentId: text('contentId').notNull(),
+	action: text('action').notNull(),
+	reasonCode: text('reasonCode').notNull(),
+	facts: text('facts').notNull(),
+	legalGround: text('legalGround'),
+	termsClause: text('termsClause').notNull(),
+	source: text('source').notNull(),
+	automated: boolean('automated').notNull().default(false),
+	manifestlyIllegal: boolean('manifestlyIllegal').notNull().default(false),
+	restrictionEndsAt: timestamp('restrictionEndsAt', { precision: 3 }),
+	subjectUserId: text('subjectUserId'),
+	subjectStructureId: text('subjectStructureId'),
+	notifierUserIds: text('notifierUserIds').array().notNull().default(sql`ARRAY[]::text[]`),
+	noticeId: text('noticeId'),
+	decidedBy: text('decidedBy').notNull(),
+	decidedAt: timestamp('decidedAt', { precision: 3 }).notNull().defaultNow(),
+	appealUntil: timestamp('appealUntil', { precision: 3 }).notNull(),
+	statementChannel: text('statementChannel').notNull().default('none'),
+	statementSentAt: timestamp('statementSentAt', { precision: 3 }),
+	authoritiesInformedAt: timestamp('authoritiesInformedAt', { precision: 3 })
+}, (t) => ({
+	'ModerationDecision_subject_fkey': foreignKey({ name: 'ModerationDecision_subject_fkey', columns: [t.subjectUserId], foreignColumns: [CitizenUser.id] }).onDelete('set null').onUpdate('cascade'),
+	'ModerationDecision_structure_fkey': foreignKey({ name: 'ModerationDecision_structure_fkey', columns: [t.subjectStructureId], foreignColumns: [Structure.id] }).onDelete('set null').onUpdate('cascade'),
+	'ModerationDecision_notice_fkey': foreignKey({ name: 'ModerationDecision_notice_fkey', columns: [t.noticeId], foreignColumns: [ContentNotice.id] }).onDelete('set null').onUpdate('cascade'),
+	'ModerationDecision_content_idx': index('ModerationDecision_content_idx').on(t.contentType, t.contentId),
+	'ModerationDecision_subject_idx': index('ModerationDecision_subject_idx').on(t.subjectUserId, t.decidedAt),
+	'ModerationDecision_type_check': check('ModerationDecision_type_check', sql`${t.contentType} IN ('testimonial', 'story', 'job_listing', 'entraide_member', 'entraide_offer', 'notice')`),
+	'ModerationDecision_action_check': check('ModerationDecision_action_check', sql`${t.action} IN ('rejected', 'taken_down', 'offer_closed', 'member_suspended', 'member_reinstated', 'reports_dismissed', 'notice_no_action')`),
+	'ModerationDecision_source_check': check('ModerationDecision_source_check', sql`${t.source} IN ('notice', 'report', 'own_initiative', 'pre_publication_review')`),
+	// DSA art. 17(3)(c): a person decides, never an automaton
+	'ModerationDecision_human_check': check('ModerationDecision_human_check', sql`${t.automated} = false`),
+	'ModerationDecision_length_check': check('ModerationDecision_length_check', sql`char_length(${t.facts}) BETWEEN 10 AND 2000 AND char_length(${t.termsClause}) BETWEEN 3 AND 300 AND (${t.legalGround} IS NULL OR char_length(${t.legalGround}) BETWEEN 3 AND 1000)`),
+	'ModerationDecision_illegal_check': check('ModerationDecision_illegal_check', sql`${t.manifestlyIllegal} = false OR ${t.legalGround} IS NOT NULL`),
+	'ModerationDecision_channel_check': check('ModerationDecision_channel_check', sql`${t.statementChannel} IN ('email', 'in_app', 'none') AND ((${t.statementChannel} = 'none') = (${t.statementSentAt} IS NULL))`)
+}));
+
+export const ModerationAppeal = pgTable('ModerationAppeal', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	decisionId: text('decisionId').notNull(),
+	appellantKind: text('appellantKind').notNull(),
+	appellantUserId: text('appellantUserId'),
+	noticeId: text('noticeId'),
+	body: text('body').notNull(),
+	status: text('status').notNull().default('open'),
+	response: text('response'),
+	reviewedBy: text('reviewedBy'),
+	reviewedAt: timestamp('reviewedAt', { precision: 3 }),
+	soleModerator: boolean('soleModerator').notNull().default(false),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'ModerationAppeal_decision_fkey': foreignKey({ name: 'ModerationAppeal_decision_fkey', columns: [t.decisionId], foreignColumns: [ModerationDecision.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ModerationAppeal_user_fkey': foreignKey({ name: 'ModerationAppeal_user_fkey', columns: [t.appellantUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ModerationAppeal_notice_fkey': foreignKey({ name: 'ModerationAppeal_notice_fkey', columns: [t.noticeId], foreignColumns: [ContentNotice.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ModerationAppeal_user_once_key': uniqueIndex('ModerationAppeal_user_once_key').on(t.decisionId, t.appellantUserId).where(sql`${t.appellantUserId} IS NOT NULL`),
+	'ModerationAppeal_notice_once_key': uniqueIndex('ModerationAppeal_notice_once_key').on(t.decisionId, t.noticeId).where(sql`${t.noticeId} IS NOT NULL`),
+	'ModerationAppeal_queue_idx': index('ModerationAppeal_queue_idx').on(t.status, t.createdAt),
+	'ModerationAppeal_kind_check': check('ModerationAppeal_kind_check', sql`${t.appellantKind} IN ('author', 'notifier') AND ((${t.appellantUserId} IS NOT NULL) <> (${t.noticeId} IS NOT NULL))`),
+	'ModerationAppeal_body_check': check('ModerationAppeal_body_check', sql`char_length(${t.body}) BETWEEN 10 AND 2000`),
+	'ModerationAppeal_status_check': check('ModerationAppeal_status_check', sql`(${t.status} = 'open' AND ${t.reviewedAt} IS NULL) OR (${t.status} IN ('upheld', 'reversed', 'modified') AND ${t.reviewedAt} IS NOT NULL AND ${t.reviewedBy} IS NOT NULL AND ${t.response} IS NOT NULL AND char_length(${t.response}) BETWEEN 10 AND 2000)`)
+}));
+
+export const ModerationSanction = pgTable('ModerationSanction', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	subjectUserId: text('subjectUserId'),
+	notifierKey: text('notifierKey'),
+	scope: text('scope').notNull(),
+	kind: text('kind').notNull(),
+	reason: text('reason').notNull(),
+	createdBy: text('createdBy').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	endsAt: timestamp('endsAt', { precision: 3 }),
+	liftedAt: timestamp('liftedAt', { precision: 3 }),
+	liftedBy: text('liftedBy')
+}, (t) => ({
+	'ModerationSanction_user_fkey': foreignKey({ name: 'ModerationSanction_user_fkey', columns: [t.subjectUserId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ModerationSanction_user_idx': index('ModerationSanction_user_idx').on(t.subjectUserId, t.scope),
+	'ModerationSanction_key_idx': index('ModerationSanction_key_idx').on(t.notifierKey, t.scope),
+	'ModerationSanction_subject_check': check('ModerationSanction_subject_check', sql`(${t.subjectUserId} IS NOT NULL) <> (${t.notifierKey} IS NOT NULL)`),
+	'ModerationSanction_scope_check': check('ModerationSanction_scope_check', sql`${t.scope} IN ('publishing', 'notices')`),
+	'ModerationSanction_kind_check': check('ModerationSanction_kind_check', sql`(${t.kind} = 'warning' AND ${t.endsAt} IS NULL) OR (${t.kind} = 'suspension' AND ${t.endsAt} IS NOT NULL AND ${t.endsAt} > ${t.createdAt})`),
+	'ModerationSanction_reason_check': check('ModerationSanction_reason_check', sql`char_length(${t.reason}) BETWEEN 10 AND 1000`),
+	'ModerationSanction_lift_check': check('ModerationSanction_lift_check', sql`(${t.liftedAt} IS NULL) = (${t.liftedBy} IS NULL)`)
+}));

@@ -731,6 +731,8 @@
   "parcours.consent_cancel": "Не записувати",
   "parcours.title_hint": "Опишіть процедуру без інформації про ваше здоров’я чи особисту ситуацію (наприклад: «Подати заяву на допомогу на житло»).",
   "delegation_view.sensitive_hidden": "Кроки, що стосуються здоров’я чи іншої чутливої інформації, тут ніколи не показуються.",
+  "space.tile.moderation": "Рішення модерації",
+  "space.tile.moderation_body": "Рішення щодо вашого вмісту чи повідомлень і скарги.",
   "parcours.limited.already": "Цей крок уже є в Mon Parcours.",
   "parcours.limited.place": "Місце:",
   "parcours.limited.place_gone": "Вибране місце більше не опубліковано.",

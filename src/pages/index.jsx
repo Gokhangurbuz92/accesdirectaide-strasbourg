@@ -94,6 +94,10 @@ const AdminJobBoard = lazy(() => import("./admin/JobBoardAdmin.jsx"));
 // X03 (expansion): Entraide (closed by default: surface « entraide », capability community.entraide — dedicated AIPD first)
 const CompteEntraide = lazy(() => import("./CompteEntraide.jsx"));
 const AdminEntraide = lazy(() => import("./admin/EntraideAdmin.jsx"));
+// G14: moderation staffing and DSA flows (notice form and « my decisions »: surface « notices », closed by default; the admin desk is in « admin »)
+const AdminModeration = lazy(() => import("./admin/ModerationAdmin.jsx"));
+const CompteModeration = lazy(() => import("./CompteModeration.jsx"));
+const ContentNotice = lazy(() => import("./ContentNotice.jsx"));
 const RessourceDetail = lazy(() => import("./RessourceDetail.jsx"));
 const Guides = lazy(() => import("./Guides.jsx"));
 const GuideDetail = lazy(() => import("./GuideDetail.jsx"));
@@ -404,6 +408,7 @@ function PagesContent() {
                                     <Route path="histoires" element={<AdminStories />} />
                                     <Route path="offres-emploi" element={<AdminJobBoard />} />
                                     <Route path="entraide" element={<AdminEntraide />} />
+                                    <Route path="moderation" element={<AdminModeration />} />
                                     <Route path="ws2" element={<AdminWs2Queue />} />
                                     <Route path="operations" element={<AdminOperations />} />
                                     <Route path="fournisseurs" element={<AdminProviders />} />
@@ -556,6 +561,7 @@ function PagesContent() {
                                 <Route path="/compte/temoignages" element={<CompteTemoignages />} />
                                 <Route path="/compte/histoires" element={<CompteHistoires />} />
                                 <Route path="/compte/entraide" element={<CompteEntraide />} />
+                                <Route path="/compte/moderation" element={<CompteModeration />} />
                                 <Route path="/compte/historique" element={<CompteHistorique />} />
                                 <Route path="/compte/delegations" element={<CompteDelegations />} />
                                 <Route path="/compte/delegations/:id" element={<CompteDelegationVue />} />
@@ -658,6 +664,7 @@ function PagesContent() {
                                 <Route path="/temoignages" element={<Testimonials />} />
                                 <Route path="/histoires" element={<CommunityStories />} />
                                 <Route path="/offres-emploi" element={<JobBoard />} />
+                                <Route path="/signaler-un-contenu" element={<ContentNotice />} />
                                 <Route path="/ressources/:slug" element={<RessourceDetail />} />
                                 <Route path="/ressources/view" element={<RessourceDetail />} />
 

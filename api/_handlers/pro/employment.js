@@ -13,6 +13,8 @@ import { logProAudit, requireProStructureContext } from '../../_utils/auth.js';
 import { clientIp } from '../../_utils/client-ip.js';
 import { withProRdvHandler } from '../../_utils/with-pro-rdv-handler.js';
 import { employerListings } from '../../_services/job-board.js';
+import { db as defaultDb } from '../../../src/db/index.js';
+import { requireFeatureStaffed } from '../../_services/moderation-dsa.js';
 
 const ID = /^[0-9a-f-]{36}$/i;
 
@@ -32,7 +34,8 @@ async function handler(req, res) {
   const id = typeof b.id === 'string' && ID.test(b.id) ? b.id : null;
   if (!id) return res.status(400).json({ error: 'ID_REQUIRED' });
   if (b.action === 'update') return send(await svc.update(ctx, id, b));
-  if (b.action === 'submit') return send(await svc.submit(ctx, id));
+  // G14: a listing goes to moderation only while a named moderator exists (fail closed)
+  if (b.action === 'submit') { const closed = await requireFeatureStaffed(defaultDb, 'employment'); if (closed) return send(closed); return send(await svc.submit(ctx, id)); }
   if (b.action === 'withdraw') return send(await svc.withdraw(ctx, id));
   if (b.action === 'delete') return send(await svc.remove(ctx, id));
   return res.status(400).json({ error: 'UNKNOWN_ACTION' });

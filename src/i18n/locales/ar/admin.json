@@ -2198,5 +2198,6 @@
  "k5.alerts.st_closed": "مغلقة (النسخة التجريبية)",
  "k5.alerts.st_awaiting": "بانتظار الموافقة",
  "k5.alerts.st_legacy": "مهمة قديمة، مغلقة",
- "k5.alerts.st_not_scheduled": "خارج قائمة المهام المجدولة"
+ "k5.alerts.st_not_scheduled": "خارج قائمة المهام المجدولة",
+ "layout.nav.g14_moderation": "الإشراف والبلاغات"
 }

@@ -102,7 +102,10 @@ export const USER_PERSONAL_DATA_LINEAGE = Object.freeze({
             // X01 (0055): the community pseudonym, its stories and the reports the person made cascade with the account too (in the export; consent rows stay in ConsentLog)
             'CommunityMember', 'CommunityStory', 'CommunityStoryReport',
             // X03 (0057): the Entraide pseudonym, offers, requests, shared e-mails, reports and blocks cascade with the account too (in the export; consent rows stay in ConsentLog)
-            'EntraideMember', 'EntraideOffer', 'EntraideRequest', 'EntraideContactShare', 'EntraideReport', 'EntraideBlock']
+            'EntraideMember', 'EntraideOffer', 'EntraideRequest', 'EntraideContactShare', 'EntraideReport', 'EntraideBlock',
+            // G14 (0059): the person's appeals and the misuse measures on their account cascade; a moderation decision about their content stays without the link
+            // to the account (ModerationDecision.subjectUserId ON DELETE SET NULL: the statement and its facts remain as the moderation record)
+            'ModerationAppeal', 'ModerationSanction']
     },
     CitizenSession: {
         action: 'DELETE',

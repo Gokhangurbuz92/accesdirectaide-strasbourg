@@ -2179,5 +2179,6 @@
  "k5.alerts.st_closed": "geschlossen (Beta)",
  "k5.alerts.st_awaiting": "wartet auf Genehmigung",
  "k5.alerts.st_legacy": "frühere Aufgabe, geschlossen",
- "k5.alerts.st_not_scheduled": "nicht in der Liste der geplanten Aufgaben"
+ "k5.alerts.st_not_scheduled": "nicht in der Liste der geplanten Aufgaben",
+ "layout.nav.g14_moderation": "Moderation und Meldungen"
 }

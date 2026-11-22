@@ -2179,5 +2179,6 @@
  "k5.alerts.st_closed": "kapalı (beta)",
  "k5.alerts.st_awaiting": "onay bekliyor",
  "k5.alerts.st_legacy": "eski görev, kapalı",
- "k5.alerts.st_not_scheduled": "zamanlanmış görev listesinde değil"
+ "k5.alerts.st_not_scheduled": "zamanlanmış görev listesinde değil",
+ "layout.nav.g14_moderation": "Moderasyon ve bildirimler"
 }

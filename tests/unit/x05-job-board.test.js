@@ -157,6 +157,7 @@ describe('X05 — one vocabulary', () => {
     const hits = [];
     const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (!['node_modules', 'locales'].includes(e.name)) walk(p); } else if (/\.(m?js|jsx|ts|sql)$/.test(e.name) && /INSERT INTO "JobListing"|insert\(JobListing\)|update\(JobListing\)|UPDATE "JobListing"/.test(fs.readFileSync(p, 'utf8'))) hits.push(p); } };
     for (const d of ['api', 'src', 'scripts', 'drizzle']) walk(d);
-    expect(hits.sort()).toEqual(['api/_services/job-board.js']);
+    // G14: the retention steps of the decided durations (q23, q25) write it too — expiry, erased channel, deletion — and nothing else does
+    expect(hits.sort()).toEqual(['api/_services/gdpr-purge-expansion-steps.js', 'api/_services/job-board.js']);
   });
 });

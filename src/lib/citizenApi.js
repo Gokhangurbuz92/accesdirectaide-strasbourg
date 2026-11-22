@@ -87,6 +87,9 @@ export const citizenApi = {
   myEntraide: () => call('/api/citizen/entraide'),
   browseEntraide: (/** @type {string} */ category, /** @type {string} */ area) => call('/api/citizen/entraide?view=browse&category=' + encodeURIComponent(category || '') + '&area=' + encodeURIComponent(area || '')),
   entraideAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/entraide', { method: 'POST', body }),
+  // G14 / DSA art. 17, 20: the moderation decisions about my content or my reports, and my appeals (closed while no content capability is open)
+  myModeration: () => call('/api/citizen/moderation'),
+  moderationAppeal: (/** @type {string} */ decisionId, /** @type {string} */ body) => call('/api/citizen/moderation', { method: 'POST', body: { action: 'appeal', decisionId, body } }),
   addFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'POST', body: { entityType, entityId } }),
   removeFavorite: (/** @type {string} */ entityType, /** @type {string} */ entityId) => call('/api/citizen/favorites', { method: 'DELETE', body: { entityType, entityId } }),
   getHistory: () => call('/api/citizen/history'),

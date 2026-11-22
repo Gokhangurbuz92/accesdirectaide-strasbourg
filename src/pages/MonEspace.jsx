@@ -60,6 +60,8 @@ export default function MonEspace() {
     { to: '/compte/messages', testid: 'tile-messages', part: 'messages', title: t('compte:space.tile.messages', 'Mes messages'), body: messagesText(s.messages, t) },
     { to: '/compte/historique', testid: 'tile-historique', title: t('compte:space.tile.historique', 'Mon historique'), body: t('compte:space.tile.historique_body', 'Facultatif : à activer si vous le souhaitez.') },
     { to: '/compte/delegations', testid: 'tile-delegations', title: t('compte:space.tile.delegations', 'Personnes de confiance'), body: t('compte:space.tile.delegations_body', 'Donner ou consulter un accès en lecture seule, limité et révocable.') },
+    // G14 / DSA art. 17, 20: statements of reasons and appeals (surface « notices »: hidden by openLinks while it is closed)
+    { to: '/compte/moderation', testid: 'tile-moderation', title: t('compte:space.tile.moderation', 'Décisions de modération'), body: t('compte:space.tile.moderation_body', 'Décisions sur vos contenus ou vos signalements, et contestations.') },
   ];
   return (
     <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8" data-testid="mon-espace">

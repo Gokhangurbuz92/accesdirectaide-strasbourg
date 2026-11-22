@@ -59,7 +59,7 @@ describe.skipIf(!hasDatabase)('X05 inclusive job board (real DB, real API entry)
   const pro = (u, body, mfa = true) => call(body ? 'POST' : 'GET', '/api/pro/employment', { bearer: sign(u, mfa), body });
   const create = async (u, over = {}) => pro(u, { action: 'create', ...LISTING, ...over });
   const queue = (q, bearer = adminBearer()) => call('GET', `/api/admin/employment?queue=${q}`, { bearer });
-  const moderate = (body, bearer = adminBearer()) => call('POST', '/api/admin/employment', { bearer, body });
+  const moderate = (body, bearer = adminBearer()) => call('POST', '/api/admin/employment', { bearer, body: { facts: 'FIXTURE : faits de test pour l’exposé des motifs.', ...body } });
   const publicIds = async () => { const r = await call('GET', '/api/employment'); expect(r.statusCode).toBe(200); return r.body.items.map((x) => x.id); };
   const statusOf = async (id) => (await db.execute(sql`SELECT status FROM "JobListing" WHERE id = ${id}`)).rows[0]?.status;
   const withEnv = async (vars, fn) => {
@@ -79,6 +79,8 @@ describe.skipIf(!hasDatabase)('X05 inclusive job board (real DB, real API entry)
   beforeAll(async () => {
     ({ db } = await import('../../src/db/index.js'));
     api = (await import('../../api/index.js')).default; auth = await import('../../api/_utils/auth.js');
+    // G14: the moderation functions need NAMED persons (fail closed) — synthetic MFA administrator accounts hold the roles for this test
+    await (await import('../helpers/g14-moderation-staff.js')).seedModerationStaff(db, ADMIN);
     for (const [sid, statut, ver] of [[EMP, 'actif', 'VERIFIED'], [OTHER, 'actif', 'VERIFIED'], [UNVER, 'actif', 'UNVERIFIED']]) {
       await db.execute(sql`INSERT INTO "Structure" (id, nom, slug, type_structure, adresse, ville, code_postal, accessibilite_pmr, services, publics_accueillis, categories_aidees, statut, verification_status, "updatedAt", "createdAt")
         VALUES (${sid}, ${'FIXTURE employeur ' + sid}, ${sid + '-slug'}, 'association', '1 rue', 'Strasbourg', '67000', false, ARRAY['x'], ARRAY['tout_public'], ARRAY['social'], ${statut}, ${ver}, NOW(), NOW())`);
@@ -89,6 +91,7 @@ describe.skipIf(!hasDatabase)('X05 inclusive job board (real DB, real API entry)
   }, 90000);
   afterAll(async () => {
     if (!db) return;
+    await (await import('../helpers/g14-moderation-staff.js')).clearModerationStaff(db, ADMIN);
     await db.execute(sql`DELETE FROM "AuditLog" WHERE actor = ${ADMIN} OR details->>'structureId' IN (${inList(all)})`).catch(() => {});
     await db.execute(sql`DELETE FROM "JobListing" WHERE "structureId" IN (${inList(all)})`).catch(() => {});
     await db.execute(sql`DELETE FROM "ProUser" WHERE "structureId" IN (${inList(all)})`);
@@ -203,7 +206,7 @@ describe.skipIf(!hasDatabase)('X05 inclusive job board (real DB, real API entry)
       const c = await create(EA); const id = c.body.id; await pro(EA, { action: 'submit', id });
       expect((await moderate({ action: 'reject', id })).statusCode).toBe(400);
       expect((await moderate({ action: 'reject', id, reason: 'FREE TEXT' })).body.error).toBe('REASON_REQUIRED');
-      expect((await moderate({ action: 'reject', id, reason: 'HEALTH_DATA_REQUESTED' })).body).toEqual({ id, status: 'rejected' });
+      expect((await moderate({ action: 'reject', id, reason: 'HEALTH_DATA_REQUESTED' })).body).toMatchObject({ id, status: 'rejected', decisionId: expect.any(String) });   // G14: + the statement of reasons recorded
       const mine = (await pro(EA)).body.listings.find((x) => x.id === id);
       expect(mine).toMatchObject({ status: 'rejected', moderationReason: 'HEALTH_DATA_REQUESTED' }); expect(mine.moderatedBy).toBeUndefined();
       const u = await pro(EA, { action: 'update', id, ...LISTING, description: `${DESC} Corrigée.` }); expect(u.body.listingStatus).toBe('draft');
@@ -213,7 +216,7 @@ describe.skipIf(!hasDatabase)('X05 inclusive job board (real DB, real API entry)
     it('takedown of a published listing (reason) and withdrawal by the employer: gone from the next public answer', async () => {
       const a = await published(); const b = await published();
       expect(await publicIds()).toEqual(expect.arrayContaining([a, b]));
-      expect((await moderate({ action: 'takedown', id: a, reason: 'DISCRIMINATORY_CRITERION' })).body).toEqual({ id: a, status: 'taken_down' });
+      expect((await moderate({ action: 'takedown', id: a, reason: 'DISCRIMINATORY_CRITERION' })).body).toMatchObject({ id: a, status: 'taken_down', decisionId: expect.any(String) });   // G14: + the statement of reasons recorded
       expect((await pro(EA, { action: 'withdraw', id: b })).body.listingStatus).toBe('withdrawn');
       const ids = await publicIds(); expect(ids).not.toContain(a); expect(ids).not.toContain(b);
       expect((await moderate({ action: 'approve', id: a })).statusCode).toBe(409);

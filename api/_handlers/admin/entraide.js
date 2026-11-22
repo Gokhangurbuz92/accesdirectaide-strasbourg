@@ -12,6 +12,9 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/ra
 import { adminGate } from '../../_utils/admin-gate.js';
 import { QUEUES, entraideModeration } from '../../_services/entraide.js';
 import logger from '../../_utils/logger.js';
+import { sql } from 'drizzle-orm';
+import { db as defaultDb } from '../../../src/db/index.js';
+import { moderatedAction, requireStaffRole } from '../../_services/moderation-dsa.js';
 
 const ID = /^[0-9a-f-]{36}$/i;
 
@@ -24,20 +27,34 @@ export default async function handler(req, res) {
   if (!auth) return undefined;
   const mod = entraideModeration();
   const actor = String(auth.email);
+  // G14: X03 needs its named persons — a safety officer (« référent protection ») and two moderators; the caller holds one of the two roles
+  const refused = await requireStaffRole(defaultDb, actor, 'entraide');
+  if (refused) return res.status(refused.status).json({ error: refused.code, reason: refused.reason, message: refused.message });
+  /** G14 / DSA art. 17: a restriction with its statement of reasons (facts required) @param {string} type @param {string} ref @param {string} decisionAction @param {string} reasonCode @param {() => Promise<any>} run */
+  const act = (type, ref, decisionAction, reasonCode, run) => moderatedAction({ db: defaultDb }, { actor, contentType: type, contentId: ref, decisionAction, reasonCode, body: b, run });
+  let b = {};
   try {
     if (req.method === 'GET') {
       const queue = String(req.query?.queue || 'reported');
       if (!QUEUES.includes(queue)) return res.status(400).json({ error: 'BAD_QUEUE' });
       return res.status(200).json({ items: await mod.list(actor, queue) });
     }
-    const b = req.body && typeof req.body === 'object' ? req.body : {};
+    b = req.body && typeof req.body === 'object' ? req.body : {};
     switch (b.action) {
-      case 'suspend': return res.status(200).json(await mod.suspend(actor, b.pseudonym, b.reason));
-      case 'reinstate': return res.status(200).json(await mod.reinstate(actor, b.pseudonym));
-      case 'dismiss_reports': return res.status(200).json(await mod.dismissReports(actor, b.pseudonym));
+      case 'suspend': return res.status(200).json(await act('entraide_member', String(b.pseudonym || ''), 'member_suspended', b.reason, () => mod.suspend(actor, b.pseudonym, b.reason)));
+      case 'reinstate': {
+        // charter § 7: a suspension for unsafe behaviour or harassment is lifted only by the named safety officer
+        const [m] = (await defaultDb.execute(sql`SELECT "suspensionReason" AS r FROM "EntraideMember" WHERE lower(pseudonym) = lower(${String(b.pseudonym || '')})`))?.rows || [];
+        if (['UNSAFE_BEHAVIOUR', 'HARASSMENT'].includes(m?.r)) {
+          const safety = await requireStaffRole(defaultDb, actor, 'entraide', { safetyOnly: true });
+          if (safety) return res.status(safety.status).json({ error: safety.code, message: safety.message });
+        }
+        return res.status(200).json(await act('entraide_member', String(b.pseudonym || ''), 'member_reinstated', 'SUSPENSION_REVIEWED', () => mod.reinstate(actor, b.pseudonym)));
+      }
+      case 'dismiss_reports': return res.status(200).json(await act('entraide_member', String(b.pseudonym || ''), 'reports_dismissed', 'REPORTS_UNFOUNDED', () => mod.dismissReports(actor, b.pseudonym)));
       case 'close_offer':
         if (typeof b.offerId !== 'string' || !ID.test(b.offerId)) return res.status(400).json({ error: 'ID_REQUIRED' });
-        return res.status(200).json(await mod.closeOffer(actor, b.offerId, b.reason));
+        return res.status(200).json(await act('entraide_offer', b.offerId, 'offer_closed', b.reason, () => mod.closeOffer(actor, b.offerId, b.reason)));
       default: return res.status(400).json({ error: 'UNKNOWN_ACTION' });
     }
   } catch (e) {

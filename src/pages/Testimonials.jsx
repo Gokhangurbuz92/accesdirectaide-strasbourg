@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
 import { REASONS, reasonLabel, textAttrs } from '@/lib/testimonials';
+import ReportContentLink from '@/components/moderation/ReportContentLink';
 
 /** the report form of one testimonial @param {{ id: string }} props */
 function Report({ id }) {
@@ -97,6 +98,7 @@ export default function Testimonials() {
           ))}
         </ul>
       )}
+      <ReportContentLink />
     </div>
   );
 }

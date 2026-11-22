@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { citizenHandler } from '../../_utils/citizen-handler.js';
 import { citizenStories } from '../../_services/community-stories.js';
+import { db as defaultDb } from '../../../src/db/index.js';
+import { requireFeatureStaffed, suspensionRefusal } from '../../_services/moderation-dsa.js';
 
 /**
  * X01 (expansion) — the person's community pseudonym and stories (api/_services/community-stories.js). A verified citizen session (cookie), CSRF on writes,
@@ -19,10 +21,11 @@ export default citizenHandler('stories', ['GET', 'POST'], async (citizen, req) =
   const b = req.body && typeof req.body === 'object' ? req.body : {};
   if (b.action === 'join') return svc.join(citizen, b);
   if (b.action === 'leave') return svc.leave(citizen.id);
-  if (b.action === 'submit') return svc.submit(citizen, b);
+  // G14: a new story needs a named moderator to read it (fail closed) and an account whose publishing is not suspended (DSA art. 23)
+  if (b.action === 'submit') return (await requireFeatureStaffed(defaultDb, 'stories')) || (await suspensionRefusal(defaultDb, citizen.id, 'publishing')) || svc.submit(citizen, b);
   const id = typeof b.id === 'string' && ID.test(b.id) ? b.id : null;
   if (!id) return { ok: false, status: 400, code: 'ID_REQUIRED', message: 'Histoire manquante.' };
   if (b.action === 'withdraw') return svc.withdraw(citizen.id, id);
-  if (b.action === 'report') return svc.report(citizen.id, id, b.reason);
+  if (b.action === 'report') return (await suspensionRefusal(defaultDb, citizen.id, 'notices')) || svc.report(citizen.id, id, b.reason);
   return { ok: false, status: 400, code: 'UNKNOWN_ACTION', message: 'Action inconnue.' };
 });

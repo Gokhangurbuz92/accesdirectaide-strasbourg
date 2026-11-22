@@ -63,7 +63,7 @@ describe.skipIf(!hasDatabase)('X03 Entraide (real DB, real API entry)', () => {
   const join = (as, pseudonym, over = {}) => act(as, { action: 'join', pseudonym, charter: true, charterVersion: CHARTER, ...over });
   const offer = (as, over = {}) => act(as, { action: 'offer_create', category: 'SHOPPING', area: 'STRASBOURG_NEUDORF_PORT_DU_RHIN', ...over });
   const queue = (q, opts = {}) => call('GET', `/api/admin/entraide?queue=${q}`, { bearer: opts.bearer ?? adminBearer() });
-  const moderate = (body) => call('POST', '/api/admin/entraide', { bearer: adminBearer(), body });
+  const moderate = (body) => call('POST', '/api/admin/entraide', { bearer: adminBearer(), body: { facts: 'FIXTURE : faits de test pour l’exposé des motifs.', ...body } });
   const one = async (q) => (await db.execute(q)).rows[0];
   const n = async (q) => Number((await one(q)).n);
   const ids = () => sql.join(ALL.map((x) => sql`${x.id}`), sql`, `);
@@ -80,6 +80,8 @@ describe.skipIf(!hasDatabase)('X03 Entraide (real DB, real API entry)', () => {
     api = (await import('../../api/index.js')).default;
     userAuth = await import('../../api/_utils/user-auth.js');
     auth = await import('../../api/_utils/auth.js');
+    // G14: the moderation functions need NAMED persons (fail closed) — synthetic MFA administrator accounts hold the roles for this test
+    await (await import('../helpers/g14-moderation-staff.js')).seedModerationStaff(db, ADMIN);
     const { recordAgeDeclaration } = await import('../../api/_utils/age-policy.js');
     for (const x of ALL) await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${x.id}, ${x.email}, 'x', NOW(), NOW())`);
     for (const x of ALL.filter((y) => y !== NODECL)) await recordAgeDeclaration(x.id, { adult: true, channel: 'signup' }, db);
@@ -87,6 +89,7 @@ describe.skipIf(!hasDatabase)('X03 Entraide (real DB, real API entry)', () => {
   }, 60000);
   afterAll(async () => {
     if (!db) return;
+    await (await import('../helpers/g14-moderation-staff.js')).clearModerationStaff(db, ADMIN);
     await db.execute(sql`DELETE FROM "DSRRequest" WHERE "subjectId" IN (${ids()})`).catch(() => {});
     await db.execute(sql`DELETE FROM "ConsentLog" WHERE subject_id IN (${ids()})`).catch(() => {});
     await db.execute(sql`DELETE FROM "AuditLog" WHERE actor = ${ADMIN}`).catch(() => {});

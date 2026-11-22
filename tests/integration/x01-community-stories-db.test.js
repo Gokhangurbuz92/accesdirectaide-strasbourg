@@ -61,7 +61,7 @@ describe.skipIf(!hasDatabase)('X01 community stories (real DB, real API entry)',
   const join = (as, pseudonym) => act(as, { action: 'join', pseudonym });
   const submit = (as, over = {}) => act(as, { action: 'submit', title: TITLE, body: TEXT_A, lang: 'fr', consent: true, consentVersion: VERSION, ...over });
   const queue = (q, opts = {}) => call('GET', `/api/admin/stories?queue=${q}`, { bearer: opts.bearer ?? adminBearer() });
-  const moderate = (body) => call('POST', '/api/admin/stories', { bearer: adminBearer(), body });
+  const moderate = (body) => call('POST', '/api/admin/stories', { bearer: adminBearer(), body: { facts: 'FIXTURE : faits de test pour l’exposé des motifs.', ...body } });
   const publicList = async () => (await call('GET', '/api/stories')).body.items;
   const one = async (q) => (await db.execute(q)).rows[0];
   const ids = () => sql.join(ALL.map((x) => sql`${x.id}`), sql`, `);
@@ -85,6 +85,8 @@ describe.skipIf(!hasDatabase)('X01 community stories (real DB, real API entry)',
     api = (await import('../../api/index.js')).default;
     userAuth = await import('../../api/_utils/user-auth.js');
     auth = await import('../../api/_utils/auth.js');
+    // G14: the moderation functions need NAMED persons (fail closed) — synthetic MFA administrator accounts hold the roles for this test
+    await (await import('../helpers/g14-moderation-staff.js')).seedModerationStaff(db, ADMIN);
     const { recordAgeDeclaration } = await import('../../api/_utils/age-policy.js');
     for (const x of ALL) await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${x.id}, ${x.email}, 'x', NOW(), NOW())`);
     for (const x of ALL.filter((y) => y !== NODECL)) await recordAgeDeclaration(x.id, { adult: true, channel: 'signup' }, db);
@@ -92,6 +94,7 @@ describe.skipIf(!hasDatabase)('X01 community stories (real DB, real API entry)',
   }, 60000);
   afterAll(async () => {
     if (!db) return;
+    await (await import('../helpers/g14-moderation-staff.js')).clearModerationStaff(db, ADMIN);
     await db.execute(sql`DELETE FROM "DSRRequest" WHERE "subjectId" IN (${ids()})`).catch(() => {});
     await db.execute(sql`DELETE FROM "ConsentLog" WHERE subject_id IN (${ids()})`).catch(() => {});
     await db.execute(sql`DELETE FROM "AuditLog" WHERE actor = ${ADMIN}`).catch(() => {});

@@ -14,7 +14,9 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
   // X05 (expansion): the job board, an employer's listings and their moderation — surface « employment », opened by no build
   '/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi',
   // X03 (expansion): Entraide, the member side and its moderation — surface « entraide », opened by no build (dedicated AIPD first)
-  '/compte/entraide', '/admin/entraide'];
+  '/compte/entraide', '/admin/entraide',
+  // G14: the account-free notice form (DSA art. 16) and « my moderation decisions » — surface « notices », opened by no build
+  '/signaler-un-contenu', '/compte/moderation'];
 
 /**
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
@@ -30,6 +32,7 @@ export const SCREEN_SURFACES = {
   stories: ['/histoires', '/compte/histoires', '/admin/histoires'],
   employment: ['/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'],
   entraide: ['/compte/entraide', '/admin/entraide'],
+  notices: ['/signaler-un-contenu', '/compte/moderation'],
 };
 const builtOpen = () => {
   let v = '';
@@ -112,6 +115,8 @@ export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSu
   if (SCREEN_SURFACES.employment.some((x) => under(p, x))) return !open.includes('employment');
   // X03: the Entraide screens follow ONLY the « entraide » surface (they sit under /compte and /admin, which do not open them)
   if (SCREEN_SURFACES.entraide.some((x) => under(p, x))) return !open.includes('entraide');
+  // G14: the notice form and « my moderation decisions » follow ONLY the « notices » surface (/compte/moderation sits under /compte, which does not open it)
+  if (SCREEN_SURFACES.notices.some((x) => under(p, x))) return !open.includes('notices');
   // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
   if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
   const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));
@@ -215,4 +220,13 @@ export function employmentOpened(beta, open = builtOpen(), sub = builtSub()) {
  */
 export function entraideOpened(beta, open = builtOpen(), sub = builtSub()) {
   return !beta || !isBetaRestrictedPath('/compte/entraide', open, sub);
+}
+
+/**
+ * G14 — is the account-free notice form usable in this build: outside the beta, or when the build opens the « notices » surface. Links to it are offered
+ * only then; the server answers 503 anyway while no content capability is open.
+ * @param {boolean} beta @param {string[]} [open] @param {BetaSubSwitches} [sub]
+ */
+export function noticesOpened(beta, open = builtOpen(), sub = builtSub()) {
+  return !beta || !isBetaRestrictedPath('/signaler-un-contenu', open, sub);
 }

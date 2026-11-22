@@ -10,6 +10,8 @@ import { useCallback, useEffect, useState } from 'react';
 import SEO from '@/components/SEO';
 import { apiClient } from '@/api/client';
 import { Button } from '@/components/ui/button';
+import StatementFields from '@/components/moderation/StatementFields';
+import { EMPTY_STATEMENT, statementBody, statementReady } from '@/lib/moderation';
 import { formatDate, useT } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
 import { REASONS, accommodationLabel, contractLabel, problemLabel, reasonLabel } from '@/lib/jobBoard';
@@ -21,6 +23,9 @@ function Item({ item, queue, onAct, busy }) {
   const { t } = useT('employment');
   const fr = useFrAttrs();
   const [reason, setReason] = useState('');
+  // G14 / DSA art. 17: the statement of reasons is written before any restriction or decision on reports (the server refuses it without facts)
+  const [st, setSt] = useState(EMPTY_STATEMENT);
+  const ok = statementReady(st);
   const sel = `job-reason-${item.id}`;
   return (
     <li className="space-y-2 rounded-xl border border-slate-200 bg-white p-4">
@@ -36,6 +41,7 @@ function Item({ item, queue, onAct, busy }) {
           <ul className="list-disc ps-5">{item.problems.map((p) => <li key={p}>{problemLabel(p, t) || <code>{p}</code>}</li>)}</ul>
         </div>
       )}
+      <StatementFields value={st} onChange={setSt} />
       <div className="flex flex-wrap items-end gap-2">
         <div>
           <label htmlFor={sel} className="block text-sm font-semibold text-slate-900">{t('employment:admin.reason', 'Motif (refus ou retrait)')}</label>
@@ -47,10 +53,10 @@ function Item({ item, queue, onAct, busy }) {
         {queue === 'pending' ? (
           <>
             <Button size="sm" disabled={busy || item.problems?.length > 0} onClick={() => onAct({ action: 'approve', id: item.id })}>{t('employment:admin.approve', 'Publier')}</Button>
-            <Button size="sm" variant="destructive" disabled={busy || !reason} onClick={() => onAct({ action: 'reject', id: item.id, reason })}>{t('employment:admin.reject', 'Refuser (l’employeur peut corriger)')}</Button>
+            <Button size="sm" variant="destructive" disabled={busy || !reason || !ok} onClick={() => onAct({ action: 'reject', id: item.id, reason, ...statementBody(st) })}>{t('employment:admin.reject', 'Refuser (l’employeur peut corriger)')}</Button>
           </>
         ) : (
-          <Button size="sm" variant="destructive" disabled={busy || !reason} onClick={() => onAct({ action: 'takedown', id: item.id, reason })}>{t('employment:admin.takedown', 'Retirer du site')}</Button>
+          <Button size="sm" variant="destructive" disabled={busy || !reason || !ok} onClick={() => onAct({ action: 'takedown', id: item.id, reason, ...statementBody(st) })}>{t('employment:admin.takedown', 'Retirer du site')}</Button>
         )}
       </div>
     </li>

@@ -2179,5 +2179,6 @@
  "k5.alerts.st_closed": "closed (beta)",
  "k5.alerts.st_awaiting": "awaiting approval",
  "k5.alerts.st_legacy": "former job, closed",
- "k5.alerts.st_not_scheduled": "not in the scheduled job list"
+ "k5.alerts.st_not_scheduled": "not in the scheduled job list",
+ "layout.nav.g14_moderation": "Moderation and notices"
 }

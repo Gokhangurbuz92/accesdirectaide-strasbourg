@@ -19,6 +19,7 @@ import * as Sentry from '@sentry/node';
 import { restrictedDossierSql, restrictedSubjectSql } from '../../_services/processing-restriction.js';
 import { appointmentGuestSchema } from '../../_utils/schema-features.js';
 import { GUEST_DECOY_NAME } from '../../_utils/rdv-guest-decoy.js';
+import { expansionSteps } from '../../_services/gdpr-purge-expansion-steps.js';
 import { RETENTION_POLICY, executionGate, ownerChoiceOf, policyDays, policySummary, stepApprovalProblem } from '../../_services/retention-policy.js';
 
 /**
@@ -486,6 +487,10 @@ export const PURGE_STEPS = [
     { id: 'disabledProUsersReport', summaryKey: 'disabled_pro_users_eligible', ecode: 'E9b', kind: 'report', table: 'ProUser', durationKey: 'PRO_USER_DISABLED_DAYS', tables: ['ProUser'],
         sharedController: 'professional accounts are referenced by structure records',
         count: (db, ctx) => countWhere(db, ProUser, and(eq(ProUser.status, 'disabled'), lt(ProUser.updatedAt, ctx.cutoff('PRO_USER_DISABLED_DAYS')))) },
+
+    // 23–47. G14 — the expansion content (X04, X02, X01, X05, X03) and the account-free DSA notices: durations decided by the controller 22/11/2026
+    //     (formulaire G14); each step still needs its own approval record (dry run read, backup verified). See api/_services/gdpr-purge-expansion-steps.js.
+    ...expansionSteps({ heldSql: (...ids) => heldSql(...ids), personProtectedSql: (s) => personProtectedSql(s) }),
 ];
 
 /** @param {PurgeContext} ctx @param {boolean} followed */

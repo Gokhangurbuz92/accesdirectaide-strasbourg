@@ -124,6 +124,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'citizen/restriction': ['citizen.account'], 'citizen/espace': ['citizen.account'], 'citizen/notifications': ['citizen.account'],
   'citizen/push': ['citizen.push'], 'citizen/household': ['citizen.household'], 'citizen/guardians': ['citizen.guardians'],
   'citizen/parcours': ['citizen.parcours'], 'citizen/favorites': ['citizen.favorites'], 'citizen/history': ['citizen.history'],
+  // G14: my moderation decisions and appeals — the account capability; the handler also answers 503 unless a content capability is open
+  'citizen/moderation': ['citizen.account'],
   'citizen/delegations': ['citizen.delegations'], 'citizen/referrals': ['citizen.orientation_records'], 'citizen/shares': ['citizen.shared_dossier'],
   // appointments
   rdv: ['citizen.booking'], 'auth/callback/outlook': ['calendar.outlook'],

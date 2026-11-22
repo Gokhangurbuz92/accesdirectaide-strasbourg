@@ -731,6 +731,8 @@
   "parcours.consent_cancel": "Kaydetme",
   "parcours.title_hint": "İşlemi sağlığınız veya kişisel durumunuz hakkında bilgi vermeden tanımlayın (örneğin: “Konut yardımı başvurusu yapmak”).",
   "delegation_view.sensitive_hidden": "Sağlık veya başka bir hassas bilgiyle ilgili adımlar burada asla gösterilmez.",
+  "space.tile.moderation": "Moderasyon kararları",
+  "space.tile.moderation_body": "İçerikleriniz veya bildirimleriniz hakkındaki kararlar ve itirazlar.",
   "parcours.limited.already": "Bu adım zaten Mon Parcours içinde.",
   "parcours.limited.place": "Yer:",
   "parcours.limited.place_gone": "Seçilen yer artık yayında değil.",

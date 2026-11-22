@@ -112,6 +112,10 @@ export const SURFACES = {
   // « community.entraide » in ADA_CAPABILITIES_OPEN — and, before either, a DEDICATED AIPD signed by the controller (sensitive inference). Longer prefixes
   // than « citizen » / « admin »: opening accounts or admin does not open them. No public (anonymous) route exists.
   entraide: ['citizen/entraide', 'admin/entraide'],
+  // G14 (22/11/2026): the account-free notice form of DSA art. 16 (and the notifier's appeal), and « my moderation decisions » (statements of reasons, art.
+  // 17; appeals, art. 20) of a signed-in person. Opened by NO deployment: it needs this name in ADA_BETA_OPEN_SURFACES, and both handlers answer 503 unless a
+  // content capability (testimonials, stories, employment, entraide) is open. Longer prefixes win: « citizen/moderation » belongs here, not to « accounts ».
+  notices: ['notices', 'citizen/moderation'],
 };
 /** surfaces that ADA_BETA_OPEN_SURFACES never opens (R40 / G2) */
 export const NOT_OPENABLE = Object.freeze(['jobs']);
