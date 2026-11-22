@@ -14,7 +14,9 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
   // X05 (expansion): the job board, an employer's listings and their moderation — surface « employment », opened by no build
   '/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi',
   // X03 (expansion): Entraide, the member side and its moderation — surface « entraide », opened by no build (dedicated AIPD first)
-  '/compte/entraide', '/admin/entraide'];
+  '/compte/entraide', '/admin/entraide',
+  // G14: the account-free notice form (DSA art. 16) and « my moderation decisions » — surface « notices », opened by no build
+  '/signaler-un-contenu', '/compte/moderation'];
 
 /**
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
@@ -30,6 +32,7 @@ export const SCREEN_SURFACES = {
   stories: ['/histoires', '/compte/histoires', '/admin/histoires'],
   employment: ['/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'],
   entraide: ['/compte/entraide', '/admin/entraide'],
+  notices: ['/signaler-un-contenu', '/compte/moderation'],
 };
 const builtOpen = () => {
   let v = '';

@@ -615,6 +615,50 @@
         "responses": { "200": { "description": "{ items }" }, "503": { "description": "CAPABILITY_NOT_OPEN ou bêta restreinte" } }
       }
     },
+    "/notices": {
+      "get": {
+        "tags": ["Core Data"],
+        "summary": "Signaler un contenu : disponibilité du formulaire (DSA art. 16, G14 — fermé par défaut)",
+        "description": "Sans compte. Répond seulement si le formulaire peut servir (au moins une capacité de contenu ouverte : community.testimonials, community.stories, community.employment, community.entraide), s'il a une personne nommée pour la modération, et les listes fermées de catégories et de types de contenu. Aucune donnée.",
+        "responses": { "200": { "description": "{ available, staffed, categories, contentTypes }" }, "503": { "description": "CAPABILITY_NOT_OPEN ou bêta restreinte (surface notices)" } }
+      },
+      "post": {
+        "tags": ["Core Data"],
+        "summary": "Envoyer un signalement ou contester la décision (DSA art. 16, 20)",
+        "description": "{ action: submit, contentType, contentRef, category, explanation, notifierName, notifierEmail, goodFaith: true, declaredTrustedFlagger? } — les quatre éléments de l'art. 16(2) ; nom et e-mail facultatifs seulement pour CHILD_SAFETY ; accusé de réception par e-mail (art. 16(4)). { action: appeal, noticeId, code, body } — contestation pendant six mois avec la référence et le code de l'accusé de réception. CSRF et limite par adresse IP (CONTENT_NOTICE).",
+        "responses": { "201": { "description": "Signalement enregistré { id, priority } / contestation enregistrée" }, "400": { "description": "NAME_REQUIRED, EMAIL_REQUIRED, EXPLANATION_REQUIRED, GOOD_FAITH_REQUIRED, CATEGORY_INVALID, APPEAL_TEXT_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "NOTICES_SUSPENDED (art. 23)" }, "404": { "description": "NOTICE_NOT_FOUND" }, "409": { "description": "NOT_DECIDED, APPEAL_PERIOD_OVER, ALREADY_APPEALED" }, "429": { "description": "Trop de requêtes" }, "503": { "description": "CAPABILITY_NOT_OPEN, MODERATION_NOT_STAFFED, MODERATION_NOT_AVAILABLE" } }
+      }
+    },
+    "/citizen/moderation": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Mes décisions de modération (DSA art. 17, G14 — fermé par défaut)",
+        "description": "Session citoyenne vérifiée. Les exposés des motifs sur mes contenus (auteur) et les décisions sur mes signalements (signalant) : action, motif, date, fin du délai de contestation, texte de l'exposé, contestation. Jamais l'identité d'un signalant.",
+        "responses": { "200": { "description": "{ available, decisions }" }, "401": { "description": "Session requise" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+      },
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Contester une décision (DSA art. 20, six mois, gratuit)",
+        "description": "{ action: appeal, decisionId, body } — une contestation par personne et par décision ; réexamen par une autre personne nommée lorsque c'est possible.",
+        "responses": { "201": { "description": "Contestation enregistrée" }, "400": { "description": "ID_REQUIRED, APPEAL_TEXT_REQUIRED" }, "401": { "description": "Session requise" }, "403": { "description": "ACCOUNT_RESTRICTED" }, "404": { "description": "DECISION_NOT_FOUND" }, "409": { "description": "APPEAL_PERIOD_OVER, ALREADY_APPEALED" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+      }
+    },
+    "/admin/moderation": {
+      "get": {
+        "tags": ["Admin"],
+        "summary": "Modération : rôles nommés, signalements, contestations, transparence (G14)",
+        "description": "?view=staffing|roles (tout administrateur avec MFA) ; ?view=notices|appeals|transparency|misuse (modérateur nommé ou référent protection). Comptages seulement pour la transparence. Session administrateur nominative avec MFA, journalisée.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Vue demandée" }, "400": { "description": "BAD_VIEW, BAD_STATUS, ID_REQUIRED" }, "401": { "description": "Session administrateur requise" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED, MODERATOR_ROLE_REQUIRED" }, "503": { "description": "MODERATION_NOT_AVAILABLE" } }
+      },
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Attribuer / retirer un rôle ; traiter signalements, contestations, mesures (G14)",
+        "description": "{ action: role_assign, email, role: MODERATOR | ENTRAIDE_SAFETY_OFFICER, charterAcknowledged: true } | { action: role_revoke, email, role } — le titulaire est un compte administrateur existant, actif, avec MFA et nommé. { action: notice_record_email | notice_close | appeal_review | sanction | sanction_lift | authorities_informed, … } — modérateur nommé.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "Fait" }, "201": { "description": "Rôle attribué / signalement / mesure enregistrés" }, "400": { "description": "UNKNOWN_ROLE, CHARTER_ACKNOWLEDGEMENT_REQUIRED, FACTS_REQUIRED, DURATION_INVALID, UNKNOWN_ACTION" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED, MODERATOR_ROLE_REQUIRED, ANOTHER_MODERATOR_REQUIRED" }, "404": { "description": "ADMIN_NOT_FOUND, NOT_FOUND, ROLE_NOT_ASSIGNED" }, "409": { "description": "ADMIN_MFA_REQUIRED, ADMIN_NAME_REQUIRED, ADMIN_DISABLED, ROLE_ALREADY_ASSIGNED, PRIOR_WARNING_REQUIRED, SOLE_MODERATOR_DELAY, ALREADY_DECIDED" }, "503": { "description": "MODERATION_NOT_AVAILABLE" } }
+      }
+    },
     "/citizen/testimonials": {
       "get": {
         "tags": ["Auth"],

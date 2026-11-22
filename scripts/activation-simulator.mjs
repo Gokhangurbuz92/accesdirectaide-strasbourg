@@ -62,7 +62,7 @@ export const LEGAL_IDENTITY_VARS = ['VITE_LEGAL_PUBLISHER_IDENTITY', 'VITE_LEGAL
 const OPENABLE_SURFACES = Object.keys(SURFACES).filter((s) => !NOT_OPENABLE.includes(s));
 // X04 (19/11/2026): the EXPANSION items (founder authorization for engineering only, separate register CONTROL/master/EXPANSION_REGISTER_15.md) are not
 // part of the 173-feature activation: the final configuration does not open them; each one opens by its own owner decision (AIPD line first)
-export const EXPANSION_SURFACES = Object.freeze(['events', 'testimonials', 'stories', 'employment', 'entraide']);   // X04, X02, X01, X05, X03 (X03: dedicated AIPD first)
+export const EXPANSION_SURFACES = Object.freeze(['events', 'testimonials', 'stories', 'employment', 'entraide', 'notices']);   // X04, X02, X01, X05, X03 (X03: dedicated AIPD first); G14: notices (DSA art. 16 form)
 const FINAL_SURFACES = OPENABLE_SURFACES.filter((s) => !EXPANSION_SURFACES.includes(s));
 const OUT_OF_AIPD = Object.entries(CAPABILITIES).filter(([, c]) => c.aipd === 'out' && c.openable !== false && !EXPANSION_SURFACES.includes(c.surface)).map(([n]) => n);
 const EXPANSION_NOTE = 'EXTENSION (hors des 173) : non ouverte par la configuration finale ; ouverture = décision séparée du propriétaire après la ligne AIPD';
@@ -166,6 +166,7 @@ const SURFACE_PROBES = {
   stories: { route: 'stories', method: 'GET', screen: '/histoires', features: ['X01'] },
   employment: { route: 'employment', method: 'GET', screen: '/offres-emploi', features: ['X05'] },
   entraide: { route: 'citizen/entraide', method: 'GET', screen: '/compte/entraide', features: ['X03'] },
+  notices: { route: 'notices', method: 'GET', screen: '/signaler-un-contenu', features: ['X02', 'X01', 'X05', 'X03'] },
 };
 const SURFACE_OTHER = {
   accounts: [

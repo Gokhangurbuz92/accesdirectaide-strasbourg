@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { citizenHandler } from '../../_utils/citizen-handler.js';
 import { citizenEntraide } from '../../_services/entraide.js';
+import { db as defaultDb } from '../../../src/db/index.js';
+import { requireFeatureStaffed, suspensionRefusal } from '../../_services/moderation-dsa.js';
 
 /**
  * X03 (expansion) — ENTRAIDE, the member side (api/_services/entraide.js). ⚠ A DEDICATED AIPD IS MANDATORY BEFORE ANY OPENING (capability
@@ -21,10 +23,21 @@ import { citizenEntraide } from '../../_services/entraide.js';
 const ID = /^[0-9a-f-]{36}$/i;
 const id = (v) => (typeof v === 'string' && ID.test(v) ? v : null);
 const MISSING = { ok: false, status: 400, code: 'ID_REQUIRED', message: 'Élément manquant.' };
+/** G14: what a member may still do while X03 lacks its named persons — read their own data, leave, end or withdraw, stop sharing their address, block */
+const ALWAYS = new Set(['leave', 'contact_revoke', 'block', 'unblock', 'offer_pause', 'offer_close', 'request_end', 'request_decline']);
+/** actions that publish or contact someone (DSA art. 23 publishing suspension) */
+const PUBLISHING = new Set(['offer_create', 'offer_reopen', 'request_create']);
 export default citizenHandler('entraide', ['GET', 'POST'], async (citizen, req) => {
   const svc = citizenEntraide();
   if (req.method === 'GET') return req.query?.view === 'browse' ? svc.browse(citizen.id, req.query) : svc.mine(citizen.id);
   const b = req.body && typeof req.body === 'object' ? req.body : {};
+  // G14 (fail closed): without a named safety officer and two named moderators, nothing new starts (join, offers, requests, contact, reports)
+  if (!ALWAYS.has(b.action)) {
+    const closed = await requireFeatureStaffed(defaultDb, 'entraide');
+    if (closed) return closed;
+  }
+  if (PUBLISHING.has(b.action)) { const r = await suspensionRefusal(defaultDb, citizen.id, 'publishing'); if (r) return r; }
+  if (b.action === 'report') { const r = await suspensionRefusal(defaultDb, citizen.id, 'notices'); if (r) return r; }
   switch (b.action) {
     case 'join': return svc.join(citizen, b);
     case 'accept_charter': return svc.acceptCharter(citizen, b);

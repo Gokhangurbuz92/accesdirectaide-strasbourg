@@ -29,7 +29,7 @@ describe.skipIf(!hasDatabase)('migration 0055: up → down → code without it �
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
   // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0056 (X05) is rolled back first, then 0055
-  const down = async () => { for (const f of ['drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
+  const down = async () => { for (const f of ['drizzle/rollback/0059_down.sql', 'drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
   const REL = `('"CommunityMember"'::regclass, '"CommunityStory"'::regclass, '"CommunityStoryReport"'::regclass)`;
 
   beforeAll(async () => {

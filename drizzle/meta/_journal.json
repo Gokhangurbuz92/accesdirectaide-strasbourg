@@ -414,6 +414,13 @@
       "when": 1795000000000,
       "tag": "0058_g12_sole_admin_checks",
       "breakpoints": true
+    },
+    {
+      "idx": 59,
+      "version": "7",
+      "when": 1795010000000,
+      "tag": "0059_g14_moderation_dsa",
+      "breakpoints": true
     }
   ]
 }

@@ -114,7 +114,7 @@ const OFFER_NOT_FOUND = refusal(404, 'OFFER_NOT_FOUND', 'Offre introuvable ou pl
 const REQUEST_NOT_FOUND = refusal(404, 'REQUEST_NOT_FOUND', 'Demande introuvable.');
 
 /** one append-only ConsentLog row @param {any} q @param {string} userId @param {string} purpose @param {string} version @param {string} ref @param {boolean} decision */
-async function consentRow(q, userId, purpose, version, ref, decision) {
+export async function consentRow(q, userId, purpose, version, ref, decision) {
   await q.insert(ConsentLog).values({
     subject_type: 'CITIZEN_USER', subject_id: String(userId), purpose, decision: decision === true, policy_version: version, policy_hash: `${version}:${purpose}:${ref}`,
     collection_channel: 'account', guardian_involved: false, proof_level: decision === true ? 'EXPLICIT_CHECKBOX' : 'AUTHENTICATED_SESSION',
@@ -123,7 +123,7 @@ async function consentRow(q, userId, purpose, version, ref, decision) {
 }
 
 /** delete the shared e-mails of these requests, each one with its consent withdrawal (the account of the member who shared it) @param {any} tx @param {string[]} requestIds */
-async function releaseShares(tx, requestIds) {
+export async function releaseShares(tx, requestIds) {
   if (!requestIds.length) return 0;
   const shares = await tx.select({ id: EntraideContactShare.id, requestId: EntraideContactShare.requestId, userId: EntraideMember.citizenUserId }).from(EntraideContactShare)
     .innerJoin(EntraideMember, eq(EntraideMember.id, EntraideContactShare.memberId)).where(inArray(EntraideContactShare.requestId, requestIds));
@@ -134,7 +134,7 @@ async function releaseShares(tx, requestIds) {
 }
 
 /** end the active (pending / accepted) requests matching `where`: note erased, shared e-mails deleted @param {any} tx @param {any} where @param {Date} at */
-async function endActiveRequests(tx, where, at) {
+export async function endActiveRequests(tx, where, at) {
   const rows = await tx.update(EntraideRequest).set({ status: 'ended', note: null, closedAt: at, updatedAt: at })
     .where(and(where, inArray(EntraideRequest.status, ACTIVE_REQ))).returning({ id: EntraideRequest.id });
   await releaseShares(tx, rows.map((r) => r.id));

@@ -53,7 +53,9 @@ describe('anonymous authorization sweep (all routes)', () => {
       'docs/openapi.json', 'drees/*',
       'employment',   // X05 (expansion), reviewed 2026-11-19 — the published job listings of verified employers (organization data, the employer's own application channel; no person, no applicant data); the router refuses it 503 while community.employment is closed
       'glossaire', 'health', 'health/live', 'healthz',
-      'monitor/cron/actualites', 'monitor/csp-report', 'robots', 'robots.txt', 'status',   // 'status': P24 overlay v1 — public status, reviewed 2026-10-21 (no internals, no personal data)
+      'monitor/cron/actualites', 'monitor/csp-report',
+      'notices',   // G14 / DSA art. 16, reviewed 2026-11-22 — GET answers the form's availability, the closed lists of categories and content types only (no data); the handler refuses 503 while no content capability is open
+      'robots', 'robots.txt', 'status',   // 'status': P24 overlay v1 — public status, reviewed 2026-10-21 (no internals, no personal data)
       'stories',   // X01 (expansion), reviewed 2026-11-19 — the published community stories (pseudonym, title, text, language, date; no account, no member id); the router refuses it 503 while community.stories is closed
       'taxonomy',
       'testimonials',   // X02 (expansion), reviewed 2026-11-19 — the published testimonials (chosen name, text, language, date; no account); the router refuses it 503 while community.testimonials is closed

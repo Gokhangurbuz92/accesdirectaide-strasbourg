@@ -21,6 +21,8 @@ import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION
 const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog', 'SharedDiagnostic', 'AuthToken', 'EmailChangeRequest', 'AiMetric', 'ConsentLog', 'UserConsent',
   'Invitation', 'ProOutlookToken', 'ProAuditLog', 'ProAppointment', 'AppointmentNotice', 'RdvConversation', 'RdvMessageAttachment', 'ProNotification', 'PushSubscription',
   'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral', 'SharedDossierThread'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042
+// G14: the expansion steps need the 0053–0059 tables, absent from this 0042-like mock: they are skipped (skipped_steps) and tested on a real DB
+const EXPANSION_IDS = new Set(Object.keys(RETENTION_POLICY.decidedSteps || {}));
 const dialect = new PgDialect();
 const render = (w) => dialect.sqlToQuery(w).sql;
 const log = { info: () => {}, warn: () => {}, error: () => {}, debug: () => {} };
@@ -50,8 +52,17 @@ const writes = (db) => db.calls.filter((c) => c.op !== 'select');
 const NOW = new Date('2026-11-04T12:00:00Z');
 
 describe('R44 retention policy object', () => {
-  it('V2 phase 1 (owner, 09/11/2026): APPROVED with A7 = 365 named in the version, only step 6c approved, frozen; the proposal stays unapproved', () => {
-    expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'r45-proposal-2-2026-11-05-a7-365d', approvedPolicyVersion: 'r45-proposal-2-2026-11-05-a7-365d', approvedChoices: { A7: 365 } });
+  it('V2 phase 1 (owner, 09/11/2026) + G14 (owner 22/11/2026, question 32): APPROVED with A7 = 365 named in the version, only step 6c approved, frozen; the proposal stays unapproved', () => {
+    // G14: a new version (expansion durations), approved together with step 6c in one move; the earlier version is named in « supersedes »
+    expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'g14-expansion-1-2026-11-22-a7-365d', approvedPolicyVersion: 'g14-expansion-1-2026-11-22-a7-365d',
+      supersedes: 'r45-proposal-2-2026-11-05-a7-365d', approvedChoices: { A7: 365 } });
+    // G14: 25 steps DECIDED (durations) — none of them APPROVED for execution (no dry run read, no backup verified yet); X03 steps wait for their AIPD
+    expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(25);
+    for (const [id, d] of Object.entries(RETENTION_POLICY.decidedSteps)) {
+      expect(d.decidedOn, id).toBe('2026-11-22');
+      expect(d.decision, id).toMatch(/^décision du responsable 22\/11\/2026, formulaire G14, question \d+$/);
+      expect(Boolean(d.condition), id).toBe(id.startsWith('entraide'));
+    }
     expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
     // C3 step 6c (V2 6B): ONLY unverifiedAccountsDeleted is approved; every other purge step still needs its own approval record
     expect(Object.keys(RETENTION_POLICY.approvedSteps || {})).toEqual(['unverifiedAccountsDeleted']);
@@ -118,7 +129,10 @@ describe('R44 / E16 execution gate', () => {
   it('step ids are unique; report steps are E7 / D4-V2 (suppression review) / E9b; every step names its duration in the policy (or an expiry)', () => {
     const ids = PURGE_STEPS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
-    expect(PURGE_STEPS.filter((s) => s.kind === 'report').map((s) => [s.id, s.ecode])).toEqual([['inactiveAccountsReport', 'E7'], ['mailSuppressionsReview', 'D4-V2'], ['disabledProUsersReport', 'E9b']]);
+    expect(PURGE_STEPS.filter((s) => s.kind === 'report').map((s) => [s.id, s.ecode])).toEqual([['inactiveAccountsReport', 'E7'], ['mailSuppressionsReview', 'D4-V2'], ['disabledProUsersReport', 'E9b'],
+      ['testimonialsReconfirmationReport', 'X02'], ['storiesReconfirmationReport', 'X01'], ['entraideSuspensionsReview', 'X03']]);   // G14 (q18, q27): reports, never deletions
+    // G14: every expansion step is a decided step, and every decided step exists
+    expect(PURGE_STEPS.filter((s) => EXPANSION_IDS.has(s.id)).length).toBe(EXPANSION_IDS.size);
     for (const s of PURGE_STEPS) if (s.durationKey) expect(() => policyDays(approvedTestPolicy(), s.durationKey), s.id).not.toThrow();   // R45: A7 resolved in the approved copy
   });
 });
@@ -134,7 +148,9 @@ describe('R44 runGdprPurge — dry run by default, execution only of approved st
     expect(body.steps.find((l) => l.id === 'unverifiedAccountsDeleted')).toMatchObject({ decision: 'executed', table: 'CitizenUser', days: 7 });
     // every other executable step is refused for lack of its own approval record (the guest step is skipped first: a 0042 database has no guest columns)
     expect(body.steps.filter((l) => l.decision === 'not_approved_in_policy').map((l) => l.id).sort())
-      .toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount' && id !== 'unverifiedAccountsDeleted').sort());
+      .toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount' && id !== 'unverifiedAccountsDeleted' && !EXPANSION_IDS.has(id)).sort());
+    // G14: on this 0042-like database the expansion tables do not exist — skipped, never executed
+    expect(body.steps.filter((l) => EXPANSION_IDS.has(l.id)).every((l) => l.decision === 'skipped_schema')).toBe(true);
     expect(body.steps.find((l) => l.id === 'clearedGuestHoldsCount').decision).toBe('skipped_schema');
   });
   it('the production policy, enabled and pinned, but GDPR_PURGE_APPROVED_STEPS without the 6c step: nothing deleted (the operator list is still required)', async () => {
@@ -194,7 +210,7 @@ describe('R44 runGdprPurge — dry run by default, execution only of approved st
     const db = recDb({ tables: ALL_TABLES.filter((t) => t !== 'PushSubscription' && t !== 'ProNotification') });
     const { status, body } = await runGdprPurge({ database: db, policy: approvedTestPolicy(), env: approvalEnv(executableStepIds(PURGE_STEPS)), now: NOW, logger: log });
     expect(status).toBe(200);
-    expect(body.skipped_steps).toEqual(['clearedGuestHoldsCount', 'proNotificationsDeleted', 'pushSubscriptionsFailingDeleted']);
+    expect(body.skipped_steps).toEqual(['clearedGuestHoldsCount', 'proNotificationsDeleted', 'pushSubscriptionsFailingDeleted', ...PURGE_STEPS.filter((x) => EXPANSION_IDS.has(x.id)).map((x) => x.id)]);
     expect(writes(db).some((c) => c.table === 'PushSubscription' || c.table === 'ProNotification')).toBe(false);
   });
   it('schema detection failure is fail-closed: every step skipped, the run reported as partial', async () => {

@@ -23,7 +23,7 @@
 import crypto from 'node:crypto';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
-import { AcademyItem, AuditLog, EventRegistration } from '../../src/db/schema.js';
+import { AcademyItem, AuditLog, ConsentLog, EventRegistration } from '../../src/db/schema.js';
 import { claimsEntitlement } from '../lib/entitlementWording.js';
 
 export const KINDS = Object.freeze(['LESSON', 'EVENT']);
@@ -300,6 +300,16 @@ function needOf(v) {
 }
 
 const refusal = (status, code, message) => ({ ok: false, status, code, message });
+/** G14 (owner decision 22/11/2026, formulaire G14 question 3): the proof of the explicit consent (art. 7(1), art. 9(2)(a) RGPD) for an accessibility need —
+ * one append-only ConsentLog row per decision (true when a need is given or changed, false when it is removed or the registration cancelled) */
+export const NEED_CONSENT_PURPOSE = 'EVENT_ACCESSIBILITY_NEED';
+export const NEED_CONSENT_VERSION = 'x04-need-2026-11-22';
+/** @param {any} q @param {string} userId @param {string} registrationId @param {boolean} decision @param {Date} at */
+async function needConsentRow(q, userId, registrationId, decision, at) {
+  await q.insert(ConsentLog).values({ subject_type: 'CITIZEN_USER', subject_id: String(userId), purpose: NEED_CONSENT_PURPOSE, decision: decision === true,
+    policy_version: NEED_CONSENT_VERSION, policy_hash: `${NEED_CONSENT_VERSION}:${NEED_CONSENT_PURPOSE}:${registrationId}`, collection_channel: 'account',
+    guardian_involved: false, proof_level: decision === true ? 'EXPLICIT_CHECKBOX' : 'AUTHENTICATED_SESSION', created_at: at, ...(decision === true ? {} : { withdrawn_at: at }) });
+}
 const NEED_CONSENT_REFUSAL = refusal(400, 'NEED_CONSENT_REQUIRED', 'Pour transmettre votre besoin d’accessibilité à l’organisateur, cochez la case d’accord, ou choisissez « aucun » : l’inscription est possible sans besoin indiqué.');
 
 /**
@@ -344,8 +354,11 @@ export function eventRegistrations({ db = defaultDb, now = () => new Date(), isA
         const [{ n }] = (await tx.execute(sql`SELECT count(*)::int AS n FROM "EventRegistration" WHERE "itemId" = ${item.id} AND status = 'REGISTERED'`)).rows;
         if (Number(n) >= item.capacity) return refusal(409, 'EVENT_FULL', 'Cet événement est complet.');
         const values = { status: 'REGISTERED', accessibilityNeed: need.value, accessibilityNeedAt: need.value ? at : null, cancelledAt: null, updatedAt: at };
+        const regId = existing ? existing.id : crypto.randomUUID();
         if (existing) await tx.update(EventRegistration).set(values).where(eq(EventRegistration.id, existing.id));
-        else await tx.insert(EventRegistration).values({ id: crypto.randomUUID(), itemId: item.id, citizenUserId: userId, createdAt: at, ...values });
+        else await tx.insert(EventRegistration).values({ id: regId, itemId: item.id, citizenUserId: userId, createdAt: at, ...values });
+        // G14 q3: the explicit consent to the need is proven in the same transaction (no proof, no need kept)
+        if (need.value) await needConsentRow(tx, userId, regId, true, at);
         return { ok: true, status: existing ? 200 : 201, registered: true, itemId: item.id, accessibilityNeed: need.value };
       });
     },
@@ -355,8 +368,11 @@ export function eventRegistrations({ db = defaultDb, now = () => new Date(), isA
       const reg = await regOf(db, userId, itemId);
       if (!reg || reg.status !== 'REGISTERED') return refusal(404, 'REGISTRATION_NOT_FOUND', 'Aucune inscription en cours à cet événement.');
       const at = now();
-      await db.update(EventRegistration).set({ status: 'CANCELLED', accessibilityNeed: null, accessibilityNeedAt: null, cancelledAt: at, updatedAt: at })
-        .where(and(eq(EventRegistration.id, reg.id), eq(EventRegistration.citizenUserId, userId)));
+      await db.transaction(async (tx) => {
+        await tx.update(EventRegistration).set({ status: 'CANCELLED', accessibilityNeed: null, accessibilityNeedAt: null, cancelledAt: at, updatedAt: at })
+          .where(and(eq(EventRegistration.id, reg.id), eq(EventRegistration.citizenUserId, userId)));
+        if (reg.accessibilityNeed) await needConsentRow(tx, userId, reg.id, false, at);   // G14 q3: the need goes, its withdrawal is recorded
+      });
       return { ok: true, status: 200, cancelled: true, itemId: reg.itemId };
     },
     /** change or remove the accessibility need of a current registration (a need again needs the agreement) */
@@ -368,8 +384,13 @@ export function eventRegistrations({ db = defaultDb, now = () => new Date(), isA
       const reg = await regOf(db, userId, itemId);
       if (!reg || reg.status !== 'REGISTERED') return refusal(404, 'REGISTRATION_NOT_FOUND', 'Aucune inscription en cours à cet événement.');
       const at = now();
-      await db.update(EventRegistration).set({ accessibilityNeed: need.value, accessibilityNeedAt: need.value ? at : null, updatedAt: at })
-        .where(and(eq(EventRegistration.id, reg.id), eq(EventRegistration.citizenUserId, userId)));
+      await db.transaction(async (tx) => {
+        await tx.update(EventRegistration).set({ accessibilityNeed: need.value, accessibilityNeedAt: need.value ? at : null, updatedAt: at })
+          .where(and(eq(EventRegistration.id, reg.id), eq(EventRegistration.citizenUserId, userId)));
+        // G14 q3: a new or changed need = a new consent; a removed need = its withdrawal
+        if (need.value && need.value !== reg.accessibilityNeed) await needConsentRow(tx, userId, reg.id, true, at);
+        else if (!need.value && reg.accessibilityNeed) await needConsentRow(tx, userId, reg.id, false, at);
+      });
       return { ok: true, status: 200, itemId: reg.itemId, accessibilityNeed: need.value };
     },
   };

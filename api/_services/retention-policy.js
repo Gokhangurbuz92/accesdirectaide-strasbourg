@@ -33,7 +33,8 @@ export const POLICY_STATUS_APPROVED = 'APPROVED';
  * @typedef {{ days: number | null, anchor: string, basis: string, ecode?: string, ownerChoice?: string, options?: number[] }} PolicyDuration
  * @typedef {{ id: string, version: string, status: string, approvedPolicyVersion?: string, source: string, durations: Record<string, PolicyDuration>,
  *   ownerChoices?: Record<string, { durationKey: string, options: number[], label: string }>, approvedChoices?: Record<string, number>,
- *   approvedSteps?: Record<string, { approvedOn: string, dryRunReviewedOn: string, backupVerified: string, sharedControllerBasis?: string }> }} RetentionPolicy
+ *   approvedSteps?: Record<string, { approvedOn: string, dryRunReviewedOn: string, backupVerified: string, sharedControllerBasis?: string }>,
+ *   decidedSteps?: Record<string, { decidedOn: string, decision: string, condition?: string }>, supersedes?: string }} RetentionPolicy
  */
 
 /** @template T @param {T} o @returns {T} */
@@ -48,6 +49,27 @@ function deepFreeze(o) {
 const OPS = 'besoin opérationnel (proposition)';
 const CNIL_LOG = 'recommandation CNIL 2021-122 (journalisation : 6 mois à 1 an) — pas une obligation légale';
 const PROOF = 'preuve (proposition, à justifier par écrit)';
+const G14 = 'décision du responsable 22/11/2026, formulaire G14 (pas une obligation légale)';
+const G14_X03 = 'décision du responsable 22/11/2026, formulaire G14 — applicable avec l’AIPD dédiée X03 (pas une obligation légale)';
+const G14_DECISION = 'décision du responsable 22/11/2026, formulaire G14';
+/** the X03 condition (question 27: « önerildiği gibi, ayrı AIPD ile birlikte ») */
+export const X03_AIPD_CONDITION = 'AIPD dédiée X03 signée';
+
+/**
+ * G14 — the decision recorded per expansion step: { decidedOn, decision (the question), condition? }. A decided step is NOT an approved step: it executes
+ * only once the controller records it in `approvedSteps` (dry run read, backup verified) and lists it in GDPR_PURGE_APPROVED_STEPS.
+ * @type {Record<string, { decidedOn: string, decision: string, condition?: string }>}
+ */
+const G14_DECIDED_STEPS = Object.fromEntries([
+  ['eventNeedsClearedAfterEnd', 14], ['eventRegistrationsDeleted', 15], ['academyEventsEndedDeleted', 16],
+  ['testimonialsPendingExpired', 17], ['testimonialSkeletonsDeleted', 19], ['testimonialReportsDeleted', 20], ['testimonialsReconfirmationReport', 18],
+  ['storiesPendingExpired', 17], ['storySkeletonsDeleted', 19], ['storyReportsDeleted', 20], ['storiesReconfirmationReport', 18], ['communityMembersInactiveDeleted', 21],
+  ['jobListingsExpiredMarked', 25], ['jobListingApplyTargetsErased', 23], ['jobListingsEndedDeleted', 25], ['jobListingDraftsDeleted', 25],
+  ['entraideOffersIdleClosed', 27], ['entraideRequestsPendingExpired', 27], ['entraideRequestsAcceptedEnded', 26], ['entraideRequestsEndedDeleted', 27],
+  ['entraideOffersClosedDeleted', 27], ['entraideReportsDeleted', 27], ['entraideSuspensionsReview', 27], ['entraideMembersInactiveDeleted', 27],
+  ['contentNoticesDeleted', 28],
+].map(([id, q]) => [id, { decidedOn: '2026-11-22', decision: `${G14_DECISION}, question ${q}`,
+  ...(String(id).startsWith('entraide') ? { condition: X03_AIPD_CONDITION } : {}) }]));
 
 /** @type {RetentionPolicy} */
 export const RETENTION_POLICY = deepFreeze({
@@ -56,9 +78,14 @@ export const RETENTION_POLICY = deepFreeze({
   // D4 V2 with its 09/11 addenda) — proposal r45-proposal-2-2026-11-05, durations unchanged, owner choice A7 = 365 days. This is the approval of the
   // policy directions, NOT the final AIPD signature. No purge step executes from this alone: each step still needs its own approval record below
   // (approvedSteps), GDPR_PURGE_ENABLED, GDPR_PURGE_POLICY_VERSION = this version, and GDPR_PURGE_APPROVED_STEPS (executionGate).
-  version: 'r45-proposal-2-2026-11-05-a7-365d',
+  // G14 (décision du responsable 22/11/2026, formulaire G14, questions 14–28 et 32): a NEW version carrying the expansion durations (X01–X05, content
+  // notices). Question 32 « (önerilen) »: the new version is approved AND step 6c re-approved in ONE move — the version below replaces
+  // r45-proposal-2-2026-11-05-a7-365d (still named in `supersedes`); the deployment must re-pin GDPR_PURGE_POLICY_VERSION to it in the same owner action,
+  // otherwise every run (6c included) is a dry run (POLICY_VERSION_NOT_PINNED, fail-closed). Durations of the earlier version are unchanged; A7 = 365.
+  version: 'g14-expansion-1-2026-11-22-a7-365d',
+  supersedes: 'r45-proposal-2-2026-11-05-a7-365d',
   status: POLICY_STATUS_APPROVED,
-  approvedPolicyVersion: 'r45-proposal-2-2026-11-05-a7-365d',
+  approvedPolicyVersion: 'g14-expansion-1-2026-11-22-a7-365d',
   approvedChoices: { A7: 365 },
   // approvedSteps: one entry per step the controller approved (D4: step by step) — { [stepId]: { approvedOn, dryRunReviewedOn, backupVerified,
   //   sharedControllerBasis? } }. C3 step 6c ONLY (V2 stage 6B): unverified accounts deleted after 7 days. Dry run opened in Production 14/11/2026
@@ -72,7 +99,12 @@ export const RETENTION_POLICY = deepFreeze({
       backupVerified: 'CONTROL/v2/c7/EVIDENCE_2026-11-12.json (restore verified) + K3 scheduled backups 2026-11-13T02:20Z/14:17Z (ADAB2, EU)',
     },
   },
-  source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]; R44_DECISIONS_RGPD_D1_D6_FR_v2.md annexe A (A7 au choix du responsable)',
+  // G14 — the DURATIONS of the expansion steps are decided by the controller (décision du responsable 22/11/2026, formulaire G14). That is not the
+  // per-step approval above: D4 still requires, for each step, a dry-run report READ and a VERIFIED backup before it executes, and neither exists yet for
+  // these steps (engineering never invents them). `decidedSteps` records the decision per step; the controller adds the step to `approvedSteps` after
+  // reading its dry run. X03 steps carry a condition: the dedicated X03 AIPD must be signed first (question 27).
+  decidedSteps: G14_DECIDED_STEPS,
+  source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]; R44_DECISIONS_RGPD_D1_D6_FR_v2.md annexe A (A7 au choix du responsable); G14_KARAR_FORMU_GENISLETME_TR.md (décision du responsable 22/11/2026, questions 14–28, 32)',
   ownerChoices: {
     A7: { durationKey: 'APPOINTMENT_CONFIRMED_DAYS', options: [365, 730], label: 'rendez-vous confirmés, tenus, absences : 1 an ou 2 ans après startAt (D4 v2, annexe A, ligne A7)' },
   },
@@ -107,6 +139,30 @@ export const RETENTION_POLICY = deepFreeze({
     INACTIVE_WARNING_GRACE_DAYS: { days: 30, anchor: 'warning e-mail sent (not built)', basis: OPS, ecode: 'E7' },
     PRO_USER_DISABLED_DAYS: { days: 365, anchor: 'disabling date (not recorded on 0042)', basis: OPS, ecode: 'E9b' },
     BACKUP_KEEP_DAYS: { days: 35, anchor: 'backup file time (V2: 35 days, as the privacy notice § 4 says)', basis: OPS, ecode: 'E15' },
+    // ── G14 expansion (décision du responsable 22/11/2026, formulaire G14; the question number follows each line). None is a legal obligation.
+    EVENT_NEED_AFTER_END_DAYS: { days: 1, anchor: 'AcademyItem.endsAt (accessibility need of a registration)', basis: G14, ecode: 'X04' },   // q14
+    EVENT_REGISTRATION_AFTER_END_DAYS: { days: 30, anchor: 'AcademyItem.endsAt, or LEAST(cancelledAt, endsAt) when cancelled', basis: G14, ecode: 'X04' },   // q15
+    ACADEMY_EVENT_ENDED_DAYS: { days: 365, anchor: 'COALESCE(AcademyItem.endsAt, cancelledAt) of an EVENT', basis: G14, ecode: 'X04' },   // q16
+    TESTIMONIAL_PENDING_DAYS: { days: 60, anchor: 'Testimonial.submittedAt (never read by a moderator)', basis: G14, ecode: 'X02' },   // q17
+    TESTIMONIAL_REVIEW_DAYS: { days: 1095, anchor: 'Testimonial.publishedAt (report only: the person is asked again)', basis: G14, ecode: 'X02' },   // q18
+    TESTIMONIAL_SKELETON_DAYS: { days: 365, anchor: 'COALESCE(withdrawnAt, moderatedAt, updatedAt) of a row without text', basis: G14, ecode: 'X02' },   // q19
+    UGC_REPORT_DAYS: { days: 90, anchor: 'createdAt of an in-app report (deleted at the decision already)', basis: G14, ecode: 'X02' },   // q20
+    STORY_PENDING_DAYS: { days: 60, anchor: 'CommunityStory.submittedAt', basis: G14, ecode: 'X01' },   // q17
+    STORY_REVIEW_DAYS: { days: 1095, anchor: 'CommunityStory.publishedAt (report only)', basis: G14, ecode: 'X01' },   // q18
+    STORY_SKELETON_DAYS: { days: 365, anchor: 'COALESCE(withdrawnAt, moderatedAt, updatedAt) of a row without text', basis: G14, ecode: 'X01' },   // q19
+    COMMUNITY_MEMBER_INACTIVE_DAYS: { days: 730, anchor: 'GREATEST(member.createdAt, MAX(story.updatedAt)) of a pseudonym without a pending or published story', basis: G14, ecode: 'X01' },   // q21
+    JOB_APPLY_TARGET_AFTER_END_DAYS: { days: 30, anchor: 'expiresOn (expired), withdrawnAt (withdrawn), moderatedAt (taken down)', basis: G14, ecode: 'X05' },   // q23
+    JOB_LISTING_ENDED_DAYS: { days: 365, anchor: 'same anchors as JOB_APPLY_TARGET_AFTER_END_DAYS', basis: G14, ecode: 'X05' },   // q25
+    JOB_LISTING_DRAFT_DAYS: { days: 180, anchor: 'JobListing.updatedAt of a draft or a rejected listing', basis: G14, ecode: 'X05' },   // q25
+    ENTRAIDE_OFFER_IDLE_DAYS: { days: 90, anchor: 'EntraideOffer.updatedAt (open / paused)', basis: G14_X03, ecode: 'X03' },   // q27
+    ENTRAIDE_REQUEST_PENDING_DAYS: { days: 30, anchor: 'EntraideRequest.createdAt', basis: G14_X03, ecode: 'X03' },   // q27
+    ENTRAIDE_REQUEST_ACCEPTED_DAYS: { days: 90, anchor: 'COALESCE(decidedAt, updatedAt) of an accepted request', basis: G14_X03, ecode: 'X03' },   // q26
+    ENTRAIDE_REQUEST_ENDED_DAYS: { days: 365, anchor: 'EntraideRequest.closedAt', basis: G14_X03, ecode: 'X03' },   // q27
+    ENTRAIDE_OFFER_CLOSED_DAYS: { days: 365, anchor: 'EntraideOffer.closedAt', basis: G14_X03, ecode: 'X03' },   // q27
+    ENTRAIDE_REPORT_DAYS: { days: 365, anchor: 'EntraideReport.createdAt', basis: G14_X03, ecode: 'X03' },   // q27
+    ENTRAIDE_SUSPENSION_REVIEW_DAYS: { days: 365, anchor: 'EntraideMember.suspendedAt (report only: human review)', basis: G14_X03, ecode: 'X03' },   // q27
+    ENTRAIDE_MEMBER_INACTIVE_DAYS: { days: 730, anchor: 'GREATEST(member.updatedAt, MAX(offer.updatedAt), MAX(request.updatedAt))', basis: G14_X03, ecode: 'X03' },   // q27
+    CONTENT_NOTICE_AFTER_DECISION_DAYS: { days: 365, anchor: 'ContentNotice.decidedAt (notice sent through the public form, without an account)', basis: G14, ecode: 'DSA' },   // q28
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });
@@ -181,6 +237,9 @@ export function stepApprovalProblem(policy, step) {
   if (String(a.dryRunReviewedOn) > String(a.approvedOn)) return 'STEP_DRY_RUN_REVIEW_AFTER_APPROVAL';
   if (typeof a.backupVerified !== 'string' || a.backupVerified.trim().length < 3) return 'STEP_BACKUP_VERIFICATION_MISSING';
   if (step.sharedController && (typeof a.sharedControllerBasis !== 'string' || a.sharedControllerBasis.trim().length < 3)) return 'STEP_SHARED_CONTROLLER_BASIS_MISSING';
+  // G14: a decided step with an open condition (X03 — the dedicated AIPD) never executes, whatever its approval record says
+  const decided = /** @type {any} */ (policy)?.decidedSteps?.[step.id];
+  if (decided?.condition && !ISO_DAY.test(String(decided.conditionMetOn || ''))) return 'STEP_CONDITION_OPEN';
   return null;
 }
 
@@ -210,5 +269,15 @@ export function executionGate(policy, env, opts = {}) {
 export function policySummary(policy) {
   return { id: policy.id, version: policy.version, status: policy.status, approved: isPolicyApproved(policy), approvedPolicyVersion: policy.approvedPolicyVersion ?? null, source: policy.source,
     ownerChoicesOpen: missingOwnerChoices(policy), approvedChoices: /** @type {any} */ (policy).approvedChoices ?? null,
-    approvedStepCount: Object.keys(/** @type {any} */ (policy).approvedSteps || {}).length };
+    approvedStepCount: Object.keys(/** @type {any} */ (policy).approvedSteps || {}).length,
+    decidedStepCount: Object.keys(/** @type {any} */ (policy).decidedSteps || {}).length };
+}
+
+/**
+ * G14 — the decision behind a step, or null. A step with a condition (X03: the dedicated AIPD) stays non-approvable while the condition is open: even an
+ * approvedSteps record does not execute it until the condition is recorded as met (`conditionMetOn`). @param {RetentionPolicy} policy @param {string} stepId
+ */
+export function stepDecision(policy, stepId) {
+  const d = /** @type {any} */ (policy)?.decidedSteps?.[stepId];
+  return d && typeof d === 'object' ? d : null;
 }
