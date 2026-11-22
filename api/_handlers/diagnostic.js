@@ -23,7 +23,7 @@ import { SyncRun } from '../../src/db/schema.js';
 import { and, eq } from 'drizzle-orm';
 import crypto from 'crypto';
 import { engineUnavailableAssessment, simulationResponse } from '../lib/diagnosticAssessment.js';
-// R31: expert-validated rules only (the gate is api/lib/validatedRules.js; no right passes it today, so results are unchanged)
+// R31: expert-validated rules only (G14: OWNER_VALIDATED excluded server-side) (the gate is api/lib/validatedRules.js; no right passes it today, so results are unchanged)
 import { validatedReadings } from '../lib/validatedRules.js';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -31,7 +31,10 @@ let rulesRegister;
 /** the register, read once; unreadable = no right passes the gate (fail closed: results stay non-authoritative) */
 const readings = (answers, referenceDate) => {
   try { rulesRegister ??= JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/rules/rights-rules.v1.json'), 'utf8')); } catch { return {}; }
-  return validatedReadings(rulesRegister, answers, referenceDate);
+  // G14 (22/11/2026): the server applies EXPERT_VALIDATED rules only. An OWNER_VALIDATED rule (approved by the data controller, not by an independent
+  // expert) never unlocks a server-side evaluation or an API field: it is read only by the browser-only orientation (src/lib/orientationBrowserOnly.js).
+  const all = validatedReadings(rulesRegister, answers, referenceDate);
+  return Object.fromEntries(Object.entries(all).filter(([, r]) => r.validation === 'EXPERT'));
 };
 import { ERROR_CODES, SAFE_MESSAGES, captureSafe, classifyError, parseJsonBody } from '../lib/diagnosticErrors.js';
 import { clientIp } from '../_utils/client-ip.js';
@@ -240,9 +243,7 @@ async function handleDiagnosticInner(req, res, track) {
         // INSUFFICIENT_INFORMATION and the missing inputs are named. The raw engine values (exact amounts, « eligible » flags) never leave the server.
         // R46 (D10): the version is the one the engine states (Country-Package-Version), else the pinned one; D11: each right says whether its rule passed the gate
         const engineVersion = (health?.ok && health.version) || process.env.OPENFISCA_FRANCE_VERSION || null;
-        const passed = readings(answers, null);   // G14: expert and owner validations are kept apart
-        const estimates = qualifyEstimates(rights, answers, { period, engineVersion, validatedRules: Object.keys(passed).filter((k) => passed[k].validation !== 'OWNER'),
-          ownerValidatedRules: Object.keys(passed).filter((k) => passed[k].validation === 'OWNER') });
+        const estimates = qualifyEstimates(rights, answers, { period, engineVersion, validatedRules: Object.keys(readings(answers, null)) });   // expert-validated only (G14)
 
         const duration = Date.now() - start;
         logger.info('[Diagnostic]', { requestId, duration_ms: duration, rightsCount: rights.length });

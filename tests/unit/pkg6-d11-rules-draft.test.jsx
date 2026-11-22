@@ -67,14 +67,15 @@ describe('PKG-6 / D11 draft reading of the register', () => {
     const a = buildAssessment({ answers: { birthDate: '1960-01-01', householdSize: 1, income: { salary: 100 }, housing: { status: 'tenant', rent: 300 }, territory: '67000' }, unsupportedRights: UNSUPPORTED_RIGHTS });
     for (const it of a.items) { expect(it.authoritative).toBe(false); expect(it.provenance.source).toBeNull(); expect(it.state).not.toMatch(/ELIGIBLE|NOT_APPLICABLE/); }
     expect(reg.rights.filter((r) => r.status === 'EXPERT_VALIDATED')).toEqual([]);
-    expect(reg.rights.every((r) => r.referenceCases.length === 0)).toBe(true);   // proposed cases never land in the register without an expert
+    // G14 (owner sign-off 22/11/2026): accepted cases land only with a named human review (expert or owner), never from the proposals alone
+    for (const r of reg.rights) if (r.referenceCases.length) { expect(['EXPERT_VALIDATED', 'OWNER_VALIDATED'], r.id).toContain(r.status); for (const c of r.referenceCases) expect(c.acceptedBy?.name, `${r.id}.${c.id}`).toBeTruthy(); }
   });
 
   it('the expert review pack is generated from the data and is in sync (re-run: node scripts/d11-review-pack.mjs)', () => {
     const pack = renderReviewPack(reg, proposed);
     expect(fs.readFileSync(PACK_PATH, 'utf8')).toBe(pack);
-    expect(pack).toMatch(/aucune règle n'est validée/);
-    for (const r of reg.rights) expect(pack).toContain(`(\`${r.id}\`) — RESEARCHED_UNVALIDATED`);
+    expect(pack).toMatch(/aucune règle n'est validée( par un expert)?/);   // G14: an owner approval is never presented as an expert validation
+    for (const r of reg.rights) expect(pack).toContain(`(\`${r.id}\`) — ${r.status}`);
     expect(pack.match(/☐ accepter ☐ corriger ☐ rejeter/g).length).toBe(reg.rights.reduce((n, r) => n + r.conditions.length, 0) + proposed.cases.length);
   });
 });
@@ -97,7 +98,10 @@ describe('PKG-6 / D11 → D20: official pages in « Pourquoi ce résultat ? »',
     const assessment = buildAssessment({ answers, ruleReadings: validatedReadings(owned, answers, '2026-11-22') });
     render(createElement(MemoryRouter, null, createElement(AssessmentView, { results: { assessment } })));
     expect(screen.getByTestId('verify-with-body-rsa')).toHaveTextContent("À vérifier auprès de l'organisme compétent.");
-    expect(screen.queryByTestId('verify-with-body-apl')).toBeNull();   // only items read from a reviewed rule
+    // only items read from a reviewed rule: with no rule reading, no such line (the committed register is owner-approved since 48ffc853, so build without readings)
+    cleanup();
+    render(createElement(MemoryRouter, null, createElement(AssessmentView, { results: { assessment: buildAssessment({ answers }) } })));
+    expect(screen.queryByTestId('verify-with-body-rsa')).toBeNull();
   });
 
   it('each item shows the pages (new tab, noopener), who decides, and that the result is not computed from them; axe clean', async () => {
@@ -111,7 +115,10 @@ describe('PKG-6 / D11 → D20: official pages in « Pourquoi ce résultat ? »',
     for (const a of links) { expect(a).toHaveAttribute('target', '_blank'); expect(a.getAttribute('rel')).toMatch(/noopener/); expect(a).toHaveTextContent(/nouvel onglet/); }
     expect(rsa).toHaveTextContent(/date indiquée sur la page : 01\/04\/2026/);
     expect(rsa).toHaveTextContent(/Qui décide : Caf/);
-    expect(screen.getByTestId('official-info-unvalidated-rsa')).toHaveTextContent(/aucun expert ne les a encore validées : le résultat ci-dessus n'est pas calculé à partir d'elles/);
+    // G14 (owner sign-off 22/11/2026): the rule is « relue par l'équipe ADA », never « validée par un expert »; the unvalidated sentence is replaced
+    expect(screen.getByTestId('official-info-owner-rsa')).toHaveTextContent(/Règle relue par l'équipe ADA à partir de ces pages officielles \(pas par un expert indépendant\)\. L'organisme décide\./);
+    expect(screen.queryByTestId('official-info-unvalidated-rsa')).toBeNull();
+    expect(screen.getByTestId('official-info-rsa')).not.toHaveTextContent(/validée? par un expert/i);
     expect(screen.getByTestId('official-info-are')).toBeInTheDocument();
     expect(screen.getByTestId('official-info-faj-strasbourg').querySelector('a')).toHaveAttribute('href', 'https://www.strasbourg.eu/fr/fond-aide-jeunes');
     expect(screen.queryByTestId('official-info-impayes-loyer')).toBeNull();

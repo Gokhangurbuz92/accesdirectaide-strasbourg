@@ -33,9 +33,16 @@ export function renderReviewPack(register, proposed) {
   const L = [];
   L.push('# D11 — dossier de revue experte des règles de droits (ADA Strasbourg)', '');
   L.push(`Registre : data/rules/rights-rules.v1.json (consulté le ${register.consultedAt}). Cas proposés : data/rules/reference-cases.proposed.v1.json.`, '');
-  L.push('**Statut : aucune règle n\'est validée.** Ce document est généré à partir des données du produit ; il ne contient aucune décision. Pour chaque droit,',
+  // G14: the status line says what the register holds — no right expert-validated is not the same as no right approved by the owner
+  const st = (s) => register.rights.filter((r) => r.status === s).map((r) => r.id);
+  const statusLine = st('EXPERT_VALIDATED').length || st('OWNER_VALIDATED').length
+    ? `**Statut : ${st('EXPERT_VALIDATED').length ? `relues par un expert : ${st('EXPERT_VALIDATED').join(', ')}` : 'aucune règle n\'est validée par un expert'}${st('OWNER_VALIDATED').length ? ` ; approuvées par le responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) : ${st('OWNER_VALIDATED').join(', ')}` : ''}.**`
+    : '**Statut : aucune règle n\'est validée.**';
+  L.push(`${statusLine} Ce document est généré à partir des données du produit ; il ne contient aucune décision. Pour chaque droit,`,
     'l\'expert (nom, fonction, date) accepte, corrige ou rejette chaque condition, chaque lecture automatique et chaque cas proposé, et tranche les ambiguïtés.',
-    'Tant que ce n\'est pas fait, ADA n\'utilise pas ces règles pour orienter : les résultats restent « à faire vérifier » et l\'organisme compétent décide.', '');
+    st('OWNER_VALIDATED').length
+      ? 'Une règle approuvée par le responsable du traitement n\'est lue que par l\'orientation dans le navigateur (« règle relue par l\'équipe ADA ; l\'organisme décide ») ; le serveur n\'applique que les règles relues par un expert. Les résultats restent « à faire vérifier » et l\'organisme compétent décide.'
+      : 'Tant que ce n\'est pas fait, ADA n\'utilise pas ces règles pour orienter : les résultats restent « à faire vérifier » et l\'organisme compétent décide.', '');
   L.push('Légende des résultats : MET = condition remplie d\'après les réponses ; NOT_MET = non remplie ; UNKNOWN = ADA ne peut pas le dire.', '');
   for (const r of register.rights) {
     L.push(`## ${r.label} (\`${r.id}\`) — ${r.status}`, '');

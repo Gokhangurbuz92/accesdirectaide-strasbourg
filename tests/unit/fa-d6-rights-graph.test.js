@@ -228,7 +228,9 @@ describe('unknown conditions and contradictory sources → abstention « à vér
   });
   it('the D11 gate is untouched: no right is expert-validated; source-checked rights stay EXPERT_REVIEW_PENDING', () => {
     for (const r of register.rights) {
-      expect(r.status).toBe('RESEARCHED_UNVALIDATED');
+      // G14 (owner sign-off 22/11/2026, commit 48ffc853): OWNER_VALIDATED is the data controller's approval, not an expert review — the graph still
+      // says « expert review pending » and never « expert-validated »
+      expect(['RESEARCHED_UNVALIDATED', 'OWNER_VALIDATED']).toContain(r.status);
       expect(graph.nodes[`right:${r.id}`].reviewState).toBe('EXPERT_REVIEW_PENDING');
       expect(graph.nodes[`right:${r.id}`].expertValidated).toBe(false);
     }

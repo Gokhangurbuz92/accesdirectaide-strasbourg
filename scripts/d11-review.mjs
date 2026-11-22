@@ -114,6 +114,8 @@ export function applyForm(register, results) {
     } else {
       r.status = 'EXPERT_VALIDATED';
       r.expertReview = { ...res.review, ambiguityDecisions: res.ambiguityDecisions };
+      // G14: an expert review supersedes an earlier owner approval; the owner's record is kept for history, outside the gate
+      if (r.ownerReview) { r.supersededOwnerReview = r.ownerReview; delete r.ownerReview; }
     }
     r.referenceCases = res.accepted.map(({ decision, ...c }) => c);
     if (!validatedRight(next, r.id)) throw new Error(`gate refused ${r.id} after apply`);   // belt and braces: the product's own gate must agree
@@ -131,8 +133,10 @@ function main() {
   if (cmd === 'form') { process.stdout.write(renderForm(register, proposed)); return; }
   if (cmd === 'status') {
     const gate = register.rights.map((r) => ({ right: r.id, status: r.status, ...gateStatus(register, r.id) }));
-    if (args.includes('--json')) process.stdout.write(`${JSON.stringify({ register: target.pathname.split('/').pop(), validated: gate.filter((g) => g.passes).map((g) => g.right), gate }, null, 1)}\n`);
-    else for (const g of gate) console.log(`${g.right}: ${g.passes ? 'PASSES THE GATE' : `closed (${g.reasons.join(', ')})`}`);
+    const passing = (st) => gate.filter((g) => g.passes && g.status === st).map((g) => g.right);   // G14: the two kinds are listed apart
+    if (args.includes('--json')) process.stdout.write(`${JSON.stringify({ register: target.pathname.split('/').pop(), validated: gate.filter((g) => g.passes).map((g) => g.right),
+      expertValidated: passing('EXPERT_VALIDATED'), ownerValidated: passing('OWNER_VALIDATED'), gate }, null, 1)}\n`);
+    else for (const g of gate) console.log(`${g.right}: ${g.passes ? `PASSES THE GATE (${g.status})` : `closed (${g.reasons.join(', ')})`}`);
     return;
   }
   if (cmd === 'apply' && file) {

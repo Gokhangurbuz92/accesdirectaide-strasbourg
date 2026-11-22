@@ -33,6 +33,8 @@ import { isBetaRestrictedPath } from '../../src/lib/publicBeta.js';
 import { NEEDS } from '../../src/lib/rightsPublicView.js';
 import { runLocalSimulation } from '../../api/lib/LocalRulesEngine.js';
 import { simulationResponse } from '../../api/lib/diagnosticAssessment.js';
+import { validatedReadings } from '../../api/lib/validatedRules.js';
+import register from '../../data/rules/rights-rules.v1.json';
 import { claimsEntitlement } from '../../api/lib/entitlementWording.js';
 import { ENTITLEMENT_CLAIMS } from '../../scripts/i18n-check.mjs';
 import { setLanguage } from '../../src/i18n/index.js';
@@ -77,7 +79,13 @@ describe('G4: the result is the SIMULATION_MODE contract, computed here', () => 
     expect(result.meta.requestId).toBeUndefined();
     expect(result).not.toHaveProperty('rights');
     const answers = { birthDate: '1987-04-12', householdSize: 3, territory: '67000', statut: 'sans_emploi', income: { salary: 1234, unemployment: 567 }, housing: { rent: 789, charges: 45, status: 'tenant' } };
-    expect(result.assessment).toEqual(simulationResponse(runLocalSimulation(answers), answers, {}).assessment);
+    // G14 (owner sign-off 22/11/2026): the browser reads the OWNER_VALIDATED rules of the bundled register (the server does not: expert rules only);
+    // the same chain with the same readings gives the same assessment, and an owner-approved rule says « relue par l'équipe ADA », never « expert »
+    const sim = runLocalSimulation(answers);
+    const readings = validatedReadings(register, answers, sim?.meta?.referenceDate ?? null);
+    expect(result.assessment).toEqual(simulationResponse(sim, answers, {}, readings).assessment);
+    for (const r of Object.values(readings)) { expect(r.validation).toBe('OWNER'); expect(r.rule).toMatch(/relue par l'équipe ADA .* l'organisme décide/); expect(r.rule).not.toMatch(/validée? par un expert|relue par un expert/); }
+    for (const item of result.assessment.items.filter((i) => i.provenance?.uncertainty === 'ORIENTATION_REGLE_RELUE')) expect(item.explanation).not.toMatch(/relue par un expert/);
     const json = JSON.stringify(result);
     expect(json).not.toMatch(/"eligible"|ELIGIBLE_WHERE_AUTHORITY_VERIFIED|estimatedAmount|montant/i);
     for (const item of result.assessment.items) { expect(item.amount ?? null).toBeNull(); expect(item.amountStatus ?? 'NOT_PROVIDED_NO_AUTHORITY').toBe('NOT_PROVIDED_NO_AUTHORITY'); }

@@ -79,11 +79,18 @@ describe('G14 — an AI review never satisfies the D11 human-approval gate', () 
     forged.rights.find((r) => r.id === 'apl').expertReview = { ...forged.rights.find((r) => r.id === 'apl').expertReview, name: 'GPT-6 (système IA)', role: 'assistant IA' };
     expect(gateStatus(forged, 'apl').reasons).toContain(GATE_REASONS.NON_HUMAN_REVIEWER);
     expect(validatedRight(forged, 'apl')).toBeNull();
-    expect(validatedReadings(forged, { housing: { status: 'tenant' } })).toEqual({});
+    expect(validatedReadings(forged, { housing: { status: 'tenant' } })).not.toHaveProperty('apl');   // the other rights keep their own (owner) status
   });
 
-  it('the committed register stays unvalidated: no EXPERT_VALIDATED, no reviewer, no accepted case', () => {
-    for (const r of reg.rights) { expect(r.status).toBe('RESEARCHED_UNVALIDATED'); expect(r.expertReview).toBeNull(); expect(r.referenceCases).toEqual([]); }
+  it('the committed register: never EXPERT_VALIDATED; an approval is the owner\'s own (human, kind owner, 48ffc853), never the AI\'s', () => {
+    for (const r of reg.rights) {
+      expect(r.status).not.toBe('EXPERT_VALIDATED'); expect(r.expertReview).toBeNull();
+      if (r.status === 'OWNER_VALIDATED') {
+        expect(r.ownerReview).toMatchObject({ kind: 'owner', basis: expect.stringMatching(/pas une validation d'expert indépendant/) });
+        expect(nonHumanReviewer(r.ownerReview)).toBe(false);
+        for (const c of r.referenceCases) expect(nonHumanReviewer(c.acceptedBy)).toBe(false);
+      } else { expect(r.status).toBe('RESEARCHED_UNVALIDATED'); expect(r.referenceCases).toEqual([]); }
+    }
     expect(reg.aiReviewStatement).toMatch(/never fills the D11 form and never validates a right/);
     for (const row of blank()) for (const k of ['decision', 'reviewer_name', 'reviewer_role', 'review_date']) expect(row[k], `${row.right}.${row.item_id}.${k}`).toBe('');
   });
@@ -134,6 +141,13 @@ describe('G14 — owner decision (22/11/2026): OWNER_VALIDATED, distinct from an
     const written = JSON.parse(fs.readFileSync(copy, 'utf8'));
     expect(written.rights.find((r) => r.id === 'apl').status).toBe('OWNER_VALIDATED');
     expect(written.rights.filter((r) => r.status === 'EXPERT_VALIDATED')).toEqual([]);
+  });
+  it('a reading of an owner-approved rule names its conditions without any amount, and the server never applies it', () => {
+    const readings = validatedReadings(reg, { birthDate: '1990-01-01', housing: { status: 'tenant' }, territory: '67000', householdSize: 1 }, '2026-11-22');
+    const json = JSON.stringify(readings);
+    expect(json).not.toMatch(/€|\d{1,3}(?:[ \u00a0\u202f]\d{3})+|montant/);
+    for (const r of Object.values(readings)) for (const l of [...r.met, ...r.notMet, ...r.unknown]) expect(l.length, l).toBeLessThan(60);
+    expect(fs.readFileSync('api/_handlers/diagnostic.js', 'utf8')).toMatch(/filter\(\(\[, r\]\) => r\.validation === 'EXPERT'\)/);
   });
   it('an engine estimate never labels an owner-approved rule as expert-validated', () => {
     const q = qualifyEstimates([{ code: 'rsa', label: 'RSA', amount: 100 }], {}, { period: '2026-11', ownerValidatedRules: ['rsa'] });

@@ -21,11 +21,13 @@ const acceptAll = (right) => blank().map((r) => (r.right !== right ? r : { ...r,
 const FULL = { birthDate: '1990-01-01', householdSize: 2, income: { salary: 900 }, housing: { status: 'tenant', rent: 517 }, territory: '67000' };
 
 describe('D11 gate — today', () => {
-  it('no right passes: no reading reaches a result, and the diagnostic answer is unchanged', () => {
-    for (const r of reg.rights) expect(validatedRight(reg, r.id)).toBeNull();
-    expect(validatedReadings(reg, FULL)).toEqual({});
+  it('no right is expert-validated: no expert reading reaches the server answer, which is unchanged (owner-approved rules stay browser-only, G14)', () => {
+    for (const r of reg.rights) expect(r.status === 'EXPERT_VALIDATED' ? validatedRight(reg, r.id) : null).toBeNull();
+    const expertOnly = Object.fromEntries(Object.entries(validatedReadings(reg, FULL)).filter(([, x]) => x.validation === 'EXPERT'));   // what api/_handlers/diagnostic.js applies
+    expect(expertOnly).toEqual({});
+    expect(fs.readFileSync('api/_handlers/diagnostic.js', 'utf8')).toMatch(/r\.validation === 'EXPERT'/);
     const sim = { mode: 'SIMULATION_MODE', rights: [], meta: {} };
-    expect(simulationResponse(sim, FULL, {}, validatedReadings(reg, FULL))).toEqual(simulationResponse(sim, FULL, {}));
+    expect(simulationResponse(sim, FULL, {}, expertOnly)).toEqual(simulationResponse(sim, FULL, {}));
   });
   it('the committed blank form matches the register (re-run: node scripts/d11-review.mjs form > docs/rules/D11_REVIEW_FORM.csv)', () => {
     expect(fs.readFileSync('docs/rules/D11_REVIEW_FORM.csv', 'utf8')).toBe(renderForm(reg, proposed));
@@ -74,7 +76,8 @@ describe('P13 — the whole chain once a right is validated (synthetic review)',
   const validated = applyForm(reg, evaluateForm(reg, proposed, acceptAll('rsa')));
   it('input → reading → classification → explanation → official source → next step; never a decision, never a value of the person', () => {
     const readings = validatedReadings(validated, FULL, '2026-11-20');
-    expect(Object.keys(readings)).toEqual(['rsa']);
+    expect(readings.rsa.validation).toBe('EXPERT');   // G14: rsa expert-reviewed in this synthetic copy; the 7 others keep the owner approval of 48ffc853
+    for (const [code, x] of Object.entries(readings)) if (code !== 'rsa') expect(x.validation, code).toBe('OWNER');
     const a = buildAssessment({ answers: FULL, ruleReadings: readings });
     const rsa = a.items.find((i) => i.code === 'rsa');
     assertAssessmentItem(rsa);
@@ -89,7 +92,7 @@ describe('P13 — the whole chain once a right is validated (synthetic review)',
     expect(rsa.whoToAsk).toBe('votre CAF');
     for (const v of ['1990', '900', '517', '67000']) expect(JSON.stringify(rsa)).not.toContain(v);
     // the other rights are untouched
-    expect(a.items.find((i) => i.code === 'apl').provenance.source).toBeNull();
+    expect(a.items.find((i) => i.code === 'apl').provenance.rule).toMatch(/relue par l'équipe ADA .* l'organisme décide/);   // G14: owner-approved, never « expert »
   });
   it('an unmet condition stays a check, not a refusal; missing answers still ask for the answers first', () => {
     const young = validatedReadings(validated, { ...FULL, birthDate: '2010-01-01' }, '2026-11-20');

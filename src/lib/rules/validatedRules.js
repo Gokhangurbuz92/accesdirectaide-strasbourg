@@ -105,6 +105,19 @@ export function factsFromAnswers(answers = {}, referenceDate = null) {
 }
 
 /**
+ * G14: what a person reads about a condition — a short name, never the register's research text (which quotes amounts and ceilings: a public result never
+ * carries an amount). The condition's full text stays in the register and the review pack.
+ */
+export const CONDITION_LABELS = Object.freeze({
+  age: 'âge', residence: 'résidence', resources: 'ressources', nationality: 'nationalité ou titre de séjour', activity: 'situation d’activité',
+  activity_young: 'activité (RSA jeune actif)', 'housing.status': 'statut d’occupation du logement', housing: 'logement (résidence principale, décent, conventionné)',
+  exclusion: 'cas d’exclusion', disability: 'taux d’incapacité (décision de la CDAPH)', dependency: 'perte d’autonomie (évaluation GIR)',
+  employment_loss: 'perte d’emploi', affiliation: 'durée de travail (affiliation)', registration: 'inscription à France Travail',
+  automatic: 'attribution automatique (bénéficiaires du RSA)', territory: 'commune de résidence', nature: 'nature de l’aide',
+});
+const conditionLabel = (fact) => CONDITION_LABELS[fact] || 'autre condition';
+
+/**
  * Readings for the rights that pass the gate (an empty object today).
  * @returns {Record<string, { rule: string, source: string, verifiedAt: string, label: string, decidedBy: string | null, met: string[], notMet: string[], unknown: string[] }>}
  */
@@ -113,7 +126,7 @@ export function validatedReadings(register, answers = {}, referenceDate = null) 
   for (const right of register?.rights || []) {
     if (!validatedRight(register, right.id)) continue;
     const reading = readConditions(register, right.id, factsFromAnswers(answers, referenceDate));
-    const by = (res) => reading.conditions.filter((c) => c.result === res).map((c) => c.text);
+    const by = (res) => reading.conditions.filter((c) => c.result === res).map((c) => conditionLabel(c.fact));   // G14: names, never amounts
     const page = right.sources[0];
     const rev = reviewOf(right);
     const owner = right.status === 'OWNER_VALIDATED';

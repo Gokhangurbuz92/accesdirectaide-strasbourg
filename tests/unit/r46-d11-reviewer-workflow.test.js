@@ -24,12 +24,17 @@ const toCsv = (rows) => `${Object.keys(rows[0]).join(',')}\n${rows.map((r) => Ob
 afterAll(() => { fs.rmSync(dir, { recursive: true, force: true }); expect(fs.readFileSync(REG_FILE, 'utf8')).toBe(committed); });
 
 describe('D11 gate explained (gateStatus)', () => {
-  it('today every right of the committed register is closed for one reason: no expert validation', () => {
-    for (const r of reg.rights) expect(gateStatus(reg, r.id)).toEqual({ code: r.id, passes: false, reasons: [GATE_REASONS.NOT_EXPERT_VALIDATED] });
+  it('the committed register: no right expert-validated; each right passes only as OWNER_VALIDATED (owner sign-off 48ffc853), else closed for no validation', () => {
+    for (const r of reg.rights) {
+      expect(r.status).not.toBe('EXPERT_VALIDATED');
+      if (r.status === 'OWNER_VALIDATED') { expect(gateStatus(reg, r.id)).toEqual({ code: r.id, passes: true, reasons: [] }); expect(r.ownerReview.kind).toBe('owner'); expect(r.expertReview).toBeNull(); }
+      else expect(gateStatus(reg, r.id)).toEqual({ code: r.id, passes: false, reasons: [GATE_REASONS.NOT_EXPERT_VALIDATED] });
+    }
     expect(gateStatus(reg, 'inconnu').reasons).toEqual([GATE_REASONS.UNKNOWN_RIGHT]);
   });
   it('a status set by hand without a complete review or accepted cases is refused, with the reasons', () => {
     const forged = JSON.parse(committed); const r = forged.rights.find((x) => x.id === 'apl');
+    delete r.ownerReview; r.referenceCases = [];   // G14: start from an unreviewed right (the committed one is owner-approved since 48ffc853)
     r.status = 'EXPERT_VALIDATED'; r.expertReview = { name: 'X', role: '', date: '2026-11-05' };
     expect(gateStatus(forged, 'apl').reasons).toEqual([GATE_REASONS.REVIEWER_INCOMPLETE, GATE_REASONS.NO_ACCEPTED_CASE]);
     r.expertReview.role = 'juriste'; r.referenceCases = [{ id: 'c', facts: {}, expected: {} }];
@@ -52,7 +57,7 @@ describe('D11 reviewer workflow through the CLI, on a copy of the register', () 
   });
   it('apply (dry run) says what the form allows and writes nothing', () => {
     const r = cli('apply', filled, '--register', copy);
-    expect(r.status).toBe(0); expect(r.stdout).toMatch(/^apl: VALIDABLE \(EXPERT_VALIDATED\)$/m);   // G14: the status the form gives is named expect(r.stdout).toMatch(/^rsa: reste non validée$/m);
+    expect(r.status).toBe(0); expect(r.stdout).toMatch(/^apl: VALIDABLE \(EXPERT_VALIDATED\)$/m); expect(r.stdout).toMatch(/^rsa: reste non validée$/m);   // G14: the status the form gives is named
     expect(fs.readFileSync(copy, 'utf8')).toBe(committed);
   });
   it('apply --write records the review in the copy; status and the product gate agree; the committed register is untouched', () => {
@@ -62,8 +67,11 @@ describe('D11 reviewer workflow through the CLI, on a copy of the register', () 
     expect(next.rights.find((x) => x.id === 'apl')).toMatchObject({ status: 'EXPERT_VALIDATED', expertReview: { name: SYNTH.reviewer_name, role: SYNTH.reviewer_role, date: SYNTH.review_date } });
     expect(validatedRight(next, 'apl')).not.toBeNull();
     const st = JSON.parse(cli('status', '--json', '--register', copy).stdout);
-    expect(st.validated).toEqual(['apl']);
-    expect(JSON.parse(cli('status', '--json').stdout).validated).toEqual([]);
+    expect(st.expertValidated).toEqual(['apl']);   // G14: the expert review supersedes the owner approval of apl (kept as supersededOwnerReview)
+    expect(next.rights.find((x) => x.id === 'apl').supersededOwnerReview?.kind).toBe('owner');
+    const committedStatus = JSON.parse(cli('status', '--json').stdout);
+    expect(committedStatus.expertValidated).toEqual([]);
+    expect(committedStatus.ownerValidated).toEqual(reg.rights.filter((x) => x.status === 'OWNER_VALIDATED').map((x) => x.id));
     expect(fs.readFileSync(REG_FILE, 'utf8')).toBe(committed);
   });
   it('lapse: once the official page is revised after the review date, the gate closes and a new form cannot validate on the old date', () => {

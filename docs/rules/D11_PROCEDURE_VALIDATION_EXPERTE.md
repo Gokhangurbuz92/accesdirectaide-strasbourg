@@ -110,3 +110,12 @@ d'éligibilité ou d'inéligibilité ; aucune règle n'est marquée `EXPERT_VALI
 
 Inscrit dans le registre (`ownerDecision`). Le formulaire du propriétaire (`D11_FORMULAIRE_PROPRIETAIRE_PREREMPLI.csv`, hors dépôt) porte ces décisions,
 `validation_kind=owner` et une identité vide : la signature et l'import (`apply --write`) restent un acte du propriétaire.
+
+## 9. Après la signature du propriétaire (commit 48ffc853, 22/11/2026)
+
+- Les 8 droits sont `OWNER_VALIDATED` ; aucun n'est `EXPERT_VALIDATED` ; `sourceCheck.reviewState` reste `EXPERT_REVIEW_PENDING`.
+- Le serveur (`api/_handlers/diagnostic.js`, estimation OpenFisca comprise) n'applique que les règles `EXPERT_VALIDATED` : une règle approuvée par le
+  propriétaire n'ouvre aucune évaluation côté serveur ni aucun champ d'API. Seule l'orientation dans le navigateur (`/orientation`, rien n'est envoyé)
+  la lit, avec « règle relue par l'équipe ADA … ; l'organisme décide » et « À vérifier auprès de l'organisme compétent » pour toute condition non établie.
+- Une lecture nomme ses conditions (âge, ressources…) sans jamais reprendre le texte du registre : aucun montant ni plafond n'apparaît dans un résultat.
+- Une relecture d'expert ultérieure remplace l'approbation du propriétaire (gardée dans `supersededOwnerReview`).

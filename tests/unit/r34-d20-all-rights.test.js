@@ -45,7 +45,9 @@ describe('D20 — every validated right shows its rule', () => {
     expect(JSON.stringify(result.items.filter((i) => readings[i.code]))).not.toMatch(/Aucune règle vérifiée/);
   });
   it('without validation nothing changes: the five other rights produce no item and ARE / APA stay unsupported', () => {
-    const today = assessSimulation({ mode: 'SIMULATION_MODE', rights: [], meta: {} }, FULL, validatedReadings(reg, FULL));
+    // G14: « without validation » = a register where no right is reviewed (the committed one is owner-approved since 48ffc853)
+    const unreviewed = { ...reg, rights: reg.rights.map((r) => ({ ...r, status: 'RESEARCHED_UNVALIDATED', ownerReview: undefined, expertReview: null, referenceCases: [] })) };
+    const today = assessSimulation({ mode: 'SIMULATION_MODE', rights: [], meta: {} }, FULL, validatedReadings(unreviewed, FULL));
     expect(today.items.map((i) => i.code)).toEqual(['rsa', 'apl', 'faj-strasbourg', 'are', 'apa', 'impayes-loyer']);
     expect(today.items.filter((i) => i.code === 'are' || i.code === 'apa').every((i) => i.state === STATES.UNSUPPORTED)).toBe(true);
   });

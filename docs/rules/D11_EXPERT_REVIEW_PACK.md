@@ -2,9 +2,9 @@
 
 Registre : data/rules/rights-rules.v1.json (consulté le 2026-10-21). Cas proposés : data/rules/reference-cases.proposed.v1.json.
 
-**Statut : aucune règle n'est validée.** Ce document est généré à partir des données du produit ; il ne contient aucune décision. Pour chaque droit,
+**Statut : aucune règle n'est validée par un expert ; approuvées par le responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) : rsa, prime-activite, apl, aah, apa, are, c2s, faj-strasbourg.** Ce document est généré à partir des données du produit ; il ne contient aucune décision. Pour chaque droit,
 l'expert (nom, fonction, date) accepte, corrige ou rejette chaque condition, chaque lecture automatique et chaque cas proposé, et tranche les ambiguïtés.
-Tant que ce n'est pas fait, ADA n'utilise pas ces règles pour orienter : les résultats restent « à faire vérifier » et l'organisme compétent décide.
+Une règle approuvée par le responsable du traitement n'est lue que par l'orientation dans le navigateur (« règle relue par l'équipe ADA ; l'organisme décide ») ; le serveur n'applique que les règles relues par un expert. Les résultats restent « à faire vérifier » et l'organisme compétent décide.
 
 Légende des résultats : MET = condition remplie d'après les réponses ; NOT_MET = non remplie ; UNKNOWN = ADA ne peut pas le dire.
 
