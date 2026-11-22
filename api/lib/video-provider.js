@@ -4,7 +4,8 @@
  * token authentication, or 8x8 JaaS). Nothing here deploys, contacts or tests a video server: it decides whether video may be offered and issues a short-lived, room-bound
  * access token that the provider verifies.
  *
- * OFF BY DEFAULT. Video is offered only when VIDEO_PROVIDER=jitsi-jwt with a domain, an app id and a secret of at least 32 characters; in production it also needs
+ * OFF BY DEFAULT. Video is offered only when VIDEO_PROVIDER=jitsi-jwt with a domain, an app id and a secret of at least 32 characters (HS256), or VIDEO_PROVIDER=jaas
+ * (G14, 8x8 JaaS, RS256) with a valid app id, key id and RSA private key; in production it also needs
  * VIDEO_PRODUCTION_APPROVED=true (set only after provider, hosting, credentials, DPO/GDPR and security approvals) AND the CSP / Permissions-Policy activation documented in
  * docs/pkg3-video-activation.md (the shipped headers block any video origin and camera/microphone). VIDEO_SANDBOX=true marks a LAB configuration: every screen then says
  * that the provider connection is NOT verified.
@@ -26,12 +27,48 @@ export function videoStatus(env = process.env) {
   const production = String(env.VERCEL_ENV || '') === 'production';
   const off = (reason) => ({ bookable: false, joinable: false, provider: provider || 'off', sandbox, reason });
   if (provider === 'off' || !provider) return off('NOT_CONFIGURED');
-  if (provider !== 'jitsi-jwt') return off('UNKNOWN_PROVIDER');
-  const domain = String(env.VIDEO_JITSI_DOMAIN || '').trim().toLowerCase();
-  if (!HOST.test(domain) || !String(env.VIDEO_JITSI_APP_ID || '').trim() || String(env.VIDEO_JITSI_SECRET || '').length < 32) return off('INCOMPLETE_CONFIGURATION');
+  if (provider !== 'jitsi-jwt' && provider !== 'jaas') return off('UNKNOWN_PROVIDER');
+  let domain; let appId = null;
+  if (provider === 'jaas') {
+    const j = jaasConfig(env);   // fail closed: a missing / malformed app id, key id or RSA private key is « not configured », never a partial token
+    if (!j) return off('INCOMPLETE_CONFIGURATION');
+    domain = JAAS_DOMAIN; appId = j.appId;
+  } else {
+    domain = String(env.VIDEO_JITSI_DOMAIN || '').trim().toLowerCase();
+    if (!HOST.test(domain) || !String(env.VIDEO_JITSI_APP_ID || '').trim() || String(env.VIDEO_JITSI_SECRET || '').length < 32) return off('INCOMPLETE_CONFIGURATION');
+  }
   if (production && String(env.VIDEO_PRODUCTION_APPROVED || '') !== 'true') return off('PRODUCTION_ACTIVATION_PENDING');
   if (production && sandbox) return off('SANDBOX_IN_PRODUCTION');
-  return { bookable: true, joinable: true, provider, sandbox, domain, reason: null };
+  return { bookable: true, joinable: true, provider, sandbox, domain, ...(appId ? { appId } : {}), reason: null };
+}
+
+/*
+ * G14 — 8x8 « Jitsi as a Service » (VIDEO_PROVIDER=jaas). Verified on 2026-11-22 against the official 8x8 developer documentation:
+ *   https://developer.8x8.com/jaas/docs/api-keys-jwt (« The Jitsi JSON Web Token (JWT) »): header alg RS256, kid = the API key's kid « <AppID>/<suffix> », typ JWT;
+ *     claims aud « jitsi » and iss « chat » (hardcoded), sub = AppID, room = the room name (literal match; the AppID is NOT part of it), nbf / exp,
+ *     context.user { id, name, moderator: "true" | "false" (missing or "false" = no moderator rights) }, context.features (livestreaming, recording, transcription,
+ *     sip-inbound-call, sip-outbound-call, inbound-call, outbound-call, file-upload, …: "true" / "false"), context.room.regex (false = literal room name).
+ *   https://developer.8x8.com/jaas/docs/iframe-api-integration: script https://8x8.vc/<AppID>/external_api.js, domain « 8x8.vc », roomName « <AppID>/<room> », jwt option.
+ *   https://developer.8x8.com/jaas/docs/jaas-console-api-keys: the console generates the RSA key pair (the private key is downloaded once, 8x8 does not store it); the AppID
+ *     is prefixed « vpaas-magic-cookie- ».
+ * Environment (names only): VIDEO_JAAS_APP_ID, VIDEO_JAAS_KEY_ID (the key suffix, or the full « <AppID>/<suffix> » kid), VIDEO_JAAS_PRIVATE_KEY (PEM; « \n » escapes accepted).
+ * The private key and the token are never logged, never returned except the token itself in the no-store join body.
+ */
+export const JAAS_DOMAIN = '8x8.vc';
+const JAAS_APP_ID = /^vpaas-magic-cookie-[A-Za-z0-9]{8,64}$/;
+const JAAS_KEY_SUFFIX = /^[A-Za-z0-9_-]{1,64}$/;
+function jaasConfig(env) {
+  const appId = String(env.VIDEO_JAAS_APP_ID || '').trim();
+  if (!JAAS_APP_ID.test(appId)) return null;
+  let keyId = String(env.VIDEO_JAAS_KEY_ID || '').trim();
+  if (keyId.startsWith(`${appId}/`)) keyId = keyId.slice(appId.length + 1);
+  if (!JAAS_KEY_SUFFIX.test(keyId)) return null;
+  const pem = String(env.VIDEO_JAAS_PRIVATE_KEY || '').replace(/(\\r)?\\n/g, '\n').replace(/\r\n/g, '\n').trim();
+  if (pem.length < 200 || pem.length > 16384 || !/^-----BEGIN (RSA )?PRIVATE KEY-----/.test(pem)) return null;
+  let key;
+  try { key = crypto.createPrivateKey({ key: pem, format: 'pem' }); } catch { return null; }   // the parse error may quote the key: swallowed, never logged
+  if (key.asymmetricKeyType !== 'rsa' || (key.asymmetricKeyDetails?.modulusLength || 0) < 2048) return null;
+  return { appId, kid: `${appId}/${keyId}`, key };
 }
 
 /** What a screen may show about video, never a secret. */
@@ -63,13 +100,22 @@ export function joinRefusal(appointment, { now = new Date(), env = process.env }
 
 export const newRoomNonce = () => crypto.randomBytes(24).toString('base64url');
 export function roomNameOf(appointment, env = process.env) {
-  return 'ada' + crypto.createHmac('sha256', String(env.VIDEO_JITSI_SECRET || '')).update(`room:${appointment.id}:${appointment.visioRoomId}`).digest('hex').slice(0, 40);
+  return 'ada' + crypto.createHmac('sha256', roomKey(env)).update(`room:${appointment.id}:${appointment.visioRoomId}`).digest('hex').slice(0, 40);
+}
+/** HMAC key of the room name: the shared secret (self-hosted, unchanged) or, for JaaS which has no shared secret, a hash of the server-held private key. */
+function roomKey(env) {
+  if (String(env.VIDEO_PROVIDER || '').trim() !== 'jaas') return String(env.VIDEO_JITSI_SECRET || '');
+  const j = jaasConfig(env);
+  if (!j) throw new Error('VIDEO_NOT_CONFIGURED');
+  return crypto.createHash('sha256').update('ada-jaas-room:').update(j.key.export({ type: 'pkcs8', format: 'der' })).digest();
 }
 const b64u = (v) => Buffer.from(typeof v === 'string' ? v : JSON.stringify(v)).toString('base64url');
 
 /** A room-bound, time-bound token for ONE authorised participant. role: 'pro' (moderator) | 'citizen'. Call only after joinRefusal() returned null. */
 export function issueJoin(appointment, role, { now = new Date(), env = process.env } = {}) {
   const s = videoStatus(env);
+  if (!s.joinable) throw new Error('VIDEO_NOT_CONFIGURED');   // fail closed (joinRefusal() already refuses this case)
+  if (s.provider === 'jaas') return issueJaasJoin(appointment, role, s, { now, env });
   const w = joinWindow(appointment);
   const room = roomNameOf(appointment, env);
   const claims = {
@@ -83,7 +129,35 @@ export function issueJoin(appointment, role, { now = new Date(), env = process.e
   return { provider: s.provider, sandbox: s.sandbox, domain: s.domain, roomName: room, jwt: `${head}.${body}.${sig}`, expiresAt: w.closesAt.toISOString(), role };
 }
 
+/** G14 — the 8x8 JaaS variant: RS256 with the API key's private key, claims as documented (see the block above jaasConfig). */
+function issueJaasJoin(appointment, role, s, { now, env }) {
+  const j = jaasConfig(env);
+  if (!j) throw new Error('VIDEO_NOT_CONFIGURED');
+  const w = joinWindow(appointment);
+  const room = roomNameOf(appointment, env);
+  const pro = role === 'pro';
+  const userId = crypto.createHmac('sha256', roomKey(env)).update(`user:${appointment.id}:${pro ? 'pro' : 'citizen'}`).digest('hex').slice(0, 32);   // pseudonymous, stable per appointment
+  const off = 'false';
+  const claims = {
+    aud: 'jitsi', iss: 'chat', sub: j.appId, room,
+    nbf: Math.floor(Math.min(now.getTime(), w.opensAt.getTime()) / 1000) - 30, exp: Math.floor(w.closesAt.getTime() / 1000),
+    context: {
+      user: { id: userId, name: pro ? 'Conseiller·e' : 'Personne accompagnée', moderator: pro ? 'true' : 'false' },
+      features: { recording: off, livestreaming: off, transcription: off, 'outbound-call': off, 'sip-outbound-call': off, 'inbound-call': off, 'sip-inbound-call': off, 'file-upload': off },
+      room: { regex: false },
+    },
+  };
+  const head = b64u({ alg: 'RS256', kid: j.kid, typ: 'JWT' }); const body = b64u(claims);
+  const sig = crypto.sign('sha256', Buffer.from(`${head}.${body}`), j.key).toString('base64url');   // RSASSA-PKCS1-v1_5 + SHA-256 = RS256
+  return { provider: s.provider, sandbox: s.sandbox, domain: JAAS_DOMAIN, appId: j.appId, roomName: `${j.appId}/${room}`, jwt: `${head}.${body}.${sig}`, expiresAt: w.closesAt.toISOString(), role };
+}
+
 /** Header sources the activation would need (documentation + tests): the shipped headers must NOT contain them while video is not approved. */
 export function activationHeaderSources(domain) {
   return { 'script-src': `https://${domain}`, 'frame-src': `https://${domain}`, 'connect-src': `https://${domain} wss://${domain}`, 'Permissions-Policy': `camera=(self "https://${domain}"), microphone=(self "https://${domain}")` };
 }
+
+/** G14 — exactly what the SHIPPED headers (vercel.json) allow for 8x8 JaaS: its External API script and its meeting frame, camera / microphone / fullscreen delegated
+ * to that frame only. Nothing else (no connect-src: the page talks to the frame by postMessage). Asserted by tests/unit/g14-jaas-video.test.js. */
+export const JAAS_HEADER_SOURCES = Object.freeze({ 'script-src': `https://${JAAS_DOMAIN}`, 'frame-src': `https://${JAAS_DOMAIN}` });
+export const JAAS_PERMISSIONS = Object.freeze({ camera: `(self "https://${JAAS_DOMAIN}")`, microphone: `(self "https://${JAAS_DOMAIN}")`, fullscreen: `(self "https://${JAAS_DOMAIN}")` });

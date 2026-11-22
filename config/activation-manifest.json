@@ -976,7 +976,7 @@
         "production",
         "preview"
       ],
-      "format": "^jitsi-jwt$"
+      "format": "^(jitsi-jwt|jaas)$"
     },
     "VIDEO_JITSI_DOMAIN": {
       "class": "conditional",
@@ -1008,6 +1008,38 @@
       "provider": "jitsi",
       "account": true,
       "format": "^.{32,}$"
+    },
+    "VIDEO_JAAS_APP_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "8x8-jaas",
+      "account": true,
+      "format": "^vpaas-magic-cookie-"
+    },
+    "VIDEO_JAAS_KEY_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "8x8-jaas",
+      "account": true
+    },
+    "VIDEO_JAAS_PRIVATE_KEY": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production",
+        "preview"
+      ],
+      "provider": "8x8-jaas",
+      "account": true,
+      "format": "PRIVATE KEY-----"
     },
     "VIDEO_PRODUCTION_APPROVED": {
       "class": "approval",
@@ -2704,36 +2736,31 @@
       ],
       "requires": [
         "VIDEO_PROVIDER",
-        "VIDEO_JITSI_DOMAIN",
-        "VIDEO_JITSI_APP_ID",
-        "VIDEO_JITSI_SECRET"
+        "VIDEO_JITSI_DOMAIN|VIDEO_JAAS_KEY_ID",
+        "VIDEO_JITSI_APP_ID|VIDEO_JAAS_APP_ID",
+        "VIDEO_JITSI_SECRET|VIDEO_JAAS_PRIVATE_KEY"
       ],
       "requires_module": [
         "appointments"
       ],
       "tests": [
-        "pkg3-video-headers.test.js"
+        "pkg3-video-headers.test.js",
+        "g14-jaas-video.test.js"
       ],
       "approval": "VIDEO_PRODUCTION_APPROVED",
       "gates": [
         {
           "id": "video-dpia",
           "kind": "privacy",
-          "text": "DPA, DPIA, lobby on, recording off on the Jitsi server"
+          "text": "DPA, DPIA, lobby on, recording off on the Jitsi server (or in the 8x8 JaaS console)"
         }
       ],
       "gaps": [
         {
           "id": "video-csp",
           "file": "vercel.json",
-          "fixed_when": "VIDEO_JITSI_DOMAIN|jitsi",
-          "text": "CSP and Permissions-Policy do not allow the Jitsi domain (3 places)"
-        },
-        {
-          "id": "jaas-rs256",
-          "file": "api/lib/video-provider.js",
-          "fixed_when": "RS256",
-          "text": "8x8 JaaS (RS256) not supported: only self-hosted Jitsi HS256"
+          "fixed_when": "8x8\\.vc|VIDEO_JITSI_DOMAIN|jitsi",
+          "text": "CSP and Permissions-Policy do not allow the video provider (G14: 8x8.vc allowed for VIDEO_PROVIDER=jaas; a self-hosted Jitsi domain still needs its own reviewed header change)"
         }
       ],
       "order": 11

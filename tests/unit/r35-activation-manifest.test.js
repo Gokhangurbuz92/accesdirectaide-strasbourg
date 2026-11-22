@@ -85,8 +85,10 @@ describe('R35 feature readiness doctor', () => {
 
   it('keeps legal gates and approvals closed whatever the variables say, and open implementation gaps first', () => {
     const r = run(fullEnv());
-    expect(r.modules.video.verdict).toBe('MISSING_IMPLEMENTATION');
-    expect(r.modules.video.also).toContain('gate: video-dpia');
+    // G14: the video implementation gaps are closed (8x8 JaaS RS256 + 8x8.vc in the shipped headers); the privacy gate still keeps video closed
+    expect(r.modules.video.verdict).toBe('LEGAL_OR_PRIVACY_GATE');
+    expect(r.modules.video.blockers).toContain('gate: video-dpia');
+    expect(JSON.stringify(r.modules.video)).not.toMatch(/gap: (video-csp|jaas-rs256)/);
     expect(r.modules.coffre).toMatchObject({ verdict: 'LEGAL_OR_PRIVACY_GATE', blockers: ['gate: hds', 'gate: storage-dpa'] });
     expect(r.modules['gdpr-purge'].verdict).toBe('LEGAL_OR_PRIVACY_GATE');
     expect(r.modules.mail.blockers).toContain('gate: mail-dpa');

@@ -3,12 +3,15 @@ import { useEffect, useRef, useState } from 'react';
 import { AlertCircle, Loader2 } from 'lucide-react';
 
 import { useT } from '@/i18n';
+import { externalApiScriptUrl } from './visioScript.js';
 /**
  * PKG-3 / B07 — VisioWindow: embeds the JWT-protected Jitsi deployment named by the SERVER (join = { domain, roomName, jwt, sandbox } from a successful join request).
  * The token is passed to the provider's External API in memory (never in a URL); recording, live streaming and invitations are not offered by the toolbar and are disabled in
  * the token. If the provider's script cannot load — the shipped Content-Security-Policy blocks every video origin until video is activated (docs/pkg3-video-activation.md),
  * and a LAB has no provider — the screen says so plainly; it never pretends a meeting is running.
- * @param {{ join: { domain: string, roomName: string, jwt: string, sandbox?: boolean }, onClose?: () => void }} props
+ * G14 — 8x8 JaaS (join.provider === 'jaas'): the script is https://8x8.vc/<AppID>/external_api.js, the domain 8x8.vc and the room « <AppID>/<room> » as returned by the
+ * server (https://developer.8x8.com/jaas/docs/iframe-api-integration, read 2026-11-22); any other shape is refused before a script is loaded.
+ * @param {{ join: { provider?: string, domain: string, appId?: string, roomName: string, jwt: string, sandbox?: boolean }, onClose?: () => void }} props
  */
 export default function VisioWindow({ join, onClose }) {
   const { t } = useT('booking');
@@ -30,7 +33,8 @@ export default function VisioWindow({ join, onClose }) {
   }, [onClose]);
 
   useEffect(() => {
-    if (!containerRef.current || !join?.domain || !join?.jwt) { setStatus('error'); return undefined; }
+    const scriptUrl = externalApiScriptUrl(join);
+    if (!containerRef.current || !scriptUrl) { setStatus('error'); return undefined; }
     let disposed = false;
     const start = () => {
       if (disposed) return;
@@ -51,7 +55,7 @@ export default function VisioWindow({ join, onClose }) {
     if (window.JitsiMeetExternalAPI) start();
     else {
       script = document.createElement('script');
-      script.src = `https://${join.domain}/external_api.js`;
+      script.src = scriptUrl;
       script.async = true;
       script.onload = start;
       script.onerror = () => { if (!disposed) setStatus('error'); };

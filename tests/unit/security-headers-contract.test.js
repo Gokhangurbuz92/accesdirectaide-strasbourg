@@ -47,7 +47,7 @@ describe('security headers (vercel.json)', () => {
     }
   });
 
-  // KNOWN GAP (decision pending, see docs/release): in-app Visio loads https://meet.jit.si/external_api.js and a Jitsi iframe,
+  // KNOWN GAP (decision pending, see docs/release): a self-hosted / public Jitsi (e.g. https://meet.jit.si/external_api.js and its iframe) stays blocked — G14 allows only 8x8 JaaS (8x8.vc),
   // which script-src / frame-src (falls back to default-src 'self') and Permissions-Policy camera=(self) block in production.
   it.fails('KNOWN GAP: Visio third-party origin is allowed by CSP and Permissions-Policy', () => {
     expect(csp['script-src'].join(' ')).toContain('meet.jit.si');

@@ -74,12 +74,12 @@ export function providerStatuses(env = process.env) {
   row({ id: 'outlook', category: 'calendar', label: 'Agenda Outlook (Microsoft Graph, disponibilités)', state: ol.enabled ? 'CONNECTED' : 'NOT_CONFIGURED', reasonCode: ol.enabled ? 'COMPLETE' : ol.reason, reason: ol.enabled ? 'application et clé de chiffrement présentes' : ol.reason,
     variables: presence(env, ['OUTLOOK_ENABLED', 'OUTLOOK_CLIENT_ID', 'OUTLOOK_CLIENT_SECRET', 'OUTLOOK_REDIRECT_URI', 'ADA_VAULT_KEY', 'CALENDAR_PRODUCTION_APPROVED']) });
 
-  // video (Jitsi JWT, api/lib/video-provider.js)
+  // video (Jitsi JWT, api/lib/video-provider.js): self-hosted HS256 (VIDEO_PROVIDER=jitsi-jwt) or, G14, 8x8 JaaS RS256 (VIDEO_PROVIDER=jaas) — names only, never values
   const v = videoStatus(env);
-  row({ id: 'video', category: 'appointments', label: 'Visio (Jitsi avec jeton)', state: v.bookable ? (v.sandbox ? 'SIMULATED' : 'CONNECTED') : 'NOT_CONFIGURED',
+  row({ id: 'video', category: 'appointments', label: v.provider === 'jaas' ? 'Visio (8x8 JaaS avec jeton)' : 'Visio (Jitsi avec jeton)', state: v.bookable ? (v.sandbox ? 'SIMULATED' : 'CONNECTED') : 'NOT_CONFIGURED',
     reasonCode: v.bookable ? (v.sandbox ? 'SANDBOX' : 'COMPLETE') : v.reason,
-    reason: v.bookable ? (v.sandbox ? 'VIDEO_SANDBOX=true : connexion au fournisseur non vérifiée' : 'fournisseur configuré') : v.reason,
-    variables: presence(env, ['VIDEO_PROVIDER', 'VIDEO_JITSI_DOMAIN', 'VIDEO_JITSI_APP_ID', 'VIDEO_JITSI_SECRET', 'VIDEO_SANDBOX', 'VIDEO_PRODUCTION_APPROVED']) });
+    reason: v.bookable ? (v.sandbox ? 'VIDEO_SANDBOX=true : connexion au fournisseur non vérifiée' : v.provider === 'jaas' ? 'fournisseur 8x8 JaaS configuré (identifiant, clé et clé privée RSA valides)' : 'fournisseur configuré') : v.reason,
+    variables: presence(env, ['VIDEO_PROVIDER', 'VIDEO_JITSI_DOMAIN', 'VIDEO_JITSI_APP_ID', 'VIDEO_JITSI_SECRET', 'VIDEO_JAAS_APP_ID', 'VIDEO_JAAS_KEY_ID', 'VIDEO_JAAS_PRIVATE_KEY', 'VIDEO_SANDBOX', 'VIDEO_PRODUCTION_APPROVED']) });
 
   // OpenFisca (api/lib/openfiscaClient.js): no URL = the diagnostic runs its simulation mode
   const ofName = ['OPENFISCA_URL', 'OPENFISCA_API_URL'].find((n) => has(env, n));
