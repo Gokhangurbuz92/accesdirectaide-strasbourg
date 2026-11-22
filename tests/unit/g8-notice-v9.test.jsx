@@ -55,8 +55,8 @@ describe('privacy notice v9-2026-11-19 — professional accounts of ADA Pro', ()
     expect(LEGAL_DRAFT_DOCUMENTS_V9.map((d) => d.id)).toEqual([ID]);
     expect(v9.version).toBe(LEGAL_DRAFTS_V9);
     expect(v9.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
-    expect(latestDraftVersionOf(ID)).toBe(LEGAL_DRAFTS_V9);
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v7-2026-11-18', 'cgu-professionnel@v9-2026-11-22', 'conditions-structures@v8-2026-11-19', `${ID}@${LEGAL_DRAFTS_V9}`]);   // G14: the professional terms' newest draft is v9-2026-11-22
+    expect(latestDraftVersionOf(ID)).toBe('v11-2026-11-22');   // G14 (22/11/2026): v11 = v9 + Mon Parcours, for K8 (tests/unit/g14-legal-v10.test.js)
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v10-2026-11-22', 'cgu-professionnel@v9-2026-11-22', 'conditions-structures@v8-2026-11-19', `${ID}@v11-2026-11-22`]);   // G14: the newest draft of each document
     // hashes taken from the commit before this change (c231397)
     expect(sha(doc(LEGAL_DRAFT_DOCUMENTS_V6))).toBe('f7cb5dec60ab2186797f89eaf64de5780f7e07221ba4b521c7e627ebf37d8966');
     expect(sha(doc(LEGAL_DRAFT_DOCUMENTS_V7))).toBe('4ac5e148ef8a26337c40545a0f249c7c660546b21d0be8cce110adc3c35470e6');

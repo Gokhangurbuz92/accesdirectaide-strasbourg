@@ -16,10 +16,19 @@ const searchFor = async (page, q) => {
   await page.goto(`${BASE}/recherche?q=${encodeURIComponent(q)}`);
   return resp;
 };
-const parcoursRows = (userId) => db(`SELECT id, title, status, "planStep" FROM "ParcoursItem" WHERE "userId" = $1 ORDER BY "createdAt"`, [userId]);
+const parcoursRows = (userId) => db(`SELECT id, title, status, "itemCodes", "dueSourceUrl", "planStep" FROM "ParcoursItem" WHERE "userId" = $1 ORDER BY "createdAt"`, [userId]);
+/** G14 (limited Mon Parcours): a step is chosen in the closed list (no free title, no « add to my plan » from an orientation) */
+const addStepType = async (page, code) => {
+  await page.getByTestId('parcours-type-select').selectOption(code);
+  const posted = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
+  await page.getByTestId('parcours-add').click();
+  const r = await posted;
+  await expect(page.getByTestId('parcours-type-select')).toHaveValue('');   // the form is emptied for the next choice
+  return r;
+};
 
 // ───────────────────────────── P1 older adult with reduced autonomy ─────────────────────────────
-test('P1 older adult, reduced autonomy: orientation « aide à domicile » with official sheets → the LAB page of the sheet → places serving Strasbourg → Mon Parcours step with the next action', async ({ browser }) => {
+test('P1 older adult, reduced autonomy: orientation « aide à domicile » with official sheets → the LAB page of the sheet → places serving Strasbourg → a generic Mon Parcours step from the closed list (no step for the health-related need)', async ({ browser }) => {
   const p = await person(browser);
   const page = await p.context.newPage();
   const resp = await searchFor(page, "j'ai 82 ans, je vis seule, je perds mon autonomie et j'ai besoin d'aide à domicile");
@@ -47,27 +56,26 @@ test('P1 older adult, reduced autonomy: orientation « aide à domicile » with 
   await expect(page.getByTestId('structures-results-list')).toContainText(ORG.Z.nom);
   await expect(page.getByTestId('structures-results-list')).not.toContainText(ORG.M.nom);
   evidence('P1 older adult', 'territory-correct services', `GET /api/structures?serves=67482 → ${ids.length} places, Haut-Rhin excluded`);
-  // account + Mon Parcours: the need becomes a step from the orientation itself
+  // account + Mon Parcours (G14 limited): a loss-of-autonomy need is health-related (RGPD art. 9) — no step type exists for it and the orientation offers no
+  // « add to my plan »; the person can still track a generic step of the closed list (here: the Aspa), with its official fiche
   await citizenSignIn(page, C.aine, '/compte');
   await searchFor(page, "j'ai 82 ans, je vis seule, je perds mon autonomie et j'ai besoin d'aide à domicile");
-  const add = page.getByTestId('orientation-need-aide-domicile').getByTestId('parcours-add-record-button');
-  const posted = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
-  await add.click();
-  expect((await posted).status()).toBe(201);
-  await expect(page.getByTestId('orientation-need-aide-domicile').getByTestId('parcours-add-record-status')).toBeVisible();
-  const rows = await parcoursRows(C.aine.id);
-  expect(rows).toHaveLength(1); expect(rows[0].planStep).toMatchObject({ need: 'aide-domicile', nextActionKey: 'read_record' });
+  await expect(page.getByTestId('orientation-need-aide-domicile')).toBeVisible();
+  await expect(page.getByTestId('parcours-add-record-button')).toHaveCount(0);
   await page.goto(`${BASE}/compte/parcours`);
+  expect((await addStepType(page, 'ASPA_DEMANDE')).status()).toBe(201);
+  const rows = await parcoursRows(C.aine.id);
+  expect(rows).toHaveLength(1); expect(rows[0].itemCodes).toEqual(['steptype:ASPA_DEMANDE']); expect(rows[0].planStep).toBeNull();
   await expect(page.getByTestId('parcours-item')).toHaveCount(1);
-  await expect(page.getByTestId('parcours-next-action').first()).toBeVisible();
+  await expect(page.getByTestId('parcours-official-sources').first().locator('a[href="https://www.service-public.gouv.fr/particuliers/vosdroits/F16871"]')).toHaveCount(1);
   await axe(page, 'P1 Mon Parcours');
-  evidence('P1 older adult', 'Mon Parcours step + next action', `ParcoursItem ${rows[0].id} planStep.need=aide-domicile`);
+  evidence('P1 older adult', 'Mon Parcours step (closed list) + official fiche', `ParcoursItem ${rows[0].id} steptype:ASPA_DEMANDE; no step for the health-related need`);
   expect(p.serverErrors).toEqual([]); expect(p.external).toEqual([]);
   await p.context.close();
 });
 
 // ───────────────────────────── P2 tenant: rent arrears + loss of income ─────────────────────────────
-test('P2 tenant with rent arrears and no income: two needs, the local sheet page, a step organised with a professional — and a NETWORK LOSS while saving, then a retry that succeeds', async ({ browser }) => {
+test('P2 tenant with rent arrears and no income: two needs, the local sheet page, a step of the closed list with its status and a sourced deadline — and a NETWORK LOSS while saving, then a retry that succeeds', async ({ browser }) => {
   const p = await person(browser);
   const page = await p.context.newPage();
   await citizenSignIn(page, C.locataire, '/compte');
@@ -77,30 +85,32 @@ test('P2 tenant with rent arrears and no income: two needs, the local sheet page
   await expect(page.getByTestId('orientation-need-expulsion-impayes')).toBeVisible();
   await expect(page.getByTestId('orientation-need-minima-sociaux')).toBeVisible();
   evidence('P2 tenant', 'multi-need orientation', `needs=${ids}`);
-  // NETWORK LOSS (simulated: route.abort) on the save — the person is told, nothing is half-saved, then the retry succeeds
-  await page.route('**/api/citizen/parcours', (route) => route.abort('internetdisconnected'));
-  const add = page.getByTestId('orientation-need-expulsion-impayes').getByTestId('parcours-add-record-button');
-  await add.click();
-  await expect(page.getByTestId('orientation-need-expulsion-impayes').getByTestId('parcours-add-record-error')).toBeVisible();
-  expect(await parcoursRows(C.locataire.id)).toHaveLength(0);
-  evidence('P2 tenant', 'network loss while saving', 'route.abort → parcours-add-record-error, 0 ParcoursItem rows');
-  await page.unroute('**/api/citizen/parcours');
-  const posted = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
-  await add.click();
-  expect((await posted).status()).toBe(201);
-  const rows = await parcoursRows(C.locataire.id);
-  expect(rows).toHaveLength(1); expect(rows[0].planStep.need).toBe('expulsion-impayes');
-  evidence('P2 tenant', 'retry after network loss', `POST /api/citizen/parcours 201, ParcoursItem ${rows[0].id}`);
-  // organise the step: a professional acts, next action = share the dossier (the person's own words on the screen)
+  // NETWORK LOSS (simulated: route.abort) on the save — the person is told, nothing is half-saved, then the retry succeeds (G14: a step of the closed list)
   await page.goto(`${BASE}/compte/parcours`);
+  await page.route('**/api/citizen/parcours', (route) => (route.request().method() === 'POST' ? route.abort('internetdisconnected') : route.continue()));
+  await page.getByTestId('parcours-type-select').selectOption('FSL_DEMANDE');
+  await page.getByTestId('parcours-add').click();
+  await expect(page.getByTestId('parcours-problem')).toBeVisible();
+  expect(await parcoursRows(C.locataire.id)).toHaveLength(0);
+  evidence('P2 tenant', 'network loss while saving', 'route.abort → parcours-problem (role=alert), 0 ParcoursItem rows');
+  await page.unroute('**/api/citizen/parcours');
+  expect((await addStepType(page, 'FSL_DEMANDE')).status()).toBe(201);
+  const rows = await parcoursRows(C.locataire.id);
+  expect(rows).toHaveLength(1); expect(rows[0].itemCodes).toEqual(['steptype:FSL_DEMANDE']);
+  evidence('P2 tenant', 'retry after network loss', `POST /api/citizen/parcours 201, ParcoursItem ${rows[0].id}`);
+  // next step understood: the person records where they are and a deadline; its source is the step's official fiche (no free address)
   await page.getByTestId('parcours-item').first().locator('button[aria-controls^="parcours-detail-"]').click();
-  await page.getByTestId('parcours-actor-select').selectOption('professional');
+  const st = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
+  await page.getByTestId('parcours-status-select').selectOption('IN_PROGRESS');
+  expect((await st).status()).toBe(200);
+  await expect(page.getByTestId('parcours-detail')).toBeVisible();   // the details stay open after the reload
+  await page.getByTestId('parcours-due-date').fill(new Date(Date.now() + 20 * 864e5).toISOString().slice(0, 10));
   const saved = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
-  await page.getByTestId('parcours-organise-save').click();
+  await page.getByTestId('parcours-due-save').click();
   expect((await saved).status()).toBe(200);
-  await expect.poll(async () => (await parcoursRows(C.locataire.id))[0].planStep?.actor?.kind).toBe('professional');
-  await expect(page.getByTestId('parcours-actor').first()).toBeVisible();
-  evidence('P2 tenant', 'next step understood (who acts)', 'planStep.actor.kind=professional, shown as parcours-actor');
+  await expect.poll(async () => (await parcoursRows(C.locataire.id))[0].dueSourceUrl).toBe('https://www.service-public.gouv.fr/particuliers/vosdroits/F1334');
+  expect((await parcoursRows(C.locataire.id))[0].status).toBe('IN_PROGRESS');
+  evidence('P2 tenant', 'next step understood (status + sourced deadline)', 'status IN_PROGRESS, dueSourceUrl = the step type fiche F1334');
   expect(p.serverErrors).toEqual([]);
   await p.context.close();
 });
@@ -156,15 +166,16 @@ test('P4 limited French: Arabic (right to left) — the situation in Arabic give
   await expect(page.locator('#orientation-title')).not.toContainText('Votre situation');
   await axe(page, 'P4 ar orientation');
   evidence('P4 limited French (ar)', 'orientation RTL, French text marked', `needs=${body.orientation.needs.map((n) => n.id)}; html dir=rtl`);
-  const posted = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
-  await page.getByTestId('orientation-need-mdph-droits').getByTestId('parcours-add-record-button').click();
-  expect((await posted).status()).toBe(201);
+  // G14: the disability need has no step type (RGPD art. 9) and the orientation offers no « add to my plan »; a generic step is chosen in Arabic
+  await expect(page.getByTestId('parcours-add-record-button')).toHaveCount(0);
   await page.goto(`${BASE}/compte/parcours`);
+  expect((await addStepType(page, 'RSA_DEMANDE')).status()).toBe(201);
   await expect(page.getByTestId('parcours-item')).toHaveCount(1);
+  await expect(page.getByTestId('parcours-item-title')).not.toHaveText('Demander le RSA');   // the label is translated (the French official fiche titles stay marked French)
   await expect(page.locator('h1')).not.toHaveText('Mon Parcours');
   await axe(page, 'P4 ar Mon Parcours');
-  expect((await parcoursRows(C.arabophone.id))[0].planStep.need).toBe('mdph-droits');
-  evidence('P4 limited French (ar)', 'Mon Parcours in Arabic', 'ParcoursItem planStep.need=mdph-droits; h1 not French');
+  expect((await parcoursRows(C.arabophone.id))[0].itemCodes).toEqual(['steptype:RSA_DEMANDE']);
+  evidence('P4 limited French (ar)', 'Mon Parcours in Arabic', 'ParcoursItem steptype:RSA_DEMANDE; label and h1 not French; no step for the disability need');
   await p.context.close();
   const t = await person(browser, { lang: 'tr' });
   const tp = await t.context.newPage();
@@ -250,7 +261,7 @@ test('P6 anonymous: searches, reads a sheet and the directory without an account
   await expect(page.getByTestId('structures-results-list')).toContainText(ORG.X.nom);
   const cookies = (await p.context.cookies(BASE)).map((c) => c.name);
   expect(cookies.filter((n) => /session|token|ada_user/i.test(n)), `cookies: ${cookies}`).toEqual([]);
-  expect((await p.api('POST', '/api/citizen/parcours', { action: 'add', title: 'anonyme' })).status).toBe(401);
+  expect((await p.api('POST', '/api/citizen/parcours', { action: 'add', stepType: 'RSA_DEMANDE' })).status).toBe(401);
   expect((await p.api('GET', '/api/citizen/referrals')).status).toBe(401);
   await page.goto(`${BASE}/compte/parcours`);
   await expect(page.locator('a[href^="/auth/login"]').first()).toBeVisible();

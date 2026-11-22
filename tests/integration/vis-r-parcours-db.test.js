@@ -8,6 +8,9 @@
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+// G14: these are proofs of the FORMER Mon Parcours contract (free titles, records, plan data, consent, import, delegate read): reachable only in the
+// test suites (api/lib/parcours-limited.js legacyContractAllowed). The limited contract has its own proof: tests/integration/g14-parcours-limited-db.test.js
+process.env.ADA_PARCOURS_LEGACY_CONTRACT = 'test-only';
 
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429) }));
 

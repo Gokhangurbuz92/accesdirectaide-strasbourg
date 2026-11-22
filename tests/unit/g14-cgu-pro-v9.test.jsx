@@ -42,14 +42,15 @@ afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.resetModules(); vi.stubEnv('
 describe('cgu-professionnel v9-2026-11-22 — listed as a draft', () => {
   it('a new version for the professional terms only, a draft, the newest draft of that document; the others and v8 unchanged', () => {
     expect(LEGAL_DRAFTS_V9_PRO).toBe('v9-2026-11-22');
-    expect(LEGAL_DRAFT_VERSIONS.at(-1)).toBe(LEGAL_DRAFTS_V9_PRO);
+    // G14 merge: v10 / v11 (Mon Parcours: citizen terms and notice) come after it; v9-2026-11-22 follows v9-2026-11-19
+    expect(LEGAL_DRAFT_VERSIONS.indexOf(LEGAL_DRAFTS_V9_PRO)).toBe(LEGAL_DRAFT_VERSIONS.indexOf('v9-2026-11-19') + 1);
     expect([...LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS]).toEqual([ID]);
     expect(LEGAL_DRAFT_DOCUMENTS_V9_PRO.map((d) => d.id)).toEqual([ID]);
     expect(v9.version).toBe(LEGAL_DRAFTS_V9_PRO);
     expect(v9.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
     expect(v9.path).toBe('/cgu/professionnel');
     expect(latestDraftVersionOf(ID)).toBe(LEGAL_DRAFTS_V9_PRO);
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v7-2026-11-18', 'cgu-professionnel@v9-2026-11-22', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v9-2026-11-19']);
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v10-2026-11-22', 'cgu-professionnel@v9-2026-11-22', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v11-2026-11-22']);   // G14 merge: Mon Parcours v10 / v11
     // hashes taken from the commit before this change (99a6c11)
     expect(sha(LEGAL_DRAFT_DOCUMENTS_V8)).toBe('adc97403b2533d6b534d933c46ddac666ae1f967f5957ffd136a61c79c1451bb');
     expect(sha(LEGAL_DRAFT_DOCUMENTS_V9)).toBe('9b49394eac64574239478f217f7071758fd841485d9b335d900399069dc72e34');

@@ -5,6 +5,7 @@
  * time. The invitation is accepted only by the account whose VERIFIED e-mail is the invited one. Legal mandates (tuteur, curateur, représentant) need a proof whose
  * verification is not designed yet: they stay PROOF_REQUIRED and open nothing (the database refuses ACTIVE for them) — said plainly, never presented as verified.
  */
+import { legacyContractAllowed, parcoursDelegateReadOpen } from '../lib/parcours-limited.js';
 import crypto from 'node:crypto';
 import { and, asc, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
@@ -28,8 +29,16 @@ export const INVITE_DAYS = 7;
  * themselves: with delegations open and the vault closed, a delegate must not list the names of the Coffre files.
  */
 export const SCOPE_CAPABILITY = Object.freeze({ PARCOURS_READ: 'citizen.parcours', COFFRE_LIST: 'citizen.vault', RDV_READ: 'citizen.booking' });
+/**
+ * G14 — a delegate's read of Mon Parcours stays CLOSED in the limited version (counsel Q6 / analyse documentaire du responsable: no delegation in the first
+ * phase), even where Mon Parcours and the delegations are both open: ADA_PARCOURS_DELEGATE_READ=on is needed (api/lib/parcours-limited.js). The former
+ * contract's integration suites (NODE_ENV=test only) keep it.
+ */
+const parcoursReadAllowed = () => parcoursDelegateReadOpen() || legacyContractAllowed();
+/** @param {string} scope @param {(capability: string) => boolean} isOpen */
+const scopeOpen = (scope, isOpen) => isOpen(SCOPE_CAPABILITY[scope]) && (scope !== 'PARCOURS_READ' || parcoursReadAllowed());
 /** The scopes whose part of Mon Espace is open on this service. @param {(capability: string) => boolean} [isOpen] */
-export const openScopes = (isOpen = (c) => capabilityOpen(c)) => DELEGATION_SCOPES.filter((s) => isOpen(SCOPE_CAPABILITY[s]));
+export const openScopes = (isOpen = (c) => capabilityOpen(c)) => DELEGATION_SCOPES.filter((s) => scopeOpen(s, isOpen));
 const LIVE = ['INVITED', 'ACTIVE', 'PROOF_REQUIRED'];
 const VIEWS = Object.freeze({ parcours: ['PARCOURS_READ', 'PARCOURS_VIEWED'], coffre: ['COFFRE_LIST', 'COFFRE_LISTED'], rdv: ['RDV_READ', 'RDV_VIEWED'] });
 const ACTION_LABELS = Object.freeze({ PARCOURS_VIEWED: 'a consulté Mon Parcours', COFFRE_LISTED: 'a consulté la liste de Mon Coffre', RDV_VIEWED: 'a consulté les rendez-vous' });
@@ -146,7 +155,7 @@ export async function delegateView(userId, id, what, db = defaultDb, opts = {}) 
   const spec = VIEWS[String(what || '')];
   if (!spec) return bad('INVALID_VIEW', 'Vue inconnue.');
   // A-18: the part's own capability gate, before anything is read or logged (404: on this service that part does not exist, for the delegate as for the person)
-  if (!(opts.isOpen || ((c) => capabilityOpen(c)))(SCOPE_CAPABILITY[spec[0]])) return bad('CAPABILITY_NOT_OPEN', 'Cette partie n’est pas ouverte sur ce service.', 404);
+  if (!scopeOpen(spec[0], opts.isOpen || ((c) => capabilityOpen(c)))) return bad('CAPABILITY_NOT_OPEN', 'Cette partie n’est pas ouverte sur ce service.', 404);   // G14: + PARCOURS_READ gate
   const [r] = await db.select().from(CitizenDelegation).where(and(eq(CitizenDelegation.id, String(id || '')), eq(CitizenDelegation.delegateUserId, userId))).limit(1);
   if (!r || statusOf(r) !== 'ACTIVE') return bad('NOT_FOUND', 'Délégation introuvable ou inactive.', 404);
   if (!r.scopes.includes(spec[0])) return bad('SCOPE_NOT_GRANTED', 'La personne ne vous a pas donné accès à cette partie.', 403);

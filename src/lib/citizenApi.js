@@ -71,6 +71,8 @@ export const citizenApi = {
   parcoursHistory: (/** @type {string} */ id) => call(`/api/citizen/parcours?history=${encodeURIComponent(id)}`),
   parcours: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/parcours', { method: 'POST', body }),
   removeParcours: (/** @type {string} */ id) => call('/api/citizen/parcours', { method: 'DELETE', body: { id } }),
+  // G14 (limited Mon Parcours): the published places of an allowed kind for one step type, by name or town (nothing stored)
+  parcoursStructures: (/** @type {string} */ stepType, /** @type {string} */ q) => call(`/api/citizen/parcours?structuresFor=${encodeURIComponent(stepType)}&q=${encodeURIComponent(q)}`),
   listFavorites: () => call('/api/citizen/favorites'),
   // X04 (expansion): the person's event registrations (closed by default: capability community.events)
   myEvents: () => call('/api/citizen/events'),

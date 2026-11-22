@@ -9,12 +9,14 @@ import { rdvMessagingClient } from '@/api/rdv-messaging-client';
 import { frontendEnv } from '@/config/env';
 import { parcoursOpened } from '@/lib/publicBeta';
 import { useT } from '@/i18n';
+import { PARCOURS_RECORD_STEPS } from '@/lib/parcoursRecordSteps';
 
 /**
  * VIS-R — may « Ajouter à mon parcours » be offered here: Mon Parcours is open in this build (src/lib/publicBeta.js) AND a citizen is signed in. It reuses
  * the header's session query (same key): no extra request, and none at all while the surface is closed. The server stays the only real protection.
  * @returns {boolean}
  */
+
 function useParcoursAccess() {
   const open = parcoursOpened(frontendEnv.flags.publicBeta);
   const auth = useQuery({ queryKey: ['header-auth-check'], queryFn: () => rdvMessagingClient.authMe(), staleTime: 60_000, retry: false, refetchOnWindowFocus: false, enabled: open });
@@ -32,6 +34,9 @@ function SignedInOnly({ children }) {
  */
 export function ParcoursAccessGate({ children }) {
   const client = useContext(QueryClientContext);
+  // G14: the limited Mon Parcours accepts only a step type of its reviewed list — a catalogue record can no longer become a step (the server refuses
+  // `records` with 400 FIELD_NOT_ALLOWED), so the button is not offered on record pages and orientations
+  if (!PARCOURS_RECORD_STEPS.offered) return null;
   if (!client || !parcoursOpened(frontendEnv.flags.publicBeta)) return null;
   return <SignedInOnly>{children}</SignedInOnly>;
 }

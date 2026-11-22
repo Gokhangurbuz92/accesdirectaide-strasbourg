@@ -15,6 +15,7 @@ import { capabilityOpen } from '../../_utils/capabilities.js';
 import { citizenMailLanguage } from '../../_services/mail-language.js';
 import { templates } from '../../lib/email-service.js';
 import { buildAppUrl } from '../../_utils/user-auth.js';
+import { parcoursExternalRemindersOpen } from '../../lib/parcours-limited.js';
 
 /**
  * PKG-2 / C08 — reminders of Mon Parcours deadlines (GET|POST /api/cron/parcours-reminder, CRON_SECRET).
@@ -124,6 +125,8 @@ export async function runParcoursReminders({ now = new Date(), deps = {} } = {})
 
 export const PARCOURS_CAPABILITY = 'citizen.parcours';
 export const CAPABILITY_CLOSED = 'CAPABILITY_CLOSED';
+/** G14: e-mail / SMS / push reminders are OFF unless ADA_PARCOURS_EXTERNAL_REMINDERS=on — the job then reads and sends nothing (in-app notices are separate) */
+export const EXTERNAL_REMINDERS_OFF = 'EXTERNAL_REMINDERS_OFF';
 
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -135,6 +138,11 @@ export default async function handler(req, res) {
     logger.info({ job: 'parcours-reminder', skipped: true, reason: CAPABILITY_CLOSED }, '[Cron] Parcours reminders skipped: capability closed');
     await finishCronRun(db, runId, { status: 'skipped', skipReason: CAPABILITY_CLOSED, startedAtMs, metrics: { considered: 0 } });
     return res.status(200).json({ ok: true, skipped: true, reason: CAPABILITY_CLOSED, capability: PARCOURS_CAPABILITY });
+  }
+  if (!parcoursExternalRemindersOpen()) {
+    logger.info({ job: 'parcours-reminder', skipped: true, reason: EXTERNAL_REMINDERS_OFF }, '[Cron] Parcours reminders skipped: external reminders off');
+    await finishCronRun(db, runId, { status: 'skipped', skipReason: EXTERNAL_REMINDERS_OFF, startedAtMs, metrics: { considered: 0 } });
+    return res.status(200).json({ ok: true, skipped: true, reason: EXTERNAL_REMINDERS_OFF });
   }
   try {
     const summary = await runParcoursReminders();

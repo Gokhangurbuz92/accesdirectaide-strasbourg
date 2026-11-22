@@ -107,9 +107,9 @@ export function classifyParcoursStep({ texts = [], need = null, recordCategories
 export const parcoursSensitiveMode = (env = process.env) => (String(env.ADA_PARCOURS_SENSITIVE_STEPS || '').trim() === 'consent' ? 'consent' : 'excluded');
 
 /**
- * G8 — the free-text note of a step. Unset / any other value: kept (500 characters, a visible request not to write health information, the same
- * sensitive-words guard as the title, never shown to a delegate, never sent to any organisation). Exactly « off »: no new note can be written; an
- * existing note can still be read, exported and cleared by the person. Foreseen for counsel's answer « the free text must go ».
+ * G8 — the free-text note of a step. G14 (owner requirement 1, 22/11/2026): OFF BY DEFAULT. Exactly « on » opens it (500 characters, a visible request
+ * not to write health information, the same sensitive-words guard as the title, never shown to a delegate, never sent to any organisation); unset or any
+ * other value: no new note can be written; an existing note can still be read, exported and cleared by the person.
  * @param {Record<string, string | undefined>} [env] @returns {boolean}
  */
-export const parcoursNotesOpen = (env = process.env) => String(env.ADA_PARCOURS_NOTES || '').trim() !== 'off';
+export const parcoursNotesOpen = (env = process.env) => String(env.ADA_PARCOURS_NOTES || '').trim() === 'on';

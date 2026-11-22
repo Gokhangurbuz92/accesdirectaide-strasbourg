@@ -659,19 +659,83 @@ const toV9Pro = (d) => {
 /** @type {DraftDocument[]} the professional terms only */
 export const LEGAL_DRAFT_DOCUMENTS_V9_PRO = LEGAL_DRAFT_DOCUMENTS_V8.filter((d) => LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS.includes(d.id)).map(toV9Pro);
 
+/*
+ * v10-2026-11-22 / v11-2026-11-22 — G14 (22/11/2026): Mon Parcours, LIMITED version (owner batch approval « G14 toplu onay », point 2, 22/11/2026; masters:
+ * CONTROL/master/completion/G14_MON_PARCOURS_NOTICE_CGU_V10_FR.md). Mon Parcours opens BEFORE ADA Pro (K8 has no date) and the notice must never describe
+ * ADA Pro as open while it is closed, so the Mon Parcours texts exist on two bases:
+ *  v10  cgu-citoyen            = v7 (in force) + one item in § 5 « Votre compte » (account.parcours_v10): declarative, no free text, deletion.
+ *       notice-confidentialite = v8 (in force in Production since G4) + three texts: § 3 item P17 (purposes.p17_v10), § 4 item « Mon Parcours »
+ *                                (retention.parcours_v10: 24 months after closure, notice 30 days before, backups up to 35 days, possible reappearance after a
+ *                                restore), § 4 « functions not open yet » without « suivi des démarches » (retention.i14_v10, from the v8 list).
+ *       → put in force at the Mon Parcours opening.
+ *  v11  notice-confidentialite = v9 (approved by the owner on 22/11/2026 for the ADA Pro opening) + the SAME three texts (retention.i14_v11 from the v9 list).
+ *       APPROVED FOR ACTIVATION AT THE ADA PRO (K8) OPENING ONLY (LEGAL_DRAFTS_V11_ACTIVATION); a draft until VITE_LEGAL_DOCS_APPROVED_VERSION names it.
+ * Every earlier version unchanged byte for byte. Translations: the « …_v10 » / « …_v11 » keys of src/i18n/locales/<lang>/legaldraft.json.
+ */
+export const LEGAL_DRAFTS_V10 = 'v10-2026-11-22';
+export const LEGAL_DRAFTS_V10_DOCUMENT_IDS = Object.freeze(['cgu-citoyen', 'notice-confidentialite']);
+export const LEGAL_DRAFTS_V11 = 'v11-2026-11-22';
+export const LEGAL_DRAFTS_V11_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
+/** v11 is approved (owner, 22/11/2026) but goes into force only with the ADA Pro opening (K8): it carries the v9 texts on professional accounts */
+export const LEGAL_DRAFTS_V11_ACTIVATION = 'APPROVED_FOR_ACTIVATION_AT_K8 — approuvée le 22/11/2026, à mettre en vigueur seulement à l’ouverture d’ADA Pro (K8)';
+export const LEGAL_DRAFTS_V10_P17 = "P17 — Mon Parcours, le suivi personnel de vos démarches (une démarche choisie dans une liste fermée de démarches courantes, un lieu public publié si vous le choisissez, l'état que vous indiquez, une échéance avec la fiche officielle qui s'y rapporte, l'historique des changements sans texte) : exécution des conditions d'utilisation (art. 6, 1, b). Mon Parcours n'enregistre aucun texte libre et ne propose aucune démarche liée à la santé, au handicap, à la vie sexuelle, à une infraction ou une procédure pénale, au droit au séjour, à des violences subies, à la protection de l'enfance, à une mesure de protection juridique ou à une situation de grande précarité. Vos étapes ne sont visibles que par vous : aucune structure, aucun professionnel, aucune personne de confiance et aucun administrateur ne les voit dans le service. Les rappels d'échéance se font seulement dans les notifications de Mon Espace, jamais par e-mail ni par SMS pour le moment.";
+export const LEGAL_DRAFTS_V10_PARCOURS_RETENTION = "Mon Parcours : une étape en cours est gardée tant que vous la gardez ; vous pouvez la supprimer à tout moment. Une étape terminée ou abandonnée est effacée, avec son historique, 24 mois après sa clôture ; un avis vous prévient dans Mon Espace 30 jours avant, et vous pouvez télécharger vos données à tout moment. Une étape effacée peut subsister jusqu'à 35 jours dans les copies de sauvegarde (« Historique de restauration » ci-dessous) ; si une restauration avait lieu pendant ce délai, une étape que vous aviez supprimée pourrait réapparaître : vous en seriez prévenu et pourriez la supprimer à nouveau.";
+/** v10 (from v8): the v8 list without « suivi des démarches » */
+export const LEGAL_DRAFTS_V10_NOT_OPEN = "Fonctions pas encore ouvertes (notamment rendez-vous, message facultatif, notifications des professionnels, assistant, membres du foyer, historique de consultation, favoris) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.";
+/** v11 (from v9): the v9 list without « suivi des démarches » */
+export const LEGAL_DRAFTS_V11_NOT_OPEN = "Fonctions pas encore ouvertes (notamment rendez-vous, message facultatif, orientations entre professionnels, assistant, membres du foyer, historique de consultation, favoris) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.";
+export const LEGAL_DRAFTS_V10_CGU_PARCOURS = "Mon Parcours : vous pouvez y suivre vous-même des démarches choisies dans une liste proposée par le service, avec, si vous le souhaitez, un lieu public et une échéance. Ce que vous y indiquez est déclaratif : ce n'est ni une demande, ni un dépôt, ni la preuve d'une démarche, et cela n'engage ni AccesDirectAide ni aucun organisme ; seul l'organisme compétent décide. Mon Parcours n'accepte aucun texte libre. Vous pouvez supprimer une étape à tout moment ; une étape terminée est effacée 24 mois après sa clôture.";
+/** changes in the v9 change format; indexes = those of the base document (cgu-citoyen v7, notice v8 for v10, notice v9 for v11) */
+export const LEGAL_DRAFTS_V10_CHANGES = Object.freeze({
+  'notice-confidentialite': { sections: {
+    purposes: { items: { insertAfter: { 9: [[LEGAL_DRAFTS_V10_P17, 'p17_v10']] } } },
+    retention: { items: { insertAfter: { 12: [[LEGAL_DRAFTS_V10_PARCOURS_RETENTION, 'parcours_v10']] }, replace: { 13: [LEGAL_DRAFTS_V10_NOT_OPEN, 'i14_v10'] } } },
+  } },
+  'cgu-citoyen': { sections: {
+    account: { items: { insertAfter: { 0: [[LEGAL_DRAFTS_V10_CGU_PARCOURS, 'parcours_v10']] } } },
+  } },
+});
+export const LEGAL_DRAFTS_V11_CHANGES = Object.freeze({
+  'notice-confidentialite': { sections: {
+    purposes: { items: { insertAfter: { 10: [[LEGAL_DRAFTS_V10_P17, 'p17_v10']] } } },
+    retention: { items: { insertAfter: { 15: [[LEGAL_DRAFTS_V10_PARCOURS_RETENTION, 'parcours_v10']] }, replace: { 16: [LEGAL_DRAFTS_V11_NOT_OPEN, 'i14_v11'] } } },
+  } },
+});
+/** @param {any} changes @param {string} version @returns {(d: DraftDocument) => DraftDocument} */
+const withChanges = (changes, version) => (d) => {
+  const c = changes[d.id];
+  return { ...d, version, sections: d.sections.map((s) => {
+    const sc = c.sections[s.id];
+    if (!sc) return s;
+    const [paras, paraKeys] = applyV9(sc.paras, s.paras, s.paraKeys, 'p');
+    const [items, itemKeys] = applyV9(sc.items, s.items, s.itemKeys, 'i');
+    return { ...s, ...(paras ? { paras, paraKeys } : {}), ...(items ? { items, itemKeys } : {}) };
+  }) };
+};
+/** @param {DraftDocument[]} set @param {string} id @returns {DraftDocument} */
+const docOf = (set, id) => /** @type {DraftDocument} */ (set.find((d) => d.id === id));
+/** @type {DraftDocument[]} the citizen terms (from v7) and the privacy notice (from v8, the version in force) — Mon Parcours opening */
+export const LEGAL_DRAFT_DOCUMENTS_V10 = [
+  withChanges(LEGAL_DRAFTS_V10_CHANGES, LEGAL_DRAFTS_V10)(docOf(LEGAL_DRAFT_DOCUMENTS_V7, 'cgu-citoyen')),
+  withChanges(LEGAL_DRAFTS_V10_CHANGES, LEGAL_DRAFTS_V10)(docOf(LEGAL_DRAFT_DOCUMENTS_V8, 'notice-confidentialite')),
+];
+/** @type {DraftDocument[]} the privacy notice (from v9) — to be put in force at the ADA Pro (K8) opening only */
+export const LEGAL_DRAFT_DOCUMENTS_V11 = [withChanges(LEGAL_DRAFTS_V11_CHANGES, LEGAL_DRAFTS_V11)(docOf(LEGAL_DRAFT_DOCUMENTS_V9, 'notice-confidentialite'))];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
- * (draft; v8 stays approvable). LEGAL_DRAFT_DOCUMENTS = the newest draft
+ * (draft; v8 stays approvable); G14: the citizen terms and the notice at LEGAL_DRAFTS_V10 (Mon Parcours opening), the notice also at LEGAL_DRAFTS_V11 (K8). LEGAL_DRAFT_DOCUMENTS = the newest draft
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
-  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO] });
+  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO],
+  [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10], [LEGAL_DRAFTS_V11]: [...LEGAL_DRAFT_DOCUMENTS_V11] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {

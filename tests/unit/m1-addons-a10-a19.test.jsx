@@ -26,6 +26,7 @@ vi.mock('../../src/config/env.js', async (importOriginal) => { const real = awai
 vi.mock('../../src/db/index.js', () => ({ db: new Proxy({}, { get() { throw new Error('database touched'); } }) }));
 
 import AddToParcoursButton from '../../src/components/AddToParcoursButton.jsx';
+import { PARCOURS_RECORD_STEPS } from '../../src/lib/parcoursRecordSteps.js';
 import CompteParcours from '../../src/pages/CompteParcours.jsx';
 import CompteProfil from '../../src/pages/CompteProfil.jsx';
 import { notificationOptionOpen, notificationOptionsOpen, smsReminderOpen, setPreference, NOTIFICATION_OPTION_CLOSED } from '../../api/_services/citizen-account.js';
@@ -33,8 +34,9 @@ import { capabilityOpen } from '../../api/_utils/capabilities.js';
 
 const mount = (C, props = {}) => render(h(QueryClientProvider, { client: new QueryClient() }, h(HelmetProvider, null, h(MemoryRouter, null, h(C, props)))));
 const tick = () => act(async () => { await new Promise((r) => setTimeout(r, 20)); });
-beforeEach(() => { Object.values(api).forEach((f) => f.mockReset()); authMe.mockReset(); api.listShares.mockResolvedValue({ shares: [] }); api.parcoursHistory.mockResolvedValue({ events: [] }); env.frontendEnv.flags.publicBeta = false; });
-afterEach(() => { cleanup(); vi.unstubAllEnvs(); });
+beforeEach(() => { Object.values(api).forEach((f) => f.mockReset()); authMe.mockReset(); api.listShares.mockResolvedValue({ shares: [] }); api.parcoursHistory.mockResolvedValue({ events: [] }); env.frontendEnv.flags.publicBeta = false;
+  PARCOURS_RECORD_STEPS.offered = true; });   // G14: the former record-step control (off in the application) is tested on its own
+afterEach(() => { cleanup(); vi.unstubAllEnvs(); PARCOURS_RECORD_STEPS.offered = false; });
 
 describe('A-10 — a place or a guide page becomes a step', () => {
   it('the server accepts « structure » among the record types, and still refuses any other type before touching the database', async () => {
@@ -86,10 +88,12 @@ describe('A-19 — an SMS reminder is offered only where one can be sent', () =>
   });
   it('« SMS × rappels » is open only where the number is collected AND appointments are open; Mon Parcours alone does not open it', () => {
     expect(capabilityOpen('citizen.parcours', PARCOURS_ONLY)).toBe(true); expect(capabilityOpen('citizen.booking', PARCOURS_ONLY)).toBe(false);
-    expect(notificationOptionsOpen(PARCOURS_ONLY)).toEqual({ sms: true, reminder: true, marketing: false });
+    expect(notificationOptionsOpen(PARCOURS_ONLY)).toEqual({ sms: true, reminder: false, marketing: false });   // G14: Mon Parcours alone opens it only with ADA_PARCOURS_EXTERNAL_REMINDERS=on
+    expect(notificationOptionsOpen({ ...PARCOURS_ONLY, ADA_PARCOURS_EXTERNAL_REMINDERS: 'on' })).toEqual({ sms: true, reminder: true, marketing: false });
     expect(smsReminderOpen(PARCOURS_ONLY)).toBe(false);
     expect(notificationOptionOpen('sms', 'reminder', PARCOURS_ONLY)).toBe(false);
-    expect(notificationOptionOpen('email', 'reminder', PARCOURS_ONLY)).toBe(true);   // the channel that works stays offered
+    expect(notificationOptionOpen('email', 'reminder', PARCOURS_ONLY)).toBe(false);   // G14: external reminders off by default
+    expect(notificationOptionOpen('email', 'reminder', { ...PARCOURS_ONLY, ADA_PARCOURS_EXTERNAL_REMINDERS: 'on' })).toBe(true);   // the channel that works
     expect(notificationOptionOpen('sms', 'service', PARCOURS_ONLY)).toBe(true);
     // the LAB (nothing enforced: appointments open) keeps it, as does an environment where appointments are open
     expect(smsReminderOpen({})).toBe(true); expect(notificationOptionOpen('sms', 'reminder', {})).toBe(true);

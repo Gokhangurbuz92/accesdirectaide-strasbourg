@@ -105,9 +105,10 @@ describe.skipIf(!hasDatabase)('G3 — ADA Pro opened alone: accounts, MFA and st
     expect(reg.statusCode, JSON.stringify(reg.body)).toBe(201);
     J.admin = { id: reg.body.user.id, email: ADMIN_EMAIL, st: PILOT, role: 'STRUCTURE_ADMIN' };
     expect(reg.body.user).toMatchObject({ role: 'STRUCTURE_ADMIN', structureId: PILOT });
-    const { LEGAL_DRAFTS_V8 } = await import('../../src/config/legal-drafts.js');
+    // outside Production the acceptance records the NEWEST draft of each document (G14: cgu-professionnel v9-2026-11-22; the structure conditions stay v8)
+    const { LEGAL_DRAFTS_V8, latestDraftVersionOf } = await import('../../src/config/legal-drafts.js');
     expect(await ledger(J.admin.id)).toEqual([
-      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CGU_PROFESSIONNEL', decision: true, policy_version: `cgu-professionnel@${LEGAL_DRAFTS_V8}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
+      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CGU_PROFESSIONNEL', decision: true, policy_version: `cgu-professionnel@${latestDraftVersionOf('cgu-professionnel')}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
       { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CONDITIONS_STRUCTURES', decision: true, policy_version: `conditions-structures@${LEGAL_DRAFTS_V8}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
     ]);
 

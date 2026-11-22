@@ -115,6 +115,8 @@ const OPEN_ENV = { ADA_BETA_OPEN_SURFACES: 'accounts,pro,institution,appointment
   ADA_CAPABILITIES_OPEN: OPEN_CAPS.join(','), ADA_HDS_CERTIFIED_HOSTING: LAB_HDS,
   // jobs opened one at a time, the personal-data ones (category C) also « approved » — LAB only, Production approves each job separately
   ADA_BETA_OPEN_JOBS: 'rdv-reminder,parcours-reminder,referral-timeouts,link-check,observatory-freeze,health-alert', ADA_JOBS_APPROVED: 'rdv-reminder,parcours-reminder,referral-timeouts',
+  // G14 (limited Mon Parcours): the two switches that stay OFF in Production, ON here so that the LAB still proves the reminder job (C08) and the delegate's read (C23)
+  ADA_PARCOURS_EXTERNAL_REMINDERS: 'on', ADA_PARCOURS_DELEGATE_READ: 'on',
   FRANCECONNECT_ISSUER: fcMock.issuer, FRANCECONNECT_CLIENT_ID: fcMock.clientId, FRANCECONNECT_CLIENT_SECRET: fcMock.clientSecret,
   PROCONNECT_ENABLED: 'true', PROCONNECT_ISSUER: pcMock.issuer, PROCONNECT_CLIENT_ID: pcMock.clientId, PROCONNECT_CLIENT_SECRET: pcMock.clientSecret,
   // video: a SANDBOX Jitsi-JWT configuration (the domain is never contacted; tokens are checked offline) — B07 / N06

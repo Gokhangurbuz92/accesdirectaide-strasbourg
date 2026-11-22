@@ -32,27 +32,30 @@ test.beforeAll(async ({ browser }) => {
 });
 test.afterAll(async () => { await P?.context.close(); });
 
-test('GB1 · limited French: the situation said in Arabic → three needs with official sources (French text marked French) → a Mon Parcours plan of three steps, in Arabic, right to left', async () => {
+test('GB1 · limited French: the situation said in Arabic → three needs with official sources (French text marked French) → three Mon Parcours steps chosen in the closed list, in Arabic, right to left', async () => {
   const resp = finalResponse(page, (u, m) => u.endsWith('/api/search') && m === 'POST');
   await page.goto(`${BASE}/recherche?q=${encodeURIComponent('لا أستطيع دفع الإيجار، ليس لدي دخل، وأحتاج ملف الإعاقة')}`);
   const out = await (await resp).json();
   expect(out.orientation.needs.map((n) => n.id)).toEqual(expect.arrayContaining(['expulsion-impayes', 'minima-sociaux', 'mdph-droits']));
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
-  for (const id of ['expulsion-impayes', 'mdph-droits']) {
-    const posted = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
-    await page.getByTestId(`orientation-need-${id}`).getByTestId('parcours-add-record-button').click();
-    expect((await posted).status()).toBe(201);
-  }
-  // the need without a sheet published on the site: the person writes the step themselves, in their language
+  // G14 (limited Mon Parcours): the orientation no longer turns a need into a step (no « add to my plan » button: records are refused); the person
+  // chooses generic steps in the closed list, in their language. The disability need (« mdph-droits ») has NO step type by design (RGPD art. 9).
+  await expect(page.getByTestId('parcours-add-record-button')).toHaveCount(0);
   await page.goto(`${BASE}/compte/parcours`);
-  await page.getByTestId('parcours-new-title').fill(`لا دخل — ${CASE}`);
-  const posted = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
-  await page.getByTestId('parcours-add').click();
-  expect((await posted).status()).toBe(201);
+  for (const code of ['FSL_DEMANDE', 'RSA_DEMANDE', 'AIDE_LOGEMENT_DEMANDE']) {
+    await page.getByTestId('parcours-type-select').selectOption(code);
+    const posted = finalResponse(page, (u, m) => u.endsWith('/api/citizen/parcours') && m === 'POST');
+    await page.getByTestId('parcours-add').click();
+    expect((await posted).status()).toBe(201);
+    await expect(page.getByTestId('parcours-type-select')).toHaveValue('');   // the form is emptied for the next choice
+  }
+  await expect(page.getByTestId('compte-parcours')).toHaveAttribute('data-contract', 'limited');
+  await expect(page.getByTestId('parcours-new-title')).toHaveCount(0);   // no free title
   await expect(page.getByTestId('parcours-item')).toHaveCount(3);
   await axe(page, 'GB1 Mon Parcours ar');
-  const rows = await db(`SELECT id, title, "planStep" FROM "ParcoursItem" WHERE "userId" = $1 ORDER BY "createdAt"`, [G.id]);
-  expect(rows.map((r) => r.planStep?.need || null)).toEqual(['expulsion-impayes', 'mdph-droits', null]);
+  const rows = await db(`SELECT id, title, "itemCodes", "planStep" FROM "ParcoursItem" WHERE "userId" = $1 ORDER BY "createdAt"`, [G.id]);
+  expect(rows.map((r) => r.itemCodes)).toEqual([['steptype:FSL_DEMANDE'], ['steptype:RSA_DEMANDE'], ['steptype:AIDE_LOGEMENT_DEMANDE']]);
+  expect(rows.every((r) => r.planStep === null)).toBe(true);
   S.steps = rows.map((r) => r.id);
   evidence('GOLDEN (browser)', 'need → possible rights → Mon Parcours plan (ar, RTL)', `case ${CASE}; ParcoursItem ${S.steps.join(',')}`);
 });

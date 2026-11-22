@@ -23,6 +23,7 @@ vi.mock('../../src/config/env.js', async (importOriginal) => { const real = awai
 vi.mock('../../src/db/index.js', () => ({ db: new Proxy({}, { get() { throw new Error('database touched'); } }) }));
 
 import AddToParcoursButton from '../../src/components/AddToParcoursButton.jsx';
+import { PARCOURS_RECORD_STEPS } from '../../src/lib/parcoursRecordSteps.js';
 import OrientationPanel from '../../src/components/search/OrientationPanel.jsx';
 import CompteParcours from '../../src/pages/CompteParcours.jsx';
 import { parcoursOpened } from '../../src/lib/publicBeta.js';
@@ -36,8 +37,9 @@ const signedIn = () => authMe.mockResolvedValue({ session: { kind: 'user' }, use
 const need = { id: 'n1', label: 'Se soigner sans titre de séjour', urgent: false, numbers: [], actions: ['Demander un rendez-vous'], rules: [], sheets: ['F3079', 'F12006'], topic: 'aide médicale' };
 const orientation = { needs: [need], cautions: [], questions: [], sources: { F3079: { title: 'Fiche F3079', url: 'https://www.service-public.gouv.fr/x/F3079', slug: 'aide-medicale-f3079' }, F12006: { title: 'Fiche F12006', url: 'https://www.service-public.gouv.fr/x/F12006', slug: null } } };
 
-beforeEach(() => { Object.values(api).forEach((f) => f.mockReset()); authMe.mockReset(); api.listShares.mockResolvedValue({ shares: [] }); api.parcoursHistory.mockResolvedValue({ events: [] }); env.frontendEnv.flags.publicBeta = false; });
-afterEach(() => { cleanup(); vi.unstubAllEnvs(); });
+beforeEach(() => { Object.values(api).forEach((f) => f.mockReset()); authMe.mockReset(); api.listShares.mockResolvedValue({ shares: [] }); api.parcoursHistory.mockResolvedValue({ events: [] }); env.frontendEnv.flags.publicBeta = false;
+  PARCOURS_RECORD_STEPS.offered = true; });   // G14: the former record-step control (off in the application) is tested on its own
+afterEach(() => { cleanup(); vi.unstubAllEnvs(); PARCOURS_RECORD_STEPS.offered = false; });
 
 describe('surface gating of « Ajouter à mon parcours »', () => {
   it('open outside the beta; inside it only with the accounts surface in its FULL scope — the same answer as the server gate', () => {

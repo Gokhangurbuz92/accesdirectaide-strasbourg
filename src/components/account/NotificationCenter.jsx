@@ -20,6 +20,8 @@ const kindLabels = (t) => ({
   MESSAGE_FROM_STRUCTURE: t('compte:notifications.kind.message_from_structure', 'Nouveau message d’une structure.'),
   DOSSIER_MESSAGE: t('compte:notifications.kind.dossier_message', 'Nouveau message sur un dossier partagé.'),
   PARCOURS_DEADLINE_SOON: t('compte:notifications.kind.parcours_deadline', 'Une échéance de Mon Parcours arrive dans moins de 7 jours.'),
+  // G14: only once the retention duration is approved (api/_services/citizen-inbox.js) — kind, time and link only
+  PARCOURS_CLOSED_STEP_EXPIRING: t('compte:notifications.kind.parcours_closed_expiring', 'Une étape terminée de Mon Parcours sera supprimée dans 30 jours. Vous pouvez télécharger vos données avant.'),
   DOCUMENT_EXPIRING: t('compte:notifications.kind.document_expiring', 'Un document de Mon Coffre arrive à sa date de fin de validité.'),
   GUARDIAN_REQUEST: t('compte:notifications.kind.guardian_request', 'Une demande de lien de représentant légal attend votre réponse.'),
   // E7: the referrals of the person's dossiers (api/_services/citizen-inbox.js) — kind, time and link only

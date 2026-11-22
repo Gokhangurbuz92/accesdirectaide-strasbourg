@@ -30,7 +30,7 @@ export const POLICY_STATUS_PROPOSED = 'PROPOSED — NOT APPROVED';
 export const POLICY_STATUS_APPROVED = 'APPROVED';
 
 /**
- * @typedef {{ days: number | null, anchor: string, basis: string, ecode?: string, ownerChoice?: string, options?: number[] }} PolicyDuration
+ * @typedef {{ days: number | null, anchor: string, basis: string, ecode?: string, ownerChoice?: string, options?: number[], pendingApproval?: string, decidedOn?: string }} PolicyDuration
  * @typedef {{ id: string, version: string, status: string, approvedPolicyVersion?: string, source: string, durations: Record<string, PolicyDuration>,
  *   ownerChoices?: Record<string, { durationKey: string, options: number[], label: string }>, approvedChoices?: Record<string, number>,
  *   approvedSteps?: Record<string, { approvedOn: string, dryRunReviewedOn: string, backupVerified: string, sharedControllerBasis?: string }> }} RetentionPolicy
@@ -107,6 +107,10 @@ export const RETENTION_POLICY = deepFreeze({
     INACTIVE_WARNING_GRACE_DAYS: { days: 30, anchor: 'warning e-mail sent (not built)', basis: OPS, ecode: 'E7' },
     PRO_USER_DISABLED_DAYS: { days: 365, anchor: 'disabling date (not recorded on 0042)', basis: OPS, ecode: 'E9b' },
     BACKUP_KEEP_DAYS: { days: 35, anchor: 'backup file time (V2: 35 days, as the privacy notice § 4 says)', basis: OPS, ecode: 'E15' },
+    // G14 — Mon Parcours: 24 months after closure. DECIDED by the controller on 22/11/2026 (« G14 toplu onay », point 2: « décision du responsable
+    // 22/11/2026 », CONTROL/master/MASTER_CHECKPOINT.md; analyse documentaire Q7: a management choice). The duration is decided; the purge STEP still needs
+    // its own record in approvedSteps (dry run of this step read, verified backup) and GDPR_PURGE_APPROVED_STEPS, like every other step — not given here.
+    PARCOURS_CLOSED_STEP_DAYS: { days: 730, anchor: 'closing date of the step (latest change of state in its history, else updatedAt); its history and reminder ledger go with it', basis: 'choix de gestion — décision du responsable 22/11/2026', ecode: 'G14', decidedOn: '2026-11-22' },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });
@@ -174,6 +178,9 @@ const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
  * activation, not the approval). Returns null when complete, else why not. @param {RetentionPolicy} policy @param {{ id: string, sharedController?: string }} step
  */
 export function stepApprovalProblem(policy, step) {
+  // G14: a duration still marked « à approuver » never executes, whatever the step record and the environment say
+  const dk = /** @type {any} */ (step).durationKey;
+  if (dk && /** @type {any} */ (policy)?.durations?.[dk]?.pendingApproval) return 'DURATION_PENDING_APPROVAL';
   const a = /** @type {any} */ (policy)?.approvedSteps?.[step.id];
   if (!a || typeof a !== 'object') return 'STEP_NOT_APPROVED_IN_POLICY';
   if (!ISO_DAY.test(String(a.approvedOn || ''))) return 'STEP_APPROVAL_DATE_MISSING';
@@ -204,6 +211,16 @@ export function executionGate(policy, env, opts = {}) {
   if (String(env.GDPR_PURGE_POLICY_VERSION || '').trim() !== policy.version) return no('POLICY_VERSION_NOT_PINNED');
   if (approvedSteps.size === 0) return no('NO_APPROVED_STEPS');
   return { execute: true, reason: null, approvedSteps };
+}
+
+/**
+ * G14 — will a purge step really execute in this environment (policy approved and pinned, purge enabled, the step listed AND recorded, its duration not
+ * pending)? Used to announce a deletion to a person only when it will happen (api/_services/citizen-inbox.js).
+ * @param {RetentionPolicy} policy @param {Record<string, string | undefined>} env @param {{ id: string, durationKey: string, sharedController?: string }} step
+ */
+export function stepWillExecute(policy, env, step) {
+  const gate = executionGate(policy, env);
+  return gate.execute && gate.approvedSteps.has(step.id) && stepApprovalProblem(policy, step) === null;
 }
 
 /** A public summary of a policy (no secret, no personal data). @param {RetentionPolicy} policy */

@@ -7,6 +7,9 @@
  */
 import { vi, afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
+// G14: proofs of the FORMER Mon Parcours contract (free titles, plan import, delegate read): reachable only in the test suites
+// (api/lib/parcours-limited.js legacyContractAllowed). The limited contract has its own proof: tests/integration/g14-parcours-limited-db.test.js
+process.env.ADA_PARCOURS_LEGACY_CONTRACT = 'test-only';
 
 vi.mock('@sentry/node', () => ({ captureException: vi.fn(), default: { captureException: vi.fn() } }));
 
