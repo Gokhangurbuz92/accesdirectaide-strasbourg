@@ -59,7 +59,7 @@ export default function CompteProfil() {
       const account = await citizenApi.getProfile();
       let owned = { shares: [] };
       try { owned = await citizenApi.listShares(); setSharesOpen(true); } catch (err) {
-        if (err.status === 503 && err.code === 'CAPABILITY_NOT_OPEN') setSharesOpen(false); else throw err;
+        if (err.status === 503 && ['CAPABILITY_NOT_OPEN', 'PUBLIC_BETA_RESTRICTED'].includes(err.code)) setSharesOpen(false); else throw err;   // G14: the beta gate answers PUBLIC_BETA_RESTRICTED for shares in the narrow scope
       }
       setShares(owned.shares || []);
       const p = account.profile;
