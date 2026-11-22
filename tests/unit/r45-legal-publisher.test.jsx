@@ -12,7 +12,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { checkLegalPublisher, findAddressPatterns, readLegalDefaults } from '../../scripts/check-legal-publisher.mjs';
 import { resolvePublisherConfig, HOST, A_I_APPROVAL_TOKEN } from '../../src/config/legal-publisher.js';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftTextKeys, draftVisibility } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftTextKeys, draftVisibility, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
 import { ENTITLEMENT_CLAIMS } from '../../scripts/i18n-check.mjs';
 
 const FAKE_ADDRESS = "1 rue de l'Exemple 00000 Testville";
@@ -119,7 +119,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) {
       // G4 (19/11/2026): v8 covers the two professional documents and the notice; G8 (19/11/2026): v9 covers the notice only; the others keep the shared version
       expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
-      expect(d.version).toBe(LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
+      expect(d.version).toBe(LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G14: v10 = citizen terms + notice
     }
   });
   it('visibility: hidden in Production unless approved; preview only outside Production; an approval names id@version or the version', () => {
@@ -129,7 +129,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     expect(draftVisibility(d, { production: false })).toBe('HIDDEN');
     expect(draftVisibility(d, { production: false, preview: '1' })).toBe('PREVIEW');
     expect(draftVisibility(d, { production: true, approved: `${d.id}@${d.version}` })).toBe('IN_FORCE');
-    expect(draftVisibility(d, { production: true, approved: `x, ${LEGAL_DRAFTS_VERSION}` })).toBe('IN_FORCE');
+    expect(draftVisibility(d, { production: true, approved: `x, ${d.version}` })).toBe('IN_FORCE');
     expect(draftVisibility(d, { production: true, approved: `${d.id}@r44-old` })).toBe('HIDDEN');
     expect(draftVisibility(LEGAL_DRAFT_DOCUMENTS[1], { production: true, approved: `${d.id}@${d.version}` })).toBe('HIDDEN');
   });
@@ -144,7 +144,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     expect(notice.sections.filter((s) => s.proposed).map((s) => s.id)).toEqual(['purposes-later']);
     const v2 = notice.sections.find((s) => s.id === 'purposes');
     // G8 notice v9 (19/11/2026): P4p (professional accounts) moved from 3 bis to § 3 — ADA Pro opens to a pilot structure (tests/unit/g8-notice-v9.test.jsx)
-    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16']);
+    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17']);
     expect(t).toContain('ne sont pas des consentements au sens du RGPD');
     expect(t).toContain('Aucun numéro de téléphone n\'est demandé');
     expect(t).toContain('aucune information de ce type n\'est demandée');
@@ -267,7 +267,7 @@ describe('R45 draft documents rendering', () => {
     const { container } = await renderPage('LegalDraftDocument.jsx', '/confidentialite/notice');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');
     // G4 notice (19/11/2026): the privacy notice has a v8 draft, G8 (19/11/2026) a v9 draft (professional accounts); LAB preview shows the newest draft
-    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent(`notice-confidentialite@${LEGAL_DRAFTS_V9}`);
+    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent(`notice-confidentialite@${LEGAL_DRAFTS_V10}`);   // G14: v10 (Mon Parcours)
     expect(screen.getAllByTestId('legal-proposed-badge').length).toBe(LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === 'notice-confidentialite').sections.filter((s) => s.proposed).reduce((n, s) => n + (s.items || []).length, 0));
     expect(screen.getAllByTestId('legal-proposed-badge')[0]).toHaveTextContent('proposé — en attente de validation du responsable');
     expect(container.textContent).toContain('1 an après la date du rendez-vous, puis anonymisation');

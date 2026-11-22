@@ -597,18 +597,63 @@ const toV9 = (d) => {
 /** @type {DraftDocument[]} the privacy notice only */
 export const LEGAL_DRAFT_DOCUMENTS_V9 = LEGAL_DRAFT_DOCUMENTS_V8.filter((d) => LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id)).map(toV9);
 
+/*
+ * v10-2026-11-22 — G14 (22/11/2026): Mon Parcours, LIMITED version (owner batch approval « G14 toplu onay », point 2, 22/11/2026; masters:
+ * CONTROL/master/completion/G14_MON_PARCOURS_NOTICE_CGU_PROJET_FR.md, version mise en vigueur). v10 exists for TWO documents (LEGAL_DRAFTS_V10_DOCUMENT_IDS):
+ *  notice-confidentialite  v10 = v9 + exactly three changes: § 3 new item P17 (purposes.p17_v10: the closed list of step types, an optional published place,
+ *                          the declared status, a deadline citing one of the step's Service-Public fiches, the history without text; basis art. 6, 1, b;
+ *                          no free text; the excluded categories; visible to the person only; reminders in Mon Espace only — api/lib/parcours-limited.js,
+ *                          data/reference/parcours-step-types.v1.json); § 4 new item (retention.parcours_v10: kept while the person keeps it, deleted at
+ *                          will, 24 months after closure — retention-policy PARCOURS_CLOSED_STEP_DAYS, owner decision 22/11/2026 —, notice 30 days
+ *                          before, backups up to 35 days); § 4 i14 « suivi des démarches » removed from the functions not open yet (retention.i14_v10).
+ *  cgu-citoyen            v10 = v7 + one item in § 5 « Votre compte » (account.parcours_v10): Mon Parcours is declarative, no free text, deletion.
+ * The other documents keep their versions; v6–v9 unchanged byte for byte. Translations: the « …_v10 » keys of src/i18n/locales/<lang>/legaldraft.json.
+ */
+export const LEGAL_DRAFTS_V10 = 'v10-2026-11-22';
+export const LEGAL_DRAFTS_V10_DOCUMENT_IDS = Object.freeze(['cgu-citoyen', 'notice-confidentialite']);
+export const LEGAL_DRAFTS_V10_P17 = "P17 — Mon Parcours, le suivi personnel de vos démarches (une démarche choisie dans une liste fermée de démarches courantes, un lieu public publié si vous le choisissez, l'état que vous indiquez, une échéance avec la fiche officielle qui s'y rapporte, l'historique des changements sans texte) : exécution des conditions d'utilisation (art. 6, 1, b). Mon Parcours n'enregistre aucun texte libre et ne propose aucune démarche liée à la santé, au handicap, à la vie sexuelle, à une infraction ou une procédure pénale, au droit au séjour, à des violences subies, à la protection de l'enfance, à une mesure de protection juridique ou à une situation de grande précarité. Vos étapes ne sont visibles que par vous : aucune structure, aucun professionnel, aucune personne de confiance et aucun administrateur ne les voit dans le service. Les rappels d'échéance se font seulement dans les notifications de Mon Espace, jamais par e-mail ni par SMS pour le moment.";
+export const LEGAL_DRAFTS_V10_PARCOURS_RETENTION = "Mon Parcours : une étape en cours est gardée tant que vous la gardez ; vous pouvez la supprimer à tout moment. Une étape terminée ou abandonnée est effacée, avec son historique, 24 mois après sa clôture ; un avis vous prévient dans Mon Espace 30 jours avant, et vous pouvez télécharger vos données à tout moment. Une étape effacée peut subsister jusqu'à 35 jours dans les copies de sauvegarde (« Historique de restauration » ci-dessous) ; si une restauration avait lieu pendant ce délai, une étape que vous aviez supprimée pourrait réapparaître : vous en seriez prévenu et pourriez la supprimer à nouveau.";
+export const LEGAL_DRAFTS_V10_NOT_OPEN = "Fonctions pas encore ouvertes (notamment rendez-vous, message facultatif, orientations entre professionnels, assistant, membres du foyer, historique de consultation, favoris) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.";
+export const LEGAL_DRAFTS_V10_CGU_PARCOURS = "Mon Parcours : vous pouvez y suivre vous-même des démarches choisies dans une liste proposée par le service, avec, si vous le souhaitez, un lieu public et une échéance. Ce que vous y indiquez est déclaratif : ce n'est ni une demande, ni un dépôt, ni la preuve d'une démarche, et cela n'engage ni AccesDirectAide ni aucun organisme ; seul l'organisme compétent décide. Mon Parcours n'accepte aucun texte libre. Vous pouvez supprimer une étape à tout moment ; une étape terminée est effacée 24 mois après sa clôture.";
+/** v10 changes, in the v9 change format (indexes = those of the document v10 starts from: notice v9, cgu-citoyen v7) */
+export const LEGAL_DRAFTS_V10_CHANGES = Object.freeze({
+  'notice-confidentialite': { sections: {
+    purposes: { items: { insertAfter: { 10: [[LEGAL_DRAFTS_V10_P17, 'p17_v10']] } } },
+    retention: { items: { insertAfter: { 15: [[LEGAL_DRAFTS_V10_PARCOURS_RETENTION, 'parcours_v10']] }, replace: { 16: [LEGAL_DRAFTS_V10_NOT_OPEN, 'i14_v10'] } } },
+  } },
+  'cgu-citoyen': { sections: {
+    account: { items: { insertAfter: { 0: [[LEGAL_DRAFTS_V10_CGU_PARCOURS, 'parcours_v10']] } } },
+  } },
+});
+/** @param {DraftDocument} d @returns {DraftDocument} */
+const toV10 = (d) => {
+  const c = /** @type {any} */ (LEGAL_DRAFTS_V10_CHANGES)[d.id];
+  return { ...d, version: LEGAL_DRAFTS_V10, sections: d.sections.map((s) => {
+    const sc = c.sections[s.id];
+    if (!sc) return s;
+    const [paras, paraKeys] = applyV9(sc.paras, s.paras, s.paraKeys, 'p');
+    const [items, itemKeys] = applyV9(sc.items, s.items, s.itemKeys, 'i');
+    return { ...s, ...(paras ? { paras, paraKeys } : {}), ...(items ? { items, itemKeys } : {}) };
+  }) };
+};
+/** @type {DraftDocument[]} the citizen terms (from v7) and the privacy notice (from v9) */
+export const LEGAL_DRAFT_DOCUMENTS_V10 = [
+  toV10(/** @type {DraftDocument} */ (LEGAL_DRAFT_DOCUMENTS_V7.find((d) => d.id === 'cgu-citoyen'))),
+  toV10(/** @type {DraftDocument} */ (LEGAL_DRAFT_DOCUMENTS_V9.find((d) => d.id === 'notice-confidentialite'))),
+];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the professional documents are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9. LEGAL_DRAFT_DOCUMENTS = the newest draft
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V10]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
-  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9] });
+  [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {

@@ -12,8 +12,9 @@
  *     gets 401; the delegate read is closed (PARCOURS_READ not offered);
  *   - the reminder job reads and sends nothing (EXTERNAL_REMINDERS_OFF);
  *   - export (art. 15/20) contains the step type and the structure reference; the reviewed erasure removes every row;
- *   - retention: the closed-step purge is counted in a dry run, refused while « à approuver » even with a step record, and — on a copy of the policy with
- *     the mark removed — deletes only closed steps past the duration (history and ledger cascade), never an open step, a held one or another person's.
+ *   - retention (730 days decided by the controller on 22/11/2026): counted in a dry run; refused by the production policy while the step has no record
+ *     of its own; refused whenever a duration is marked pending; with a recorded copy, deletes only closed steps past 730 days (history and ledger
+ *     cascade), never an open step, a held one or a recently closed one; the 30-day in-app notice appears only where the step really executes.
  * Synthetic data only. Skipped without DATABASE_URL.
  */
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -186,7 +187,7 @@ describe.skipIf(!hasDatabase)('G14 — the limited Mon Parcours (real API entry,
     expect((await counts(A.id)).reminders).toBe(0);
   });
 
-  it('retention: counted in a dry run; refused while « à approuver »; once approved, deletes only closed steps past 730 days', async () => {
+  it('retention: counted in a dry run; refused without the step record or while pending; once recorded, deletes only closed steps past 730 days', async () => {
     const purge = await import('../../api/_handlers/cron/gdpr-purge.js');
     // an old closed step of A, an old closed step of B under legal hold, an old OPEN step of A
     const old = (u, title, status) => rows(sql`INSERT INTO "ParcoursItem" (id, "userId", origin, "stepKind", "itemCodes", title, status, "updatedAt") VALUES (gen_random_uuid()::text, ${u}, 'MANUAL', 'custom', '{steptype:PASSEPORT_DEMANDE}', ${title}, ${status}, NOW() - interval '800 days') RETURNING id`);
@@ -199,12 +200,13 @@ describe.skipIf(!hasDatabase)('G14 — the limited Mon Parcours (real API entry,
     const [recent] = await old(A.id, 'Demander un passeport', 'CLOSED');
     await db.execute(sql`INSERT INTO "ParcoursEvent" (id, "itemId", "userId", kind, "fromStatus", "toStatus", "createdAt") VALUES (gen_random_uuid()::text, ${recent.id}, ${A.id}, 'STATUS', 'SUBMITTED', 'CLOSED', NOW() - interval '10 days')`);
 
-    // the in-app notice 30 days before: never while the duration is only proposed; with an approved duration, for the closed step only (kind and link only)
+    // the in-app notice 30 days before: never where the step does not really execute (here: no step record in the production policy, purge not enabled);
+    // where it executes, for the old closed step only (kind and link only)
     const { listInbox } = await import('../../api/_services/citizen-inbox.js');
-    const kinds = async (policy) => (await listInbox(A.id, db, { isOpen: (c) => c === 'citizen.parcours', ...(policy ? { policy } : {}) })).notifications.filter((i) => i.kind === 'PARCOURS_CLOSED_STEP_EXPIRING');
-    expect(await kinds()).toEqual([]);
-    const noMark = { durations: { PARCOURS_CLOSED_STEP_DAYS: { days: 730 } } };
-    expect((await kinds(noMark)).map((i) => Object.keys(i).sort())).toEqual([['at', 'id', 'kind', 'link', 'unread']]);
+    const kinds = async (o = {}) => (await listInbox(A.id, db, { isOpen: (c) => c === 'citizen.parcours', ...o })).notifications.filter((i) => i.kind === 'PARCOURS_CLOSED_STEP_EXPIRING');
+    expect(await kinds({ env: {} })).toEqual([]);
+    expect(await kinds({ env: { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_POLICY_VERSION: 'r45-proposal-2-2026-11-05-a7-365d', GDPR_PURGE_APPROVED_STEPS: 'parcoursClosedStepsDeleted' } })).toEqual([]);
+    expect((await kinds({ policy: approvedTestPolicy({ steps: ['parcoursClosedStepsDeleted'] }), env: approvalEnv(['parcoursClosedStepsDeleted']) })).map((i) => Object.keys(i).sort())).toEqual([['at', 'id', 'kind', 'link', 'unread']]);
 
     const dry = await purge.runGdprPurge({ env: {} });
     const line = dry.body.steps.find((l) => l.id === 'parcoursClosedStepsDeleted');
@@ -212,12 +214,18 @@ describe.skipIf(!hasDatabase)('G14 — the limited Mon Parcours (real API entry,
     expect(line.count).toBeGreaterThanOrEqual(1);
 
     const STEPS = ['parcoursClosedStepsDeleted'];
-    const pending = await purge.runGdprPurge({ policy: approvedTestPolicy({ steps: STEPS }), env: approvalEnv(STEPS) });
+    // the production policy, enabled, pinned and the step listed: refused — the step has no record of its own yet (dry run read, backup verified)
+    const { RETENTION_POLICY } = await import('../../api/_services/retention-policy.js');
+    const prodRun = await purge.runGdprPurge({ env: { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version, GDPR_PURGE_APPROVED_STEPS: STEPS.join(',') } });
+    expect(prodRun.body.steps.find((l) => l.id === 'parcoursClosedStepsDeleted')).toMatchObject({ decision: 'not_approved_in_policy', approvalProblem: 'STEP_NOT_APPROVED_IN_POLICY' });
+    // a duration marked pending is refused even with a record (the mechanism stays for any later change)
+    const t = approvedTestPolicy({ steps: STEPS });
+    const pendingPolicy = { ...t, durations: { ...t.durations, PARCOURS_CLOSED_STEP_DAYS: { ...t.durations.PARCOURS_CLOSED_STEP_DAYS, pendingApproval: 'À APPROUVER' } } };
+    const pending = await purge.runGdprPurge({ policy: pendingPolicy, env: approvalEnv(STEPS) });
     expect(pending.body.steps.find((l) => l.id === 'parcoursClosedStepsDeleted')).toMatchObject({ decision: 'not_approved_in_policy', approvalProblem: 'DURATION_PENDING_APPROVAL' });
     expect((await rows(sql`SELECT count(*)::int AS n FROM "ParcoursItem" WHERE id = ${oldA.id}`))[0].n).toBe(1);
 
-    const p = approvedTestPolicy({ steps: STEPS });
-    const approved = { ...p, durations: { ...p.durations, PARCOURS_CLOSED_STEP_DAYS: { ...p.durations.PARCOURS_CLOSED_STEP_DAYS, pendingApproval: undefined } } };
+    const approved = approvedTestPolicy({ steps: STEPS });
     const run = await purge.runGdprPurge({ policy: approved, env: approvalEnv(STEPS) });
     expect(run.body.steps.find((l) => l.id === 'parcoursClosedStepsDeleted'), JSON.stringify(run.body)).toMatchObject({ decision: 'executed' });
     const left = (await rows(sql`SELECT id FROM "ParcoursItem" WHERE id IN (${oldA.id}, ${oldOpen.id}, ${oldB.id}, ${recent.id}, ${J.a1})`)).map((r) => r.id).sort();

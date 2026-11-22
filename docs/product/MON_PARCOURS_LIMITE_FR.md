@@ -1,6 +1,6 @@
 # Mon Parcours — version limitée (G14) : liste positive des types d'étapes
 
-> **PROJET — liste à approuver par le responsable de traitement.** Source de vérité : `data/reference/parcours-step-types.v1.json` (version `1.0.0-projet`). Ce document en est la lecture humaine ; en cas d'écart, le fichier fait foi et les tests (`tests/unit/g14-parcours-limited.test.js`) échouent.
+> **APPROUVÉE — décision du responsable du traitement du 22/11/2026 (« G14 toplu onay », point 2).** Source de vérité : `data/reference/parcours-step-types.v1.json` (version `1.0.0`). Ce document en est la lecture humaine ; en cas d'écart, le fichier fait foi et les tests (`tests/unit/g14-parcours-limited.test.js`) échouent.
 
 Contexte : analyse documentaire du responsable du 22/11/2026 (`CONTROL/master/completion/G8_MON_PARCOURS_ANALYSE_DOCUMENTAIRE_PROPRIETAIRE_2026-11-22.md`, non signée par un avocat) — Q2 : pas de titre ni d'organisme libres, liste positive d'étapes neutres, contrôle serveur ; Q10 : exclure les groupes A (art. 9), B (art. 10) et C (protection renforcée).
 
@@ -77,7 +77,7 @@ Tout autre type de lieu (association, centre de santé, CSAPA, CMP, MDPH, CADA, 
 | C | Précarité extrême, hébergement d'urgence | domiciliation (sans domicile stable), 115, CHRS, Dalo, résidence sociale, pension de famille, LHSS | protection renforcée |
 | C | Certaines informations familiales | allocation de soutien familial (enfant non reconnu, orphelin, séparation), pension de réversion (décès), adoption | protection renforcée |
 
-Points **à confirmer par le responsable** (écartés ou gardés par prudence, sans avis juridique) : le surendettement (`SURENDETTEMENT_DOSSIER`) et le microcrédit sont gardés (difficulté financière, ni art. 9 ni art. 10, ni « précarité extrême ») ; la C2S est écartée bien qu'elle soit un faux positif possible (Q10) ; la domiciliation et le Dalo sont écartés (groupe C : précarité extrême / hébergement).
+Choix approuvés avec la liste (22/11/2026) : le surendettement (`SURENDETTEMENT_DOSSIER`) et le microcrédit sont gardés (difficulté financière, ni art. 9 ni art. 10, ni « précarité extrême ») ; la C2S est écartée bien qu'elle soit un faux positif possible (Q10) ; la domiciliation et le Dalo sont écartés (groupe C : précarité extrême / hébergement).
 
 ## Révélation indirecte : ce qui est contrôlé
 

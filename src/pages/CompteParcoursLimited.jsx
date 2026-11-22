@@ -44,9 +44,10 @@ export default function CompteParcoursLimited({ data, reload }) {
   };
   const add = (e) => {
     e.preventDefault();
-    run(() => citizenApi.parcours({ action: 'add', stepType: choice, ...(place ? { structureId: place } : {}) }),
-      (out) => (out && out.added === false ? t('compte:parcours.limited.already', 'Cette étape est déjà dans Mon Parcours.') : t('compte:parcours.step_added', 'Étape ajoutée.')))
-      .then((out) => { if (out) { setChoice(''); setQuery(''); setPlaces(null); setPlace(''); } });
+    const body = { action: 'add', stepType: choice, ...(place ? { structureId: place } : {}) };
+    // the form is emptied as soon as the server answers, BEFORE the list is reloaded: a choice made meanwhile is never wiped afterwards
+    run(async () => { const out = await citizenApi.parcours(body); setChoice(''); setQuery(''); setPlaces(null); setPlace(''); return out; },
+      (out) => (out && out.added === false ? t('compte:parcours.limited.already', 'Cette étape est déjà dans Mon Parcours.') : t('compte:parcours.step_added', 'Étape ajoutée.')));
   };
   const toggle = async (id) => {
     if (open === id) { setOpen(null); return; }

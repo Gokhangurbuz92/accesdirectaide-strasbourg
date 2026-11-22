@@ -1,7 +1,7 @@
 {
  "schema": "ada.parcours-step-types",
- "version": "1.0.0-projet",
- "status": "PROJET — liste positive à approuver par le responsable de traitement (non approuvée)",
+ "version": "1.0.0",
+ "status": "APPROUVÉE — décision du responsable du traitement du 22/11/2026 (« G14 toplu onay », point 2) ; liste en vigueur à l'ouverture de Mon Parcours",
  "purpose": "Liste positive et fermée des types d'étapes de Mon Parcours (version limitée G14). Toute autre valeur est refusée par le serveur.",
  "readAt": "2026-11-22",
  "sourceArchive": {
@@ -666,5 +666,6 @@
    "examples": "allocation de soutien familial (enfant non reconnu, orphelin, séparation), pension de réversion (décès), adoption",
    "reason": "protection renforcée"
   }
- ]
+ ],
+ "approvedOn": "2026-11-22"
 }

@@ -117,9 +117,12 @@ const C = cit.c;
   const fl2 = await C.call('GET', '/api/citizen/favorites');
   check(J1, 'favorite removed', fav, 'DELETE 200, then not listed', { status: fd.status, json: fl2.json }, fd.status === 200 && fl2.status === 200 && !has(fl2, 'r31-aide-apl'));
 
-  const add = await C.call('POST', '/api/citizen/parcours', { body: { action: 'add', title: 'Étape fictive R35 : rassembler les justificatifs' } });
+  // G14 (limited Mon Parcours): a step is a code of the closed list; a free title is refused (400 FIELD_NOT_ALLOWED)
+  const addFree = await C.call('POST', '/api/citizen/parcours', { body: { action: 'add', title: 'Étape fictive R35 : rassembler les justificatifs' } });
+  check(J1, 'Mon Parcours: free title refused', { action: 'add', title: '…' }, '400 FIELD_NOT_ALLOWED', addFree, addFree.status === 400);
+  const add = await C.call('POST', '/api/citizen/parcours', { body: { action: 'add', stepType: 'RSA_DEMANDE' } });
   const itemId = add.json?.item?.id;
-  check(J1, 'Mon Parcours: manual step added', { action: 'add' }, '201 with item.id', add, add.status === 201 && itemId);
+  check(J1, 'Mon Parcours: step of the closed list added', { action: 'add', stepType: 'RSA_DEMANDE' }, '201 with item.id', add, (add.status === 201 || add.status === 200) && itemId);
   const stp = await C.call('POST', '/api/citizen/parcours', { body: { action: 'status', id: itemId, status: 'IN_PROGRESS' } });
   check(J1, 'Mon Parcours: status updated', { action: 'status', status: 'IN_PROGRESS' }, '200', stp, stp.status === 200);
   const sbad = await C.call('POST', '/api/citizen/parcours', { body: { action: 'status', id: itemId, status: 'NOT_A_STATUS' } });

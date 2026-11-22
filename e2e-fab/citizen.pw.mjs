@@ -82,23 +82,23 @@ test('C06 account-owned dossiers: OPEN — an account-free dossier is attached t
 test('C08 consented reminders of sourced deadlines: OPEN — a J-1 deadline with its official source is reminded once, without naming the step; no consent = nothing sent; PROD — refused', async ({ browser }) => {
   const { P } = await signedIn(browser, F[4]);
   const due = new Date(Date.now() + 20 * 3600e3).toISOString();   // inside the J-1 window (due within the next 24 h)
-  const item = await P.api('POST', '/api/citizen/parcours', { action: 'add', title: 'Étape secrète FAB C08' });
+  const item = await P.api('POST', '/api/citizen/parcours', { action: 'add', stepType: 'RSA_DEMANDE' });   // G14: a step of the closed list
   expect(item.status).toBe(201);
   const unsourced = await P.api('POST', '/api/citizen/parcours', { action: 'deadline', id: item.json.item.id, dueDate: due, dueSourceUrl: 'http://exemple.invalid/x' });
-  expect(code(unsourced.json)).toBe('DEADLINE_SOURCE_REQUIRED');
-  expect((await P.api('POST', '/api/citizen/parcours', { action: 'deadline', id: item.json.item.id, dueDate: due, dueSourceUrl: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F12006' })).status).toBe(200);
+  expect(code(unsourced.json)).toBe('DEADLINE_SOURCE_NOT_ALLOWED');   // G14: only one of the step type's official fiches
+  expect((await P.api('POST', '/api/citizen/parcours', { action: 'deadline', id: item.json.item.id, dueDate: due, dueSourceUrl: 'https://www.service-public.gouv.fr/particuliers/vosdroits/N19775' })).status).toBe(200);
   const run1 = await cron('parcours-reminder'); expect(run1.status).toBe(200);
   const sent = (await outbox(F[4].email, OPEN));
   expect(sent.length).toBe(1);
-  expect(sent[0].text).not.toContain('Étape secrète FAB C08');   // an e-mail can be seen by others: no step, no right named
+  expect(sent[0].text).not.toContain('RSA');   // an e-mail can be seen by others: no step, no right named
   const rows = await db(`SELECT threshold, channel, status FROM "ParcoursReminder" WHERE "itemId" = $1 ORDER BY channel`, [item.json.item.id]);
   expect(rows).toEqual([{ threshold: 'J1', channel: 'email', status: 'TEST_RECORDED' }, { threshold: 'J1', channel: 'push', status: 'NO_CONSENT' }, { threshold: 'J1', channel: 'sms', status: 'NO_CONSENT' }]);
   await cron('parcours-reminder');
   expect((await outbox(F[4].email, OPEN)).length, 'exactly once').toBe(1);
   // the person switches e-mail reminders off: a new deadline is not sent
   expect((await P.api('PUT', '/api/citizen/preferences', { channel: 'email', category: 'reminder', enabled: false })).status).toBe(200);
-  const item2 = await P.api('POST', '/api/citizen/parcours', { action: 'add', title: 'Autre étape FAB C08' });
-  await P.api('POST', '/api/citizen/parcours', { action: 'deadline', id: item2.json.item.id, dueDate: due, dueSourceUrl: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F12006' });
+  const item2 = await P.api('POST', '/api/citizen/parcours', { action: 'add', stepType: 'AIDE_LOGEMENT_DEMANDE' });
+  await P.api('POST', '/api/citizen/parcours', { action: 'deadline', id: item2.json.item.id, dueDate: due });   // G14: the type's first fiche by default
   await cron('parcours-reminder');
   expect((await outbox(F[4].email, OPEN)).length).toBe(1);
   expect((await db(`SELECT status FROM "ParcoursReminder" WHERE "itemId" = $1 AND channel = 'email'`, [item2.json.item.id])).map((r) => r.status)).toEqual(['NO_CONSENT']);
@@ -173,7 +173,7 @@ test('C22 consent ledger (append-only, withdrawal): OPEN — a withdrawal is a N
 
 test('C23 delegation: OPEN — scoped read-only access for a trusted person (invitation by e-mail, acceptance, logged views, end); a legal mandate stays « proof required »; PROD — refused', async ({ browser }) => {
   const principal = await signedIn(browser, F[10], '/compte/delegations');
-  await principal.P.api('POST', '/api/citizen/parcours', { action: 'add', title: 'Étape partagée FAB C23' });
+  await principal.P.api('POST', '/api/citizen/parcours', { action: 'add', stepType: 'PASSEPORT_DEMANDE' });   // G14: a step of the closed list
   const inv = await principal.P.api('POST', '/api/citizen/delegations', { action: 'invite', email: F[11].email, role: 'AIDANT', scopes: ['PARCOURS_READ'], days: 30 });
   expect(inv.status, JSON.stringify(inv.json)).toBeLessThan(300);
   const mail = (await outbox(F[11].email, OPEN)).find((m) => /délégation|confiance|consulter/i.test(m.subject + m.text));
@@ -183,7 +183,7 @@ test('C23 delegation: OPEN — scoped read-only access for a trusted person (inv
   await expect(delegate.page.getByTestId('delegation-received-item')).toHaveCount(1);
   const id = (await db(`SELECT id FROM "CitizenDelegation" WHERE "principalUserId" = $1`, [F[10].id]))[0].id;
   const view = await delegate.P.api('GET', `/api/citizen/delegations?id=${id}&view=parcours`);
-  expect(view.status).toBe(200); expect(JSON.stringify(view.json)).toContain('Étape partagée FAB C23');
+  expect(view.status).toBe(200); expect(JSON.stringify(view.json)).toContain('Demander un passeport');
   expect((await delegate.P.api('GET', `/api/citizen/delegations?id=${id}&view=coffre`)).status, 'outside the scopes').not.toBe(200);
   const log = await principal.P.api('GET', `/api/citizen/delegations?log=${id}`);
   expect(log.json.events.length).toBeGreaterThan(0);

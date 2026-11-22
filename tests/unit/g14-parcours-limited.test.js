@@ -13,7 +13,7 @@ import { PARCOURS_STEP_TYPES_FILE, STEP_TYPE_PREFIX, deadlineSourceOf, stepCatal
   structureKindOf, validateStepCatalogue } from '../../api/lib/parcours-step-types.js';
 import { LIMITED_POST_FIELDS, legacyContractAllowed, limitedRequestRefusal, parcoursDelegateReadOpen, parcoursExternalRemindersOpen } from '../../api/lib/parcours-limited.js';
 import { classifyParcoursStep, parcoursNotesOpen } from '../../api/lib/parcours-sensitivity.js';
-import { RETENTION_POLICY, isPolicyApproved, stepApprovalProblem } from '../../api/_services/retention-policy.js';
+import { RETENTION_POLICY, isPolicyApproved, stepApprovalProblem, stepWillExecute } from '../../api/_services/retention-policy.js';
 import { TARGET_LANGUAGES, languageOf } from '../../src/i18n/languages.js';
 import { claimsEntitlement } from '../../api/lib/entitlementWording.js';
 
@@ -24,13 +24,13 @@ const cat = stepCatalogue();
 const FORBIDDEN = /sant|handicap|mdph|aah|pch|aeeh|apa\b|autonomie|addict|grossesse|paje|sexu|psy|soin|maladi|c2s|css\b|\bame\b|sejour|séjour|asile|naturalis|oqtf|cada|ofii|penal|pénal|justice|juridiction|spip|pjj|prison|detenu|tutelle|curatelle|protection|ase\b|enfance|violence|victime|domicil|dalo|hebergement|hébergement|115|chrs|urgence|sans.abri|reversion|réversion|deces|décès|orphelin|soutien familial|adoption/i;
 
 describe('G14 — the reviewed list of step types (data/reference/parcours-step-types.v1.json)', () => {
-  it('is the exact reviewed list: 28 types, 9 domains, 9 structure kinds, every code unique and well-formed, marked PROJET (not approved)', () => {
+  it('is the exact reviewed list: 28 types, 9 domains, 9 structure kinds, every code unique and well-formed, approved by the controller on 22/11/2026', () => {
     expect(cat.types).toHaveLength(28);
     expect(Object.keys(cat.domains)).toHaveLength(9);
     expect(Object.keys(cat.structureKinds).sort()).toEqual(['caf', 'ccas', 'cio', 'france_services', 'france_travail', 'information_jeunesse', 'mairie', 'maison_solidarites', 'mission_locale']);
     expect(new Set(cat.types.map((t) => t.code)).size).toBe(28);
-    expect(raw.status).toMatch(/PROJET/);
-    expect(raw.status).toMatch(/non approuvée/);
+    expect(raw.status).toMatch(/^APPROUVÉE — décision du responsable du traitement du 22\/11\/2026/);
+    expect(raw).toMatchObject({ version: '1.0.0', approvedOn: '2026-11-22' });
     expect(raw.sourceArchive.sha256).toMatch(/^[0-9a-f]{64}$/);
   });
 
@@ -190,19 +190,28 @@ describe('G14 — what stays OFF', () => {
   });
 });
 
-describe('G14 — retention (proposal « à approuver »)', () => {
-  it('the closed-step duration is 730 days, marked pending approval; the approved policy version is unchanged', () => {
+describe('G14 — retention (decided 22/11/2026; the purge step still needs its own record)', () => {
+  const STEP = { id: 'parcoursClosedStepsDeleted', durationKey: 'PARCOURS_CLOSED_STEP_DAYS' };
+  it('the closed-step duration is 730 days, decided by the controller on 22/11/2026; the approved policy version is unchanged; no step record is forged', () => {
     const d = RETENTION_POLICY.durations.PARCOURS_CLOSED_STEP_DAYS;
-    expect(d.days).toBe(730);
-    expect(d.pendingApproval).toMatch(/À APPROUVER/);
+    expect(d).toMatchObject({ days: 730, decidedOn: '2026-11-22', basis: expect.stringContaining('décision du responsable 22/11/2026') });
+    expect(d.pendingApproval).toBeUndefined();
     expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
-    expect(RETENTION_POLICY.approvedSteps.parcoursClosedStepsDeleted).toBeUndefined();
+    expect(RETENTION_POLICY.approvedSteps.parcoursClosedStepsDeleted).toBeUndefined();   // dry run of this step not yet read in Production
+    expect(stepApprovalProblem(RETENTION_POLICY, STEP)).toBe('STEP_NOT_APPROVED_IN_POLICY');
   });
-  it('even with a step approval record, a pending duration never executes', () => {
-    const policy = { ...RETENTION_POLICY, approvedSteps: { parcoursClosedStepsDeleted: { approvedOn: '2026-12-01', dryRunReviewedOn: '2026-11-30', backupVerified: 'restore test' } } };
-    expect(stepApprovalProblem(policy, { id: 'parcoursClosedStepsDeleted', durationKey: 'PARCOURS_CLOSED_STEP_DAYS' })).toBe('DURATION_PENDING_APPROVAL');
-    const approvedDuration = { ...policy, durations: { ...policy.durations, PARCOURS_CLOSED_STEP_DAYS: { ...policy.durations.PARCOURS_CLOSED_STEP_DAYS, pendingApproval: undefined } } };
-    expect(stepApprovalProblem(approvedDuration, { id: 'parcoursClosedStepsDeleted', durationKey: 'PARCOURS_CLOSED_STEP_DAYS' })).toBeNull();
+  it('a duration marked pending never executes, even with a step record; the in-app notice follows the real execution only', () => {
+    const rec = { approvedOn: '2026-12-01', dryRunReviewedOn: '2026-11-30', backupVerified: 'restore test' };
+    const withRec = { ...RETENTION_POLICY, approvedSteps: { ...RETENTION_POLICY.approvedSteps, parcoursClosedStepsDeleted: rec } };
+    const pending = { ...withRec, durations: { ...withRec.durations, PARCOURS_CLOSED_STEP_DAYS: { ...withRec.durations.PARCOURS_CLOSED_STEP_DAYS, pendingApproval: 'À APPROUVER' } } };
+    expect(stepApprovalProblem(pending, STEP)).toBe('DURATION_PENDING_APPROVAL');
+    expect(stepApprovalProblem(withRec, STEP)).toBeNull();
+    const env = { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version, GDPR_PURGE_APPROVED_STEPS: 'unverifiedAccountsDeleted,parcoursClosedStepsDeleted' };
+    expect(stepWillExecute(RETENTION_POLICY, env, STEP)).toBe(false);   // no record
+    expect(stepWillExecute(withRec, env, STEP)).toBe(true);
+    expect(stepWillExecute(pending, env, STEP)).toBe(false);
+    expect(stepWillExecute(withRec, { ...env, GDPR_PURGE_APPROVED_STEPS: 'unverifiedAccountsDeleted' }, STEP)).toBe(false);
+    expect(stepWillExecute(withRec, { ...env, GDPR_PURGE_ENABLED: 'false' }, STEP)).toBe(false);
   });
   it('the purge step exists, deletes ParcoursItem only, and is protected by legal hold / restriction / open request', async () => {
     const src = fs.readFileSync('api/_handlers/cron/gdpr-purge.js', 'utf8');
