@@ -220,7 +220,12 @@ function OfficialInfo({ code }) {
             <p className="mt-1 text-slate-800" data-testid={`official-info-amounts-${code}`}>
                 {t('diagnostic:official.amounts_note', "Montants et plafonds : seuls ceux de la page officielle font foi, à la date qu'elle indique. ADA ne les utilise pas pour le résultat ci-dessus.")}
             </p>
-            {!info.validated && (
+            {info.ownerValidated && (
+                <p className="mt-1 text-slate-800" data-testid={`official-info-owner-${code}`}>
+                    {t('diagnostic:official.owner_reviewed', "Règle relue par l'équipe ADA à partir de ces pages officielles (pas par un expert indépendant). L'organisme décide.")}
+                </p>
+            )}
+            {!info.validated && !info.ownerValidated && (
                 <p className="mt-1 text-slate-800" data-testid={`official-info-unvalidated-${code}`}>
                     {t('diagnostic:official.unvalidated', "ADA a relevé les conditions de ces pages, mais aucun expert ne les a encore validées : le résultat ci-dessus n'est pas calculé à partir d'elles.")}
                 </p>

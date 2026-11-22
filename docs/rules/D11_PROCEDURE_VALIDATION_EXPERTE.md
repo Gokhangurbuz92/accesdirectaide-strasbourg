@@ -75,3 +75,17 @@ dans chaque résultat.
 - Le texte caché adressé à des agents automatiques (page FAJ) n'est plus une ambiguïté juridique : c'est un contrôle de sécurité de l'ingestion
   (`ingestionSecurityNotes`, quarantaine dans `api/_services/verification/pages.js`).
 - Le formulaire a été régénéré ; un formulaire rempli sur l'ancienne version (85 lignes) doit être refait.
+
+## 7. Approbation par le responsable du traitement (décision du propriétaire du 22/11/2026)
+
+- Statut distinct **`OWNER_VALIDATED`** : « relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas
+  une validation d'expert indépendant ». Il n'est **jamais** `EXPERT_VALIDATED`.
+- Il n'est inscrit que par `node scripts/d11-review.mjs apply <formulaire> --write`, quand toutes les lignes d'un droit portent `validation_kind=owner`
+  et le nom, la fonction et la date d'une personne réelle (la règle du § 3 s'applique pareillement : conditions acceptées, ambiguïtés tranchées, un cas accepté).
+  Sans `validation_kind`, la relecture est traitée comme une relecture d'expert ; une valeur inconnue ou des types mélangés ne valident rien.
+- Une IA ou un système n'est jamais relecteur, quel que soit le type (sortie 3, rien n'est écrit).
+- Le registre garde la relecture dans `ownerReview` (`expertReview` reste vide) ; le site refuse une règle dont le statut d'expert reposerait sur une relecture du
+  propriétaire (`OWNER_REVIEW_IS_NOT_EXPERT`).
+- Texte public : « règle relue par l'équipe ADA … ; l'organisme décide » — jamais « validé par un expert », jamais « vous avez droit ».
+- Un formulaire prérempli avec les décisions appliquées le 22/11/2026, identité vide, est fourni hors dépôt
+  (`CONTROL/master/d11_ai_review/D11_FORMULAIRE_PROPRIETAIRE_PREREMPLI.csv`).

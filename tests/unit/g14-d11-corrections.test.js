@@ -18,6 +18,7 @@ import { applyForm, evaluateForm, parseCsv, renderForm } from '../../scripts/d11
 import { buildAssessment, STATES } from '../../api/lib/assessmentContract.js';
 import { instructionLike, parseOfficialPage, quarantineHidden } from '../../api/_services/verification/pages.js';
 import { officialInfoFor } from '../../src/lib/rightsInfoSources.js';
+import { qualifyEstimates, RULE_VALIDATION } from '../../api/lib/openfiscaEstimate.js';
 
 const REG_FILE = 'data/rules/rights-rules.v1.json';
 const committed = fs.readFileSync(REG_FILE, 'utf8');
@@ -85,6 +86,72 @@ describe('G14 — an AI review never satisfies the D11 human-approval gate', () 
     for (const r of reg.rights) { expect(r.status).toBe('RESEARCHED_UNVALIDATED'); expect(r.expertReview).toBeNull(); expect(r.referenceCases).toEqual([]); }
     expect(reg.aiReviewStatement).toMatch(/never fills the D11 form and never validates a right/);
     for (const row of blank()) for (const k of ['decision', 'reviewer_name', 'reviewer_role', 'review_date']) expect(row[k], `${row.right}.${row.item_id}.${k}`).toBe('');
+  });
+});
+
+describe('G14 — owner decision (22/11/2026): OWNER_VALIDATED, distinct from and never convertible into EXPERT_VALIDATED', () => {
+  const OWNER = { ...HUMAN, reviewer_name: 'Responsable fictif (test G14)', reviewer_role: 'responsable du traitement (fictif)', validation_kind: 'owner' };
+  it('a human owner review with an explicit validation_kind=owner gives OWNER_VALIDATED (ownerReview), never EXPERT_VALIDATED', () => {
+    const res = evaluateForm(reg, proposed, acceptAll('apl', OWNER)).find((r) => r.right === 'apl');
+    expect([res.validated, res.kind, res.status]).toEqual([true, 'owner', 'OWNER_VALIDATED']);
+    const next = applyForm(reg, evaluateForm(reg, proposed, acceptAll('apl', OWNER)));
+    const apl = next.rights.find((r) => r.id === 'apl');
+    expect(apl.status).toBe('OWNER_VALIDATED'); expect(apl.expertReview).toBeNull();
+    expect(apl.ownerReview).toMatchObject({ kind: 'owner', name: OWNER.reviewer_name, basis: expect.stringMatching(/pas une validation d'expert indépendant/) });
+    expect(next.rights.filter((r) => r.status === 'EXPERT_VALIDATED')).toEqual([]);
+    expect(validatedRight(next, 'apl')).not.toBeNull();
+    expect(next.statuses).toContain('OWNER_VALIDATED');
+  });
+  it('without the explicit kind the same rows are an expert review; an unknown or mixed kind validates nothing', () => {
+    expect(evaluateForm(reg, proposed, acceptAll('apl', HUMAN)).find((r) => r.right === 'apl').status).toBe('EXPERT_VALIDATED');
+    expect(evaluateForm(reg, proposed, acceptAll('apl', { ...OWNER, validation_kind: 'propriétaire' })).find((r) => r.right === 'apl').validated).toBe(false);
+    let first = true;
+    const mixed = acceptAll('apl', OWNER).map((r) => { if (r.right !== 'apl' || !first) return r; first = false; return { ...r, validation_kind: 'expert' }; });
+    expect(evaluateForm(reg, proposed, mixed).find((r) => r.right === 'apl').open.join(' ')).toMatch(/un seul type/);
+  });
+  it('the AI-reviewer refusal stays with the owner kind (form and CLI)', () => {
+    expect(evaluateForm(reg, proposed, acceptAll('apl', { ...AI, validation_kind: 'owner' })).find((r) => r.right === 'apl').validated).toBe(false);
+    const copy = path.join(dir, 'register-owner-ai.json'); fs.writeFileSync(copy, committed);
+    const file = path.join(dir, 'owner-ai.csv'); fs.writeFileSync(file, toCsv(acceptAll('apl', { ...AI, validation_kind: 'owner' })));
+    expect(cli('apply', file, '--write', '--register', copy).status).toBe(3);
+    expect(fs.readFileSync(copy, 'utf8')).toBe(committed);
+  });
+  it('the expert status is unreachable through an owner review: forged registers are refused by the gate', () => {
+    const owned = applyForm(reg, evaluateForm(reg, proposed, acceptAll('apl', OWNER)));
+    const promote = JSON.parse(JSON.stringify(owned)); promote.rights.find((r) => r.id === 'apl').status = 'EXPERT_VALIDATED';
+    expect(gateStatus(promote, 'apl').reasons).toContain(GATE_REASONS.OWNER_REVIEW_IS_NOT_EXPERT);
+    const copied = JSON.parse(JSON.stringify(owned)); const a = copied.rights.find((r) => r.id === 'apl');
+    a.status = 'EXPERT_VALIDATED'; a.expertReview = { ...a.ownerReview }; delete a.ownerReview;
+    expect(gateStatus(copied, 'apl').reasons).toContain(GATE_REASONS.OWNER_REVIEW_IS_NOT_EXPERT);
+    const noKind = JSON.parse(JSON.stringify(owned)); noKind.rights.find((r) => r.id === 'apl').ownerReview.kind = 'expert';
+    expect(validatedRight(noKind, 'apl')).toBeNull();
+  });
+  it('the CLI writes OWNER_VALIDATED on a copy only with the explicit kind', () => {
+    const copy = path.join(dir, 'register-owner.json'); fs.writeFileSync(copy, committed);
+    const file = path.join(dir, 'owner.csv'); fs.writeFileSync(file, toCsv(acceptAll('apl', OWNER)));
+    const out = cli('apply', file, '--write', '--register', copy);
+    expect(out.status).toBe(0); expect(out.stdout).toMatch(/apl: VALIDABLE \(OWNER_VALIDATED\)/);
+    const written = JSON.parse(fs.readFileSync(copy, 'utf8'));
+    expect(written.rights.find((r) => r.id === 'apl').status).toBe('OWNER_VALIDATED');
+    expect(written.rights.filter((r) => r.status === 'EXPERT_VALIDATED')).toEqual([]);
+  });
+  it('an engine estimate never labels an owner-approved rule as expert-validated', () => {
+    const q = qualifyEstimates([{ code: 'rsa', label: 'RSA', amount: 100 }], {}, { period: '2026-11', ownerValidatedRules: ['rsa'] });
+    expect(q.items[0].ruleValidation).toBe(RULE_VALIDATION.OWNER_VALIDATED);
+    expect(q.d11Gate.validatedRules).toEqual([]);
+    expect(q.d11Gate.statement).toMatch(/équipe ADA \(sans expert indépendant\)/);
+  });
+  it('public wording of an owner-approved rule: « relue par l’équipe ADA », the organism decides, never « expert » as the validator, never a right', () => {
+    const owned = applyForm(reg, evaluateForm(reg, proposed, acceptAll('rsa', OWNER)));
+    const answers = { birthDate: '1990-01-01', householdSize: 1, income: { salary: 900 }, housing: { status: 'tenant', rent: 517 }, territory: '67000' };
+    const readings = validatedReadings(owned, answers, '2026-11-22');
+    expect(readings.rsa.validation).toBe('OWNER');
+    expect(readings.rsa.rule).toMatch(/relue par l'équipe ADA .* l'organisme décide/);
+    const item = buildAssessment({ answers, ruleReadings: readings }).items.find((i) => i.code === 'rsa');
+    expect(item.state).toBe(STATES.CHECK_REQUIRED);
+    const text = JSON.stringify(item);
+    expect(text).not.toMatch(/validée? par un expert|relue par un expert|relue par responsable|éligible|vous avez droit/i);
+    expect(item.provenance.rule).toMatch(/sans expert indépendant/);
   });
 });
 
@@ -189,7 +256,7 @@ describe('G14 — public information (class A)', () => {
   it('the new interface key is appended at the end of the five translation files', () => {
     for (const lang of ['en', 'de', 'tr', 'ar', 'uk']) {
       const keys = Object.keys(JSON.parse(fs.readFileSync(`src/i18n/locales/${lang}/diagnostic.json`, 'utf8')));
-      expect(keys.at(-1), lang).toBe('official.amounts_note');
+      expect(keys.slice(-2), lang).toEqual(['official.amounts_note', 'official.owner_reviewed']);
     }
   });
 });

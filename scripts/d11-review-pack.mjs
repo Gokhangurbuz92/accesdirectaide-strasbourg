@@ -60,7 +60,7 @@ export function renderReviewPack(register, proposed) {
         L.push(`| ${c.id} | ${cell(fmt(c.facts))} | ${cell(fmt(c.expected))} | ${cell(fmt(got))} | ${cell(c.basis)} | ☐ accepter ☐ corriger ☐ rejeter |`);
       }
     } else L.push('Aucun.');
-    L.push('', 'Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED', '');
+    L.push('', 'Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d\'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED', '');
   }
   return L.join('\n') + '\n';
 }

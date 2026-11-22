@@ -98,11 +98,12 @@ export function missingInputs(answers) {
  * say that the rule of its right passed the expert gate (api/lib/validatedRules.js) — today none does, so every item is NOT_EXPERT_VALIDATED.
  */
 export const REGISTER_RIGHT = Object.freeze({ rsa: 'rsa', prime_activite: 'prime-activite', apl: 'apl', aide_logement: 'apl', aah: 'aah', css: 'c2s' });
-export const RULE_VALIDATION = Object.freeze({ EXPERT_VALIDATED: 'EXPERT_VALIDATED', NOT_EXPERT_VALIDATED: 'NOT_EXPERT_VALIDATED', NOT_IN_REGISTER: 'NOT_IN_REGISTER' });
-const ruleValidation = (code, validated) => {
+export const RULE_VALIDATION = Object.freeze({ EXPERT_VALIDATED: 'EXPERT_VALIDATED', OWNER_VALIDATED: 'OWNER_VALIDATED', NOT_EXPERT_VALIDATED: 'NOT_EXPERT_VALIDATED', NOT_IN_REGISTER: 'NOT_IN_REGISTER' });
+const ruleValidation = (code, validated, ownerValidated = new Set()) => {
   const id = REGISTER_RIGHT[code];
   if (!id) return RULE_VALIDATION.NOT_IN_REGISTER;
-  return validated.has(id) ? RULE_VALIDATION.EXPERT_VALIDATED : RULE_VALIDATION.NOT_EXPERT_VALIDATED;
+  if (validated.has(id)) return RULE_VALIDATION.EXPERT_VALIDATED;
+  return ownerValidated.has(id) ? RULE_VALIDATION.OWNER_VALIDATED : RULE_VALIDATION.NOT_EXPERT_VALIDATED;   // G14: an owner approval is never « expert »
 };
 
 const orderOfMagnitude = (x) => (x > 0 ? Math.max(10, Math.round(x / 10) * 10) : 0);
@@ -115,9 +116,10 @@ const orderOfMagnitude = (x) => (x > 0 ? Math.max(10, Math.round(x / 10) * 10) :
 export function qualifyEstimates(rights, answers, ctx) {
   const missing = missingInputs(answers);
   const validated = new Set(ctx.validatedRules || []);
+  const ownerValidated = new Set(ctx.ownerValidatedRules || []);   // G14: rules approved by the data controller (OWNER_VALIDATED), never counted as expert
   const items = (rights || []).map((r) => {
     const gaps = missing[r.code] || ['notSupported'];
-    const base = { code: r.code, label: r.label, category: r.category, ruleValidation: ruleValidation(r.code, validated) };
+    const base = { code: r.code, label: r.label, category: r.category, ruleValidation: ruleValidation(r.code, validated, ownerValidated) };
     if (gaps.length) {
       return { ...base, status: 'INSUFFICIENT_INFORMATION', monthlyOrderOfMagnitude: null,
         missing: gaps.map((k) => ({ key: k, label: MISSING[k] || 'cette aide n’est pas estimée par AccesDirectAide' })) };
@@ -131,7 +133,10 @@ export function qualifyEstimates(rights, answers, ctx) {
     contract: ESTIMATE_CONTRACT,
     authoritative: false,
     // R46 (D11): the AUTHORITATIVE reading of a right needs its rule to pass the expert gate; an engine order of magnitude stays an estimate even then
-    d11Gate: { validatedRules: [...validated].sort(), statement: validated.size ? 'Règles relues par un expert pour les seules aides indiquées ; le montant reste une estimation.' : 'Aucune règle n’est encore validée par un expert des droits sociaux.' },
+    d11Gate: { validatedRules: [...validated].sort(), ...(ownerValidated.size ? { ownerValidatedRules: [...ownerValidated].sort() } : {}),
+      statement: validated.size ? 'Règles relues par un expert pour les seules aides indiquées ; le montant reste une estimation.'
+        : ownerValidated.size ? 'Règles relues par l’équipe ADA (sans expert indépendant) pour les seules aides indiquées ; l’organisme décide ; le montant reste une estimation.'
+          : 'Aucune règle n’est encore validée par un expert des droits sociaux.' },
     period: ctx.period,
     computedAt: ctx.computedAt || new Date().toISOString(),
     engine: { name: 'openfisca-france', version: ctx.engineVersion || null },

@@ -17,21 +17,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readConditions } from '../api/lib/rulesDraft.js';
-import { gateStatus, validatedRight, nonHumanReviewer } from '../api/lib/validatedRules.js';
+import { gateStatus, validatedRight, nonHumanReviewer, OWNER_REVIEW_BASIS } from '../api/lib/validatedRules.js';
 import { isMainModule } from './lib/is-main.mjs';
 
 const REGISTER = new URL('../data/rules/rights-rules.v1.json', import.meta.url);
 const PROPOSED = new URL('../data/rules/reference-cases.proposed.v1.json', import.meta.url);
-export const COLUMNS = ['right', 'item_type', 'item_id', 'text', 'proposed', 'decision', 'correction_or_decision', 'reviewer_name', 'reviewer_role', 'review_date'];
+// G14: validation_kind = '' or 'expert' (named qualified reviewer → EXPERT_VALIDATED) | 'owner' (the data controller → OWNER_VALIDATED, never EXPERT_VALIDATED)
+export const COLUMNS = ['right', 'item_type', 'item_id', 'text', 'proposed', 'decision', 'correction_or_decision', 'reviewer_name', 'reviewer_role', 'review_date', 'validation_kind'];
+export const VALIDATION_KINDS = Object.freeze(['', 'expert', 'owner']);
 const q = (v) => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s; };
 
 /** @returns {string} the blank form */
 export function renderForm(register, proposed) {
   const rows = [COLUMNS.join(',')];
   for (const r of register.rights) {
-    for (const c of r.conditions) rows.push([r.id, 'condition', c.fact, `${c.text} (${c.source})`, c.draftCheck ? JSON.stringify(c.draftCheck) : 'non lisible : toujours inconnu', '', '', '', '', ''].map(q).join(','));
-    (r.ambiguities || []).forEach((a, i) => rows.push([r.id, 'ambiguity', String(i + 1), a, '', '', '', '', '', ''].map(q).join(',')));
-    for (const c of proposed.cases.filter((x) => x.right === r.id)) rows.push([r.id, 'case', c.id, `${JSON.stringify(c.facts)} — ${c.basis}`, JSON.stringify(c.expected), '', '', '', '', ''].map(q).join(','));
+    for (const c of r.conditions) rows.push([r.id, 'condition', c.fact, `${c.text} (${c.source})`, c.draftCheck ? JSON.stringify(c.draftCheck) : 'non lisible : toujours inconnu', '', '', '', '', '', ''].map(q).join(','));
+    (r.ambiguities || []).forEach((a, i) => rows.push([r.id, 'ambiguity', String(i + 1), a, '', '', '', '', '', '', ''].map(q).join(',')));
+    for (const c of proposed.cases.filter((x) => x.right === r.id)) rows.push([r.id, 'case', c.id, `${JSON.stringify(c.facts)} — ${c.basis}`, JSON.stringify(c.expected), '', '', '', '', '', ''].map(q).join(','));
   }
   return `${rows.join('\n')}\n`;
 }
@@ -61,6 +63,11 @@ export function evaluateForm(register, proposed, rows) {
     if (!mine.length) open.push('aucune ligne remplie');
     // G14: an AI / automated review is an engineering input, never the human approval — the whole right is refused
     if (mine.some((x) => nonHumanReviewer(x))) open.push('relecteur non humain (IA, système automatique ou avis IA non signé) : refusé — seule une personne qualifiée nommée peut relire');
+    // G14: the kind of validation is explicit and the same on every row of the right; « owner » can only ever give OWNER_VALIDATED
+    const kinds = new Set(mine.map((x) => String(x.validation_kind ?? '').trim().toLowerCase()));
+    if ([...kinds].some((k) => !VALIDATION_KINDS.includes(k))) open.push(`type de validation inconnu (${[...kinds].filter((k) => !VALIDATION_KINDS.includes(k)).join(', ')}) : « expert » ou « owner »`);
+    if (kinds.size > 1) open.push('type de validation différent selon les lignes : une relecture = un seul type (expert ou owner)');
+    const kind = kinds.has('owner') ? 'owner' : 'expert';
     if (reviewers.size > 1) open.push('plusieurs relecteurs ou dates : une relecture = une personne, une date');
     if (!name || !role || !/^\d{4}-\d{2}-\d{2}$/.test(date || '')) open.push('nom, fonction ou date (AAAA-MM-JJ) du relecteur manquant');
     // R46: the reviewer must have read the page as it is now — a page revised after the review date needs a new review
@@ -88,7 +95,7 @@ export function evaluateForm(register, proposed, rows) {
       accepted.push({ id: c.id, facts: c.facts, expected, basis: c.basis, acceptedBy: { name, role, date }, decision: row.decision });
     }
     if (!accepted.length) open.push('aucun cas de référence accepté');
-    results.push({ right: r.id, validated: open.length === 0, open, review: name ? { name, role, date } : null, ambiguityDecisions, accepted });
+    results.push({ right: r.id, validated: open.length === 0, kind, status: kind === 'owner' ? 'OWNER_VALIDATED' : 'EXPERT_VALIDATED', open, review: name ? { name, role, date } : null, ambiguityDecisions, accepted });
   }
   return results;
 }
@@ -99,8 +106,15 @@ export function applyForm(register, results) {
   for (const res of results) {
     if (!res.validated) continue;
     const r = next.rights.find((x) => x.id === res.right);
-    r.status = 'EXPERT_VALIDATED';
-    r.expertReview = { ...res.review, ambiguityDecisions: res.ambiguityDecisions };
+    if (res.kind === 'owner') {
+      // G14: the data controller's approval — its own status and record; expertReview stays null, so the expert status is unreachable this way
+      r.status = 'OWNER_VALIDATED';
+      r.expertReview = null;
+      r.ownerReview = { ...res.review, kind: 'owner', basis: OWNER_REVIEW_BASIS, ambiguityDecisions: res.ambiguityDecisions };
+    } else {
+      r.status = 'EXPERT_VALIDATED';
+      r.expertReview = { ...res.review, ambiguityDecisions: res.ambiguityDecisions };
+    }
     r.referenceCases = res.accepted.map(({ decision, ...c }) => c);
     if (!validatedRight(next, r.id)) throw new Error(`gate refused ${r.id} after apply`);   // belt and braces: the product's own gate must agree
   }
@@ -130,7 +144,7 @@ function main() {
       return;
     }
     const results = evaluateForm(register, proposed, rows);
-    for (const r of results) console.log(`${r.right}: ${r.validated ? 'VALIDABLE' : 'reste non validée'}${r.open.length ? `\n  - ${r.open.join('\n  - ')}` : ''}`);
+    for (const r of results) console.log(`${r.right}: ${r.validated ? `VALIDABLE (${r.status})` : 'reste non validée'}${r.open.length ? `\n  - ${r.open.join('\n  - ')}` : ''}`);
     if (args.includes('--write')) { fs.writeFileSync(target, `${JSON.stringify(applyForm(register, results), null, 2)}\n`); console.log('registre écrit ; relancer node scripts/d11-review-pack.mjs'); }
     return;
   }

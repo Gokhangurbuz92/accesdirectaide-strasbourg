@@ -22,7 +22,7 @@ export const SITUATIONS = Object.freeze([
 /** the report follows this line on stdout (the application logger may write before it) */
 export const REPORT_MARK = '--- openfisca-verify report ---';
 const STATUSES = new Set(['INSUFFICIENT_INFORMATION', 'INDICATIVE_ESTIMATE', 'NOT_INDICATED_UNDER_ASSUMPTIONS']);
-const RULE = new Set(['EXPERT_VALIDATED', 'NOT_EXPERT_VALIDATED', 'NOT_IN_REGISTER']);
+const RULE = new Set(['EXPERT_VALIDATED', 'OWNER_VALIDATED', 'NOT_EXPERT_VALIDATED', 'NOT_IN_REGISTER']);
 
 /** @returns {string[]} the contract violations of one qualified estimate (empty = conforms) */
 export function contractViolations(estimates) {

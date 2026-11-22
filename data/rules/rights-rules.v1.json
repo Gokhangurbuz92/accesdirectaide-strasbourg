@@ -6,6 +6,7 @@
   "statuses": [
     "RESEARCHED_UNVALIDATED",
     "EXPERT_VALIDATED",
+    "OWNER_VALIDATED",
     "SUPERSEDED"
   ],
   "rights": [
@@ -1255,5 +1256,6 @@
   ],
   "draftCheckStatement": "draftCheck = a machine-readable reading of the cited condition, written by ADA engineering (not by an expert). It is executed ONLY by api/lib/rulesDraft.js for the expert review pack and its tests; no user-facing assessment uses it while the right is not EXPERT_VALIDATED. A condition without draftCheck cannot be read from the answers ADA collects and always stays UNKNOWN. G14: amount-bearing checks carry effectiveFrom / staleAfter (source-dated window) and requiresBasis (the resources basis the source names); outside them the reading is UNKNOWN.",
   "datedPartsStatement": "FA-D6 (18/11/2026): conditions[].datedParts = a part of a condition that applies only from a date the fiche states (« Depuis le… », « À compter du… »), with the exact sentence; conflicts[] = official texts that disagree on a condition (each sentence quoted), for the ages they concern. Both are read by the rights graph (api/lib/rightsGraph.js) and re-checked against the DILA archive by scripts/rights-graph-sources.mjs; neither is read by rulesDraft.js nor by any user-facing answer.",
-  "aiReviewStatement": "G14 (22/11/2026): docs/rules and the conditions above were corrected from an AI-assisted documentary review (CONTROL/master/d11_ai_review, AI_ONLY_UNVERIFIED_BY_HUMAN) ONLY where ADA engineering re-read the official source the same day (sourceRecheck). That review is an engineering input: it never fills the D11 form and never validates a right (scripts/d11-review.mjs and api/lib/validatedRules.js refuse a non-human reviewer)."
+  "aiReviewStatement": "G14 (22/11/2026): docs/rules and the conditions above were corrected from an AI-assisted documentary review (CONTROL/master/d11_ai_review, AI_ONLY_UNVERIFIED_BY_HUMAN) ONLY where ADA engineering re-read the official source the same day (sourceRecheck). That review is an engineering input: it never fills the D11 form and never validates a right (scripts/d11-review.mjs and api/lib/validatedRules.js refuse a non-human reviewer).",
+  "statusStatement": "G14 (22/11/2026): OWNER_VALIDATED = relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant (ownerReview). Set only by scripts/d11-review.mjs from a form with validation_kind=owner and a named human reviewer; never EXPERT_VALIDATED. Public wording: « règle relue par l'équipe ADA ; l'organisme décide »."
 }

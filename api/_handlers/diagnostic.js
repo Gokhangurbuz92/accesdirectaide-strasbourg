@@ -240,7 +240,9 @@ async function handleDiagnosticInner(req, res, track) {
         // INSUFFICIENT_INFORMATION and the missing inputs are named. The raw engine values (exact amounts, « eligible » flags) never leave the server.
         // R46 (D10): the version is the one the engine states (Country-Package-Version), else the pinned one; D11: each right says whether its rule passed the gate
         const engineVersion = (health?.ok && health.version) || process.env.OPENFISCA_FRANCE_VERSION || null;
-        const estimates = qualifyEstimates(rights, answers, { period, engineVersion, validatedRules: Object.keys(readings(answers, null)) });
+        const passed = readings(answers, null);   // G14: expert and owner validations are kept apart
+        const estimates = qualifyEstimates(rights, answers, { period, engineVersion, validatedRules: Object.keys(passed).filter((k) => passed[k].validation !== 'OWNER'),
+          ownerValidatedRules: Object.keys(passed).filter((k) => passed[k].validation === 'OWNER') });
 
         const duration = Date.now() - start;
         logger.info('[Diagnostic]', { requestId, duration_ms: duration, rightsCount: rights.length });

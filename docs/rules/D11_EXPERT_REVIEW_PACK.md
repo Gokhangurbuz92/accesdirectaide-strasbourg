@@ -50,7 +50,7 @@ Cas de référence proposés (8) :
 | rsa-age-17 | {ageRange: [17, 17]} | {age: UNKNOWN} | {age: UNKNOWN} | CASF L262-4 1° : « assumer la charge d'un ou plusieurs enfants nés ou à naître » n'a pas d'âge minimum ; RSA jeune actif à partir de 18 ans (CASF L262-7-1) : âge seul non tranchable (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 | rsa-age-25-unread | {ageRange: [25, 25]} | {age: MET, residence: UNKNOWN, resources: UNKNOWN, nationality: UNKNOWN, activity: UNKNOWN} | {age: MET, residence: UNKNOWN, resources: UNKNOWN, nationality: UNKNOWN, activity: UNKNOWN} | F19778 « au moins 25 ans » : l'âge seul est rempli, toutes les autres conditions restent inconnues — jamais un droit (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
 ## Prime d'activité (`prime-activite`) — RESEARCHED_UNVALIDATED
 
@@ -86,7 +86,7 @@ Cas de référence proposés (4) :
 | prime-band-under-18 | {ageRange: [0, 17]} | {age: NOT_MET} | {age: NOT_MET} | F2882 « Avoir 18 ans ou plus » : tranche entièrement sous 18 ans (FA-D6) | ☐ accepter ☐ corriger ☐ rejeter |
 | prime-age-20-activity-unread | {ageRange: [20, 20]} | {age: MET, activity: UNKNOWN} | {age: MET, activity: UNKNOWN} | F2882 « 18 ans ou plus » ; F33375 seuil étudiant / apprenti 1 144,21 € sans date d'effet : condition d'activité jamais lue (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
 ## APL (aide personnalisée au logement) (`apl`) — RESEARCHED_UNVALIDATED
 
@@ -122,7 +122,7 @@ Cas de référence proposés (5) :
 | apl-free-housed | {housing: {status: free}} | {housing.status: UNKNOWN, housing: UNKNOWN} | {housing.status: UNKNOWN, housing: UNKNOWN} | F12006 « locataire » : hébergé gratuitement, cas non couvert par la lecture (à vérifier) ; conventionnement jamais lu (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 | apl-subtenant | {housing: {status: subtenant}} | {housing.status: UNKNOWN} | {housing.status: UNKNOWN} | F12006 : sous-location, texte et infographie divergents (moins de 30 ans / plus de 60 ans / handicap) : jamais lue automatiquement (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
 ## AAH (allocation aux adultes handicapés) (`aah`) — RESEARCHED_UNVALIDATED
 
@@ -165,7 +165,7 @@ Cas de référence proposés (14) :
 | aah-res-4children | {annualResources: 37497, children: 4, resourcesBasis: revenu-net-categoriel-n-2, referenceDate: 2026-11-22} | {resources: MET} | {resources: MET} | F12242 : 37 497 € avec 4 enfants (au 1er avril 2026) (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 | aah-res-5children | {annualResources: 20000, children: 5, resourcesBasis: revenu-net-categoriel-n-2, referenceDate: 2026-11-22} | {resources: UNKNOWN} | {resources: UNKNOWN} | F12242 : aucun plafond publié au-delà de 4 enfants : à vérifier (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
 ## APA à domicile (allocation personnalisée d'autonomie) (`apa`) — RESEARCHED_UNVALIDATED
 
@@ -200,7 +200,7 @@ Cas de référence proposés (5) :
 | apa-band-25-59 | {ageRange: [25, 59]} | {age: NOT_MET} | {age: NOT_MET} | F10009 « Vous devez être âgé d’au moins 60 ans » : tranche entièrement sous 60 ans (FA-D6) | ☐ accepter ☐ corriger ☐ rejeter |
 | apa-age-60-unread | {ageRange: [60, 60]} | {age: MET, dependency: UNKNOWN, residence: UNKNOWN, exclusion: UNKNOWN} | {age: MET, dependency: UNKNOWN, residence: UNKNOWN, exclusion: UNKNOWN} | F10009 « au moins 60 ans » : GIR, résidence et non-cumul jamais lus — aucun montant de plan d'aide utilisé (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
 ## ARE (allocation d'aide au retour à l'emploi) (`are`) — RESEARCHED_UNVALIDATED
 
@@ -233,7 +233,7 @@ Cas de référence proposés (2) :
 | are-unread | {ageRange: [30, 30]} | {employment_loss: UNKNOWN, affiliation: UNKNOWN, registration: UNKNOWN, residence: UNKNOWN} | {employment_loss: UNKNOWN, affiliation: UNKNOWN, registration: UNKNOWN, residence: UNKNOWN} | ARE : aucune condition lisible à partir des réponses ADA (perte d'emploi, durée d'affiliation, inscription) : France Travail décide | ☐ accepter ☐ corriger ☐ rejeter |
 | are-unread-60 | {ageRange: [60, 60]} | {employment_loss: UNKNOWN, affiliation: UNKNOWN, registration: UNKNOWN, residence: UNKNOWN} | {employment_loss: UNKNOWN, affiliation: UNKNOWN, registration: UNKNOWN, residence: UNKNOWN} | F38881 : 36 mois de référence à partir de 55 ans, primo-entrants 5 mois depuis le 1er avril 2026 : affiliation jamais lue (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
 ## C2S (complémentaire santé solidaire) (`c2s`) — RESEARCHED_UNVALIDATED
 
@@ -275,7 +275,7 @@ Cas de référence proposés (12) :
 | c2s-before-date | {annualResources: 9000, householdSize: 1, area: metropole, resourcesBasis: ressources-foyer-12-mois-c2s, referenceDate: 2026-03-15} | {resources: UNKNOWN} | {resources: UNKNOWN} | ameli.fr : plafonds « au 1er avril 2026 » ; une date antérieure n'est pas lue (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 | c2s-stale | {annualResources: 9000, householdSize: 1, area: metropole, resourcesBasis: ressources-foyer-12-mois-c2s, referenceDate: 2027-04-01} | {resources: UNKNOWN} | {resources: UNKNOWN} | ameli.fr : barème « au 1er avril 2026 », à relire à la revalorisation suivante (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
 ## FAJ — fonds d'aide aux jeunes (Eurométropole de Strasbourg) (`faj-strasbourg`) — RESEARCHED_UNVALIDATED
 
@@ -316,5 +316,5 @@ Cas de référence proposés (11) :
 | faj-band-18-24 | {ageRange: [18, 24]} | {age: MET, nature: UNKNOWN} | {age: MET, nature: UNKNOWN} | strasbourg.eu « 16 à 25 ans » : tranche annoncée ; la nature de l'aide n'est pas une condition lue (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 | faj-territory-none | {} | {territory: UNKNOWN, age: UNKNOWN} | {age: UNKNOWN, territory: UNKNOWN} | aucune réponse : tout reste inconnu, jamais une acceptation (G14) | ☐ accepter ☐ corriger ☐ rejeter |
 
-Signature de revue : nom …… fonction …… date …… — statut décidé : ☐ EXPERT_VALIDATED ☐ à corriger ☐ SUPERSEDED
+Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 

@@ -52,7 +52,7 @@ describe('D11 reviewer workflow through the CLI, on a copy of the register', () 
   });
   it('apply (dry run) says what the form allows and writes nothing', () => {
     const r = cli('apply', filled, '--register', copy);
-    expect(r.status).toBe(0); expect(r.stdout).toMatch(/^apl: VALIDABLE$/m); expect(r.stdout).toMatch(/^rsa: reste non validée$/m);
+    expect(r.status).toBe(0); expect(r.stdout).toMatch(/^apl: VALIDABLE \(EXPERT_VALIDATED\)$/m);   // G14: the status the form gives is named expect(r.stdout).toMatch(/^rsa: reste non validée$/m);
     expect(fs.readFileSync(copy, 'utf8')).toBe(committed);
   });
   it('apply --write records the review in the copy; status and the product gate agree; the committed register is untouched', () => {

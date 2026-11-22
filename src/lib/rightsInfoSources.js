@@ -10,7 +10,7 @@ const OFFICIAL = /^https:\/\/(www\.)?(service-public\.gouv\.fr|legifrance\.gouv\
 const host = (u) => new URL(u).hostname.replace(/^www\./, '');
 const frDate = (d) => (d ? d.split('-').reverse().join('/') : null);
 
-/** @returns {{ status: string, validated: boolean, decidedBy: string, pages: Array<{ url: string, site: string, pageDate: string|null, scope: string|null }> } | null} */
+/** @returns {{ status: string, validated: boolean, ownerValidated: boolean, decidedBy: string, pages: Array<{ url: string, site: string, pageDate: string|null, scope: string|null }> } | null} */
 export function officialInfoFor(code) {
   const r = register.rights.find((x) => x.id === code);
   if (!r) return null;
@@ -18,5 +18,5 @@ export function officialInfoFor(code) {
   const pages = [...r.sources, ...(r.relatedSources || [])].filter((s) => OFFICIAL.test(s.url))
     .map((s) => ({ url: s.url, site: host(s.url), pageDate: frDate(s.pageVerifiedOn), scope: s.scope || null }));
   if (!pages.length) return null;
-  return { status: r.status, validated: r.status === 'EXPERT_VALIDATED', decidedBy: r.decidedBy, pages };
+  return { status: r.status, validated: r.status === 'EXPERT_VALIDATED', ownerValidated: r.status === 'OWNER_VALIDATED', decidedBy: r.decidedBy, pages };
 }

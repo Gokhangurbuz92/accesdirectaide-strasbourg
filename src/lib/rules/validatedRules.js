@@ -25,8 +25,20 @@ const sameExpected = (reading, expected) => Object.entries(expected || {}).every
 export const GATE_REASONS = Object.freeze({
   UNKNOWN_RIGHT: 'UNKNOWN_RIGHT', NOT_EXPERT_VALIDATED: 'NOT_EXPERT_VALIDATED', REVIEWER_INCOMPLETE: 'REVIEWER_INCOMPLETE', NO_ACCEPTED_CASE: 'NO_ACCEPTED_CASE',
   CASE_NOT_ACCEPTED: 'CASE_NOT_ACCEPTED', CASE_NO_LONGER_MATCHES: 'CASE_NO_LONGER_MATCHES', SOURCE_REVISED_AFTER_REVIEW: 'SOURCE_REVISED_AFTER_REVIEW', NO_SOURCE: 'NO_SOURCE',
-  NON_HUMAN_REVIEWER: 'NON_HUMAN_REVIEWER',
+  NON_HUMAN_REVIEWER: 'NON_HUMAN_REVIEWER', OWNER_REVIEW_IS_NOT_EXPERT: 'OWNER_REVIEW_IS_NOT_EXPERT',
 });
+
+/**
+ * G14 (22/11/2026, owner decision): two validated statuses, never confused.
+ *   - EXPERT_VALIDATED: a named qualified reviewer (expertReview), the original D11 path;
+ *   - OWNER_VALIDATED: « relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation
+ *     d'expert indépendant » (ownerReview, kind 'owner'), set only by scripts/d11-review.mjs from a form with validation_kind=owner and a human reviewer.
+ * An owner review can never make a right EXPERT_VALIDATED (OWNER_REVIEW_IS_NOT_EXPERT), and an AI never reviews (NON_HUMAN_REVIEWER).
+ */
+export const VALIDATED_STATUSES = Object.freeze(['EXPERT_VALIDATED', 'OWNER_VALIDATED']);
+export const OWNER_REVIEW_BASIS = "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant";
+/** the review that backs a validated status (expertReview or ownerReview), or null */
+export const reviewOf = (right) => (right?.status === 'OWNER_VALIDATED' ? right.ownerReview : right?.status === 'EXPERT_VALIDATED' ? right.expertReview : null) || null;
 const ISO = /^\d{4}-\d{2}-\d{2}$/;
 
 /**
@@ -49,14 +61,18 @@ export function gateStatus(register, code) {
   const right = (register?.rights || []).find((r) => r.id === code);
   if (!right) return { code, passes: false, reasons: [R.UNKNOWN_RIGHT] };
   const reasons = [];
-  if (right.status !== 'EXPERT_VALIDATED') reasons.push(R.NOT_EXPERT_VALIDATED);
-  const rev = right.expertReview;
+  const validatedStatus = VALIDATED_STATUSES.includes(right.status);
+  if (!validatedStatus) reasons.push(R.NOT_EXPERT_VALIDATED);
+  const rev = validatedStatus ? reviewOf(right) : right.expertReview;
   const reviewOk = Boolean(rev && String(rev.name || '').trim() && String(rev.role || '').trim() && ISO.test(String(rev.date || '')));
-  if (right.status === 'EXPERT_VALIDATED' && !reviewOk) reasons.push(R.REVIEWER_INCOMPLETE);
+  if (validatedStatus && !reviewOk) reasons.push(R.REVIEWER_INCOMPLETE);
   if (rev && nonHumanReviewer(rev)) reasons.push(R.NON_HUMAN_REVIEWER);   // G14: an AI / system review never opens the gate
+  // G14: the two kinds never mix — an owner review cannot stand for an expert one, and an owner status needs an explicit owner review
+  if (right.status === 'EXPERT_VALIDATED' && (right.expertReview?.kind === 'owner' || right.ownerReview)) reasons.push(R.OWNER_REVIEW_IS_NOT_EXPERT);
+  if (right.status === 'OWNER_VALIDATED' && (right.ownerReview?.kind !== 'owner' || right.expertReview)) reasons.push(R.OWNER_REVIEW_IS_NOT_EXPERT);
   const sources = Array.isArray(right.sources) ? right.sources : [];
   if (!sources.length || !sources[0]?.url) reasons.push(R.NO_SOURCE);
-  if (right.status === 'EXPERT_VALIDATED') {
+  if (validatedStatus) {
     const cases = Array.isArray(right.referenceCases) ? right.referenceCases : [];
     if (!cases.length) reasons.push(R.NO_ACCEPTED_CASE);
     if (cases.some((c) => !c.acceptedBy)) reasons.push(R.CASE_NOT_ACCEPTED);
@@ -99,10 +115,17 @@ export function validatedReadings(register, answers = {}, referenceDate = null) 
     const reading = readConditions(register, right.id, factsFromAnswers(answers, referenceDate));
     const by = (res) => reading.conditions.filter((c) => c.result === res).map((c) => c.text);
     const page = right.sources[0];
+    const rev = reviewOf(right);
+    const owner = right.status === 'OWNER_VALIDATED';
+    const day = rev.date.split('-').reverse().join('/');
     out[right.id] = {
-      rule: `règle « ${right.label} » du registre ADA (${register.builtAt}), relue par ${right.expertReview.role} le ${right.expertReview.date.split('-').reverse().join('/')}`,
+      // G14: an owner-approved rule never says « expert »: « règle relue par l'équipe ADA », and the organism decides
+      rule: owner
+        ? `règle « ${right.label} » du registre ADA (${register.builtAt}), relue par l'équipe ADA le ${day} à partir des pages officielles (analyse documentaire assistée par IA, sans expert indépendant) ; l'organisme décide`
+        : `règle « ${right.label} » du registre ADA (${register.builtAt}), relue par ${rev.role} le ${day}`,
+      validation: owner ? 'OWNER' : 'EXPERT',
       source: `${page.url}${page.pageVerifiedOn ? ` (page vérifiée le ${page.pageVerifiedOn.split('-').reverse().join('/')})` : ''}`,
-      verifiedAt: right.expertReview.date,
+      verifiedAt: rev.date,
       label: right.label, decidedBy: right.decidedBy || null,
       met: by(RESULTS.MET), notMet: by(RESULTS.NOT_MET), unknown: by(RESULTS.UNKNOWN),
     };
