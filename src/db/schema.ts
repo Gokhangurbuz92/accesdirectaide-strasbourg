@@ -3520,7 +3520,8 @@ export const ContentNotice = pgTable('ContentNotice', {
 	'ContentNotice_identity_check': check('ContentNotice_identity_check', sql`${t.category} = 'CHILD_SAFETY' OR (${t.notifierName} IS NOT NULL AND ${t.notifierEmail} IS NOT NULL)`),
 	'ContentNotice_good_faith_check': check('ContentNotice_good_faith_check', sql`${t.goodFaith} = true`),
 	'ContentNotice_priority_check': check('ContentNotice_priority_check', sql`${t.priority} IN ('urgent', 'trusted', 'ordinary')`),
-	'ContentNotice_status_check': check('ContentNotice_status_check', sql`(${t.status} = 'received' AND ${t.outcome} IS NULL AND ${t.decidedAt} IS NULL) OR (${t.status} = 'decided' AND ${t.outcome} IN ('action_taken', 'no_action', 'not_processed') AND ${t.decidedAt} IS NOT NULL AND ${t.decidedBy} IS NOT NULL)`)
+	// null-safe (G14 QA v30 finding): a NULL outcome / response made the whole rule NULL, which a CHECK accepts
+	'ContentNotice_status_check': check('ContentNotice_status_check', sql`(${t.status} = 'received' AND ${t.outcome} IS NULL AND ${t.decidedAt} IS NULL) OR (${t.status} = 'decided' AND ${t.outcome} IS NOT NULL AND ${t.outcome} IN ('action_taken', 'no_action', 'not_processed') AND ${t.decidedAt} IS NOT NULL AND ${t.decidedBy} IS NOT NULL)`)
 }));
 
 export const ModerationDecision = pgTable('ModerationDecision', {
@@ -3584,7 +3585,7 @@ export const ModerationAppeal = pgTable('ModerationAppeal', {
 	'ModerationAppeal_queue_idx': index('ModerationAppeal_queue_idx').on(t.status, t.createdAt),
 	'ModerationAppeal_kind_check': check('ModerationAppeal_kind_check', sql`${t.appellantKind} IN ('author', 'notifier') AND ((${t.appellantUserId} IS NOT NULL) <> (${t.noticeId} IS NOT NULL))`),
 	'ModerationAppeal_body_check': check('ModerationAppeal_body_check', sql`char_length(${t.body}) BETWEEN 10 AND 2000`),
-	'ModerationAppeal_status_check': check('ModerationAppeal_status_check', sql`(${t.status} = 'open' AND ${t.reviewedAt} IS NULL) OR (${t.status} IN ('upheld', 'reversed', 'modified') AND ${t.reviewedAt} IS NOT NULL AND ${t.reviewedBy} IS NOT NULL AND char_length(${t.response}) BETWEEN 10 AND 2000)`)
+	'ModerationAppeal_status_check': check('ModerationAppeal_status_check', sql`(${t.status} = 'open' AND ${t.reviewedAt} IS NULL) OR (${t.status} IN ('upheld', 'reversed', 'modified') AND ${t.reviewedAt} IS NOT NULL AND ${t.reviewedBy} IS NOT NULL AND ${t.response} IS NOT NULL AND char_length(${t.response}) BETWEEN 10 AND 2000)`)
 }));
 
 export const ModerationSanction = pgTable('ModerationSanction', {

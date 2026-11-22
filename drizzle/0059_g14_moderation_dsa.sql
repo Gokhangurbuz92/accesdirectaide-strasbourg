@@ -38,7 +38,7 @@ CREATE TABLE "ContentNotice" (
 	CONSTRAINT "ContentNotice_identity_check" CHECK ("ContentNotice"."category" = 'CHILD_SAFETY' OR ("ContentNotice"."notifierName" IS NOT NULL AND "ContentNotice"."notifierEmail" IS NOT NULL)),
 	CONSTRAINT "ContentNotice_good_faith_check" CHECK ("ContentNotice"."goodFaith" = true),
 	CONSTRAINT "ContentNotice_priority_check" CHECK ("ContentNotice"."priority" IN ('urgent', 'trusted', 'ordinary')),
-	CONSTRAINT "ContentNotice_status_check" CHECK (("ContentNotice"."status" = 'received' AND "ContentNotice"."outcome" IS NULL AND "ContentNotice"."decidedAt" IS NULL) OR ("ContentNotice"."status" = 'decided' AND "ContentNotice"."outcome" IN ('action_taken', 'no_action', 'not_processed') AND "ContentNotice"."decidedAt" IS NOT NULL AND "ContentNotice"."decidedBy" IS NOT NULL))
+	CONSTRAINT "ContentNotice_status_check" CHECK (("ContentNotice"."status" = 'received' AND "ContentNotice"."outcome" IS NULL AND "ContentNotice"."decidedAt" IS NULL) OR ("ContentNotice"."status" = 'decided' AND "ContentNotice"."outcome" IS NOT NULL AND "ContentNotice"."outcome" IN ('action_taken', 'no_action', 'not_processed') AND "ContentNotice"."decidedAt" IS NOT NULL AND "ContentNotice"."decidedBy" IS NOT NULL))
 );
 --> statement-breakpoint
 CREATE TABLE "ModerationAppeal" (
@@ -56,7 +56,7 @@ CREATE TABLE "ModerationAppeal" (
 	"createdAt" timestamp (3) DEFAULT now() NOT NULL,
 	CONSTRAINT "ModerationAppeal_kind_check" CHECK ("ModerationAppeal"."appellantKind" IN ('author', 'notifier') AND (("ModerationAppeal"."appellantUserId" IS NOT NULL) <> ("ModerationAppeal"."noticeId" IS NOT NULL))),
 	CONSTRAINT "ModerationAppeal_body_check" CHECK (char_length("ModerationAppeal"."body") BETWEEN 10 AND 2000),
-	CONSTRAINT "ModerationAppeal_status_check" CHECK (("ModerationAppeal"."status" = 'open' AND "ModerationAppeal"."reviewedAt" IS NULL) OR ("ModerationAppeal"."status" IN ('upheld', 'reversed', 'modified') AND "ModerationAppeal"."reviewedAt" IS NOT NULL AND "ModerationAppeal"."reviewedBy" IS NOT NULL AND char_length("ModerationAppeal"."response") BETWEEN 10 AND 2000))
+	CONSTRAINT "ModerationAppeal_status_check" CHECK (("ModerationAppeal"."status" = 'open' AND "ModerationAppeal"."reviewedAt" IS NULL) OR ("ModerationAppeal"."status" IN ('upheld', 'reversed', 'modified') AND "ModerationAppeal"."reviewedAt" IS NOT NULL AND "ModerationAppeal"."reviewedBy" IS NOT NULL AND "ModerationAppeal"."response" IS NOT NULL AND char_length("ModerationAppeal"."response") BETWEEN 10 AND 2000))
 );
 --> statement-breakpoint
 CREATE TABLE "ModerationDecision" (

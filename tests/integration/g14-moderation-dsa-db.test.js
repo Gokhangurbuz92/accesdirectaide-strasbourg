@@ -215,6 +215,11 @@ describe.skipIf(!hasDatabase)('G14 — moderation roles, DSA flows and expansion
         VALUES (gen_random_uuid()::text, 'testimonial', ${`g14-chk-${T}`}, 'rejected', 'X', ${FACTS}, ${ground}, 'Charte § 2', 'own_initiative', ${automated}, ${illegal}, 'g14-chk', NOW())`);
       await expect(ins(true, false, null)).rejects.toThrow();
       await expect(ins(false, true, null)).rejects.toThrow();
+      // null-safe rules (G14 QA v30 finding): a decided notice without its outcome, a reviewed appeal without its reasoned answer are refused
+      const [n] = (await db.execute(sql`SELECT id FROM "ContentNotice" WHERE status = 'received' AND "contentRef" LIKE ${'%' + T + '%'} LIMIT 1`)).rows;
+      await expect(db.execute(sql`UPDATE "ContentNotice" SET status = 'decided', "decidedAt" = NOW(), "decidedBy" = 'g14-chk' WHERE id = ${n.id}`)).rejects.toThrow();
+      const [a] = (await db.execute(sql`SELECT id FROM "ModerationAppeal" WHERE status = 'open' LIMIT 1`)).rows;
+      await expect(db.execute(sql`UPDATE "ModerationAppeal" SET status = 'upheld', "reviewedAt" = NOW(), "reviewedBy" = 'g14-chk' WHERE id = ${a.id}`)).rejects.toThrow();
     });
   });
 

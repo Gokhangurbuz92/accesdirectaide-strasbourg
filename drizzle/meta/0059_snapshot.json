@@ -1,5 +1,5 @@
 {
-  "id": "300f426e-c243-42f3-bcc0-acc3c2046e45",
+  "id": "cdc4d02e-c341-49e3-a65d-430886e45d21",
   "prevId": "786877d6-bc9a-43a9-aebc-f849d71c18f8",
   "version": "7",
   "dialect": "postgresql",
@@ -3686,7 +3686,7 @@
         },
         "ContentNotice_status_check": {
           "name": "ContentNotice_status_check",
-          "value": "(\"ContentNotice\".\"status\" = 'received' AND \"ContentNotice\".\"outcome\" IS NULL AND \"ContentNotice\".\"decidedAt\" IS NULL) OR (\"ContentNotice\".\"status\" = 'decided' AND \"ContentNotice\".\"outcome\" IN ('action_taken', 'no_action', 'not_processed') AND \"ContentNotice\".\"decidedAt\" IS NOT NULL AND \"ContentNotice\".\"decidedBy\" IS NOT NULL)"
+          "value": "(\"ContentNotice\".\"status\" = 'received' AND \"ContentNotice\".\"outcome\" IS NULL AND \"ContentNotice\".\"decidedAt\" IS NULL) OR (\"ContentNotice\".\"status\" = 'decided' AND \"ContentNotice\".\"outcome\" IS NOT NULL AND \"ContentNotice\".\"outcome\" IN ('action_taken', 'no_action', 'not_processed') AND \"ContentNotice\".\"decidedAt\" IS NOT NULL AND \"ContentNotice\".\"decidedBy\" IS NOT NULL)"
         }
       },
       "isRLSEnabled": false
@@ -7762,7 +7762,7 @@
         },
         "ModerationAppeal_status_check": {
           "name": "ModerationAppeal_status_check",
-          "value": "(\"ModerationAppeal\".\"status\" = 'open' AND \"ModerationAppeal\".\"reviewedAt\" IS NULL) OR (\"ModerationAppeal\".\"status\" IN ('upheld', 'reversed', 'modified') AND \"ModerationAppeal\".\"reviewedAt\" IS NOT NULL AND \"ModerationAppeal\".\"reviewedBy\" IS NOT NULL AND char_length(\"ModerationAppeal\".\"response\") BETWEEN 10 AND 2000)"
+          "value": "(\"ModerationAppeal\".\"status\" = 'open' AND \"ModerationAppeal\".\"reviewedAt\" IS NULL) OR (\"ModerationAppeal\".\"status\" IN ('upheld', 'reversed', 'modified') AND \"ModerationAppeal\".\"reviewedAt\" IS NOT NULL AND \"ModerationAppeal\".\"reviewedBy\" IS NOT NULL AND \"ModerationAppeal\".\"response\" IS NOT NULL AND char_length(\"ModerationAppeal\".\"response\") BETWEEN 10 AND 2000)"
         }
       },
       "isRLSEnabled": false
