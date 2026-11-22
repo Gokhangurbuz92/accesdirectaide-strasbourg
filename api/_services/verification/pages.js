@@ -81,11 +81,56 @@ export function innerOfBalanced(h, start, tag) {
 }
 
 /**
+ * G14 (22/11/2026) — source-ingestion security. A page is data, never instructions: a text addressed to automated agents (« ignore previous instructions »,
+ * « note to AI assistants… », « vous êtes un assistant… ») is quarantined, whether it sits in an element hidden from readers (hidden, aria-hidden, display:none,
+ * visibility:hidden) or in the visible text. Quarantined text never reaches the chapters, the fingerprint or the texts written from the page (texts.js); the
+ * page records how many items were set aside and their sha-256 (never their wording) so the journal shows it. Ordinary hidden content (menus, dialogs, a
+ * technical « Caché » button) is left as it was, so the fingerprint of a page without such text does not change.
+ */
+// only words that name an automated agent: a plain « agent » or « assistant » (agent public, assistant social) is ordinary page content
+const AGENT_WORDS = '(?:ai|ia|llm|gpt|chatgpt|gemini|copilot|chatbots?|bots?|crawlers?|agents? (?:ia|ai|automatiques?|conversationnels?|autonomes?)|ai agents?|assistants? (?:ia|ai|virtuels?|conversationnels?)|ai assistants?|mod[eè]les? de langage|language models?|intelligences? artificielles?|artificial intelligence)';
+const INSTRUCTION_LIKE = [
+  /(?<!\p{L})(?:ignore[rz]?|disregard|oubliez|oublie|ne (?:pas )?tenir compte|ne tenez pas compte)(?!\p{L})[^.\n]{0,60}(?<!\p{L})(?:instructions?|consignes?|prompts?)(?!\p{L})/iu,
+  new RegExp(`\\b(?:note|message|instructions?|consignes?|notice)\\s+(?:to|for|aux|à|pour|destinée?s? aux?|à l'attention des?)\\s+(?:les\\s+|the\\s+|all\\s+|tous les\\s+)?${AGENT_WORDS}\\b`, 'iu'),
+  new RegExp(`\\b(?:if you are|si vous [êe]tes|you are|tu es|vous [êe]tes)\\s+(?:an?\\s+|une?\\s+)?${AGENT_WORDS}\\b`, 'iu'),
+  new RegExp(`\\b${AGENT_WORDS}\\s*(?:,|:)?\\s*(?:must|should|please|doi(?:t|vent|s)|devez|merci de|veuillez)\\b`, 'iu'),
+  /\b(?:system prompt|prompt syst[eè]me|jailbreak|developer mode)\b/iu,
+];
+/** @param {string} text @returns {boolean} true when a text reads as an instruction addressed to an automated agent */
+export function instructionLike(text) {
+  const t = decode(String(text || '')).replace(/\s+/g, ' ');
+  return INSTRUCTION_LIKE.some((re) => re.test(t));
+}
+const HIDDEN_OPEN = /<([a-z][a-z0-9-]*)\b(?=[^>]*(?:\shidden(?:[\s=>/])|aria-hidden\s*=\s*["']?true|style\s*=\s*["'][^"']*(?:display\s*:\s*none|visibility\s*:\s*hidden)))[^>]*>/gi;
+/**
+ * Removes the hidden elements whose text is instruction-like; others stay. @param {string} h
+ * @returns {{ html: string, quarantined: { where: 'hidden', sha256: string, chars: number }[] }}
+ */
+export function quarantineHidden(h) {
+  let html = String(h || '');
+  const quarantined = [];
+  let m; HIDDEN_OPEN.lastIndex = 0;
+  const cuts = [];
+  while ((m = HIDDEN_OPEN.exec(html))) {
+    const tag = m[1].toLowerCase();
+    const inner = /^(?:input|img|br|hr|meta|link)$/.test(tag) ? m[0] : innerOfBalanced(html, m.index, tag);
+    const end = inner === null ? m.index + m[0].length : html.indexOf(inner, m.index) + inner.length;
+    const close = html.slice(end).match(new RegExp(`^\\s*</${tag}\\s*>`, 'i'));
+    const stop = close ? end + close[0].length : end;
+    const text = textOf(html.slice(m.index, stop));
+    if (instructionLike(text) || instructionLike(m[0])) cuts.push([m.index, stop, text]);
+  }
+  for (const [a, b, text] of cuts.reverse()) { html = html.slice(0, a) + ' ' + html.slice(b); quarantined.unshift({ where: 'hidden', sha256: sha256(text), chars: text.length }); }
+  return { html, quarantined };
+}
+
+/**
  * Parse an official page. Service-Public sheets: chapters of the main article; other sites: the <main> (or <article>, or <body>) text as one chapter.
+ * G14: instruction-like text addressed to automated agents is quarantined first (hidden or visible), see quarantineHidden / instructionLike.
  * @param {string} html @param {string} url
  */
 export function parseOfficialPage(html, url = '') {
-  const h = String(html || '');
+  const { html: h, quarantined } = quarantineHidden(String(html || ''));
   const title = textOf((h.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i) || [])[1] || (h.match(/<title>([\s\S]*?)<\/title>/i) || [])[1] || '').split('|')[0].trim() || null;
   const verified = frenchDate((decode(h).match(/V[ée]rifi[ée] le\s*([0-9]{1,2}(?:er)?\s+[a-zéû]+\s+[0-9]{4})/i) || [])[1]);
   const scope = mainScope(h).replace(/<(nav|header|footer|form|dialog|aside)[^>]*>[\s\S]*?<\/\1>/gi, ' ');
@@ -94,13 +139,16 @@ export function parseOfficialPage(html, url = '') {
   for (const part of parts) {
     const heading = textOf((part.match(/^<h[2-4][^>]*>([\s\S]*?)<\/h[2-4]>/i) || [])[1] || '') || null;
     const body = textOf(part.replace(/^<h[2-4][^>]*>[\s\S]*?<\/h[2-4]>/i, ''))
-      .split('\n').filter((l) => !/^v[ée]rifi[ée] le\b/i.test(l) && !/^(partager|imprimer|copier le lien|cette page vous a-t-elle été utile)/i.test(l)).join('\n').trim();
+      .split('\n').filter((l) => !/^v[ée]rifi[ée] le\b/i.test(l) && !/^(partager|imprimer|copier le lien|cette page vous a-t-elle été utile)/i.test(l))
+      .filter((l) => { if (!instructionLike(l)) return true; quarantined.push({ where: 'visible', sha256: sha256(l), chars: l.length }); return false; })   // G14
+      .join('\n').trim();
     if (heading && /lien vers cette page a été envoyé|partager la page|vous a-t-elle été utile/i.test(heading)) continue;   // sharing / feedback dialogs, not content
     if (heading && /^(ent[êe]te|en-t[êe]te|pied) de (la )?page$/i.test(heading)) { if (body.length >= 20) chapters.push({ heading: null, text: body }); continue; }   // D06: a hidden landmark label, not a chapter
     if (body.length >= 20 || (heading && body)) chapters.push({ heading, text: body });
   }
   const fullText = chapters.map((c) => `${c.heading ? `## ${c.heading}\n` : ''}${c.text}`).join('\n\n');
-  return { url, title, officialCheckedAt: verified, chapters, text: fullText, fingerprint: sha256(normalize(fullText)), facts: keyFacts(fullText), chars: fullText.length };
+  const ingestion = { quarantined, instructionsFound: quarantined.length > 0 };   // G14: evidence of non-execution — counts and hashes, never the wording
+  return { url, title, officialCheckedAt: verified, chapters, text: fullText, fingerprint: sha256(normalize(fullText)), facts: keyFacts(fullText), chars: fullText.length, ingestion };
 }
 
 /**

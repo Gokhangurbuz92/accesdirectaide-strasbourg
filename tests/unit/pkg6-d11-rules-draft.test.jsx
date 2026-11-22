@@ -28,7 +28,7 @@ afterEach(cleanup);
 
 describe('PKG-6 / D11 draft reading of the register', () => {
   it('every proposed reference case (PROPOSED_UNREVIEWED, cited basis) agrees with the draft reading — consistency only', () => {
-    expect(proposed.cases.length).toBe(39);   // FA-D6 (18/11/2026): +9 proposed cases (boundaries, residence)
+    expect(proposed.cases.length).toBe(61);   // FA-D6 (18/11/2026): +9 proposed cases (boundaries, residence); G14 (22/11/2026): +22 edge and negative cases
     for (const c of proposed.cases) {
       expect(c.status, c.id).toBe('PROPOSED_UNREVIEWED');
       expect(c.basis.length, c.id).toBeGreaterThan(10);
@@ -82,7 +82,7 @@ describe('PKG-6 / D11 → D20: official pages in « Pourquoi ce résultat ? »',
     for (const code of ['rsa', 'apl', 'faj-strasbourg', 'are', 'apa']) {
       const i = officialInfoFor(code);
       expect(i, code).not.toBeNull(); expect(i.validated).toBe(false);
-      for (const p of i.pages) expect(p.url).toMatch(/^https:\/\/(www\.)?(service-public\.gouv\.fr|strasbourg\.eu)\//);
+      for (const p of i.pages) expect(p.url).toMatch(/^https:\/\/(www\.)?(service-public\.gouv\.fr|strasbourg\.eu|unedic\.org|ameli\.fr)\//);   // G14: + Unédic, ameli.fr
     }
     expect(officialInfoFor('impayes-loyer')).toBeNull();
   });
@@ -92,7 +92,9 @@ describe('PKG-6 / D11 → D20: official pages in « Pourquoi ce résultat ? »',
     const { container } = render(createElement(MemoryRouter, null, createElement(AssessmentView, { results: { assessment } })));
     const rsa = screen.getByTestId('official-info-rsa');
     const links = rsa.querySelectorAll('a');
-    expect([...links].map((a) => a.getAttribute('href'))).toEqual(['https://www.service-public.gouv.fr/particuliers/vosdroits/F19778', 'https://www.service-public.gouv.fr/particuliers/vosdroits/F286']);
+    expect([...links].map((a) => a.getAttribute('href'))).toEqual(['https://www.service-public.gouv.fr/particuliers/vosdroits/F19778', 'https://www.service-public.gouv.fr/particuliers/vosdroits/F286',
+      'https://www.service-public.gouv.fr/particuliers/vosdroits/F15553']);   // G14: RSA parent isolé, after the main pages
+    expect(screen.getByTestId('official-info-amounts-rsa')).toHaveTextContent(/seuls ceux de la page officielle font foi.*ADA ne les utilise pas/);
     for (const a of links) { expect(a).toHaveAttribute('target', '_blank'); expect(a.getAttribute('rel')).toMatch(/noopener/); expect(a).toHaveTextContent(/nouvel onglet/); }
     expect(rsa).toHaveTextContent(/date indiquée sur la page : 01\/04\/2026/);
     expect(rsa).toHaveTextContent(/Qui décide : Caf/);

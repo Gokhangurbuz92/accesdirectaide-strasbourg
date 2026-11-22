@@ -20,8 +20,11 @@ const reading = (c) => {
   if (d.kind === 'ageBetween') return `âge ${d.min} à ${d.max} ; ${d.max} ans exactement : ${d.atMax}`;
   if (d.kind === 'territoryScope') return 'hors département déclaré : NOT_MET ; dans le département : inconnu (communes non vérifiées)';
   if (d.kind === 'oneOf') return `${d.fact} ∈ {${d.met.join(', ')}} : MET ; autre : ${d.otherwise}`;
+  // G14: amount-bearing checks say their source-dated window and the resources basis they compare
+  const dated = `${d.effectiveFrom ? ` ; barème en vigueur à partir du ${d.effectiveFrom}, à relire le ${d.staleAfter || '?'} (hors de cette période : inconnu)` : ''}${d.requiresBasis ? ` ; base de ressources exigée : ${d.requiresBasis} (autre base : inconnu)` : ''}`;
+  if (d.kind === 'annualResourcesBands' && d.byArea) return `${Object.entries(d.byArea).map(([area, t]) => `${area} : ${Object.entries(t.bySize).map(([n, bs]) => `${n} pers. ${bs.map((b) => `≤ ${b.max} €`).join(' / ')}`).join(', ')}${t.perExtra ? `, + ${t.perExtra.join(' / ')} € par personne en plus` : ''}`).join(' ; ')} (MET avec la note « sans participation » / « avec participation ») ; au-delà : ${d.above}${dated}`;
   if (d.kind === 'annualResourcesBands') return `${d.householdSize} pers., ${d.area} : ${d.bands.map((b) => `≤ ${b.max} € ${b.result} (${b.note})`).join(' ; ')} ; au-delà : ${d.above}`;
-  if (d.kind === 'annualResourcesCeiling') return `plafond annuel ${Object.entries(d.byChildren).map(([k, v]) => `${k} enfant(s) : ${v} €`).join(', ')} ; au-delà : ${d.above} ; autre nombre d'enfants : inconnu`;
+  if (d.kind === 'annualResourcesCeiling') return `plafond annuel ${Object.entries(d.byChildren).map(([k, v]) => `${k} enfant(s) : ${v} €`).join(', ')} ; au-delà : ${d.above} ; autre nombre d'enfants : inconnu${dated}`;
   return d.kind;
 };
 
@@ -42,8 +45,12 @@ export function renderReviewPack(register, proposed) {
     L.push('', `Base légale citée : ${r.legalBasis?.length ? r.legalBasis.join(' ; ') : 'aucune sur la page'}`, '');
     L.push('| Condition | Texte relevé | Source | Lecture automatique proposée | Décision expert |', '|---|---|---|---|---|');
     for (const c of r.conditions) L.push(`| ${c.fact} | ${cell(c.text)} | ${c.source} | ${cell(reading(c))} | ☐ accepter ☐ corriger ☐ rejeter |`);
+    if (r.relatedSources?.length) L.push('', `Pages complémentaires (information, G14) : ${r.relatedSources.map((s) => `${s.url}${s.scope ? ` (${s.scope})` : ''}`).join(' ; ')}`, '');
+    if (r.sourceRecheck) L.push(...(r.relatedSources?.length ? [] : ['']), `Sources relues le ${r.sourceRecheck.readAt} par ADA engineering (pas une relecture d'expert) : ${r.sourceRecheck.pages.map((p) => p.id || p.url).join(', ')}${r.sourceRecheck.legal.length ? ` ; ${r.sourceRecheck.legal.map((l) => `${l.num} (en vigueur depuis le ${l.inForceSince})`).join(', ')}` : ''}.`);
     L.push('', 'Ambiguïtés à trancher :');
     for (const a of r.ambiguities) L.push(`- ${a} — décision : ……`);
+    // G14: a hidden text addressed to automated agents is a source-ingestion security matter, not a legal ambiguity: listed, never submitted to the expert
+    for (const n of r.ingestionSecurityNotes || []) L.push(`- (sécurité de l'ingestion, hors relecture juridique — ${n.readAt}) ${n.note}`);
     const cases = proposed.cases.filter((c) => c.right === r.id);
     L.push('', `Cas de référence proposés (${cases.length}) :`, '');
     if (cases.length) {

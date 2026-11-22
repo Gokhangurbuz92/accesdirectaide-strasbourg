@@ -17,7 +17,8 @@ const blank = () => parseCsv(renderForm(reg, proposed));
 const reviewer = { reviewer_name: 'Experte fictive (test)', reviewer_role: 'juriste en droit social (fictif)', review_date: '2026-11-15' };
 /** a synthetic review that accepts everything of one right */
 const acceptAll = (right) => blank().map((r) => (r.right !== right ? r : { ...r, ...reviewer, decision: r.item_type === 'ambiguity' ? 'DECIDED' : 'ACCEPT', correction_or_decision: r.item_type === 'ambiguity' ? 'tranché (test)' : '' }));
-const FULL = { birthDate: '1990-01-01', householdSize: 2, income: { salary: 900 }, housing: { status: 'tenant', rent: 512 }, territory: '67000' };
+// G14: rent 517 (was 512, which now also appears in a cited article number, CSS L512-2, of the RSA register text — the leak check needs a value no text contains)
+const FULL = { birthDate: '1990-01-01', householdSize: 2, income: { salary: 900 }, housing: { status: 'tenant', rent: 517 }, territory: '67000' };
 
 describe('D11 gate — today', () => {
   it('no right passes: no reading reaches a result, and the diagnostic answer is unchanged', () => {
@@ -86,7 +87,7 @@ describe('P13 — the whole chain once a right is validated (synthetic review)',
     expect(rsa.whyFr).toContain('Repère utilisé : règle « RSA');
     expect(rsa.whyFr).toContain('Source : https://www.service-public.gouv.fr/');
     expect(rsa.whoToAsk).toBe('votre CAF');
-    for (const v of ['1990', '900', '512', '67000']) expect(JSON.stringify(rsa)).not.toContain(v);
+    for (const v of ['1990', '900', '517', '67000']) expect(JSON.stringify(rsa)).not.toContain(v);
     // the other rights are untouched
     expect(a.items.find((i) => i.code === 'apl').provenance.source).toBeNull();
   });

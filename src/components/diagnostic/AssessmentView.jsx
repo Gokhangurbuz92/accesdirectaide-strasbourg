@@ -217,6 +217,9 @@ function OfficialInfo({ code }) {
                 ))}
             </ul>
             <p className="mt-1 text-slate-800">{t('diagnostic:official.decided_by', 'Qui décide :')} <span {...FR}>{info.decidedBy}</span>.</p>
+            <p className="mt-1 text-slate-800" data-testid={`official-info-amounts-${code}`}>
+                {t('diagnostic:official.amounts_note', "Montants et plafonds : seuls ceux de la page officielle font foi, à la date qu'elle indique. ADA ne les utilise pas pour le résultat ci-dessus.")}
+            </p>
             {!info.validated && (
                 <p className="mt-1 text-slate-800" data-testid={`official-info-unvalidated-${code}`}>
                     {t('diagnostic:official.unvalidated', "ADA a relevé les conditions de ces pages, mais aucun expert ne les a encore validées : le résultat ci-dessus n'est pas calculé à partir d'elles.")}

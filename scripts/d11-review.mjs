@@ -11,12 +11,13 @@
  * (or corrected) at least one reference case — and every accepted case gives its expected result with the register's reading (api/lib/rulesDraft.js).
  * A corrected or rejected condition never validates anything: the register must first be corrected by an engineer and a new form filled.
  * The script records what the reviewer wrote; it never decides in the reviewer's place.
+ * G14 (22/11/2026): a form row signed by an AI or a system, or carrying AI-review columns (ai_review_status…), is refused (exit 3, nothing written).
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import { readConditions } from '../api/lib/rulesDraft.js';
-import { gateStatus, validatedRight } from '../api/lib/validatedRules.js';
+import { gateStatus, validatedRight, nonHumanReviewer } from '../api/lib/validatedRules.js';
 import { isMainModule } from './lib/is-main.mjs';
 
 const REGISTER = new URL('../data/rules/rights-rules.v1.json', import.meta.url);
@@ -38,7 +39,7 @@ export function renderForm(register, proposed) {
 /** a small RFC 4180 reader (quoted fields, doubled quotes, CRLF tolerated) */
 export function parseCsv(text) {
   const out = []; let row = []; let f = ''; let inQ = false;
-  const s = String(text).replace(/\r\n/g, '\n');
+  const s = String(text).replace(/^\uFEFF/, '').replace(/\r\n/g, '\n');   // G14: a UTF-8 BOM (spreadsheet export) must not hide the « right » column
   for (let i = 0; i < s.length; i += 1) {
     const ch = s[i];
     if (inQ) { if (ch === '"' && s[i + 1] === '"') { f += '"'; i += 1; } else if (ch === '"') inQ = false; else f += ch; continue; }
@@ -58,6 +59,8 @@ export function evaluateForm(register, proposed, rows) {
     const reviewers = new Set(mine.map((x) => `${x.reviewer_name}|${x.reviewer_role}|${x.review_date}`));
     const [name, role, date] = [...reviewers][0]?.split('|') || [];
     if (!mine.length) open.push('aucune ligne remplie');
+    // G14: an AI / automated review is an engineering input, never the human approval — the whole right is refused
+    if (mine.some((x) => nonHumanReviewer(x))) open.push('relecteur non humain (IA, système automatique ou avis IA non signé) : refusé — seule une personne qualifiée nommée peut relire');
     if (reviewers.size > 1) open.push('plusieurs relecteurs ou dates : une relecture = une personne, une date');
     if (!name || !role || !/^\d{4}-\d{2}-\d{2}$/.test(date || '')) open.push('nom, fonction ou date (AAAA-MM-JJ) du relecteur manquant');
     // R46: the reviewer must have read the page as it is now — a page revised after the review date needs a new review
@@ -119,7 +122,14 @@ function main() {
     return;
   }
   if (cmd === 'apply' && file) {
-    const results = evaluateForm(register, proposed, parseCsv(fs.readFileSync(file, 'utf8')));
+    const rows = parseCsv(fs.readFileSync(file, 'utf8'));
+    if (rows.some((x) => nonHumanReviewer(x))) {
+      // G14: a file that contains an AI / system review is never imported, not even partly, and --write is refused
+      console.error('refusé : ce formulaire contient un avis IA ou un relecteur non humain (colonnes ai_* ou nom / fonction d\'un système). Rien n\'est écrit.');
+      process.exitCode = 3;
+      return;
+    }
+    const results = evaluateForm(register, proposed, rows);
     for (const r of results) console.log(`${r.right}: ${r.validated ? 'VALIDABLE' : 'reste non validée'}${r.open.length ? `\n  - ${r.open.join('\n  - ')}` : ''}`);
     if (args.includes('--write')) { fs.writeFileSync(target, `${JSON.stringify(applyForm(register, results), null, 2)}\n`); console.log('registre écrit ; relancer node scripts/d11-review-pack.mjs'); }
     return;

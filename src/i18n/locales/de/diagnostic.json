@@ -269,5 +269,6 @@
   "wizard.local.region": "Orientierungsfragebogen (in Ihrem Browser)",
   "wizard.local.erased": "Ihre Antworten wurden gelöscht. Nichts wurde gesendet oder gespeichert.",
   "wizard.local.result_note": "Dieses Ergebnis wurde in Ihrem Browser erstellt. Nichts wurde gesendet oder gespeichert. Kein Hinweis wurde von einer Fachperson bestätigt: Die Stelle, die den Antrag erhält, entscheidet.",
-  "wizard.local.profile_intro": "Diese Angaben bleiben in Ihrem Browser: Sie werden weder gesendet noch gespeichert (« {{erase}} » löscht sie)."
+  "wizard.local.profile_intro": "Diese Angaben bleiben in Ihrem Browser: Sie werden weder gesendet noch gespeichert (« {{erase}} » löscht sie).",
+  "official.amounts_note": "Beträge und Obergrenzen: Maßgeblich sind nur die Angaben der offiziellen Seite, zu dem dort genannten Datum. ADA verwendet sie nicht für das obige Ergebnis."
 }

@@ -14,7 +14,9 @@ const frDate = (d) => (d ? d.split('-').reverse().join('/') : null);
 export function officialInfoFor(code) {
   const r = register.rights.find((x) => x.id === code);
   if (!r) return null;
-  const pages = r.sources.filter((s) => OFFICIAL.test(s.url)).map((s) => ({ url: s.url, site: host(s.url), pageDate: frDate(s.pageVerifiedOn), scope: s.scope || null }));
+  // G14 (22/11/2026): relatedSources = official pages re-read with the D11 corrections (F15553, F33375, Unédic, ameli.fr) — information to read, after the main pages
+  const pages = [...r.sources, ...(r.relatedSources || [])].filter((s) => OFFICIAL.test(s.url))
+    .map((s) => ({ url: s.url, site: host(s.url), pageDate: frDate(s.pageVerifiedOn), scope: s.scope || null }));
   if (!pages.length) return null;
   return { status: r.status, validated: r.status === 'EXPERT_VALIDATED', decidedBy: r.decidedBy, pages };
 }

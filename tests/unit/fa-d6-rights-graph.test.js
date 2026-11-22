@@ -127,9 +127,9 @@ describe('boundaries and age (computed at the query date)', () => {
     const at = (date) => cond(orientRights(graph, register, { needs: ['aide-domicile'], date, answers: { birthDate: '1966-11-18' } }).results[0].rights[0], 'age').result;
     expect(at('2026-11-17')).toBe('NOT_MET'); expect(at('2026-11-18')).toBe('MET');
   });
-  it('C2S resources (1 person, metropole): 10 421 MET, 14 069 MET, 14 070 NOT_MET; 2 persons UNKNOWN (scale not in the register)', () => {
-    const c2s = (n, hh = 1) => cond(right('c2s', { annualResources: n, householdSize: hh, area: 'metropole' }), 'resources').result;
-    expect([c2s(10421), c2s(14069), c2s(14070), c2s(12000, 2)]).toEqual(['MET', 'MET', 'NOT_MET', 'UNKNOWN']);
+  it('C2S resources (metropole, ameli.fr « au 1er avril 2026 »): 10 421 MET, 14 069 MET, 14 070 NOT_MET; 2 persons 12 000 MET (G14); no declared basis UNKNOWN', () => {
+    const c2s = (n, hh = 1, basis = 'ressources-foyer-12-mois-c2s') => cond(right('c2s', { annualResources: n, householdSize: hh, area: 'metropole', resourcesBasis: basis }), 'resources').result;
+    expect([c2s(10421), c2s(14069), c2s(14070), c2s(12000, 2), c2s(9000, 1, null)]).toEqual(['MET', 'MET', 'NOT_MET', 'MET', 'UNKNOWN']);
   });
   it('FAJ: 15 NOT_MET, 16 MET, 25 UNKNOWN (inclusion of 25 not stated), 26 NOT_MET; prime d\'activité 17 / 18', () => {
     const faj = (a) => cond(right('faj-strasbourg', { ageRange: [a, a] }), 'age').result;

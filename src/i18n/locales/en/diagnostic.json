@@ -269,5 +269,6 @@
   "wizard.local.region": "Orientation questionnaire (in your browser)",
   "wizard.local.erased": "Your answers have been erased. Nothing was sent or saved.",
   "wizard.local.result_note": "This result was prepared in your browser. Nothing was sent or saved. No lead has been validated by an expert: the organisation that receives the application decides.",
-  "wizard.local.profile_intro": "This information stays in your browser: it is neither sent nor saved (« {{erase}} » erases it)."
+  "wizard.local.profile_intro": "This information stays in your browser: it is neither sent nor saved (« {{erase}} » erases it).",
+  "official.amounts_note": "Amounts and ceilings: only those on the official page count, at the date it shows. ADA does not use them for the result above."
 }

@@ -269,5 +269,6 @@
   "wizard.local.region": "Yönlendirme anketi (tarayıcınızda)",
   "wizard.local.erased": "Cevaplarınız silindi. Hiçbir şey gönderilmedi veya kaydedilmedi.",
   "wizard.local.result_note": "Bu sonuç tarayıcınızda hazırlandı. Hiçbir şey gönderilmedi veya kaydedilmedi. Hiçbir ipucu bir uzman tarafından doğrulanmadı: başvuruyu alan kurum karar verir.",
-  "wizard.local.profile_intro": "Bu bilgiler tarayıcınızda kalır: ne gönderilir ne de kaydedilir (« {{erase}} » onları siler)."
+  "wizard.local.profile_intro": "Bu bilgiler tarayıcınızda kalır: ne gönderilir ne de kaydedilir (« {{erase}} » onları siler).",
+  "official.amounts_note": "Tutarlar ve tavanlar: Yalnızca resmî sayfadakiler, sayfada belirtilen tarih itibarıyla geçerlidir. ADA bunları yukarıdaki sonuç için kullanmaz."
 }

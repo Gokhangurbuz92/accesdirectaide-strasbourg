@@ -1,7 +1,7 @@
 {
   "schema": "ada.rights-reference-cases.proposed.v1",
   "builtAt": "2026-10-21",
-  "statement": "Reference cases PROPOSED by ADA engineering from the cited text of data/rules/rights-rules.v1.json, for an expert to accept, correct or reject. They are NOT validated: a right's register referenceCases[] only receives cases an expert has accepted (with name, role and date). Expected values are written from the source text, independently of api/lib/rulesDraft.js; the test that compares them only checks consistency.",
+  "statement": "Reference cases PROPOSED by ADA engineering from the cited text of data/rules/rights-rules.v1.json, for an expert to accept, correct or reject. They are NOT validated: a right's register referenceCases[] only receives cases an expert has accepted (with name, role and date). Expected values are written from the source text, independently of api/lib/rulesDraft.js; the test that compares them only checks consistency. G14 (22/11/2026): cases updated and added after the official sources were re-read (resources cases carry resourcesBasis and referenceDate).",
   "cases": [
     {
       "id": "rsa-age-25",
@@ -30,7 +30,7 @@
       "expected": {
         "age": "UNKNOWN"
       },
-      "basis": "F19778/F286 : moins de 25 ans, seule la voie RSA jeune actif (activité) reste ouverte : non tranchable par l'âge seul",
+      "basis": "F19778 « au moins 25 ans » ; à 24 ans deux voies restent possibles : charge d'un enfant né ou à naître (CASF L262-4 1°) ou RSA jeune actif 18-25 ans (CASF L262-7-1) : non tranchable par l'âge seul",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -45,7 +45,7 @@
       "expected": {
         "age": "UNKNOWN"
       },
-      "basis": "tranche entièrement sous 25 ans : même cas que rsa-age-24",
+      "basis": "tranche entièrement sous 25 ans : même cas que rsa-age-24 (voie « charge d'enfant » CASF L262-4 1° ou RSA jeune actif CASF L262-7-1)",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -162,12 +162,14 @@
       "right": "aah",
       "facts": {
         "annualResources": 12499,
-        "children": 0
+        "children": 0,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
         "resources": "MET"
       },
-      "basis": "F12242 plafond annuel 12 499 € sans enfant : égal au plafond = sous le plafond (à confirmer par l'expert : « jusqu'à » inclusif)",
+      "basis": "F12242 plafond annuel 12 499 € sans enfant (en vigueur au 1er avril 2026, solidarites.gouv.fr) : égal au plafond = sous le plafond, revenu net catégoriel N-2 déclaré (à confirmer par l'expert : « jusqu'à » inclusif)",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -175,12 +177,14 @@
       "right": "aah",
       "facts": {
         "annualResources": 12500,
-        "children": 0
+        "children": 0,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "NOT_MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "F12242 : au-dessus de 12 499 € sans enfant",
+      "basis": "F12242 : au-dessus de 12 499 € sans enfant ; « Depuis le 1er octobre 2023 » ressources personnelles, mais la conjugalisation est appliquée si plus favorable : jamais un refus, à vérifier",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -188,12 +192,14 @@
       "right": "aah",
       "facts": {
         "annualResources": 18000,
-        "children": 1
+        "children": 1,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
         "resources": "MET"
       },
-      "basis": "F12242 : 18 749 € avec 1 enfant",
+      "basis": "F12242 : 18 749 € avec 1 enfant (au 1er avril 2026), revenu net catégoriel N-2 déclaré",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -201,12 +207,14 @@
       "right": "aah",
       "facts": {
         "annualResources": 18000,
-        "children": 2
+        "children": 2,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "UNKNOWN"
+        "resources": "MET"
       },
-      "basis": "plafond pour 2 enfants non relevé dans le registre",
+      "basis": "F12242 : 24 998 € avec 2 enfants (au 1er avril 2026 ; CSS D821-2 : plafond majoré de moitié par enfant), revenu net catégoriel N-2 déclaré",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -282,7 +290,7 @@
       "expected": {
         "age": "MET"
       },
-      "basis": "strasbourg.eu « 16 à 25 ans »",
+      "basis": "strasbourg.eu « 16 à 25 ans » : tranche d'âge annoncée par la page (règlement non lu), condition d'âge seulement",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -373,12 +381,14 @@
       "facts": {
         "annualResources": 10421,
         "householdSize": 1,
-        "area": "metropole"
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
         "resources": "MET"
       },
-      "basis": "F10027 : gratuite jusqu'à 10 421 € (1 personne, métropole)",
+      "basis": "ameli.fr « au 1er avril 2026 » / F10027 : gratuite jusqu'à 10 421 € (1 personne, métropole) — seuil seulement",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -387,12 +397,14 @@
       "facts": {
         "annualResources": 12000,
         "householdSize": 1,
-        "area": "metropole"
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
         "resources": "MET"
       },
-      "basis": "F10027 : avec participation de 10 421 à 14 069 €",
+      "basis": "ameli.fr « au 1er avril 2026 » / F10027 : avec participation de 10 421 à 14 069 € (1 personne, métropole) — la note dit « avec participation financière »",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -401,12 +413,14 @@
       "facts": {
         "annualResources": 14070,
         "householdSize": 1,
-        "area": "metropole"
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
         "resources": "NOT_MET"
       },
-      "basis": "F10027 : au-dessus de 14 069 €",
+      "basis": "ameli.fr « au 1er avril 2026 » / F10027 : au-dessus de 14 069 € (1 personne, métropole) — condition de ressources seulement",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -415,12 +429,14 @@
       "facts": {
         "annualResources": 12000,
         "householdSize": 2,
-        "area": "metropole"
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "UNKNOWN"
+        "resources": "MET"
       },
-      "basis": "barème au-delà d'une personne non relevé dans le registre",
+      "basis": "ameli.fr « au 1er avril 2026 » / F10027 : 2 personnes, gratuite jusqu'à 15 632 € (métropole) ; 12 000 € est sous ce plafond",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -476,12 +492,14 @@
       "right": "aah",
       "facts": {
         "annualResources": 18750,
-        "children": 1
+        "children": 1,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
-        "resources": "NOT_MET"
+        "resources": "UNKNOWN"
       },
-      "basis": "F12242 « Nombre d'enfants à charge au sens des prestations familiales » : 18 749 € avec 1 enfant ; 18 750 € est au-dessus (FA-D6)",
+      "basis": "F12242 « Nombre d'enfants à charge au sens des prestations familiales » : 18 749 € avec 1 enfant ; 18 750 € est au-dessus du plafond de la personne seule, conjugalisation possible : à vérifier (FA-D6, G14)",
       "status": "PROPOSED_UNREVIEWED"
     },
     {
@@ -519,7 +537,9 @@
       "facts": {
         "annualResources": 14069,
         "householdSize": 1,
-        "area": "metropole"
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
       },
       "expected": {
         "resources": "MET"
@@ -561,6 +581,348 @@
         "territory": "UNKNOWN"
       },
       "basis": "département 67 seul : la commune, donc l'appartenance à l'Eurométropole, reste à vérifier (FA-D6, résidence)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-age-17",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          17,
+          17
+        ]
+      },
+      "expected": {
+        "age": "UNKNOWN"
+      },
+      "basis": "CASF L262-4 1° : « assumer la charge d'un ou plusieurs enfants nés ou à naître » n'a pas d'âge minimum ; RSA jeune actif à partir de 18 ans (CASF L262-7-1) : âge seul non tranchable (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "rsa-age-25-unread",
+      "right": "rsa",
+      "facts": {
+        "ageRange": [
+          25,
+          25
+        ]
+      },
+      "expected": {
+        "age": "MET",
+        "residence": "UNKNOWN",
+        "resources": "UNKNOWN",
+        "nationality": "UNKNOWN",
+        "activity": "UNKNOWN"
+      },
+      "basis": "F19778 « au moins 25 ans » : l'âge seul est rempli, toutes les autres conditions restent inconnues — jamais un droit (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "prime-age-20-activity-unread",
+      "right": "prime-activite",
+      "facts": {
+        "ageRange": [
+          20,
+          20
+        ]
+      },
+      "expected": {
+        "age": "MET",
+        "activity": "UNKNOWN"
+      },
+      "basis": "F2882 « 18 ans ou plus » ; F33375 seuil étudiant / apprenti 1 144,21 € sans date d'effet : condition d'activité jamais lue (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apl-free-housed",
+      "right": "apl",
+      "facts": {
+        "housing": {
+          "status": "free"
+        }
+      },
+      "expected": {
+        "housing.status": "UNKNOWN",
+        "housing": "UNKNOWN"
+      },
+      "basis": "F12006 « locataire » : hébergé gratuitement, cas non couvert par la lecture (à vérifier) ; conventionnement jamais lu (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apl-subtenant",
+      "right": "apl",
+      "facts": {
+        "housing": {
+          "status": "subtenant"
+        }
+      },
+      "expected": {
+        "housing.status": "UNKNOWN"
+      },
+      "basis": "F12006 : sous-location, texte et infographie divergents (moins de 30 ans / plus de 60 ans / handicap) : jamais lue automatiquement (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-age-16",
+      "right": "aah",
+      "facts": {
+        "ageRange": [
+          16,
+          16
+        ]
+      },
+      "expected": {
+        "age": "UNKNOWN"
+      },
+      "basis": "F12242 « au moins 16 ans si vous n'êtes plus considéré à la charge de vos parents » : non recueilli (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-age-19",
+      "right": "aah",
+      "facts": {
+        "ageRange": [
+          19,
+          19
+        ]
+      },
+      "expected": {
+        "age": "UNKNOWN"
+      },
+      "basis": "F12242 : 16-19 ans possible seulement hors charge pour les prestations familiales (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-no-basis",
+      "right": "aah",
+      "facts": {
+        "annualResources": 12000,
+        "children": 0,
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "F12242 « revenu net catégoriel » N-2 : un montant sans cette base n'est pas comparable au plafond (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-before-date",
+      "right": "aah",
+      "facts": {
+        "annualResources": 12000,
+        "children": 0,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-03-31"
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "plafonds en vigueur au 1er avril 2026 (solidarites.gouv.fr « Au 1er avril 2026 ») : une date antérieure n'est pas lue (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-4children",
+      "right": "aah",
+      "facts": {
+        "annualResources": 37497,
+        "children": 4,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "F12242 : 37 497 € avec 4 enfants (au 1er avril 2026) (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "aah-res-5children",
+      "right": "aah",
+      "facts": {
+        "annualResources": 20000,
+        "children": 5,
+        "resourcesBasis": "revenu-net-categoriel-n-2",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "F12242 : aucun plafond publié au-delà de 4 enfants : à vérifier (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "apa-age-60-unread",
+      "right": "apa",
+      "facts": {
+        "ageRange": [
+          60,
+          60
+        ]
+      },
+      "expected": {
+        "age": "MET",
+        "dependency": "UNKNOWN",
+        "residence": "UNKNOWN",
+        "exclusion": "UNKNOWN"
+      },
+      "basis": "F10009 « au moins 60 ans » : GIR, résidence et non-cumul jamais lus — aucun montant de plan d'aide utilisé (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "are-unread-60",
+      "right": "are",
+      "facts": {
+        "ageRange": [
+          60,
+          60
+        ]
+      },
+      "expected": {
+        "employment_loss": "UNKNOWN",
+        "affiliation": "UNKNOWN",
+        "registration": "UNKNOWN",
+        "residence": "UNKNOWN"
+      },
+      "basis": "F38881 : 36 mois de référence à partir de 55 ans, primo-entrants 5 mois depuis le 1er avril 2026 : affiliation jamais lue (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-household-2-contribution",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 21103,
+        "householdSize": 2,
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "ameli.fr « au 1er avril 2026 » : 2 personnes, avec participation jusqu'à 21 103 € (borne à confirmer) (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-household-3-above",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 25325,
+        "householdSize": 3,
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "NOT_MET"
+      },
+      "basis": "ameli.fr « au 1er avril 2026 » : 3 personnes, au-dessus de 25 324 € (condition de ressources seulement) (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-household-5-free",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 26054,
+        "householdSize": 5,
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "ameli.fr : 4 personnes 21 885 € + 4 169 € par personne supplémentaire = 26 054 € sans participation pour 5 personnes (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-outre-mer-1",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 11599,
+        "householdSize": 1,
+        "area": "outre-mer",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "MET"
+      },
+      "basis": "ameli.fr « au 1er avril 2026 » : départements d'outre-mer et Mayotte, 11 599 € sans participation (1 personne) (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-no-basis",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 9000,
+        "householdSize": 1,
+        "area": "metropole",
+        "referenceDate": "2026-11-22"
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "F10027 : ressources du foyer sur la période de 12 mois de la C2S ; un montant sans cette base n'est pas comparable (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-before-date",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 9000,
+        "householdSize": 1,
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2026-03-15"
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "ameli.fr : plafonds « au 1er avril 2026 » ; une date antérieure n'est pas lue (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "c2s-stale",
+      "right": "c2s",
+      "facts": {
+        "annualResources": 9000,
+        "householdSize": 1,
+        "area": "metropole",
+        "resourcesBasis": "ressources-foyer-12-mois-c2s",
+        "referenceDate": "2027-04-01"
+      },
+      "expected": {
+        "resources": "UNKNOWN"
+      },
+      "basis": "ameli.fr : barème « au 1er avril 2026 », à relire à la revalorisation suivante (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-band-18-24",
+      "right": "faj-strasbourg",
+      "facts": {
+        "ageRange": [
+          18,
+          24
+        ]
+      },
+      "expected": {
+        "age": "MET",
+        "nature": "UNKNOWN"
+      },
+      "basis": "strasbourg.eu « 16 à 25 ans » : tranche annoncée ; la nature de l'aide n'est pas une condition lue (G14)",
+      "status": "PROPOSED_UNREVIEWED"
+    },
+    {
+      "id": "faj-territory-none",
+      "right": "faj-strasbourg",
+      "facts": {},
+      "expected": {
+        "territory": "UNKNOWN",
+        "age": "UNKNOWN"
+      },
+      "basis": "aucune réponse : tout reste inconnu, jamais une acceptation (G14)",
       "status": "PROPOSED_UNREVIEWED"
     }
   ]

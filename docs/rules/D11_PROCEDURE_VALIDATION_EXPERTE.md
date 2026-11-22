@@ -8,7 +8,7 @@ nomme l'organisme qui décide. Ce document explique à la personne experte ce qu
 | Document | Contenu |
 |---|---|
 | `docs/rules/D11_EXPERT_REVIEW_PACK.md` | pour chaque droit : sources officielles et leur date, base légale citée, conditions relevées, lecture automatique proposée, ambiguïtés, cas de référence proposés |
-| `docs/rules/D11_REVIEW_FORM.csv` | le formulaire à remplir : une ligne par condition, par ambiguïté et par cas (85 lignes) |
+| `docs/rules/D11_REVIEW_FORM.csv` | le formulaire à remplir : une ligne par condition, par ambiguïté et par cas (107 lignes depuis le 22/11/2026 : 33 conditions, 13 ambiguïtés, 61 cas) |
 
 Les huit pages Service-Public citées ont été relues le 31/10/2026 (`scripts/d11-source-check.mjs`) : leur date « Vérifié le » n'a pas changé depuis le
 relevé du registre. La page du FAJ (strasbourg.eu) ne porte pas de date. À relancer juste avant la relecture.
@@ -62,3 +62,16 @@ dans chaque résultat.
 
 - Les montants et barèmes (non affichés tant qu'aucun moteur officiel n'est branché, D10).
 - La mention d'information du diagnostic : relecture juridique (P13, mention légale).
+
+## 6. Corrections du 22/11/2026 (G14) et avis IA
+
+- Un avis documentaire assisté par IA (85 lignes, `AI_ONLY_UNVERIFIED_BY_HUMAN`) a servi d'**entrée technique** : chaque correction n'a été faite qu'après
+  relecture, le même jour, de la source officielle (Service-Public, Légifrance, solidarites.gouv.fr, ameli.fr, Unédic, strasbourg.eu), consignée dans
+  `sourceRecheck` de chaque droit. Cet avis **n'est pas une relecture d'expert** : il ne remplit pas le formulaire et ne valide aucun droit.
+- `scripts/d11-review.mjs apply` refuse tout formulaire dont un relecteur est une IA ou un système, ou qui porte des colonnes d'avis IA (`ai_review_status`,
+  `ai_confidence`…) : sortie 3, rien n'est écrit. Le site refuse de même une règle dont la relecture nomme une IA (`NON_HUMAN_REVIEWER`).
+- Les montants (plafonds AAH, C2S) ne sont lus que dans la période que la source date (« au 1er avril 2026 ») et sur la base de ressources qu'elle nomme ;
+  hors de cette période ou sur une autre base : « inconnu ». Les montants sans date dans la source (APA, prime d'activité étudiants) restent du texte.
+- Le texte caché adressé à des agents automatiques (page FAJ) n'est plus une ambiguïté juridique : c'est un contrôle de sécurité de l'ingestion
+  (`ingestionSecurityNotes`, quarantaine dans `api/_services/verification/pages.js`).
+- Le formulaire a été régénéré ; un formulaire rempli sur l'ancienne version (85 lignes) doit être refait.

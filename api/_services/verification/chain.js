@@ -510,7 +510,8 @@ async function readPage(ctx, url, row, { requireMatch = false, kind = 'aide' } =
     const score = contentScore(recordText(row), `${p.title} ${p.text}`);
     if (requireMatch && (score < 0.25 || !pageIsAbout(row, p.title))) return null;
     return { status: 'FOUND', origin: 'PAGE', url: p.url || url, authority: auth, score,
-      source: { title: p.title, description: null, text: p.text, url: p.url || url, fingerprint: p.fingerprint, facts: p.facts, chapters: p.chapters, officialCheckedAt: p.officialCheckedAt, abbreviations: {}, definitions: {} } };
+      source: { title: p.title, description: null, text: p.text, url: p.url || url, fingerprint: p.fingerprint, facts: p.facts, chapters: p.chapters, officialCheckedAt: p.officialCheckedAt, abbreviations: {}, definitions: {},
+        ingestion: p.ingestion || null } };   // G14: quarantined agent-addressed text (counts and hashes only), kept with the evidence
   } catch (e) {
     if (e instanceof SourceError && e.code === 'URL_REFUSED') return requireMatch ? null : { status: 'NONE', url, note: `l'adresse ${url} n'est pas celle d'un site officiel reconnu` };
     return requireMatch ? null : { status: 'RETRY', url, note: `page officielle non lue (${e?.message || e})` };

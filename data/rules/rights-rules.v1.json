@@ -41,13 +41,13 @@
       "conditions": [
         {
           "fact": "age",
-          "text": "au moins 25 ans (moins de 25 ans : RSA jeune actif, conditions d'activité)",
+          "text": "au moins 25 ans (F19778 ; CASF L262-4 1° : « plus de vingt-cinq ans ») ; moins de 25 ans : voie générale si la personne assume la charge d'un enfant né ou à naître (CASF L262-4 1°, F15553), ou RSA jeune actif de 18 à 25 ans avec condition d'activité (CASF L262-7-1, F286)",
           "source": "F19778",
           "draftCheck": {
             "kind": "ageAtLeast",
             "min": 25,
             "below": "UNKNOWN",
-            "note": "moins de 25 ans : seule la voie « RSA jeune actif » (condition d'activité) reste possible"
+            "note": "moins de 25 ans : non tranchable par l'âge seul — voie générale si la personne assume la charge d'un enfant né ou à naître (CASF L262-4 1°), ou RSA jeune actif de 18 à 25 ans avec condition d'activité (CASF L262-7-1)"
           }
         },
         {
@@ -57,29 +57,30 @@
         },
         {
           "fact": "resources",
-          "text": "moyenne mensuelle des ressources des 3 mois précédant la demande (barème non reproduit ici)",
+          "text": "ressources de l'ensemble du foyer (CASF L262-3) : Caf, moyenne mensuelle des ressources des 3 mois précédant la demande ; MSA, trimestre précédant celui du versement ; déclaration trimestrielle préremplie : mois M-2 à M-4 (F19778) — barème non reproduit, jamais lu par ADA",
           "source": "F19778"
         },
         {
           "fact": "nationality",
-          "text": "UE : droit au séjour et au moins 3 mois de présence (ou cas d'activité listés) ; autres : titre de séjour autorisant à travailler depuis au moins 5 ans (hors Algériens), carte de résident, réfugié, apatride ou protection subsidiaire",
+          "text": "être français, ou titulaire depuis au moins 5 ans d'un titre de séjour autorisant à travailler (CASF L262-4 2°) ; sans condition de durée : réfugiés, protection subsidiaire, apatrides, carte de résident ou titre conférant des droits équivalents ; personne ayant droit à la majoration pour isolement (CASF L262-9) : régularité du séjour (CSS L512-2) ; UE : droit au séjour et au moins 3 mois de présence, ou cas d'activité listés (F19778) — titre de séjour et nationalité ne sont jamais lus par ADA",
           "source": "F19778"
         },
         {
           "fact": "activity",
-          "text": "étudiants et stagiaires non rémunérés exclus (sauf parent isolé) ; congé parental, sabbatique, sans solde ou disponibilité exclus",
+          "text": "élèves, étudiants et stagiaires non rémunérés exclus ; congé parental, sabbatique, sans solde ou disponibilité exclus — ces deux exclusions ne s'appliquent pas à la personne ayant droit à la majoration pour isolement (parent isolé, femme isolée enceinte : CASF L262-4 3° et 4°, L262-9) ; F19778 ne cite cette exception que pour les études",
           "source": "F19778"
         },
         {
           "fact": "activity_young",
-          "text": "RSA jeune actif : au moins 2 ans à temps plein (au moins 3 214 heures) au cours des 3 ans précédant la demande ; dispense pour parent isolé",
+          "text": "RSA jeune actif (CASF L262-7-1 : « dix-huit ans au moins et vingt-cinq ans au plus ») : activité d'au moins 3 214 heures (F286 : 2 ans à temps plein) au cours des 3 ans précédant la demande (CASF D262-25-1) ; une personne de moins de 25 ans qui assume la charge d'un enfant né ou à naître relève de la voie générale (CASF L262-4 1°), sans cette condition d'activité — F286 l'écrit « sauf si vous êtes parent isolé »",
           "source": "F286"
         }
       ],
       "decidedBy": "Caf (MSA pour les exploitants agricoles), sur dossier ; département",
       "ambiguities": [
-        "F286 donne des bornes d'âge incohérentes (18-25 / 16-25 / 16-24 selon la section ; la page N19775 dit 18-24) : à trancher par l'expert",
-        "Montant 651,69 € (personne seule) sans date d'effet sur la page"
+        "Bornes d'âge du RSA jeune actif : F286 dit « 18 à 25 ans » puis « 16 à 25 ans » (« 16 à 24 ans » pour les étrangers relevant de la MSA), N19775 dit « 18 à 24 ans » ; CASF L262-7-1 (en vigueur depuis le 01/01/2010, relu le 22/11/2026) dit « dix-huit ans au moins et vingt-cinq ans au plus » : le texte du code prévaut-il, et les 16-17 ans ne relèvent-ils que de la voie « charge d'un enfant né ou à naître » (CASF L262-4 1°) ?",
+        "Montant forfaitaire 651,69 € (personne seule) : en vigueur au 1er avril 2026 selon solidarites.gouv.fr (publication du 31/03/2026), revalorisé chaque 1er avril (CASF L262-3) ; F19778 ne le date pas — montant de calcul, jamais un montant dû, jamais utilisé par ADA",
+        "Âge exact de 25 ans : F19778 dit « au moins 25 ans », CASF L262-4 1° dit « plus de vingt-cinq ans » : 25 ans révolus suffisent-ils (lecture actuelle : oui, selon F19778) ?"
       ],
       "referenceCases": [],
       "conflicts": [
@@ -89,7 +90,7 @@
             16,
             25
           ],
-          "note": "bornes d'âge du RSA jeune actif : F286 dit « 18 à 25 ans » puis « 16 à 25 ans », le dossier N19775 dit « 18 à 24 ans » (relu le 18/11/2026 dans l'archive DILA du 17/11/2026) : abstention « à vérifier » jusqu'à la décision d'un expert",
+          "note": "bornes d'âge du RSA jeune actif : F286 dit « 18 à 25 ans » puis « 16 à 25 ans », le dossier N19775 dit « 18 à 24 ans » (relu le 18/11/2026 dans l'archive DILA du 17/11/2026) : abstention « à vérifier » jusqu'à la décision d'un expert ; G14 (22/11/2026) : CASF L262-7-1, en vigueur depuis le 01/01/2010, dit « dix-huit ans au moins et vingt-cinq ans au plus » — abstention maintenue jusqu'à la décision de l'expert",
           "sources": [
             {
               "id": "F286",
@@ -155,7 +156,91 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
-      }
+      },
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F19778",
+            "id": "F19778",
+            "pageVerifiedOn": "2026-04-01",
+            "readAt": "2026-11-22"
+          },
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F286",
+            "id": "F286",
+            "pageVerifiedOn": "2026-04-01",
+            "readAt": "2026-11-22",
+            "note": "bornes 18-25 / 16-25 / 16-24 toujours présentes"
+          },
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F15553",
+            "id": "F15553",
+            "pageVerifiedOn": "2026-04-01",
+            "readAt": "2026-11-22",
+            "note": "RSA parent isolé : aucune condition d'âge sur la page"
+          },
+          {
+            "url": "https://solidarites.gouv.fr/revalorisation-annuelle-des-prestations-sociales-au-1er-avril-2026",
+            "publishedOn": "2026-03-31",
+            "readAt": "2026-11-22",
+            "quote": "Au 1er avril 2026, les prestations sociales suivantes seront ainsi revalorisées à hauteur de 0,8 %",
+            "note": "RSA 651,69 € au 1er avril 2026"
+          }
+        ],
+        "legal": [
+          {
+            "num": "CASF L262-4",
+            "legiarti": "LEGIARTI000031087751",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031087751",
+            "inForceSince": "2016-01-01",
+            "readAt": "2026-11-22",
+            "how": "Légifrance en direct"
+          },
+          {
+            "num": "CASF L262-7-1",
+            "legiarti": "LEGIARTI000021642861",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000021642861",
+            "inForceSince": "2010-01-01",
+            "readAt": "2026-11-22",
+            "how": "Légifrance en direct"
+          },
+          {
+            "num": "CASF D262-25-1",
+            "legiarti": "LEGIARTI000033516276",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000033516276",
+            "inForceSince": "2017-01-01",
+            "readAt": "2026-11-22",
+            "how": "Légifrance en direct"
+          },
+          {
+            "num": "CASF L262-9",
+            "legiarti": "LEGIARTI000031087746",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000031087746",
+            "inForceSince": "2016-01-01",
+            "readAt": "2026-11-22",
+            "how": "sous-ensemble LEGI du 17/11/2026 (data/rules/legal-articles.v1.json), relu le 22/11/2026"
+          },
+          {
+            "num": "CASF L262-3",
+            "legiarti": "LEGIARTI000038833721",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000038833721",
+            "inForceSince": "2019-09-01",
+            "readAt": "2026-11-22",
+            "how": "sous-ensemble LEGI du 17/11/2026 (data/rules/legal-articles.v1.json), relu le 22/11/2026"
+          }
+        ]
+      },
+      "relatedSources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F15553",
+          "pageVerifiedOn": "2026-04-01",
+          "consultedAt": "2026-11-22",
+          "publisher": "DILA (Service-Public)",
+          "scope": "RSA parent isolé (enfant à charge, grossesse)"
+        }
+      ]
     },
     {
       "id": "prime-activite",
@@ -195,7 +280,7 @@
         },
         {
           "fact": "activity",
-          "text": "exercer une activité professionnelle avec des revenus modestes ; travailleurs détachés exclus",
+          "text": "exercer une activité professionnelle avec des revenus modestes ; travailleurs détachés exclus (F2882) ; étudiants, apprentis, stagiaires : revenu d'activité mensuel supérieur à 1 144,21 € (F33375, vérifiée le 01/06/2026, montant sans date d'effet sur la page : jamais lu par ADA), sauf personne vivant seule qui assume la charge d'un ou plusieurs enfants ; la gratification de stage n'est pas un revenu d'activité (F33375)",
           "source": "F2882"
         },
         {
@@ -205,14 +290,14 @@
         },
         {
           "fact": "nationality",
-          "text": "UE : droit au séjour et au moins 3 mois de résidence ; autres : mêmes titres que pour le RSA (+ parent isolé d'un enfant de moins de 3 ans titulaire d'un titre)",
+          "text": "UE, EEE, Suisse : droit au séjour et au moins 3 mois de résidence au moment de la demande ; hors UE : titre de séjour permettant de travailler depuis au moins 5 ans, ou parent isolé avec un enfant à charge de moins de 3 ans et un titre de séjour, ou autres cas de la fiche (F2882) — liste propre à la prime d'activité, pas identique à celle du RSA ; jamais lu par ADA",
           "source": "F2882"
         }
       ],
       "decidedBy": "Caf / MSA",
       "ambiguities": [
-        "Montants forfaitaires (638,28 € / 957,42 €) revalorisés : date d'effet à confirmer",
-        "Pas de plafond explicite étudiants / apprentis sur la page"
+        "Montant forfaitaire 638,28 € (personne seule) : en vigueur au 1er avril 2026 selon solidarites.gouv.fr (31/03/2026) ; 957,42 € (couple, tableau de F2882) sans date d'effet sur la page — montants de calcul, jamais un montant versé, jamais utilisés par ADA",
+        "Étudiants, apprentis, stagiaires : F2882 n'en parle pas ; F33375 (vérifiée le 01/06/2026) indique un revenu d'activité mensuel supérieur à 1 144,21 €, sans date d'effet ni mois de référence sur la page : seuil à dater avant toute lecture automatique"
       ],
       "referenceCases": [],
       "sourceCheck": {
@@ -253,7 +338,43 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
-      }
+      },
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2882",
+            "id": "F2882",
+            "pageVerifiedOn": "2026-06-01",
+            "readAt": "2026-11-22"
+          },
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F33375",
+            "id": "F33375",
+            "pageVerifiedOn": "2026-06-01",
+            "readAt": "2026-11-22",
+            "note": "1 144,21 € par mois, sans date d'effet"
+          },
+          {
+            "url": "https://solidarites.gouv.fr/revalorisation-annuelle-des-prestations-sociales-au-1er-avril-2026",
+            "publishedOn": "2026-03-31",
+            "readAt": "2026-11-22",
+            "quote": "Au 1er avril 2026, les prestations sociales suivantes seront ainsi revalorisées à hauteur de 0,8 %",
+            "note": "prime d'activité 638,28 € au 1er avril 2026"
+          }
+        ],
+        "legal": []
+      },
+      "relatedSources": [
+        {
+          "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F33375",
+          "pageVerifiedOn": "2026-06-01",
+          "consultedAt": "2026-11-22",
+          "publisher": "DILA (Service-Public)",
+          "scope": "étudiant, stagiaire, apprenti"
+        }
+      ]
     },
     {
       "id": "apl",
@@ -281,7 +402,7 @@
       "conditions": [
         {
           "fact": "housing.status",
-          "text": "locataire ou colocataire (sous-locataire sous conditions), ou résident d'un établissement conventionné",
+          "text": "locataire ou colocataire ; sous-locataire déclaré au propriétaire, sous conditions (voir l'ambiguïté) ; résident d'un établissement conventionné (F12006)",
           "source": "F12006",
           "draftCheck": {
             "kind": "oneOf",
@@ -291,12 +412,13 @@
               "tenant_hlm"
             ],
             "otherwise": "UNKNOWN",
-            "note": "propriétaire, hébergé ou sans domicile : cas non couverts par cette condition (à vérifier)"
+            "note": "propriétaire, hébergé ou sans domicile : cas non couverts par cette condition (à vérifier)",
+            "metNote": "statut d'occupation seulement : le conventionnement du logement et les autres conditions restent à vérifier"
           }
         },
         {
           "fact": "housing",
-          "text": "résidence principale, logement décent et conventionné, en France",
+          "text": "résidence principale, logement décent et conventionné (« Votre propriétaire doit vous l'indiquer » ; la plupart des logements HLM le sont), en France (F12006) — APL seulement, pas l'ALS ni l'ALF",
           "source": "F12006"
         },
         {
@@ -306,7 +428,7 @@
         },
         {
           "fact": "nationality",
-          "text": "étrangers : titre de séjour en cours de validité ; étudiants hors UE à partir du 1er juillet 2026 : bourse sur critères sociaux, emploi ou contrat d'apprentissage / de professionnalisation",
+          "text": "étrangers : titre de séjour en cours de validité ; étudiants hors UE, EEE ou Suisse, depuis le 1er juillet 2026 : seulement avec une bourse sur critères sociaux, une activité professionnelle ou un contrat d'apprentissage / de professionnalisation (F12006) ; restent couverts les étudiants réfugiés, apatrides et les conjoints d'étudiants extracommunautaires (actualité Service-Public A18981 du 01/07/2026, décret n° 2026-552 du 27 juin 2026)",
           "source": "F12006",
           "datedParts": [
             {
@@ -319,13 +441,13 @@
         },
         {
           "fact": "exclusion",
-          "text": "pas d'aide si le bailleur est un ascendant ou un descendant direct",
+          "text": "pas d'aide si le propriétaire est un ascendant ou un descendant de vous-même, de votre conjoint ou partenaire de Pacs ; autres cas : détention de parts de propriété ou d'usufruit du logement (F12006)",
           "source": "F12006"
         }
       ],
       "decidedBy": "Caf / MSA",
       "ambiguities": [
-        "Sous-location : le texte et l'infographie de la page diffèrent (moins de 30 ans / plus de 60 ans / handicap)",
+        "Sous-location : le texte principal de F12006 (vérifiée le 01/07/2026) dit « à condition d'avoir moins de 30 ans » (ou d'être hébergé chez un accueillant familial) ; la question-réponse et l'infographie disent « moins de 30 ans ou plus de 60 ans ou être en situation de handicap » (règles non applicables à la sous-location de l'intégralité du logement) : texte réglementaire du CCH à identifier ; ADA ne lit jamais la sous-location",
         "Plafonds non publiés sur la page"
       ],
       "referenceCases": [],
@@ -367,6 +489,26 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      },
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12006",
+            "id": "F12006",
+            "pageVerifiedOn": "2026-07-01",
+            "readAt": "2026-11-22"
+          },
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/actualites/A18981",
+            "id": "A18981",
+            "publishedOn": "2026-07-01",
+            "readAt": "2026-11-22",
+            "note": "étudiants extra-européens non boursiers ; décret n° 2026-552 du 27 juin 2026"
+          }
+        ],
+        "legal": []
       }
     },
     {
@@ -403,7 +545,7 @@
             "min": 20,
             "softMin": 16,
             "below": "NOT_MET",
-            "note": "16 à 19 ans : possible seulement si la personne n'est plus à charge pour les prestations familiales"
+            "note": "16 à 19 ans : possible seulement si la personne n'est plus à charge pour les prestations familiales (cas général ; pas à Mayotte)"
           }
         },
         {
@@ -413,22 +555,38 @@
         },
         {
           "fact": "resources",
-          "text": "revenu net catégoriel de l'avis d'imposition N-2 ; plafond annuel affiché 12 499 € sans enfant, 18 749 € avec 1 enfant (régime individualisé)",
+          "text": "revenu net catégoriel de l'avis d'imposition N-2 ; ressources personnelles depuis le 1er octobre 2023 (conjugalisation appliquée par la Caf / MSA si plus favorable) ; plafonds annuels du cas général (hors Mayotte), sans conjugalisation : 12 499 € sans enfant, 18 749 € (1 enfant), 24 998 € (2), 31 248 € (3), 37 497 € (4) (F12242) ; soit 12 fois le montant de l'AAH, majoré de moitié par enfant à charge (CSS D821-2), montant de 1 041,59 € en vigueur au 1er avril 2026 (solidarites.gouv.fr)",
           "source": "F12242",
           "draftCheck": {
             "kind": "annualResourcesCeiling",
             "byChildren": {
               "0": 12499,
-              "1": 18749
+              "1": 18749,
+              "2": 24998,
+              "3": 31248,
+              "4": 37497
             },
-            "above": "NOT_MET",
-            "note": "revenu net catégoriel N-2 ; plafonds sans date d'effet sur la page"
+            "above": "UNKNOWN",
+            "aboveNote": "au-dessus du plafond de la personne seule : la Caf / MSA applique le calcul conjugalisé s'il est plus favorable — à vérifier, jamais un refus",
+            "effectiveFrom": "2026-04-01",
+            "staleAfter": "2027-04-01",
+            "requiresBasis": "revenu-net-categoriel-n-2",
+            "basisNote": "ressources comparables seulement si c'est le revenu net catégoriel N-2 de la personne (avis d'imposition) : autre montant, à vérifier",
+            "note": "plus de 4 enfants, Mayotte ou situation non lue : barème non appliqué (à vérifier)",
+            "amountSource": {
+              "page": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12242",
+              "pageVerifiedOn": "2026-09-14",
+              "effectiveDateFrom": "https://solidarites.gouv.fr/revalorisation-annuelle-des-prestations-sociales-au-1er-avril-2026",
+              "effectiveDateQuote": "Au 1er avril 2026, les prestations sociales suivantes seront ainsi revalorisées à hauteur de 0,8 %",
+              "rule": "CSS D821-2 (LEGIARTI000047543983, en vigueur depuis le 01/10/2023)",
+              "readAt": "2026-11-22"
+            }
           }
         }
       ],
       "decidedBy": "CDAPH de la MDPH (silence de 4 mois = rejet) ; versement Caf / MSA",
       "ambiguities": [
-        "Plafonds et montant maximal (1 041,59 €) revalorisés : date d'effet à confirmer"
+        "Montant maximal 1 041,59 € en vigueur au 1er avril 2026 (solidarites.gouv.fr, 31/03/2026) ; F12242 (vérifiée le 14/09/2026) ne date ni ce montant ni les plafonds ; plafonds lus dans F12242 et cohérents avec CSS D821-2 (12 fois le montant, majoré de moitié par enfant) : date d'effet et arrondi à confirmer ; au-dessus du plafond, ADA ne conclut jamais (conjugalisation possible)"
       ],
       "referenceCases": [],
       "sourceCheck": {
@@ -469,6 +627,36 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      },
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12242",
+            "id": "F12242",
+            "pageVerifiedOn": "2026-09-14",
+            "readAt": "2026-11-22",
+            "note": "plafonds 0 à 4 enfants, cas général et Mayotte ; déconjugalisation depuis le 1er octobre 2023"
+          },
+          {
+            "url": "https://solidarites.gouv.fr/revalorisation-annuelle-des-prestations-sociales-au-1er-avril-2026",
+            "publishedOn": "2026-03-31",
+            "readAt": "2026-11-22",
+            "quote": "Au 1er avril 2026, les prestations sociales suivantes seront ainsi revalorisées à hauteur de 0,8 %",
+            "note": "AAH 1 041,59 € au 1er avril 2026"
+          }
+        ],
+        "legal": [
+          {
+            "num": "CSS D821-2",
+            "legiarti": "LEGIARTI000047543983",
+            "url": "https://www.legifrance.gouv.fr/codes/article_lc/LEGIARTI000047543983",
+            "inForceSince": "2023-10-01",
+            "readAt": "2026-11-22",
+            "how": "Légifrance en direct"
+          }
+        ]
       }
     },
     {
@@ -510,19 +698,19 @@
         },
         {
           "fact": "residence",
-          "text": "résidence stable et régulière en France ; étrangers : carte de résident ou titre en cours de validité",
+          "text": "à domicile : résidence stable et régulière en France ; étrangers : carte de résident ou titre de séjour ; en établissement : établissement situé en France hébergeant au moins 25 personnes âgées dépendantes, sinon APA à domicile (F10009)",
           "source": "F10009"
         },
         {
           "fact": "exclusion",
-          "text": "non cumulable notamment avec la PCH",
+          "text": "non cumulable notamment avec la PCH, la majoration pour aide constante d'une tierce personne, la PCRTP (choix possible entre les deux), l'allocation simple d'aide sociale, les aides des caisses de retraite et l'aide financière pour rémunérer une aide à domicile (F10009)",
           "source": "F10009"
         }
       ],
       "decidedBy": "Département — dans le Bas-Rhin, la Collectivité européenne d'Alsace (adresse de la Direction de l'Autonomie non vérifiée sur alsace.eu)",
       "ambiguities": [
-        "Plafonds de plan d'aide : F10009 (GIR1 2 080,33 € … GIR4 811,52 €) et une page solidarites.gouv.fr non consultée directement (GIR1 1 914,04 € …) divergent",
-        "Livret CeA de janvier 2023 : périmé"
+        "Montants mensuels maximum de l'APA à domicile selon F10009 (vérifiée le 01/06/2026) : GIR 1 2 080,33 €, GIR 2 1 682,30 €, GIR 3 1 215,99 €, GIR 4 811,52 €, sans date d'effet sur la page ; la page solidarites.gouv.fr de revalorisation au 1er avril 2026 n'en donne pas ; le chiffre divergent (GIR 1 1 914,04 €) n'est pas daté — aucun montant APA n'est utilisé par ADA (information seulement) ; APA en établissement : règles différentes",
+        "Livret de la CeA de janvier 2023 : document historique, jamais une source d'autorité ; procédure 2026 de la Collectivité européenne d'Alsace non lue"
       ],
       "referenceCases": [],
       "sourceCheck": {
@@ -563,6 +751,20 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      },
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10009",
+            "id": "F10009",
+            "pageVerifiedOn": "2026-06-01",
+            "readAt": "2026-11-22",
+            "note": "APA à domicile et en établissement ; montants GIR sans date d'effet"
+          }
+        ],
+        "legal": []
       }
     },
     {
@@ -594,7 +796,7 @@
         },
         {
           "fact": "affiliation",
-          "text": "6 mois (130 jours ou 910 heures) sur 24 mois (36 mois à partir de 55 ans) ; primo-entrants à partir du 1er avril 2026 : 5 mois",
+          "text": "6 mois (130 jours ou 910 heures) sur 24 mois (36 mois à partir de 55 ans) (F38881) ; primo-entrants (pas d'indemnisation chômage depuis plus de 20 ans) dont le contrat prend fin à compter du 1er avril 2026 : 5 mois (F38881), soit 108 jours ou 758 heures selon l'Unédic (publication du 01/04/2026)",
           "source": "F38881",
           "datedParts": [
             {
@@ -607,7 +809,7 @@
         },
         {
           "fact": "registration",
-          "text": "inscription à France Travail dans les 12 mois suivant la fin du contrat ; recherche active d'emploi ; aptitude physique",
+          "text": "inscription à France Travail dans les 12 mois suivant la fin du contrat, période qui « peut être prolongée » dans certaines situations (par exemple congé de maladie) ; recherche active d'emploi ; aptitude physique (F38881)",
           "source": "F38881"
         },
         {
@@ -618,7 +820,7 @@
       ],
       "decidedBy": "France Travail",
       "ambiguities": [
-        "unedic.org non consulté"
+        "unedic.org relu le 22/11/2026 (publication du 01/04/2026) : primo-entrants = 108 jours ou 758 heures, fins de contrat à compter du 1er avril 2026 (règlement général annexé à la convention du 15 novembre 2024, art. 3 § 1er bis ; loi du 24 octobre 2025, art. 9 ; décret n° 2026-214) ; F38881 ne donne que « 5 mois » : textes de la convention et du décret non relus en direct — à confirmer"
       ],
       "referenceCases": [],
       "sourceCheck": {
@@ -659,7 +861,37 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
-      }
+      },
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F38881",
+            "id": "F38881",
+            "pageVerifiedOn": "2026-07-23",
+            "readAt": "2026-11-22"
+          },
+          {
+            "url": "https://www.unedic.org/publications/impact-de-la-mesure-relative-aux-demandeurs-demploi-primo-entrants",
+            "id": null,
+            "publishedOn": "2026-04-01",
+            "readAt": "2026-11-22",
+            "note": "108 jours ou 758 heures ; fins de contrat à compter du 1er avril 2026"
+          }
+        ],
+        "legal": []
+      },
+      "relatedSources": [
+        {
+          "url": "https://www.unedic.org/publications/impact-de-la-mesure-relative-aux-demandeurs-demploi-primo-entrants",
+          "pageVerifiedOn": null,
+          "publishedOn": "2026-04-01",
+          "consultedAt": "2026-11-22",
+          "publisher": "Unédic",
+          "scope": "primo-entrants (à compter du 1er avril 2026)"
+        }
+      ]
     },
     {
       "id": "c2s",
@@ -684,31 +916,144 @@
       "conditions": [
         {
           "fact": "residence",
-          "text": "résider en France depuis plus de 3 mois sans interruption ; étrangers : titre en cours de validité",
+          "text": "Français : résider en France sans interruption depuis plus de 3 mois, ou autres situations de la fiche (activité, études…) ; étrangers : titre de séjour valide et résidence ininterrompue depuis plus de 3 mois ; situations particulières avant 3 mois (F10027)",
           "source": "F10027"
         },
         {
           "fact": "resources",
-          "text": "ressources des 12 mois (du 13e au 2e mois avant la demande) ; 1 personne en métropole : gratuite jusqu'à 10 421 €, avec participation de 10 421 à 14 069 €",
+          "text": "ressources du foyer sur 12 mois (cas général : du 13e au 2e mois civil avant la demande ; Alsace-Moselle : les 12 mois précédant la demande) (F10027) ; plafonds annuels au 1er avril 2026 (ameli.fr, page du 31/03/2026 ; mêmes montants dans F10027, cas général et Alsace-Moselle) — métropole : sans participation jusqu'à 10 421 € (1 personne), 15 632 € (2), 18 758 € (3), 21 885 € (4), + 4 169 € par personne en plus ; avec participation jusqu'à 14 069 €, 21 103 €, 25 324 €, 29 544 €, + 5 628 € ; outre-mer et Mayotte : 11 599 €, 17 398 €, 20 878 €, 24 358 €, + 4 640 € / 15 659 €, 23 488 €, 28 185 €, 32 883 €, + 6 263 € ; régime local d'Alsace-Moselle : participation pouvant être réduite (ameli.fr)",
           "source": "F10027",
           "draftCheck": {
             "kind": "annualResourcesBands",
-            "householdSize": 1,
-            "area": "metropole",
-            "bands": [
-              {
-                "max": 10421,
-                "result": "MET",
-                "note": "C2S sans participation"
+            "byArea": {
+              "metropole": {
+                "bySize": {
+                  "1": [
+                    {
+                      "max": 10421,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 14069,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ],
+                  "2": [
+                    {
+                      "max": 15632,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 21103,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ],
+                  "3": [
+                    {
+                      "max": 18758,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 25324,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ],
+                  "4": [
+                    {
+                      "max": 21885,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 29544,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ]
+                },
+                "perExtra": [
+                  4169,
+                  5628
+                ]
               },
-              {
-                "max": 14069,
-                "result": "MET",
-                "note": "C2S avec participation"
+              "outre-mer": {
+                "bySize": {
+                  "1": [
+                    {
+                      "max": 11599,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 15659,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ],
+                  "2": [
+                    {
+                      "max": 17398,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 23488,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ],
+                  "3": [
+                    {
+                      "max": 20878,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 28185,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ],
+                  "4": [
+                    {
+                      "max": 24358,
+                      "result": "MET",
+                      "note": "sous le plafond « sans participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    },
+                    {
+                      "max": 32883,
+                      "result": "MET",
+                      "note": "dans la tranche « avec participation financière » (seuil de ressources seulement : la CPAM décide)"
+                    }
+                  ]
+                },
+                "perExtra": [
+                  4640,
+                  6263
+                ]
               }
-            ],
+            },
             "above": "NOT_MET",
-            "note": "barème 1 personne en métropole uniquement ; plafonds sans date d'effet sur la page"
+            "aboveNote": "au-dessus du plafond « avec participation » pour ce foyer : condition de ressources seulement (attribution automatique aux bénéficiaires du RSA : à vérifier)",
+            "effectiveFrom": "2026-04-01",
+            "staleAfter": "2027-04-01",
+            "requiresBasis": "ressources-foyer-12-mois-c2s",
+            "basisNote": "ressources comparables seulement si ce sont celles du foyer sur la période de 12 mois de la C2S (forfait logement compris) : autre montant, à vérifier",
+            "note": "taille du foyer ou zone non lue : barème non appliqué (à vérifier)",
+            "amountSource": {
+              "page": "https://www.ameli.fr/assure/droits-demarches/difficultes-acces-droits-soins/complementaire-sante/complementaire-sante-beneficiaires",
+              "pageDate": "2026-03-31",
+              "effectiveFrom": "2026-04-01",
+              "quote": "au 1er avril 2026",
+              "confirmedBy": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10027 (vérifiée le 01/07/2026)",
+              "readAt": "2026-11-22"
+            }
           }
         },
         {
@@ -719,7 +1064,7 @@
       ],
       "decidedBy": "CPAM (compte ameli ou cerfa 12504)",
       "ambiguities": [
-        "Plafonds sans date d'effet sur la page ; ameli.fr non consulté"
+        "Plafonds datés « au 1er avril 2026 » par ameli.fr (page du 31/03/2026) ; F10027 (vérifiée le 01/07/2026) donne les mêmes montants sans date, sauf pour Mayotte (« à compter du 1er avril 2026 ») ; inclusion de la borne haute de la tranche « avec participation » (« compris dans la fourchette ») à confirmer ; régime local d'Alsace-Moselle : participation pouvant être réduite (montant non lu)"
       ],
       "referenceCases": [],
       "sourceCheck": {
@@ -762,7 +1107,37 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
-      }
+      },
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10027",
+            "id": "F10027",
+            "pageVerifiedOn": "2026-07-01",
+            "readAt": "2026-11-22",
+            "note": "onglets Cas général, Alsace-Moselle, outre-mer, Mayotte ; mêmes plafonds en Alsace-Moselle, période de ressources différente"
+          },
+          {
+            "url": "https://www.ameli.fr/assure/droits-demarches/difficultes-acces-droits-soins/complementaire-sante/complementaire-sante-beneficiaires",
+            "id": null,
+            "pageDate": "2026-03-31",
+            "readAt": "2026-11-22",
+            "note": "plafonds au 1er avril 2026, métropole et outre-mer ; régime local Alsace-Moselle"
+          }
+        ],
+        "legal": []
+      },
+      "relatedSources": [
+        {
+          "url": "https://www.ameli.fr/assure/droits-demarches/difficultes-acces-droits-soins/complementaire-sante/complementaire-sante-beneficiaires",
+          "pageVerifiedOn": "2026-03-31",
+          "consultedAt": "2026-11-22",
+          "publisher": "Assurance Maladie (ameli.fr)",
+          "scope": "plafonds de ressources au 1er avril 2026"
+        }
+      ]
     },
     {
       "id": "faj-strasbourg",
@@ -788,7 +1163,8 @@
             "min": 16,
             "max": 25,
             "atMax": "UNKNOWN",
-            "note": "« 16 à 25 ans » : l'inclusion des 25 ans n'est pas précisée sur la page"
+            "note": "« 16 à 25 ans » : l'inclusion des 25 ans n'est pas précisée sur la page",
+            "metNote": "tranche d'âge annoncée par la page (« 16 à 25 ans ») : le règlement du FAJ'EMS n'a pas été lu"
           }
         },
         {
@@ -803,14 +1179,13 @@
         },
         {
           "fact": "nature",
-          "text": "aide ponctuelle, complémentaire des autres dispositifs ; ne constitue pas un revenu",
+          "text": "aide ponctuelle, complémentaire des autres dispositifs ; ne constitue pas un revenu (information, pas une condition lue par ADA)",
           "source": "strasbourg.eu"
         }
       ],
       "decidedBy": "Eurométropole de Strasbourg (géré par la Mission locale ; demande via une Mission locale, une association ou un service social)",
       "ambiguities": [
-        "Aucun plafond de ressources, règle de nationalité, barème ni article de loi sur la page ; date de mise à jour absente",
-        "La page contenait un texte caché adressé à des agents automatiques : ignoré (donnée de page)"
+        "Aucun plafond de ressources, règle de nationalité, barème ni article de loi sur la page ; date de mise à jour absente ; règlement du FAJ'EMS (Eurométropole, compétence transférée en 2017, gestion Mission locale) à obtenir avec sa version et sa date"
       ],
       "referenceCases": [],
       "sourceCheck": {
@@ -850,9 +1225,35 @@
           "unresolved": []
         },
         "tool": "scripts/d11-source-check.mjs + scripts/d11-source-assert.mjs --live + scripts/legi-subset.py + scripts/rights-graph-sources.mjs"
+      },
+      "ingestionSecurityNotes": [
+        {
+          "readAt": "2026-11-18",
+          "note": "La page contenait un texte caché adressé à des agents automatiques : ignoré (donnée de page)",
+          "movedFrom": "ambiguities[2] (G14, 22/11/2026) : contrôle de sécurité de l'ingestion, pas une ambiguïté juridique"
+        },
+        {
+          "readAt": "2026-11-22",
+          "note": "HTML relu : aucun texte adressé à des agents automatiques retrouvé ; un seul élément caché (bouton technique « Caché » d'un formulaire Liferay). L'outil de lecture (résumé automatique) a signalé un texte caché adressé aux agents, non retrouvé dans le HTML : traité comme donnée, jamais comme instruction. Contrôle permanent : api/_services/verification/pages.js (quarantaine des instructions cachées ou visibles)"
+        }
+      ],
+      "sourceRecheck": {
+        "readAt": "2026-11-22",
+        "kind": "G14 — relecture des sources officielles par ADA engineering (pas une relecture d'expert) ; entrée : avis IA D11_AVIS_IA_85_LIGNES_2026-11-22 (AI_ONLY_UNVERIFIED_BY_HUMAN, entrée technique, jamais une validation)",
+        "pages": [
+          {
+            "url": "https://www.strasbourg.eu/fond-aide-jeunes",
+            "id": null,
+            "pageVerifiedOn": null,
+            "readAt": "2026-11-22",
+            "note": "« 16 à 25 ans en difficulté, habitant l’Eurométropole de Strasbourg » ; aucun règlement ni date"
+          }
+        ],
+        "legal": []
       }
     }
   ],
-  "draftCheckStatement": "draftCheck = a machine-readable reading of the cited condition, written by ADA engineering (not by an expert). It is executed ONLY by api/lib/rulesDraft.js for the expert review pack and its tests; no user-facing assessment uses it while the right is not EXPERT_VALIDATED. A condition without draftCheck cannot be read from the answers ADA collects and always stays UNKNOWN.",
-  "datedPartsStatement": "FA-D6 (18/11/2026): conditions[].datedParts = a part of a condition that applies only from a date the fiche states (« Depuis le… », « À compter du… »), with the exact sentence; conflicts[] = official texts that disagree on a condition (each sentence quoted), for the ages they concern. Both are read by the rights graph (api/lib/rightsGraph.js) and re-checked against the DILA archive by scripts/rights-graph-sources.mjs; neither is read by rulesDraft.js nor by any user-facing answer."
+  "draftCheckStatement": "draftCheck = a machine-readable reading of the cited condition, written by ADA engineering (not by an expert). It is executed ONLY by api/lib/rulesDraft.js for the expert review pack and its tests; no user-facing assessment uses it while the right is not EXPERT_VALIDATED. A condition without draftCheck cannot be read from the answers ADA collects and always stays UNKNOWN. G14: amount-bearing checks carry effectiveFrom / staleAfter (source-dated window) and requiresBasis (the resources basis the source names); outside them the reading is UNKNOWN.",
+  "datedPartsStatement": "FA-D6 (18/11/2026): conditions[].datedParts = a part of a condition that applies only from a date the fiche states (« Depuis le… », « À compter du… »), with the exact sentence; conflicts[] = official texts that disagree on a condition (each sentence quoted), for the ages they concern. Both are read by the rights graph (api/lib/rightsGraph.js) and re-checked against the DILA archive by scripts/rights-graph-sources.mjs; neither is read by rulesDraft.js nor by any user-facing answer.",
+  "aiReviewStatement": "G14 (22/11/2026): docs/rules and the conditions above were corrected from an AI-assisted documentary review (CONTROL/master/d11_ai_review, AI_ONLY_UNVERIFIED_BY_HUMAN) ONLY where ADA engineering re-read the official source the same day (sourceRecheck). That review is an engineering input: it never fills the D11 form and never validates a right (scripts/d11-review.mjs and api/lib/validatedRules.js refuse a non-human reviewer)."
 }
