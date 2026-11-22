@@ -92,9 +92,9 @@ describe('E2 — « accounts » opens the booking scope unless ADA_BETA_ACCOUNTS
   });
   it('the browser shows only the booking screens in the narrow scope', () => {
     const sub = { accountsScope: 'booking', proSelfRegistration: false };
-    for (const p of ['/login', '/auth/login', '/auth/signup', '/auth/verify-email', '/auth/reset', '/compte', '/compte/rendez-vous', '/compte/parametres'])
+    for (const p of ['/login', '/auth/login', '/auth/signup', '/auth/verify-email', '/auth/reset', '/compte', '/compte/rendez-vous', '/compte/parametres', '/compte/profil'])
       expect(isBetaRestrictedPath(p, ['accounts'], sub), p).toBe(false);
-    for (const p of ['/compte/profil', '/compte/parcours', '/compte/favoris', '/compte/historique', '/compte/delegations', '/compte/coffre', '/compte/orientations', '/compte/messages'])
+    for (const p of ['/compte/parcours', '/compte/favoris', '/compte/historique', '/compte/delegations', '/compte/coffre', '/compte/orientations', '/compte/messages'])
       expect(isBetaRestrictedPath(p, ['accounts'], sub), p).toBe(true);
     expect(isBetaRestrictedPath('/compte/parcours', ['accounts'], { ...sub, accountsScope: 'full' })).toBe(false);
     expect(isBetaRestrictedPath('/compte', [], sub)).toBe(true);

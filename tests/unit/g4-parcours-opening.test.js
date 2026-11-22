@@ -90,7 +90,7 @@ describe('G4 server — ADA_BETA_ACCOUNTS_EXTRA', () => {
 describe('G4 screens — VITE_PUBLIC_BETA_ACCOUNTS_EXTRA', () => {
   const sub = { accountsScope: 'booking', proSelfRegistration: false, accountsExtras: ['parcours'] };
   const narrow = { accountsScope: 'booking', proSelfRegistration: false };
-  const SCREENS = ['/compte/messages', '/compte/profil', '/compte/coffre', '/compte/favoris', '/compte/historique', '/compte/delegations', '/compte/delegations/x',
+  const SCREENS = ['/compte/messages', '/compte/coffre', '/compte/favoris', '/compte/historique', '/compte/delegations', '/compte/delegations/x',
     '/compte/orientations', '/compte/partages/abc', '/share/abc', '/passport'];
 
   it('shows /compte/parcours and keeps every other closed account screen behind the beta notice', () => {

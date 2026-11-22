@@ -78,7 +78,10 @@ const builtSub = () => {
   return { accountsScope: scope.trim().toLowerCase() === 'full' ? 'full' : 'booking', proSelfRegistration: reg.trim().toLowerCase() === 'open', accountsExtras: extrasOf(extra) };
 };
 /** the account screens of the narrow (booking) scope: sign-in and sign-up, the Mon Espace home, appointments and the account settings (rights) */
-export const ACCOUNTS_BOOKING_SCREENS = Object.freeze({ prefixes: ['/login', '/auth', '/compte/rendez-vous', '/compte/parametres'], exact: ['/compte'] });
+// G14 (local citizen acceptance 22/11): /compte/profil holds the profile, the account language (C04) and the e-mail preferences (C20/N01), which the server
+// already serves in the narrow scope (citizen/profile, citizen/preferences: api/_utils/public-beta.js ACCOUNTS_BOOKING_SCOPE) — it was missing here, so the
+// settings links led to the closed page.
+export const ACCOUNTS_BOOKING_SCREENS = Object.freeze({ prefixes: ['/login', '/auth', '/compte/rendez-vous', '/compte/parametres', '/compte/profil'], exact: ['/compte'] });
 export const PRO_SELF_REGISTRATION_SCREEN = '/pro/register';
 
 /** @param {string} p normalized path @param {string} x screen prefix */
