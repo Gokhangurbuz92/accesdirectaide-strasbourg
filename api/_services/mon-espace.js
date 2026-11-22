@@ -21,6 +21,7 @@ import { parcoursItemTable, parcoursPlanStepSchema } from '../_utils/schema-feat
 import { mergePlanStep, planNeeds, planStepFits, planStepFromPlan, readPlanStep, validatePlanStepInput } from '../lib/parcours-plan-step.js';
 import { PLAN_CLOSURES, PLAN_DONE_STATUSES, closureOf, dependencyCycle } from '../../src/lib/parcoursPlan.js';
 import { classifyParcoursStep, parcoursNotesOpen, parcoursSensitiveMode } from '../lib/parcours-sensitivity.js';
+import { STEP_TYPE_PREFIX, allowedTypeStructures, deadlineSourceOf, stepTypeOf, stepTypeOfItem, structureFitsStepType } from '../lib/parcours-step-types.js';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
@@ -32,7 +33,8 @@ export const MAX_PARCOURS_ITEMS = 100;
 export const MAX_PARCOURS_NOTE = 500;
 const planKeyOf = (shareId, step) => crypto.createHash('sha256').update(JSON.stringify([shareId, step.kind, step.who || '', [...(step.itemCodes || [])].sort()])).digest('hex').slice(0, 40);
 // M1: `status` stays one of the ten self-declared states; `closure` says why a CLOSED step ended when the person said so (ABANDONED | OUTCOME_UNKNOWN), else null
-const itemView = (r) => ({ id: r.id, origin: r.origin, sourceShareId: r.sourceShareId, stepKind: r.stepKind, itemCodes: r.itemCodes, title: r.title, status: r.status, closure: closureOf(r),
+// G14: `stepType` = the code of the reviewed list the step was created from (null for a step of the former contract)
+const itemView = (r) => ({ id: r.id, origin: r.origin, sourceShareId: r.sourceShareId, stepKind: r.stepKind, itemCodes: r.itemCodes, stepType: stepTypeOfItem(r)?.code || null, title: r.title, status: r.status, closure: closureOf(r),
   dueDate: r.dueDate, dueSourceUrl: r.dueSourceUrl, note: r.note, createdAt: r.createdAt, updatedAt: r.updatedAt });
 
 /**
@@ -323,6 +325,64 @@ export async function addManualItem(userId, input, db = defaultDb) {
   const [row] = await db.insert(T).values({ userId, origin: 'MANUAL', stepKind: 'custom', title, ...ps.values }).returning();
   await event(db, row, 'CREATED', null, 'NOT_STARTED');
   return { ok: true, status: 201, item: itemView(row), ...(ps.saved === undefined ? {} : { planSaved: ps.saved }) };
+}
+
+// ───────────── G14: the LIMITED Mon Parcours — a step is a code of the reviewed list (api/lib/parcours-step-types.js), never free text
+const STRUCTURE_NOT_ALLOWED = () => bad('STRUCTURE_NOT_ALLOWED', 'Cet organisme ne peut pas être choisi pour cette étape.', 422);
+const UNKNOWN_STEP_TYPE = () => bad('INVALID_STEP_TYPE', 'Choisissez une étape dans la liste.');
+
+/**
+ * The published structures that may be attached to a step of this type (its listed kinds only), matching `q` in their name or town: at most 20, public
+ * fields only (id, name, town). Nothing is stored; the search words are not logged by this service.
+ */
+export async function structuresForStepType(code, q, db = defaultDb) {
+  const type = stepTypeOf(code); if (!type) return UNKNOWN_STEP_TYPE();
+  const S = ENTITY_TABLES.structure; const term = `%${String(q || '').trim().replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
+  const rows = await db.select().from(S).where(and(inArray(S.type_structure, allowedTypeStructures(type)),
+    or(sql`${S.nom} ILIKE ${term}`, sql`${S.ville} ILIKE ${term}`))).orderBy(asc(S.nom)).limit(100);
+  const structures = rows.filter((r) => decide(r, 'structure').visible && structureFitsStepType(type, r)).slice(0, 20).map((r) => ({ id: r.id, name: r.nom, town: r.ville || null }));
+  return { ok: true, status: 200, structures };
+}
+
+/**
+ * G14 « add » of the limited contract: `stepType` must be a code of the list; `structureId`, when given, a PUBLISHED structure of a kind the type allows
+ * (an unknown, hidden or other-kind structure gets the same refusal: no existence oracle). The title stored is the list's French label; itemCodes keep
+ * « steptype:<code> » (+ « structure:<id> »). Idempotent per (type, structure): the same choice gives the step that exists (`added: false`).
+ */
+export async function addStepType(userId, input, db = defaultDb) {
+  const type = stepTypeOf(input && input.stepType); if (!type) return UNKNOWN_STEP_TYPE();
+  const sid = input.structureId == null || input.structureId === '' ? null : String(input.structureId);
+  if (sid) {
+    const S = ENTITY_TABLES.structure;
+    const [r] = await db.select().from(S).where(eq(S.id, sid)).limit(1);
+    if (!r || !decide(r, 'structure').visible || !RECORD_KEY.test(String(r.id)) || !structureFitsStepType(type, r)) return STRUCTURE_NOT_ALLOWED();
+  }
+  const codes = [`${STEP_TYPE_PREFIX}${type.code}`, ...(sid ? [`structure:${sid}`] : [])];
+  const planKey = crypto.createHash('sha256').update(JSON.stringify(['steptype', type.code, sid || ''])).digest('hex').slice(0, 40);
+  const existing = async () => (await db.select().from(ParcoursItem).where(and(eq(ParcoursItem.userId, userId), eq(ParcoursItem.planKey, planKey))).limit(1))[0];
+  const already = await existing();
+  if (already) return { ok: true, status: 200, added: false, item: itemView(already) };
+  if ((await parcoursCount(userId, db)) >= MAX_PARCOURS_ITEMS) return bad('PARCOURS_FULL', `Mon Parcours compte au plus ${MAX_PARCOURS_ITEMS} étapes.`, 409);
+  const [row] = await db.insert(ParcoursItem).values({ userId, origin: 'MANUAL', planKey, stepKind: 'custom', itemCodes: codes, title: type.label })
+    .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
+  if (!row) return { ok: true, status: 200, added: false, item: itemView(await existing()) };
+  await event(db, row, 'CREATED', null, 'NOT_STARTED');
+  return { ok: true, status: 201, added: true, item: itemView(row) };
+}
+
+/**
+ * G14 « deadline » of the limited contract: a date, and as its source one of the official fiches of the step's type (the first one when none is given) —
+ * never a free address (an address can itself reveal what the step is about). A step of the former contract cannot get a new deadline this way.
+ */
+export async function setStepTypeDeadline(userId, id, input, db = defaultDb) {
+  const { T } = await parcoursSchema(db);
+  const row = await ownedItem(userId, id, db, T); if (!row) return notFound();
+  if (input?.dueDate == null) return setDeadline(userId, id, { dueDate: null }, db);
+  const type = stepTypeOfItem(row);
+  if (!type) return bad('STEP_TYPE_REQUIRED', 'Cette étape ne peut pas recevoir d’échéance : supprimez-la et choisissez une étape de la liste.', 409);
+  const src = deadlineSourceOf(type, input.dueSourceUrl);
+  if (!src) return bad('DEADLINE_SOURCE_NOT_ALLOWED', 'La source doit être l’une des fiches officielles de cette étape.', 422);
+  return setDeadline(userId, id, { dueDate: input.dueDate, dueSourceUrl: src }, db);
 }
 
 async function ownedItem(userId, id, db, T = ParcoursItem) {

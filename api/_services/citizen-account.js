@@ -4,6 +4,7 @@
  * Principles: minimisation (age BAND, no birth date), server-side enforcement (a UI toggle alone never counts), append-only consent proof (ConsentLog rows are only ever inserted),
  * safe defaults (marketing/SMS/push off), ownership beside — never instead of — the owner secret.
  */
+import { parcoursExternalRemindersOpen } from '../lib/parcours-limited.js';
 import { and, desc, eq, sql } from 'drizzle-orm';
 import { isRestricted, SHARE_SEAL } from './processing-restriction.js';
 import { db as defaultDb } from '../../src/db/index.js';
@@ -53,7 +54,8 @@ export const purposeOf = (channel, category) => `NOTIF_${channel.toUpperCase()}_
 export function notificationOptionsOpen(env = process.env) {
   return {
     sms: phoneCollectionOpen(env),
-    reminder: capabilityOpen('citizen.booking', env) || capabilityOpen('citizen.parcours', env),
+    // G14: Mon Parcours alone opens the reminder option only where its external reminders are on (ADA_PARCOURS_EXTERNAL_REMINDERS=on; default off)
+    reminder: capabilityOpen('citizen.booking', env) || (capabilityOpen('citizen.parcours', env) && parcoursExternalRemindersOpen(env)),
     marketing: !capabilityEnforced(env),
   };
 }

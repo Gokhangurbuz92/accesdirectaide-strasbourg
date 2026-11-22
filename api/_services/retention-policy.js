@@ -30,7 +30,7 @@ export const POLICY_STATUS_PROPOSED = 'PROPOSED — NOT APPROVED';
 export const POLICY_STATUS_APPROVED = 'APPROVED';
 
 /**
- * @typedef {{ days: number | null, anchor: string, basis: string, ecode?: string, ownerChoice?: string, options?: number[] }} PolicyDuration
+ * @typedef {{ days: number | null, anchor: string, basis: string, ecode?: string, ownerChoice?: string, options?: number[], pendingApproval?: string }} PolicyDuration
  * @typedef {{ id: string, version: string, status: string, approvedPolicyVersion?: string, source: string, durations: Record<string, PolicyDuration>,
  *   ownerChoices?: Record<string, { durationKey: string, options: number[], label: string }>, approvedChoices?: Record<string, number>,
  *   approvedSteps?: Record<string, { approvedOn: string, dryRunReviewedOn: string, backupVerified: string, sharedControllerBasis?: string }> }} RetentionPolicy
@@ -107,6 +107,9 @@ export const RETENTION_POLICY = deepFreeze({
     INACTIVE_WARNING_GRACE_DAYS: { days: 30, anchor: 'warning e-mail sent (not built)', basis: OPS, ecode: 'E7' },
     PRO_USER_DISABLED_DAYS: { days: 365, anchor: 'disabling date (not recorded on 0042)', basis: OPS, ecode: 'E9b' },
     BACKUP_KEEP_DAYS: { days: 35, anchor: 'backup file time (V2: 35 days, as the privacy notice § 4 says)', basis: OPS, ecode: 'E15' },
+    // G14 (22/11/2026) — Mon Parcours, PROPOSAL « À APPROUVER » (analyse documentaire du responsable, Q7: 24 months after closure, a management choice to
+    // justify). `pendingApproval` keeps the step from executing even if listed and recorded (stepApprovalProblem): only a reviewed commit removes it.
+    PARCOURS_CLOSED_STEP_DAYS: { days: 730, anchor: 'closing date of the step (latest change of state in its history, else updatedAt); its history and reminder ledger go with it', basis: 'choix de gestion (proposition) — à approuver', ecode: 'G14', pendingApproval: 'À APPROUVER — CONTROL/master/completion/G14_MON_PARCOURS_RETENTION_FR.md' },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });
@@ -174,6 +177,9 @@ const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
  * activation, not the approval). Returns null when complete, else why not. @param {RetentionPolicy} policy @param {{ id: string, sharedController?: string }} step
  */
 export function stepApprovalProblem(policy, step) {
+  // G14: a duration still marked « à approuver » never executes, whatever the step record and the environment say
+  const dk = /** @type {any} */ (step).durationKey;
+  if (dk && /** @type {any} */ (policy)?.durations?.[dk]?.pendingApproval) return 'DURATION_PENDING_APPROVAL';
   const a = /** @type {any} */ (policy)?.approvedSteps?.[step.id];
   if (!a || typeof a !== 'object') return 'STEP_NOT_APPROVED_IN_POLICY';
   if (!ISO_DAY.test(String(a.approvedOn || ''))) return 'STEP_APPROVAL_DATE_MISSING';

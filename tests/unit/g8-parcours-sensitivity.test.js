@@ -79,10 +79,10 @@ describe('G8 — the mode: excluded unless explicitly « consent », and only wh
     expect(sensitiveStepsMode(true, { ADA_PARCOURS_SENSITIVE_STEPS: 'consent' })).toBe('consent');
     expect(sensitiveStepsMode(true, {})).toBe('excluded');
   });
-  it('ADA_PARCOURS_NOTES: the note stays unless exactly « off »', () => {
-    expect(parcoursNotesOpen({})).toBe(true);
-    for (const v of ['', 'on', 'OFF', 'false', '0', 'no']) expect(parcoursNotesOpen({ ADA_PARCOURS_NOTES: v }), v).toBe(true);
-    expect(parcoursNotesOpen({ ADA_PARCOURS_NOTES: 'off' })).toBe(false);
+  it('ADA_PARCOURS_NOTES (G14: OFF by default): the note is open only with exactly « on »', () => {
+    expect(parcoursNotesOpen({})).toBe(false);
+    for (const v of ['', 'off', 'OFF', 'ON', 'true', '1', 'no']) expect(parcoursNotesOpen({ ADA_PARCOURS_NOTES: v }), v).toBe(false);
+    expect(parcoursNotesOpen({ ADA_PARCOURS_NOTES: 'on' })).toBe(true);
     expect(fs.readFileSync('.env.example', 'utf8')).toMatch(/^ADA_PARCOURS_NOTES=$/m);
   });
   it('the variable is documented, closed by default, with its exact format', () => {
@@ -125,6 +125,7 @@ const ALLOWED = {
   'api/_services/citizen-inbox.js': 'the person’s own notifications: id and due date only',
   'api/_handlers/cron/parcours-reminder.js': 'the deadline reminder job: due date and the account’s address, never a title (closed during the beta)',
   'api/_utils/schema-features.js': 'does the database have the planStep column (information_schema)',
+  'api/_handlers/cron/gdpr-purge.js': 'G14: the retention step of closed steps (deletes, never reads content; à approuver)',
   'src/db/schema.ts': 'the schema',
   'scripts/acceptance/r40-web-push-real.mjs': 'LAB acceptance script on a synthetic row',
 };

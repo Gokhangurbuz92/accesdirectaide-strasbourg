@@ -373,8 +373,31 @@
       "scope": [
         "production"
       ],
-      "format": "^(off)?$",
-      "note": "G8 (19/11/2026): the free-text note of a Mon Parcours step. Unset = kept (500 characters, warning, sensitive-words guard, never shown to a delegate); « off » = no new note, an existing one can still be read, exported and cleared. Set only on counsel's answer (CONTROL/master/completion/G8_MON_PARCOURS_COUNSEL_QUESTIONS_FR.md)"
+      "format": "^(on)?$",
+      "note": "G14 (22/11/2026, owner requirement 1): the free-text note of a Mon Parcours step is OFF by default. Unset = no new note (409 NOTES_CLOSED; an existing one can still be read, exported and cleared); exactly « on » = notes open (500 characters, warning, sensitive-words guard, never shown to a delegate). Keep unset: the owner's documentary analysis (Q2) asks for notes off"
+    },
+    "ADA_PARCOURS_DELEGATE_READ": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(on)?$",
+      "note": "G14 (22/11/2026): a delegate's read of Mon Parcours (scope PARCOURS_READ, api/_services/delegation.js). Unset = closed even where delegations and Mon Parcours are open; « on » only after the owner's later decision (analyse documentaire du responsable, Q6: closed in the first phase)"
+    },
+    "ADA_PARCOURS_EXTERNAL_REMINDERS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(on)?$",
+      "note": "G14 (22/11/2026): e-mail / SMS / push deadline reminders of Mon Parcours (cron parcours-reminder: skipped « EXTERNAL_REMINDERS_OFF », nothing read or sent; the profile option « e-mail × rappels » is not opened by Mon Parcours alone). In-app notices are not concerned. « on » only after the owner's decision (Q8: next phase)"
+    },
+    "ADA_PARCOURS_LEGACY_CONTRACT": {
+      "class": "forbidden",
+      "nature": "config",
+      "note": "G14 (22/11/2026): test suites only (NODE_ENV=test, never VERCEL_ENV=production) — re-opens the former Mon Parcours contract (free titles, records, plan data, consent, import) for the earlier integration proofs. Must never be set on a deployment"
     },
     "ADA_CAPABILITIES_OPEN": {
       "class": "decision",

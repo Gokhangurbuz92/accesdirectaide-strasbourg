@@ -1,0 +1,670 @@
+{
+ "schema": "ada.parcours-step-types",
+ "version": "1.0.0-projet",
+ "status": "PROJET — liste positive à approuver par le responsable de traitement (non approuvée)",
+ "purpose": "Liste positive et fermée des types d'étapes de Mon Parcours (version limitée G14). Toute autre valeur est refusée par le serveur.",
+ "readAt": "2026-11-22",
+ "sourceArchive": {
+  "name": "DILA — fiches Service-Public « vosdroits » (Licence Ouverte 2.0)",
+  "url": "https://lecomarquage.service-public.gouv.fr/vdd/3.5/part/zip/vosdroits-latest.zip",
+  "lastModified": "Sun, 22 Nov 2026 01:54:09 GMT",
+  "sha256": "d4c162dec98473142446a034d5f2facbccf5b1204aa2334883cca4cae5f4dede"
+ },
+ "rules": [
+  "Aucun intitulé libre : l'étape est un code de cette liste ; son intitulé est celui de la liste.",
+  "Aucun type ne nomme ni ne laisse déduire une donnée de santé, de handicap, d'addiction, de vie sexuelle (groupe A, RGPD art. 9), une infraction ou une procédure pénale (groupe B, art. 10), ni une situation à protection renforcée (groupe C : droit au séjour, violences, aide sociale à l'enfance, protection juridique des majeurs, précarité extrême, hébergement d'urgence, certaines informations familiales).",
+  "Organisme : seulement l'identifiant d'une Structure publiée dont le type figure dans structureKinds ET dans les structureKinds du type d'étape (jamais de texte libre).",
+  "Échéance : une date ; sa source est obligatoirement l'une des fiches officielles du type d'étape.",
+  "Ajouter, retirer ou renommer un type = nouvelle version de ce fichier, relue et approuvée (registre, AIPD), tests mis à jour."
+ ],
+ "domains": {
+  "logement": "Logement",
+  "revenus": "Ressources",
+  "famille": "Famille",
+  "emploi": "Emploi",
+  "budget": "Budget",
+  "papiers": "Papiers",
+  "scolarite": "Scolarité et jeunesse",
+  "retraite": "Retraite",
+  "recours": "Contester une décision"
+ },
+ "structureKinds": {
+  "mairie": {
+   "label": "Mairie",
+   "typeStructure": [
+    "Mairie"
+   ]
+  },
+  "ccas": {
+   "label": "CCAS",
+   "typeStructure": [
+    "CCAS (centre communal d'action sociale)",
+    "CCAS"
+   ]
+  },
+  "france_services": {
+   "label": "Espace France Services",
+   "typeStructure": [
+    "Espace France Services"
+   ]
+  },
+  "maison_solidarites": {
+   "label": "Maison des solidarités",
+   "typeStructure": [
+    "Maison des solidarités (Espace Solidarités)"
+   ]
+  },
+  "mission_locale": {
+   "label": "Mission locale",
+   "typeStructure": [
+    "Mission locale (jeunes de 16 à 25 ans)",
+    "Mission Locale"
+   ]
+  },
+  "france_travail": {
+   "label": "France Travail",
+   "typeStructure": [
+    "France Travail"
+   ]
+  },
+  "caf": {
+   "label": "Caf",
+   "typeStructure": [
+    "Caf (Caisse d'allocations familiales)",
+    "CAF"
+   ]
+  },
+  "cio": {
+   "label": "CIO",
+   "typeStructure": [
+    "CIO (centre d'information et d'orientation)"
+   ]
+  },
+  "information_jeunesse": {
+   "label": "Information jeunesse",
+   "typeStructure": [
+    "Information jeunesse"
+   ]
+  }
+ },
+ "types": [
+  {
+   "code": "LOGEMENT_SOCIAL_DEMANDE",
+   "domain": "logement",
+   "label": "Faire une demande de logement social",
+   "sources": [
+    {
+     "id": "F10007",
+     "title": "Faire une demande de logement social (HLM)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10007",
+     "modified": "2026-09-11"
+    }
+   ],
+   "structureKinds": [
+    "mairie",
+    "ccas",
+    "maison_solidarites",
+    "france_services"
+   ]
+  },
+  {
+   "code": "LOGEMENT_SOCIAL_RENOUVELLEMENT",
+   "domain": "logement",
+   "label": "Renouveler sa demande de logement social",
+   "sources": [
+    {
+     "id": "F10007",
+     "title": "Faire une demande de logement social (HLM)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F10007",
+     "modified": "2026-09-11"
+    }
+   ],
+   "structureKinds": [
+    "mairie",
+    "ccas",
+    "maison_solidarites",
+    "france_services"
+   ]
+  },
+  {
+   "code": "AIDE_LOGEMENT_DEMANDE",
+   "domain": "logement",
+   "label": "Déposer un dossier d'aide au logement (APL, ALF, ALS)",
+   "sources": [
+    {
+     "id": "F12006",
+     "title": "Aide personnalisée au logement (APL)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F12006",
+     "modified": "2026-07-01"
+    },
+    {
+     "id": "F13132",
+     "title": "Allocation de logement familiale (ALF)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13132",
+     "modified": "2026-07-01"
+    },
+    {
+     "id": "F1280",
+     "title": "Allocation de logement sociale (ALS)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1280",
+     "modified": "2026-07-01"
+    }
+   ],
+   "structureKinds": [
+    "caf",
+    "france_services",
+    "ccas",
+    "maison_solidarites"
+   ]
+  },
+  {
+   "code": "FSL_DEMANDE",
+   "domain": "logement",
+   "label": "Demander une aide du Fonds de solidarité pour le logement (FSL)",
+   "sources": [
+    {
+     "id": "F1334",
+     "title": "Quelle aide apporte le Fonds de solidarité pour le logement (FSL) ?",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1334",
+     "modified": "2025-12-12"
+    }
+   ],
+   "structureKinds": [
+    "maison_solidarites",
+    "ccas",
+    "france_services"
+   ]
+  },
+  {
+   "code": "VISALE_DEMANDE",
+   "domain": "logement",
+   "label": "Demander la garantie Visale",
+   "sources": [
+    {
+     "id": "F33453",
+     "title": "Garantie Visale : caution pour le locataire (impayés et dégradations)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F33453",
+     "modified": "2026-01-23"
+    }
+   ],
+   "structureKinds": [
+    "france_services"
+   ]
+  },
+  {
+   "code": "CHEQUE_ENERGIE_UTILISER",
+   "domain": "logement",
+   "label": "Utiliser son chèque énergie",
+   "sources": [
+    {
+     "id": "F33667",
+     "title": "Chèque énergie",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F33667",
+     "modified": "2025-10-17"
+    }
+   ],
+   "structureKinds": [
+    "ccas",
+    "france_services",
+    "maison_solidarites"
+   ]
+  },
+  {
+   "code": "RSA_DEMANDE",
+   "domain": "revenus",
+   "label": "Demander le RSA",
+   "sources": [
+    {
+     "id": "N19775",
+     "title": "Revenu de solidarité active (RSA)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/N19775",
+     "modified": "2025-07-10"
+    },
+    {
+     "id": "F19778",
+     "title": "RSA : demandeur de 25 ans et plus",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F19778",
+     "modified": "2026-04-01"
+    }
+   ],
+   "structureKinds": [
+    "caf",
+    "maison_solidarites",
+    "ccas",
+    "france_services"
+   ]
+  },
+  {
+   "code": "PRIME_ACTIVITE_DEMANDE",
+   "domain": "revenus",
+   "label": "Demander la prime d'activité",
+   "sources": [
+    {
+     "id": "N31477",
+     "title": "Prime d'activité",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/N31477",
+     "modified": "2022-08-05"
+    },
+    {
+     "id": "F2882",
+     "title": "Prime d'activité : salarié ou fonctionnaire",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2882",
+     "modified": "2026-06-01"
+    }
+   ],
+   "structureKinds": [
+    "caf",
+    "france_services"
+   ]
+  },
+  {
+   "code": "DECLARATION_TRIMESTRIELLE_RESSOURCES",
+   "domain": "revenus",
+   "label": "Faire sa déclaration trimestrielle de ressources (RSA, prime d'activité)",
+   "sources": [
+    {
+     "id": "F19778",
+     "title": "RSA : demandeur de 25 ans et plus",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F19778",
+     "modified": "2026-04-01"
+    },
+    {
+     "id": "F2882",
+     "title": "Prime d'activité : salarié ou fonctionnaire",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2882",
+     "modified": "2026-06-01"
+    }
+   ],
+   "structureKinds": [
+    "caf",
+    "france_services"
+   ]
+  },
+  {
+   "code": "ALLOCATIONS_FAMILIALES_DEMANDE",
+   "domain": "famille",
+   "label": "Demander les allocations familiales",
+   "sources": [
+    {
+     "id": "F13213",
+     "title": "Allocations familiales (famille de 2 enfants ou plus)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13213",
+     "modified": "2026-06-01"
+    }
+   ],
+   "structureKinds": [
+    "caf",
+    "france_services"
+   ]
+  },
+  {
+   "code": "ALLOCATION_RENTREE_SCOLAIRE",
+   "domain": "famille",
+   "label": "Vérifier l'allocation de rentrée scolaire (ARS)",
+   "sources": [
+    {
+     "id": "F1878",
+     "title": "Allocation de rentrée scolaire (ARS)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1878",
+     "modified": "2026-08-04"
+    }
+   ],
+   "structureKinds": [
+    "caf",
+    "france_services"
+   ]
+  },
+  {
+   "code": "ASPA_DEMANDE",
+   "domain": "revenus",
+   "label": "Demander l'allocation de solidarité aux personnes âgées (Aspa)",
+   "sources": [
+    {
+     "id": "F16871",
+     "title": "Allocation de solidarité aux personnes âgées (Aspa)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F16871",
+     "modified": "2026-06-23"
+    }
+   ],
+   "structureKinds": [
+    "france_services",
+    "ccas"
+   ]
+  },
+  {
+   "code": "FRANCE_TRAVAIL_INSCRIPTION",
+   "domain": "emploi",
+   "label": "S'inscrire à France Travail",
+   "sources": [
+    {
+     "id": "F1636",
+     "title": "Chômage : inscription à France Travail (anciennement Pôle emploi)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1636",
+     "modified": "2025-10-10"
+    }
+   ],
+   "structureKinds": [
+    "france_travail",
+    "france_services",
+    "mission_locale"
+   ]
+  },
+  {
+   "code": "FRANCE_TRAVAIL_ACTUALISATION",
+   "domain": "emploi",
+   "label": "Faire son actualisation mensuelle France Travail",
+   "sources": [
+    {
+     "id": "F1637",
+     "title": "Actualisation mensuelle France Travail (anciennement Pôle emploi)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1637",
+     "modified": "2026-01-01"
+    }
+   ],
+   "structureKinds": [
+    "france_travail",
+    "france_services"
+   ]
+  },
+  {
+   "code": "FRANCE_TRAVAIL_RENDEZ_VOUS",
+   "domain": "emploi",
+   "label": "Prendre rendez-vous à France Travail",
+   "sources": [
+    {
+     "id": "N549",
+     "title": "Chômage : démarches auprès de France Travail (anciennement Pôle emploi)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/N549",
+     "modified": "2025-01-16"
+    }
+   ],
+   "structureKinds": [
+    "france_travail",
+    "france_services"
+   ]
+  },
+  {
+   "code": "ATTESTATION_EMPLOYEUR",
+   "domain": "emploi",
+   "label": "Obtenir son attestation employeur",
+   "sources": [
+    {
+     "id": "F2867",
+     "title": "Attestation employeur destinée à France Travail (anciennement Pôle emploi)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2867",
+     "modified": "2026-06-12"
+    }
+   ],
+   "structureKinds": [
+    "france_travail",
+    "france_services"
+   ]
+  },
+  {
+   "code": "CONTRAT_ENGAGEMENT_JEUNE",
+   "domain": "emploi",
+   "label": "Demander un contrat d'engagement jeune",
+   "sources": [
+    {
+     "id": "F32700",
+     "title": "Contrat d'engagement jeune (accompagnement pour trouver un travail)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F32700",
+     "modified": "2026-04-01"
+    }
+   ],
+   "structureKinds": [
+    "mission_locale",
+    "france_travail"
+   ]
+  },
+  {
+   "code": "SURENDETTEMENT_DOSSIER",
+   "domain": "budget",
+   "label": "Déposer un dossier de surendettement",
+   "sources": [
+    {
+     "id": "F134",
+     "title": "Déposer un dossier de surendettement devant la commission de surendettement",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F134",
+     "modified": "2025-01-07"
+    }
+   ],
+   "structureKinds": [
+    "france_services",
+    "maison_solidarites",
+    "ccas"
+   ]
+  },
+  {
+   "code": "MICROCREDIT_DEMANDE",
+   "domain": "budget",
+   "label": "Demander un microcrédit personnel",
+   "sources": [
+    {
+     "id": "F21375",
+     "title": "Microcrédit personnel",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F21375",
+     "modified": "2026-04-10"
+    }
+   ],
+   "structureKinds": [
+    "ccas",
+    "maison_solidarites",
+    "france_services"
+   ]
+  },
+  {
+   "code": "CARTE_IDENTITE_DEMANDE",
+   "domain": "papiers",
+   "label": "Demander une carte d'identité",
+   "sources": [
+    {
+     "id": "N358",
+     "title": "Carte d'identité",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/N358",
+     "modified": "2026-04-09"
+    }
+   ],
+   "structureKinds": [
+    "mairie",
+    "france_services"
+   ]
+  },
+  {
+   "code": "PASSEPORT_DEMANDE",
+   "domain": "papiers",
+   "label": "Demander un passeport",
+   "sources": [
+    {
+     "id": "N360",
+     "title": "Passeport",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/N360",
+     "modified": "2026-04-09"
+    }
+   ],
+   "structureKinds": [
+    "mairie",
+    "france_services"
+   ]
+  },
+  {
+   "code": "ACTE_NAISSANCE_DEMANDE",
+   "domain": "papiers",
+   "label": "Demander un acte de naissance",
+   "sources": [
+    {
+     "id": "F1427",
+     "title": "Acte de naissance : demande de copie intégrale ou d'extrait",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F1427",
+     "modified": "2026-08-14"
+    }
+   ],
+   "structureKinds": [
+    "mairie",
+    "france_services"
+   ]
+  },
+  {
+   "code": "BOURSE_COLLEGE_DEMANDE",
+   "domain": "scolarite",
+   "label": "Demander une bourse de collège",
+   "sources": [
+    {
+     "id": "F984",
+     "title": "Bourse de collège",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F984",
+     "modified": "2026-04-30"
+    }
+   ],
+   "structureKinds": [
+    "cio",
+    "france_services"
+   ]
+  },
+  {
+   "code": "BOURSE_LYCEE_DEMANDE",
+   "domain": "scolarite",
+   "label": "Demander une bourse de lycée",
+   "sources": [
+    {
+     "id": "F616",
+     "title": "Bourse de lycée",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F616",
+     "modified": "2026-04-30"
+    }
+   ],
+   "structureKinds": [
+    "cio",
+    "france_services"
+   ]
+  },
+  {
+   "code": "CANTINE_AIDE_DEMANDE",
+   "domain": "scolarite",
+   "label": "Demander une aide pour la cantine scolaire",
+   "sources": [
+    {
+     "id": "F19294",
+     "title": "Peut-on obtenir une aide financière pour la cantine scolaire ?",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F19294",
+     "modified": "2025-10-20"
+    }
+   ],
+   "structureKinds": [
+    "mairie",
+    "ccas"
+   ]
+  },
+  {
+   "code": "PASS_CULTURE",
+   "domain": "scolarite",
+   "label": "Activer le pass Culture",
+   "sources": [
+    {
+     "id": "F34959",
+     "title": "À quoi sert le pass Culture et comment en bénéficier ?",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F34959",
+     "modified": "2025-12-18"
+    }
+   ],
+   "structureKinds": [
+    "information_jeunesse",
+    "mission_locale"
+   ]
+  },
+  {
+   "code": "RETRAITE_DEMANDE",
+   "domain": "retraite",
+   "label": "Demander sa retraite",
+   "sources": [
+    {
+     "id": "F13941",
+     "title": "Comment faire sa demande de retraite lorsqu'on est salarié ?",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F13941",
+     "modified": "2025-09-01"
+    },
+    {
+     "id": "F31541",
+     "title": "Comment faire sa demande de retraite lorsqu'on est agent public ?",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F31541",
+     "modified": "2026-01-01"
+    }
+   ],
+   "structureKinds": [
+    "france_services"
+   ]
+  },
+  {
+   "code": "RECOURS_ADMINISTRATIF",
+   "domain": "recours",
+   "label": "Contester une décision par un recours administratif",
+   "sources": [
+    {
+     "id": "F2474",
+     "title": "Recours gracieux, recours hiérarchique et recours administratif préalable obligatoire (Rapo)",
+     "url": "https://www.service-public.gouv.fr/particuliers/vosdroits/F2474",
+     "modified": "2026-05-11"
+    }
+   ],
+   "structureKinds": [
+    "france_services"
+   ]
+  }
+ ],
+ "excluded": [
+  {
+   "group": "A",
+   "topic": "Santé, handicap, perte d'autonomie, addiction, grossesse, vie sexuelle",
+   "examples": "AAH, PCH, AEEH, MDPH, Apa, prime à la naissance (Paje), consultations, CSAPA, centres de santé",
+   "reason": "donnée de santé ou relative à la vie sexuelle (RGPD art. 9)"
+  },
+  {
+   "group": "A",
+   "topic": "Complémentaire santé solidaire, AME",
+   "examples": "C2S (faux positif possible : couverture, non donnée de santé) ; AME (aussi groupe C)",
+   "reason": "écarté de la première ouverture par prudence (analyse documentaire du responsable, Q10)"
+  },
+  {
+   "group": "B",
+   "topic": "Infractions, condamnations, procédures pénales",
+   "examples": "SPIP, PJJ, aide juridictionnelle (peut révéler une procédure pénale), point-justice",
+   "reason": "RGPD art. 10 ; le consentement ne suffit pas"
+  },
+  {
+   "group": "C",
+   "topic": "Droit au séjour, asile, naturalisation",
+   "examples": "titres de séjour, CADA, OFII, sous-préfecture",
+   "reason": "protection renforcée"
+  },
+  {
+   "group": "C",
+   "topic": "Violences subies",
+   "examples": "violences conjugales ou intrafamiliales, ordonnance de protection, CIDFF",
+   "reason": "protection renforcée"
+  },
+  {
+   "group": "C",
+   "topic": "Aide sociale à l'enfance, protection de l'enfance",
+   "examples": "ASE, PMI, centre parental",
+   "reason": "protection renforcée"
+  },
+  {
+   "group": "C",
+   "topic": "Protection juridique des majeurs",
+   "examples": "tutelle, curatelle, mandataire judiciaire",
+   "reason": "protection renforcée"
+  },
+  {
+   "group": "C",
+   "topic": "Précarité extrême, hébergement d'urgence",
+   "examples": "domiciliation (sans domicile stable), 115, CHRS, Dalo, résidence sociale, pension de famille, LHSS",
+   "reason": "protection renforcée"
+  },
+  {
+   "group": "C",
+   "topic": "Certaines informations familiales",
+   "examples": "allocation de soutien familial (enfant non reconnu, orphelin, séparation), pension de réversion (décès), adoption",
+   "reason": "protection renforcée"
+  }
+ ]
+}

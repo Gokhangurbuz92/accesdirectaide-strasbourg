@@ -1,8 +1,11 @@
 // @ts-nocheck
 import { citizenHandler } from '../../_utils/citizen-handler.js';
-import { addManualItem, importPlan, itemHistory, listParcours, planImportOpen, removeItem, sensitiveStepsMode, setDeadline, setNote, setPlanStep, setStatus } from '../../_services/mon-espace.js';
+import { addManualItem, addStepType, importPlan, itemHistory, listParcours, planImportOpen, removeItem, sensitiveStepsMode, setDeadline, setNote, setPlanStep, setStatus,
+  setStepTypeDeadline, structuresForStepType } from '../../_services/mon-espace.js';
 import { isPublicBetaRestricted, openJobs } from '../../_utils/public-beta.js';
 import { parcoursNotesOpen } from '../../lib/parcours-sensitivity.js';
+import { legacyContractAllowed, limitedRequestRefusal, parcoursExternalRemindersOpen } from '../../lib/parcours-limited.js';
+import { stepCatalogueView } from '../../lib/parcours-step-types.js';
 
 /**
  * PKG-2 / C07 Mon Parcours.  GET -> { items } (each with its records, `available` and, for a plan step, `plan`: who / detail / links)   GET ?history=<id> -> { events }
@@ -18,11 +21,41 @@ import { parcoursNotesOpen } from '../../lib/parcours-sensitivity.js';
  * residence, justice, legal protection, sex life or violence is refused, 422 SENSITIVE_STEP_EXCLUDED) or « consent » (ADA_PARCOURS_SENSITIVE_STEPS=consent:
  * kept only when the request says `sensitiveConsent: true` for that step, else 409 SENSITIVE_STEP_CONSENT_REQUIRED). See api/lib/parcours-sensitivity.js.
  * G8: `notes` — false with ADA_PARCOURS_NOTES=off: no new note (409 NOTES_CLOSED); an existing one can still be cleared.
+ *
+ * G14 (22/11/2026) — THE LIMITED CONTRACT (the only one outside the automated test suites, api/lib/parcours-limited.js):
+ *   GET → { items (each with `stepType`), contract: 'limited', stepTypes (the reviewed list), notes, sensitiveSteps: 'excluded', planImport: false, emailReminders }
+ *   GET ?history=<id> → { events }      GET ?structuresFor=<code>&q=<2–60 chars> → { structures: [{ id, name, town }] } (published, allowed kinds only)
+ *   POST { action: 'add', stepType, structureId? } | { action: 'status', id, status } | { action: 'deadline', id, dueDate|null, dueSourceUrl? (one of the
+ *   type's official fiches) } | { action: 'note', id, note } (ADA_PARCOURS_NOTES=on only; otherwise note: null clears)      DELETE { id }
+ *   Every other action (import, plan) or field (title, records, planStep, sensitiveConsent…) → 400, before any database access.
  */
 /** @param {Record<string, string | undefined>} [env] */
-export const parcoursEmailRemindersOpen = (env = process.env) => !isPublicBetaRestricted(env) || openJobs(env).has('parcours-reminder');
+export const parcoursEmailRemindersOpen = (env = process.env) => parcoursExternalRemindersOpen(env) && (!isPublicBetaRestricted(env) || openJobs(env).has('parcours-reminder'));
+
+/** G14 — the limited contract (see above) */
+async function limited(citizen, req) {
+  const refusal = limitedRequestRefusal({ method: req.method, body: req.body, query: req.query || {} });
+  if (refusal) return refusal;
+  if (req.method === 'GET') {
+    const q = req.query || {};
+    if (q.history) return itemHistory(citizen.id, q.history);
+    if (q.structuresFor) return structuresForStepType(q.structuresFor, q.q || '');
+    const list = await listParcours(citizen.id);
+    return { ...list, contract: 'limited', stepTypes: stepCatalogueView(), planImport: false, emailReminders: parcoursEmailRemindersOpen(), sensitiveSteps: 'excluded', notes: parcoursNotesOpen() };
+  }
+  if (req.method === 'DELETE') return removeItem(citizen.id, req.body.id);
+  const b = req.body;
+  switch (b.action) {
+    case 'add': return addStepType(citizen.id, b);
+    case 'status': return setStatus(citizen.id, b.id, b.status);
+    case 'deadline': return setStepTypeDeadline(citizen.id, b.id, b);
+    default: return setNote(citizen.id, b.id, b.note === '' ? null : b.note);   // 'note' (the only other action the contract lets through)
+  }
+}
 
 export default citizenHandler('parcours', ['GET', 'POST', 'DELETE'], async (citizen, req) => {
+  if (!legacyContractAllowed()) return limited(citizen, req);
+  // ── the former contract: automated test suites only (NODE_ENV=test + ADA_PARCOURS_LEGACY_CONTRACT=test-only, never on Vercel Production)
   if (req.method === 'GET') {
     const hid = req.query?.history;
     if (hid) return itemHistory(citizen.id, hid);

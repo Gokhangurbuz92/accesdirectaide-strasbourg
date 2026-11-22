@@ -20,7 +20,7 @@ import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION
 
 const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog', 'SharedDiagnostic', 'AuthToken', 'EmailChangeRequest', 'AiMetric', 'ConsentLog', 'UserConsent',
   'Invitation', 'ProOutlookToken', 'ProAuditLog', 'ProAppointment', 'AppointmentNotice', 'RdvConversation', 'RdvMessageAttachment', 'ProNotification', 'PushSubscription',
-  'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral', 'SharedDossierThread'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042
+  'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral', 'SharedDossierThread', 'ParcoursItem', 'ParcoursEvent'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016)
 const dialect = new PgDialect();
 const render = (w) => dialect.sqlToQuery(w).sql;
 const log = { info: () => {}, warn: () => {}, error: () => {}, debug: () => {} };

@@ -6,7 +6,7 @@ import {
     AuthToken, AiMetric, ConsentLog, UserConsent, Invitation, EmailChangeRequest,
     ProOutlookToken, ProAuditLog, ProAppointment,
     AppointmentNotice, ProNotification, PushSubscription, RdvConversation, RdvMessageAttachment,
-    LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser
+    LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser, ParcoursItem
 } from '../../../src/db/schema.js';
 import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-orm';
 import { getCronAuth } from '../../_utils/cronAuth.js';
@@ -246,6 +246,19 @@ function messageWhere(ctx) {
 export const unverifiedAccountsWhere = (before) => and(isNull(CitizenUser.emailVerifiedAt), lt(CitizenUser.createdAt, before),
     sql`NOT ${heldSql(CitizenUser.id)}`, sql`NOT ${personProtectedSql(CitizenUser.id)}`);
 
+/**
+ * G14 — a Mon Parcours step the person CLOSED (one of the closed states, abandoned / outcome unknown included: they are stored as CLOSED) more than
+ * PARCOURS_CLOSED_STEP_DAYS ago. The closing date is the latest change of state recorded in its history (ParcoursEvent STATUS), else the row's updatedAt.
+ * Its history (ParcoursEvent) and reminder ledger (ParcoursReminder) go with it (ON DELETE CASCADE). The person sees an in-app notice 30 days before
+ * (api/_services/citizen-inbox.js PARCOURS_CLOSED_STEP_EXPIRING) and can export at any time. A legal hold on the step or the person, a restriction or an
+ * open access request keep it. The duration is a PROPOSAL « à approuver » (retention-policy.js pendingApproval): the step cannot execute until a reviewed
+ * commit removes that mark AND the step gets its own approval record. @param {Date} before
+ */
+export const PARCOURS_CLOSED_STATES = Object.freeze(['DECISION_POSITIVE', 'DECISION_NEGATIVE', 'CLOSED']);
+export const parcoursClosedAtSql = sql`COALESCE((SELECT max(e."createdAt") FROM "ParcoursEvent" e WHERE e."itemId" = ${ParcoursItem.id} AND e.kind = 'STATUS'), ${ParcoursItem.updatedAt})`;
+export const parcoursClosedStepsWhere = (before) => and(inArray(ParcoursItem.status, [...PARCOURS_CLOSED_STATES]), sql`${parcoursClosedAtSql} < ${before}`,
+    sql`NOT ${heldSql(ParcoursItem.id, ParcoursItem.userId)}`, sql`NOT ${personProtectedSql(ParcoursItem.userId)}`);
+
 const deleteStep = (table, where) => ({
     count: (db, ctx) => countWhere(db, table, where(ctx)),
     run: async (db, ctx) => affected(await db.delete(table).where(where(ctx))),
@@ -452,6 +465,11 @@ export const PURGE_STEPS = [
         ...deleteStep(DSRRequest, (ctx) => and(isNotNull(DSRRequest.completedAt), lt(DSRRequest.completedAt, ctx.cutoff('DSR_REQUEST_DAYS')), ne(DSRRequest.status, 'ACTIVE'),
             sql`NOT (${DSRRequest.requestType} = 'DELETE' AND EXISTS (SELECT 1 FROM "ConsentLog" c WHERE c.subject_id = ${DSRRequest.subjectId}))`,
             sql`NOT ${heldSql(DSRRequest.id, DSRRequest.subjectId)}`)) },
+
+    // 20b. G14 — Mon Parcours steps closed for PARCOURS_CLOSED_STEP_DAYS (PROPOSED « à approuver »: not executable while pendingApproval is set)
+    { id: 'parcoursClosedStepsDeleted', summaryKey: 'parcours_closed_steps_deleted', ecode: 'G14', kind: 'delete', table: 'ParcoursItem', durationKey: 'PARCOURS_CLOSED_STEP_DAYS',
+        tables: ['ParcoursItem', 'ParcoursEvent', 'LegalHold', 'DSRRequest'],
+        ...deleteStep(ParcoursItem, (ctx) => parcoursClosedStepsWhere(ctx.cutoff('PARCOURS_CLOSED_STEP_DAYS'))) },
 
     // 21. R44 / E7 — REPORT ONLY: accounts without citizen activity for 24 months (last sign-in; an account never signed into counts from its creation —
     //     D4 V2, 08/11/2026: it used to be left out). Deleting is a later, separate decision (D4 V2 procedure: notice first, erasure engine — never this job).

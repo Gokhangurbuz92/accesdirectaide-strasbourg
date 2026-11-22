@@ -12,6 +12,10 @@
 import { vi, afterAll, beforeAll, describe, expect, it } from 'vitest';
 import crypto from 'node:crypto';
 import { sql } from 'drizzle-orm';
+// G14: these are proofs of the FORMER Mon Parcours contract (free titles, records, plan data, consent, import, delegate read): reachable only in the
+// test suites (api/lib/parcours-limited.js legacyContractAllowed). The limited contract has its own proof: tests/integration/g14-parcours-limited-db.test.js
+process.env.ADA_PARCOURS_LEGACY_CONTRACT = 'test-only';
+process.env.ADA_PARCOURS_NOTES = 'on';   // G14: notes are off by default; this file proves the note path
 
 vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockResolvedValue({ allowed: true }), getClientIp: vi.fn().mockReturnValue('127.0.0.1'), getRateLimitStatus: vi.fn().mockReturnValue(429), rateLimitMiddleware: vi.fn() }));
 // the plan of a dossier, as the action-plan builder gives it: a dossier carrying `__g8Plan` gets exactly those steps (every other dossier: the real builder)
@@ -63,7 +67,7 @@ describe.skipIf(!hasDatabase)('G8 — sensitive steps of Mon Parcours (real API 
   beforeAll(async () => {
     for (const k of ENV_KEYS) saved[k] = process.env[k];
     setEnv(Object.fromEntries(ENV_KEYS.map((k) => [k, undefined])));
-    setEnv({ MAILER_PROVIDER: 'test', MAILER_FROM: 'qa@example.test' });
+    setEnv({ MAILER_PROVIDER: 'test', MAILER_FROM: 'qa@example.test', ADA_PARCOURS_NOTES: 'on' });   // G14: notes default off; this file proves them
     ({ db } = await import('../../src/db/index.js'));
     api = (await import('../../api/index.js')).default; userAuth = await import('../../api/_utils/user-auth.js');
     for (const c of [A, D]) await db.execute(sql`INSERT INTO "CitizenUser" (id, email, "passwordHash", "emailVerifiedAt", "updatedAt") VALUES (${c.id}, ${c.email}, 'x', NOW(), NOW())`);
@@ -160,7 +164,7 @@ describe.skipIf(!hasDatabase)('G8 — sensitive steps of Mon Parcours (real API 
       expect((await rows(sql`SELECT note FROM "ParcoursItem" WHERE id = ${id}`))[0].note).toBeNull();
       expect((await rows(sql`SELECT note FROM "ParcoursItem" WHERE id = ${J.mdph}`))[0].note).toBe('Certificat du médecin à joindre');
       expect(ok(await P(A, { action: 'note', id: J.mdph, note: '' })).item.note).toBeNull();
-    } finally { setEnv({ ADA_PARCOURS_NOTES: undefined }); }
+    } finally { setEnv({ ADA_PARCOURS_NOTES: 'on' }); }
     expect(ok(await call('GET', '/api/citizen/parcours', { as: A })).notes).toBe(true);
   });
 

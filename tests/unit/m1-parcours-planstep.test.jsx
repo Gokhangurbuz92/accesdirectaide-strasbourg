@@ -25,6 +25,7 @@ vi.mock('../../src/db/index.js', () => ({ db: new Proxy({}, { get() { throw new 
 
 import CompteParcours from '../../src/pages/CompteParcours.jsx';
 import OrientationPanel from '../../src/components/search/OrientationPanel.jsx';
+import { PARCOURS_RECORD_STEPS } from '../../src/lib/parcoursRecordSteps.js';
 import { PLAN_ACTOR_KINDS, PLAN_CLOSURES, PLAN_DERIVED_ACTIONS, PLAN_DONE_STATUSES, PLAN_NEXT_ACTIONS, closureOf, dependencyCycle, groupByNeed, needsRecovery, nextActionOf } from '../../src/lib/parcoursPlan.js';
 import { PARCOURS_DONE, PARCOURS_STATUS_LABELS, PARCOURS_CLOSURE_LABELS } from '../../src/lib/monEspace.js';
 import { MAX_PLAN_LINKS, MAX_PLAN_STEP_BYTES, PLAN_STEP_INPUT_KEYS, mergePlanStep, planNeeds, planStepFits, planStepFromPlan, readPlanStep, validatePlanStepInput } from '../../api/lib/parcours-plan-step.js';
@@ -42,8 +43,9 @@ const item = (o = {}) => ({ id: 'p1', origin: 'MANUAL', stepKind: 'custom', titl
 const step = (o = {}) => ({ need: null, actor: null, links: [], nextActionKey: null, detail: null, ...o });
 const tick = () => act(async () => { await new Promise((r) => setTimeout(r, 20)); });
 
-beforeEach(() => { Object.values(api).forEach((f) => f.mockReset()); authMe.mockReset(); api.listShares.mockResolvedValue({ shares: [] }); api.parcoursHistory.mockResolvedValue({ events: [] }); env.frontendEnv.flags.publicBeta = false; });
-afterEach(() => { cleanup(); vi.unstubAllEnvs(); });
+beforeEach(() => { Object.values(api).forEach((f) => f.mockReset()); authMe.mockReset(); api.listShares.mockResolvedValue({ shares: [] }); api.parcoursHistory.mockResolvedValue({ events: [] }); env.frontendEnv.flags.publicBeta = false;
+  PARCOURS_RECORD_STEPS.offered = true; });   // G14: the former record-step control (off in the application) is tested on its own
+afterEach(() => { cleanup(); vi.unstubAllEnvs(); PARCOURS_RECORD_STEPS.offered = false; });
 
 describe('what a person may send (validatePlanStepInput)', () => {
   it('the contract: five keys, three kinds of actor, the stored next actions, the two closing reasons, the same « done » states as the screen', () => {

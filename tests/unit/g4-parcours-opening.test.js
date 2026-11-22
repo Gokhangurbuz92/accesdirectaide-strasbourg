@@ -75,8 +75,11 @@ describe('G4 server — ADA_BETA_ACCOUNTS_EXTRA', () => {
     expect(planImportOpen({ ...G4, ADA_CAPABILITIES_OPEN: 'citizen.parcours,citizen.shared_dossier' }), 'no HDS attestation').toBe(false);
     expect(parcoursEmailRemindersOpen(G4)).toBe(false);
     expect(parcoursEmailRemindersOpen({ ...G4, ADA_BETA_OPEN_JOBS: 'parcours-reminder' }), 'opened without the approval').toBe(false);
-    expect(parcoursEmailRemindersOpen({ ...G4, ADA_BETA_OPEN_JOBS: 'parcours-reminder', ADA_JOBS_APPROVED: 'parcours-reminder' })).toBe(true);
-    expect(parcoursEmailRemindersOpen({})).toBe(true);
+    // G14: and only with ADA_PARCOURS_EXTERNAL_REMINDERS=on (default off)
+    expect(parcoursEmailRemindersOpen({ ...G4, ADA_BETA_OPEN_JOBS: 'parcours-reminder', ADA_JOBS_APPROVED: 'parcours-reminder' })).toBe(false);
+    expect(parcoursEmailRemindersOpen({ ...G4, ADA_BETA_OPEN_JOBS: 'parcours-reminder', ADA_JOBS_APPROVED: 'parcours-reminder', ADA_PARCOURS_EXTERNAL_REMINDERS: 'on' })).toBe(true);
+    expect(parcoursEmailRemindersOpen({})).toBe(false);
+    expect(parcoursEmailRemindersOpen({ ADA_PARCOURS_EXTERNAL_REMINDERS: 'on' })).toBe(true);
   });
 
   it('the release preflight names the addition', () => {

@@ -12,6 +12,7 @@ import { frontendEnv } from '@/config/env';
 import { openLinks } from '@/lib/publicBeta';
 import HumanHelpBlock, { HUMAN_HELP_DIRECTORY } from '@/components/HumanHelpBlock';
 import { PLAN_CLOSURES, groupByNeed, needsRecovery, nextActionOf } from '@/lib/parcoursPlan';
+import CompteParcoursLimited from './CompteParcoursLimited';
 
 /** French text of the plan or of a record inside any interface language: marked French and left-to-right */
 const FR = { lang: 'fr', dir: 'ltr' };
@@ -53,6 +54,8 @@ export default function CompteParcours() {
   const load = useCallback(async () => {
     try {
       const p = await citizenApi.listParcours();
+      // G14: the server's limited contract (closed list of step types, no free text) has its own screen
+      if (p.contract === 'limited') { setState({ loading: false, error: '', items: p.items || [], shares: [], limited: p }); return; }
       // G4: the dossiers are listed only where the server says the plan import is open (it belongs to the HDS-bound shared dossier); a refusal there never
       // hides Mon Parcours itself. A server without the flag (before G4) keeps the former behaviour.
       const importOpen = p.planImport !== false;
@@ -95,6 +98,7 @@ export default function CompteParcours() {
       </div>
     );
   }
+  if (state.limited) return <CompteParcoursLimited data={state.limited} reload={load} />;
   const active = state.items.filter((i) => !PARCOURS_DONE.includes(i.status));
   const done = state.items.filter((i) => PARCOURS_DONE.includes(i.status));
   const helpLinks = openLinks([

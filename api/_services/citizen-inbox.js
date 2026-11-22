@@ -7,6 +7,8 @@
  *   MESSAGE_FROM_STRUCTURE      the latest structure message of each appointment conversation                              (citizen.booking_message)
  *   DOSSIER_MESSAGE             the latest organisation message of each thread of a dossier the account owns              (citizen.shared_dossier)
  *   PARCOURS_DEADLINE_SOON      a sourced Mon Parcours deadline in the next 7 days, item still open                       (citizen.parcours)
+ *   PARCOURS_CLOSED_STEP_EXPIRING  G14: a closed step will be deleted within 30 days by the retention policy — ONLY once that duration is approved
+ *                               (no « pendingApproval » in api/_services/retention-policy.js), so no deletion is ever announced that will not happen
  *   DOCUMENT_EXPIRING           a Mon Coffre document whose expiry date is in the next 30 days                            (citizen.vault)
  *   GUARDIAN_REQUEST            a minor's guardian-link request waiting for this account's answer                          (citizen.guardians)
  *   REFERRAL_DECISION_NEEDED    E7: a referral proposal on a dossier the account owns, waiting for the person's consent    (citizen.orientation_records)
@@ -27,10 +29,11 @@ import { and, eq, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { NotificationPreference } from '../../src/db/schema.js';
 import { capabilityOpen } from '../_utils/capabilities.js';
+import { RETENTION_POLICY } from './retention-policy.js';
 
 export const INBOX_LIMIT = 50;
 export const APPOINTMENT_KINDS = ['BOOKED_BY_STRUCTURE', 'CANCELLED_BY_STRUCTURE', 'RESCHEDULED', 'REMINDER_J1', 'VISIO_APPROVED', 'VISIO_REVOKED', 'REQUEST_ACCEPTED', 'REQUEST_REFUSED', 'BOOKED_BY_CITIZEN', 'REQUEST_RECEIVED'];
-export const INBOX_KINDS = [...APPOINTMENT_KINDS.map((k) => `APPOINTMENT_${k}`), 'MESSAGE_FROM_STRUCTURE', 'DOSSIER_MESSAGE', 'PARCOURS_DEADLINE_SOON', 'DOCUMENT_EXPIRING', 'GUARDIAN_REQUEST',
+export const INBOX_KINDS = [...APPOINTMENT_KINDS.map((k) => `APPOINTMENT_${k}`), 'MESSAGE_FROM_STRUCTURE', 'DOSSIER_MESSAGE', 'PARCOURS_DEADLINE_SOON', 'PARCOURS_CLOSED_STEP_EXPIRING', 'DOCUMENT_EXPIRING', 'GUARDIAN_REQUEST',
   'REFERRAL_DECISION_NEEDED', 'REFERRAL_ANSWER', 'REFERRAL_ENDED', 'EVENT_REMINDER', 'EVENT_CANCELLED'];
 /** E7: the referral transitions the person is told about in the centre (ReferralEvent, append-only), by who made them */
 export const REFERRAL_ANSWER_STATUSES = Object.freeze(['ACKNOWLEDGED', 'NEEDS_INFO', 'ACCEPTED', 'DECLINED', 'IN_PROGRESS', 'COMPLETED']);
@@ -40,7 +43,7 @@ const SEEN = { channel: 'inapp', category: 'seen' };
 const opaque = (userId, kind, ref) => crypto.createHash('sha256').update(`${userId}\n${kind}\n${ref}`).digest('hex').slice(0, 24);
 const rows = async (db, q) => (await db.execute(q)).rows;
 
-/** @param {string} userId @param {any} [db] @param {{ isOpen?: (c: string) => boolean, now?: Date }} [opts] */
+/** @param {string} userId @param {any} [db] @param {{ isOpen?: (c: string) => boolean, now?: Date, policy?: any }} [opts] */
 export async function listInbox(userId, db = defaultDb, opts = {}) {
   const isOpen = opts.isOpen || ((c) => capabilityOpen(c));
   const now = opts.now || new Date();
@@ -69,6 +72,16 @@ export async function listInbox(userId, db = defaultDb, opts = {}) {
         AND "dueDate" > ${now} AND "dueDate" <= ${new Date(now.getTime() + 7 * 864e5)} AND status NOT IN ('CLOSED', 'DECISION_POSITIVE', 'DECISION_NEGATIVE') LIMIT ${INBOX_LIMIT}`)) {
       // the item appears once the 7-day window opens: its time is the window's start
       items.push({ ref: `p:${r.id}:${new Date(r.due).getTime()}`, kind: 'PARCOURS_DEADLINE_SOON', at: new Date(new Date(r.due).getTime() - 7 * 864e5), link: '/compte/parcours' });
+    }
+    // G14: 30 days before a closed step reaches the APPROVED retention duration (never while it is only proposed); the person can export or keep a copy
+    const keep = (opts.policy || RETENTION_POLICY).durations?.PARCOURS_CLOSED_STEP_DAYS;
+    if (keep && !keep.pendingApproval && Number.isInteger(keep.days) && keep.days > 30) {
+      const cut = new Date(now.getTime() - (keep.days - 30) * 864e5);
+      for (const r of await rows(db, sql`SELECT i.id, COALESCE((SELECT max(e."createdAt") FROM "ParcoursEvent" e WHERE e."itemId" = i.id AND e.kind = 'STATUS'), i."updatedAt") AS closed
+          FROM "ParcoursItem" i WHERE i."userId" = ${userId} AND i.status IN ('CLOSED', 'DECISION_POSITIVE', 'DECISION_NEGATIVE')
+          AND COALESCE((SELECT max(e."createdAt") FROM "ParcoursEvent" e WHERE e."itemId" = i.id AND e.kind = 'STATUS'), i."updatedAt") < ${cut} LIMIT ${INBOX_LIMIT}`)) {
+        items.push({ ref: `pc:${r.id}`, kind: 'PARCOURS_CLOSED_STEP_EXPIRING', at: new Date(new Date(r.closed).getTime() + (keep.days - 30) * 864e5), link: '/compte/parcours' });
+      }
     }
   }
   if (isOpen('citizen.vault')) {
