@@ -88,9 +88,12 @@ describe('the three sentences that become false at the pro opening', () => {
     for (const part of ['adresse électronique professionnelle', 'votre rôle', 'votre structure', 'mot de passe sous forme hachée', 'secret de votre double authentification', 'journal de vos actions', 'préférences de notification', 'si vous les indiquez, votre nom affiché et votre fonction']) expect(p1).toContain(part);
   });
 
-  it('« vous et votre structure en êtes informés »: no automatic notice (true of the code); the operator informs in writing', () => {
+  it('« vous et votre structure en êtes informés »: a neutral, true statement (no automatic notice), no new commitment', () => {
     const [p1] = section(v9, 'end').paras;
-    expect(p1).toBe("En cas d'usage contraire à ces conditions ou d'incident de sécurité, l'administrateur de votre structure ou l'exploitant peut désactiver votre compte : vos sessions prennent fin aussitôt. Aucun avis automatique ne vous est envoyé. Lorsque l'exploitant désactive un compte, il en informe par écrit l'administrateur de votre structure et, sauf urgence de sécurité, vous-même à votre adresse professionnelle.");
+    expect(p1).toBe("En cas d'usage contraire à ces conditions ou d'incident de sécurité, l'administrateur de votre structure ou l'exploitant peut désactiver votre compte : vos sessions prennent fin aussitôt. Aucun avis automatique ne vous est envoyé lorsque votre compte est désactivé.");
+    // owner condition 22/11/2026: no obligation beyond his approvals — no promise to inform, in any language
+    expect(frText(v9)).not.toMatch(/en informe|informé|par écrit/);
+    for (const lang of LANGS) expect(locale(lang)['cguPro.end.p1_v9'], lang).not.toMatch(/in writing|schriftlich|yazılı|كتابي|письмово/i);
     const admin = readFileSync('api/_services/pro-account-admin.js', 'utf8');
     expect(admin).not.toMatch(/sendMail|createNotification/);
     expect(admin).toContain('"sessionsValidAfter" = NOW()');
@@ -110,9 +113,7 @@ describe('retention (owner decisions 22/11/2026) and video', () => {
 
   it('video: conditional only, no provider named (no DPA yet), in every language', () => {
     const p3 = section(v9, 'appointments').paras[2];
-    expect(p3).toMatch(/^Si la visioconférence est activée pour votre structure \(elle ne l'est pas à ce jour\)/);
-    expect(p3).toContain('ni enregistré, ni diffusé, ni transcrit');
-    expect(readFileSync('api/lib/video-provider.js', 'utf8')).toContain('recording: false, livestreaming: false, transcription: false');
+    expect(p3).toBe("Si la visioconférence est activée pour votre structure (elle ne l'est pas à ce jour), son traitement et son prestataire sont décrits dans la notice de confidentialité.");
     const all = [frText(v9), ...LANGS.map((l) => Object.entries(locale(l)).filter(([k]) => k.startsWith('cguPro.') && k.endsWith('_v9')).map(([, v]) => v).join('\n'))].join('\n');
     expect(all).not.toMatch(/8x8|JaaS|Jitsi/i);
   });
@@ -183,7 +184,7 @@ describe('rendering (LegalDraftDocument.jsx)', () => {
     const { container } = await renderPage('/cgu/professionnel');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('cgu-professionnel@v9-2026-11-22');
-    expect(container.textContent).toContain('Aucun avis automatique ne vous est envoyé.');
+    expect(container.textContent).toContain('Aucun avis automatique ne vous est envoyé lorsque votre compte est désactivé.');
     expect(container.textContent).not.toContain('bases légales proposées');
   });
 
