@@ -13,7 +13,7 @@
     {
       "id": "rsa",
       "label": "RSA (revenu de solidarité active)",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -85,7 +85,178 @@
         "Montant forfaitaire 651,69 € (personne seule) : en vigueur au 1er avril 2026 selon solidarites.gouv.fr (publication du 31/03/2026), revalorisé chaque 1er avril (CASF L262-3) ; F19778 ne le date pas — montant de calcul, jamais un montant dû, jamais utilisé par ADA",
         "Âge exact de 25 ans : F19778 dit « au moins 25 ans », CASF L262-4 1° dit « plus de vingt-cinq ans » : 25 ans révolus suffisent-ils (lecture actuelle : oui, selon F19778) ?"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "rsa-age-25",
+          "facts": {
+            "ageRange": [
+              25,
+              25
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "F19778 « au moins 25 ans » : 25 ans inclus — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-age-24",
+          "facts": {
+            "ageRange": [
+              24,
+              24
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "F19778 « au moins 25 ans » ; à 24 ans deux voies restent possibles : charge d'un enfant né ou à naître (CASF L262-4 1°) ou RSA jeune actif 18-25 ans (CASF L262-7-1) : non tranchable par l'âge seul",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-band-18-24",
+          "facts": {
+            "ageRange": [
+              18,
+              24
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "tranche entièrement sous 25 ans : même cas que rsa-age-24 (voie « charge d'enfant » CASF L262-4 1° ou RSA jeune actif CASF L262-7-1)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-band-25-59",
+          "facts": {
+            "ageRange": [
+              25,
+              59
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "tranche entièrement à 25 ans ou plus — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-unread",
+          "facts": {
+            "ageRange": [
+              40,
+              40
+            ]
+          },
+          "expected": {
+            "residence": "UNKNOWN",
+            "resources": "UNKNOWN",
+            "nationality": "UNKNOWN",
+            "activity": "UNKNOWN",
+            "activity_young": "UNKNOWN"
+          },
+          "basis": "conditions non lisibles à partir des réponses ADA : toujours inconnues",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-age-26",
+          "facts": {
+            "ageRange": [
+              26,
+              26
+            ]
+          },
+          "expected": {
+            "age": "MET"
+          },
+          "basis": "F19778 « Vous pouvez demander le RSA si vous êtes âgé d'au moins 25 ans » : 26 ans, au-delà du seuil (FA-D6, archive DILA du 17/11/2026)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-age-17",
+          "facts": {
+            "ageRange": [
+              17,
+              17
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "CASF L262-4 1° : « assumer la charge d'un ou plusieurs enfants nés ou à naître » n'a pas d'âge minimum ; RSA jeune actif à partir de 18 ans (CASF L262-7-1) : âge seul non tranchable (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-age-25-unread",
+          "facts": {
+            "ageRange": [
+              25,
+              25
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN",
+            "residence": "UNKNOWN",
+            "resources": "UNKNOWN",
+            "nationality": "UNKNOWN",
+            "activity": "UNKNOWN"
+          },
+          "basis": "F19778 « au moins 25 ans » : l'âge seul est rempli, toutes les autres conditions restent inconnues — jamais un droit (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "rsa-age-26-band",
+          "facts": {
+            "ageRange": [
+              26,
+              59
+            ]
+          },
+          "expected": {
+            "age": "MET"
+          },
+          "basis": "F19778 « au moins 25 ans » : tranche entièrement au-dessus de 25 ans (la limite exacte de 25 ans reste à vérifier) (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "conflicts": [
         {
           "fact": "activity_young",
@@ -243,12 +414,33 @@
           "publisher": "DILA (Service-Public)",
           "scope": "RSA parent isolé (enfant à charge, grossesse)"
         }
-      ]
+      ],
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "Bornes d'âge du RSA jeune actif : F286 dit « 18 à 25 ans » puis « 16 à 25 ans » (« 16 à 24 ans » pour les étrangers relevant de la MSA), N19775 dit « 18 à 24 ans » ; CASF L262-7-1 (en vigueur depuis le 01/01/2010, relu le 22/11/2026) dit « dix-huit ans au moins et vingt-cinq ans au plus » : le texte du code prévaut-il, et les 16-17 ans ne relèvent-ils que de la voie « charge d'un enfant né ou à naître » (CASF L262-4 1°) ?",
+            "decision": "décision du propriétaire 22/11, option prudente : bornes du RSA jeune actif non tranchées : hors 18-25 ans et pour 16-17 ans, UNKNOWN « À vérifier auprès de l'organisme compétent » (question 1)"
+          },
+          {
+            "ambiguity": "Montant forfaitaire 651,69 € (personne seule) : en vigueur au 1er avril 2026 selon solidarites.gouv.fr (publication du 31/03/2026), revalorisé chaque 1er avril (CASF L262-3) ; F19778 ne le date pas — montant de calcul, jamais un montant dû, jamais utilisé par ADA",
+            "decision": "décision du propriétaire 22/11, option prudente : 651,69 € en vigueur au 1er avril 2026 (solidarites.gouv.fr ; CASF L262-3) : information seulement, jamais affiché comme montant dû ni utilisé"
+          },
+          {
+            "ambiguity": "Âge exact de 25 ans : F19778 dit « au moins 25 ans », CASF L262-4 1° dit « plus de vingt-cinq ans » : 25 ans révolus suffisent-ils (lecture actuelle : oui, selon F19778) ?",
+            "decision": "décision du propriétaire 22/11, option prudente : 25 ans exactement → UNKNOWN « À vérifier auprès de l'organisme compétent » (question 2)"
+          }
+        ]
+      }
     },
     {
       "id": "prime-activite",
       "label": "Prime d'activité",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -302,7 +494,81 @@
         "Montant forfaitaire 638,28 € (personne seule) : en vigueur au 1er avril 2026 selon solidarites.gouv.fr (31/03/2026) ; 957,42 € (couple, tableau de F2882) sans date d'effet sur la page — montants de calcul, jamais un montant versé, jamais utilisés par ADA",
         "Étudiants, apprentis, stagiaires : F2882 n'en parle pas ; F33375 (vérifiée le 01/06/2026) indique un revenu d'activité mensuel supérieur à 1 144,21 €, sans date d'effet ni mois de référence sur la page : seuil à dater avant toute lecture automatique"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "prime-age-17",
+          "facts": {
+            "ageRange": [
+              17,
+              17
+            ]
+          },
+          "expected": {
+            "age": "NOT_MET"
+          },
+          "basis": "F2882 « 18 ans ou plus »",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "prime-age-18",
+          "facts": {
+            "ageRange": [
+              18,
+              18
+            ]
+          },
+          "expected": {
+            "age": "MET"
+          },
+          "basis": "F2882 « 18 ans ou plus » : 18 inclus",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "prime-band-under-18",
+          "facts": {
+            "ageRange": [
+              0,
+              17
+            ]
+          },
+          "expected": {
+            "age": "NOT_MET"
+          },
+          "basis": "F2882 « Avoir 18 ans ou plus » : tranche entièrement sous 18 ans (FA-D6)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "prime-age-20-activity-unread",
+          "facts": {
+            "ageRange": [
+              20,
+              20
+            ]
+          },
+          "expected": {
+            "age": "MET",
+            "activity": "UNKNOWN"
+          },
+          "basis": "F2882 « 18 ans ou plus » ; F33375 seuil étudiant / apprenti 1 144,21 € sans date d'effet : condition d'activité jamais lue (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "sourceCheck": {
         "result": "SOURCE_CHECKED",
         "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
@@ -377,12 +643,29 @@
           "publisher": "DILA (Service-Public)",
           "scope": "étudiant, stagiaire, apprenti"
         }
-      ]
+      ],
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "Montant forfaitaire 638,28 € (personne seule) : en vigueur au 1er avril 2026 selon solidarites.gouv.fr (31/03/2026) ; 957,42 € (couple, tableau de F2882) sans date d'effet sur la page — montants de calcul, jamais un montant versé, jamais utilisés par ADA",
+            "decision": "décision du propriétaire 22/11, option prudente : 638,28 € en vigueur au 1er avril 2026 ; 957,42 € non daté : information seulement, jamais utilisés"
+          },
+          {
+            "ambiguity": "Étudiants, apprentis, stagiaires : F2882 n'en parle pas ; F33375 (vérifiée le 01/06/2026) indique un revenu d'activité mensuel supérieur à 1 144,21 €, sans date d'effet ni mois de référence sur la page : seuil à dater avant toute lecture automatique",
+            "decision": "décision du propriétaire 22/11, option prudente : seuil étudiants / apprentis de 1 144,21 € : information seulement, jamais évalué (question 7)"
+          }
+        ]
+      }
     },
     {
       "id": "apl",
       "label": "APL (aide personnalisée au logement)",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -453,7 +736,94 @@
         "Sous-location : le texte principal de F12006 (vérifiée le 01/07/2026) dit « à condition d'avoir moins de 30 ans » (ou d'être hébergé chez un accueillant familial) ; la question-réponse et l'infographie disent « moins de 30 ans ou plus de 60 ans ou être en situation de handicap » (règles non applicables à la sous-location de l'intégralité du logement) : texte réglementaire du CCH à identifier ; ADA ne lit jamais la sous-location",
         "Plafonds non publiés sur la page"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "apl-tenant",
+          "facts": {
+            "housing": {
+              "status": "tenant"
+            }
+          },
+          "expected": {
+            "housing.status": "MET"
+          },
+          "basis": "F12006 « locataire »",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apl-owner",
+          "facts": {
+            "housing": {
+              "status": "owner"
+            }
+          },
+          "expected": {
+            "housing.status": "UNKNOWN"
+          },
+          "basis": "propriétaire : hors du champ de F12006 tel que relevé (APL accession non relevée)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apl-tenant-hlm",
+          "facts": {
+            "housing": {
+              "status": "tenant_hlm"
+            }
+          },
+          "expected": {
+            "housing.status": "MET"
+          },
+          "basis": "F12006 « La plupart des logements HLM » : locataire d'un logement HLM = locataire (conventionnement à vérifier) (FA-D6)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apl-free-housed",
+          "facts": {
+            "housing": {
+              "status": "free"
+            }
+          },
+          "expected": {
+            "housing.status": "UNKNOWN",
+            "housing": "UNKNOWN"
+          },
+          "basis": "F12006 « locataire » : hébergé gratuitement, cas non couvert par la lecture (à vérifier) ; conventionnement jamais lu (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apl-subtenant",
+          "facts": {
+            "housing": {
+              "status": "subtenant"
+            }
+          },
+          "expected": {
+            "housing.status": "UNKNOWN"
+          },
+          "basis": "F12006 : sous-location, texte et infographie divergents (moins de 30 ans / plus de 60 ans / handicap) : jamais lue automatiquement (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "sourceCheck": {
         "result": "SOURCE_CHECKED",
         "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
@@ -512,12 +882,29 @@
           }
         ],
         "legal": []
+      },
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "Sous-location : le texte principal de F12006 (vérifiée le 01/07/2026) dit « à condition d'avoir moins de 30 ans » (ou d'être hébergé chez un accueillant familial) ; la question-réponse et l'infographie disent « moins de 30 ans ou plus de 60 ans ou être en situation de handicap » (règles non applicables à la sous-location de l'intégralité du logement) : texte réglementaire du CCH à identifier ; ADA ne lit jamais la sous-location",
+            "decision": "décision du propriétaire 22/11, option prudente : sous-location toujours UNKNOWN « À vérifier auprès de l'organisme compétent » (question 3)"
+          },
+          {
+            "ambiguity": "Plafonds non publiés sur la page",
+            "decision": "décision du propriétaire 22/11, option prudente : aucun plafond APL lu : condition de ressources « à vérifier »"
+          }
+        ]
       }
     },
     {
       "id": "aah",
       "label": "AAH (allocation aux adultes handicapés)",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -592,7 +979,277 @@
       "ambiguities": [
         "Montant maximal 1 041,59 € en vigueur au 1er avril 2026 (solidarites.gouv.fr, 31/03/2026) ; F12242 (vérifiée le 14/09/2026) ne date ni ce montant ni les plafonds ; plafonds lus dans F12242 et cohérents avec CSS D821-2 (12 fois le montant, majoré de moitié par enfant) : date d'effet et arrondi à confirmer ; au-dessus du plafond, ADA ne conclut jamais (conjugalisation possible)"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "aah-age-15",
+          "facts": {
+            "ageRange": [
+              15,
+              15
+            ]
+          },
+          "expected": {
+            "age": "NOT_MET"
+          },
+          "basis": "F12242 : au moins 20 ans, 16 ans si plus à charge : 15 ans exclu",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-age-17",
+          "facts": {
+            "ageRange": [
+              17,
+              17
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "F12242 : 16-19 ans possible seulement si plus à charge pour les prestations familiales (non recueilli)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-age-20",
+          "facts": {
+            "ageRange": [
+              20,
+              20
+            ]
+          },
+          "expected": {
+            "age": "MET"
+          },
+          "basis": "F12242 « au moins 20 ans »",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-at-ceiling",
+          "facts": {
+            "annualResources": 12499,
+            "children": 0,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "F12242 plafond annuel 12 499 € sans enfant (en vigueur au 1er avril 2026, solidarites.gouv.fr) : égal au plafond = sous le plafond, revenu net catégoriel N-2 déclaré (à confirmer par l'expert : « jusqu'à » inclusif) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-above",
+          "facts": {
+            "annualResources": 12500,
+            "children": 0,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "F12242 : au-dessus de 12 499 € sans enfant ; « Depuis le 1er octobre 2023 » ressources personnelles, mais la conjugalisation est appliquée si plus favorable : jamais un refus, à vérifier",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-1child",
+          "facts": {
+            "annualResources": 18000,
+            "children": 1,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "MET"
+          },
+          "basis": "F12242 : 18 749 € avec 1 enfant (au 1er avril 2026), revenu net catégoriel N-2 déclaré",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-2children",
+          "facts": {
+            "annualResources": 18000,
+            "children": 2,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "MET"
+          },
+          "basis": "F12242 : 24 998 € avec 2 enfants (au 1er avril 2026 ; CSS D821-2 : plafond majoré de moitié par enfant), revenu net catégoriel N-2 déclaré",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-1child-above",
+          "facts": {
+            "annualResources": 18750,
+            "children": 1,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "F12242 « Nombre d'enfants à charge au sens des prestations familiales » : 18 749 € avec 1 enfant ; 18 750 € est au-dessus du plafond de la personne seule, conjugalisation possible : à vérifier (FA-D6, G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-age-16",
+          "facts": {
+            "ageRange": [
+              16,
+              16
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "F12242 « au moins 16 ans si vous n'êtes plus considéré à la charge de vos parents » : non recueilli (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-age-19",
+          "facts": {
+            "ageRange": [
+              19,
+              19
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "F12242 : 16-19 ans possible seulement hors charge pour les prestations familiales (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-no-basis",
+          "facts": {
+            "annualResources": 12000,
+            "children": 0,
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "F12242 « revenu net catégoriel » N-2 : un montant sans cette base n'est pas comparable au plafond (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-before-date",
+          "facts": {
+            "annualResources": 12000,
+            "children": 0,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-03-31"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "plafonds en vigueur au 1er avril 2026 (solidarites.gouv.fr « Au 1er avril 2026 ») : une date antérieure n'est pas lue (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-4children",
+          "facts": {
+            "annualResources": 37000,
+            "children": 4,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "MET"
+          },
+          "basis": "F12242 : 37 497 € avec 4 enfants (au 1er avril 2026) ; 37 000 € est sous le plafond (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-5children",
+          "facts": {
+            "annualResources": 20000,
+            "children": 5,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "F12242 : aucun plafond publié au-delà de 4 enfants : à vérifier (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "aah-res-below",
+          "facts": {
+            "annualResources": 12000,
+            "children": 0,
+            "resourcesBasis": "revenu-net-categoriel-n-2",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "MET"
+          },
+          "basis": "F12242 : 12 000 € sous le plafond de 12 499 € sans enfant (au 1er avril 2026) (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "sourceCheck": {
         "result": "SOURCE_CHECKED",
         "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
@@ -661,12 +1318,25 @@
             "how": "Légifrance en direct"
           }
         ]
+      },
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "Montant maximal 1 041,59 € en vigueur au 1er avril 2026 (solidarites.gouv.fr, 31/03/2026) ; F12242 (vérifiée le 14/09/2026) ne date ni ce montant ni les plafonds ; plafonds lus dans F12242 et cohérents avec CSS D821-2 (12 fois le montant, majoré de moitié par enfant) : date d'effet et arrondi à confirmer ; au-dessus du plafond, ADA ne conclut jamais (conjugalisation possible)",
+            "decision": "décision du propriétaire 22/11, option prudente : ressources égales au plafond → UNKNOWN ; plafonds datés du 1er avril 2026 affichés comme information ; au-dessus : UNKNOWN (question 4)"
+          }
+        ]
       }
     },
     {
       "id": "apa",
       "label": "APA à domicile (allocation personnalisée d'autonomie)",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -716,7 +1386,102 @@
         "Montants mensuels maximum de l'APA à domicile selon F10009 (vérifiée le 01/06/2026) : GIR 1 2 080,33 €, GIR 2 1 682,30 €, GIR 3 1 215,99 €, GIR 4 811,52 €, sans date d'effet sur la page ; la page solidarites.gouv.fr de revalorisation au 1er avril 2026 n'en donne pas ; le chiffre divergent (GIR 1 1 914,04 €) n'est pas daté — aucun montant APA n'est utilisé par ADA (information seulement) ; APA en établissement : règles différentes",
         "Livret de la CeA de janvier 2023 : document historique, jamais une source d'autorité ; procédure 2026 de la Collectivité européenne d'Alsace non lue"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "apa-age-59",
+          "facts": {
+            "ageRange": [
+              59,
+              59
+            ]
+          },
+          "expected": {
+            "age": "NOT_MET"
+          },
+          "basis": "F10009 « Vous devez être âgé d’au moins 60 ans »",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apa-age-60",
+          "facts": {
+            "ageRange": [
+              60,
+              60
+            ]
+          },
+          "expected": {
+            "age": "MET"
+          },
+          "basis": "F10009 « Vous devez être âgé d’au moins 60 ans »",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apa-band-60plus",
+          "facts": {
+            "ageRange": [
+              60,
+              130
+            ]
+          },
+          "expected": {
+            "age": "MET",
+            "dependency": "UNKNOWN"
+          },
+          "basis": "GIR 1 à 4 : évaluation par l'équipe médico-sociale du Département, jamais lisible par ADA",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apa-band-25-59",
+          "facts": {
+            "ageRange": [
+              25,
+              59
+            ]
+          },
+          "expected": {
+            "age": "NOT_MET"
+          },
+          "basis": "F10009 « Vous devez être âgé d’au moins 60 ans » : tranche entièrement sous 60 ans (FA-D6)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "apa-age-60-unread",
+          "facts": {
+            "ageRange": [
+              60,
+              60
+            ]
+          },
+          "expected": {
+            "age": "MET",
+            "dependency": "UNKNOWN",
+            "residence": "UNKNOWN",
+            "exclusion": "UNKNOWN"
+          },
+          "basis": "F10009 « au moins 60 ans » : GIR, résidence et non-cumul jamais lus — aucun montant de plan d'aide utilisé (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "sourceCheck": {
         "result": "SOURCE_CHECKED",
         "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
@@ -769,12 +1534,29 @@
           }
         ],
         "legal": []
+      },
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "Montants mensuels maximum de l'APA à domicile selon F10009 (vérifiée le 01/06/2026) : GIR 1 2 080,33 €, GIR 2 1 682,30 €, GIR 3 1 215,99 €, GIR 4 811,52 €, sans date d'effet sur la page ; la page solidarites.gouv.fr de revalorisation au 1er avril 2026 n'en donne pas ; le chiffre divergent (GIR 1 1 914,04 €) n'est pas daté — aucun montant APA n'est utilisé par ADA (information seulement) ; APA en établissement : règles différentes",
+            "decision": "décision du propriétaire 22/11, option prudente : montants GIR de F10009 non datés : information seulement, aucun montant APA utilisé"
+          },
+          {
+            "ambiguity": "Livret de la CeA de janvier 2023 : document historique, jamais une source d'autorité ; procédure 2026 de la Collectivité européenne d'Alsace non lue",
+            "decision": "décision du propriétaire 22/11, option prudente : livret CeA 2023 : historique, jamais une source d'autorité"
+          }
+        ]
       }
     },
     {
       "id": "are",
       "label": "ARE (allocation d'aide au retour à l'emploi)",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -826,7 +1608,50 @@
       "ambiguities": [
         "unedic.org relu le 22/11/2026 (publication du 01/04/2026) : primo-entrants = 108 jours ou 758 heures, fins de contrat à compter du 1er avril 2026 (règlement général annexé à la convention du 15 novembre 2024, art. 3 § 1er bis ; loi du 24 octobre 2025, art. 9 ; décret n° 2026-214) ; F38881 ne donne que « 5 mois » : textes de la convention et du décret non relus en direct — à confirmer"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "are-unread",
+          "facts": {
+            "ageRange": [
+              30,
+              30
+            ]
+          },
+          "expected": {
+            "employment_loss": "UNKNOWN",
+            "affiliation": "UNKNOWN",
+            "registration": "UNKNOWN",
+            "residence": "UNKNOWN"
+          },
+          "basis": "ARE : aucune condition lisible à partir des réponses ADA (perte d'emploi, durée d'affiliation, inscription) : France Travail décide",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "are-unread-60",
+          "facts": {
+            "ageRange": [
+              60,
+              60
+            ]
+          },
+          "expected": {
+            "employment_loss": "UNKNOWN",
+            "affiliation": "UNKNOWN",
+            "registration": "UNKNOWN",
+            "residence": "UNKNOWN"
+          },
+          "basis": "F38881 : 36 mois de référence à partir de 55 ans, primo-entrants 5 mois depuis le 1er avril 2026 : affiliation jamais lue (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "sourceCheck": {
         "result": "SOURCE_CHECKED",
         "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
@@ -895,12 +1720,25 @@
           "publisher": "Unédic",
           "scope": "primo-entrants (à compter du 1er avril 2026)"
         }
-      ]
+      ],
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "unedic.org relu le 22/11/2026 (publication du 01/04/2026) : primo-entrants = 108 jours ou 758 heures, fins de contrat à compter du 1er avril 2026 (règlement général annexé à la convention du 15 novembre 2024, art. 3 § 1er bis ; loi du 24 octobre 2025, art. 9 ; décret n° 2026-214) ; F38881 ne donne que « 5 mois » : textes de la convention et du décret non relus en direct — à confirmer",
+            "decision": "décision du propriétaire 22/11, option prudente : aucune lecture ARE ; F38881 (« 5 mois ») et Unédic (108 jours / 758 heures) affichés ; France Travail décide (question 6)"
+          }
+        ]
+      }
     },
     {
       "id": "c2s",
       "label": "C2S (complémentaire santé solidaire)",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -1071,7 +1909,254 @@
       "ambiguities": [
         "Plafonds datés « au 1er avril 2026 » par ameli.fr (page du 31/03/2026) ; F10027 (vérifiée le 01/07/2026) donne les mêmes montants sans date, sauf pour Mayotte (« à compter du 1er avril 2026 ») ; inclusion de la borne haute de la tranche « avec participation » (« compris dans la fourchette ») à confirmer ; régime local d'Alsace-Moselle : participation pouvant être réduite (montant non lu)"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "c2s-free",
+          "facts": {
+            "annualResources": 10421,
+            "householdSize": 1,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » / F10027 : gratuite jusqu'à 10 421 € (1 personne, métropole) — seuil seulement — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-contribution",
+          "facts": {
+            "annualResources": 12000,
+            "householdSize": 1,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "MET"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » / F10027 : avec participation de 10 421 à 14 069 € (1 personne, métropole) — la note dit « avec participation financière »",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-above",
+          "facts": {
+            "annualResources": 14070,
+            "householdSize": 1,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "NOT_MET"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » / F10027 : au-dessus de 14 069 € (1 personne, métropole) — condition de ressources seulement",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-household-2",
+          "facts": {
+            "annualResources": 12000,
+            "householdSize": 2,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "MET"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » / F10027 : 2 personnes, gratuite jusqu'à 15 632 € (métropole) ; 12 000 € est sous ce plafond",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-at-upper",
+          "facts": {
+            "annualResources": 14069,
+            "householdSize": 1,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "F10027 « Entre 10 421 € et 14 069 € » : 14 069 € inclus dans la tranche avec participation (inclusion de la borne à confirmer par l'expert) (FA-D6) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-household-2-contribution",
+          "facts": {
+            "annualResources": 21103,
+            "householdSize": 2,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » : 2 personnes, avec participation jusqu'à 21 103 € (borne à confirmer) (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-household-3-above",
+          "facts": {
+            "annualResources": 25325,
+            "householdSize": 3,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "NOT_MET"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » : 3 personnes, au-dessus de 25 324 € (condition de ressources seulement) (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-household-5-free",
+          "facts": {
+            "annualResources": 26054,
+            "householdSize": 5,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "ameli.fr : 4 personnes 21 885 € + 4 169 € par personne supplémentaire = 26 054 € sans participation pour 5 personnes (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-outre-mer-1",
+          "facts": {
+            "annualResources": 11599,
+            "householdSize": 1,
+            "area": "outre-mer",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » : départements d'outre-mer et Mayotte, 11 599 € sans participation (1 personne) (G14) — décision du propriétaire 22/11, option prudente : limite exacte = UNKNOWN",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-no-basis",
+          "facts": {
+            "annualResources": 9000,
+            "householdSize": 1,
+            "area": "metropole",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "F10027 : ressources du foyer sur la période de 12 mois de la C2S ; un montant sans cette base n'est pas comparable (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-before-date",
+          "facts": {
+            "annualResources": 9000,
+            "householdSize": 1,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-03-15"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "ameli.fr : plafonds « au 1er avril 2026 » ; une date antérieure n'est pas lue (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-stale",
+          "facts": {
+            "annualResources": 9000,
+            "householdSize": 1,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2027-04-01"
+          },
+          "expected": {
+            "resources": "UNKNOWN"
+          },
+          "basis": "ameli.fr : barème « au 1er avril 2026 », à relire à la revalorisation suivante (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "c2s-free-below",
+          "facts": {
+            "annualResources": 10000,
+            "householdSize": 1,
+            "area": "metropole",
+            "resourcesBasis": "ressources-foyer-12-mois-c2s",
+            "referenceDate": "2026-11-22"
+          },
+          "expected": {
+            "resources": "MET"
+          },
+          "basis": "ameli.fr « au 1er avril 2026 » : 10 000 € sous le plafond « sans participation » de 10 421 € (1 personne) (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "sourceCheck": {
         "result": "SOURCE_CHECKED",
         "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
@@ -1142,12 +2227,25 @@
           "publisher": "Assurance Maladie (ameli.fr)",
           "scope": "plafonds de ressources au 1er avril 2026"
         }
-      ]
+      ],
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "Plafonds datés « au 1er avril 2026 » par ameli.fr (page du 31/03/2026) ; F10027 (vérifiée le 01/07/2026) donne les mêmes montants sans date, sauf pour Mayotte (« à compter du 1er avril 2026 ») ; inclusion de la borne haute de la tranche « avec participation » (« compris dans la fourchette ») à confirmer ; régime local d'Alsace-Moselle : participation pouvant être réduite (montant non lu)",
+            "decision": "décision du propriétaire 22/11, option prudente : ressources égales à une limite de tranche → UNKNOWN ; Alsace-Moselle : note d'information seulement (question 5)"
+          }
+        ]
+      }
     },
     {
       "id": "faj-strasbourg",
       "label": "FAJ — fonds d'aide aux jeunes (Eurométropole de Strasbourg)",
-      "status": "RESEARCHED_UNVALIDATED",
+      "status": "OWNER_VALIDATED",
       "expertReview": null,
       "sources": [
         {
@@ -1192,7 +2290,188 @@
       "ambiguities": [
         "Aucun plafond de ressources, règle de nationalité, barème ni article de loi sur la page ; date de mise à jour absente ; règlement du FAJ'EMS (Eurométropole, compétence transférée en 2017, gestion Mission locale) à obtenir avec sa version et sa date"
       ],
-      "referenceCases": [],
+      "referenceCases": [
+        {
+          "id": "faj-age-15",
+          "facts": {
+            "ageRange": [
+              15,
+              15
+            ]
+          },
+          "expected": {
+            "age": "NOT_MET"
+          },
+          "basis": "strasbourg.eu « 16 à 25 ans »",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-age-16",
+          "facts": {
+            "ageRange": [
+              16,
+              16
+            ]
+          },
+          "expected": {
+            "age": "MET"
+          },
+          "basis": "strasbourg.eu « 16 à 25 ans » : tranche d'âge annoncée par la page (règlement non lu), condition d'âge seulement",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-age-25",
+          "facts": {
+            "ageRange": [
+              25,
+              25
+            ]
+          },
+          "expected": {
+            "age": "UNKNOWN"
+          },
+          "basis": "strasbourg.eu « 16 à 25 ans » : inclusion des 25 ans non précisée (ambiguïté à trancher par l'expert)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-age-26",
+          "facts": {
+            "ageRange": [
+              26,
+              26
+            ]
+          },
+          "expected": {
+            "age": "NOT_MET"
+          },
+          "basis": "au-delà de 25 ans",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-territory-67000",
+          "facts": {
+            "territory": "67000"
+          },
+          "expected": {
+            "territory": "UNKNOWN"
+          },
+          "basis": "code postal du Bas-Rhin : la liste des communes de l'Eurométropole n'est pas vérifiée",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-territory-75011",
+          "facts": {
+            "territory": "75011"
+          },
+          "expected": {
+            "territory": "NOT_MET"
+          },
+          "basis": "hors Bas-Rhin, donc hors Eurométropole (le FAJ d'un autre territoire peut s'appliquer)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-territory-68100",
+          "facts": {
+            "territory": "68100"
+          },
+          "expected": {
+            "territory": "NOT_MET"
+          },
+          "basis": "Haut-Rhin (Alsace-Moselle, hors Bas-Rhin) : hors Eurométropole ; le FAJ de la Collectivité européenne d'Alsace peut s'appliquer (règlement non lu) (FA-D6, résidence)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-territory-57000",
+          "facts": {
+            "territory": "57000"
+          },
+          "expected": {
+            "territory": "NOT_MET"
+          },
+          "basis": "Moselle (Alsace-Moselle, hors Bas-Rhin) : hors Eurométropole ; un autre fonds d'aide aux jeunes peut exister (non lu) (FA-D6, résidence)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-territory-dept-67",
+          "facts": {
+            "territory": "67"
+          },
+          "expected": {
+            "territory": "UNKNOWN"
+          },
+          "basis": "département 67 seul : la commune, donc l'appartenance à l'Eurométropole, reste à vérifier (FA-D6, résidence)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-band-18-24",
+          "facts": {
+            "ageRange": [
+              18,
+              24
+            ]
+          },
+          "expected": {
+            "age": "MET",
+            "nature": "UNKNOWN"
+          },
+          "basis": "strasbourg.eu « 16 à 25 ans » : tranche annoncée ; la nature de l'aide n'est pas une condition lue (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        },
+        {
+          "id": "faj-territory-none",
+          "facts": {},
+          "expected": {
+            "territory": "UNKNOWN",
+            "age": "UNKNOWN"
+          },
+          "basis": "aucune réponse : tout reste inconnu, jamais une acceptation (G14)",
+          "acceptedBy": {
+            "name": "Gokhan GURBUZ",
+            "role": "Fondateur et porteur de projet",
+            "date": "2026-11-22"
+          }
+        }
+      ],
       "sourceCheck": {
         "result": "SOURCE_CHECKED",
         "kind": "INDEPENDENT_SOURCE_CHECKED (FA-D6, contrôle automatique et relecture des pages par ADA engineering — ce n'est pas une relecture d'expert)",
@@ -1255,6 +2534,19 @@
           }
         ],
         "legal": []
+      },
+      "ownerReview": {
+        "name": "Gokhan GURBUZ",
+        "role": "Fondateur et porteur de projet",
+        "date": "2026-11-22",
+        "kind": "owner",
+        "basis": "relu et approuvé par le responsable du traitement, sur la base d'une analyse documentaire assistée par IA ; pas une validation d'expert indépendant",
+        "ambiguityDecisions": [
+          {
+            "ambiguity": "Aucun plafond de ressources, règle de nationalité, barème ni article de loi sur la page ; date de mise à jour absente ; règlement du FAJ'EMS (Eurométropole, compétence transférée en 2017, gestion Mission locale) à obtenir avec sa version et sa date",
+            "decision": "décision du propriétaire 22/11, option prudente : règlement FAJ'EMS non lu : 25 ans exactement UNKNOWN ; ressources et résidence à vérifier auprès de la Mission locale (question 8)"
+          }
+        ]
       }
     }
   ],

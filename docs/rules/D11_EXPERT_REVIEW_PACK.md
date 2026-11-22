@@ -8,7 +8,7 @@ Tant que ce n'est pas fait, ADA n'utilise pas ces règles pour orienter : les r�
 
 Légende des résultats : MET = condition remplie d'après les réponses ; NOT_MET = non remplie ; UNKNOWN = ADA ne peut pas le dire.
 
-## RSA (revenu de solidarité active) (`rsa`) — RESEARCHED_UNVALIDATED
+## RSA (revenu de solidarité active) (`rsa`) — OWNER_VALIDATED
 
 Décide : Caf (MSA pour les exploitants agricoles), sur dossier ; département
 
@@ -53,7 +53,7 @@ Cas de référence proposés (9) :
 
 Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
-## Prime d'activité (`prime-activite`) — RESEARCHED_UNVALIDATED
+## Prime d'activité (`prime-activite`) — OWNER_VALIDATED
 
 Décide : Caf / MSA
 
@@ -89,7 +89,7 @@ Cas de référence proposés (4) :
 
 Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
-## APL (aide personnalisée au logement) (`apl`) — RESEARCHED_UNVALIDATED
+## APL (aide personnalisée au logement) (`apl`) — OWNER_VALIDATED
 
 Décide : Caf / MSA
 
@@ -125,7 +125,7 @@ Cas de référence proposés (5) :
 
 Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
-## AAH (allocation aux adultes handicapés) (`aah`) — RESEARCHED_UNVALIDATED
+## AAH (allocation aux adultes handicapés) (`aah`) — OWNER_VALIDATED
 
 Décide : CDAPH de la MDPH (silence de 4 mois = rejet) ; versement Caf / MSA
 
@@ -169,7 +169,7 @@ Cas de référence proposés (15) :
 
 Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
-## APA à domicile (allocation personnalisée d'autonomie) (`apa`) — RESEARCHED_UNVALIDATED
+## APA à domicile (allocation personnalisée d'autonomie) (`apa`) — OWNER_VALIDATED
 
 Décide : Département — dans le Bas-Rhin, la Collectivité européenne d'Alsace (adresse de la Direction de l'Autonomie non vérifiée sur alsace.eu)
 
@@ -204,7 +204,7 @@ Cas de référence proposés (5) :
 
 Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
-## ARE (allocation d'aide au retour à l'emploi) (`are`) — RESEARCHED_UNVALIDATED
+## ARE (allocation d'aide au retour à l'emploi) (`are`) — OWNER_VALIDATED
 
 Décide : France Travail
 
@@ -237,7 +237,7 @@ Cas de référence proposés (2) :
 
 Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
-## C2S (complémentaire santé solidaire) (`c2s`) — RESEARCHED_UNVALIDATED
+## C2S (complémentaire santé solidaire) (`c2s`) — OWNER_VALIDATED
 
 Décide : CPAM (compte ameli ou cerfa 12504)
 
@@ -280,7 +280,7 @@ Cas de référence proposés (13) :
 
 Signature de revue : nom …… fonction …… date …… — type : ☐ expert (EXPERT_VALIDATED) ☐ owner, responsable du traitement (OWNER_VALIDATED, pas une validation d'expert indépendant) — statut décidé : ☐ validée ☐ à corriger ☐ SUPERSEDED
 
-## FAJ — fonds d'aide aux jeunes (Eurométropole de Strasbourg) (`faj-strasbourg`) — RESEARCHED_UNVALIDATED
+## FAJ — fonds d'aide aux jeunes (Eurométropole de Strasbourg) (`faj-strasbourg`) — OWNER_VALIDATED
 
 Décide : Eurométropole de Strasbourg (géré par la Mission locale ; demande via une Mission locale, une association ou un service social)
 
