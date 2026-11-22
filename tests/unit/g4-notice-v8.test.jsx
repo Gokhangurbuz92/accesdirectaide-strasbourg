@@ -47,7 +47,7 @@ describe('privacy notice v8-2026-11-19 — exactly two changes', () => {
   it('v8 of the notice exists, still a draft; v6 / v7 of the notice unchanged byte for byte; the citizen terms stay at v7', () => {
     expect(v8.version).toBe(LEGAL_DRAFTS_V8);
     expect(v8.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
-    expect(latestDraftVersionOf(ID)).toBe('v10-2026-11-22');   // G14 (22/11/2026): v10 (Mon Parcours) is newer still   // G8 (19/11/2026): v9 (professional accounts) is newer; v8 stays approvable by name (tests/unit/g8-notice-v9.test.jsx)
+    expect(latestDraftVersionOf(ID)).toBe('v11-2026-11-22');   // G14 (22/11/2026): v10 (v8 + Mon Parcours) and v11 (v9 + Mon Parcours, for K8) are newer   // G8 (19/11/2026): v9 (professional accounts) is newer; v8 stays approvable by name (tests/unit/g8-notice-v9.test.jsx)
     expect(latestDraftVersionOf('cgu-citoyen')).toBe('v10-2026-11-22');   // G14: cgu-citoyen v10 (Mon Parcours)
     // hashes taken from the commit before this change (8d05312)
     expect(sha(v7)).toBe('4ac5e148ef8a26337c40545a0f249c7c660546b21d0be8cce110adc3c35470e6');

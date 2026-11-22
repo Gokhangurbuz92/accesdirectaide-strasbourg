@@ -46,11 +46,11 @@ afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.resetModules(); vi.stubEnv('
 
 describe('legal drafts v8-2026-11-19 — the professional documents only', () => {
   it('three approvable versions; v8 has exactly the two professional documents, still drafts; the others stay at v7', () => {
-    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v10-2026-11-22']);   // G14: v10 = citizen terms + notice (Mon Parcours)   // G8: v9 = the privacy notice only
+    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v10-2026-11-22', 'v11-2026-11-22']);   // G14: v10 = citizen terms + notice (Mon Parcours)   // G8: v9 = the privacy notice only
     expect(LEGAL_DRAFT_DOCUMENTS_V8.map((d) => d.id)).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     expect([...LEGAL_DRAFTS_V8_DOCUMENT_IDS]).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     for (const d of LEGAL_DRAFT_DOCUMENTS_V8) { expect(d.version).toBe(LEGAL_DRAFTS_V8); expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); }
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v10-2026-11-22', 'cgu-professionnel@v8-2026-11-19', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v10-2026-11-22']);   // G14: v10 (Mon Parcours) for the citizen terms and the notice
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v10-2026-11-22', 'cgu-professionnel@v8-2026-11-19', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v11-2026-11-22']);   // G14: citizen terms v10; notice v11 is the newest draft (v10 = in-force v8 + Mon Parcours)
     expect(LEGAL_NOTICE_VARIANT_DOCUMENT.version).toBe(LEGAL_DRAFTS_V7);
     expect(latestDraftVersionOf(LEGAL_NOTICE_VARIANT_DOCUMENT.id)).toBe(LEGAL_DRAFTS_V7);
     expect(latestDraftVersionOf('cgu-citoyen')).toBe('v10-2026-11-22');   // G14: cgu-citoyen v10 (Mon Parcours)

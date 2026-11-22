@@ -6,7 +6,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V11_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
 import { appendConsent, notificationOptionOpen, notificationOptionsOpen, NOTIFICATION_OPTION_CLOSED, setPreference } from '../../api/_services/citizen-account.js';
 
 const doc = (/** @type {string} */ id) => LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === id);
@@ -20,7 +20,7 @@ describe('legal drafts: what the v3 review (14/11/2026) changed still holds', ()
     expect(LEGAL_DRAFTS_VERSION).toMatch(/^v\d+-\d{4}-\d{2}-\d{2}$/);
     expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(3);
     // G4 (19/11/2026): v8 covers the two professional documents only; the others keep the shared version
-    for (const d of LEGAL_DRAFT_DOCUMENTS) expect(d.version).toBe(LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G8: the notice is at v9
+    for (const d of LEGAL_DRAFT_DOCUMENTS) expect(d.version).toBe(LEGAL_DRAFTS_V11_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V11 : LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G8: the notice is at v9
   });
   it('cgu §5 / §6 carry the « pas encore ouvert » qualifier and no present-tense booking promise', () => {
     const account = textOf(section('cgu-citoyen', 'account'));

@@ -13,7 +13,7 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_DOCUMENTS_V8, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, draftVisibility, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_DOCUMENTS_V8, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, draftVisibility, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V11_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
 import { RETENTION_POLICY, isPolicyApproved, policyDays } from '../../api/_services/retention-policy.js';
 import { citizenTermsInForce } from '../../api/_utils/terms-in-force.js';
 
@@ -31,7 +31,7 @@ describe('legal drafts: what the v5 provider verification (15/11/2026) changed s
   it('every document carries the one current version, v5 or later', () => {
     expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(5);
     // G4 (19/11/2026): v8 covers the two professional documents only; the others keep the shared version
-    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G8: the notice is at v9
+    for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) expect(d.version).toBe(LEGAL_DRAFTS_V11_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V11 : LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G8: the notice is at v9
   });
 
   it('Production keeps hiding the drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names the current version — an approval of v4 or v5 does not carry over', () => {
