@@ -17,6 +17,7 @@ import { qualifyEstimates, traceQualification } from '../lib/openfiscaEstimate.j
 import { IDENTITY_FAILURES, cachedEngineHealth } from '../lib/openfiscaEngine.js';
 import { reserveOpenfiscaCall, peekOpenfiscaQuota, QUOTA_MESSAGE_FR } from '../lib/openfiscaQuota.js';
 import { citizenEstimate, estimateConfigProblem } from '../lib/openfiscaLegislation.js';
+import { isEmsCommune } from '../lib/geography/emsCommunes.js';
 import { runLocalSimulation } from '../lib/LocalRulesEngine.js';
 import { ageFromBand } from '../lib/ageBands.js';
 import { checkRateLimit } from '../_utils/rateLimit.js';
@@ -71,6 +72,10 @@ function validateAnswers(answers) {
     const hasBand = !answers.birthDate && ageFromBand(answers.ageBand) !== null;
     if (!hasBand && (!answers.birthDate || !/^\d{4}-\d{2}-\d{2}$/.test(answers.birthDate))) {
         errors.push('birthDate is required (YYYY-MM-DD format)');
+    }
+    // G14: the commune of the indicative calculation (housing aid zone) — only an INSEE code of the Eurométropole (closed list of the questionnaire)
+    if (answers.depcom !== undefined && !isEmsCommune(answers.depcom)) {
+        errors.push('depcom must be the INSEE code of a commune of the Eurométropole de Strasbourg');
     }
     if (answers.income) {
         if (answers.income.salary != null && (isNaN(answers.income.salary) || answers.income.salary < 0)) {

@@ -1,15 +1,18 @@
 import { AlertTriangle, ExternalLink, Info, Scale } from 'lucide-react';
 import { formatDate, formatNumber, useT } from '@/i18n';
 
+/** the housing aids, whose amount depends on the commune */
+const HOUSING = new Set(['apl', 'aide_logement']);
+
 /**
  * G14 — the « estimation indicative » of the self-hosted OpenFisca engine (the `citizen` block of POST /api/diagnostic, api/lib/openfiscaLegislation.js).
  * Shows an amount ONLY when the server gave one (pinned legislation in force for the period); otherwise why there is none. Every aide says who decides,
  * the date of the legislation used when there is one, the official page and simulator, and « À vérifier auprès de l'organisme compétent » while its rule
  * is not expert-validated (D11). Never an entitlement statement. The interface frame is in the interface language (namespace `diagnostic`); what the
  * server wrote (aide names, deciding bodies, assumptions) stays French and is marked lang="fr".
- * @param {{ estimate: any, headingLevel?: 2 | 3 }} props
+ * @param {{ estimate: any, headingLevel?: 2 | 3, communeOutside?: boolean }} props communeOutside: the person chose « Autre commune … hors Eurométropole »
  */
-export default function IndicativeEstimate({ estimate, headingLevel = 2 }) {
+export default function IndicativeEstimate({ estimate, headingLevel = 2, communeOutside = false }) {
     const { t } = useT('diagnostic');
     if (!estimate || estimate.contract !== 'ADA_CITIZEN_ESTIMATE_V1' || !Array.isArray(estimate.items)) return null;
     const H = headingLevel === 3 ? 'h3' : 'h2';
@@ -28,7 +31,7 @@ export default function IndicativeEstimate({ estimate, headingLevel = 2 }) {
         household: t('diagnostic:estimate.missing.household', 'la composition exacte du foyer'),
         pension: t('diagnostic:estimate.missing.pension', 'le montant de vos pensions (non demandé ici)'),
         housing: t('diagnostic:estimate.missing.housing', 'votre statut de locataire et votre loyer'),
-        commune: t('diagnostic:estimate.missing.commune', 'votre commune exacte (non demandée ici)'),
+        commune: t('diagnostic:estimate.missing.commune', 'votre commune (question « Commune »)'),
         disabilityRate: t('diagnostic:estimate.missing.disability_rate', 'le taux d’incapacité reconnu par la MDPH (non demandé ici)'),
         unemploymentHistory: t('diagnostic:estimate.missing.unemployment_history', 'votre parcours d’emploi (non demandé ici)'),
         otherParent: t('diagnostic:estimate.missing.other_parent', 'la situation de l’autre parent (non demandée ici)'),
@@ -57,14 +60,18 @@ export default function IndicativeEstimate({ estimate, headingLevel = 2 }) {
                 {estimate.items.map((/** @type {any} */ item) => (
                     <li key={item.code} data-testid={`estimate-item-${item.code}`} className="rounded-xl border border-slate-200 p-4">
                         <H2 className="text-base font-bold text-slate-900" lang="fr">{item.label}</H2>
-                        {Number.isInteger(item.monthlyAmount) && item.monthlyAmount > 0 ? (
+                        {communeOutside && HOUSING.has(item.code) && !(item.monthlyAmount > 0) ? (
+                            <p className="mt-1 text-sm text-slate-700" data-testid="estimate-commune-outside">
+                                {t('diagnostic:estimate.withheld.commune_outside', 'Pas de montant : l’aide au logement n’est estimée ici que pour les communes de l’Eurométropole de Strasbourg (le montant dépend de la commune). Votre Caf la calcule pour votre commune.')}
+                            </p>
+                        ) : Number.isInteger(item.monthlyAmount) && item.monthlyAmount > 0 ? (
                             <p className="mt-1 text-sm text-slate-800" data-testid="estimate-amount">
                                 {t('diagnostic:estimate.amount', 'Montant estimé : environ {{amount}} par mois.', { amount: euros(item.monthlyAmount) })}
                             </p>
                         ) : (
                             <p className="mt-1 text-sm text-slate-700" data-testid="estimate-no-amount">{withheld(item.amountWithheld)}</p>
                         )}
-                        {item.amountWithheld === 'MISSING_INPUTS' && item.missing?.length > 0 && (
+                        {item.amountWithheld === 'MISSING_INPUTS' && item.missing?.length > 0 && !(communeOutside && HOUSING.has(item.code)) && (
                             <div className="mt-1 text-sm text-slate-700">
                                 <p>{t('diagnostic:estimate.missing_title', 'Il faudrait connaître :')}</p>
                                 <ul className="ms-5 list-disc">{item.missing.map((/** @type {string} */ k) => <li key={k}>{missingLabel(k)}</li>)}</ul>

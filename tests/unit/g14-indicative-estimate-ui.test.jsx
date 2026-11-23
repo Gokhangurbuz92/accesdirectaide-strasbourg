@@ -89,7 +89,7 @@ describe('offered: the indicative estimate', () => {
     expect(ppa.querySelectorAll('a[target="_blank"][rel~="noopener"]')).toHaveLength(2);
     const apl = screen.getByTestId('estimate-item-apl');
     expect(apl.querySelector('[data-testid="estimate-amount"]')).toBeNull();
-    expect(apl).toHaveTextContent('Pas de montant : il manque des informations.'); expect(apl).toHaveTextContent('votre commune exacte (non demandée ici)');
+    expect(apl).toHaveTextContent('Pas de montant : il manque des informations.'); expect(apl).toHaveTextContent('votre commune (question « Commune »)');
     expect(apl.querySelectorAll('a')).toHaveLength(0);   // a link that is not an official domain is never rendered
     expect(apl.querySelector('[lang="fr"]')).toHaveTextContent('APL');
     expect(await screen.findByTestId('assessment-region')).toBeInTheDocument();   // the orientation, computed in the browser
@@ -118,6 +118,38 @@ describe('offered: the indicative estimate', () => {
     render(wrap(h(DiagnosticPage))); fill(); submit();
     await screen.findByTestId('assessment-region');
     expect(screen.getByTestId('estimate-unavailable')).toHaveTextContent('momentanément indisponible');
+  });
+});
+
+describe('the commune question (closed list of the Eurométropole)', () => {
+  it('lists the 33 communes of the directory reference plus « Autre commune »; the INSEE code goes only in the AUTHORITATIVE request', async () => {
+    const calls = server({ availability: { status: 200, body: { available: true } }, authoritative: { status: 200, body: { citizen: CITIZEN } } });
+    render(wrap(h(DiagnosticPage)));
+    const select = document.getElementById('diag-commune');
+    expect(document.querySelector('label[for="diag-commune"]')).toHaveTextContent('Commune (facultatif)');
+    const values = [...select.options].map((o) => o.value);
+    expect(values[0]).toBe(''); expect(values.at(-1)).toBe('AUTRE'); expect(values).toHaveLength(35);
+    expect(values).toContain('67482'); expect(values.slice(1, -1).every((v) => /^67\d{3}$/.test(v))).toBe(true);
+    fill(); fireEvent.change(select, { target: { value: '67218' } }); submit();
+    await screen.findByTestId('indicative-estimate');
+    expect(posts(calls)[0].body.answers.depcom).toBe('67218');
+  });
+  it('« Autre commune … hors Eurométropole »: no code is sent and the housing aid says why there is no amount', async () => {
+    const calls = server({ availability: { status: 200, body: { available: true } }, authoritative: { status: 200, body: { citizen: CITIZEN } } });
+    render(wrap(h(DiagnosticPage)));
+    fill(); fireEvent.change(document.getElementById('diag-commune'), { target: { value: 'AUTRE' } }); submit();
+    await screen.findByTestId('indicative-estimate');
+    expect(posts(calls)[0].body.answers.depcom).toBeUndefined();
+    const apl = screen.getByTestId('estimate-item-apl');
+    expect(apl.querySelector('[data-testid="estimate-commune-outside"]')).toHaveTextContent('que pour les communes de l’Eurométropole de Strasbourg');
+    expect(apl).not.toHaveTextContent('Il faudrait connaître');
+  });
+  it('the SIMULATION_MODE request never carries the commune', async () => {
+    const calls = server({ availability: { status: 200, body: { available: false } }, authoritative: { status: 500, body: {} } });
+    render(wrap(h(DiagnosticPage)));
+    fill(); fireEvent.change(document.getElementById('diag-commune'), { target: { value: '67482' } }); submit();
+    await screen.findByTestId('assessment-region');
+    expect(posts(calls)[0].body.mode).toBe('SIMULATION_MODE'); expect(JSON.stringify(posts(calls)[0].body)).not.toContain('67482');
   });
 });
 

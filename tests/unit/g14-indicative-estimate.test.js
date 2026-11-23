@@ -111,15 +111,17 @@ vi.mock('../../api/_utils/auth.js', () => ({ resolveAuthContext: async () => nul
 const URL_ = 'https://ada-openfisca.functions.fnc.fr-par.scw.cloud';
 const mk = () => ({ statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, setHeader(k, v) { this.headers[k] = v; } });
 // sentinel answers: none of these strings may reach a log, Sentry, the database or the quota store
-const SENT = { birthDate: '1987-06-05', salary: 1234.56, rent: 543.21, territory: '67123' };
+const SENT = { birthDate: '1987-06-05', salary: 1234.56, rent: 543.21, territory: '67123', depcom: '67218' };
 const ANSWERS = { birthDate: SENT.birthDate, householdSize: 1, territory: SENT.territory, statut: 'salarié', income: { salary: SENT.salary }, housing: { status: 'tenant', rent: SENT.rent, charges: 0 } };
+const WITH_COMMUNE = { ...ANSWERS, depcom: SENT.depcom };
 function engine(posts) {
   return vi.fn(async (url, init = {}) => {
     const headers = { get: (n) => ({ 'country-package': 'openfisca-france', 'country-package-version': OPENFISCA_FRANCE_PIN })[String(n).toLowerCase()] ?? null };
     if (String(url).endsWith('/spec')) return { ok: true, status: 200, headers, json: async () => ({}) };
     const body = JSON.parse(init.body); posts.push(body);
     const p = Object.values(body.familles.fam_1.rsa || {}).length ? Object.keys(body.familles.fam_1.rsa)[0] : '2026-11';
-    const fam = { ...body.familles.fam_1, rsa: { [p]: 0 }, ppa: { [p]: 187.4 }, apl: { [p]: 0 }, aide_logement: { [p]: 0 } };
+    const housing = body.menages?.men_1?.depcom ? 231.6 : 0;   // the engine needs the commune for the housing aid
+    const fam = { ...body.familles.fam_1, rsa: { [p]: 0 }, ppa: { [p]: 187.4 }, apl: { [p]: housing }, aide_logement: { [p]: housing } };
     return { ok: true, status: 200, headers, json: async () => ({ ...body, familles: { fam_1: fam } }) };
   });
 }
@@ -166,12 +168,13 @@ describe('POST /api/diagnostic (AUTHORITATIVE_MODE) and GET estimate-availabilit
   it('privacy: nothing of the answers is logged, stored (database, quota store) or sent to Sentry — only the engine receives them', async () => {
     const posts = []; vi.stubGlobal('fetch', engine(posts));
     const { default: handler } = await import('../../api/_handlers/diagnostic.js');
-    const r = mk(); await handler({ method: 'POST', url: '/api/diagnostic', headers: { host: 'x' }, socket: {}, body: { mode: 'AUTHORITATIVE_MODE', answers: ANSWERS } }, r);
+    const r = mk(); await handler({ method: 'POST', url: '/api/diagnostic', headers: { host: 'x' }, socket: {}, body: { mode: 'AUTHORITATIVE_MODE', answers: WITH_COMMUNE } }, r);
     expect(r.statusCode).toBe(200);
     const kv = await memoryStore.read(monthKey(Date.now()));
     const kept = JSON.stringify({ logs: R.logs, sentry: R.sentry, db: R.db, kv });
-    for (const v of [SENT.birthDate, String(SENT.salary), String(SENT.rent), SENT.territory, '1987', '1234', '543']) expect(kept, v).not.toContain(v);
+    for (const v of [SENT.birthDate, String(SENT.salary), String(SENT.rent), SENT.territory, SENT.depcom, '1987', '1234', '543']) expect(kept, v).not.toContain(v);
     expect(JSON.stringify(posts)).toContain(SENT.birthDate);   // the premise: the engine did receive them
+    expect(posts[0].menages.men_1.depcom).toEqual({ '2026-11': SENT.depcom });
     // and an engine failure does not echo them either
     vi.stubGlobal('fetch', vi.fn(async (u) => (String(u).endsWith('/spec') ? engine([])(u) : { ok: false, status: 500, text: async () => JSON.stringify(ANSWERS), json: async () => ({}) })));
     R.logs.length = 0; R.sentry.length = 0;
@@ -179,5 +182,19 @@ describe('POST /api/diagnostic (AUTHORITATIVE_MODE) and GET estimate-availabilit
     const r2 = mk(); await h2({ method: 'POST', url: '/api/diagnostic', headers: { host: 'x' }, socket: {}, body: { mode: 'AUTHORITATIVE_MODE', answers: ANSWERS } }, r2);
     expect(r2.statusCode).toBe(503);
     expect(JSON.stringify({ logs: R.logs, sentry: R.sentry, body: r2.body })).not.toContain(SENT.birthDate);
+  });
+
+  it('the commune (closed list of the Eurométropole): with it, the housing aid shows an amount within its window; any other code is refused', async () => {
+    const posts = []; vi.stubGlobal('fetch', engine(posts));
+    const { default: handler } = await import('../../api/_handlers/diagnostic.js');
+    const r = mk(); await handler({ method: 'POST', url: '/api/diagnostic', headers: { host: 'x' }, socket: {}, body: { mode: 'AUTHORITATIVE_MODE', answers: WITH_COMMUNE } }, r);
+    const by = Object.fromEntries(r.body.citizen.items.map((i) => [i.code, i]));
+    expect(by.apl).toMatchObject({ monthlyAmount: 230, amountWithheld: null, legislation: { inForceFrom: '2026-10-01' }, verifyWithOrganism: true });
+    expect(by.aide_logement).toMatchObject({ monthlyAmount: 230 });
+    for (const depcom of ['75056', '67001x', 67482, 'AUTRE', '']) {
+      const bad = mk(); await handler({ method: 'POST', url: '/api/diagnostic', headers: { host: 'x' }, socket: {}, body: { mode: 'AUTHORITATIVE_MODE', answers: { ...ANSWERS, depcom } } }, bad);
+      expect(bad.statusCode, String(depcom)).toBe(400); expect(bad.body.error).toBe('validation_error');
+    }
+    expect(posts).toHaveLength(1);
   });
 });

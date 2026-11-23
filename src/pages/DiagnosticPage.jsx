@@ -25,6 +25,12 @@ import { EMPLOYMENT_KEYS, HOUSING_KEYS, useDiagnosticLabels } from '@/lib/diagno
 import { useLanguage, useT } from '@/i18n';
 import { client } from '@/api/client';
 import useCitizenHistory from '@/hooks/useCitizenHistory';
+import serviceTerritory from '../../data/geography/service-territory.v1.json';
+
+/** G14: the Eurométropole communes (INSEE code, name; the directory's reference), sorted by name — proper nouns, the same in every language */
+const EMS_COMMUNES = /** @type {[string, string][]} */ ([...serviceTerritory.communes]).sort((a, b) => a[1].localeCompare(b[1], 'fr'));
+/** the closed value of « Autre commune du Bas-Rhin / hors Eurométropole »: no code is sent */
+const OTHER_COMMUNE = 'AUTRE';
 
 // DTA S3A: directory lookup for the plan's structure shortlist (a public, read-only listing; the person chooses a structure on its own page). Stable reference on purpose.
 const loadStructures = async (/** @type {string} */ query) => {
@@ -46,6 +52,7 @@ const DEFAULT_SITUATION = {
     housingStatus: '',
     householdSize: 1,
     zipCode: '',
+    commune: '',
     employmentStatus: 'salarié',
 };
 
@@ -131,7 +138,8 @@ export default function DiagnosticPage() {
             response = await csrfFetch('/api/diagnostic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mode: 'AUTHORITATIVE_MODE', answers }),
+                // G14: the commune's INSEE code goes to the engine only (housing aid zone); « Autre commune » / unanswered sends none
+                body: JSON.stringify({ mode: 'AUTHORITATIVE_MODE', answers: { ...answers, ...(EMS_COMMUNES.some(([c]) => c === situation.commune) ? { depcom: situation.commune } : {}) } }),
             });
             data = await response.json().catch(() => ({}));
             if (response.ok && data?.citizen?.contract === 'ADA_CITIZEN_ESTIMATE_V1') {
@@ -437,6 +445,25 @@ export default function DiagnosticPage() {
                                 />
                             </div>
 
+                            {/* G14: commune (closed list of the Eurométropole) — used only by the indicative calculation, for the housing aid */}
+                            <div className="flex flex-col gap-1.5">
+                                <label htmlFor="diag-commune" className="flex items-center gap-2 text-xs font-bold text-slate-600">
+                                    <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {t('diagnostic:form.commune', 'Commune (facultatif)')}
+                                </label>
+                                <select
+                                    id="diag-commune"
+                                    value={situation.commune || ''}
+                                    onChange={(e) => updateField('commune', e.target.value)}
+                                    aria-describedby="diag-commune-hint"
+                                    className="w-full appearance-none rounded-xl border border-slate-200 bg-slate-50 px-3 py-3 text-sm font-medium outline-none transition-all focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20"
+                                >
+                                    <option value="">{t('diagnostic:form.commune_none', 'Non précisée')}</option>
+                                    {EMS_COMMUNES.map(([code, name]) => <option key={code} value={code} lang="fr">{name}</option>)}
+                                    <option value={OTHER_COMMUNE}>{t('diagnostic:form.commune_other', 'Autre commune du Bas-Rhin / hors Eurométropole')}</option>
+                                </select>
+                                <p id="diag-commune-hint" className="text-xs text-slate-700">{t('diagnostic:form.commune_hint', 'Sert seulement à estimer l’aide au logement, quand l’estimation indicative est disponible : son montant dépend de la commune.')}</p>
+                            </div>
+
                             {/* Actions */}
                             <div className="flex flex-col gap-3 border-t border-slate-100 pt-6">
                                 {!canCalculate && (
@@ -509,7 +536,7 @@ export default function DiagnosticPage() {
                         {results ? (
                             <div data-testid="diagnostic-results" ref={resultsRef}>
                                 <p role="status" className="sr-only">{t('diagnostic:results.announce', "Nouvelles pistes d'orientation affichées.")}</p>
-                                {estimate ? <IndicativeEstimate estimate={estimate} /> : null}
+                                {estimate ? <IndicativeEstimate estimate={estimate} communeOutside={situation.commune === OTHER_COMMUNE} /> : null}
                                 {estimateNotice ? <EstimateUnavailable code={estimateNotice} /> : null}
                                 <DiagnosticOutcome results={results} situation={situation} structureLoader={loadStructures} />
                             </div>
