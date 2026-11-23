@@ -49,8 +49,8 @@ describe('cgu-professionnel v9-2026-11-22 — listed as a draft', () => {
     expect(v9.version).toBe(LEGAL_DRAFTS_V9_PRO);
     expect(v9.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
     expect(v9.path).toBe('/cgu/professionnel');
-    expect(latestDraftVersionOf(ID)).toBe(LEGAL_DRAFTS_V9_PRO);
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v12-2026-11-23', 'cgu-professionnel@v9-2026-11-22', 'conditions-structures@v8-2026-11-19', 'notice-confidentialite@v13-2026-11-23']);   // G14 merge: Mon Parcours v10 / v11, expansion v12 / v13
+    expect(latestDraftVersionOf(ID)).toBe('v10-2026-11-23');   // G14 ADA Pro opening: v10-2026-11-23 is newer (tests/unit/g14-legal-v12.test.js); v9 stays approvable by name
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v12-2026-11-23', 'cgu-professionnel@v10-2026-11-23', 'conditions-structures@v9-2026-11-23', 'notice-confidentialite@v13-2026-11-23']);   // G14 merge: Mon Parcours v10 / v11, expansion v12 / v13
     // hashes taken from the commit before this change (99a6c11)
     expect(sha(LEGAL_DRAFT_DOCUMENTS_V8)).toBe('adc97403b2533d6b534d933c46ddac666ae1f967f5957ffd136a61c79c1451bb');
     expect(sha(LEGAL_DRAFT_DOCUMENTS_V9)).toBe('9b49394eac64574239478f217f7071758fd841485d9b335d900399069dc72e34');
@@ -158,7 +158,7 @@ describe('not approved: Production and the acceptance record', () => {
     expect(approvedVersionOf(ID, WITH_PRO_V9)).toBe(LEGAL_DRAFTS_V9_PRO);
     expect(proTermsReference(ID, { VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: WITH_PRO_V9 })).toBe('cgu-professionnel@v9-2026-11-22');
     expect(proTermsReference('conditions-structures', { VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: WITH_PRO_V9 })).toBe('conditions-structures@v8-2026-11-19');
-    expect(proTermsReference(ID, { VERCEL_ENV: 'preview' })).toBe('cgu-professionnel@v9-2026-11-22');
+    expect(proTermsReference(ID, { VERCEL_ENV: 'preview' })).toBe('cgu-professionnel@v10-2026-11-23');   // the newest draft
   });
 
   it('recordProTermsAcceptance writes the approved version (v8) in Production, not the draft', async () => {
@@ -184,7 +184,7 @@ describe('rendering (LegalDraftDocument.jsx)', () => {
     vi.stubEnv('VITE_LEGAL_DRAFT_PREVIEW', '1');
     const { container } = await renderPage('/cgu/professionnel');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');
-    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('cgu-professionnel@v9-2026-11-22');
+    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('cgu-professionnel@v10-2026-11-23');   // G14 ADA Pro opening: the newest draft
     expect(container.textContent).toContain('Aucun avis automatique ne vous est envoyé lorsque votre compte est désactivé.');
     expect(container.textContent).not.toContain('bases légales proposées');
   });

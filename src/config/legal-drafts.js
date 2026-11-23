@@ -734,8 +734,12 @@ export const LEGAL_DRAFT_DOCUMENTS_V11 = [withChanges(LEGAL_DRAFTS_V11_CHANGES, 
  *       notice-confidentialite = v10 (Mon Parcours, from v8: no ADA Pro text) + § 2 one paragraph, new § « 3 ter » (`participation`), § 4 five items,
  *                                § 5 one paragraph, § 6 Mailjet item (moderation e-mails), § 8 one paragraph, new § « 13 » (`moderation`).
  *       → put in force at the X04 / X01 / X02 opening (with cgu-professionnel@v8 and conditions-structures@v8 unchanged).
- *  v13  notice-confidentialite = v11 (ADA Pro, from v9) + the SAME expansion texts (Mailjet item from the v9 wording) + the 8x8 JaaS video texts (§ 6
- *       item and paragraph, § 7 paragraph). Proposed for activation at the ADA Pro (K8) opening only (LEGAL_DRAFTS_V13_ACTIVATION).
+ *  v13  notice-confidentialite = v11 (ADA Pro, from v9) + the SAME expansion texts (Mailjet item from the v9 wording) + the ADA Pro opening texts
+ *       (owner decision 23/11/2026: no pilot structure, public sign-up verified by the operator, appointments, 8x8 JaaS video, Outlook free / busy):
+ *       § 2 p1_v13, § 3 P4p_v13 + P4 / P5 / P7 moved word for word from § 3 bis + P11 without « (désactivé) », § 4 appointments / Outlook / not-open list,
+ *       § 5 p2_v13, § 6 Microsoft / 8x8 items and video paragraph, § 7 video paragraph, § 9 booking (the structure receives neither name, e-mail nor
+ *       phone: rdv.js), § 11 p3_v13 (sign-up). Proposed for activation at the ADA Pro opening only (LEGAL_DRAFTS_V13_ACTIVATION), with
+ *       cgu-professionnel v10-2026-11-23 and conditions-structures v9-2026-11-23 (below).
  * Facts by text (code wins over the master; differences listed in the master file):
  *  participation  X04 adult account only (isAdultAccount), one need from a closed list with a separate never-pre-ticked agreement, proof in ConsentLog
  *                 (EVENT_ACCESSIBILITY_NEED, true / false), organizer counts only (registrationCounts), reminder in the notification centre from 48 h
@@ -750,7 +754,9 @@ export const LEGAL_DRAFT_DOCUMENTS_V11 = [withChanges(LEGAL_DRAFTS_V11_CHANGES, 
  *                 (SOLE_REVIEW_DELAY_MS) and the answer says so, warnings then 1–180 days (WARNING_WINDOW_DAYS 365), notifier keyed by HMAC (notifierKey).
  *  video (v13)    api/lib/video-provider.js issueJaasJoin: room = HMAC (no name, date, structure), user id = HMAC per appointment, generic display name,
  *                 moderator flag, nbf / exp = 15 min before / after; recording, live streaming, transcription, calls, file upload off. 8x8 Global DPA
- *                 2025-02 (owner accepted 23/11/2026): processor, SCC 2021/914 module 2. Video stays closed (capability `video`, appointments closed).
+ *                 2025-02 (owner accepted 23/11/2026): processor, SCC 2021/914 module 2. Opens with ADA Pro (owner 23/11/2026).
+ *  appointments   gdpr-purge.js: A7 = 365 (approvedChoices) confirmed, 90 unconfirmed / refused / expired after startAt, 90 cancelled after cancelledAt,
+ *  (v13)          30 message (LEAST(startAt, cancelledAt)); Outlook tokens 30 days after expiry; busy read kept 2 min in memory (CALENDAR_FRESH_MS).
  * Every earlier version unchanged byte for byte. Translations: the « …_v12 » / « …_v13 » keys of src/i18n/locales/<lang>/legaldraft.json.
  */
 export const LEGAL_DRAFTS_V12 = 'v12-2026-11-23';
@@ -759,7 +765,7 @@ export const LEGAL_DRAFTS_V13 = 'v13-2026-11-23';
 export const LEGAL_DRAFTS_V13_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
 /** v12 and v13 are proposed (23/11/2026), not approved by the owner; v13 carries the v9 / v11 texts on professional accounts and the video provider */
 export const LEGAL_DRAFTS_V12_STATUS = 'PROPOSED — proposée le 23/11/2026, à approuver par le responsable avant l’ouverture de X04, X01 et X02';
-export const LEGAL_DRAFTS_V13_ACTIVATION = 'APPROVED_FOR_ACTIVATION_AT_K8 — proposée le 23/11/2026 (pas encore approuvée par le responsable), à mettre en vigueur seulement à l’ouverture d’ADA Pro (K8)';
+export const LEGAL_DRAFTS_V13_ACTIVATION = 'APPROVED_FOR_ACTIVATION_AT_K8 — proposée le 23/11/2026 (pas encore approuvée par le responsable), à mettre en vigueur seulement à l’ouverture d’ADA Pro (K8 : inscription libre vérifiée, rendez-vous, visioconférence, Outlook), avec cgu-professionnel v10-2026-11-23 et conditions-structures v9-2026-11-23';
 
 export const LEGAL_DRAFTS_V12_STATUS_PARAGRAPH = "Elle décrit aussi, lorsqu'elles sont ouvertes, les fonctions de participation (section 3 ter) et la manière dont les contenus publiés sont signalés et modérés (section 13).";
 export const LEGAL_DRAFTS_V12_EVENTS = "Événements de l'Académie : vous inscrire à un événement, annuler votre inscription et recevoir un rappel dans les notifications de Mon Espace à partir de 48 heures avant le début : exécution des conditions d'utilisation (art. 6, 1, b). Si vous le choisissez, un seul besoin d'accessibilité dans une liste (par exemple une interprétation en langue des signes) : votre consentement explicite (art. 9, 2, a), donné par une case distincte jamais cochée d'avance. Chaque accord et chaque retrait est enregistré comme preuve. Vous pouvez retirer ce besoin à tout moment depuis « Mes événements » ; l'annulation de l'inscription l'efface aussi. L'organisateur ne reçoit que des nombres (combien de personnes inscrites, combien de besoins de chaque sorte), jamais votre nom ni votre adresse.";
@@ -800,10 +806,26 @@ export const LEGAL_DRAFTS_V12_CGU_PUBLISHING = Object.freeze([
 ]);
 export const LEGAL_DRAFTS_V12_CGU_SUSPENSION = "La participation à une fonction (communauté, témoignages) peut aussi être suspendue seule, sans toucher au reste du compte, avec les mêmes garanties (motifs et recours de la section 7 bis).";
 /** v13 only — 8x8 JaaS (video stays closed, like the appointments) */
-export const LEGAL_DRAFTS_V13_VIDEO_PROCESSOR = "8x8, Inc. (États-Unis) : visioconférence des rendez-vous (service « Jitsi as a Service »), qui n'est pas encore ouverte, comme les rendez-vous eux-mêmes. 8x8 agit comme sous-traitant selon son accord de traitement des données (« Global Data Processing Addendum », version de février 2025), intégré à ses conditions de service.";
-export const LEGAL_DRAFTS_V13_VIDEO_DATA = "Visioconférence (pas encore ouverte) : elle ne sera proposée que pour un rendez-vous dont la structure a validé la visioconférence et pour lequel vous avez donné votre accord. AccesDirectAide transmettra alors à 8x8 seulement un jeton d'accès valable de 15 minutes avant le début à 15 minutes après la fin du rendez-vous, qui contient un nom de salle calculé (une suite de caractères qui ne contient ni votre nom, ni la date, ni la structure), un identifiant technique propre au rendez-vous, un nom affiché générique (« Personne accompagnée » ou « Conseiller·e ») et le rôle dans la salle ; ni votre nom, ni votre adresse électronique, ni l'objet du rendez-vous. Pendant l'appel, votre navigateur se connectera directement aux serveurs de 8x8 : le son, l'image et les messages écrits dans la salle passeront par eux, et 8x8 recevra les données techniques de la connexion (notamment votre adresse IP). L'enregistrement, la diffusion en direct, la transcription, les appels téléphoniques et l'envoi de fichiers sont désactivés.";
-export const LEGAL_DRAFTS_V13_VIDEO_TRANSFER = "Visioconférence (pas encore ouverte) : 8x8, Inc. est établie aux États-Unis ; les données de la visioconférence pourront y être transférées. La garantie prévue est celle des clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914, module 2 : de responsable du traitement à sous-traitant), prévues par l'accord de traitement des données de 8x8.";
+export const LEGAL_DRAFTS_V13_VIDEO_PROCESSOR = "8x8, Inc. (États-Unis) : visioconférence des rendez-vous (service « Jitsi as a Service »). 8x8 agit comme sous-traitant selon son accord de traitement des données (« Global Data Processing Addendum », version de février 2025), intégré à ses conditions de service.";
+export const LEGAL_DRAFTS_V13_VIDEO_DATA = "Visioconférence : elle n'est proposée que pour un rendez-vous dont la structure a validé la visioconférence et pour lequel vous avez donné votre accord ; sa base est celle des rendez-vous (P5, section 3). AccesDirectAide transmet alors à 8x8 seulement un jeton d'accès valable de 15 minutes avant le début à 15 minutes après la fin du rendez-vous, qui contient un nom de salle calculé (une suite de caractères qui ne contient ni votre nom, ni la date, ni la structure), un identifiant technique propre au rendez-vous, un nom affiché générique (« Personne accompagnée » ou « Conseiller·e ») et le rôle dans la salle ; ni votre nom, ni votre adresse électronique, ni l'objet du rendez-vous. Pendant l'appel, votre navigateur se connecte directement aux serveurs de 8x8 : le son, l'image et les messages écrits dans la salle passent par eux, et 8x8 reçoit les données techniques de la connexion (notamment votre adresse IP). L'appel n'est pas enregistré : l'enregistrement, la diffusion en direct, la transcription, les appels téléphoniques et l'envoi de fichiers sont désactivés.";
+export const LEGAL_DRAFTS_V13_VIDEO_TRANSFER = "Visioconférence : 8x8, Inc. est établie aux États-Unis ; les données de la visioconférence peuvent y être transférées. La garantie prévue est celle des clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914, module 2 : de responsable du traitement à sous-traitant), prévues par l'accord de traitement des données de 8x8.";
 
+/** v13 — the ADA Pro opening (owner 23/11/2026: no pilot structure, public sign-up verified by the operator, appointments, video and Outlook open) */
+export const LEGAL_DRAFTS_V13_STATUS_PARAGRAPH = "Cette notice décrit les traitements des comptes personnels (section 3) et des comptes professionnels ADA Pro (section 3, P4p, et section 11). Dans ADA Pro sont ouvertes les fonctions de compte, d'équipe et de fiche de la structure (avec son journal et ses statistiques), les rendez-vous (demande, confirmation, report, annulation, affectation à un professionnel), la visioconférence des rendez-vous et la lecture des disponibilités Outlook (occupé ou libre) des professionnels qui connectent leur calendrier. Le message joint à une demande, les rappels, les orientations entre professionnels et le partage de dossiers ne sont pas encore ouverts : leurs bases légales sont indiquées à titre de proposition (section 3 bis) et seront confirmées avant leur ouverture.";
+export const LEGAL_DRAFTS_V13_P4P = "P4p — Comptes professionnels ADA Pro (création sur invitation ou par l'inscription d'une structure, vérifiée par l'exploitant sur une source officielle, connexion avec double authentification obligatoire, gestion de l'équipe et des invitations par l'administrateur de la structure, propositions de mise à jour de la fiche de la structure, nom affiché et fonction facultatifs, notifications et e-mails de service, journal des actions) : exécution des conditions d'utilisation des professionnels acceptées à l'inscription (art. 6, 1, b) ; sécurité des comptes et journal des actions : intérêt légitime de l'exploitant et de la structure à protéger les accès (art. 6, 1, f).";
+export const LEGAL_DRAFTS_V13_P11 = "P11 — Disponibilités Outlook d'un professionnel qui connecte son calendrier (occupé ou libre seulement) : base choisie par la structure ; l'exploitant agit pour elle.";
+export const LEGAL_DRAFTS_V13_APPOINTMENTS_RETENTION = "Rendez-vous : un rendez-vous confirmé, tenu ou manqué est anonymisé 1 an après sa date ; une demande refusée, expirée ou restée sans réponse est anonymisée 90 jours après la date prévue du rendez-vous, et un rendez-vous annulé 90 jours après son annulation ; le message joint à une demande, lorsque cette fonction est ouverte, est effacé 30 jours après la date du rendez-vous (ou après l'annulation si elle vient avant).";
+export const LEGAL_DRAFTS_V13_OUTLOOK_RETENTION = "Calendrier Outlook d'un professionnel : les jetons de connexion, chiffrés, sont gardés tant que la connexion est active ; un jeton expiré et non renouvelé est supprimé 30 jours après son expiration. Les plages occupées ou libres lues ne sont pas enregistrées dans la base de données : elles sont gardées 2 minutes au plus, en mémoire.";
+export const LEGAL_DRAFTS_V13_NOT_OPEN = "Fonctions pas encore ouvertes (notamment message facultatif, rappels, orientations entre professionnels, assistant, membres du foyer, historique de consultation, favoris) : leurs durées seront annoncées dans cette notice avant leur ouverture.";
+export const LEGAL_DRAFTS_V13_RECIPIENTS = "La structure que vous choisissez pour un rendez-vous reçoit aussi ce qui lui est transmis (section 9). Lorsqu'un professionnel a connecté son calendrier Outlook, Microsoft reçoit les demandes de disponibilité (occupé ou libre) de ce calendrier ; aucune information sur vous ne lui est envoyée.";
+export const LEGAL_DRAFTS_V13_MICROSOFT = "Microsoft : boîte de réception de l'adresse de contact ; pour les professionnels qui connectent leur calendrier Outlook, lecture des seules plages occupées ou libres de ce calendrier (autorisation « Calendars.ReadBasic »), sans l'objet, les participants ni le lieu des événements ; rien n'est écrit dans le calendrier. Selon les règles de l'organisation Microsoft du professionnel, l'accord de son administrateur peut être nécessaire.";
+export const LEGAL_DRAFTS_V13_BOOKING = Object.freeze([
+  "Une demande de rendez-vous se fait depuis votre compte. Selon le choix de la structure, le rendez-vous est confirmé aussitôt, ou la structure confirme, propose un autre créneau ou refuse.",
+  "La structure choisie reçoit dans ADA Pro le service, le créneau et la modalité (sur place ou en visioconférence) que vous avez choisis et, lorsque cette fonction est ouverte et que vous l'avez accepté, votre message. La plateforme ne lui communique ni votre nom, ni votre adresse électronique, ni votre téléphone ; les avis sur le rendez-vous vous sont envoyés par la plateforme.",
+  "Pour ce qu'elle reçoit, la structure est responsable de son propre traitement : elle décide de ce qu'elle en fait dans ses dossiers, selon ses obligations. Vous pouvez exercer vos droits auprès d'elle.",
+  "Pour la gestion de la demande dans la plateforme, l'exploitant et la structure sont responsables conjoints ; un accord le précisera et ses grandes lignes seront publiées. Aucun accord n'est signé à ce jour.",
+]);
+export const LEGAL_DRAFTS_V13_PRO_ACCOUNT_PARAGRAPH = "Si un compte professionnel vous est ouvert, c'est sur invitation envoyée à votre adresse électronique professionnelle par un administrateur de votre structure ou par l'exploitant, ou parce que vous avez inscrit vous-même votre structure (nom de la structure, votre adresse électronique professionnelle et un mot de passe) ; dans ce cas, le compte ne peut servir qu'après que l'exploitant a vérifié la structure sur une source officielle et vous a envoyé l'invitation à activer la double authentification. Ce compte contient votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification, ainsi que, si vous les indiquez, votre nom affiché et votre fonction. Votre acceptation des conditions d'utilisation des professionnels (et, pour un administrateur de structure, des conditions des structures) est enregistrée avec leur version dans le registre des consentements ; ce n'est pas un consentement au sens du RGPD. Les sections 3 à 8 s'appliquent aussi à vous, avec les règles propres aux comptes professionnels qu'elles indiquent : finalité et base en section 3 (P4p), durées en section 4, destinataires en section 5, exercice de vos droits en section 8.";
 /** @type {DraftSection} the new § 3 ter of the notice (v12 and v13) */
 const PARTICIPATION_SECTION = Object.freeze({ id: 'participation', title: '3 ter. Fonctions de participation', titleKey: 'title_v12',
   items: [LEGAL_DRAFTS_V12_EVENTS, LEGAL_DRAFTS_V12_TESTIMONIALS, LEGAL_DRAFTS_V12_STORIES], itemKeys: { 0: 'events_v12', 1: 'testimonials_v12', 2: 'stories_v12' },
@@ -832,22 +854,32 @@ export const LEGAL_DRAFTS_V12_CHANGES = Object.freeze({
     deletion: { paras: { insertAfter: { 2: [[LEGAL_DRAFTS_V12_CGU_SUSPENSION, 'participation_v12']] } } },
   } },
 });
+/** the § 3 bis items of notice v11 (P4 … P11), some of which move to § 3 in v13 */
+const V11_LATER = /** @type {string[]} */ (/** @type {any} */ (docOf(LEGAL_DRAFT_DOCUMENTS_V11, 'notice-confidentialite').sections.find((x) => x.id === 'purposes-later')).items);
 export const LEGAL_DRAFTS_V13_CHANGES = Object.freeze({
   'notice-confidentialite': { addSections: { 'purposes-later': [PARTICIPATION_SECTION], language: [MODERATION_SECTION] }, sections: {
-    status: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_STATUS_PARAGRAPH, 'expansion_v12']] } } },
-    retention: { items: { insertAfter: { 16: RETENTION_V12 } } },
-    recipients: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RECIPIENTS, 'expansion_v12']] } } },
+    status: { paras: { replace: { 0: [LEGAL_DRAFTS_V13_STATUS_PARAGRAPH, 'p1_v13'] }, insertAfter: { 0: [[LEGAL_DRAFTS_V12_STATUS_PARAGRAPH, 'expansion_v12']] } } },
+    // P4, P5, P7 move from § 3 bis to § 3 word for word (their translations are copied under the new keys); P11 without « (désactivé) »
+    purposes: { items: { replace: { 4: [LEGAL_DRAFTS_V13_P4P, 'p4p_v13'] }, insertAfter: { 4: [[V11_LATER[0], 'p4_v13'], [V11_LATER[1], 'p5_v13'], [V11_LATER[4], 'p7_v13'], [LEGAL_DRAFTS_V13_P11, 'p11_v13']] } } },
+    'purposes-later': { items: { remove: [0, 1, 4, 8] } },
+    retention: { items: { insertAfter: { 16: [...RETENTION_V12, [LEGAL_DRAFTS_V13_APPOINTMENTS_RETENTION, 'appointments_v13'], [LEGAL_DRAFTS_V13_OUTLOOK_RETENTION, 'outlook_v13']] },
+      replace: { 17: [LEGAL_DRAFTS_V13_NOT_OPEN, 'i14_v13'] } } },
+    recipients: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RECIPIENTS, 'expansion_v12']] }, replace: { 2: [LEGAL_DRAFTS_V13_RECIPIENTS, 'p2_v13'] } } },
     processors: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V13_VIDEO_DATA, 'video_v13']] } },
-      items: { replace: { 3: [LEGAL_DRAFTS_V13_MAILJET, 'i4_v13'] }, insertAfter: { 5: [[LEGAL_DRAFTS_V13_VIDEO_PROCESSOR, 'provider_v13']] } } },
+      items: { replace: { 3: [LEGAL_DRAFTS_V13_MAILJET, 'i4_v13'], 4: [LEGAL_DRAFTS_V13_MICROSOFT, 'i5_v13'] }, insertAfter: { 5: [[LEGAL_DRAFTS_V13_VIDEO_PROCESSOR, 'provider_v13']] } } },
     transfers: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V13_VIDEO_TRANSFER, 'video_v13']] } } },
     rights: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RIGHTS, 'expansion_v12']] } } },
+    booking: { title: ['9. Quand vous demandez un rendez-vous', 'title_v13'],
+      paras: { replace: Object.fromEntries(LEGAL_DRAFTS_V13_BOOKING.map((t, i) => [i, [t, `p${i + 1}_v13`]])) } },
+    art14: { paras: { replace: { 2: [LEGAL_DRAFTS_V13_PRO_ACCOUNT_PARAGRAPH, 'p3_v13'] } } },
   } },
 });
 /** withChanges + new sections inserted after the section they follow @param {any} changes @param {string} version @returns {(d: DraftDocument) => DraftDocument} */
 const withSections = (changes, version) => (d) => {
   const doc = withChanges(changes, version)(d);
-  const add = changes[d.id].addSections || {};
-  return { ...doc, sections: doc.sections.flatMap((s) => [s, ...(add[s.id] || []).map((x) => ({ ...x, ...(x.items ? { items: [...x.items], itemKeys: { ...x.itemKeys } } : {}),
+  const c = changes[d.id]; const add = c.addSections || {};
+  const titled = doc.sections.map((s) => (c.sections[s.id]?.title ? { ...s, title: c.sections[s.id].title[0], titleKey: c.sections[s.id].title[1] } : s));
+  return { ...doc, ...(c.intro ? { intro: c.intro[0], introKey: c.intro[1] } : {}), sections: titled.flatMap((s) => [s, ...(add[s.id] || []).map((x) => ({ ...x, ...(x.items ? { items: [...x.items], itemKeys: { ...x.itemKeys } } : {}),
     ...(x.paras ? { paras: [...x.paras], paraKeys: { ...x.paraKeys } } : {}) }))]) };
 };
 /** @type {DraftDocument[]} the citizen terms (from v10) and the privacy notice (from v10: no ADA Pro text) — X04 / X01 / X02 opening */
@@ -858,21 +890,67 @@ export const LEGAL_DRAFT_DOCUMENTS_V12 = [
 /** @type {DraftDocument[]} the privacy notice (from v11) — proposed for the ADA Pro (K8) opening only */
 export const LEGAL_DRAFT_DOCUMENTS_V13 = [withSections(LEGAL_DRAFTS_V13_CHANGES, LEGAL_DRAFTS_V13)(docOf(LEGAL_DRAFT_DOCUMENTS_V11, 'notice-confidentialite'))];
 
+/*
+ * cgu-professionnel v10-2026-11-23 and conditions-structures v9-2026-11-23 — G14 (owner decision 23/11/2026): ADA Pro opens WITHOUT a pilot structure, by
+ * the public sign-up of a structure verified by the operator on an official source (api/_handlers/pro/auth/register.js; verification and MFA invitation:
+ * branch g14-pro, api/_services/pro-mfa-invitation.js « Vérifier et activer »), with appointments, video (8x8 JaaS) and Outlook free / busy. Only the
+ * statements that the opening makes false are removed or adjusted; no new obligation (owner condition). The signed-convention precondition of the
+ * appointments is dropped by owner decision. Opened with notice-confidentialite v13-2026-11-23. PROPOSED: not approved by the owner.
+ *  cgu-professionnel      intro_v10 / account.i1_v10: sign-up of the structure besides the invitation; appointments.title_v10 / p1_v10: no « pas encore
+ *                         ouverte »; p3_v10: video offered by the structure (8x8, see the notice); p4_v10: Outlook free / busy only; data.p1_v10: + Outlook.
+ *  conditions-structures  intro_v9: appointments open, « aucune structure ne les a signées » removed; agreement.title_v9 / p1_v9: no convention, no referent;
+ *                         roles.p1_v9 / p2_v9: present tense, « coordonnées » removed (the structure receives no name, address or phone: rdv.js values,
+ *                         pro appointments list without citizenEmailSnapshot); commitments.i1_v9; end.p1_v9: no notice period « fixé dans la convention ».
+ */
+export const LEGAL_DRAFTS_PRO_V10 = 'v10-2026-11-23';
+export const LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS = Object.freeze(['cgu-professionnel']);
+export const LEGAL_DRAFTS_STRUCTURES_V9 = 'v9-2026-11-23';
+export const LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS = Object.freeze(['conditions-structures']);
+export const LEGAL_DRAFTS_PRO_V10_CHANGES = Object.freeze({
+  'cgu-professionnel': { intro: ["Ces conditions s'appliquent aux professionnels qui utilisent un compte ADA Pro, créé sur invitation d'un administrateur de leur structure ou de l'exploitant, ou ouvert par l'inscription de leur structure.", 'intro_v10'], sections: {
+    account: { items: { replace: { 0: ["Le compte est créé sur invitation envoyée à votre adresse électronique professionnelle par un administrateur de votre structure ou par l'exploitant (par exemple pour le premier administrateur d'une structure), ou lorsque vous inscrivez vous-même votre structure, avec son nom, votre adresse électronique professionnelle et un mot de passe. Dans ce cas, le compte ne peut servir qu'après que l'exploitant a vérifié la structure sur une source officielle et vous a envoyé l'invitation à activer la double authentification. Il est personnel : ne le partagez pas.", 'i1_v10'] } } },
+    appointments: { title: ['4. Rendez-vous', 'title_v10'], paras: {
+      replace: {
+        0: ["Lorsque la prise de rendez-vous est ouverte pour votre structure, vous confirmez, proposez un autre créneau ou refusez les demandes qui vous sont adressées, dans un délai raisonnable, et vous tenez vos créneaux à jour.", 'p1_v10'],
+        2: ["Si votre structure propose la visioconférence pour un rendez-vous, son traitement et son prestataire (8x8) sont décrits dans la notice de confidentialité.", 'p3_v10'],
+      },
+      insertAfter: { 2: [["Si vous connectez votre calendrier Outlook, seules vos plages occupées ou libres sont lues, pour ne pas proposer un créneau où vous êtes occupé ; rien n'est écrit dans votre calendrier. Vous pouvez le déconnecter à tout moment.", 'p4_v10']] },
+    } },
+    data: { paras: { replace: { 0: ["Pour votre compte, la plateforme traite votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification, ainsi que, si vous les indiquez, votre nom affiché et votre fonction. Lorsque la prise de rendez-vous est ouverte pour votre structure, elle traite aussi vos créneaux et, si vous connectez votre calendrier Outlook, les jetons de connexion chiffrés et vos plages occupées ou libres. Ces traitements reposent sur l'exécution des présentes conditions (article 6, 1, b du RGPD) et, pour la sécurité des comptes et le journal des actions, sur l'intérêt légitime de l'exploitant et de votre structure à protéger les accès (article 6, 1, f). La notice de confidentialité les décrit (section 3, P4p et P11), avec leurs durées (section 4) et la façon d'exercer vos droits (section 8).", 'p1_v10'] } } },
+  } },
+});
+export const LEGAL_DRAFTS_STRUCTURES_V9_CHANGES = Object.freeze({
+  'conditions-structures': { intro: ["Ces conditions décrivent les règles proposées aux structures (associations, services publics, établissements) qui figurent dans l'annuaire, dont l'équipe utilise des comptes ADA Pro ou qui reçoivent des demandes de rendez-vous.", 'intro_v9'], sections: {
+    agreement: { title: ['2. Raccordement aux rendez-vous', 'title_v9'], paras: { replace: { 0: ["Une structure reçoit des demandes de rendez-vous lorsqu'elle a ouvert la prise de rendez-vous dans son espace ADA Pro. Le raccordement est gratuit : aucune somme n'est versée par la structure ni à la structure.", 'p1_v9'] } } },
+    roles: { paras: { replace: {
+      0: ["La structure est responsable de son propre traitement pour ce qu'elle reçoit (demandes et, lorsque cette fonction est ouverte, message accepté par la personne), dans ses dossiers et selon ses obligations.", 'p1_v9'],
+      1: ["Pour la gestion de la demande dans la plateforme, l'exploitant et la structure sont responsables conjoints (RGPD, art. 26). Un accord le précisera ; ses grandes lignes seront mises à la disposition des personnes.", 'p2_v9'],
+    } } },
+    commitments: { items: { replace: { 0: ['Répondre aux demandes de rendez-vous dans un délai raisonnable et tenir ses créneaux à jour.', 'i1_v9'] } } },
+    end: { paras: { replace: { 0: ["Chaque partie peut mettre fin au raccordement. Les données sont ensuite traitées selon les durées indiquées dans la notice de confidentialité.", 'p1_v9'] } } },
+  } },
+});
+/** @type {DraftDocument[]} the professional terms (from v9-2026-11-22) — ADA Pro opening */
+export const LEGAL_DRAFT_DOCUMENTS_PRO_V10 = [withSections(LEGAL_DRAFTS_PRO_V10_CHANGES, LEGAL_DRAFTS_PRO_V10)(docOf(LEGAL_DRAFT_DOCUMENTS_V9_PRO, 'cgu-professionnel'))];
+/** @type {DraftDocument[]} the structure conditions (from v8) — ADA Pro opening */
+export const LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9 = [withSections(LEGAL_DRAFTS_STRUCTURES_V9_CHANGES, LEGAL_DRAFTS_STRUCTURES_V9)(docOf(LEGAL_DRAFT_DOCUMENTS_V8, 'conditions-structures'))];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
- * (draft; v8 stays approvable); G14: the citizen terms and the notice at LEGAL_DRAFTS_V10 (Mon Parcours opening), the notice also at LEGAL_DRAFTS_V11 (K8); G14 expansion: the citizen terms and the notice at LEGAL_DRAFTS_V12 (X04 / X01 / X02 opening), the notice also at LEGAL_DRAFTS_V13 (K8, with video). LEGAL_DRAFT_DOCUMENTS = the newest draft
+ * (draft; v8 stays approvable); G14: the citizen terms and the notice at LEGAL_DRAFTS_V10 (Mon Parcours opening), the notice also at LEGAL_DRAFTS_V11 (K8); G14 expansion: the citizen terms and the notice at LEGAL_DRAFTS_V12 (X04 / X01 / X02 opening), the notice also at LEGAL_DRAFTS_V13 (ADA Pro opening, with appointments, video and Outlook), the structure conditions at LEGAL_DRAFTS_STRUCTURES_V9 and the professional terms at LEGAL_DRAFTS_PRO_V10 (same opening). LEGAL_DRAFT_DOCUMENTS = the newest draft
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
   [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO],
   [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10], [LEGAL_DRAFTS_V11]: [...LEGAL_DRAFT_DOCUMENTS_V11],
-  [LEGAL_DRAFTS_V12]: [...LEGAL_DRAFT_DOCUMENTS_V12], [LEGAL_DRAFTS_V13]: [...LEGAL_DRAFT_DOCUMENTS_V13] });
+  [LEGAL_DRAFTS_V12]: [...LEGAL_DRAFT_DOCUMENTS_V12], [LEGAL_DRAFTS_V13]: [...LEGAL_DRAFT_DOCUMENTS_V13],
+  [LEGAL_DRAFTS_STRUCTURES_V9]: [...LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9], [LEGAL_DRAFTS_PRO_V10]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V10] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {
