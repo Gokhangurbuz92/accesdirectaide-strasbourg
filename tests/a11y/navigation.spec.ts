@@ -99,7 +99,8 @@ test.describe('Navigation a11y — Header links + focus-visible', () => {
         await menuButton.click();
 
         // Wait for mobile nav to appear
-        await expect(page.locator('header nav')).toBeVisible({ timeout: 5000 });
+        // G14-CHAN: the header holds two navigations (desktop, hidden below xl; mobile) — the mobile one is the one the button opens
+        await expect(page.getByRole('navigation', { name: 'Navigation mobile' })).toBeVisible({ timeout: 5000 });
 
         // Verify at least one navigation link became visible after opening menu
         // The mobile nav renders links that were previously hidden

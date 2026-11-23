@@ -31,7 +31,7 @@ const capOpen = (env) => Object.keys(CAPABILITIES).filter((c) => capabilityState
 
 describe('G4 server — ADA_BETA_ACCOUNTS_EXTRA', () => {
   it('reads exact names only: unknown, wildcard and look-alikes add nothing; the full scope makes it moot', () => {
-    expect(Object.keys(ACCOUNTS_EXTRAS)).toEqual(['parcours']);
+    expect(Object.keys(ACCOUNTS_EXTRAS)).toEqual(['parcours', 'push']);   // G14-CHAN: push (citizen/push) added by name
     expect([...accountsExtras({ ADA_BETA_ACCOUNTS_EXTRA: ' Parcours , household,*' })]).toEqual(['parcours']);
     for (const v of ['', '*', 'all', 'full', 'parcour', 'parcours-reminder', 'citizen/parcours', 'citizen.parcours', 'household,favorites']) {
       expect([...accountsExtras({ ADA_BETA_ACCOUNTS_EXTRA: v })], v).toEqual([]);

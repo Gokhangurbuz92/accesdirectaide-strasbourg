@@ -135,7 +135,7 @@ async function visit(/** @type {import('@playwright/test').Browser} */ browser, 
   await page.waitForFunction(() => !document.querySelector('[aria-busy="true"], .animate-pulse, .animate-spin'), null, { timeout: 4000 }).catch(() => {});
   const m = await page.evaluate(inPage, { lang, frTexts }).catch((e) => ({ error: String(e).slice(0, 200) }));
   let axe = []; try {
-    const res = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+    const res = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
     axe = res.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical').map((v) => ({ id: v.id, impact: v.impact, nodes: v.nodes.length, targets: v.nodes.slice(0, 3).map((n) => String(n.target).slice(0, 100)) }));
   } catch (e) { axe = [{ id: 'axe-failed', impact: 'n/a', nodes: 0, targets: [String(e).slice(0, 100)] }]; }
   const focus = await focusCheck(page);

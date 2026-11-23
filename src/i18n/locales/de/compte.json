@@ -584,6 +584,7 @@
   "thread.you": "Sie",
   "push.loading": "Wird geprüft…",
   "push.unsupported": "Dieser Browser kann keine Benachrichtigungen empfangen. Erinnerungen bleiben per E-Mail verfügbar.",
+  "push.ios_install": "Auf iPhone oder iPad funktionieren Benachrichtigungen nur, wenn Sie diese Website zum Home-Bildschirm hinzufügen (iOS 16.4 oder neuer). Tippen Sie in Safari auf „Teilen“ und dann auf „Zum Home-Bildschirm“. Öffnen Sie die Website danach über das neue Symbol und kehren Sie hierher zurück. Erinnerungen bleiben per E-Mail verfügbar.",
   "push.unavailable": "Benachrichtigungen auf dem Gerät werden von diesem Dienst noch nicht angeboten. Erinnerungen bleiben per E-Mail verfügbar.",
   "push.denied": "Benachrichtigungen sind für diese Website in Ihrem Browser blockiert. Um sie zu erhalten, erlauben Sie sie in den Website-Einstellungen Ihres Browsers und kommen Sie dann hierher zurück.",
   "push.off": "Erhalten Sie auf diesem Gerät die Erinnerungen an die Schritte in Mon Parcours (Ihr Verlaufsbereich) (ohne persönliche Details in der Benachrichtigung). Sie können jederzeit aufhören.",

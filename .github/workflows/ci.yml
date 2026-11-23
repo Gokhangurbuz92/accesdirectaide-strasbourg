@@ -1,5 +1,5 @@
-# Q08 — continuous integration for every push and pull request on main: lint, typecheck, the unit gate, the dependency audit, the build and
-# (RA-10) a secret scan of the pushed tree.
+# Q08 — continuous integration for every push and pull request on main: lint, typecheck, the unit gate, the dependency audit, the build,
+# (RA-10) a secret scan of the pushed tree and (G14-CHAN) the automated accessibility job.
 # It never deploys (production releases are made with scripts/release-production.sh, which requires this workflow to have succeeded).
 # Installed on 01/11/2026 (the owner's GitHub token received the « workflow » scope).
 name: CI
@@ -42,6 +42,50 @@ jobs:
         env:
           VITE_PUBLIC_BETA: 'true'
           VITE_LEGAL_DATA_PROTECTION_CONTACT: contact@accesdirectaide.fr
+  a11y:
+    # G14-CHAN (Part B) — automated accessibility in CI, 0 €: no secret, no database, no Production. The app is built (mock mode) and served by
+    # `vite preview` on 127.0.0.1; the browser mocks every API call (e2e/fixtures.js). Runs beside « quality » (parallel), so the release gate
+    # (scripts/release-production.sh waits for this workflow) is not slowed while this job stays shorter than « quality ».
+    # Automated checks only: they catch regressions; they are not an RGAA audit and replace no test with real users (none has been made).
+    name: Accessibility (axe WCAG 2.2 AA + best practices, keyboard, reflow / 400 %, text spacing, RTL, forced colours, contrast states, screen-reader patterns)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Cache the Playwright browsers (keyed on the lockfile, i.e. the Playwright version)
+        id: pw-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Chromium (cache miss)
+        if: steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Install Chromium system libraries (cache hit)
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+      - name: "Screen-reader patterns (virtual screen reader), lang / dir, FALC readability heuristic (unit)"
+        run: npx vitest run tests/unit/g14-a11y-virtual-screen-reader.test.jsx tests/unit/g14-a11y-lang-dir.test.jsx tests/unit/g14-falc-readability.test.js
+      - name: "FALC readability (Kandel-Moles — a heuristic, WARN only, never fails)"
+        run: node scripts/falc-readability.mjs
+      - name: Build (mock mode)
+        run: npx vite build
+      - name: "Playwright: e2e/accessibility.spec.js, tests/a11y, e2e-a11y (every finding fails)"
+        run: npx playwright test -c playwright.a11y-ci.config.mjs
+      - name: Keep the traces of a failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-test-results
+          path: test-results/a11y-ci
+          retention-days: 7
   secret-scan:
     # RA-10: the repository is public. The scan used to run only on the developer's machine (optional pre-push hook) and in the release script, AFTER the
     # push. Same scan as `npm run security:secrets` (scripts/security-secrets-scan.mjs): gitleaks over the tracked files, with the repository's

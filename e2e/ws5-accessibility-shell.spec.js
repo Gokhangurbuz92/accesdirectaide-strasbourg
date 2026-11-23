@@ -35,7 +35,7 @@ for (const routePath of CORE_ROUTES) {
     await page.goto(`${BASE_URL}${routePath}`, { waitUntil: 'networkidle' });
 
     const results = await new AxeBuilder({ page })
-      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+      .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
       .analyze();
 
     expect(

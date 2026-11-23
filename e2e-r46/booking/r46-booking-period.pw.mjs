@@ -45,7 +45,7 @@ for (const viewport of [{ name: 'desktop', size: { width: 1280, height: 900 } },
       const first = await label.textContent();
       if (lang !== 'fr') { expect(await prev.textContent()).not.toContain('jours'); expect(await next.textContent()).not.toContain('jours'); }
       const axe = async (what) => {
-        const r = await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+        const r = await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
         expect(r.violations.filter((v) => ['serious', 'critical'].includes(v.impact)).map((v) => v.id), `axe ${what}`).toEqual([]);
       };
       await axe('first window');

@@ -10,7 +10,7 @@ import AxeBuilder from '@axe-core/playwright';
 const BASE = process.env.R43_BASE || 'http://127.0.0.1:5183';
 const LANGS = ['fr', 'en', 'tr', 'ar', 'de', 'uk'];
 const settle = async (page) => { await page.waitForFunction(() => document.getAnimations().every((a) => a.playState !== 'running'), null, { timeout: 10000 }).catch(() => {}); await page.waitForTimeout(300); };
-const axeSerious = async (page, sel = 'main') => (await settle(page), expect(await page.locator(sel).count(), `${sel} exists (axe would scan nothing)`).toBeGreaterThan(0), await new AxeBuilder({ page }).include(sel).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze())
+const axeSerious = async (page, sel = 'main') => (await settle(page), expect(await page.locator(sel).count(), `${sel} exists (axe would scan nothing)`).toBeGreaterThan(0), await new AxeBuilder({ page }).include(sel).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze())
   .violations.filter((v) => ['serious', 'critical'].includes(v.impact)).map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).slice(0, 3).join(', ')}`);
 const json = (body, status = 200) => ({ status, contentType: 'application/json', body: JSON.stringify(body) });
 const overflow = (page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

@@ -23,7 +23,7 @@ const lastStep = { v: -1 };
 const totp = async () => { let s = Math.floor(Date.now() / 30000); while (s === lastStep.v) { await new Promise((r) => setTimeout(r, 1000)); s = Math.floor(Date.now() / 30000); } lastStep.v = s; return generateCode(P1.totpSecret, s); };
 const axe = async (page, label) => {
   await page.waitForTimeout(300);
-  const r = await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  const r = await new AxeBuilder({ page }).include('main').withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
   const bad = r.violations.filter((v) => ['serious', 'critical'].includes(v.impact)).map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).slice(0, 3).join(', ')}`);
   expect(bad, `axe serious/critical — ${label}`).toEqual([]);
 };

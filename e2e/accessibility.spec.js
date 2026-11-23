@@ -52,7 +52,7 @@ test.describe('Accessibility — axe audit (critical + serious)', () => {
             await waitForSettledPage(page);
 
             const results = await new AxeBuilder({ page })
-                .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+                .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
                 .analyze();
 
             // Filter to critical and serious only

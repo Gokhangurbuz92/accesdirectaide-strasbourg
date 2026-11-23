@@ -85,7 +85,11 @@ function formatUtc(date) {
  *  location?: string,
  *  cancelled?: boolean,
  *  itip?: { organizer?: string, attendee?: string },
+ *  summary?: string,
+ *  directionsUrl?: string,
  * }} input
+ * G14-CHAN: `summary` replaces the default « RDV - <structure> » title (the J-1 reminder uses « Rendez-vous »); `directionsUrl` (an https link, e.g.
+ * OpenStreetMap) is added to the DESCRIPTION.
  * PKG-3 / B05 / N05: the same UID for the life of the appointment; SEQUENCE grows with each move so calendar clients UPDATE the event; a cancellation is
  * STATUS:CANCELLED so clients remove it.
  * N05 (R13, checked with ical.js 2.2.1 and RFC 5546): METHOD makes the object a scheduling message, and iTIP PUBLISH / CANCEL require an ORGANIZER (CANCEL also the
@@ -95,13 +99,14 @@ function formatUtc(date) {
 export function buildAppointmentIcs(input) {
   const now = new Date();
   const uid = `${String(input.appointmentId || '').trim() || 'rdv'}@accesdirectaide.fr`;
-  const summary = `RDV - ${String(input.structureName || 'Acces Direct Aide').trim()}`;
+  const summary = String(input.summary || '').trim() || `RDV - ${String(input.structureName || 'Acces Direct Aide').trim()}`;
   const organizer = mailAddress(input.itip?.organizer);
   const attendee = mailAddress(input.itip?.attendee);
   const scheduling = Boolean(organizer) && (!input.cancelled || Boolean(attendee));
   const descriptionLines = [
     `Service: ${String(input.serviceName || 'Rendez-vous').trim()}`,
     input.manageUrl ? `Gestion du RDV: ${String(input.manageUrl).trim()}` : '',
+    /^https:\/\/\S+$/.test(String(input.directionsUrl || '')) ? `Itinéraire (OpenStreetMap): ${String(input.directionsUrl)}` : '',
   ].filter(Boolean);
 
   const lines = [

@@ -20,6 +20,9 @@ import { minimalSms, resolveNotificationPrivacy } from '../../lib/notification-p
 import { citizenMailLanguage } from '../../_services/mail-language.js';
 import { reminderClaimOutcome } from '../../_utils/rdv-guest-core.js';
 import { appointmentColumns, appointmentGuestSchema, columnFlags } from '../../_utils/schema-features.js';
+import { appointmentReminderPush, osmDirectionsUrl, reminderCalendar } from '../../lib/reminder-channels.js';
+import { pushLedgerStatus, sendToUser } from '../../_services/web-push.js';
+import { capabilityOpen } from '../../_utils/capabilities.js';
 
 /** R39: the person's J-1 e-mails that failed (NOT_DELIVERED / FAILED) since `since` (the start of today's Paris day) — the bound of the retries */
 async function citizenReminderFailuresSince(appointmentId, since) {
@@ -114,7 +117,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                             notificationEmailEnabled: true,
                         },
                     },
-                    structure: { columns: { nom: true, adresse: true, code_postal: true, ville: true, accessibilite_pmr: true, verification_status: true, data_origin: true } },
+                    structure: { columns: { nom: true, adresse: true, code_postal: true, ville: true, latitude: true, longitude: true, accessibilite_pmr: true, verification_status: true, data_origin: true } },
                 },
             });
 
@@ -133,6 +136,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
             let smsChannelInactive = 0;
             let notificationsCreated = 0;
             let skipped = 0;
+            const push = { accepted: 0, notDelivered: 0, failed: 0, noConsent: 0, closed: 0 };   // G14-CHAN: the Web Push nudge (counts only)
             const errors = [];
 
             for (const listed of appointments) {
@@ -175,9 +179,12 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 const timeStr = formatParisTime(rdv.startAt);
 
                 // 0. The person of the appointment (verified account, e-mail reminders allowed: canNotify email/reminder), with the modality and the place / the video access
+                // G14-CHAN: an in-person appointment also gets the OpenStreetMap directions link to the structure's public address (and, at the reduced
+                // privacy level only, the calendar file below; the minimal level replaces this text and drops every attachment)
+                const directions = osmDirectionsUrl(rdv.structure, rdv);
                 const modeLine = rdv.mode === 'VIDEO'
                     ? `Modalité : ${MODE_LABELS.VIDEO}. Accès sécurisé depuis Mes rendez-vous, 15 minutes avant (aucun lien par e-mail).`
-                    : `Modalité : ${MODE_LABELS.IN_PERSON}.\n${locationText(locationOf(rdv.structure))}`;
+                    : `Modalité : ${MODE_LABELS.IN_PERSON}.\n${locationText(locationOf(rdv.structure))}${directions ? `\nItinéraire (OpenStreetMap) : ${directions}` : ''}`;
                 // R39: an account-free booking has no account page: its personal link (only its hash is stored) moves, cancels and turns the reminder off
                 const manageLine = rdv.citizenUserId
                     ? `Gérer mes rendez-vous : ${buildAppUrl('/compte/rendez-vous')}`
@@ -188,6 +195,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 const citizenStatus = done.has('citizen:email') ? 'PROVIDER_ACCEPTED' : await noticeCitizen(rdv, 'REMINDER_J1', {
                     subject: `Rappel : rendez-vous demain ${dateStr} à ${timeStr}`,
                     text: `Rappel : vous avez rendez-vous demain ${dateStr} à ${timeStr}${rdv.structure?.nom ? ` avec ${rdv.structure.nom}` : ''}.\n${modeLine}\n\n${manageLine}`,
+                    calendar: reminderCalendar(rdv),
                 }, { sendMail: async (payload) => { citizenMail = await sendMail({ ...payload, idempotencyKey: `rdv-reminder-j1/${rdv.id}/${startKey}/citizen` }); return citizenMail; } });
                 // PKG-5: accepted by the provider (not a confirmed delivery); R39: the LAB test outbox counts like the agent's, a refused / noop e-mail is a failure
                 const citizenFailed = citizenStatus === 'NOT_DELIVERED' || citizenStatus === 'FAILED';
@@ -301,6 +309,24 @@ export default async function handler(/** @type {import('../../_utils/http-types
                     } catch (successErr) {
                         logger.error({ rdvId: rdv.id, err: { name: successErr?.name, code: successErr?.cause?.code || successErr?.code } }, 'Failed to record successful send');
                     }
+                    // 4. G14-CHAN — the Web Push nudge to the person's own devices: only once, on the pass that closes the claim (a released claim sends
+                    //    nothing, so a retry never pushes twice); only with an account, the capability citizen.push open and the person's push/reminder
+                    //    consent. It never decides the claim and is not written to the AppointmentNotice ledger (its channels are e-mail / SMS / in-app):
+                    //    the e-mail stays the record of the reminder; the run counts the outcome.
+                    if (rdv.citizenUserId) {
+                        try {
+                            if (!capabilityOpen('citizen.push')) push.closed++;
+                            else if (!(await canNotify(rdv.citizenUserId, 'push', 'reminder').catch(() => false))) push.noConsent++;
+                            else {
+                                const level = (await resolveNotificationPrivacy(rdv)).level;
+                                const out = await sendToUser(rdv.citizenUserId, appointmentReminderPush(level, rdv.startAt, await citizenMailLanguage(rdv.citizenUserId)));
+                                const st = pushLedgerStatus(out);
+                                if (st === 'PROVIDER_ACCEPTED') push.accepted++; else if (st === 'FAILED') push.failed++; else push.notDelivered++;
+                            }
+                        } catch (pushErr) {
+                            push.failed++; logger.warn({ err: { name: pushErr?.name } }, '[rdv-reminder] push nudge failed');
+                        }
+                    }
                 }
             }
 
@@ -326,6 +352,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 smsQuietHours,
                 smsChannelInactive,
                 notificationsCreated,
+                push,
                 skipped,
                 errors: errors.length,
             }, '[Cron] RDV J-1 reminder completed');
@@ -340,6 +367,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 smsQuietHours,
                 smsChannelInactive,
                 notificationsCreated,
+                pushAccepted: push.accepted, pushNotDelivered: push.notDelivered, pushFailed: push.failed, pushNoConsent: push.noConsent, pushClosed: push.closed,
                 skipped,
                 errors: errors.length > 0 ? errors.slice(0, 5) : undefined,
             };

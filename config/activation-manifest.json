@@ -2069,6 +2069,21 @@
       ],
       "provider": "object-storage",
       "note": "D5 b: second encrypted copy of the erasure tombstones (dedicated R2 EU bucket); off when absent"
+    },
+    "GITHUB_ACTIONS": {
+      "class": "lab",
+      "nature": "config",
+      "note": "G14-CHAN: set by GitHub Actions; scripts/falc-readability.mjs prints its heuristic warnings as GitHub annotations there"
+    },
+    "PIPER_CMD": {
+      "class": "lab",
+      "nature": "config",
+      "note": "G14-CHAN: owner's Mac only — the Piper command of the OFFLINE FALC audio build (scripts/build-falc-audio.mjs); never read at runtime"
+    },
+    "PIPER_VOICE": {
+      "class": "lab",
+      "nature": "config",
+      "note": "G14-CHAN: owner's Mac only — path of the fr_FR-siwis-medium voice for the OFFLINE FALC audio build (scripts/build-falc-audio.mjs); never read at runtime"
     }
   },
   "platform": [

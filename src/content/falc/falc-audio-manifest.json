@@ -1,0 +1,48 @@
+{
+  "voice": "fr_FR-siwis-medium",
+  "generatedOn": "2026-11-23",
+  "entries": {
+    "accountData": {
+      "file": "/audio/falc/accountData.m4a",
+      "hash": "e9d7905f",
+      "seconds": 37,
+      "bytes": 235863
+    },
+    "emptyResults": {
+      "file": "/audio/falc/emptyResults.m4a",
+      "hash": "4844f5c6",
+      "seconds": 12,
+      "bytes": 76722
+    },
+    "home": {
+      "file": "/audio/falc/home.m4a",
+      "hash": "ed2cd65b",
+      "seconds": 53,
+      "bytes": 330588
+    },
+    "notFound": {
+      "file": "/audio/falc/notFound.m4a",
+      "hash": "af87fdd8",
+      "seconds": 10,
+      "bytes": 68672
+    },
+    "orientationResult": {
+      "file": "/audio/falc/orientationResult.m4a",
+      "hash": "4d500626",
+      "seconds": 36,
+      "bytes": 232162
+    },
+    "rightDetail": {
+      "file": "/audio/falc/rightDetail.m4a",
+      "hash": "1f64bbaa",
+      "seconds": 30,
+      "bytes": 194004
+    },
+    "serviceError": {
+      "file": "/audio/falc/serviceError.m4a",
+      "hash": "0679e487",
+      "seconds": 11,
+      "bytes": 72273
+    }
+  }
+}

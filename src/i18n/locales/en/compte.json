@@ -584,6 +584,7 @@
   "thread.you": "You",
   "push.loading": "Checking…",
   "push.unsupported": "This browser cannot receive notifications. Reminders remain available by e-mail.",
+  "push.ios_install": "On iPhone or iPad, notifications only work if you add this site to the Home Screen (iOS 16.4 or later). In Safari, tap the Share button, then “Add to Home Screen”. Then open the site from its new icon and come back here. Reminders remain available by e-mail.",
   "push.unavailable": "Device notifications are not offered by this service yet. Reminders remain available by e-mail.",
   "push.denied": "Notifications are blocked for this site in your browser. To receive them, allow them in your browser's site settings, then come back here.",
   "push.off": "Receive the reminders of the steps in Mon Parcours (your follow-up space) on this device (no personal details in the notification). You can stop at any time.",
