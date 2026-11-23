@@ -327,7 +327,7 @@ async function apply(o) {
 
   await s.send('POST', `${C}/containers/${c.id}/deploy`, {});
   for (let i = 0; i < 120; i++) { await sleep(5000); c = await s.get(`${C}/containers/${c.id}`); if (c.status === 'ready' || c.status === 'error') break; }
-  if (c.status !== 'ready') die(`container status ${c.status}${c.error_message ? ' (see the Scaleway console)' : ''}`);
+  if (c.status !== 'ready') die(`container status ${c.status}${c.error_message ? ' — Scaleway: ' + String(c.error_message).slice(0, 300) : ''}`);
   const url = `https://${c.domain_name}`;
   const anon = await fetch(`${url}/healthz`); if (anon.ok) die('anonymous request was accepted: the container is not private');
   const hz = await fetch(`${url}/healthz`, { headers: { 'X-Auth-Token': token }, signal: AbortSignal.timeout(120_000) });
