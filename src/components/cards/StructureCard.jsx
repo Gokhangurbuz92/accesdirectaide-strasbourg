@@ -56,7 +56,10 @@ const NUMERIC_DATE = { day: '2-digit', month: '2-digit', year: 'numeric' };
 export default function StructureCard({ structure, compact = false, index = 0 }) {
   const { t } = useT('structures');
   // A-8: « RDV en ligne » and its button are shown only when booking is open in this build
-  const bookable = Boolean(structure?.is_pro_enabled) && bookingOpened(frontendEnv.flags.publicBeta);
+  // G14-FIND: and only for a place the SERVER says can really be asked for an appointment online now (`online_booking`: published booking, active and
+  // verified organisation, a reviewed non-sensitive service, an opening period — api/lib/bookable-structures.js). The legacy is_pro_enabled flag alone
+  // no longer earns the badge: it is set for places whose booking cannot be completed.
+  const bookable = structure?.online_booking === true && bookingOpened(frontendEnv.flags.publicBeta);
   // names, addresses, phone numbers and opening hours are never translated: tr.attrs() marks them as French
   const tr = useContentTranslation('structure', structure);
   const { isFalcEnabled } = useFalc();
@@ -121,8 +124,9 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                   </Badge>
                 )}
                 {bookable && (
-                  <Badge className="bg-indigo-100 text-indigo-800 border-indigo-200 flex items-center gap-1">
-                    <Calendar className="h-3 w-3" />
+                  <Badge className="bg-indigo-100 text-indigo-800 border-indigo-200 flex items-center gap-1" data-testid="structure-online-booking-badge"
+                    title={t('structures:card.online_booking_hint', 'Demande de rendez-vous possible sur AccesDirectAide. Ce n’est pas un partenariat : la structure confirme elle-même le rendez-vous.')}>
+                    <Calendar className="h-3 w-3" aria-hidden="true" />
                     {t('structures:card.online_booking', 'RDV en ligne')}
                   </Badge>
                 )}

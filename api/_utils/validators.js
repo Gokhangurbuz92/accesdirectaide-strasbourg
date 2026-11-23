@@ -105,6 +105,8 @@ export const searchStructuresSchema = baseSearchSchema.extend({
   // PKG-11 / E05: an INSEE commune code — only the places whose REVIEWED service area covers it
   serves: z.string().regex(/^(\d{5}|2[AB]\d{3})$/).optional(),
   pmr: z.enum(['true', 'false', '1', '0']).optional(),
+  // G14-FIND: only the places that can really be asked for an appointment online now (api/lib/bookable-structures.js)
+  bookable: z.enum(['true', 'false', '1', '0']).optional(),
   // Strict whitelist for sort to prevent SQL injection
   sort: z.enum([
     // External stable aliases

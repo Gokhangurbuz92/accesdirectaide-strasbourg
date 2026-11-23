@@ -59,11 +59,18 @@ describe('A-8: the booking entry respects the closed booking capability', () => 
   });
   it('the directory card: no « RDV en ligne » badge or booking link in the restricted beta', () => {
     env.beta = true;
-    const closed = wrap(h(StructureCard, { structure: PLACE }), '/structures');
+    // G14-FIND: the card follows the server's `online_booking` flag (api/lib/bookable-structures.js), not the legacy is_pro_enabled flag
+    const BOOKABLE = { ...PLACE, online_booking: true };
+    const closed = wrap(h(StructureCard, { structure: BOOKABLE }), '/structures');
     expect(closed.container).not.toHaveTextContent('RDV en ligne');
     expect(closed.container.querySelector('a[href^="/rdv"]')).toBeNull();
     cleanup(); env.beta = false;
-    const open = wrap(h(StructureCard, { structure: PLACE }), '/structures');
+    const open = wrap(h(StructureCard, { structure: BOOKABLE }), '/structures');
     expect(open.container).toHaveTextContent('RDV en ligne');
+    cleanup();
+    // G14-FIND: is_pro_enabled alone (no verified organisation / reviewed service / agenda behind it) no longer earns the badge
+    const legacy = wrap(h(StructureCard, { structure: PLACE }), '/structures');
+    expect(legacy.container).not.toHaveTextContent('RDV en ligne');
+    expect(legacy.container.querySelector('a[href^="/rdv"]')).toBeNull();
   });
 });

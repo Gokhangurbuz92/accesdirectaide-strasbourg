@@ -144,5 +144,9 @@
   "form.territory-all": "كل البلديات",
   "form.territory-help": "عند اختيار بلدية، لا تُعرض المساعدات المخصصة لمنطقة أخرى. الإجراءات والأماكن والأخبار لا تخضع للتصفية.",
   "section.glossary": "تعريفات ({{n}})",
-  "link.glossary": "عرض المسرد كاملًا"
+  "link.glossary": "عرض المسرد كاملًا",
+  "form.territory-help-v2": "عند اختيار بلدية، لا تُعرض المساعدات المخصصة لمنطقة أخرى، وتُقترح أماكن هذه البلدية أولًا. الإجراءات والأخبار لا تخضع للتصفية.",
+  "structures_scope.commune": "الأماكن المسجّلة لـ {{commune}}.",
+  "structures_scope.territory": "لا يوجد مكان مطابق مسجّل لـ {{commune}}: إليك أماكن بلديات أخرى في Eurométropole de Strasbourg.",
+  "structures_scope.all": "لا يوجد مكان مطابق مسجّل لـ {{commune}} ولا في Eurométropole: إليك أماكن بلديات أخرى."
 }

@@ -177,5 +177,19 @@
   "view.label": "Display",
   "detail.no_contact": "The official source publishes no telephone, e-mail or website for this organisation. You can go to the address shown, or look for another organisation nearby.",
   "detail.nearby_in_city": "See the other organisations in {{city}}",
-  "detail.nearby": "See the directory"
+  "detail.nearby": "See the directory",
+  "filters.zip_chip": "Postcode {{zip}}",
+  "filters.rdv_only": "Online appointments",
+  "filters.rdv_hint": "Places where you can request an appointment on AccesDirectAide. This is not a partnership: the organisation confirms the appointment itself.",
+  "empty.description_rdv": "No place offers online appointment requests yet with these criteria. You can remove this filter: the other places can be contacted by phone, e-mail or in person.",
+  "empty.remove_rdv": "Also show places without online appointments",
+  "empty.remove_place": "Search the whole Bas-Rhin",
+  "empty.check_rights": "Check my rights",
+  "card.online_booking_hint": "Appointment requests possible on AccesDirectAide. This is not a partnership: the organisation confirms the appointment itself.",
+  "detail.booking.contact_only": "Online appointment requests are not open for this organisation’s services. Contact it directly (details below).",
+  "detail.booking.services_title": "Services open to online requests",
+  "detail.booking.duration": "({{n}} min)",
+  "detail.booking.next_day": "First day with a free slot: {{date}}.",
+  "detail.booking.no_slot_14": "No free slot in the next 14 days. You can try again later or contact the organisation.",
+  "detail.booking.loading": "Loading availability…"
 }

@@ -9,6 +9,7 @@ import { formatDate, useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { openLinks } from '@/lib/publicBeta';
 import NotificationCenter from '@/components/account/NotificationCenter';
+import FindAndBook from '@/components/account/FindAndBook';
 
 /**
  * PKG-2 / C13 — Mon Espace (/compte): one page that says where the person stands — Mon Parcours, the next deadline and appointment, Mon Coffre, favourites and the dossiers
@@ -63,10 +64,15 @@ export default function MonEspace() {
     // G14 / DSA art. 17, 20: statements of reasons and appeals (surface « notices »: hidden by openLinks while it is closed)
     { to: '/compte/moderation', testid: 'tile-moderation', title: t('compte:space.tile.moderation', 'Décisions de modération'), body: t('compte:space.tile.moderation_body', 'Décisions sur vos contenus ou vos signalements, et contestations.') },
   ];
+  // R43 (E2): during the beta, a tile of a screen this build keeps closed (narrow accounts scope) is not offered
+  // R45 (ENG-LR-6): a part the server did not return (its capability is closed) has no tile
+  const visibleTiles = openLinks(tiles.filter((tile) => !tile.part || Object.prototype.hasOwnProperty.call(s, tile.part)), frontendEnv.flags.publicBeta, (tile) => tile.to);
   return (
     <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8" data-testid="mon-espace">
       <SEO title={t('compte:space.title', 'Mon Espace')} noindex />
       <h1 className="text-2xl font-bold text-slate-900">{t('compte:space.title', 'Mon Espace')}</h1>
+      {/* G14-FIND: « find and book » first — the page was empty in the restricted beta (every tile closed): now a real search and open screens */}
+      <FindAndBook showGuide={visibleTiles.length === 0} />
       <NotificationCenter />
       <div className="grid gap-4 sm:grid-cols-2">
         {s.parcours ? (<Card data-testid="espace-next-due">
@@ -82,11 +88,9 @@ export default function MonEspace() {
           </CardContent>
         </Card>) : null}
       </div>
-      <nav aria-label={t('compte:space.nav_label', 'Rubriques de Mon Espace')}>
+      {visibleTiles.length > 0 && <nav aria-label={t('compte:space.nav_label', 'Rubriques de Mon Espace')}>
         <ul className="grid gap-4 sm:grid-cols-2">
-          {/* R43 (E2): during the beta, a tile of a screen this build keeps closed (narrow accounts scope) is not offered */}
-          {/* R45 (ENG-LR-6): a part the server did not return (its capability is closed) has no tile */}
-          {openLinks(tiles.filter((tile) => !tile.part || Object.prototype.hasOwnProperty.call(s, tile.part)), frontendEnv.flags.publicBeta, (tile) => tile.to).map((tile) => (
+          {visibleTiles.map((tile) => (
             <li key={tile.to}>
               <Link to={tile.to} data-testid={tile.testid} className="block rounded-lg border border-slate-200 bg-white p-4 hover:border-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
                 <span className="block text-base font-semibold text-slate-900">{tile.title}</span>
@@ -95,7 +99,7 @@ export default function MonEspace() {
             </li>
           ))}
         </ul>
-      </nav>
+      </nav>}
     </div>
   );
 }

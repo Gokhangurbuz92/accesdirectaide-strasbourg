@@ -177,5 +177,19 @@
   "view.label": "Ansicht",
   "detail.no_contact": "Die amtliche Quelle veröffentlicht für diese Einrichtung weder Telefon noch E-Mail noch Website. Sie können die angegebene Adresse aufsuchen oder eine andere Einrichtung in der Nähe suchen.",
   "detail.nearby_in_city": "Weitere Einrichtungen in {{city}} anzeigen",
-  "detail.nearby": "Verzeichnis ansehen"
+  "detail.nearby": "Verzeichnis ansehen",
+  "filters.zip_chip": "Postleitzahl {{zip}}",
+  "filters.rdv_only": "Online-Termine",
+  "filters.rdv_hint": "Stellen, bei denen Sie über AccesDirectAide einen Termin anfragen können. Das ist keine Partnerschaft: Die Einrichtung bestätigt den Termin selbst.",
+  "empty.description_rdv": "Mit diesen Kriterien bietet noch keine Stelle Online-Terminanfragen an. Sie können diesen Filter entfernen: Die anderen Stellen erreichen Sie telefonisch, per E-Mail oder vor Ort.",
+  "empty.remove_rdv": "Auch Stellen ohne Online-Termine anzeigen",
+  "empty.remove_place": "Im gesamten Bas-Rhin suchen",
+  "empty.check_rights": "Meine Rechte prüfen",
+  "card.online_booking_hint": "Terminanfragen über AccesDirectAide möglich. Das ist keine Partnerschaft: Die Einrichtung bestätigt den Termin selbst.",
+  "detail.booking.contact_only": "Online-Terminanfragen sind für die Leistungen dieser Einrichtung nicht geöffnet. Wenden Sie sich direkt an sie (Kontaktdaten unten).",
+  "detail.booking.services_title": "Leistungen mit Online-Anfrage",
+  "detail.booking.duration": "({{n}} Min.)",
+  "detail.booking.next_day": "Erster Tag mit freiem Termin: {{date}}.",
+  "detail.booking.no_slot_14": "In den nächsten 14 Tagen kein freier Termin. Versuchen Sie es später erneut oder wenden Sie sich an die Einrichtung.",
+  "detail.booking.loading": "Verfügbarkeiten werden geladen…"
 }

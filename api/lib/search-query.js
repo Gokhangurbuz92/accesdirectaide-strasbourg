@@ -28,6 +28,7 @@ const territorySlugSql = (col) => sql`trim(both '-' from regexp_replace(translat
 const CURATED_FIRST = sql`(coalesce(auto_check->'texts'->>'mode', '') = 'OFFICIAL_SOURCE') ASC, (auto_check->'classification'->>'subdomain' IS NULL) ASC,`;
 const categoryIn = (c) => sql`"categorie" IN (${sql.join(categoryVariants(c).map((v) => sql`${v}`), sql`, `)})`;
 import { buildProvenance } from '../_utils/provenance.js';
+import { bookableStructureSqlNow, bookingOpenOnServer } from './bookable-structures.js';
 
 // DTA S3B: `search_vector` is NOT created by any migration of this repository (drizzle/*.sql, src/db/schema*). PostgreSQL resolves a column at parse time, even inside a CASE branch,
 // so the former runtime `pg_extension`/`information_schema` CASE guards could not protect the query: on a schema without the column every keyword (`q`) search answered 500
@@ -128,7 +129,17 @@ export function wordTerms(w) {
  * @param {any} folded the folded column (SQL) @param {string} t a folded term
  */
 export const isShortTerm = (/** @type {string} */ t) => t.length <= 3 && !t.includes(' ');
-const termMatch = (folded, t) => (isShortTerm(t) ? sql`${folded} ~ ${`\\m${t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\M`}` : sql`${folded} LIKE ${`%${t}%`}`);
+/**
+ * G14-FIND (owner 23/11/2026): a term of FOUR letters (the acronyms CCAS, CPAM, MDPH, CMPP…, and words like « taxe », « soin ») must START a word
+ * (\\m … , PostgreSQL): as a substring « ccas » was in « oCCASion », so « CCAS » listed « Certificat d’immatriculation : véhicule d'occasion ». It may still
+ * continue (plurals, compounds: « soins », « taxes », « automobile » for « auto »). Three letters or fewer stay whole words; five or more stay substrings.
+ * @param {string} t a folded term
+ */
+export const isWordStartTerm = (/** @type {string} */ t) => t.length === 4 && !t.includes(' ');
+const escapeRe = (/** @type {string} */ t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/** how one folded term matches a folded SQL text (exported for the directory's declared services) @param {any} folded @param {string} t */
+export const termMatch = (folded, t) => (isShortTerm(t) ? sql`${folded} ~ ${`\\m${escapeRe(t)}\\M`}`
+  : isWordStartTerm(t) ? sql`${folded} ~ ${`\\m${escapeRe(t)}`}` : sql`${folded} LIKE ${`%${t}%`}`);
 
 /**
  * The SQL of a word search over some text columns (fixed identifiers): one group per word (the word OR one of its synonyms in one of the columns, or in
@@ -723,7 +734,7 @@ export async function searchDispositifs(params) {
  * @param {any} params
  */
 export async function searchStructures(params) {
-  const { q, city, zip, type, departement, pmr, sort, page, pageSize, serves } = params;
+  const { q, city, zip, type, departement, pmr, sort, page, pageSize, serves, bookable } = params;
   const LIMIT = Number(pageSize) || 20;
   const OFFSET = (Math.max(1, Number(page) || 1) - 1) * LIMIT;
 
@@ -732,6 +743,9 @@ export async function searchStructures(params) {
   // Espace Structure proposal, and a geography change accepted without the reviewer confirming the territory withdraws territory_verified — so every place that
   // stays visible here (D-5 requires territory_verified) has a REVIEWED area. Being located in a commune (city) is a different, weaker fact.
   if (serves) conditions.push(sql`${String(serves)} = ANY(coalesce("Structure"."insee_codes", ARRAY[]::text[]))`);
+  // G14-FIND: any of several communes (the covered territory, for the global search's « nearby » fallback); internal parameter, codes checked here
+  const servesAny = Array.isArray(params.servesAny) ? params.servesAny.map(String).filter((c) => /^(\d{5}|2[AB]\d{3})$/.test(c)) : [];
+  if (servesAny.length) conditions.push(sql`coalesce("Structure"."insee_codes", ARRAY[]::text[]) && ${`{${servesAny.join(',')}}`}::text[]`);
 
   const sv = q ? await hasSearchVector('Structure') : false;
   // PKG-11 / E04: what a structure DECLARES it does (catalogue `services`) and the services it offers for booking on ADA (active, published booking only) feed the
@@ -743,11 +757,11 @@ export async function searchStructures(params) {
   // known (best match level): « CCAS Strasbourg » = a CCAS in Strasbourg
   // R34: and the services data·inclusion attributes to the place (Structure.services_externes: the schema's service name and themes, never free text) — 478
   // services on 269 public places that no search read: « aide aux aidants » found nothing, « apprendre le français » found « Croix-Rouge française »
-  const declared = (t) => sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE translate(lower(regexp_replace(declared.x, ${EXCLUSION_CLAUSE}, '', 'gi')), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})
+  const declared = (t) => sql`(EXISTS (SELECT 1 FROM unnest(coalesce("Structure"."services", ARRAY[]::text[])) AS declared(x) WHERE ${termMatch(sql`translate(lower(regexp_replace(declared.x, ${EXCLUSION_CLAUSE}, '', 'gi')), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc')`, t)})
     OR EXISTS (SELECT 1 FROM jsonb_array_elements(CASE WHEN jsonb_typeof("Structure"."services_externes"->'services') = 'array' THEN "Structure"."services_externes"->'services' ELSE '[]'::jsonb END) AS ext(x)
-      WHERE translate(lower(coalesce(ext.x->>'nom', '') || ' ' || coalesce(ext.x->>'themes', '') || ' ' || coalesce(ext.x->>'type', '')), 'àâäéèêëîïôöùûüç’', 'aaaeeeeiioouuuc''') LIKE ${`%${t}%`})
+      WHERE ${termMatch(sql`translate(lower(coalesce(ext.x->>'nom', '') || ' ' || coalesce(ext.x->>'themes', '') || ' ' || coalesce(ext.x->>'type', '')), 'àâäéèêëîïôöùûüç’', 'aaaeeeeiioouuuc''')`, t)})
     OR ("Structure"."is_pro_enabled" = true AND EXISTS (SELECT 1 FROM "ProRdvService" bookable WHERE bookable."structureId" = "Structure".id AND bookable."isActive" = true
-      AND translate(lower(bookable.name), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc') LIKE ${`%${t}%`})))`;   // R34: E04's bookable services, lost when R27 moved to the word plan
+      AND ${termMatch(sql`translate(lower(bookable.name), 'àâäéèêëîïôöùûüç', 'aaaeeeeiioouuuc')`, t)})))`;   // G14-FIND: the same word-aware match (« caf » ≠ « café »)   // R34: E04's bookable services, lost when R27 moved to the word plan
   const plan = q ? wordPlan(q, ['"nom"', '"description_courte"', '"ville"', '"code_postal"', '"type_structure"'], '"nom"', sv, declared) : null;
   // the words of the query found in what the place DOES (its services), ranked above words found only in its name
   const serviceHits = plan ? sql`(${sql.join(plan.words.map((w) => sql`(CASE WHEN (${sql.join(wordTerms(w).map((t) => declared(t)), sql.raw(' OR '))}) THEN 1 ELSE 0 END)`), sql.raw(' + '))})` : null;
@@ -796,6 +810,12 @@ export async function searchStructures(params) {
   if (wantsPmr) {
     conditions.push(sql`"accessibilite_pmr" = true`);
   }
+
+  // G14-FIND: « Rendez-vous en ligne » — only the places that can really be asked for an appointment online now; while booking is closed on this
+  // deployment the filter matches nothing (fail closed: it never falls back to the whole list) and no item carries the flag
+  const bookingOpen = bookingOpenOnServer();
+  const wantsBookable = bookable === 'true' || bookable === '1';
+  if (wantsBookable) conditions.push(bookingOpen ? bookableStructureSqlNow() : sql`false`);
 
   if (plan) conditions.push(await bestMatchCondition('Structure', conditions, plan));
   const whereClause = conditions.length > 0
@@ -912,6 +932,16 @@ export async function searchStructures(params) {
       },
     });
     const itemMap = new Map(fullItems.map((/** @type {{ id: string }} */ i) => [i.id, i]));
+    // G14-FIND: the online-booking flag of the page's places in ONE query (no query per place); under the filter every place already matched it
+    /** @type {Set<string>} */
+    const onlineBooking = new Set();
+    if (bookingOpen) {
+      if (wantsBookable) for (const i of itemIds) onlineBooking.add(String(i));
+      else {
+        const rows = (await db.execute(sql`SELECT id FROM "Structure" WHERE id IN (${sql.join(itemIds.map((/** @type {string} */ i) => sql`${i}`), sql`, `)}) AND ${bookableStructureSqlNow()}`)).rows || [];
+        for (const r of rows) onlineBooking.add(String(r.id));
+      }
+    }
     // E04 « why shown »: the declared or bookable services that match the words searched (max 3 per structure; text as the structure wrote it)
     /** @type {Map<string, string[]>} */
     const whyShown = new Map();
@@ -942,6 +972,7 @@ export async function searchStructures(params) {
           sourceUrl: sourceDocument?.source_url || safeFull.source_url || safeFull.source_url_exact,
         }),
         contentStatus: visibility.contentStatus,
+        online_booking: onlineBooking.has(String(raw.id)),
       };
       if (q) return { ...baseItem, rank: raw.rank, ...(whyShown.has(raw.id) ? { whyShown: { services: whyShown.get(raw.id) } } : {}) };
       return baseItem;

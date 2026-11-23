@@ -177,5 +177,19 @@
   "view.label": "Görünüm",
   "detail.no_contact": "Resmî kaynak bu kuruluş için telefon, e-posta veya web sitesi yayımlamıyor. Belirtilen adrese gidebilir ya da yakında başka bir kuruluş arayabilirsiniz.",
   "detail.nearby_in_city": "{{city}} içindeki diğer kuruluşları gör",
-  "detail.nearby": "Rehbere bak"
+  "detail.nearby": "Rehbere bak",
+  "filters.zip_chip": "Posta kodu {{zip}}",
+  "filters.rdv_only": "Çevrimiçi randevu",
+  "filters.rdv_hint": "AccesDirectAide üzerinden randevu talep edebileceğiniz yerler. Bu bir ortaklık değildir: randevuyu kurumun kendisi onaylar.",
+  "empty.description_rdv": "Bu ölçütlerle henüz çevrimiçi randevu talebi sunan bir yer yok. Bu filtreyi kaldırabilirsiniz: diğer yerlere telefonla, e-postayla ya da yerinde ulaşabilirsiniz.",
+  "empty.remove_rdv": "Çevrimiçi randevusu olmayan yerleri de göster",
+  "empty.remove_place": "Tüm Bas-Rhin’de ara",
+  "empty.check_rights": "Haklarımı kontrol et",
+  "card.online_booking_hint": "AccesDirectAide üzerinden randevu talebi mümkündür. Bu bir ortaklık değildir: randevuyu kurumun kendisi onaylar.",
+  "detail.booking.contact_only": "Bu kurumun hizmetleri için çevrimiçi randevu talebi açık değildir. Doğrudan kurumla iletişime geçin (bilgiler aşağıda).",
+  "detail.booking.services_title": "Çevrimiçi talebe açık hizmetler",
+  "detail.booking.duration": "({{n}} dk)",
+  "detail.booking.next_day": "Boş randevusu olan ilk gün: {{date}}.",
+  "detail.booking.no_slot_14": "Önümüzdeki 14 gün içinde boş randevu yok. Daha sonra tekrar deneyebilir ya da kurumla iletişime geçebilirsiniz.",
+  "detail.booking.loading": "Uygunluk yükleniyor…"
 }

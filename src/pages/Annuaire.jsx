@@ -2,9 +2,9 @@
 import OfficialResourcesNotice from '@/components/OfficialResourcesNotice';
 import HumanHelpBlock from '@/components/HumanHelpBlock';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { List, Map as MapIcon } from 'lucide-react';
+import { Calendar, List, Map as MapIcon } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { client } from '@/api/client';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,8 @@ import StructureCard from '@/components/cards/StructureCard';
 import { generateBreadcrumbSchema } from '@/utils/schema';
 import { useT } from '@/i18n';
 import FalcPageDraft from '@/components/FalcPageDraft';
+import { frontendEnv } from '@/config/env';
+import { bookingOpened, isBetaRestrictedPath } from '@/lib/publicBeta';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 const StructureMap = React.lazy(() => import('../components/StructureMap'));
@@ -76,6 +78,13 @@ export default function Annuaire() {
   const servesName = serves ? (/** @type {[string, string][]} */ (serviceTerritory.communes).find(([code]) => code === serves) || [])[1] || '' : '';
   const pmrRaw = (searchParams.get('pmr') || '').trim();
   const pmrEnabled = pmrRaw === '1' || pmrRaw === 'true';
+  // G14-FIND: « Rendez-vous en ligne » — offered (and sent) only when online booking is open in this build; the server checks it again
+  const bookingOpen = bookingOpened(frontendEnv.flags.publicBeta);
+  const orientationOpen = !frontendEnv.flags.publicBeta || !isBetaRestrictedPath('/orientation');
+  const rdvRaw = (searchParams.get('rdv') || '').trim();
+  const rdvOnly = bookingOpen && (rdvRaw === '1' || rdvRaw === 'true');
+  // G14-FIND: a postal code of the Bas-Rhin (from « Où ? » in Mon Espace): the places whose recorded address has that postal code
+  const zip = /^67\d{3}$/.test((searchParams.get('zip') || '').trim()) ? searchParams.get('zip').trim() : '';
   const page = parsePage(searchParams.get('page'));
   const limit = parseLimit(searchParams.get('limit') || searchParams.get('pageSize'));
   const sort = (searchParams.get('sort') || (q ? 'relevance' : 'quality')).trim();
@@ -93,14 +102,16 @@ export default function Annuaire() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['structures', { q, type, city, departement, serves, pmr: pmrEnabled, sort, page, limit }],
+    queryKey: ['structures', { q, type, city, zip, departement, serves, pmr: pmrEnabled, rdv: rdvOnly, sort, page, limit }],
     queryFn: () => client.entities.Structure.filter({
       q: q || undefined,
       type: type || undefined,
       city: city || undefined,
+      zip: zip || undefined,
       departement: departement || undefined,
       serves: serves || undefined,
       pmr: pmrEnabled ? '1' : undefined,
+      bookable: rdvOnly ? '1' : undefined,
       sort,
       page,
       limit,
@@ -174,8 +185,10 @@ export default function Annuaire() {
     q && { key: 'q', label: `« ${q} »`, onRemove: () => handleParamChange('q', '') },
     type && { key: 'type', label: typeLabel(TYPE_STRUCTURES.find((o) => o.value === type) || { value: type, label: type }), onRemove: () => handleParamChange('type', '') },
     city && { key: 'city', label: city, lang: 'fr', onRemove: () => handleParamChange('city', '') },
+    zip && { key: 'zip', label: t('structures:filters.zip_chip', 'Code postal {{zip}}', { zip }), onRemove: () => handleParamChange('zip', '') },
     departement && { key: 'departement', label: departement, onRemove: () => handleParamChange('departement', '') },
     pmrEnabled && { key: 'pmr', label: t('structures:filters.pmr_only', 'Accessible PMR uniquement'), onRemove: () => handleParamChange('pmr', '') },
+    rdvOnly && { key: 'rdv', label: t('structures:filters.rdv_only', 'Rendez-vous en ligne'), onRemove: () => handleParamChange('rdv', '') },
   ].filter(Boolean);
 
   /** the place filters, in the sidebar (prefix '') and in the phone sheet (prefix 'm-'); the types are the chips above the results @param {string} prefix */
@@ -194,6 +207,20 @@ export default function Annuaire() {
           checked={pmrEnabled} onChange={(e) => handleParamChange('pmr', e.target.checked ? '1' : '')} />
         {t('structures:filters.pmr_only', 'Accessible PMR uniquement')}
       </label>
+      {/* G14-FIND: only when online booking is open in this build; the hint says what the filter means, and what it does not */}
+      {bookingOpen && (
+        <div>
+          <label htmlFor={`${prefix}structures-rdv`} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900">
+            <input id={`${prefix}structures-rdv`} type="checkbox" className="h-5 w-5 rounded border-slate-400 accent-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
+              checked={rdvOnly} onChange={(e) => handleParamChange('rdv', e.target.checked ? '1' : '')} aria-describedby={`${prefix}structures-rdv-hint`} data-testid={`${prefix}structures-rdv-filter`} />
+            <Calendar className="h-4 w-4 shrink-0 text-indigo-700" aria-hidden="true" />
+            {t('structures:filters.rdv_only', 'Rendez-vous en ligne')}
+          </label>
+          <p id={`${prefix}structures-rdv-hint`} className="mt-1 text-xs text-slate-700">
+            {t('structures:filters.rdv_hint', 'Lieux où vous pouvez demander un rendez-vous sur AccesDirectAide. Ce n’est pas un partenariat : la structure confirme elle-même le rendez-vous.')}
+          </p>
+        </div>
+      )}
       {activeFilters.length > 0 && <Button type="button" variant="ghost" className="h-11 w-full" onClick={clearFilters}>{t('structures:filters.reset', 'Réinitialiser')}</Button>}
     </div>
   );
@@ -243,7 +270,7 @@ export default function Annuaire() {
 
         <ResultsBar summary={!isLoading && !error && structures.length > 0
           ? t('structures:list.count', { count: total, defaultValue_one: '{{count}} structure trouvée.', defaultValue_other: '{{count}} structures trouvées.' }) : null}>
-          <MobileFilters title={t('structures:filters.toggle', 'Filtres')} count={[city, departement, pmrEnabled].filter(Boolean).length} render={renderFilters} onReset={clearFilters} />
+          <MobileFilters title={t('structures:filters.toggle', 'Filtres')} count={[city, zip, departement, pmrEnabled, rdvOnly].filter(Boolean).length} render={renderFilters} onReset={clearFilters} />
           <div role="tablist" aria-label={t('structures:view.label', 'Affichage')} className="inline-flex rounded-lg bg-slate-100 p-1">
             <button id="annuaire-tab-list" role="tab" type="button" aria-selected={viewMode === 'list'} aria-controls="annuaire-panel" tabIndex={viewMode === 'list' ? 0 : -1}
               className={tabClass(viewMode === 'list')} onClick={() => setViewMode('list')} onKeyDown={onTabKey}>
@@ -340,8 +367,22 @@ export default function Annuaire() {
               title={t('structures:empty.title', 'Aucune structure trouvée')}
               description={serves
                 ? t('structures:empty.description_serves', "Aucun lieu publié n'est enregistré pour cette commune : ni situé dans la commune, ni déclarant y intervenir. Vous pouvez chercher par ville ou voir toutes les structures.")
-                : t('structures:empty.description', "Nous n'avons trouvé aucune structure correspondant à vos critères.")}
-              actions={<Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>{t('structures:empty.show_all', 'Voir toutes les structures')}</Button>}
+                : rdvOnly
+                  ? t('structures:empty.description_rdv', 'Aucun lieu ne propose encore la demande de rendez-vous en ligne avec ces critères. Vous pouvez retirer ce filtre : les autres lieux se contactent par téléphone, courriel ou sur place.')
+                  : t('structures:empty.description', "Nous n'avons trouvé aucune structure correspondant à vos critères.")}
+              actions={(
+                <div className="flex flex-wrap justify-center gap-2" data-testid="annuaire-empty-actions">
+                  {/* G14-FIND: concrete next steps: drop the narrowest filter first (online booking, then the place), then everything */}
+                  {rdvOnly ? <Button type="button" className="min-h-11" onClick={() => handleParamChange('rdv', '')}>{t('structures:empty.remove_rdv', 'Voir aussi les lieux sans rendez-vous en ligne')}</Button> : null}
+                  {(zip || city || departement || serves) ? (
+                    <Button type="button" variant="outline" className="min-h-11" onClick={() => { const params = new URLSearchParams(searchParams); ['zip', 'city', 'departement', 'territory', 'geo', 'serves'].forEach((k) => params.delete(k)); params.set('page', '1'); setSearchParams(params); }}>
+                      {t('structures:empty.remove_place', 'Chercher dans tout le Bas-Rhin')}
+                    </Button>
+                  ) : null}
+                  <Button type="button" variant="outline" className="min-h-11" onClick={clearFilters}>{t('structures:empty.show_all', 'Voir toutes les structures')}</Button>
+                  {orientationOpen ? <Button asChild variant="ghost" className="min-h-11"><Link to="/orientation">{t('structures:empty.check_rights', 'Vérifier mes droits')}</Link></Button> : null}
+                </div>
+              )}
               data-testid="annuaire-empty"
             />
           )}

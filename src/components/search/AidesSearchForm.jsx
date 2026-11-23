@@ -157,7 +157,7 @@ export default function AidesSearchForm(props) {
       </p>
       {withTerritory && (
         <p id="aides-search-territory-help" className="mt-1 text-sm text-slate-700">
-          {t('search:form.territory-help', 'Avec une commune, les aides réservées à un autre territoire ne sont pas affichées. Les démarches, les lieux et les actualités ne sont pas filtrés.')}
+          {t('search:form.territory-help-v2', 'Avec une commune, les aides réservées à un autre territoire ne sont pas affichées et les lieux de cette commune sont proposés en premier. Les démarches et les actualités ne sont pas filtrées.')}
         </p>
       )}
     </form>
