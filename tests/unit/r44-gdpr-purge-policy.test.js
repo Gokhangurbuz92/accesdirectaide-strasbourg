@@ -57,8 +57,10 @@ describe('R44 retention policy object', () => {
     expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'g14-expansion-1-2026-11-22-a7-365d', approvedPolicyVersion: 'g14-expansion-1-2026-11-22-a7-365d',
       supersedes: 'r45-proposal-2-2026-11-05-a7-365d', approvedChoices: { A7: 365 } });
     // G14: 25 steps DECIDED (durations) — none of them APPROVED for execution (no dry run read, no backup verified yet); X03 steps wait for their AIPD
-    expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(25);
+    expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(26);   // G14 (25) + G14-PS social referrals (proposal)
     for (const [id, d] of Object.entries(RETENTION_POLICY.decidedSteps)) {
+      // G14-PS (23/11/2026): the social referral step is a PROPOSAL recorded at the lead's request; its duration stays pendingApproval (never executes)
+      if (id === 'socialReferralsClosedDeleted') { expect(d).toMatchObject({ decidedOn: '2026-11-23', decision: expect.stringMatching(/^proposition G14-PS/) }); expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS.pendingApproval).toBeTruthy(); continue; }
       expect(d.decidedOn, id).toBe('2026-11-22');
       expect(d.decision, id).toMatch(/^décision du responsable 22\/11\/2026, formulaire G14, question \d+$/);
       expect(Boolean(d.condition), id).toBe(id.startsWith('entraide'));

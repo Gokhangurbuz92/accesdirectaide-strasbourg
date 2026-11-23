@@ -35,7 +35,9 @@ export const CATALOGUE = Object.freeze({
   referral_cancelled: ev('referrals', 'Orientation annulée'),
   referral_overdue: ev('referrals', 'Orientation sans réponse'),
   referral_expired: ev('referrals', 'Orientation expirée'),
-  referral_follow_up: ev('referrals', 'Orientation à relancer', false),   // M2 / G4: in-app only (no new e-mail type)
+  referral_follow_up: ev('referrals', 'Orientation à relancer', false),
+  // G14-PS: the social referral (non-HDS) — in-app only, never a reason, a name or a contact in the notice (the page shows them to members)
+  social_referral_update: ev('referrals', 'Orientation sociale : nouvelle étape', false),   // M2 / G4: in-app only (no new e-mail type)
   referent_update: ev('cases', 'Personne de contact du parcours', false),   // M2 / G5: the person's decision on a proposed contact person — in-app only
   rdv_new: ev('appointments', 'Rendez-vous demain'),
   rdv_booked_by_structure: ev('appointments', 'Rendez-vous créé'),
@@ -71,6 +73,7 @@ export function notificationPath(type, metadata) {
   if (id(m.appointmentId)) return `/pro/appointments/${id(m.appointmentId)}`;
   if (id(m.proposalId) || type === 'structure_proposal_decided') return '/pro/structure';
   if (type === 'team_role_change') return '/pro/team';
+  if (type === 'social_referral_update') return '/pro/orientations-sociales';   // G14-PS
   if (type === 'case_handover') return '/pro/dossiers';
   return '/pro/dashboard';
 }

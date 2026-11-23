@@ -62,7 +62,8 @@ export const LEGAL_IDENTITY_VARS = ['VITE_LEGAL_PUBLISHER_IDENTITY', 'VITE_LEGAL
 const OPENABLE_SURFACES = Object.keys(SURFACES).filter((s) => !NOT_OPENABLE.includes(s));
 // X04 (19/11/2026): the EXPANSION items (founder authorization for engineering only, separate register CONTROL/master/EXPANSION_REGISTER_15.md) are not
 // part of the 173-feature activation: the final configuration does not open them; each one opens by its own owner decision (AIPD line first)
-export const EXPANSION_SURFACES = Object.freeze(['events', 'testimonials', 'stories', 'employment', 'entraide', 'notices']);   // X04, X02, X01, X05, X03 (X03: dedicated AIPD first); G14: notices (DSA art. 16 form)
+export const EXPANSION_SURFACES = Object.freeze(['events', 'testimonials', 'stories', 'employment', 'entraide', 'notices', 'social_referrals']);   // G14-PS: social_referrals (owner decision 23/11/2026, AIPD line first)
+// X04, X02, X01, X05, X03 (X03: dedicated AIPD first); G14: notices (DSA art. 16 form)
 const FINAL_SURFACES = OPENABLE_SURFACES.filter((s) => !EXPANSION_SURFACES.includes(s));
 const OUT_OF_AIPD = Object.entries(CAPABILITIES).filter(([, c]) => c.aipd === 'out' && c.openable !== false && !EXPANSION_SURFACES.includes(c.surface)).map(([n]) => n);
 const EXPANSION_NOTE = 'EXTENSION (hors des 173) : non ouverte par la configuration finale ; ouverture = décision séparée du propriétaire après la ligne AIPD';
@@ -167,6 +168,7 @@ const SURFACE_PROBES = {
   employment: { route: 'employment', method: 'GET', screen: '/offres-emploi', features: ['X05'] },
   entraide: { route: 'citizen/entraide', method: 'GET', screen: '/compte/entraide', features: ['X03'] },
   notices: { route: 'notices', method: 'GET', screen: '/signaler-un-contenu', features: ['X02', 'X01', 'X05', 'X03'] },
+  social_referrals: { route: 'pro/social-referrals', method: 'GET', screen: '/pro/orientations-sociales', features: ['R09', 'R10', 'E06'] },
 };
 const SURFACE_OTHER = {
   accounts: [
@@ -190,6 +192,9 @@ const SURFACE_OTHER = {
   diagnostic: [{ type: 'owner_decision', what: 'extension de l’AIPD au questionnaire / assistant', ref: 'api/_utils/capabilities.js' },
     { type: 'human_review', what: 'expert D11 : aucune règle n’est validée (le résultat reste indicatif)', ref: 'docs/rules/D11_PROCEDURE_VALIDATION_EXPERTE.md' }],
   admin: [{ type: 'operator', what: 'comptes administrateurs nominatifs avec MFA (pas de jeton hérité)', ref: 'scripts/admin-bootstrap.mjs' }],
+  social_referrals: [{ type: 'migration', what: 'drizzle/pending/0061_g14_ps_social_referrals.sql (tables SocialReferral, SocialReferralEvent) — numérotée après 0060 de g14-ai, à journaliser à la fusion puis exécuter par le propriétaire', ref: 'api/_services/social-referrals.js' },
+    { type: 'owner_decision', what: 'ligne AIPD de l’orientation sociale (G14-PS) et notice d’information', ref: 'api/_utils/capabilities.js pro.referrals_social' },
+    { type: 'human_review', what: 'liste des types de structures non médico-sociales (NON_ESSMS_KINDS) revue', ref: 'api/lib/social-referral-policy.js' }],
 };
 const SURFACE_REQUIRES = { accounts: ['provider.mail'], pro: ['provider.mail'], institution: ['capability.institution.portal'], appointments: ['provider.mail'],
   communications: ['provider.mail', 'storage.object'], documents: ['capability.citizen.vault', 'protected_store'], video: ['capability.video'] };
@@ -228,7 +233,8 @@ export function buildItems() {
     'citizen.shared_dossier': ['C14', 'C15', 'C16', 'C17', 'R13', 'R15'], 'citizen.saved_diagnostic': ['C12'], 'diagnostic.questionnaire': ['P13', 'D10', 'D20'],
     'pro.case_management': ['R03', 'R05', 'R06', 'R07', 'R08', 'R11', 'R12'], 'pro.referrals': ['R09', 'R10', 'E06'], 'pro.orientation_selections': ['R18'], 'pro.siao_interop': ['R22'], 'partner.referral_adapter': ['R09', 'R10', 'E06'],
     'ai.processing': ['P17', 'D17', 'D18', 'R17', 'R23', 'P18'], 'institution.portal': ['I01', 'I02', 'I03', 'I04'], video: ['B07', 'N06'], 'citizen.minor_accounts': [],
-    'community.events': ['X04'], 'community.testimonials': ['X02'], 'community.stories': ['X01'], 'community.employment': ['X05'], 'community.entraide': ['X03'] };
+    'community.events': ['X04'], 'community.testimonials': ['X02'], 'community.stories': ['X01'], 'community.employment': ['X05'], 'community.entraide': ['X03'],
+    'pro.referrals_social': ['R09', 'R10', 'E06'] };
   for (const [name, cap] of Object.entries(CAPABILITIES)) {
     const env = [tok('ADA_BETA_OPEN_SURFACES', cap.surface)];
     if (cap.accountsFull) env.push(eqv('ADA_BETA_ACCOUNTS_SCOPE', 'full'));

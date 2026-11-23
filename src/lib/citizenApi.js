@@ -122,6 +122,9 @@ export const citizenApi = {
   // PKG-4 — referrals proposed by organizations (nothing is shared before 'accept') and the follow-ups of a dossier
   referrals: () => call('/api/citizen/referrals'),
   decideReferral: (/** @type {string} */ id, /** @type {'accept'|'refuse'} */ decision) => call('/api/citizen/referrals', { method: 'POST', body: { id, decision } }),
+  // G14-PS — social referrals (non-HDS): claim a one-time code, decide (with the contact to share), withdraw
+  socialReferrals: () => call('/api/citizen/social-referrals'),
+  socialReferralAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/social-referrals', { method: 'POST', body }),
   dossierFollowUps: (/** @type {string} */ shareId) => call(`/api/citizen/dossier?view=followups&shareId=${encodeURIComponent(shareId)}`),
   // M2 / G5 — the contact person of the path (« référent de parcours »): declarative, set only with the person's agreement, ended by them at any time
   dossierReferent: (/** @type {string} */ shareId) => call(`/api/citizen/dossier?view=referent&shareId=${encodeURIComponent(shareId)}`),

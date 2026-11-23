@@ -16,7 +16,9 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
   // X03 (expansion): Entraide, the member side and its moderation — surface « entraide », opened by no build (dedicated AIPD first)
   '/compte/entraide', '/admin/entraide',
   // G14: the account-free notice form (DSA art. 16) and « my moderation decisions » — surface « notices », opened by no build
-  '/signaler-un-contenu', '/compte/moderation'];
+  '/signaler-un-contenu', '/compte/moderation',
+  // G14-PS: the social referral (non-HDS), both sides — surface « social_referrals », opened by no build
+  '/compte/orientations-sociales', '/pro/orientations-sociales'];
 
 /**
  * R35: the screens of a surface the server opened during the beta (ADA_BETA_OPEN_SURFACES, api/_utils/public-beta.js) are shown when the build names the
@@ -33,6 +35,7 @@ export const SCREEN_SURFACES = {
   employment: ['/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'],
   entraide: ['/compte/entraide', '/admin/entraide'],
   notices: ['/signaler-un-contenu', '/compte/moderation'],
+  social_referrals: ['/compte/orientations-sociales', '/pro/orientations-sociales'],
 };
 const builtOpen = () => {
   let v = '';
@@ -117,6 +120,8 @@ export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSu
   if (SCREEN_SURFACES.entraide.some((x) => under(p, x))) return !open.includes('entraide');
   // G14: the notice form and « my moderation decisions » follow ONLY the « notices » surface (/compte/moderation sits under /compte, which does not open it)
   if (SCREEN_SURFACES.notices.some((x) => under(p, x))) return !open.includes('notices');
+  // G14-PS: the social referral screens follow ONLY the « social_referrals » surface (they sit under /compte and /pro, which do not open them)
+  if (SCREEN_SURFACES.social_referrals.some((x) => under(p, x))) return !open.includes('social_referrals');
   // R43 (E1): the public structure sign-up stays closed while the pro space is open for invited members
   if (under(p, PRO_SELF_REGISTRATION_SCREEN) && !sub.proSelfRegistration) return true;
   const opened = open.flatMap((name) => (name === 'accounts' && sub.accountsScope !== 'full' ? [] : SCREEN_SURFACES[name] || []));

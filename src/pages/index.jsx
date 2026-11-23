@@ -240,6 +240,10 @@ const ProCases = lazy(() => import("./pro/Cases.jsx"));
 const ProReferrals = lazy(() => import("./pro/Referrals.jsx"));
 const ProSelections = lazy(() => import("./pro/Selections.jsx"));
 const CompteOrientations = lazy(() => import("./CompteOrientations.jsx"));
+// G14-PS: social referrals (non-HDS) and the local-first Passeport Social
+const CompteOrientationsSociales = lazy(() => import("./CompteOrientationsSociales.jsx"));
+const ProSocialReferrals = lazy(() => import("./pro/SocialReferrals.jsx"));
+const PasseportSocial = lazy(() => import("./PasseportSocial.jsx"));
 
 // Sentry
 const SentryTestPage = lazy(() => import("./SentryTestPage.jsx"));
@@ -503,6 +507,7 @@ function PagesContent() {
                                     <Route path="dossiers/:id" element={<ProGuard><ProCases /></ProGuard>} />
                                     <Route path="orientations" element={<ProGuard><ProReferrals /></ProGuard>} />
                                     <Route path="orientations/:id" element={<ProGuard><ProReferrals /></ProGuard>} />
+                                    <Route path="orientations-sociales" element={<ProGuard><ProSocialReferrals /></ProGuard>} />
                                     <Route path="selections" element={<ProGuard><ProSelections /></ProGuard>} />
                                     <Route path="selections/:id" element={<ProGuard><ProSelections /></ProGuard>} />
                                     <Route path="audit" element={<ProGuard><ProAuditLog /></ProGuard>} />
@@ -567,6 +572,8 @@ function PagesContent() {
                                 <Route path="/compte/delegations/:id" element={<CompteDelegationVue />} />
                                 <Route path="/compte/rendez-vous" element={<CompteRendezVous />} />
                                 <Route path="/compte/orientations" element={<CompteOrientations />} />
+                                <Route path="/compte/orientations-sociales" element={<CompteOrientationsSociales />} />
+                                <Route path="/passeport-social" element={<PasseportSocial />} />
                                 <Route path="/compte/partages/:shareId" element={<ComptePartageDetail />} />
                                 <Route path="/a-propos" element={<APropos />} />
                                 <Route path="/accessibilite" element={<Accessibilite />} />

@@ -39,6 +39,8 @@ export const EXPORT_SECTION_TABLES = Object.freeze({
   entraideContactShares: 'EntraideContactShare', entraideReports: 'EntraideReport', entraideBlocks: 'EntraideBlock',
   // G14 (0059): the moderation decisions about the person's content (statements of reasons), their appeals and the measures taken on their account
   moderationDecisions: 'ModerationDecision', moderationAppeals: 'ModerationAppeal', moderationSanctions: 'ModerationSanction',
+  // G14-PS (0061): the person's social referrals (organisations, closed reasons, statuses, what they chose to share, consent channel, times)
+  socialReferrals: 'SocialReferral',
 });
 
 /** columns that must never appear in these sections */
@@ -95,8 +97,12 @@ export async function accountLinkedSections(userId, rows, deps = {}) {
   const moderationDecisions = await m(moderation.moderationDecisionsExportSql);
   const moderationAppeals = await m(moderation.moderationAppealsExportSql);
   const moderationSanctions = await m(moderation.moderationSanctionsExportSql);
+  // G14-PS: same rule for a database without 0061
+  const social = await import('./social-referrals.js');
+  const withSocial = await (deps.hasSocialReferralTables || (() => social.socialReferralsAvailable()))();
+  const socialReferrals = withSocial ? await rows(social.socialReferralsExportSql(userId)) : [];
   return { pushSubscriptions, emailChangeRequests, ownershipRecoveryCases, parcoursReminders, appointmentNotices, eventRegistrations, testimonials, testimonialReports,
     communityMember, communityStories, communityStoryReports,
     entraideMember, entraideOffers, entraideRequests, entraideRequestsReceived, entraideContactShares, entraideReports, entraideBlocks,
-    moderationDecisions, moderationAppeals, moderationSanctions };
+    moderationDecisions, moderationAppeals, moderationSanctions, socialReferrals };
 }

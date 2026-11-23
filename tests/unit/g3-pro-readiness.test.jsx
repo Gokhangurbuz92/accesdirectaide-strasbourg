@@ -24,7 +24,8 @@ vi.mock('@/components/OnboardingTour', () => ({ default: () => null }));
 
 const LAB_HDS = `HDS1:lab-synthetic:G3-SYNTHETIC:2099-12-31:${'0'.repeat(64)}`;
 const PRO_ONLY = { ADA_PUBLIC_BETA_RESTRICTED: '1', ADA_BETA_OPEN_SURFACES: 'admin,accounts,pro', VERCEL_ENV: 'production' };
-const CLOSED = { cases: false, referrals: false, selections: false, dossiers: false, agenda: false, outlook: false, video: false, messages: false, team: true, structure: true, reports: true, regional: true, audit: true, employment: false };   // X05: the job board needs its own surface and capability
+const CLOSED = { cases: false, referrals: false, selections: false, dossiers: false, agenda: false, outlook: false, video: false, messages: false, team: true, structure: true, reports: true, regional: true, audit: true, employment: false, socialReferrals: false };   // G14-PS: the social referral needs its own surface and capability
+// X05: the job board needs its own surface and capability (CLOSED above)
 
 describe('G3 server: the module states follow the router gates', () => {
   it('pro opened alone: only account / structure-administration modules', () => {
@@ -85,7 +86,7 @@ describe('G3 console with modules closed', () => {
     await screen.findByTestId('pro-dashboard-queue');
     const nav = screen.getAllByRole('navigation')[0];
     const closed = [...nav.querySelectorAll('[data-testid="pro-nav-closed"]')].map((x) => x.textContent);
-    expect(closed).toEqual(['Dossiers suivispas encore ouvert', 'Sélections d’orientationpas encore ouvert', 'Orientationspas encore ouvert', 'Agenda RDVpas encore ouvert', 'Messagespas encore ouvert']);
+    expect(closed).toEqual(['Dossiers suivispas encore ouvert', 'Sélections d’orientationpas encore ouvert', 'Orientationspas encore ouvert', 'Orientations socialespas encore ouvert', 'Agenda RDVpas encore ouvert', 'Messagespas encore ouvert']);
     expect(nav.querySelector('a[href="/pro/dossiers"]')).toBeNull();
     expect(nav.querySelector('a[href="/pro/rdv/new"]')).toBeNull();
     for (const href of ['/pro/team', '/pro/structure', '/pro/regional', '/pro/parametres']) expect(nav.querySelector(`a[href="${href}"]`), href).not.toBeNull();

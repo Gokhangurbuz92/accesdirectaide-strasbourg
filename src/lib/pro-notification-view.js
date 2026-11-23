@@ -23,6 +23,7 @@ export function notificationPath(notif) {
   if (id(m.appointmentId)) return `/pro/appointments/${id(m.appointmentId)}`;
   if (id(m.proposalId) || type === 'structure_proposal_decided') return '/pro/structure';
   if (type === 'team_role_change') return '/pro/team';
+  if (type === 'social_referral_update') return '/pro/orientations-sociales';   // G14-PS
   if (type === 'case_handover') return '/pro/dossiers';
   return '/pro/dashboard';
 }

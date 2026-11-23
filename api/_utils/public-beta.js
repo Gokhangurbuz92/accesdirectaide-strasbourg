@@ -116,6 +116,10 @@ export const SURFACES = {
   // 17; appeals, art. 20) of a signed-in person. Opened by NO deployment: it needs this name in ADA_BETA_OPEN_SURFACES, and both handlers answer 503 unless a
   // content capability (testimonials, stories, employment, entraide) is open. Longer prefixes win: « citizen/moderation » belongs here, not to « accounts ».
   notices: ['notices', 'citizen/moderation'],
+  // G14-PS (23/11/2026): the social referral (non-HDS) — the professional side and « Mes orientations sociales ». Opened by NO deployment: it needs this
+  // name in ADA_BETA_OPEN_SURFACES AND « pro.referrals_social » in ADA_CAPABILITIES_OPEN (outside the AIPD until its line is signed). Longer prefixes than
+  // « pro » / « citizen »: opening pro or accounts does not open them (signing in still needs « pro » / « accounts »).
+  social_referrals: ['pro/social-referrals', 'citizen/social-referrals'],
 };
 /** surfaces that ADA_BETA_OPEN_SURFACES never opens (R40 / G2) */
 export const NOT_OPENABLE = Object.freeze(['jobs']);

@@ -2,6 +2,7 @@
 import logger from '../../_utils/logger.js';
 import { getCronAuth, scheduledByVercel } from '../../_utils/cronAuth.js';
 import { runReferralTimeouts } from '../../_services/referrals.js';
+import { runSocialReferralTimeouts } from '../../_services/social-referrals.js';
 import { startCronRun, finishCronRun, countsOnly } from '../../_utils/cron-run.js';
 import { db } from '../../../src/db/index.js';
 
@@ -13,7 +14,8 @@ export default async function handler(req, res) {
   const startedAtMs = Date.now();
   const cronRunId = await startCronRun(db, 'referral-timeouts', { trigger: scheduledByVercel(req) ? 'vercel-cron' : 'manual' });
   try {
-    const summary = await runReferralTimeouts();
+    // G14-PS: the social referrals' timeouts run in the same job (counts only; skipped on a database without 0061)
+    const summary = { ...(await runReferralTimeouts()), ...(await runSocialReferralTimeouts().catch(() => ({ socialSkipped: 'FAILED' }))) };
     logger.info(summary, '[Cron] referral timeouts');
     const failed = Number(summary?.expiredNoticeFailed || 0) + Number(summary?.pendingCitizenNoticeFailed || 0) + Number(summary?.overdueRetry || 0);
     await finishCronRun(db, cronRunId, summary?.skipped ? { status: 'skipped', skipReason: String(summary.skipped), startedAtMs, metrics: countsOnly(summary) }
