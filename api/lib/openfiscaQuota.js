@@ -148,3 +148,22 @@ export function monthlyCapacity(cfg = quotaConfig({ OPENFISCA_URL: 'https://x.ex
 
 /** French message of the refusal (the interface translates by the code OPENFISCA_QUOTA_REACHED, namespace diagnostic) */
 export const QUOTA_MESSAGE_FR = 'Le calcul indicatif est suspendu jusqu’au début du mois prochain : la limite mensuelle d’utilisation du service de calcul est atteinte. Aucun résultat de remplacement n’est affiché. Vous pouvez demander conseil à un professionnel.';
+
+/**
+ * Would one call be accepted now? READ ONLY (nothing is charged, the engine is not contacted) — used by GET /api/diagnostic/estimate-availability so the
+ * interface does not offer the indicative calculation when this month's allowance is spent. Never throws.
+ * @returns {Promise<{ allowed: boolean, code: string }>}
+ */
+export async function peekOpenfiscaQuota({ env = process.env, now = Date.now(), store } = {}) {
+  const cfg = quotaConfig(env);
+  if (!cfg.enabled) return { allowed: true, code: 'OPENFISCA_QUOTA_OFF' };
+  const s = store || redisStore(env) || (cfg.production ? null : memoryStore);
+  if (!s) return { allowed: false, code: 'OPENFISCA_QUOTA_STORE_UNAVAILABLE' };
+  try {
+    const state = await bounded(s.read(monthKey(now)));
+    const r = chargeCall(state, now, cfg);
+    return { allowed: r.allowed, code: r.allowed ? 'OPENFISCA_QUOTA_OK' : 'OPENFISCA_QUOTA_REACHED' };
+  } catch {
+    return { allowed: false, code: 'OPENFISCA_QUOTA_STORE_UNAVAILABLE' };
+  }
+}

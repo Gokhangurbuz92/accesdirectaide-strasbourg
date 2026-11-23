@@ -2940,7 +2940,8 @@
         "api/lib/openfiscaClient.js",
         "api/lib/openfiscaEngine.js",
         "api/_handlers/diagnostic.js",
-        "api/lib/openfiscaQuota.js"
+        "api/lib/openfiscaQuota.js",
+        "api/lib/openfiscaLegislation.js"
       ],
       "routes": [
         "diagnostic"
@@ -2963,7 +2964,9 @@
         "dta-openfisca-client-privacy.test.js",
         "r15-openfisca-estimate-honesty.test.js",
         "r46-d10-openfisca-engine.test.js",
-        "g14-openfisca-selfhost.test.js"
+        "g14-openfisca-selfhost.test.js",
+        "g14-indicative-estimate.test.js",
+        "g14-indicative-estimate-ui.test.jsx"
       ],
       "gates": [
         {

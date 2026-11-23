@@ -19,6 +19,7 @@ import { useSituation } from '@/hooks/useSituation';
 import { csrfFetch } from '@/lib/csrf';
 import DiagnosticOutcome from '@/components/diagnostic/DiagnosticOutcome';
 import PrivacyNotice from '@/components/diagnostic/PrivacyNotice';
+import IndicativeEstimate, { EstimateUnavailable } from '@/components/diagnostic/IndicativeEstimate';
 import { useAssessmentLabels } from '@/lib/assessmentLabelsI18n';
 import { EMPLOYMENT_KEYS, HOUSING_KEYS, useDiagnosticLabels } from '@/lib/diagnosticLabelsI18n';
 import { useLanguage, useT } from '@/i18n';
@@ -70,6 +71,8 @@ export default function DiagnosticPage() {
     const { housing, employment } = useDiagnosticLabels();
     const [results, setResults] = useState(/** @type {Record<string, unknown> | null} */ (null));   // the /api/diagnostic answer, read only through the assessment contract (readAssessment)
     const recordHistory = useCitizenHistory();
+    const [estimate, setEstimate] = useState(/** @type {Record<string, any> | null} */ (null));   // G14: the « estimation indicative » (citizen block), or null
+    const [estimateNotice, setEstimateNotice] = useState(/** @type {string | null} */ (null));   // G14: why it could not be made (a closed code, fixed texts)
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(/** @type {string | null} */ (null));
     const resultsRef = useRef(/** @type {HTMLDivElement | null} */ (null));
@@ -82,8 +85,67 @@ export default function DiagnosticPage() {
         if (loading || !focusAfterSubmit.current) return;
         focusAfterSubmit.current = false;
         if (error) focusHeading(errorTitleRef.current);
-        else if (results) focusHeading(resultsRef.current?.querySelector('#assessment-title'));
+        else if (results) focusHeading(resultsRef.current?.querySelector('#estimate-title') || resultsRef.current?.querySelector('#assessment-title'));
     }, [loading, results, error]);
+
+    /**
+     * Appelle POST /api/diagnostic avec l'état courant,
+     * en respectant le contrat attendu par le handler existant.
+     */
+    /** the questionnaire's answers, and nothing else (DTA S2B minimisation; S1D: a BLANK field is not answered, an explicit 0 is a known zero) */
+    const buildAnswers = () => ({
+        // DTA S2B (data minimisation): an exact date OR an age band — never both
+        ...(situation.birthDate ? { birthDate: situation.birthDate } : { ageBand: situation.ageBand }),
+        householdSize: Number(situation.householdSize) || 1,
+        territory: situation.zipCode || '',
+        statut: situation.employmentStatus || '',
+        // DTA S1D: a BLANK field is "not answered" (absent => the assessment reports the fact as missing), an explicit 0 is a known zero.
+        income: {
+            ...answered('salary', situation.salary),
+            ...answered('unemployment', situation.unemployment),
+        },
+        housing: {
+            // rent is only asked for tenants; for any other status it does not apply and is the known value 0
+            ...(isTenant(situation.housingStatus) ? answered('rent', situation.rent) : { rent: 0 }),
+            charges: Number(situation.charges) || 0,
+            status: situation.housingStatus,
+        },
+    });
+
+    /**
+     * G14: the indicative calculation of the self-hosted OpenFisca engine, when the server offers it (GET /api/diagnostic/estimate-availability: configuration
+     * and this month's free-tier allowance only — the engine is not woken). Returns { estimate, orientation } on success; { notice } when the engine is
+     * unavailable or the allowance is spent (the page then does exactly what it did before, with a fixed message saying why); null when it is not offered.
+     * @param {Record<string, any>} answers
+     */
+    const tryIndicativeEstimate = async (answers) => {
+        let availability = null;
+        try {
+            const a = await fetch('/api/diagnostic/estimate-availability', { credentials: 'same-origin', headers: { Accept: 'application/json' } });
+            availability = a.ok ? await a.json().catch(() => null) : null;
+        } catch { availability = null; }
+        if (availability?.reason === 'OPENFISCA_QUOTA_REACHED') return { notice: 'OPENFISCA_QUOTA_REACHED' };
+        if (availability?.available !== true) return null;
+        let response; let data;
+        try {
+            response = await csrfFetch('/api/diagnostic', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mode: 'AUTHORITATIVE_MODE', answers }),
+            });
+            data = await response.json().catch(() => ({}));
+            if (response.ok && data?.citizen?.contract === 'ADA_CITIZEN_ESTIMATE_V1') {
+                const { localOrientation } = await import('@/lib/diagnosticLocalOrientation');
+                return { estimate: data.citizen, orientation: localOrientation(answers) };
+            }
+        } catch {
+            // network error, unreadable answer for the local orientation: the page falls back to what it did before
+            return { notice: 'OPENFISCA_UNAVAILABLE' };
+        }
+        if (response.status === 503 || response.ok) return { notice: data && data.error === 'OPENFISCA_QUOTA_REACHED' ? 'OPENFISCA_QUOTA_REACHED' : 'OPENFISCA_UNAVAILABLE' };
+        // an invalid input or a rate limit: the same fixed message as the orientation path
+        throw new FixedMessage(errorMessageFor(response.status, data && data.error));
+    };
 
     /**
      * Appelle POST /api/diagnostic avec l'état courant,
@@ -92,31 +154,26 @@ export default function DiagnosticPage() {
     const handleCalculate = async () => {
         setLoading(true);
         setError(null);
+        setEstimate(null);
+        setEstimateNotice(null);
 
         try {
+            const answers = buildAnswers();
+            const indicative = await tryIndicativeEstimate(answers);
+            if (indicative?.estimate) {
+                setEstimate(indicative.estimate);
+                setResults(indicative.orientation || null);
+                recordHistory({ kind: 'diagnostic', label: 'Simulation de mes droits', ref: '/diagnostic' });
+                return;
+            }
+            if (indicative?.notice) setEstimateNotice(indicative.notice);
+
             const response = await csrfFetch('/api/diagnostic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     mode: 'SIMULATION_MODE',
-                    answers: {
-                        // DTA S2B (data minimisation): an exact date OR an age band — never both
-                        ...(situation.birthDate ? { birthDate: situation.birthDate } : { ageBand: situation.ageBand }),
-                        householdSize: Number(situation.householdSize) || 1,
-                        territory: situation.zipCode || '',
-                        statut: situation.employmentStatus || '',
-                        // DTA S1D: a BLANK field is "not answered" (absent => the assessment reports the fact as missing), an explicit 0 is a known zero.
-                        income: {
-                            ...answered('salary', situation.salary),
-                            ...answered('unemployment', situation.unemployment),
-                        },
-                        housing: {
-                            // rent is only asked for tenants; for any other status it does not apply and is the known value 0
-                            ...(isTenant(situation.housingStatus) ? answered('rent', situation.rent) : { rent: 0 }),
-                            charges: Number(situation.charges) || 0,
-                            status: situation.housingStatus,
-                        },
-                    },
+                    answers,
                 }),
             });
 
@@ -143,6 +200,8 @@ export default function DiagnosticPage() {
         resetSituation();
         setResults(null);
         setError(null);
+        setEstimate(null);
+        setEstimateNotice(null);
     };
 
     /**
@@ -450,6 +509,8 @@ export default function DiagnosticPage() {
                         {results ? (
                             <div data-testid="diagnostic-results" ref={resultsRef}>
                                 <p role="status" className="sr-only">{t('diagnostic:results.announce', "Nouvelles pistes d'orientation affichées.")}</p>
+                                {estimate ? <IndicativeEstimate estimate={estimate} /> : null}
+                                {estimateNotice ? <EstimateUnavailable code={estimateNotice} /> : null}
                                 <DiagnosticOutcome results={results} situation={situation} structureLoader={loadStructures} />
                             </div>
                         ) : (

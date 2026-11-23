@@ -15,7 +15,8 @@ const openfisca = async () => (openfiscaModule ??= await import('../lib/openfisc
 import { buildTestCase, parseResults, getCurrentPeriod } from '../lib/openfiscaMapping.js';
 import { qualifyEstimates, traceQualification } from '../lib/openfiscaEstimate.js';
 import { IDENTITY_FAILURES, cachedEngineHealth } from '../lib/openfiscaEngine.js';
-import { reserveOpenfiscaCall, QUOTA_MESSAGE_FR } from '../lib/openfiscaQuota.js';
+import { reserveOpenfiscaCall, peekOpenfiscaQuota, QUOTA_MESSAGE_FR } from '../lib/openfiscaQuota.js';
+import { citizenEstimate, estimateConfigProblem } from '../lib/openfiscaLegislation.js';
 import { runLocalSimulation } from '../lib/LocalRulesEngine.js';
 import { ageFromBand } from '../lib/ageBands.js';
 import { checkRateLimit } from '../_utils/rateLimit.js';
@@ -104,6 +105,17 @@ export default async function handler(req, /** @type {string | number | boolean 
     // Route: /api/diagnostic/trace
     if (pathSuffix === 'trace') {
         return handleTrace(req, res);
+    }
+
+    // G14: GET /api/diagnostic/estimate-availability — may the interface offer the indicative calculation? Configuration + this month's free-tier guard,
+    // READ ONLY: no engine contact (the container is not woken), nothing charged, nothing of a person received. Gated like every diagnostic route.
+    if (pathSuffix === 'estimate-availability') {
+        if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed', allowed: ['GET'] });
+        res.setHeader?.('Cache-Control', 'no-store');
+        const problem = estimateConfigProblem(process.env);
+        if (problem) return res.status(200).json({ available: false, reason: problem });
+        const q = await peekOpenfiscaQuota();
+        return res.status(200).json({ available: q.allowed, reason: q.allowed ? null : q.code, engine: { name: 'openfisca-france', version: process.env.OPENFISCA_FRANCE_VERSION || null } });
     }
 
     // Route: /api/diagnostic (main)
@@ -292,6 +304,9 @@ async function handleDiagnosticInner(req, res, track) {
             period,
             authoritative: false,
             estimates,
+            // G14: what the citizen page shows — an amount only under the pinned legislation in force for the period (api/lib/openfiscaLegislation.js);
+            // the version is the one the ENGINE stated, never the configured one
+            citizen: citizenEstimate(estimates, { period, engineVersion: health?.ok ? health.version : null }),
             meta: {
                 source: 'openfisca',
                 engineVersion,
