@@ -952,7 +952,7 @@ const withSections = (changes, version) => (d) => {
   const doc = withChanges(changes, version)(d);
   const c = changes[d.id]; const add = c.addSections || {};
   const titled = doc.sections.map((s) => (c.sections[s.id]?.title ? { ...s, title: c.sections[s.id].title[0], titleKey: c.sections[s.id].title[1] } : s));
-  return { ...doc, ...(c.intro ? { intro: c.intro[0], introKey: c.intro[1] } : {}), sections: titled.flatMap((s) => [s, ...(add[s.id] || []).map((x) => ({ ...x, ...(x.items ? { items: [...x.items], itemKeys: { ...x.itemKeys } } : {}),
+  return { ...doc, ...(c.intro ? { intro: c.intro[0], introKey: c.intro[1] } : {}), sections: titled.flatMap((s) => [s, ...(add[s.id] || []).map((/** @type {any} */ x) => ({ ...x, ...(x.items ? { items: [...x.items], itemKeys: { ...x.itemKeys } } : {}),
     ...(x.paras ? { paras: [...x.paras], paraKeys: { ...x.paraKeys } } : {}) }))]) };
 };
 /** @type {DraftDocument[]} the citizen terms (from v10) and the privacy notice (from v10: no ADA Pro text) — X04 / X01 / X02 opening */

@@ -17,7 +17,7 @@ import ProDashboard from '../../src/pages/pro/Dashboard.jsx';
 import { moduleOfScreen, moduleOpen, isNotOpenRefusal } from '../../src/lib/proModules.js';
 import { PRO_MODULE_ROUTES, proModuleStates } from '../../api/_utils/pro-modules.js';
 import { proTermsInForce, proTermsReference, proTermsDocumentsFor } from '../../api/_utils/pro-terms.js';
-import { LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS } from '../../src/config/legal-drafts.js';
 
 vi.mock('@/components/NotificationCenter', () => ({ default: () => null }));
 vi.mock('@/components/OnboardingTour', () => ({ default: () => null }));
