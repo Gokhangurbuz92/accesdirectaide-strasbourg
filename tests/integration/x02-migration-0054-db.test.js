@@ -88,7 +88,9 @@ describe.skipIf(!hasDatabase)('migration 0054: up → down → code without it �
     const out = await accountLinkedSections('keep', rows, { hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => t.testimonialsSchemaAvailable(db),
       hasCommunityTables: () => cs.communitySchemaAvailable(db),
       // X03: the later 0057 is rolled back too here — its sections are asked of THIS database
-      hasEntraideTables: async () => (await import('../../api/_services/entraide.js')).entraideSchemaAvailable(db) });
+      hasEntraideTables: async () => (await import('../../api/_services/entraide.js')).entraideSchemaAvailable(db),
+      // G14-PS: the later 0061 is rolled back too here — its section is asked of THIS database
+      hasSocialReferralTables: async () => { const sr = await import('../../api/_services/social-referrals.js'); sr.forgetSocialReferralSchema(db); return sr.socialReferralsAvailable(db); } });
     expect(out.testimonials).toEqual([]); expect(out.testimonialReports).toEqual([]); expect(failed).toBe(0);
   });
 

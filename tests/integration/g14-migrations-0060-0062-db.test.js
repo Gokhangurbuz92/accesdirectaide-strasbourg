@@ -13,6 +13,7 @@ import fs from 'node:fs';
 import pg from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { Aide } from '../../src/db/schema.js';
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const NAME = `ada_g14r2_mig_${Date.now().toString(36)}_test`;
@@ -79,6 +80,8 @@ describe.skipIf(!hasDatabase)('migrations 0060–0062: up → down → up', () =
     await down();
     expect(await state()).toEqual(ALL_DOWN);
     expect(await rowsOf()).toEqual(before.slice(0, -3));
+    // the code still reads "Aide" through Drizzle without 0060 (the bge-m3 columns are not declared in src/db/schema.ts: raw SQL behind a presence check)
+    await expect(drizzle(pool).select().from(Aide).limit(1)).resolves.toEqual([]);
     await down();
     expect(await state()).toEqual(ALL_DOWN);
     expect(await rowsOf()).toEqual(before.slice(0, -3));

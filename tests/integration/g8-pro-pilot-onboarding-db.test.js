@@ -287,7 +287,7 @@ describe.skipIf(!hasDatabase)('G8 — pilot partner onboarding of ADA Pro, end t
 
     const me = await call('GET', '/api/pro/me', { bearer: J.member.session });
     expect(me.body.modules).toEqual({ cases: false, referrals: false, selections: false, dossiers: false, agenda: false, outlook: false, video: false, messages: false,
-      team: true, structure: true, reports: true, regional: true, audit: true, employment: false, assist: false });   // G14-AID: the helper code needs citizen.assisted_mode (out of the AIPD)   // X05 (G10 merge): the job board needs its own surface and capability
+      team: true, structure: true, reports: true, regional: true, audit: true, employment: false, assist: false, socialReferrals: false });   // G14-PS: the social referral needs its own surface and capability; G14-AID: the helper code needs citizen.assisted_mode (out of the AIPD)   // X05 (G10 merge): the job board needs its own surface and capability
     // the member: reads the record (cannot propose), keeps their own public profile, their notifications; administration stays with the administrator
     const st = await call('GET', '/api/pro/structure', { bearer: J.member.session });
     expect([st.statusCode, st.body.canPropose]).toEqual([200, false]);

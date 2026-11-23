@@ -103,7 +103,8 @@ describe.skipIf(!hasDatabase)('migration 0057: up → down → code without it �
     const { accountLinkedSections } = await import('../../api/_services/export-account-sections.js');
     let failed = 0;
     const rows = async (query) => { try { return (await db.execute(query)).rows; } catch { failed += 1; return []; } };
-    const out = await accountLinkedSections('keep', rows, { hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEntraideTables: () => e.entraideSchemaAvailable(db) });
+    const out = await accountLinkedSections('keep', rows, { hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEntraideTables: () => e.entraideSchemaAvailable(db),
+      hasSocialReferralTables: async () => { const sr = await import('../../api/_services/social-referrals.js'); sr.forgetSocialReferralSchema(db); return sr.socialReferralsAvailable(db); } });   // G14-PS: 0061 rolled back here too
     for (const k of ['entraideMember', 'entraideOffers', 'entraideRequests', 'entraideRequestsReceived', 'entraideContactShares', 'entraideReports', 'entraideBlocks']) expect(out[k], k).toEqual([]);
     expect(failed).toBe(0);
   });

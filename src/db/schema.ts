@@ -119,10 +119,12 @@ export const Aide = pgTable('Aide', {
 	// PKG-11 / D16: SHA-256 of the exact text the stored embedding was computed from, and when — a changed record is re-embedded, an unchanged one is not
 	embedded_text_sha256: text('embedded_text_sha256'),
 	embedded_at: timestamp('embedded_at', { precision: 3 }),
-	// G14-AI (migration 0060): the Cloudflare Workers AI index (@cf/baai/bge-m3, 1024 dimensions), its source-text hash and time — built by scripts/reindex-embeddings.mjs --provider=workers_ai
-	embedding_m3: vector('embedding_m3', { dimensions: 1024 }),
-	embedding_m3_sha256: text('embedding_m3_sha256'),
-	embedding_m3_at: timestamp('embedding_m3_at', { precision: 3 }),
+	// G14-AI (migration 0060): "embedding_m3" vector(1024), "embedding_m3_sha256" text, "embedding_m3_at" timestamp(3) and the HNSW index
+	// "Aide_embedding_m3_hnsw_idx" are NOT declared here (g14-r2 integration): Drizzle names every declared column in select() / insert(), so declaring them
+	// made every read of "Aide" fail (« column "embedding_m3" does not exist ») on a database where 0060 is not applied yet — Production receives its
+	// migrations later, separately authorised (tests/integration/m1-parcours-without-0046-db.test.js). They are read and written only through raw SQL guarded
+	// by a column-presence check (api/lib/hybrid-search.js, api/lib/retrieval-index.js, scripts/reindex-embeddings.mjs). drizzle/0060…0062 and their
+	// snapshots own them: a schema diff (drizzle-kit generate) must NOT turn their absence here into a DROP.
 	// automatic verification chain (api/_services/verification/chain.js): the FALC steps, and the summary of the last automatic check (sources read, result, texts)
 	etapes_falc: jsonb('etapes_falc'),
 	auto_check: jsonb('auto_check'),
@@ -151,9 +153,7 @@ export const Aide = pgTable('Aide', {
 	// HNSW index for fast cosine similarity search (pgvector)
 	'Aide_embedding_hnsw_idx': index('Aide_embedding_hnsw_idx')
 		.using('hnsw', Aide.embedding.op('vector_cosine_ops')),
-	// G14-AI (0060): the bge-m3 index of the Workers AI assistant
-	'Aide_embedding_m3_hnsw_idx': index('Aide_embedding_m3_hnsw_idx')
-		.using('hnsw', Aide.embedding_m3.op('vector_cosine_ops')),
+	// G14-AI (0060): the bge-m3 HNSW index is owned by the migration (see the note on the columns above)
 }));
 
 export const AidCategory = pgTable('AidCategory', {

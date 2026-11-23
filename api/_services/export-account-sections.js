@@ -49,7 +49,7 @@ export const EXPORT_FORBIDDEN_FIELDS = Object.freeze(['endpoint', 'endpointHash'
 /**
  * @param {string} userId
  * @param {(query: import('drizzle-orm').SQL) => Promise<any[]>} rows reads rows and counts a failed read (privacy.js safeRows)
- * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean>, hasCommunityTables?: () => Promise<boolean>, hasEntraideTables?: () => Promise<boolean>, hasModerationTables?: () => Promise<boolean> }} [deps]
+ * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean>, hasCommunityTables?: () => Promise<boolean>, hasEntraideTables?: () => Promise<boolean>, hasModerationTables?: () => Promise<boolean>, hasSocialReferralTables?: () => Promise<boolean> }} [deps]
  *   hasEventTables: migration 0053 present (X04); hasTestimonialTables: migration 0054 present (X02); hasCommunityTables: migration 0055 present (X01); hasEntraideTables: migration 0057 present (X03)
  */
 export async function accountLinkedSections(userId, rows, deps = {}) {

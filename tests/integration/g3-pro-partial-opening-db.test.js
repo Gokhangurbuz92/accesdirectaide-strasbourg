@@ -106,10 +106,10 @@ describe.skipIf(!hasDatabase)('G3 — ADA Pro opened alone: accounts, MFA and st
     J.admin = { id: reg.body.user.id, email: ADMIN_EMAIL, st: PILOT, role: 'STRUCTURE_ADMIN' };
     expect(reg.body.user).toMatchObject({ role: 'STRUCTURE_ADMIN', structureId: PILOT });
     // outside Production the acceptance records the NEWEST draft of each document (G14: cgu-professionnel v9-2026-11-22; the structure conditions stay v8)
-    const { LEGAL_DRAFTS_V8, latestDraftVersionOf } = await import('../../src/config/legal-drafts.js');
+    const { latestDraftVersionOf } = await import('../../src/config/legal-drafts.js');
     expect(await ledger(J.admin.id)).toEqual([
       { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CGU_PROFESSIONNEL', decision: true, policy_version: `cgu-professionnel@${latestDraftVersionOf('cgu-professionnel')}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
-      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CONDITIONS_STRUCTURES', decision: true, policy_version: `conditions-structures@${LEGAL_DRAFTS_V8}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
+      { subject_type: 'PRO_USER', purpose: 'TERMS_ACCEPTANCE_CONDITIONS_STRUCTURES', decision: true, policy_version: `conditions-structures@${latestDraftVersionOf('conditions-structures')}`, proof_level: 'CONTRACT_ACCEPTANCE', collection_channel: 'register-invite' },
     ]);
 
     // the password-only session can only enrol the factor: /api/pro/me says so; every other console route refuses it
@@ -137,7 +137,7 @@ describe.skipIf(!hasDatabase)('G3 — ADA Pro opened alone: accounts, MFA and st
     const me = await call('GET', '/api/pro/me', { bearer: J.session });
     expect(me.statusCode).toBe(200);
     expect(me.body.modules).toEqual({ cases: false, referrals: false, selections: false, dossiers: false, agenda: false, outlook: false, video: false, messages: false,
-      team: true, structure: true, reports: true, regional: true, audit: true, employment: false, assist: false });   // G14-AID: the helper code needs citizen.assisted_mode (out of the AIPD)   // X05: the job board needs its own surface and capability
+      team: true, structure: true, reports: true, regional: true, audit: true, employment: false, assist: false, socialReferrals: false });   // G14-PS: the social referral needs its own surface and capability; G14-AID: the helper code needs citizen.assisted_mode (out of the AIPD)   // X05: the job board needs its own surface and capability
     expect(JSON.stringify(me.body.modules)).not.toMatch(/HDS1|@|ADA_/);
   });
 

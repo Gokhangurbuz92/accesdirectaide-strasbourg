@@ -4,7 +4,7 @@
  * (hashed, single use, 72 h, bound to structure + e-mail + role) and is redeemable ONLY by that account; nothing secret is printed; one AuditLog line;
  * every refusal (wrong host or database, an existing SUPERADMIN, a second run, a resend after enrolment) writes nothing.
  * Isolation: other suites create SUPERADMIN rows in the shared integration database at the same time, so this suite works in its OWN schema (copies of
- * Structure / ProUser / Invitation / AuditLog made with LIKE … INCLUDING ALL from the database under test — same columns, at 0042 as at the latest
+ * Structure / ProUser / Invitation / AuditLog — and AdminUser, read by the invitation check since G14-PRO — made with LIKE … INCLUDING ALL from the database under test — same columns, at 0042 as at the latest
  * migration) selected through the connection's search_path, and drops it at the end. Synthetic data only; skipped without DATABASE_URL.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
@@ -22,6 +22,8 @@ const NAME = `Titulaire Exploitation ${TS}`;
 /** synthetic password built at run time (never a literal a secret scanner reads as a credential) */
 const PASSWORD = ['Synthetique', 'R43', `Boot${TS.slice(0, 4)}9`].join('-');
 const TABLES = ['Structure', 'ProUser', 'Invitation', 'AuditLog'];
+// G14-PRO: redeeming an invitation also reads "AdminUser" (an invitation sent from the administration, api/_utils/invite-token.js): copied too, left empty
+const COPIED = [...TABLES, 'AdminUser'];
 
 describe.skipIf(!hasDatabase)('R43 first platform SUPERADMIN bootstrap (real DB, isolated schema)', () => {
   let pg, admin, scoped, scopedUrl, host, dbName, tmp, mod, enrolment, drizzle;
@@ -43,7 +45,7 @@ describe.skipIf(!hasDatabase)('R43 first platform SUPERADMIN bootstrap (real DB,
     host = u.hostname.replace(/^\[|\]$/g, '').toLowerCase(); dbName = decodeURIComponent(u.pathname.slice(1));
     admin = new pg.Client({ connectionString: process.env.DATABASE_URL }); await admin.connect();
     await admin.query(`CREATE SCHEMA "${SCHEMA}"`);
-    for (const t of TABLES) await admin.query(`CREATE TABLE "${SCHEMA}"."${t}" (LIKE public."${t}" INCLUDING ALL)`);
+    for (const t of COPIED) await admin.query(`CREATE TABLE "${SCHEMA}"."${t}" (LIKE public."${t}" INCLUDING ALL)`);
     u.searchParams.set('options', `-c search_path=${SCHEMA}`);
     scopedUrl = u.toString();
     scoped = new pg.Client({ connectionString: scopedUrl }); await scoped.connect();
