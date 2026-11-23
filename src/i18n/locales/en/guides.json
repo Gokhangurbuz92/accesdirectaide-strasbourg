@@ -61,5 +61,6 @@
  "detail.in_progress": "Content being written.",
  "detail.sources": "Sources:",
  "detail.next_title": "What next? Take action near you",
- "detail.next_see": "View"
+ "detail.next_see": "View",
+ "image.show_data_saver": "Show the image (data saving is on)"
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { useT } from '@/i18n';
+import { useReducedData } from '@/lib/dataSaver';
 
 /**
  * ⚡ LazyImage — Optimized image component with native lazy loading
@@ -19,12 +20,25 @@ export default function LazyImage({ src, alt, className, fallbackText, ...props 
   const fallback = fallbackText ?? t('guides:image.unavailable', 'Image indisponible');
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
+  // G14-LITE: with data saving on, the image is downloaded only when the person asks for it (text first)
+  const saveData = useReducedData();
+  const [asked, setAsked] = useState(false);
 
   // launch-readiness item 49: the fallback is drawn here — it used to load an image from placehold.co, a third party that then saw every visitor's address
   if (error) {
     return (
       <div role="img" aria-label={alt || fallback} className={cn('relative flex items-center justify-center overflow-hidden bg-muted p-4 text-sm text-muted-foreground', className)}>
         {fallback}
+      </div>
+    );
+  }
+
+  if (saveData && !asked) {
+    return (
+      <div className={cn('relative flex items-center justify-center overflow-hidden bg-muted p-4', className)}>
+        <button type="button" data-testid="lazy-image-show" onClick={() => setAsked(true)} className="min-h-11 rounded-lg border border-input bg-background px-4 py-2 text-sm font-semibold text-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          {t('guides:image.show_data_saver', 'Afficher l’image (économie de données activée)')}
+        </button>
       </div>
     );
   }

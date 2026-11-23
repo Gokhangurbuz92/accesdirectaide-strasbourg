@@ -9,7 +9,8 @@
 
 const CACHE_NAME = 'ada-static-shell-v1';   // unchanged name: a changed sw.js reinstalls and re-precaches (offline page included) anyway
 const OFFLINE_URL = '/offline.html';
-// R46 / M01: offline page revision 2 (six languages): editing this file is what makes installed workers reinstall and re-precache it
+// R46 / M01: offline page revision 2 (six languages); G14-LITE revision 3 (the opt-in Mon Parcours line): editing this file is what makes installed workers
+// reinstall and re-precache it
 const PRECACHE_URLS = ['/index.html', '/manifest.json', OFFLINE_URL, '/icons/icon-192.png'];
 
 const NEVER_CACHE_PREFIXES = [
@@ -23,7 +24,7 @@ const NEVER_CACHE_PREFIXES = [
   '/auth/',
 ];
 
-const STATIC_PREFIXES = ['/assets/', '/icons/'];
+const STATIC_PREFIXES = ['/assets/', '/icons/', '/fonts/'];
 const STATIC_EXACT_PATHS = new Set([
   '/manifest.json',
   '/offline.html',
@@ -31,6 +32,18 @@ const STATIC_EXACT_PATHS = new Set([
   '/logo.svg',
   '/logo.png',
 ]);
+
+/**
+ * G14-LITE — Mon Parcours readable offline, ONLY when the person switched on « Garder Mon Parcours sur cet appareil » (default off).
+ * This worker never stores personal data: the steps themselves are kept by the page in IndexedDB (src/lib/offlineParcours.js). The worker keeps, in a
+ * separate cache, the STATIC application shell the page asked for (the same /index.html every visitor gets, and the hashed /assets, /fonts files the page
+ * had loaded) so that /compte/parcours can start without network. Any other page still shows /offline.html offline; /api, /auth, admin, pro,
+ * documents, messages are never cached (NEVER_CACHE_PREFIXES, shouldBypass). The page clears this cache on « off », logout and account switch.
+ */
+const OFFLINE_SHELL_CACHE = 'ada-offline-parcours-shell-v1';
+const OFFLINE_SHELL_KEY = '/__ada/offline-parcours-shell';
+const OFFLINE_PARCOURS_PATH = '/compte/parcours';
+const MAX_SHELL_ASSETS = 200;
 
 function pathMatchesPrefix(pathname, prefix) {
   return pathname === prefix.slice(0, -1) || pathname.startsWith(prefix);
@@ -81,11 +94,22 @@ function responseMayBeCached(response) {
   return response.type === 'basic' || response.type === 'default';
 }
 
+/** G14-LITE: looks in the kept shell WITHOUT creating it (caches.open would leave an empty cache behind when the person never switched it on) */
+async function matchOfflineShell(request) {
+  if (typeof caches.has !== 'function' || !(await caches.has(OFFLINE_SHELL_CACHE))) return undefined;
+  const shell = await caches.open(OFFLINE_SHELL_CACHE);
+  return shell.match(request);
+}
+
 async function cacheFirstStatic(request) {
   const cache = await caches.open(CACHE_NAME);
   const cached = await cache.match(request);
 
   if (cached) return cached;
+
+  // G14-LITE: a static file kept for the offline Mon Parcours shell (only exists when the person switched it on)
+  const kept = await matchOfflineShell(request);
+  if (kept) return kept;
 
   const response = await fetch(request);
 
@@ -133,8 +157,59 @@ function isPageNavigation(request) {
   return Boolean(request && request.mode === 'navigate' && request.method === 'GET' && new URL(request.url).origin === self.location.origin);
 }
 
+/** G14-LITE: the offline Mon Parcours shell, if the person kept it; otherwise the static offline page */
+async function offlineParcoursShell() {
+  return (await matchOfflineShell(OFFLINE_SHELL_KEY)) || offlineFallback();
+}
+
+/** G14-LITE: only the exact Mon Parcours address may start from the kept shell (never another account page) */
+function isOfflineParcoursNavigation(request) {
+  if (!isPageNavigation(request)) return false;
+  const pathname = new URL(request.url).pathname.replace(/\/+$/, '');
+  return pathname === OFFLINE_PARCOURS_PATH;
+}
+
+/**
+ * G14-LITE: the shell files a page may ask this worker to keep — same origin, GET-able static files only (/assets, /fonts, /icons and the exact static
+ * paths). Anything else (an /api address, an account page, another origin) is refused.
+ */
+function isShellAssetUrl(raw) {
+  let url;
+  try { url = new URL(String(raw), self.location.origin); } catch { return false; }
+  if (url.origin !== self.location.origin || url.search || url.hash) return false;
+  if (NEVER_CACHE_PREFIXES.some((prefix) => pathMatchesPrefix(url.pathname, prefix))) return false;
+  if (STATIC_EXACT_PATHS.has(url.pathname)) return true;
+  return STATIC_PREFIXES.some((prefix) => pathMatchesPrefix(url.pathname, prefix));
+}
+
+/** G14-LITE: keeps the static shell for offline Mon Parcours: the shared /index.html (stored under a private key) and the listed static files */
+async function keepOfflineParcoursShell(assets) {
+  const list = Array.isArray(assets) ? assets.filter(isShellAssetUrl).slice(0, MAX_SHELL_ASSETS) : [];
+  const shell = await caches.open(OFFLINE_SHELL_CACHE);
+  const page = await fetch('/index.html', { cache: 'no-store', credentials: 'omit' });
+  if (!responseMayBeCached(page)) return false;
+  await shell.put(OFFLINE_SHELL_KEY, page.clone());
+  await Promise.all(list.map(async (raw) => {
+    const url = new URL(String(raw), self.location.origin).href;
+    try {
+      const res = await fetch(url, { credentials: 'omit' });
+      if (responseMayBeCached(res)) await shell.put(url, res.clone());
+    } catch { /* a missing file only means that part will not start offline */ }
+  }));
+  return true;
+}
+
+async function dropOfflineParcoursShell() {
+  await caches.delete(OFFLINE_SHELL_CACHE);
+}
+
 self.addEventListener('fetch', (event) => {
   const request = event.request;
+
+  if (isOfflineParcoursNavigation(request)) {
+    event.respondWith(fetch(request).catch(offlineParcoursShell));
+    return;
+  }
 
   if (isPageNavigation(request)) {
     event.respondWith(fetch(request).catch(offlineFallback));
@@ -153,6 +228,10 @@ self.addEventListener('fetch', (event) => {
 // PKG-9 / M01: the update prompt (src/components/pwa/UpdatePrompt.jsx) asks the waiting worker to take over only when the person chooses to.
 self.addEventListener('message', (event) => {
   if (event?.data?.type === 'SKIP_WAITING') self.skipWaiting();
+  // G14-LITE: only messages from a page of this origin (event.source is a window client of this worker) — the page decides, the worker never asks
+  const fromPage = !event?.origin || event.origin === self.location.origin;
+  if (fromPage && event?.data?.type === 'ADA_OFFLINE_PARCOURS_KEEP') event.waitUntil?.(keepOfflineParcoursShell(event.data.assets));
+  if (fromPage && event?.data?.type === 'ADA_OFFLINE_PARCOURS_DROP') event.waitUntil?.(dropOfflineParcoursShell());
 });
 
 // R11 / N04 — a Web Push message (api/_services/web-push.js): generic words and a link INSIDE the site, shown as a notification; nothing personal is in it.

@@ -16,6 +16,7 @@ import { useLanguage, useT } from '@/i18n';
 import { applyAccountLanguageOnce } from '@/lib/accountLanguage';
 
 import { logoutOnServer } from '@/lib/citizenSession';
+import { reconcileOfflineOwner } from '@/lib/offlineParcours';
 /**
  * AuthHeaderActions — Menus "Se connecter" / "S'inscrire" unifiés
  * 
@@ -44,6 +45,9 @@ export function AuthHeaderActions() {
     const { code: uiLanguage } = useLanguage();
     const sessionUser = isUser ? authQuery.data?.user : null;
     useEffect(() => { if (sessionUser) void applyAccountLanguageOnce(sessionUser, uiLanguage); }, [sessionUser?.id, sessionUser?.preferredLanguage]);   // eslint-disable-line react-hooks/exhaustive-deps -- once per session, not on every interface change
+
+    // G14-LITE: a Mon Parcours copy kept on this device belongs to ONE account — another account (or none) recognised here erases it (account switch)
+    useEffect(() => { if (authQuery.isSuccess) void reconcileOfflineOwner(sessionUser?.id || null); }, [authQuery.isSuccess, sessionUser?.id]);
 
     const userEmail = (authQuery.data?.user?.email ?? authQuery.data?.session?.user?.email);
 

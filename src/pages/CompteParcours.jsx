@@ -13,6 +13,9 @@ import { openLinks } from '@/lib/publicBeta';
 import HumanHelpBlock, { HUMAN_HELP_DIRECTORY } from '@/components/HumanHelpBlock';
 import { PLAN_CLOSURES, groupByNeed, needsRecovery, nextActionOf } from '@/lib/parcoursPlan';
 import CompteParcoursLimited from './CompteParcoursLimited';
+// G14-LITE: « Garder Mon Parcours sur cet appareil » (default off) and the read-only copy shown without Internet
+import { OfflineParcoursSwitch, OfflineParcoursView } from '@/components/parcours/ParcoursOffline';
+import { clearOfflineParcours, isNetworkFailure, readOfflineParcours } from '@/lib/offlineParcours';
 
 /** French text of the plan or of a record inside any interface language: marked French and left-to-right */
 const FR = { lang: 'fr', dir: 'ltr' };
@@ -55,14 +58,18 @@ export default function CompteParcours() {
     try {
       const p = await citizenApi.listParcours();
       // G14: the server's limited contract (closed list of step types, no free text) has its own screen
-      if (p.contract === 'limited') { setState({ loading: false, error: '', items: p.items || [], shares: [], limited: p }); return; }
+      if (p.contract === 'limited') { setState({ loading: false, error: '', items: p.items || [], shares: [], limited: p, raw: p }); return; }
       // G4: the dossiers are listed only where the server says the plan import is open (it belongs to the HDS-bound shared dossier); a refusal there never
       // hides Mon Parcours itself. A server without the flag (before G4) keeps the former behaviour.
       const importOpen = p.planImport !== false;
       const s = importOpen ? await citizenApi.listShares().catch(() => ({ shares: [] })) : { shares: [] };
       setState({ loading: false, error: '', items: p.items || [], shares: importOpen ? s.shares || [] : [], planSteps: p.planSteps === true, emailReminders: p.emailReminders !== false,
-        sensitiveSteps: p.sensitiveSteps === 'consent' ? 'consent' : 'excluded', notes: p.notes !== false });
-    } catch (err) { setState({ loading: false, unauth: err.status === 401, error: err.status === 401 ? t('compte:parcours.login_required', 'Connectez-vous pour accéder à Mon Parcours.') : err.message, items: [], shares: [] }); }
+        sensitiveSteps: p.sensitiveSteps === 'consent' ? 'consent' : 'excluded', notes: p.notes !== false, raw: p });
+    } catch (err) {
+      // G14-LITE: the session is over → the copy kept on this device is erased; no network → the kept copy (if the person chose to keep one), read-only
+      if (err.status === 401) void clearOfflineParcours();
+      if (isNetworkFailure(err)) { const kept = await readOfflineParcours(); if (kept?.enabled && kept.data) { setState({ loading: false, error: '', items: [], shares: [], offline: kept }); return; } }
+      setState({ loading: false, unauth: err.status === 401, error: err.status === 401 ? t('compte:parcours.login_required', 'Connectez-vous pour accéder à Mon Parcours.') : err.message, items: [], shares: [] }); }
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
 
@@ -85,7 +92,8 @@ export default function CompteParcours() {
     try { const h = await citizenApi.parcoursHistory(id); setHistory((x) => ({ ...x, [id]: h.events || [] })); } catch { setHistory((x) => ({ ...x, [id]: [] })); }
   };
 
-  if (state.loading) return <div className="container mx-auto max-w-3xl px-4 py-8" role="status">{t('compte:parcours.chargement_mon_parcours', 'Chargement de Mon Parcours…')}</div>;
+  if (state.offline) return <OfflineParcoursView record={state.offline} onRetry={() => { setState({ loading: true, error: '', items: [], shares: [], planSteps: false }); load(); }} />;
+  if (state.loading) return <div className="container mx-auto min-h-screen max-w-3xl px-4 py-8" role="status">{t('compte:parcours.chargement_mon_parcours', 'Chargement de Mon Parcours…')}</div>;
   if (state.error) {
     return (
       <div className="container mx-auto max-w-3xl px-4 py-8" data-testid="parcours-error">
@@ -98,7 +106,7 @@ export default function CompteParcours() {
       </div>
     );
   }
-  if (state.limited) return <CompteParcoursLimited data={state.limited} reload={load} />;
+  if (state.limited) return <><CompteParcoursLimited data={state.limited} reload={load} /><OfflineParcoursSwitch data={state.raw} /></>;
   const active = state.items.filter((i) => !PARCOURS_DONE.includes(i.status));
   const done = state.items.filter((i) => PARCOURS_DONE.includes(i.status));
   const helpLinks = openLinks([
@@ -281,6 +289,7 @@ export default function CompteParcours() {
   const grouped = groups.some((g) => g.need);
 
   return (
+    <>
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8" data-testid="compte-parcours">
       <SEO title={t('compte:parcours.mon_parcours', 'Mon Parcours')} noindex />
       <h1 className="text-2xl font-bold text-slate-900">{t('compte:parcours.mon_parcours', 'Mon Parcours')}</h1>
@@ -350,5 +359,7 @@ export default function CompteParcours() {
         <Card><CardHeader><CardTitle as="h2" className="text-lg">{t('compte:parcours.etapes_terminees', 'Étapes terminées')}</CardTitle></CardHeader><CardContent><ul className="space-y-3" data-testid="parcours-done">{done.map(renderItem)}</ul></CardContent></Card>
       ) : null}
     </div>
+    <OfflineParcoursSwitch data={state.raw} />
+    </>
   );
 }

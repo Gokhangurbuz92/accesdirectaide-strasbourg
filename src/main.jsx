@@ -9,6 +9,7 @@ import { initSentry } from '@/observability/initSentry'
 import { ThemeProvider } from '@/components/providers/ThemeProvider'
 import { FalcProvider } from '@/contexts/FalcContext.jsx'
 import UpdatePrompt from '@/components/pwa/UpdatePrompt.jsx'
+import OfflineBanner from '@/components/pwa/OfflineBanner.jsx'   // G14-LITE
 import { storage } from '@/lib/storage'
 import { bootLanguage } from '@/i18n'
 
@@ -26,6 +27,7 @@ void bootLanguage().finally(() => {
                 <FalcProvider>
                     <App />
                     <UpdatePrompt />
+                    <OfflineBanner />
                 </FalcProvider>
             </ThemeProvider>
         </ErrorBoundary>

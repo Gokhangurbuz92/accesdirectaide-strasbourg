@@ -135,5 +135,6 @@
  "coverage.gdelt": "Einige Links wurden mit dem GDELT-Projekt gefunden:",
  "related.title": "Siehe auch",
  "saved.count_one": "{{count}} gespeicherter Artikel.",
- "saved.count_other": "{{count}} gespeicherte Artikel."
+ "saved.count_other": "{{count}} gespeicherte Artikel.",
+ "image.show_data_saver": "Bild anzeigen (Datensparmodus aktiv)"
 }
