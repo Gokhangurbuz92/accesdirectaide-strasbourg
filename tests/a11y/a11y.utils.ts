@@ -21,7 +21,7 @@ export async function expectNoA11yIssues(page: Page, options?: any) {
     await page.addStyleTag({ content: '*, *::before, *::after { animation-duration: 0s !important; transition-duration: 0s !important; opacity: revert !important; }' });
     await page.waitForTimeout(100);
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    const accessibilityScanResults = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
 
     const filtered = accessibilityScanResults.violations.filter(
         (violation) => violation.impact === 'critical' || violation.impact === 'serious'

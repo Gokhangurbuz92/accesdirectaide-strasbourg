@@ -400,3 +400,12 @@ body.reduce-motion *::after {
 
 /* R33 — WCAG 1.4.12 (text spacing) and 1.4.10 (reflow): long words (German compounds, Ukrainian) wrap instead of overflowing at 320 px */
 :where(h1, h2, h3, h4, h5, h6, p, li, dt, dd, summary, label, td, th, figcaption, blockquote) { overflow-wrap: anywhere; hyphens: auto; }
+
+/* G14-CHAN — Windows high contrast / forced colours: an icon inside a control follows the control's forced text colour (lucide icons draw with
+   currentColor; a fixed utility colour on the icon, e.g. the theme toggle's text-slate-600, left it in a colour the system did not choose).
+   Checked by e2e-a11y/forced-colors.pw.mjs. */
+@media (forced-colors: active) {
+  button svg, a svg, [role="button"] svg, summary svg {
+    color: inherit !important;
+  }
+}

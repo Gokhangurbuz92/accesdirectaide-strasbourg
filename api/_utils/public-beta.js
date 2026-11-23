@@ -183,6 +183,9 @@ export function inAccountsBookingScope(path) {
  */
 export const ACCOUNTS_EXTRAS = Object.freeze({
   parcours: Object.freeze({ routes: Object.freeze(['citizen/parcours']), capabilities: Object.freeze(['citizen.parcours']) }),
+  // G14-CHAN: Web Push on the person's device (citizen.push, INSIDE the AIPD, P10) without the rest of the full scope: GET / POST / DELETE citizen/push.
+  // It still needs the deployment's VAPID keys (otherwise « not offered »), the person's push/reminder consent, and the reminder jobs (category C) to send.
+  push: Object.freeze({ routes: Object.freeze(['citizen/push']), capabilities: Object.freeze(['citizen.push']) }),
 });
 /** the additions to the narrow accounts scope named in this environment (empty in the full scope) @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
 export function accountsExtras(envVars = process.env) {

@@ -101,6 +101,8 @@ export function vapidHeader(endpoint, env = process.env, now = Date.now()) {
 }
 
 // ------------------------------------------------------------------------------------------------ subscriptions
+/** G14-CHAN: the default per-account daily cap of sendToUser (api/_utils/rateLimit.js PUSH_SEND_USER), loaded lazily (no KV client at import time) */
+const defaultSendLimit = async (userId) => (await import('../_utils/rateLimit.js')).checkRateLimit('PUSH_SEND_USER', `push:${userId}`);
 const hashEndpoint = (endpoint) => crypto.createHash('sha256').update(endpoint).digest('hex');
 const seal = (userId, id, v) => sealText(JSON.stringify(v), { purpose: 'push-subscription', context: `push:${userId}:${id}` });
 const open = (userId, id, s) => JSON.parse(String(openText(s, { purpose: 'push-subscription', context: `push:${userId}:${id}` }) || '{}'));
@@ -133,14 +135,20 @@ export async function subscriptionCount(userId, { db = defaultDb } = {}) {
  *   ACCEPTED         at least one push service took it (2xx) — not proof the person saw it
  *   EXPIRED          R40: every subscription was ended by its push service (404 / 410) and removed: permanent, no device left (not a provider failure)
  *   FAILED           attempted and refused / unreachable (5xx, 429, network, a subscription that cannot be opened): may succeed later
- * @param {{ title: string, body: string, url: string }} message only generic, non-personal words and a link inside the site
+ *   RATE_LIMITED     G14-CHAN: this account already received PUSH_SEND_USER messages today (a nudge, never a flood): nothing attempted
+ * @param {{ title: string, body: string, url: string, tag?: string }} message only generic, non-personal words and a link inside the site; `tag` (optional,
+ *   letters / digits / - only) lets a newer notification of the same kind replace the older one on the device
+ * @param {{ rateLimit?: ((userId: string) => Promise<{ allowed: boolean }>) | null }} [opts] rateLimit: null = no per-account cap (tests); default PUSH_SEND_USER
  */
-export async function sendToUser(userId, message, { db = defaultDb, env = process.env, fetchImpl = fetch, ttl = 86400 } = {}) {
+export async function sendToUser(userId, message, { db = defaultDb, env = process.env, fetchImpl = fetch, ttl = 86400, rateLimit = defaultSendLimit } = {}) {
   if (!pushConfig(env).ok) return { status: 'NOT_CONFIGURED', accepted: 0, failed: 0, expired: 0 };
   const rows = await db.select().from(PushSubscription).where(eq(PushSubscription.userId, userId));
   if (!rows.length) return { status: 'NO_SUBSCRIPTION', accepted: 0, failed: 0, expired: 0 };
+  // G14-CHAN: a per-account daily cap; a limiter that cannot answer does not block the nudge (the e-mail stays the record)
+  if (rateLimit) { let allowed = true; try { allowed = (await rateLimit(userId))?.allowed !== false; } catch { allowed = true; } if (!allowed) return { status: 'RATE_LIMITED', accepted: 0, failed: 0, expired: 0 }; }
   const url = String(message.url || '/').startsWith('/') && !String(message.url).startsWith('//') ? String(message.url) : '/';
-  const payload = JSON.stringify({ title: String(message.title).slice(0, 80), body: String(message.body).slice(0, 240), url });
+  const tag = /^[a-z0-9-]{1,40}$/i.test(String(message.tag || '')) ? String(message.tag) : undefined;
+  const payload = JSON.stringify({ title: String(message.title).slice(0, 80), body: String(message.body).slice(0, 240), url, ...(tag ? { tag } : {}) });
   let accepted = 0; let failed = 0; let expired = 0;
   for (const row of rows) {
     let sub; try { sub = open(userId, row.id, row.subscriptionEncrypted); } catch { failed += 1; continue; }

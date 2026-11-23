@@ -4,6 +4,9 @@
  * on (this device receives them), and errors. Switching on asks the person's consent (recorded) BEFORE the browser's permission; switching off removes the
  * subscription on the server and in the browser. Nothing is promised: « reçu par le service de notification du navigateur » is all the site can know.
  * R40: the texts are in the interface language (namespace `compte`).
+ * G14-CHAN: on an iPhone / iPad, Web Push exists only for a site added to the Home Screen (iOS / iPadOS 16.4 or later) and opened from its icon: in Safari
+ * the card explains how (« ajoutez à l’écran d’accueil ») instead of « not supported ». A route closed in this environment (503) or not open in the beta
+ * reads « not offered yet », never as an error. The permission prompt is asked only from the button (a user gesture), never on page load.
  */
 import { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -13,6 +16,12 @@ import { useT } from '@/i18n';
 
 const fromB64u = (/** @type {string} */ s) => { const p = s.replace(/-/g, '+').replace(/_/g, '/'); const b = atob(p + '='.repeat((4 - (p.length % 4)) % 4)); return Uint8Array.from(b, (c) => c.charCodeAt(0)); };
 const supported = () => typeof window !== 'undefined' && 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+/** G14-CHAN: an iPhone / iPad (iPadOS reports itself as a Mac with touch) — Web Push needs the site installed to the Home Screen there */
+const isAppleMobile = (/** @type {Navigator} */ nav = navigator) => /iPad|iPhone|iPod/.test(nav.userAgent || '') || (nav.platform === 'MacIntel' && (nav.maxTouchPoints || 0) > 1);
+/** opened from the Home Screen icon (standalone display) */
+const isStandalone = () => { try { return window.matchMedia('(display-mode: standalone)').matches || /** @type {any} */ (navigator).standalone === true; } catch { return false; } };
+/** the push routes / channel answer « not offered here » (closed capability or beta route, channel unavailable) */
+const notOffered = (/** @type {any} */ e) => [403, 404, 409, 503].includes(e?.status) && e?.code !== 'CONSENT_REQUIRED';
 
 export default function DevicePush() {
   const { t } = useT('compte');
@@ -20,9 +29,10 @@ export default function DevicePush() {
   const [busy, setBusy] = useState(false);
 
   const refresh = useCallback(async () => {
-    if (!supported()) { setState({ phase: 'unsupported' }); return; }
+    if (!supported()) { setState({ phase: isAppleMobile() && !isStandalone() ? 'ios_install' : 'unsupported' }); return; }
     try {
-      const server = await citizenApi.pushStatus();
+      let server;
+      try { server = await citizenApi.pushStatus(); } catch (e) { if (notOffered(e)) { setState({ phase: 'unavailable' }); return; } throw e; }
       if (!server.available) { setState({ phase: 'unavailable', server }); return; }
       if (Notification.permission === 'denied') { setState({ phase: 'denied', server }); return; }
       const reg = await navigator.serviceWorker.getRegistration();
@@ -59,6 +69,7 @@ export default function DevicePush() {
   const TEXT = {
     loading: t('compte:push.loading', 'Vérification…'),
     unsupported: t('compte:push.unsupported', 'Ce navigateur ne permet pas de recevoir des notifications. Les rappels restent disponibles par e-mail.'),
+    ios_install: t('compte:push.ios_install', 'Sur iPhone ou iPad, les notifications marchent seulement si vous ajoutez ce site à l’écran d’accueil (iOS 16.4 ou plus récent). Dans Safari, touchez le bouton Partager, puis « Sur l’écran d’accueil ». Ouvrez ensuite le site depuis sa nouvelle icône et revenez ici. Les rappels restent disponibles par e-mail.'),
     unavailable: t('compte:push.unavailable', 'Les notifications sur appareil ne sont pas encore proposées par ce service. Les rappels restent disponibles par e-mail.'),
     denied: t('compte:push.denied', 'Les notifications sont bloquées pour ce site dans votre navigateur. Pour les recevoir, autorisez-les dans les réglages du site de votre navigateur, puis revenez ici.'),
     off: t('compte:push.off', 'Recevez sur cet appareil les rappels des étapes de Mon Parcours (sans détail personnel dans la notification). Vous pouvez arrêter à tout moment.'),

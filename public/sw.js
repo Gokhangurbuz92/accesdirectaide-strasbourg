@@ -160,8 +160,11 @@ self.addEventListener('push', (event) => {
   let data = {};
   try { data = event.data ? event.data.json() : {}; } catch { data = {}; }
   const url = typeof data.url === 'string' && data.url.startsWith('/') && !data.url.startsWith('//') ? data.url : '/compte';
+  // G14-CHAN: an optional tag (letters, digits, « - ») replaces an older notification of the same kind instead of piling them up
+  const tag = typeof data.tag === 'string' && /^[a-z0-9-]{1,40}$/i.test(data.tag) ? data.tag : undefined;
   event.waitUntil(self.registration.showNotification(String(data.title || 'AccesDirectAide').slice(0, 80), {
     body: String(data.body || 'Vous avez une nouvelle information dans votre espace.').slice(0, 240), icon: '/icons/icon-192.png', badge: '/icons/icon-192.png', lang: 'fr', data: { url },
+    ...(tag ? { tag } : {}),
   }));
 });
 // a click opens (or focuses) the site at that page — same origin only

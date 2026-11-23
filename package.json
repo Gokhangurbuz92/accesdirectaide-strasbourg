@@ -167,6 +167,7 @@
     "@babel/parser": "^7.29.8",
     "@eslint/js": "^9.19.0",
     "@flydotio/dockerfile": "^0.7.10",
+    "@guidepup/virtual-screen-reader": "0.32.1",
     "@playwright/test": "^1.58.0",
     "@sentry/vite-plugin": "^4.7.0",
     "@storybook/react": "9.1.21",

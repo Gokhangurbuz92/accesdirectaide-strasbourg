@@ -81,7 +81,7 @@ for (const lang of LANGS) {
         opened = await page.locator('[role="listbox"], [role="menu"], [role="dialog"]').count() > 0; }
       const file = path.join(SHOTS, `${lang}_${surface}_${(route.replace(/^\//, '') || 'home').replace(/[^\w-]/g, '_')}.png`);
       await page.screenshot({ path: file, fullPage: true });
-      const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+      const axe = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
       const geo = await page.evaluate(() => {
         const rtl = document.documentElement.dir === 'rtl'; const vw = document.documentElement.clientWidth; const out = { dir: document.documentElement.dir, problems: [], checked: 0 };
         const vis = (e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0 && getComputedStyle(e).visibility !== 'hidden'; };

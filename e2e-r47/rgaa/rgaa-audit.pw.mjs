@@ -157,7 +157,7 @@ async function structural(page, R) {
 }
 
 async function axeRun(page, R) {
-  const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
+  const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice']).analyze();
   rec({ ...R, check: 'axe', rgaa: 'auto', pass: r.violations.length === 0, detail: r.violations.map((v) => `${v.impact}:${v.id}(${v.nodes.length}) ${v.nodes.slice(0, 2).map((n) => n.target.join(' ')).join(' | ')}`).join(' ; ') });
   return r.violations;
 }

@@ -584,6 +584,7 @@
   "thread.you": "Siz",
   "push.loading": "Kontrol ediliyor…",
   "push.unsupported": "Bu tarayıcı bildirim alamıyor. Hatırlatmaları e-posta ile almaya devam edebilirsiniz.",
+  "push.ios_install": "iPhone veya iPad’de bildirimler yalnızca bu siteyi ana ekrana eklerseniz çalışır (iOS 16.4 veya daha yeni). Safari’de Paylaş düğmesine, ardından “Ana Ekrana Ekle”ye dokunun. Sonra siteyi yeni simgesinden açın ve buraya geri dönün. Hatırlatmaları e-posta ile almaya devam edebilirsiniz.",
   "push.unavailable": "Cihaz bildirimleri bu hizmet tarafından henüz sunulmuyor. Hatırlatmaları e-posta ile almaya devam edebilirsiniz.",
   "push.denied": "Bildirimler tarayıcınızda bu site için engellenmiş. Almak için tarayıcınızın site ayarlarından izin verin, sonra buraya dönün.",
   "push.off": "Mon Parcours (takip alanınız) adımlarının hatırlatmalarını bu cihazda alın (bildirimde kişisel ayrıntı yok). İstediğiniz zaman durdurabilirsiniz.",

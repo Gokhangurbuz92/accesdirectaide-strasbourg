@@ -452,6 +452,7 @@ export default function Recherche() {
 
           {status === 'error' && (
             <EmptyState
+              headingLevel={2}   // G14-CHAN (axe heading-order): directly under the page h1
               title={t('search:error.title', 'Impossible de charger les résultats')}
               description={errorDescription}
               icon={<RotateCcw className="h-6 w-6" />}
@@ -471,6 +472,7 @@ export default function Recherche() {
 
           {status === 'empty' && (
             <EmptyState
+              headingLevel={2}   // G14-CHAN (axe heading-order): directly under the page h1
               title={t('search:empty.title', 'Aucun résultat')}
               description={t('search:empty.text', 'Essayez de modifier vos filtres ou de réinitialiser votre recherche.')}
               icon={<Search className="h-6 w-6" />}
