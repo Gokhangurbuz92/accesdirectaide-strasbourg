@@ -2206,5 +2206,6 @@
  "organizations.pro_registration.activate": "Перевірити й активувати",
  "organizations.pro_registration.refuse": "Відхилити",
  "organizations.pro_registration.done_activated": "Організацію перевірено й активовано: лист для ввімкнення двофакторної автентифікації передано поштовій службі.",
- "organizations.pro_registration.done_refused": "Запит відхилено: обліковий запис вимкнено, причину збережено в журналі."
+ "organizations.pro_registration.done_refused": "Запит відхилено: обліковий запис вимкнено, причину збережено в журналі.",
+ "k5.providers.p.partner_bridge": "Міст скерувань партнерів (ada.partner-referral/1)"
 }

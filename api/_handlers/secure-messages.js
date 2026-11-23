@@ -8,6 +8,8 @@ import { requireProAuth, requireProStructureContext } from '../_utils/auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../_utils/rateLimit.js';
 import * as threads from '../_services/shared-dossier-threads.js';
 import { findActiveGrant } from '../_utils/share-access.js';
+import { capabilityOpen } from '../_utils/capabilities.js';
+import { conversationAllowed, refuseClosed } from '../_services/messaging-policy.js';
 
 const MAX_ID_LENGTH = 128;
 const MAX_ENCRYPTED_CONTENT_LENGTH = 32 * 1024; // client-encrypted blob (base64) — a chat message, not a file
@@ -49,7 +51,9 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
             const limit = await checkRateLimit('MESSAGE_PRO_READ', `${ctx.userId}:${getClientIp(req)}`);
             if (!limit.allowed) return res.status(getRateLimitStatus(/** @type {any} */ (limit))).json(/** @type {any} */ (limit).error || { error: 'Too many requests' });
 
-            const dossier = await threads.getDossier(shareId);
+            // R3: the thread of a SHARED DOSSIER belongs to that dossier (HDS-bound): while citizen.shared_dossier is closed a dossier id is treated like any
+            // unknown id (the conversation lookup below answers the same 404 — no existence oracle)
+            const dossier = capabilityOpen('citizen.shared_dossier') ? await threads.getDossier(shareId) : null;
             if (dossier) {
                 // RC5: a SharedDiagnostic id is not authorization. Only a structure with an ACTIVE grant (redeemed share token) reaches its thread; everyone else: uniform 404.
                 const grant = await findActiveGrant(dossier.id, ctx);
@@ -70,11 +74,12 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
 
             const conversation = await db.query.RdvConversation.findFirst({
                 where: (c, { eq }) => eq(c.id, shareId),
-                columns: { id: true, structureId: true },
+                columns: { id: true, structureId: true, appointmentId: true },
             });
             if (!conversation || conversation.structureId !== ctx.structureId) {
                 return res.status(404).json({ error: 'Conversation introuvable' });
             }
+            if (!(await conversationAllowed(conversation.appointmentId)).open) return refuseClosed(res);   // R3
 
             const messages = await db.query.RdvConversationMessage.findMany({
                 where: (m, { eq }) => eq(m.conversationId, shareId),
@@ -117,7 +122,7 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
             const limit = await checkRateLimit('MESSAGE_PRO_SEND', `${ctx.userId}:${shareId}:${getClientIp(req)}`);
             if (!limit.allowed) return res.status(getRateLimitStatus(/** @type {any} */ (limit))).json(/** @type {any} */ (limit).error || { error: 'Too many requests' });
 
-            const dossier = await threads.getDossier(shareId);
+            const dossier = capabilityOpen('citizen.shared_dossier') ? await threads.getDossier(shareId) : null;   // R3: as in GET
             if (dossier) {
                 // RC5: thread creation requires an ACTIVE grant of the caller's structure (no grant / revoked grant / unknown id: indistinguishable 404).
                 const grant = await findActiveGrant(dossier.id, ctx);
@@ -138,6 +143,7 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
             if (!conversation || conversation.structureId !== ctx.structureId) {
                 return res.status(404).json({ error: 'Conversation introuvable' });
             }
+            if (!(await conversationAllowed(conversation.appointmentId)).open) return refuseClosed(res);   // R3
 
             const serverEncryptedContent = encrypt(encryptedContent);
             if (serverEncryptedContent == null) {

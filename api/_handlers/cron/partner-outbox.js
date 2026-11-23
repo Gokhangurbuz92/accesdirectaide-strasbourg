@@ -9,7 +9,7 @@ import { db } from '../../../src/db/index.js';
 /**
  * FA-D7 — partner referral outbox (GET|POST /api/cron/partner-outbox, CRON_SECRET): sends the signed events of ada.partner-referral/1 to the connected
  * partner organizations (api/_services/partner-adapter.js). Job category C (it concerns referrals of persons: ADA_BETA_OPEN_JOBS + ADA_JOBS_APPROVED during
- * the beta), NOT scheduled in vercel.json, and skipped while the capability partner.referral_adapter is closed or no partner is configured.
+ * the beta), scheduled hourly in vercel.json since R3 (refused by the beta gate until named AND approved), and skipped while the capability partner.referral_adapter is closed or no partner is configured.
  */
 export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

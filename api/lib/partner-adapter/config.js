@@ -10,6 +10,9 @@
  *                          `delegateProUserId` is the accountable human: every inbound step is recorded as THAT member's act (ReferralEvent.actorId) and
  *                          is refused when the account is not an active member, exactly as on the native path.
  *   ADA_PARTNER_SECRET_<ID>  the shared signing secret of each partner (≥ 32 characters; <ID> = id upper-cased, « - » → « _ »); server only.
+ *   ADA_PARTNER_SECRET_<ID>_PREVIOUS  R3 (key rotation, optional): the secret being retired. While it is set, an INBOUND callback signed with either
+ *                          secret is accepted; OUTBOUND events are always signed with the current secret. Remove it once the partner signs with the new one
+ *                          (docs/partner-bridge/RUNBOOK_OPERATEUR_FR.md § rotation). ≥ 32 characters and different from the current one, or the config is INVALID.
  *   ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED=true  required in production / preview (owner, after the partner agreement, the AIPD extension and HDS).
  * The capability `partner.referral_adapter` (api/_utils/capabilities.js) must ALSO be open. Without configuration the adapter does nothing at all:
  * referrals follow the native ADA Pro path unchanged (graceful no-integration).
@@ -22,6 +25,8 @@ const LOOPBACK = new Set(['127.0.0.1', 'localhost', '[::1]']);
 const deployed = (/** @type {Record<string, string | undefined>} */ e) => ['production', 'preview'].includes(flag(e.VERCEL_ENV).toLowerCase());
 export const PARTNER_ID = /^[a-z0-9][a-z0-9-]{1,39}$/;
 export const secretEnvName = (/** @type {string} */ id) => `ADA_PARTNER_SECRET_${id.toUpperCase().replace(/-/g, '_')}`;
+/** R3: the retiring secret of a key rotation (inbound verification only) @param {string} id */
+export const previousSecretEnvName = (/** @type {string} */ id) => `${secretEnvName(id)}_PREVIOUS`;
 
 /** @param {unknown} value @param {Record<string, string | undefined>} envVars */
 export function allowedPartnerEndpoint(value, envVars) {
@@ -32,7 +37,7 @@ export function allowedPartnerEndpoint(value, envVars) {
 }
 
 /**
- * @typedef {{ id: string, structureId: string, endpoint: string, delegateProUserId: string, secret: string }} Partner
+ * @typedef {{ id: string, structureId: string, endpoint: string, delegateProUserId: string, secret: string, previousSecret?: string | null }} Partner
  * @param {Record<string, string | undefined>} [envVars]
  * @returns {{ state: 'NOT_CONFIGURED' | 'INVALID' | 'PRODUCTION_NOT_APPROVED' | 'CONFIGURED', partners: Partner[], problems: string[] }}
  */
@@ -55,8 +60,10 @@ export function partnerAdapterConfig(envVars = process.env) {
     if (!delegateProUserId || delegateProUserId.length > 80) problems.push(`[${i}]:delegateProUserId`);
     const secret = PARTNER_ID.test(id) ? flag(envVars[secretEnvName(id)]) : '';
     if (secret.length < MIN_SECRET_LENGTH) problems.push(`[${i}]:secret`);
+    const previousSecret = PARTNER_ID.test(id) ? flag(envVars[previousSecretEnvName(id)]) : '';
+    if (previousSecret && (previousSecret.length < MIN_SECRET_LENGTH || previousSecret === secret)) problems.push(`[${i}]:previousSecret`);
     seen.add(id); seenStructures.add(structureId);
-    partners.push({ id, structureId, endpoint, delegateProUserId, secret });
+    partners.push({ id, structureId, endpoint, delegateProUserId, secret, previousSecret: previousSecret || null });
   });
   if (problems.length) return { state: 'INVALID', partners: [], problems };
   if (deployed(envVars) && flag(envVars.ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED).toLowerCase() !== 'true') return { state: 'PRODUCTION_NOT_APPROVED', partners: [], problems: [] };
@@ -66,7 +73,8 @@ export function partnerAdapterConfig(envVars = process.env) {
 /** the status line (no value, no secret, no endpoint) @param {Record<string, string | undefined>} [envVars] */
 export function partnerAdapterStatus(envVars = process.env) {
   const c = partnerAdapterConfig(envVars);
-  return { provider: 'partner-referral-adapter', contract: PARTNER_CONTRACT, state: c.state, partners: c.partners.map((p) => p.id), problems: c.problems };
+  return { provider: 'partner-referral-adapter', contract: PARTNER_CONTRACT, state: c.state, partners: c.partners.map((p) => p.id),
+    rotating: c.partners.filter((p) => p.previousSecret).map((p) => p.id), problems: c.problems };
 }
 
 /** @param {string} id @param {Record<string, string | undefined>} [envVars] */

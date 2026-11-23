@@ -86,7 +86,7 @@ describe('FA-D7 configuration is fail-closed', () => {
     const two = JSON.stringify([{ id: 'a-1', structureId: 's', endpoint: 'https://a.example.test', delegateProUserId: 'p' }, { id: 'a-1', structureId: 's', endpoint: 'ftp://x', delegateProUserId: '', extra: 1 }]);
     expect(K.partnerAdapterConfig({ ADA_PARTNER_ADAPTERS: two, ADA_PARTNER_SECRET_A_1: SECRET }).problems).toEqual(expect.arrayContaining(['[1]:id', '[1]:structureId', '[1]:endpoint', '[1]:delegateProUserId', '[1]:extra-field']));
     const st = K.partnerAdapterStatus(ENV);
-    expect(st).toEqual({ provider: 'partner-referral-adapter', contract: C.PARTNER_CONTRACT, state: 'CONFIGURED', partners: ['lab-partner'], problems: [] });
+    expect(st).toEqual({ provider: 'partner-referral-adapter', contract: C.PARTNER_CONTRACT, state: 'CONFIGURED', partners: ['lab-partner'], rotating: [], problems: [] });
     expect(JSON.stringify(st)).not.toContain(SECRET); expect(JSON.stringify(st)).not.toContain('127.0.0.1');
   });
   it('production / preview: loopback http refused, and an explicit approval switch is required', () => {
@@ -161,7 +161,9 @@ describe('FA-D7 gates: closed capability, HDS-bound, beta, job, OpenAPI', () => 
     expect(isAllowedInPublicBeta('GET', 'monitor/partner/referral-events', { ...beta, ...ENV })).toBe(false);
     expect(SCHEDULED_JOBS['partner-outbox']).toBe('C');
     expect(isAllowedInPublicBeta('GET', 'cron/partner-outbox', { ...beta, ADA_BETA_OPEN_JOBS: 'partner-outbox' })).toBe(false);
-    expect(JSON.parse(fs.readFileSync('vercel.json', 'utf8')).crons.map((c) => c.path)).not.toContain('/api/cron/partner-outbox');
+    // R3: scheduled hourly so that opening one partner needs no code change — the run is still refused while the job is not opened AND approved
+    expect(JSON.parse(fs.readFileSync('vercel.json', 'utf8')).crons.find((c) => c.path === '/api/cron/partner-outbox')?.schedule).toBe('41 * * * *');
+    expect(isAllowedInPublicBeta('GET', 'cron/partner-outbox', { ...beta, ADA_BETA_OPEN_JOBS: 'partner-outbox', ADA_JOBS_APPROVED: 'partner-outbox' })).toBe(true);
   });
   it('OpenAPI documents both directions with the versioned contract and closed schemas', () => {
     const spec = JSON.parse(fs.readFileSync('docs/openapi.json', 'utf8'));

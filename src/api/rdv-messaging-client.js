@@ -2,6 +2,7 @@
 import { ensureCsrfHeaders } from '@/lib/csrf';
 import { frontendEnv } from '@/config/env';
 import { accountEntriesShown } from '@/lib/publicBeta';
+import i18n from '@/i18n';
 
 class ApiError extends Error {
   /** @param {string} message @param {number} status @param {any} [payload] @param {string|null} [requestId] */
@@ -305,6 +306,10 @@ export const rdvMessagingClient = {
 export function messagingErrorText(error, fallback = 'Une erreur est survenue.') {
   if (!error) return fallback;
   if (typeof error === 'string') return error;
+  // R3: a function this service has not opened (surface or capability gate) is said as such, never as a raw code or an outage
+  if (error?.status === 503 && ['CAPABILITY_NOT_OPEN', 'PUBLIC_BETA_RESTRICTED'].includes(String(error?.payload?.code || error?.payload?.error || ''))) {
+    return i18n.t('common:api_error.capability_not_open', 'Cette fonction n’est pas encore ouverte sur ce service. Aucune donnée n’a été lue ni enregistrée.');
+  }
   // R47: in another language than French, the server's French sentence is translated or replaced by the caller's fallback (src/lib/serverText.js)
   if (error?.payload?.error && typeof error.payload.error === 'string') return serverText(error.payload.error, fallback);
   if (error?.message && typeof error.message === 'string') return serverText(error.message, fallback);

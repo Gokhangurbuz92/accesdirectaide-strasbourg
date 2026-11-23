@@ -1502,5 +1502,7 @@
  "assist.get_code": "Code anzeigen",
  "assist.valid_until": "Gültig bis etwa {{time}}. Geben Sie ihn nur der Person, die Sie begleiten.",
  "assist.structure": "Erfasste Einrichtung: {{name}}",
- "layout.accompagnement": "Eine Person begleiten"
+ "layout.accompagnement": "Eine Person begleiten",
+ "thread.attachments_closed": "Anhänge: auf diesem Dienst noch nicht geöffnet (eine Datei kann Gesundheitsangaben enthalten, die ein zertifiziertes Hosting erfordern). Schreiben Sie Ihre Nachricht ohne Dokument.",
+ "thread.privacy_hint": "Schreiben Sie nur, was für den Termin nützlich ist. Keine Gesundheitsangaben und keine Diagnose: Diese Nachrichtenfunktion ist keine Fallakte. Die Nachrichten sind auf unseren Servern verschlüsselt, aber nicht Ende-zu-Ende."
 }

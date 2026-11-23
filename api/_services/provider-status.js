@@ -16,6 +16,7 @@ import { outlookStatus } from './calendar-outlook.js';
 import { videoStatus } from '../lib/video-provider.js';
 import { franceConnectConfig } from '../lib/franceconnect/oidc-client.js';
 import { proConnectConfig, proConnectStatus, PROCONNECT_REQUIRED_ENV, PROCONNECT_OPTIONAL_ENV } from '../lib/proconnect-oidc.js';
+import { partnerAdapterConfig, secretEnvName, previousSecretEnvName, PARTNER_ID } from '../lib/partner-adapter/config.js';
 
 export const PROVIDER_STATES = Object.freeze(['CONNECTED', 'SIMULATED', 'NOT_CONFIGURED']);
 /** every reasonCode a row can carry (the page translates them; `reason` is the operator's French detail) */
@@ -108,6 +109,15 @@ export function providerStatuses(env = process.env) {
     reasonCode: pc.available ? 'COMPLETE' : proConnectConfig(env).productionApprovalPending ? 'PRODUCTION_ACTIVATION_PENDING' : (pc.missing.length === PROCONNECT_REQUIRED_ENV.length ? 'NOT_CONFIGURED' : 'INCOMPLETE_CONFIGURATION'),
     reason: pc.available ? 'configuration complète (inscription et connexion réelle non vérifiées par cette page)' : 'non configuré : les professionnels se connectent avec leur compte ADA Pro (MFA)',
     variables: presence(env, [...PROCONNECT_REQUIRED_ENV, ...PROCONNECT_OPTIONAL_ENV]) });
+
+  // R3 / FA-D7: the partner referral bridge (ada.partner-referral/1, api/lib/partner-adapter/config.js) — the configuration only; whether the capability
+  // partner.referral_adapter and the job partner-outbox are open is the release preflight's job (scripts/release-preflight.mjs, check partner.bridge)
+  const pa = partnerAdapterConfig(env);
+  const paIds = (() => { try { const l = JSON.parse(String(env.ADA_PARTNER_ADAPTERS || '')); return Array.isArray(l) ? l.map((x) => String(x?.id || '')).filter((x) => PARTNER_ID.test(x)) : []; } catch { return []; } })();
+  row({ id: 'partner-bridge', category: 'integration', label: 'Pont d’orientation partenaires (ada.partner-referral/1)', state: pa.state === 'CONFIGURED' ? 'CONNECTED' : 'NOT_CONFIGURED',
+    reasonCode: pa.state === 'CONFIGURED' ? 'COMPLETE' : pa.state === 'INVALID' ? 'INCOMPLETE_CONFIGURATION' : pa.state === 'PRODUCTION_NOT_APPROVED' ? 'PRODUCTION_ACTIVATION_PENDING' : 'NOT_CONFIGURED',
+    reason: pa.state === 'CONFIGURED' ? `${pa.partners.length} partenaire(s) configuré(s)` : pa.state === 'INVALID' ? `configuration invalide (${pa.problems.length} point(s))` : pa.state === 'PRODUCTION_NOT_APPROVED' ? 'ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED absent' : 'aucun partenaire : les orientations suivent le seul circuit ADA Pro',
+    variables: presence(env, ['ADA_PARTNER_ADAPTERS', 'ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED', ...paIds.flatMap((id) => [secretEnvName(id), previousSecretEnvName(id)])]), verify: 'node scripts/partner-bridge-kit.mjs' });
 
   // maps: OpenStreetMap tiles (browser) + Base Adresse Nationale geocoder (server), public services without a credential
   row({ id: 'maps', category: 'maps', label: 'Cartes (OpenStreetMap) et géocodage (Base Adresse Nationale)', state: 'CONNECTED',

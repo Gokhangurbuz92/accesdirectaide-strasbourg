@@ -20,6 +20,7 @@ import { encrypt } from '../../lib/crypto.js';
 import { notifyConversationMessage, sanitizeMessageBody, serializeRdvMessage } from '../../_utils/rdv-messaging.js';
 import { canNotify } from '../../_services/citizen-account.js';
 import { markConversationRead } from '../../_services/conversation-read.js';
+import { conversationAllowed, refuseClosed } from '../../_services/messaging-policy.js';
 
 const PAGE = 200;
 
@@ -58,6 +59,7 @@ async function handler(req, res) {
   if (!appointment || appointment.structureId !== proCtx.structureId) {
     return res.status(404).json({ error: 'Appointment not found' });
   }
+  if (!(await conversationAllowed(appointment.id)).open) return refuseClosed(res);   // R3: messaging.conversations (NOT_ESSMS + ordinary service, or HDS)
 
   const conversation = await db.query.RdvConversation.findFirst({ where: eq(RdvConversation.appointmentId, appointment.id) });
 

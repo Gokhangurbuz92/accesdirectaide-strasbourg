@@ -15,6 +15,7 @@ import {
 } from '../../_utils/rdv-messaging.js';
 import { insertMessageWithAttachment, prepareAttachment, readAttachment, sendAttachment, withAttachments } from '../../_services/message-attachments.js';
 import { canNotify } from '../../_services/citizen-account.js';
+import { attachmentsOpen, conversationAllowed, conversationDecisions, refuseClosed, ATTACHMENTS } from '../../_services/messaging-policy.js';
 import { markConversationRead, unreadConversationIds } from '../../_services/conversation-read.js';
 
 /**
@@ -133,10 +134,12 @@ async function getConversations(req, res, proCtx) {
 
   // B02: which of them this member has not read (null on a database without the read marker: no flag at all, as before)
   const unread = await unreadConversationIds(proCtx).catch(() => null);
+  // R3: only the conversations this deployment serves (messaging.conversations: NOT_ESSMS structure + ordinary service, or HDS)
+  const decisions = await conversationDecisions(conversations.map((c) => c.appointmentId));
 
   return res.status(200).json({
     ok: true,
-    items: conversations.map((conversation) => ({ ...serializeConversationListItem(conversation), ...(unread ? { unread: unread.has(conversation.id) } : {}) })),
+    items: conversations.filter((c) => decisions.get(String(c.appointmentId))?.open).map((conversation) => ({ ...serializeConversationListItem(conversation), ...(unread ? { unread: unread.has(conversation.id) } : {}) })),
     unreadAvailable: Boolean(unread),
   });
 }
@@ -159,13 +162,14 @@ async function getConversation(req, res, proCtx, conversationId) {
   if (!conversation || conversation.structureId !== proCtx.structureId) {
     return res.status(404).json({ error: 'Conversation introuvable.' });
   }
+  if (!(await conversationAllowed(conversation.appointmentId)).open) return refuseClosed(res);   // R3
 
   // B02: this member has now opened the thread
   await markConversationRead({ conversationId: conversation.id, appointmentId: conversation.appointmentId, structureId: proCtx.structureId, userId: proCtx.userId });
 
   return res.status(200).json({
     ok: true,
-    item: await withAttachments(serializeConversationDetail(conversation)),   // PKG-4 / R14
+    item: { ...(await withAttachments(serializeConversationDetail(conversation))), attachmentsAllowed: attachmentsOpen() },   // PKG-4 / R14; R3: files only with HDS
   });
 }
 
@@ -179,8 +183,10 @@ async function sendMessage(req, res, proCtx, conversationId) {
     return res.status(writeLimit.status).json(writeLimit.error);
   }
 
+  // R3: a file can be a medical document — attachments stay closed until certified hosting (messaging.attachments), whatever the structure
+  const wantsFile = req.body?.attachment !== undefined && req.body?.attachment !== null;
   // PKG-4 / R14: a message may carry ONE file (validated before anything is written); text is then optional
-  const prepared = prepareAttachment(req.body?.attachment);
+  const prepared = wantsFile && !attachmentsOpen() ? { ok: true, file: null } : prepareAttachment(req.body?.attachment);
   if (!prepared.ok) return res.status(prepared.status).json({ error: prepared.code, message: prepared.message });
   const body = sanitizeMessageBody(req.body?.body) || (prepared.file ? 'Pièce jointe' : null);
   if (!body) {
@@ -207,6 +213,8 @@ async function sendMessage(req, res, proCtx, conversationId) {
   if (!conversation || conversation.structureId !== proCtx.structureId) {
     return res.status(404).json({ error: 'Conversation introuvable.' });
   }
+  if (!(await conversationAllowed(conversation.appointmentId)).open) return refuseClosed(res);   // R3
+  if (wantsFile && !attachmentsOpen()) return refuseClosed(res, ATTACHMENTS);   // R3: nothing written
 
   const { message, attachment } = await insertMessageWithAttachment({ conversationId: conversation.id, senderType: 'PRO', senderProUserId: proCtx.userId, body: encrypt(body), file: prepared.file });
 
@@ -260,6 +268,7 @@ async function handler(req, res) {
     // PKG-4 / R14: the file of a message, only through a conversation of the caller's organization
     const conversation = await db.query.RdvConversation.findFirst({ where: eq(RdvConversation.id, String(segments[0])), columns: { id: true, structureId: true } });
     if (!conversation || conversation.structureId !== proCtx.structureId) return res.status(404).json({ error: 'Introuvable.' });
+    if (!attachmentsOpen()) return refuseClosed(res, ATTACHMENTS);   // R3: files only with certified hosting
     const out = await readAttachment(conversation.id, String(segments[2]));
     return out.ok ? sendAttachment(res, out) : res.status(404).json({ error: 'Introuvable.' });
   }

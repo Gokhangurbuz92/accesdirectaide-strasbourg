@@ -2215,5 +2215,6 @@
  "organizations.pro_registration.activate": "التحقق والتفعيل",
  "organizations.pro_registration.refuse": "رفض",
  "organizations.pro_registration.done_activated": "تم التحقق من الهيئة وتفعيلها: سُلِّمت رسالة تفعيل المصادقة الثنائية إلى خدمة البريد.",
- "organizations.pro_registration.done_refused": "تم رفض الطلب: الحساب معطَّل، ويُحفظ السبب في السجل."
+ "organizations.pro_registration.done_refused": "تم رفض الطلب: الحساب معطَّل، ويُحفظ السبب في السجل.",
+ "k5.providers.p.partner_bridge": "جسر التوجيه مع الشركاء (ada.partner-referral/1)"
 }

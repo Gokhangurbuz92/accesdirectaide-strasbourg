@@ -1502,5 +1502,7 @@
  "assist.get_code": "Bir kod göster",
  "assist.valid_until": "Yaklaşık {{time}} saatine kadar geçerli. Yalnızca refakat ettiğiniz kişiye verin.",
  "assist.structure": "Kaydedilen kurum: {{name}}",
- "layout.accompagnement": "Bir kişiye refakat et"
+ "layout.accompagnement": "Bir kişiye refakat et",
+ "thread.attachments_closed": "Ekler: bu hizmette henüz açık değil (bir dosya sağlık bilgisi içerebilir; bu, sertifikalı barındırma gerektirir). Mesajınızı belge eklemeden yazın.",
+ "thread.privacy_hint": "Yalnızca randevu için gerekli olanı yazın. Sağlık bilgisi veya teşhis yazmayın: bu mesajlaşma bir takip dosyası değildir. Mesajlar sunucularımızda şifrelenir ancak uçtan uca şifreli değildir."
 }

@@ -529,6 +529,7 @@
           "404": { "description": "Partenaire non configuré, ou orientation inconnue / adressée à une autre structure" },
           "409": { "description": "Refusé par les règles de l'orientation (état, accès retiré, délégué inactif, clé réutilisée pour une autre commande)" },
           "413": { "description": "Corps trop volumineux" },
+          "429": { "description": "Trop de requêtes pour ce partenaire (120 par minute) : réessayer plus tard" },
           "503": { "description": "CAPABILITY_NOT_OPEN (capacité fermée)" }
         }
       }

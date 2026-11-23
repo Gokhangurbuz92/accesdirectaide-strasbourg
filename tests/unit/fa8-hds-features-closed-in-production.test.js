@@ -8,7 +8,8 @@ import { describe, expect, it } from 'vitest';
 import { CAPABILITIES, capabilityState, ROUTE_CAPABILITIES } from '../../api/_utils/capabilities.js';
 import { SURFACES } from '../../api/_utils/public-beta.js';
 
-const HDS_BOUND = ['citizen.orientation_records', 'citizen.vault', 'citizen.shared_dossier', 'pro.case_management', 'pro.referrals', 'pro.siao_interop', 'partner.referral_adapter'];
+const HDS_BOUND = ['citizen.orientation_records', 'citizen.vault', 'citizen.shared_dossier', 'pro.case_management', 'pro.referrals', 'pro.siao_interop', 'partner.referral_adapter',
+  'messaging.conversations', 'messaging.attachments'];   // R3: conversations HDS unless NOT_ESSMS + ordinary service; attachments always
 const ALL = Object.keys(CAPABILITIES).join(',');
 const everythingOpen = { ADA_BETA_OPEN_SURFACES: Object.keys(SURFACES).join(','), ADA_BETA_ACCOUNTS_SCOPE: 'full', ADA_CAPABILITIES_OPEN: ALL,
   ADA_DATA_ENCRYPTION: 'on', ADA_ENCRYPTION_KEY: '0'.repeat(64) };

@@ -83,6 +83,7 @@ const CONFIG = {
     MESSAGE_USER_WRITE: { limit: 20, window: 300 }, // helper actions (create/get conversation)
     MESSAGE_PRO_READ: { limit: 120, window: 60 }, // 120/min per pro+ip
     MESSAGE_PRO_SEND: { limit: 20, window: 300 }, // 20/5min per pro+conversation+ip
+    PARTNER_CALLBACK: { limit: 120, window: 60 }, // R3 / FA-D7: signed partner callbacks, 120/min per partner (a partner tool's burst; forged floods)
     DOSSIER_REDEEM: { limit: 20, window: 300 },   // RC5: share-token redemption per pro+ip
     SHARE_CREATE: { limit: 60, window: 600 },     // PKG-11 / PUB-6: public dossier creation per address (native QA peak: 42 in 10 min)
     DOSSIER_REVOKE: { limit: 10, window: 300 },   // RC5: owner revocation per dossier+ip
