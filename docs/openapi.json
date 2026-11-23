@@ -459,6 +459,20 @@
         "responses": { "200": { "description": "Notifications" } }
       }
     },
+    "/pro/assist-code": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Code d'accompagnement à usage unique (G14-AID — fermé par défaut)",
+        "description": "Membre ADA Pro actif, double authentification activée ET validée dans cette session. Code à 8 chiffres valable 10 à 20 minutes, que la personne accompagnée saisit dans l'écran d'accord du mode accompagnant ; la structure est alors enregistrée depuis la base. Rien n'est stocké hors une ligne d'audit (aucune personne accompagnée n'est nommée). Capacités pro.account + citizen.assisted_mode.",
+        "security": [{"BearerAuth": []}],
+        "responses": {
+          "200": { "description": "{ code, validUntil, structureName }" },
+          "401": { "description": "Session requise" },
+          "403": { "description": "PRO_MFA_REQUIRED, PRO_NOT_ELIGIBLE" },
+          "503": { "description": "CAPABILITY_NOT_OPEN" }
+        }
+      }
+    },
     "/pro/audit": {
       "get": {
         "tags": ["Pro"],
@@ -627,6 +641,34 @@
         "summary": "Envoyer un signalement ou contester la décision (DSA art. 16, 20)",
         "description": "{ action: submit, contentType, contentRef, category, explanation, notifierName, notifierEmail, goodFaith: true, declaredTrustedFlagger? } — les quatre éléments de l'art. 16(2) ; nom et e-mail facultatifs seulement pour CHILD_SAFETY ; accusé de réception par e-mail (art. 16(4)). { action: appeal, noticeId, code, body } — contestation pendant six mois avec la référence et le code de l'accusé de réception. CSRF et limite par adresse IP (CONTENT_NOTICE).",
         "responses": { "201": { "description": "Signalement enregistré { id, priority } / contestation enregistrée" }, "400": { "description": "NAME_REQUIRED, EMAIL_REQUIRED, EXPLANATION_REQUIRED, GOOD_FAITH_REQUIRED, CATEGORY_INVALID, APPEAL_TEXT_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "NOTICES_SUSPENDED (art. 23)" }, "404": { "description": "NOTICE_NOT_FOUND" }, "409": { "description": "NOT_DECIDED, APPEAL_PERIOD_OVER, ALREADY_APPEALED" }, "429": { "description": "Trop de requêtes" }, "503": { "description": "CAPABILITY_NOT_OPEN, MODERATION_NOT_STAFFED, MODERATION_NOT_AVAILABLE" } }
+      }
+    },
+    "/citizen/assist": {
+      "get": {
+        "tags": ["Auth"],
+        "summary": "Mode accompagnant : session en cours et historique « fait avec l'aide de » (G14-AID — fermé par défaut)",
+        "description": "Session citoyenne vérifiée ; capacité citizen.assisted_mode. Session d'accompagnement en cours (depuis le jeton), sessions encore actives (à terminer d'ici) et historique : qui a aidé (nom, rôle, structure), parties ouvertes, consultations, actions et refus. Pendant une session accompagnée, seul l'historique de cette session est renvoyé.",
+        "responses": {
+          "200": { "description": "{ current, sessions, limits }" },
+          "401": { "description": "Session requise ; ASSIST_ENDED" },
+          "503": { "description": "CAPABILITY_NOT_OPEN" }
+        }
+      },
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Démarrer ou terminer le mode accompagnant",
+        "description": "{ action: start, password, consent: true, helperName, helperRole, structureName?, proEmail?, proCode?, areas, minutes (30, 60 ou 120) } depuis une session normale : le cookie de session devient la session accompagnée (fin au plus tard après 2 h). { action: end } déconnecte aussitôt ; { action: end, continueAlone: true, password } redonne une session normale ; { action: end-session, sid } termine une session accompagnée depuis un autre appareil.",
+        "responses": {
+          "200": { "description": "{ ended, signedOut }" },
+          "201": { "description": "{ session } — Set-Cookie de la session accompagnée" },
+          "400": { "description": "CONSENT_REQUIRED, INVALID_HELPER_NAME, INVALID_HELPER_ROLE, INVALID_DURATION, INVALID_AREAS, INVALID_ACTION" },
+          "401": { "description": "Session requise ; ASSIST_ENDED" },
+          "403": { "description": "INVALID_PASSWORD, PRO_HELPER_NOT_VERIFIED, ASSIST_NOT_ALLOWED" },
+          "404": { "description": "NOT_FOUND" },
+          "409": { "description": "ASSIST_ALREADY_ACTIVE, ASSIST_ADULT_ONLY, PROCESSING_RESTRICTED, ASSIST_LEGAL_PROTECTION_OUT_OF_SCOPE, PASSWORD_NOT_SET, AREA_NOT_ALLOWED_FOR_PRO, NOT_ASSISTED" },
+          "429": { "description": "Trop de tentatives (ASSIST_REAUTH)" },
+          "503": { "description": "CAPABILITY_NOT_OPEN" }
+        }
       }
     },
     "/citizen/moderation": {

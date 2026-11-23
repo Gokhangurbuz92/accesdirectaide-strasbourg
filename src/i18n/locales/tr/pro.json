@@ -1487,5 +1487,20 @@
  "register_pro.terms_after": " kabul ediyorum.",
  "register_pro.privacy_before": "Verilerim",
  "register_pro.privacy_link": "gizlilik bildiriminde",
- "register_pro.privacy_after": " açıklandığı şekilde işlenir."
+ "register_pro.privacy_after": " açıklandığı şekilde işlenir.",
+ "assist.err_mfa": "Kod almak için iki adımlı doğrulamayla yeniden giriş yapın.",
+ "assist.err_not_eligible": "Yalnızca iki adımlı doğrulaması olan etkin bir ADA Pro hesabı bir kişiye refakat edebilir.",
+ "assist.err_closed": "Refakat modu bu hizmette henüz açık değil.",
+ "assist.err_generic": "Kod alınamadı. Yeniden deneyin.",
+ "assist.title": "Bir kişiye refakat et",
+ "assist.how_title": "Nasıl çalışır",
+ "assist.step1": "Kişi, telefonunda veya bir bilgisayarda kendi hesabına kendisi giriş yapar.",
+ "assist.step2": "Mon Espace'ta « Refakat modu »nu açar ve sizinle neler yapabileceğinizi seçer.",
+ "assist.step3": "İş e-posta adresinizi ve aşağıdaki kodu, ardından kendi şifresini girer.",
+ "assist.never": "Şifresini asla bilmezsiniz. Giriş bilgilerini değiştiremez, hesabını silemez, verilerini dışa aktaramaz veya Mon Coffre'u açamazsınız. Yaptığınız her şey onun geçmişine yazılır. İstediği zaman durdurabilir; oturum en fazla 2 saat sonra kendiliğinden sona erer.",
+ "assist.code_title": "Refakat kodum",
+ "assist.get_code": "Bir kod göster",
+ "assist.valid_until": "Yaklaşık {{time}} saatine kadar geçerli. Yalnızca refakat ettiğiniz kişiye verin.",
+ "assist.structure": "Kaydedilen kurum: {{name}}",
+ "layout.accompagnement": "Bir kişiye refakat et"
 }

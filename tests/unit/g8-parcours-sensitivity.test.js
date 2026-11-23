@@ -120,6 +120,7 @@ const code = (f) => fs.readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, ' ')
 const ALLOWED = {
   'api/_services/mon-espace.js': 'the person’s own Mon Parcours (citizen session, scoped to the account)',
   'api/_services/delegation.js': 'the read-only view of a delegate the person chose (sensitive steps and notes never included)',
+  'api/_services/delegation-actions.js': 'G14-AID: a trusted person asks to change the state of ONE step the person can confirm (owner check; a sensitive step is refused as unknown)',
   'api/_services/privacy.js': 'the person’s own export (art. 15/20) and the erasure engine',
   'api/_services/export-account-sections.js': 'the person’s own export: the reminder ledger',
   'api/_services/citizen-inbox.js': 'the person’s own notifications: id and due date only',
@@ -151,7 +152,7 @@ describe('G8 — (d)/(e) no administrator, professional, public, statistics or a
   });
   it('only the person’s own handlers and the delegate view call the Mon Parcours services', () => {
     const callers = files.filter((f) => /\b(listParcours|itemHistory|delegateView|sensitiveItemIds|espaceSummary)\b/.test(code(f)) && f.startsWith('api/'));
-    expect(callers.sort()).toEqual(['api/_handlers/citizen/delegations.js', 'api/_handlers/citizen/espace.js', 'api/_handlers/citizen/parcours.js', 'api/_services/delegation.js', 'api/_services/mon-espace.js']);
+    expect(callers.sort()).toEqual(['api/_handlers/citizen/delegations.js', 'api/_handlers/citizen/espace.js', 'api/_handlers/citizen/parcours.js', 'api/_services/delegation-actions.js', 'api/_services/delegation.js', 'api/_services/mon-espace.js']);
   });
   it('(c) the erasure lineage names every Mon Parcours table (they cascade with the account)', () => {
     expect(USER_PERSONAL_DATA_LINEAGE.CitizenProfile.storageEntities).toEqual(expect.arrayContaining(['ParcoursItem', 'ParcoursEvent', 'ParcoursReminder']));

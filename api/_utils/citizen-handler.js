@@ -18,6 +18,13 @@ export function citizenHandler(name, methods, fn) {
     if (!requireCapability(res, capabilitiesOfRoute(`citizen/${name}`))) return undefined;
     const citizen = await requireCitizen(req, res);
     if (!citizen) return undefined;
+    // G14-AID: an assisted session reaches only the areas the person opened to the helper (the router gate refuses first; this holds when a handler is called directly)
+    if (citizen.assist) {
+      const { assistDecision } = await import('../_services/assisted-mode.js');
+      if (!assistDecision(`citizen/${name}`, req.method, citizen.assist).allow) {
+        return res.status(403).json({ error: 'ASSIST_NOT_ALLOWED', message: 'En mode accompagnant, cette partie du compte n’est pas accessible. La personne peut la consulter seule, après avoir terminé le mode accompagnant.' });
+      }
+    }
     const limit = await checkRateLimit(req.method === 'GET' ? 'CITIZEN_ACCOUNT_READ' : 'CITIZEN_ACCOUNT_WRITE', `${citizen.id}:${getClientIp(req)}`);
     if (!limit.allowed) return res.status(getRateLimitStatus(limit)).json(limit.error || { error: 'Too many requests' });
     try {

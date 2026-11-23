@@ -137,7 +137,7 @@ describe.skipIf(!hasDatabase)('G3 — ADA Pro opened alone: accounts, MFA and st
     const me = await call('GET', '/api/pro/me', { bearer: J.session });
     expect(me.statusCode).toBe(200);
     expect(me.body.modules).toEqual({ cases: false, referrals: false, selections: false, dossiers: false, agenda: false, outlook: false, video: false, messages: false,
-      team: true, structure: true, reports: true, regional: true, audit: true, employment: false });   // X05: the job board needs its own surface and capability
+      team: true, structure: true, reports: true, regional: true, audit: true, employment: false, assist: false });   // G14-AID: the helper code needs citizen.assisted_mode (out of the AIPD)   // X05: the job board needs its own surface and capability
     expect(JSON.stringify(me.body.modules)).not.toMatch(/HDS1|@|ADA_/);
   });
 

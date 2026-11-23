@@ -152,6 +152,7 @@ const CompteFavoris = lazy(() => import("./CompteFavoris.jsx"));
 const CompteHistorique = lazy(() => import("./CompteHistorique.jsx"));
 const CompteDelegations = lazy(() => import("./CompteDelegations.jsx"));
 const CompteDelegationVue = lazy(() => import("./CompteDelegationVue.jsx"));
+const CompteAccompagnement = lazy(() => import("./CompteAccompagnement.jsx"));   // G14-AID: mode accompagnant
 const CompteRendezVous = lazy(() => import("./CompteRendezVous.jsx"));
 const ComptePartageDetail = lazy(() => import("./ComptePartageDetail.jsx"));
 const Layout = lazy(() => import("./Layout.jsx"));
@@ -228,6 +229,7 @@ const ProAvailability = lazy(() => import("./pro/Availability.jsx"));
 const ProTeam = lazy(() => import("./pro/Team.jsx"));
 const ProStructure = lazy(() => import("./pro/Structure.jsx"));
 const ProParametres = lazy(() => import("./pro/ProParametres.jsx"));
+const ProAccompagnement = lazy(() => import("./pro/Accompagnement.jsx"));   // G14-AID: helper code
 const ProAppointments = lazy(() => import("./pro/Appointments.jsx"));
 const ProAppointmentDetail = lazy(() => import("./pro/AppointmentDetail.jsx"));
 const ProRdvLayout = lazy(() => import("./pro/RdvLayout.jsx"));
@@ -518,6 +520,7 @@ function PagesContent() {
                                     <Route path="rehearsal" element={<Navigate to="/pro/dashboard" replace />} />
                                     <Route path="mfa-settings" element={<ProGuard><ProMfaSettings /></ProGuard>} />
                                     <Route path="parametres" element={<ProGuard><ProParametres /></ProGuard>} />
+                                    <Route path="accompagnement" element={<ProGuard><ProAccompagnement /></ProGuard>} />
                                 </Route>
                                 {/* R37: an unknown /pro page was blank (no catch-all in this block) */}
                                 <Route path="*" element={<ServiceError code={404} />} />
@@ -567,6 +570,7 @@ function PagesContent() {
                                 <Route path="/compte/historique" element={<CompteHistorique />} />
                                 <Route path="/compte/delegations" element={<CompteDelegations />} />
                                 <Route path="/compte/delegations/:id" element={<CompteDelegationVue />} />
+                                <Route path="/compte/accompagnement" element={<CompteAccompagnement />} />
                                 <Route path="/compte/rendez-vous" element={<CompteRendezVous />} />
                                 <Route path="/compte/orientations" element={<CompteOrientations />} />
                                 <Route path="/compte/partages/:shareId" element={<ComptePartageDetail />} />

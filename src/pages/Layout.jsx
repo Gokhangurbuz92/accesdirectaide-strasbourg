@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { AuthHeaderActions, AuthMobileActions } from '@/components/auth/AuthHeaderActions';
+import AssistedModeBanner from '@/components/account/AssistedModeBanner';
 import DarkModeToggle from '@/components/ui/DarkModeToggle';
 import { adminClient as client } from '@/api/client';
 import PropTypes from 'prop-types';
@@ -398,6 +399,9 @@ export default function Layout({ children }) {   // R26: the active menu entry c
           </div>
         )}
       </header>
+
+      {/* G14-AID: who helps and « Arrêter », on every page while an assisted session runs (accounts surface only) */}
+      {accountsOpen && <AssistedModeBanner />}
 
       {/* Main content */}
       <main id="main-content" className="flex-grow" tabIndex={-1}>

@@ -224,7 +224,7 @@ export function buildItems() {
   const CAP_FEATURES = { 'citizen.account': ['C01', 'C02', 'C13', 'C21'], 'citizen.booking': ['B02', 'B03', 'B04', 'B05', 'C19'], 'citizen.booking_message': ['C18'], 'citizen.push': ['N04'],
     'pro.account': ['R01', 'R20'], 'pro.structure_admin': ['E01', 'E02', 'E03', 'E07'], 'pro.agenda': ['B08', 'B09', 'B11', 'B12'], 'pro.platform_ops': ['A17'], 'calendar.outlook': ['B10'],
     'citizen.household': ['C03'], 'citizen.guardians': ['C05'], 'citizen.parcours': ['C07', 'C08'], 'citizen.favorites': ['C10'], 'citizen.history': ['C11'],
-    'citizen.franceconnect': ['C26', 'N08'], 'citizen.delegations': ['C23'], 'citizen.orientation_records': ['R09', 'R10'], 'citizen.vault': ['C09'],
+    'citizen.franceconnect': ['C26', 'N08'], 'citizen.delegations': ['C23'], 'citizen.assisted_mode': ['C23'], 'citizen.orientation_records': ['R09', 'R10'], 'citizen.vault': ['C09'],
     'citizen.shared_dossier': ['C14', 'C15', 'C16', 'C17', 'R13', 'R15'], 'citizen.saved_diagnostic': ['C12'], 'diagnostic.questionnaire': ['P13', 'D10', 'D20'],
     'pro.case_management': ['R03', 'R05', 'R06', 'R07', 'R08', 'R11', 'R12'], 'pro.referrals': ['R09', 'R10', 'E06'], 'pro.orientation_selections': ['R18'], 'pro.siao_interop': ['R22'], 'partner.referral_adapter': ['R09', 'R10', 'E06'],
     'ai.processing': ['P17', 'D17', 'D18', 'R17', 'R23', 'P18'], 'institution.portal': ['I01', 'I02', 'I03', 'I04'], video: ['B07', 'N06'], 'citizen.minor_accounts': [],

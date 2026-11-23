@@ -73,27 +73,47 @@ function getUserSessionSecret() {
 }
 
 /**
+ * G14-AID (assisted mode) — the claim of a session opened in « mode accompagnant » on the person's own device (api/_services/assisted-mode.js): the session id
+ * (an AuthToken row of type ASSIST_SESSION, checked on every request: ended or expired = no session), the areas the helper may use, whether the helper is a
+ * verified ADA Pro member, the helper's name and role (shown in the banner) and the end. Never a password, never an e-mail of the helper.
+ * @typedef {{ sid: string, areas: string[], pro: boolean, name: string, role: string, until: number }} AssistClaim
+ */
+/** @param {unknown} v @returns {AssistClaim | null} a well-formed assist claim, or null */
+export function parseAssistClaim(v) {
+  if (!v || typeof v !== 'object') return null;
+  const a = /** @type {Record<string, unknown>} */ (v);
+  const sid = String(a.sid || '');
+  if (!/^[0-9a-f-]{36}$/.test(sid) || !Array.isArray(a.areas) || typeof a.until !== 'number' || !Number.isFinite(a.until)) return null;
+  return { sid, areas: a.areas.map(String).slice(0, 8), pro: a.pro === true, name: String(a.name || '').slice(0, 80), role: String(a.role || '').slice(0, 40), until: a.until };
+}
+
+/**
  * @param {{ userId: string, email: string }} payload
+ * @param {{ assist?: AssistClaim, maxAgeSeconds?: number }} [options] G14-AID: an assisted session carries its claim and lives at most until its end
  * @returns {string}
  */
-export function signUserSessionToken(payload) {
+export function signUserSessionToken(payload, options = {}) {
   const secret = getUserSessionSecret();
   if (!secret) {
     throw new Error('Missing user auth signing secret (AUTH_SECRET/AUTH_JWT_SECRET/JWT_SECRET)');
   }
+  const assist = options.assist ? parseAssistClaim(options.assist) : null;
+  if (options.assist && !assist) throw new Error('Malformed assist claim');
+  const maxAge = Math.max(1, Math.min(USER_SESSION_MAX_AGE_SECONDS, Math.floor(Number(options.maxAgeSeconds || USER_SESSION_MAX_AGE_SECONDS))));
 
   return signJwt(
-    {
+    /** @type {any} */ ({
       scope: 'user',
       role: 'user',
       userId: String(payload.userId || ''),
       email: normalizeEmail(payload.email),
       iat_ms: Date.now(),   // PKG-11 audit pass 2: issue time to the millisecond (iat is whole seconds), see citizenSessionRevoked
-    },
+      ...(assist ? { assist } : {}),
+    }),
     secret,
     {
       algorithm: 'HS256',
-      expiresIn: `${USER_SESSION_MAX_AGE_SECONDS}s`,
+      expiresIn: `${maxAge}s`,
       issuer: USER_SESSION_ISSUER,
       audience: USER_SESSION_AUDIENCE,
     },
@@ -117,7 +137,7 @@ export function citizenSessionRevoked(iat, sessionsValidAfter, iatMs) {
 
 /**
  * @param {string | null | undefined} token
- * @returns {null | { userId: string, email: string, role: 'user', scope: 'user', iat?: number, iatMs?: number }}
+ * @returns {null | { userId: string, email: string, role: 'user', scope: 'user', iat?: number, iatMs?: number, assist?: AssistClaim | null }}
  */
 export function verifyUserSessionToken(token) {
   if (!token) return null;
@@ -139,7 +159,10 @@ export function verifyUserSessionToken(token) {
     const email = normalizeEmail(payload.email);
 
     if (scope !== 'user' || role !== 'user' || !userId || !email) return null;
-    return { userId, email, role: 'user', scope: 'user', iat: typeof payload.iat === 'number' ? payload.iat : undefined, iatMs: typeof payload.iat_ms === 'number' ? payload.iat_ms : undefined };   // see citizenSessionRevoked
+    // G14-AID: a token that carries an assist claim must carry a WELL-FORMED one (fail-closed: a malformed claim is no session, never a full session)
+    const assist = payload.assist === undefined ? null : parseAssistClaim(payload.assist);
+    if (payload.assist !== undefined && !assist) return null;
+    return { userId, email, role: 'user', scope: 'user', iat: typeof payload.iat === 'number' ? payload.iat : undefined, iatMs: typeof payload.iat_ms === 'number' ? payload.iat_ms : undefined, assist };   // see citizenSessionRevoked
   } catch {
     return null;
   }

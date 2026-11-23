@@ -103,6 +103,8 @@ const CONFIG = {
     // G14-CHAN: Web Push — subscribing / unsubscribing a device (per account + IP) and the messages one account may receive (per account, a day)
     CITIZEN_PUSH_SUBSCRIBE: { limit: 10, window: 3600 },
     PUSH_SEND_USER: { limit: 12, window: 86400 },
+    // G14-AID: starting an assisted session (password + optional ADA Pro helper code), resuming alone with the password, « agir pour moi »: 6 per 15 min per account
+    ASSIST_REAUTH: { limit: 6, window: 900 },
     // R12: endpoints that called a provider, a model or the mailer without any limit
     ASSISTANT_FEEDBACK: { limit: 20, window: 600 },
     PDF_EXPORT: { limit: 30, window: 60 },        // public record PDF, per IP (CPU)

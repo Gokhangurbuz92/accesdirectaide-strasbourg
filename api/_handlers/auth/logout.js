@@ -18,6 +18,8 @@ export default async function handler(req, res) {
   // (the client says so and advises closing the browser on a shared device)
   let revoked = true;
   if (claims?.userId) revoked = await db.update(CitizenUser).set({ sessionsValidAfter: new Date()   /* pass 2: exact, the token carries iat_ms */ }).where(eq(CitizenUser.id, claims.userId)).then(() => true, () => false);
+  // G14-AID: signing out of an assisted session ends it in the person's history (the revocation above ends it anyway)
+  if (claims?.assist) await import('../../_services/assisted-mode.js').then((m) => m.endAssistOnLogout(claims.userId, claims.assist)).catch(() => {});
   res.setHeader('Set-Cookie', buildUserSessionCookieClear());
   if (!revoked) return res.status(503).json({ ok: false, error: 'LOGOUT_NOT_CONFIRMED' });
   return res.status(200).json({ ok: true });

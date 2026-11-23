@@ -11,6 +11,7 @@
  */
 
 import { gateRoute } from './_utils/capabilities.js';
+import { assistGateRoute } from './_utils/assist-gate.js';
 
 /** @type {Route[]} */
 const routeTable = [
@@ -91,6 +92,7 @@ const routeTable = [
     { path: 'pro/notifications/unread-count', match: 'exact', handler: () => import('./_handlers/pro/notifications/unread-count.js') },
     { path: 'pro/notifications', match: 'exact', handler: () => import('./_handlers/pro/notifications.js') },
     { path: 'pro/audit', match: 'exact', handler: () => import('./_handlers/pro/audit.js') },   // A26: the ONE organisation audit trail (AuditLog); pro/audit/list read ProAuditLog, which no code writes
+    { path: 'pro/assist-code', match: 'exact', handler: () => import('./_handlers/pro/assist-code.js') },   // G14-AID: one-time helper code of an active ADA Pro member with MFA
     { path: 'pro/reports', match: 'exact', handler: () => import('./_handlers/pro/reports.js') },
     { path: 'pro/dossier/redeem', match: 'exact', handler: () => import('./_handlers/pro/dossier/redeem.js') },
     { path: 'pro/dossier/upload-secure', match: 'exact', handler: () => import('./_handlers/pro/dossier/upload-secure.js') },
@@ -253,6 +255,7 @@ const routeTable = [
     { path: 'citizen/espace', match: 'exact', handler: () => import('./_handlers/citizen/espace.js') },
     { path: 'citizen/dossier', match: 'exact', handler: () => import('./_handlers/citizen/dossier.js') },
     { path: 'citizen/delegations', match: 'exact', handler: () => import('./_handlers/citizen/delegations.js') },
+    { path: 'citizen/assist', match: 'exact', handler: () => import('./_handlers/citizen/assist.js') },   // G14-AID: « mode accompagnant » next to the person (start, end, history)
     { path: 'citizen/referrals', match: 'exact', handler: () => import('./_handlers/citizen/referrals.js') },
     { path: 'citizen/restriction', match: 'exact', handler: () => import('./_handlers/citizen/restriction.js') },
     { path: 'admin/review-queue', match: 'prefix', handler: () => import('./_handlers/admin/review-queue.js') },
@@ -294,4 +297,5 @@ const routeTable = [
  * production, preview and the restricted beta, whatever the beta flag says later. The gate is a no-op for a route of no capability.
  * @type {Route[]}
  */
-export const routes = routeTable.map((r) => gateRoute(r));
+// G14-AID: then the assisted-session gate (api/_utils/assist-gate.js): a session in « mode accompagnant » reaches only the areas the person opened to the helper
+export const routes = routeTable.map((r) => gateRoute(assistGateRoute(r)));

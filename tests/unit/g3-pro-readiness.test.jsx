@@ -24,7 +24,7 @@ vi.mock('@/components/OnboardingTour', () => ({ default: () => null }));
 
 const LAB_HDS = `HDS1:lab-synthetic:G3-SYNTHETIC:2099-12-31:${'0'.repeat(64)}`;
 const PRO_ONLY = { ADA_PUBLIC_BETA_RESTRICTED: '1', ADA_BETA_OPEN_SURFACES: 'admin,accounts,pro', VERCEL_ENV: 'production' };
-const CLOSED = { cases: false, referrals: false, selections: false, dossiers: false, agenda: false, outlook: false, video: false, messages: false, team: true, structure: true, reports: true, regional: true, audit: true, employment: false };   // X05: the job board needs its own surface and capability
+const CLOSED = { cases: false, referrals: false, selections: false, dossiers: false, agenda: false, outlook: false, video: false, messages: false, team: true, structure: true, reports: true, regional: true, audit: true, employment: false, assist: false };   // X05: the job board needs its own surface and capability; G14-AID: the helper code needs citizen.assisted_mode (out of the AIPD)
 
 describe('G3 server: the module states follow the router gates', () => {
   it('pro opened alone: only account / structure-administration modules', () => {

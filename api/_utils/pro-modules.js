@@ -27,6 +27,8 @@ export const PRO_MODULE_ROUTES = Object.freeze({
   audit: 'pro/audit',
   // X05 (expansion): the employer's job listings — closed unless the « employment » surface AND « community.employment » are open
   employment: 'pro/employment',
+  // G14-AID: the one-time helper code of the « mode accompagnant » (pro.account + citizen.assisted_mode)
+  assist: 'pro/assist-code',
 });
 
 /** is this route served here (both gates, as api/index.js and api/routes.js apply them to a GET) @param {string} path @param {Record<string, string | undefined>} [envVars] */
