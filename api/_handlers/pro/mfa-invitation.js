@@ -1,13 +1,11 @@
 import logger from '../../_utils/logger.js';
 import { db } from '../../../src/db/index.js';
-import { Invitation, ProUser } from '../../../src/db/schema.js';
-import { and, eq, isNull, sql } from 'drizzle-orm';
+import { ProUser } from '../../../src/db/schema.js';
+import { eq } from 'drizzle-orm';
 import { AUTH_ROLE, logProAudit, requireProRole } from '../../_utils/auth.js';
-import { hashInviteToken, newInviteToken } from '../../_utils/invite-token.js';
-import { mailLedgerStatus, sendMail } from '../../_utils/mailer.js';
-import { buildAppUrl } from '../../_utils/user-auth.js';
 import { checkRateLimit, getClientIp } from '../../_utils/rateLimit.js';
-import { ENROLMENT_ROLES, MFA_INVITATION_TTL_MS } from '../../_utils/pro-mfa-enrolment.js';
+import { ENROLMENT_ROLES } from '../../_utils/pro-mfa-enrolment.js';
+import { STRUCTURE_NOT_VERIFIED, mailMfaInvitation, mfaInvitationAllowedFor, structureOf, writeMfaInvitation } from '../../_services/pro-mfa-invitation.js';
 
 /**
  * R42-A08 — POST /api/pro/mfa-invitation { memberId, lostDevice? }: an authorised administrator invites an EXISTING member to enrol their second factor.
@@ -19,6 +17,10 @@ import { ENROLMENT_ROLES, MFA_INVITATION_TTL_MS } from '../../_utils/pro-mfa-enr
  *   transaction, then the invitation is sent. Without lostDevice an enrolled member is refused (their factor stays).
  * - The link goes through the configured mailer only (LAB: test or no-op provider); the answer says whether a provider accepted it, never « delivered ».
  *   The audit rows carry ids, the role and the reason — never the token.
+ * - G14 (owner 23/11/2026): a member of ANOTHER structure (the SUPERADMIN's cross-structure invitation, e.g. the first administrator of a self-registered
+ *   structure) is invited only when that structure is active AND identity-verified (org-eligibility); otherwise 409 STRUCTURE_NOT_VERIFIED, nothing written.
+ *   The SUPERADMIN's own structure and a structure administrator's own members are unchanged. The writing and the e-mail live in
+ *   api/_services/pro-mfa-invitation.js (shared with « Vérifier et activer » of /admin/organizations).
  */
 const NOT_FOUND = { error: 'Not found' };
 
@@ -46,37 +48,28 @@ async function handler(/** @type {import('../../_utils/http-types').ApiRequest} 
         return res.status(409).json({ error: 'MFA_ALREADY_ENABLED', message: 'Ce membre a déjà activé la double authentification. En cas d’appareil perdu, utilisez la procédure « appareil perdu ».' });
     }
 
-    const email = String(member.email).trim().toLowerCase();
-    const token = newInviteToken();
-    let invitationId = '';
+    // G14: the member's structure must be active and verified unless it is the sender's own
+    if (!mfaInvitationAllowedFor(await structureOf(db, member.structureId), actor.structureId)) {
+        await logProAudit('MFA_INVITATION_REFUSED_UNVERIFIED', actor.userId, member.structureId, { memberId: member.id }, ip);
+        return res.status(409).json({ ...STRUCTURE_NOT_VERIFIED });
+    }
+
+    let written;
     try {
-        invitationId = await db.transaction(async (tx) => {
-            if (lostDevice && member.mfa_enabled) {
-                await tx.update(ProUser).set({ mfa_enabled: false, mfa_secret: null, mfa_last_time_step: null, sessionsValidAfter: new Date() }).where(eq(ProUser.id, member.id));
-            }
-            // earlier pending invitations of this address in this structure stop working (only the newest link is valid)
-            await tx.delete(Invitation).where(and(eq(Invitation.structureId, member.structureId), sql`lower(${Invitation.email}) = ${email}`, isNull(Invitation.used_at)));
-            const [row] = await tx.insert(Invitation).values({
-                structureId: member.structureId, email, role: String(member.role).toUpperCase(), token: hashInviteToken(token), expires_at: new Date(Date.now() + MFA_INVITATION_TTL_MS),
-            }).returning({ id: Invitation.id });
-            return row.id;
-        });
+        written = await db.transaction((tx) => writeMfaInvitation(tx, member, { lostDevice }));
     } catch (err) {
         logger.error({ err: { name: /** @type {{ name?: string }} */ (err)?.name } }, '[mfa-invitation] creation failed');
         return res.status(500).json({ error: 'L’invitation n’a pas pu être créée. Réessayez.' });
     }
+    const { invitationId, token, email } = written;
 
     if (lostDevice && member.mfa_enabled) await logProAudit('MFA_FACTOR_RESET', actor.userId, member.structureId, { memberId: member.id, reason: 'LOST_DEVICE' }, ip);
     // INVITATION_SENT carries the sender: redemption checks they are still an authorised administrator (invite-token.js invitationsWithRevokedSender)
     await logProAudit('INVITATION_SENT', actor.userId, member.structureId, { kind: 'MFA_ENROLMENT', invitationId, memberId: member.id, role: String(member.role).toUpperCase(), lostDevice }, ip);
 
-    const link = buildAppUrl(`/pro/mfa-settings#invitation=${encodeURIComponent(token)}`);   // fragment: never sent to a server or kept in its logs
-    const mail = await sendMail({
-        to: email, category: 'pro-mfa-invitation', subject: 'Activer la double authentification — Accès Direct Aide',
-        text: `Un administrateur de votre structure vous invite à activer la double authentification de votre accès professionnel.\nConnectez-vous, puis ouvrez ce lien (valable 72 heures, utilisable une fois, uniquement avec votre propre compte) : ${link}\n\nSi vous n’attendiez pas ce message, ne l’utilisez pas et prévenez l’administrateur de votre structure.`,
-    }).catch(() => ({ accepted: false }));
+    const mailStatus = await mailMfaInvitation(email, token, 'structure');
 
-    return res.status(201).json({ ok: true, invitation: { id: invitationId, memberId: member.id, email, role: String(member.role).toUpperCase(), lostDevice }, mailStatus: mailLedgerStatus(mail) });
+    return res.status(201).json({ ok: true, invitation: { id: invitationId, memberId: member.id, email, role: String(member.role).toUpperCase(), lostDevice }, mailStatus });
 }
 
 export default requireProRole(handler, [AUTH_ROLE.STRUCTURE_ADMIN, AUTH_ROLE.SUPERADMIN]);

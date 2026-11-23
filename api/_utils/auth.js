@@ -683,6 +683,9 @@ export async function revokeProSessions(userId, dbh = db) {
   await dbh.execute(sql`UPDATE "ProUser" SET "sessionsValidAfter" = NOW() WHERE id = ${String(userId)}`);
 }
 export const PRO_SESSION_STATUSES = ['active', 'pending'];
+/** G14: the first administrator of a structure that signed up on its own, until an ADA administrator verified the structure (« Vérifier et activer »,
+ * api/_services/pro-self-registration.js) — deliberately NOT a session status: no sign-in, refresh, ProConnect or MFA invitation */
+export const PRO_PENDING_VERIFICATION_STATUS = 'pending_verification';
 
 export function requireProAuth(handler) {
   // @ts-ignore

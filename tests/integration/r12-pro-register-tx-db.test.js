@@ -1,6 +1,7 @@
 /**
  * R12 (E01) — professional sign-up on real PostgreSQL: the organization and its first administrator are created in ONE transaction, and simultaneous
  * sign-ups with the same address (in any letter case) create exactly one organization and one account — no orphan organization.
+ * G14: a sign-up is a request (no session; the same « demande reçue » answer, 202, for every concurrent request), with a SIRET and the terms accepted.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { sql } from 'drizzle-orm';
@@ -9,6 +10,8 @@ const hasDatabase = Boolean(process.env.DATABASE_URL);
 const TS = Date.now();
 const EMAIL = `r12-reg-${TS}@example.test`;
 const NAME = `R12 Inscription ${TS}`;
+/** G14: a Luhn-valid SIRET unique to this run */
+const SIRET = (() => { const b = String(TS).slice(-13).padStart(13, '7'); for (let k = 0; k < 10; k += 1) { const d = b + k; let s = 0; for (let i = 0; i < 14; i += 1) { let n = Number(d[13 - i]); if (i % 2) { n *= 2; if (n > 9) n -= 9; } s += n; } if (s % 10 === 0) return d; } return null; })();
 const mk = () => ({ statusCode: 200, body: null, headers: {}, status(c) { this.statusCode = c; return this; }, json(d) { this.body = d; return this; }, setHeader(k, v) { this.headers[k] = v; } });
 
 describe.skipIf(!hasDatabase)('R12 pro registration transaction (real DB)', () => {
@@ -21,17 +24,20 @@ describe.skipIf(!hasDatabase)('R12 pro registration transaction (real DB)', () =
   afterAll(async () => {
     if (!db) return;
     const ids = (await db.execute(sql`SELECT "structureId" AS id FROM "ProUser" WHERE lower(email) = ${EMAIL}`)).rows.map((r) => r.id);
+    await db.execute(sql`DELETE FROM "ConsentLog" WHERE subject_type = 'PRO_USER' AND subject_id IN (SELECT id FROM "ProUser" WHERE lower(email) = ${EMAIL})`).catch(() => {});
     await db.execute(sql`DELETE FROM "ProUser" WHERE lower(email) = ${EMAIL}`);
+    await db.execute(sql`DELETE FROM "AuditLog" WHERE action = 'REGISTER_REQUESTED' AND details->>'structureId' IN (SELECT id FROM "Structure" WHERE nom = ${NAME})`).catch(() => {});
     await db.execute(sql`DELETE FROM "ProAuditLog" WHERE "structureId" IN (SELECT id FROM "Structure" WHERE nom = ${NAME})`).catch(() => {});
     await db.execute(sql`DELETE FROM "Structure" WHERE nom = ${NAME}`);
     expect(ids.length).toBeLessThanOrEqual(1);
   });
 
-  it('four simultaneous sign-ups with one address (mixed case): one organization, one account, the others get the neutral refusal', async () => {
+  it('four simultaneous sign-ups with one address (mixed case): one organization, one account, the same neutral answer for all', async () => {
     const call = async (i) => { const r = mk(); await handler({ method: 'POST', url: '/api/pro/auth/register', headers: { host: 'localhost', 'x-forwarded-for': `10.9.${i}.1` },
-      body: { email: i % 2 ? EMAIL.toUpperCase() : EMAIL, password: 'Synthetic-QA-pass-0001', structureName: NAME } }, r); return r; };
+      body: { email: i % 2 ? EMAIL.toUpperCase() : EMAIL, password: 'Synthetic-QA-pass-0001', structureName: NAME, siret: SIRET, termsAccepted: true } }, r); return r; };
     const out = await Promise.all([0, 1, 2, 3].map(call));
-    expect(out.map((r) => r.statusCode).sort(), JSON.stringify(out.map((r) => r.body))).toEqual([200, 400, 400, 400]);
+    expect(out.map((r) => r.statusCode), JSON.stringify(out.map((r) => r.body))).toEqual([202, 202, 202, 202]);   // G14: no oracle, no session
+    expect(new Set(out.map((r) => JSON.stringify(r.body))).size).toBe(1);
     const users = (await db.execute(sql`SELECT "structureId" FROM "ProUser" WHERE lower(email) = ${EMAIL}`)).rows;
     const orgs = (await db.execute(sql`SELECT id FROM "Structure" WHERE nom = ${NAME}`)).rows;
     expect(users.length).toBe(1); expect(orgs.length, 'no orphan organization').toBe(1);

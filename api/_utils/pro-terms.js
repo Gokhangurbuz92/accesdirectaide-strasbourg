@@ -52,13 +52,16 @@ export const PRO_TERMS_REQUIRED_REFUSAL = Object.freeze({
   code: 'PRO_TERMS_ACCEPTANCE_REQUIRED',
 });
 
-/** writes the proof rows (inside the caller's transaction) @param {any} dbh @param {string} userId @param {string} role */
-export async function recordProTermsAcceptance(dbh, userId, role) {
+/**
+ * writes the proof rows (inside the caller's transaction) @param {any} dbh @param {string} userId @param {string} role
+ * @param {string} [channel] where the acceptance was given: 'register-invite' (invited sign-up) or 'register' (G14: the structure's own sign-up request)
+ */
+export async function recordProTermsAcceptance(dbh, userId, role, channel = 'register-invite') {
   const rows = proTermsDocumentsFor(role).map((id) => {
     const ref = proTermsReference(id);
     const purpose = PRO_TERMS_PURPOSES[/** @type {keyof typeof PRO_TERMS_PURPOSES} */ (id)];
     return { subject_type: 'PRO_USER', subject_id: String(userId), purpose, decision: true, policy_version: ref, policy_hash: `${ref}:${purpose}`,
-      collection_channel: 'register-invite', guardian_involved: false, proof_level: CONTRACT_ACCEPTANCE };
+      collection_channel: channel, guardian_involved: false, proof_level: CONTRACT_ACCEPTANCE };
   });
   await dbh.insert(ConsentLog).values(rows);
 }

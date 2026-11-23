@@ -58,6 +58,8 @@ const REVIEWED_NOT_PUBLIC = {
   'api/lib/local-ai-metrics.js': 'PKG-6 / A14: administrator AI metrics (counts Aide rows with an embedding, using visibleSql for the public count); never public',
   'api/_services/territorial-stats.js': 'PKG-5 / I03 I04: counts of verified organizations per commune for institutional aggregates (no record content); signed partners / admins only',
   'api/_services/org-lifecycle.js': 'PKG-5 / E01: administrator organization list (identity, activity, D-5 decision shown apart); admin sessions only, never public',
+  'api/_services/pro-mfa-invitation.js': 'G14: reads the member\'s Structure statut / verification_status to refuse an MFA invitation to an unverified structure; professional / admin sessions only, never public',
+  'api/_services/pro-self-registration.js': 'G14: administrator decision on a structure\'s own ADA Pro sign-up request (reads the Structure it verifies); admin MFA sessions only, never public',
   'api/_handlers/pro/dossier/redeem.js': 'E01: reads only statut / verification_status of the redeeming organization (eligibility check); never public',
   'api/lib/structure-model.js': 'D8: read-only Organisation / Établissement / Service view of one record for LAB analysis (identifiers, service origins); not wired to any public route',
   'api/_utils/org-eligibility.js': 'D8: names the record an active SAME_ENTITY duplicate decision keeps (id / nom) for a SUPERADMIN invitation refusal; never public',
