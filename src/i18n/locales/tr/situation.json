@@ -1,6 +1,7 @@
 {
  "about.decides": "Bu sayfa bir yardımın size ait olup olmadığını söylemez. Başvurunuzdan sonra kurum karar verir.",
  "about.nothing-sent": "Hesap yok. Burada seçtiğiniz veya yazdığınız hiçbir şey gönderilmez veya kaydedilmez.",
+ "about.nothing-sent-optin": "Hesap yok. Burada yazdığınız hiçbir şey gönderilmez. Seçtiğiniz durum, yalnızca kutuyu işaretlerseniz, adınız olmadan gönderilir.",
  "about.sources": "Her yardım ve her işlem, tarihiyle birlikte resmî bir sayfaya bağlanır.",
  "about.title": "Bilmeniz gerekenler",
  "back": "Tüm durumlar",

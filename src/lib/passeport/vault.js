@@ -62,7 +62,7 @@ export function indexedDbBackend(factory = globalThis.indexedDB) {
   const tx = async (/** @type {string[]} */ stores, /** @type {IDBTransactionMode} */ mode, /** @type {(t: IDBTransaction) => IDBRequest | void} */ fn) => {
     const d = await open();
     return new Promise((resolve, reject) => {
-      const t = d.transaction(stores, mode); let result;
+      const t = d.transaction(stores, mode); let result = /** @type {unknown} */ (undefined);
       const r = fn(t); if (r) r.onsuccess = () => { result = r.result; };
       t.oncomplete = () => resolve(result); t.onerror = () => reject(t.error); t.onabort = () => reject(t.error);
     });

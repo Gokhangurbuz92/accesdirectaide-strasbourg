@@ -14,6 +14,8 @@ import { bookingOpened, isBetaRestrictedPath, parcoursOpened } from '@/lib/publi
 import { needLabel } from '@/lib/rightsPublicView';
 import { EMERGENCY_FICHE, EMERGENCY_NUMBERS, FAMILIES, SITUATIONS, SITUATION_BY_ID, directoryHref, searchSituations } from '@/lib/lifeSituations';
 import { familyLabel, situationLabel } from '@/lib/situationLabels';
+import SituationSignalOptIn from '@/components/observatoire/SituationSignalOptIn';
+import { sendSituationSignal, situationSignalsOpened } from '@/lib/observatoire';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 /**
@@ -243,7 +245,7 @@ function Result({ s }) {
   );
 }
 
-function Finder() {
+function Finder({ onChoose }) {
   const { t } = useT('situation');
   const [text, setText] = useState('');
   const [hits, setHits] = useState(null);
@@ -268,7 +270,7 @@ function Finder() {
             <ul className="mt-1 space-y-1">
               {hits.map((h) => (
                 <li key={h.id}>
-                  <Link to={`/situation/${h.id}`} className={`${linkClass} ${h.danger ? 'text-red-900' : ''}`} data-situation={h.id}>
+                  <Link to={`/situation/${h.id}`} className={`${linkClass} ${h.danger ? 'text-red-900' : ''}`} data-situation={h.id} onClick={() => onChoose(h.id)}>
                     {h.danger && <AlertTriangle className="h-4 w-4 shrink-0" aria-hidden="true" />}{situationLabel(h.id, t)}
                   </Link>
                 </li>
@@ -286,6 +288,10 @@ export default function Situation() {
   const { id } = useParams();
   const s = id ? SITUATION_BY_ID.get(id) : null;
   const title = s ? situationLabel(s.id, t) : t('situation:title', 'Ma situation : par où commencer ?');
+  // G14-OBS: the opt-in counter — unticked by default, kept in this page's memory only; the chosen situation's id is sent only when ticked
+  const [optIn, setOptIn] = useState(false);
+  const choose = (/** @type {string} */ sid) => { sendSituationSignal(sid, { optedIn: optIn }); };
+  const signalsOpen = situationSignalsOpened();
   return (
     <div>
       <SEO title={s ? t('situation:seo.item', '{{situation}} — aides, démarches, lieux', { situation: title }) : t('situation:seo.title', 'Ma situation : par où commencer ?')}
@@ -298,7 +304,9 @@ export default function Situation() {
           <ul className="mt-2 list-disc space-y-1 ps-5 text-sm">
             <li>{t('situation:about.decides', 'Cette page ne dit pas si une aide vous est due. L’organisme décide, après votre demande.')}</li>
             <li>{t('situation:about.sources', 'Chaque aide et chaque démarche renvoie à une fiche officielle, avec sa date.')}</li>
-            <li>{t('situation:about.nothing-sent', 'Pas de compte. Rien de ce que vous choisissez ou écrivez ici n’est envoyé ni enregistré.')}</li>
+            <li>{signalsOpen
+              ? t('situation:about.nothing-sent-optin', 'Pas de compte. Rien de ce que vous écrivez ici n’est envoyé. La situation choisie est envoyée, sans votre nom, seulement si vous cochez la case.')
+              : t('situation:about.nothing-sent', 'Pas de compte. Rien de ce que vous choisissez ou écrivez ici n’est envoyé ni enregistré.')}</li>
           </ul>
         </section>
 
@@ -314,11 +322,12 @@ export default function Situation() {
               <h2 id="situation-urgent-title" className="flex items-center gap-2 text-xl font-semibold text-red-950"><AlertTriangle className="h-5 w-5 shrink-0" aria-hidden="true" />{t('situation:urgent.title', 'En danger maintenant ?')}</h2>
               <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {SITUATIONS.filter((x) => x.danger).map((x) => (
-                  <li key={x.id}><Link to={`/situation/${x.id}`} data-situation={x.id} className={`${linkClass} text-red-900`}>{situationLabel(x.id, t)}</Link></li>
+                  <li key={x.id}><Link to={`/situation/${x.id}`} data-situation={x.id} className={`${linkClass} text-red-900`} onClick={() => choose(x.id)}>{situationLabel(x.id, t)}</Link></li>
                 ))}
               </ul>
             </section>
-            <Finder />
+            <SituationSignalOptIn checked={optIn} onChange={setOptIn} opened={signalsOpen} />
+            <Finder onChoose={choose} />
             <nav aria-labelledby="situation-list-title" data-testid="situation-list">
               <h2 id="situation-list-title" className="text-xl font-semibold text-slate-900">{t('situation:list.title', 'Ou choisissez votre situation')}</h2>
               <p className="mt-1 text-slate-800">{t('situation:list.families', 'Les situations sont rangées par thème :')}</p>
@@ -333,7 +342,7 @@ export default function Situation() {
                   <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {SITUATIONS.filter((x) => x.family === f).map((x) => (
                       <li key={x.id}>
-                        <Link to={`/situation/${x.id}`} data-situation={x.id}
+                        <Link to={`/situation/${x.id}`} data-situation={x.id} onClick={() => choose(x.id)}
                           className={`flex min-h-11 h-full items-center justify-between gap-2 rounded-lg border bg-white px-3 py-2 font-medium text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${x.danger ? 'border-red-300' : 'border-slate-300'}`}>
                           <span>{situationLabel(x.id, t)}</span>
                           {x.danger && <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-900">{t('situation:list.urgent', 'Urgent')}</span>}

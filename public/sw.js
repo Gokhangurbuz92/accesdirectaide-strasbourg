@@ -43,6 +43,9 @@ const STATIC_EXACT_PATHS = new Set([
 const OFFLINE_SHELL_CACHE = 'ada-offline-parcours-shell-v1';
 const OFFLINE_SHELL_KEY = '/__ada/offline-parcours-shell';
 const OFFLINE_PARCOURS_PATH = '/compte/parcours';
+// G14-PS (g14-r2 integration): the Passeport Social is browser-only (IndexedDB, nothing on the server), so it may start from the SAME kept static shell when
+// it exists — never from anything else, and nothing is ever stored for it here; its lazy chunk is a hashed /assets file (cache-first like every static file)
+const OFFLINE_SHELL_PATHS = [OFFLINE_PARCOURS_PATH, '/passeport-social'];
 const MAX_SHELL_ASSETS = 200;
 
 function pathMatchesPrefix(pathname, prefix) {
@@ -162,11 +165,11 @@ async function offlineParcoursShell() {
   return (await matchOfflineShell(OFFLINE_SHELL_KEY)) || offlineFallback();
 }
 
-/** G14-LITE: only the exact Mon Parcours address may start from the kept shell (never another account page) */
+/** G14-LITE: only the exact Mon Parcours address (and the browser-only Passeport Social) may start from the kept shell (never another account page) */
 function isOfflineParcoursNavigation(request) {
   if (!isPageNavigation(request)) return false;
   const pathname = new URL(request.url).pathname.replace(/\/+$/, '');
-  return pathname === OFFLINE_PARCOURS_PATH;
+  return OFFLINE_SHELL_PATHS.includes(pathname);
 }
 
 /**

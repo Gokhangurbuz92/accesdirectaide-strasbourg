@@ -24,7 +24,7 @@ const PERSONAL_TABLES = ['CitizenUser', 'ProUser', 'AdminUser', 'Referral', 'Ref
   'SharedDiagnostic', 'CitizenProfile', 'SupportRequest', 'ConsentLog'];
 
 describe.skipIf(!hasDatabase)('G14-OBS demand signals (real DB)', () => {
-  let db; let S; let L; let assertAggregateOnly; let handler; let reset;
+  let db; let S; let assertAggregateOnly; let handler; let reset;
   const rows = async (q) => (await db.execute(q)).rows;
   const structure = (id, type, { ville = 'Strasbourg', cp = '67000', hours = null, services = '{}' } = {}) => sql`INSERT INTO "Structure"
     (id, slug, nom, ville, code_postal, adresse, type_structure, services, publics_accueillis, categories_aidees, statut, launch_eligible, verification_status, verified_by,
@@ -35,7 +35,6 @@ describe.skipIf(!hasDatabase)('G14-OBS demand signals (real DB)', () => {
   beforeAll(async () => {
     ({ db } = await import('../../src/db/index.js'));
     S = await import('../../api/_services/demand-signals.js');
-    L = await import('../../api/lib/demand-signals.js');
     ({ assertAggregateOnly } = await import('../../api/lib/public-indicators.js'));
     ({ default: handler, _resetObservatoireCache: reset } = await import('../../api/_handlers/public/observatoire.js'));
     S.forgetDemandSchema(db);

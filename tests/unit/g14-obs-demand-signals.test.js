@@ -1,7 +1,7 @@
 /**
  * G14-OBS — anonymous demand signals: registry, switches, the counted shape, small-cell suppression, gaps, the CSV, the database schema (no personal data),
  * the public handlers and the beta gate. Pure: no database (the real-database cases are in tests/integration/g14-obs-demand-signals-db.test.js).
- *   R  registry: closed lists (86 subdomains, 19 situations, 28 Mon Parcours types, 10 referral reasons, 12 aid categories), K_MIN = the observatory's 5
+ *   R  registry: closed lists (86 subdomains, 74 situations, 28 Mon Parcours types, 10 referral reasons, 12 aid categories), K_MIN = the observatory's 5
  *   S  switches closed by default and exact; one family never opens another
  *   N  the only shape counted: closed-list code; commune only for searches, only Eurométropole / « HORS », NEVER for a sensitive subdomain
  *   P  publication: < 5 masked (zero included), complementary suppression, commune table only from 20, marginal protection, totals = published sums
@@ -36,7 +36,7 @@ describe('G14-OBS R registry', () => {
   it('closed lists of the reference files, and the observatory threshold', () => {
     expect(L.codesOf('search_need')).toHaveLength(86);
     expect(L.socialReference().domains).toHaveLength(20);
-    expect(L.codesOf('situation')).toHaveLength(19);
+    expect(L.codesOf('situation')).toHaveLength(74);   // g14-rg widened « Ma situation » to 74 situations (the mirror follows data/reference/life-situations.v1.json)
     expect(L.codesOf('parcours_added')).toHaveLength(28);
     expect(L.codesOf('social_referral')).toHaveLength(10);
     expect(L.emsCommunes()).toHaveLength(33);

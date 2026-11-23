@@ -30,6 +30,7 @@ import {
   SOCIAL_REFERRAL_CONSENT_VERSION, WITHDRAWABLE, normaliseCode, socialReferralStructureClass,
 } from '../lib/social-referral-policy.js';
 import { logger } from '../lib/logger.js';
+import { recordSocialReferral } from './demand-signals.js';
 
 const day = 86400000;
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
@@ -270,6 +271,8 @@ async function decideAs(db, citizenId, id, accept, share, channel, now, deps) {
     await consentRow(tx, citizenId, id, true, channel);
     return { ok: true, status: 200, referral: { id, status: 'SENT' } };
   }).then(async (out) => {
+    // G14-OBS: anonymous count of the closed reasons of a referral SENT (nothing unless ADA_DEMAND_SIGNALS names « referral »; never throws)
+    await recordSocialReferral(Array.isArray(r.reasonCodes) ? r.reasonCodes : [], { db, now: t });
     await notifyOrg(r.toStructureId, 'Une orientation sociale attend votre réponse.', deps);
     await notifyOrg(r.fromStructureId, 'La personne a donné son accord à une orientation sociale.', deps);
     return out;

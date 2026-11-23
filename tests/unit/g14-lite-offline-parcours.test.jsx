@@ -84,6 +84,14 @@ describe('G14-LITE — service worker routing rules', () => {
     expect(none.caches.has('ada-offline-parcours-shell-v1')).toBe(false);   // looking never creates the cache
   });
 
+  it('offline, the browser-only /passeport-social starts from the same kept shell (g14-r2), otherwise the static offline page; nothing is stored for it', async () => {
+    const kept = sw({ network: 'down', shell: { '/__ada/offline-parcours-shell': 'SHELL' } });
+    expect(await kept.fire('fetch', { request: nav('/passeport-social') })).toBe('SHELL');
+    const none = sw({ network: 'down' });
+    expect(await none.fire('fetch', { request: nav('/passeport-social') })).toBe('OFFLINE_PAGE');
+    expect(none.caches.has('ada-offline-parcours-shell-v1')).toBe(false);
+  });
+
   it.each(['/compte', '/compte/messages', '/compte/coffre', '/compte/parcours/autre', '/pro/dossiers', '/admin', '/auth/login', '/aides'])(
     'offline, %s never gets the kept shell (static offline page)', async (p) => {
       const w = sw({ network: 'down', shell: { '/__ada/offline-parcours-shell': 'SHELL' } });

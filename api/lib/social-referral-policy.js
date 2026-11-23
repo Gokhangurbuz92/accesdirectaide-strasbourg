@@ -125,7 +125,7 @@ export const CITIZEN_POST_FIELDS = Object.freeze({
   decide: ['action', 'id', 'decision', 'shareEmail', 'sharePhone'],
   withdraw: ['action', 'id'],
 });
-export const CITIZEN_GET_QUERY = Object.freeze([]);
+export const CITIZEN_GET_QUERY = /** @type {readonly string[]} */ (Object.freeze([]));
 
 const ID_RE = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
 /** claim code: 10 characters of an unambiguous alphabet, optionally grouped with « - » or spaces */

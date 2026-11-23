@@ -17,8 +17,8 @@ async function handler(req, res) {
   try {
     const out = await issueProHelperCode({ userId: ctx.userId, structureId: ctx.structureId, mfa: req.user?.mfa === true });
     if (!out.ok) return res.status(out.status).json({ error: out.code, message: out.message });
-    const { ok: _ok, status, ...body } = out;
-    return res.status(status).json(body);
+    const body = Object.fromEntries(Object.entries(out).filter(([k]) => k !== 'ok' && k !== 'status'));
+    return res.status(out.status).json(body);
   } catch (err) {
     logger.error({ err: { name: err?.name } }, '[pro/assist-code] failed');
     return res.status(500).json({ error: 'internal_error' });

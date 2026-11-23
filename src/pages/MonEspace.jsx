@@ -8,6 +8,7 @@ import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { openLinks } from '@/lib/publicBeta';
+import { passeportLocalEnabled } from '@/lib/passeport/flag';
 import NotificationCenter from '@/components/account/NotificationCenter';
 import FindAndBook from '@/components/account/FindAndBook';
 
@@ -37,7 +38,8 @@ export default function MonEspace() {
   }, [t]);
   useEffect(() => { load(); }, [load]);
 
-  if (state.loading) return <div className="container mx-auto max-w-4xl px-4 py-8" role="status">{t('compte:space.loading', 'Chargement de Mon Espace…')}</div>;
+  // G14-LITE: the loading state is a screen tall (like Mon Parcours), so the footer does not jump when the page arrives (CLS)
+  if (state.loading) return <div className="container mx-auto min-h-screen max-w-4xl px-4 py-8" role="status">{t('compte:space.loading', 'Chargement de Mon Espace…')}</div>;
   if (!state.summary) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-8" data-testid="mon-espace-error">
@@ -64,6 +66,12 @@ export default function MonEspace() {
     { to: '/compte/accompagnement', testid: 'tile-accompagnement', title: t('compte:space.tile.accompagnement', 'Mode accompagnant'), body: t('compte:space.tile.accompagnement_body', 'Se faire aider, à côté de vous, pendant 2 heures au plus.') },   // G14-AID
     // G14 / DSA art. 17, 20: statements of reasons and appeals (surface « notices »: hidden by openLinks while it is closed)
     { to: '/compte/moderation', testid: 'tile-moderation', title: t('compte:space.tile.moderation', 'Décisions de modération'), body: t('compte:space.tile.moderation_body', 'Décisions sur vos contenus ou vos signalements, et contestations.') },
+    // G14-RG: « Ma situation » (public, no account needed) — offered here too
+    { to: '/situation', testid: 'tile-situation', public: true, title: t('compte:space.tile.situation', 'Ma situation'), body: t('compte:space.tile.situation_body', 'Aides à vérifier, démarches et lieux, selon ce qui vous arrive.') },
+    // G14-PS: the social referrals (surface « social_referrals »: hidden by openLinks while it is closed)
+    { to: '/compte/orientations-sociales', testid: 'tile-orientations-sociales', title: t('compte:space.tile.orientations_sociales', 'Mes orientations sociales'), body: t('compte:space.tile.orientations_sociales_body', 'Propositions d’une structure de vous orienter vers une autre : rien n’est transmis sans votre accord.') },
+    // G14-PS: the Passeport Social is browser-only, offered only when the build sets VITE_PASSEPORT_SOCIAL=local
+    ...(passeportLocalEnabled() ? [{ to: '/passeport-social', testid: 'tile-passeport', title: t('compte:space.tile.passeport', 'Passeport Social'), body: t('compte:space.tile.passeport_body', 'Vos documents et votre résumé, chiffrés sur cet appareil seulement.') }] : []),
   ];
   // R43 (E2): during the beta, a tile of a screen this build keeps closed (narrow accounts scope) is not offered
   // R45 (ENG-LR-6): a part the server did not return (its capability is closed) has no tile
@@ -73,7 +81,7 @@ export default function MonEspace() {
       <SEO title={t('compte:space.title', 'Mon Espace')} noindex />
       <h1 className="text-2xl font-bold text-slate-900">{t('compte:space.title', 'Mon Espace')}</h1>
       {/* G14-FIND: « find and book » first — the page was empty in the restricted beta (every tile closed): now a real search and open screens */}
-      <FindAndBook showGuide={visibleTiles.length === 0} />
+      <FindAndBook showGuide={visibleTiles.every((tile) => tile.public)} />   {/* the guide while no account screen is open (a public tile such as « Ma situation » does not count) */}
       <NotificationCenter />
       <div className="grid gap-4 sm:grid-cols-2">
         {s.parcours ? (<Card data-testid="espace-next-due">

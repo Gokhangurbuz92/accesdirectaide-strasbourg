@@ -48,13 +48,13 @@ export const randomBytes = (n) => webcrypto().getRandomValues(new Uint8Array(n))
 export async function deriveKey(passphrase, salt, iterations = KDF_ITERATIONS) {
   const subtle = webcrypto().subtle;
   const base = await subtle.importKey('raw', enc.encode(String(passphrase)), 'PBKDF2', false, ['deriveKey']);
-  return subtle.deriveKey({ name: 'PBKDF2', salt, iterations, hash: KDF_HASH }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  return subtle.deriveKey({ name: 'PBKDF2', salt: /** @type {BufferSource} */ (/** @type {unknown} */ (salt)), iterations, hash: KDF_HASH }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
 }
 
 /** @param {CryptoKey} key @param {Uint8Array} bytes @returns {Promise<{ iv: string, ct: string }>} */
 export async function encryptBytes(key, bytes) {
   const iv = randomBytes(12);
-  const ct = new Uint8Array(await webcrypto().subtle.encrypt({ name: 'AES-GCM', iv }, key, bytes));
+  const ct = new Uint8Array(await webcrypto().subtle.encrypt({ name: 'AES-GCM', iv }, key, /** @type {BufferSource} */ (/** @type {unknown} */ (bytes))));
   return { iv: toB64(iv), ct: toB64(ct) };
 }
 /** @param {CryptoKey} key @param {{ iv: string, ct: string }} box @returns {Promise<Uint8Array>} throws (OperationError) with a wrong key or altered data */

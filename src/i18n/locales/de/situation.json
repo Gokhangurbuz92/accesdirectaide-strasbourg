@@ -1,6 +1,7 @@
 {
  "about.decides": "Diese Seite sagt nicht, ob Ihnen eine Hilfe zusteht. Die Stelle entscheidet nach Ihrem Antrag.",
  "about.nothing-sent": "Kein Konto. Nichts, was Sie hier wählen oder schreiben, wird gesendet oder gespeichert.",
+ "about.nothing-sent-optin": "Kein Konto. Nichts, was Sie hier schreiben, wird gesendet. Die gewählte Situation wird nur gesendet, ohne Ihren Namen, wenn Sie das Kästchen ankreuzen.",
  "about.sources": "Jede Hilfe und jeder Behördengang verweist auf ein offizielles Merkblatt mit Datum.",
  "about.title": "Gut zu wissen",
  "back": "Alle Situationen",

@@ -1,6 +1,7 @@
 {
  "about.decides": "This page does not say whether a benefit is due to you. The body decides, after your application.",
  "about.nothing-sent": "No account. Nothing you choose or write here is sent or saved.",
+ "about.nothing-sent-optin": "No account. Nothing you write here is sent. The situation you choose is sent, without your name, only if you tick the box.",
  "about.sources": "Each benefit and each procedure links to an official sheet, with its date.",
  "about.title": "Good to know",
  "back": "All situations",

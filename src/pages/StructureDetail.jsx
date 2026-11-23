@@ -117,7 +117,8 @@ export default function StructureDetail() {
 
   if (isLoading) {
     return (
-      <div className="w-full p-4"><SkeletonList count={3} variant="card" /></div>
+      // G14-LITE: a screen-tall loading state (like Mon Parcours): the footer does not jump when the structure arrives (CLS)
+      <div className="min-h-screen w-full p-4"><SkeletonList count={3} variant="card" /></div>
     );
   }
 

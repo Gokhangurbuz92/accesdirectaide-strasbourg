@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { formatDate, formatNumber, useT } from '@/i18n';
 import reference from '../../../data/reference/social-domains.v1.json';
 import steps from '../../../data/reference/parcours-step-types.v1.json';
+import { situationLabel } from '@/lib/situationLabels';
 
 /**
  * G14-OBS — the published data of /observatoire (GET /api/public/observatoire). Every chart is a TABLE first (caption, header cells, scope): the bars are
@@ -165,7 +166,7 @@ function Quarter({ q, names }) {
         </div>
       ) : <p className="text-slate-700" data-testid="obs-search-not-collected">{t('observatory:search.not_collected', 'Les recherches n’étaient pas collectées ce trimestre.')}</p>}
 
-      <CodesTable testId="obs-situations" data={q.situations} label={(c) => L.situations[c] || c} caption={t('observatory:situations.caption', 'Situations choisies dans « Ma situation » (seulement par les personnes qui l’ont accepté)')} head={[t('observatory:col.situation', 'Situation'), t('observatory:col.count', 'Nombre')]} />
+      <CodesTable testId="obs-situations" data={q.situations} label={(c) => L.situations[c] || situationLabel(c, t)} caption={t('observatory:situations.caption', 'Situations choisies dans « Ma situation » (seulement par les personnes qui l’ont accepté)')} head={[t('observatory:col.situation', 'Situation'), t('observatory:col.count', 'Nombre')]} />
       {q.parcoursAdded ? (
         <Table testId="obs-parcours" caption={t('observatory:parcours.caption', 'Démarches suivies dans Mon Parcours (déclarées par les personnes)')}
           head={[t('observatory:col.step', 'Démarche'), t('observatory:col.added', 'Ajoutées'), t('observatory:col.closed', 'Terminées')]}

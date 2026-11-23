@@ -54,17 +54,41 @@ export const FAMILIES = Object.freeze({ search: ['search_need', 'search_category
 export const AID_CATEGORIES = Object.freeze(['LOGEMENT', 'SANTE', 'HANDICAP', 'EMPLOI', 'FAMILLE', 'ETUDES', 'MOBILITE', 'ENERGIE', 'ALIMENTATION', 'JUSTICE', 'NUMERIQUE', 'AUTRE']);
 
 /**
- * The Rights Graph situations (branch g14-rg, data/reference/life-situations.v1.json) and the social domain each one is about (its first subdomain's
- * domain). Mirrored here because that file is on another branch; the tests compare both when the file exists. `sensitive`: violence, child at risk,
- * distress, disability, right of residence, leaving child protection — counted only territory-wide, like every situation (no commune is ever sent).
+ * The Rights Graph situations (data/reference/life-situations.v1.json, 74 since g14-rg) and the social domain each one is about (its first subdomain's
+ * domain). Mirrored here (a frozen closed list, no file read on the request path); the tests compare both. `sensitive`: one of its subdomains is in the
+ * violence, child protection, mental health, disability or migration domain, or is a sensitive need (api/lib/parcours-sensitivity.js SENSITIVE_NEEDS) — counted only territory-wide, like every situation (no commune is ever sent).
  */
 export const SITUATIONS = Object.freeze({
-  'loyer-impaye': { domain: 'logement' }, expulsion: { domain: 'logement' }, 'sans-logement': { domain: 'logement' }, 'factures-impayees': { domain: 'budget' },
-  dettes: { domain: 'budget' }, 'perte-emploi': { domain: 'emploi' }, 'sans-ressources': { domain: 'precarite' }, 'arrivee-strasbourg': { domain: 'precarite' },
-  violences: { domain: 'violences', sensitive: true }, 'enfant-danger': { domain: 'protection-enfance', sensitive: true }, detresse: { domain: 'sante-mentale', sensitive: true },
-  'parent-seul': { domain: 'famille' }, 'proche-age': { domain: 'autonomie' }, handicap: { domain: 'handicap', sensitive: true },
-  'sans-titre-sejour': { domain: 'migration', sensitive: true }, 'sortie-ase': { domain: 'protection-enfance', sensitive: true },
-  'demarches-papiers': { domain: 'transversal' }, scolarite: { domain: 'enfance-jeunesse' }, retraite: { domain: 'autonomie' },
+  'loyer-impaye': { domain: 'logement' }, expulsion: { domain: 'logement' }, 'sans-logement': { domain: 'logement' },
+  'factures-impayees': { domain: 'precarite' }, 'logement-insalubre': { domain: 'logement' }, 'recherche-hlm': { domain: 'logement' },
+  'heberge-chez-tiers': { domain: 'logement' }, 'logement-jeune': { domain: 'logement' }, 'adapter-logement': { domain: 'logement', sensitive: true },
+  'perte-emploi': { domain: 'emploi' }, 'fin-de-droits': { domain: 'precarite' }, 'faibles-revenus': { domain: 'precarite' },
+  'sans-ressources': { domain: 'precarite' }, 'retour-emploi': { domain: 'emploi' }, 'formation-reconversion': { domain: 'emploi' },
+  dettes: { domain: 'budget' }, 'budget-difficile': { domain: 'budget' }, 'compte-bancaire': { domain: 'budget' }, impots: { domain: 'budget' },
+  'aide-alimentaire': { domain: 'precarite' }, naissance: { domain: 'famille', sensitive: true }, separation: { domain: 'famille' },
+  'parent-seul': { domain: 'famille' }, 'garde-enfant': { domain: 'famille' }, 'enfants-a-charge': { domain: 'famille' },
+  parentalite: { domain: 'famille', sensitive: true }, 'deces-proche': { domain: 'transversal' }, aidant: { domain: 'lien-social' },
+  'enfant-danger': { domain: 'protection-enfance', sensitive: true }, 'mineur-isole': { domain: 'protection-enfance', sensitive: true },
+  'sortie-ase': { domain: 'protection-enfance', sensitive: true }, 'jeune-sans-emploi': { domain: 'enfance-jeunesse' },
+  'etudiant-difficulte': { domain: 'enfance-jeunesse' }, scolarite: { domain: 'enfance-jeunesse', sensitive: true },
+  'jeune-loisirs': { domain: 'lien-social' }, handicap: { domain: 'handicap', sensitive: true }, 'enfant-handicap': { domain: 'handicap', sensitive: true },
+  'handicap-travail': { domain: 'handicap', sensitive: true }, 'handicap-hebergement': { domain: 'handicap', sensitive: true },
+  'sans-couverture-sante': { domain: 'sante', sensitive: true }, 'sante-sexuelle': { domain: 'sante', sensitive: true },
+  'souffrance-psy': { domain: 'sante-mentale', sensitive: true }, detresse: { domain: 'sante-mentale', sensitive: true },
+  addiction: { domain: 'sante-mentale', sensitive: true }, 'fin-de-vie': { domain: 'autonomie', sensitive: true },
+  'proche-age': { domain: 'autonomie', sensitive: true }, 'maison-retraite': { domain: 'autonomie', sensitive: true },
+  'maltraitance-agee': { domain: 'autonomie', sensitive: true }, retraite: { domain: 'autonomie', sensitive: true },
+  violences: { domain: 'violences', sensitive: true }, 'violences-sexuelles': { domain: 'violences', sensitive: true },
+  victime: { domain: 'violences', sensitive: true }, harcelement: { domain: 'violences', sensitive: true },
+  exploitation: { domain: 'violences', sensitive: true }, 'arrivee-strasbourg': { domain: 'transversal' },
+  'titre-sejour': { domain: 'migration', sensitive: true }, 'demande-asile': { domain: 'migration', sensitive: true },
+  'protection-temporaire': { domain: 'migration', sensitive: true }, 'apprendre-francais': { domain: 'migration', sensitive: true },
+  'sans-titre-sejour': { domain: 'migration', sensitive: true }, litige: { domain: 'justice' }, 'contester-decision': { domain: 'justice' },
+  'sortie-detention': { domain: 'justice', sensitive: true }, 'protection-majeur': { domain: 'protection-majeurs', sensitive: true },
+  discrimination: { domain: 'discrimination', sensitive: true }, 'demarches-papiers': { domain: 'precarite' }, 'pas-internet': { domain: 'numerique' },
+  'lire-ecrire': { domain: 'numerique' }, 'papiers-perdus': { domain: 'precarite' }, demenagement: { domain: 'transversal' },
+  'transport-cout': { domain: 'mobilite' }, 'permis-mobilite': { domain: 'mobilite' }, 'transport-adapte': { domain: 'mobilite', sensitive: true },
+  isolement: { domain: 'lien-social' }
 });
 
 /** the closed reasons of the social referral (branch g14-ps, api/lib/social-referral-policy.js SOCIAL_REASONS) — mirrored, compared by the tests when present */

@@ -20,7 +20,7 @@ async function handler(req, res) {
   if (!ctx) return undefined;
   ctx.mfa = req.user?.mfa === true;
   const refusal = socialReferralRequestRefusal('pro', { method: req.method, body: req.body, query: req.query });
-  const send = (out) => (out.ok === false ? res.status(out.status || 400).json({ error: out.code, message: out.message }) : res.status(out.status || 200).json((({ ok, status, ...b }) => b)(out)));
+  const send = (out) => (out.ok === false ? res.status(out.status || 400).json({ error: out.code, message: out.message }) : res.status(out.status || 200).json(Object.fromEntries(Object.entries(out).filter(([k]) => k !== 'ok' && k !== 'status'))));
   if (refusal) return send(refusal);
   const svc = socialReferralsPro();
   const q = req.query || {};
