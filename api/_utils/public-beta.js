@@ -191,7 +191,7 @@ export function inAccountsBookingScope(path) {
 
 /**
  * G4 (founder directive 19/11/2026, « Mon Parcours as soon as it is safe ») — named additions to the NARROW accounts scope, one module at a time, without
- * opening the rest of the full scope (household, guardians, push, shares, favourites, history, delegations, referrals stay closed at surface level).
+ * opening the rest of the full scope (every module not named — e.g. shares, favourites, history, referrals — stays closed at surface level).
  * ADA_BETA_ACCOUNTS_EXTRA is a comma list of the exact names below; an unknown name adds nothing, there is no wildcard, and it has no effect when the
  * accounts surface is closed or already in the full scope. An addition opens its routes at this gate AND lets its out-of-AIPD capability pass the
  * « full scope » condition of api/_utils/capabilities.js — the capability must STILL be named in ADA_CAPABILITIES_OPEN (AIPD extension), so the
@@ -210,6 +210,18 @@ export const ACCOUNTS_EXTRAS = Object.freeze({
   // G14-AID: the « mode accompagnant » next to the person (citizen/assist) in the narrow scope — the helper then reaches only what the narrow scope serves
   // (booking, profile); the remote action requests also need citizen.delegations (full scope)
   assist: Object.freeze({ routes: Object.freeze(['citizen/assist']), capabilities: Object.freeze(['citizen.assisted_mode']) }),
+  // G14-R3 (founder 24/11/2026, release-3 package): the three remaining account modules the release opens, BY NAME, instead of ADA_BETA_ACCOUNTS_SCOPE=full —
+  // the full scope would also open favourites (C10), history (C11) and the optional profile fields (age band, département: Release B minimisation), and
+  // pass the surface condition of citizen.orientation_records (HDS) and citizen.franceconnect. Each module still needs its capability in ADA_CAPABILITIES_OPEN.
+  //   household    C03 « Mon foyer » (relation, age band, optional short label): GET / POST / DELETE citizen/household — capability citizen.household
+  //   guardians    C05 minor ↔ legal guardian link: GET / POST citizen/guardians — capability citizen.guardians (the administrator's verifier route
+  //                admin/guardianships follows the admin surface); minors' own accounts stay closed (citizen.minor_accounts is not openable) and, while
+  //                they are, a NEW link cannot be declared (api/_handlers/citizen/guardians.js MINOR_ACCOUNTS_CLOSED)
+  //   delegations  C23 trusted persons (read-only, scoped, time-limited, revocable, every view logged): GET / POST citizen/delegations — capability
+  //                citizen.delegations; with citizen.assisted_mode open it also carries the trusted person's action requests (P21, signed A4)
+  household: Object.freeze({ routes: Object.freeze(['citizen/household']), capabilities: Object.freeze(['citizen.household']) }),
+  guardians: Object.freeze({ routes: Object.freeze(['citizen/guardians']), capabilities: Object.freeze(['citizen.guardians']) }),
+  delegations: Object.freeze({ routes: Object.freeze(['citizen/delegations']), capabilities: Object.freeze(['citizen.delegations']) }),
 });
 /** the additions to the narrow accounts scope named in this environment (empty in the full scope) @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
 export function accountsExtras(envVars = process.env) {

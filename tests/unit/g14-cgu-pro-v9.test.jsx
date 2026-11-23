@@ -50,7 +50,7 @@ describe('cgu-professionnel v9-2026-11-22 — listed as a draft', () => {
     expect(v9.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
     expect(v9.path).toBe('/cgu/professionnel');
     expect(latestDraftVersionOf(ID)).toBe('v10-2026-11-23');   // G14 ADA Pro opening: v10-2026-11-23 is newer (tests/unit/g14-legal-v12.test.js); v9 stays approvable by name
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v12-2026-11-23', 'cgu-professionnel@v10-2026-11-23', 'conditions-structures@v9-2026-11-23', 'notice-confidentialite@v13-2026-11-23']);   // G14 merge: Mon Parcours v10 / v11, expansion v12 / v13
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v13-2026-11-24', 'cgu-professionnel@v10-2026-11-23', 'conditions-structures@v9-2026-11-23', 'notice-confidentialite@v14-2026-11-24']);   // G14-R3 drafts (24/11/2026); G14 merge: Mon Parcours v10 / v11, expansion v12 / v13
     // hashes taken from the commit before this change (99a6c11)
     expect(sha(LEGAL_DRAFT_DOCUMENTS_V8)).toBe('adc97403b2533d6b534d933c46ddac666ae1f967f5957ffd136a61c79c1451bb');
     expect(sha(LEGAL_DRAFT_DOCUMENTS_V9)).toBe('9b49394eac64574239478f217f7071758fd841485d9b335d900399069dc72e34');

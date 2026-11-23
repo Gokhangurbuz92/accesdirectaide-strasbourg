@@ -10,8 +10,7 @@
 import crypto from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import {
-  LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_DOCUMENTS_V10, LEGAL_DRAFT_DOCUMENTS_V11, LEGAL_DRAFT_DOCUMENTS_V12, LEGAL_DRAFT_DOCUMENTS_V13, LEGAL_DRAFT_STATUS, LEGAL_DRAFT_VERSIONS,
+import { LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE_DOCUMENT_IDS, LEGAL_DRAFTS_R3_CGU_DOCUMENT_IDS, LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_DOCUMENTS_V10, LEGAL_DRAFT_DOCUMENTS_V11, LEGAL_DRAFT_DOCUMENTS_V12, LEGAL_DRAFT_DOCUMENTS_V13, LEGAL_DRAFT_STATUS, LEGAL_DRAFT_VERSIONS,
   LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V12_DOCUMENT_IDS, LEGAL_DRAFTS_V12_STATUS, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_V13_ACTIVATION,
   LEGAL_DRAFTS_V13_DOCUMENT_IDS, LEGAL_DRAFT_DOCUMENTS_V8, LEGAL_DRAFT_DOCUMENTS_V9_PRO, LEGAL_DRAFT_DOCUMENTS_PRO_V10, LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9,
   LEGAL_DRAFTS_PRO_V10, LEGAL_DRAFTS_STRUCTURES_V9, approvedVersionOf, draftFor, draftTextKeys, draftVisibility, knownApprovalToken, latestDraftVersionOf,
@@ -61,7 +60,8 @@ const STRUCT_V8_SHA = '51b988dce038d1a155ebbb9844a9d1f4ff6f17ed31d544382f37067a8
 describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderation block', () => {
   it('v12 = cgu-citoyen + notice, v13 = notice only, after v11; v10 / v11 unchanged byte for byte; approved by the owner on 23/11/2026', () => {
     const order = [...LEGAL_DRAFT_VERSIONS];
-    expect(order.slice(-6)).toEqual([LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]);
+    expect(order.slice(-8, -2)).toEqual([LEGAL_DRAFTS_V10,   // G14-R3 (proposed 24/11/2026): cgu v13-2026-11-24, notice v14-2026-11-24 follow
+      LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]);
     expect([LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]).toEqual(['v9-2026-11-23', 'v10-2026-11-23']);
     expect(sha(PRO_V9)).toBe(PRO_V9_SHA); expect(sha(STRUCT_V8)).toBe(STRUCT_V8_SHA);
     expect([...LEGAL_DRAFTS_V12_DOCUMENT_IDS]).toEqual(['cgu-citoyen', N]);
@@ -75,9 +75,9 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     expect(LEGAL_DRAFTS_V13_ACTIVATION).toMatch(/^APPROVED_FOR_ACTIVATION — approuvée le 23\/11\/2026 par le responsable.*sans structure pilote.*cgu-professionnel v10-2026-11-23 et conditions-structures v9-2026-11-23$/);
     for (const x of [LEGAL_DRAFTS_V12_STATUS, LEGAL_DRAFTS_V13_ACTIVATION]) expect(x).not.toMatch(/proposée|pas encore approuvée|AT_K8|avocat|expert/);
     for (const d of [n12, n13, cgu, pro, struct]) expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
-    expect(latestDraftVersionOf(N)).toBe(LEGAL_DRAFTS_V13);
-    expect(latestDraftVersionOf('cgu-citoyen')).toBe(LEGAL_DRAFTS_V12);
-    expect(find(LEGAL_DRAFT_DOCUMENTS, N).version).toBe(LEGAL_DRAFTS_V13);
+    expect(latestDraftVersionOf(N)).toBe(LEGAL_DRAFTS_R3_NOTICE);   // G14-R3: notice v14 and cgu v13 proposed (tests/unit/g14-r3-household-trusted-events.test.js)
+    expect(latestDraftVersionOf('cgu-citoyen')).toBe(LEGAL_DRAFTS_R3_CGU);
+    expect(find(LEGAL_DRAFT_DOCUMENTS, N).version).toBe(LEGAL_DRAFTS_R3_NOTICE);
     expect(latestDraftVersionOf('cgu-professionnel')).toBe(LEGAL_DRAFTS_PRO_V10);
     expect(latestDraftVersionOf('conditions-structures')).toBe(LEGAL_DRAFTS_STRUCTURES_V9);
   });

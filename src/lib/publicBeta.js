@@ -73,7 +73,9 @@ export function accountEntriesShown(beta, open = builtOpen()) {
  * @typedef {{ accountsScope: 'booking' | 'full', proSelfRegistration: boolean, accountsExtras?: string[] }} BetaSubSwitches
  */
 /** G4: the screens of each module that can be added by name to the narrow accounts scope (server: ACCOUNTS_EXTRAS) @type {Readonly<Record<string, readonly string[]>>} */
-export const ACCOUNTS_EXTRA_SCREENS = Object.freeze({ parcours: Object.freeze(['/compte/parcours']), assist: Object.freeze(['/compte/accompagnement']) });   // G14-AID: mode accompagnant
+export const ACCOUNTS_EXTRA_SCREENS = Object.freeze({ parcours: Object.freeze(['/compte/parcours']), assist: Object.freeze(['/compte/accompagnement']),   // G14-AID: mode accompagnant
+  // G14-R3: « Mon foyer » and the guardian card live on /compte/profil (already a narrow-scope screen): no screen of their own; the trusted persons have theirs
+  household: Object.freeze([]), guardians: Object.freeze([]), delegations: Object.freeze(['/compte/delegations']) });
 /** @param {unknown} v @returns {string[]} */
 const extrasOf = (v) => String(v || '').split(',').map((x) => x.trim().toLowerCase()).filter((x) => Object.prototype.hasOwnProperty.call(ACCOUNTS_EXTRA_SCREENS, x));
 /** @returns {BetaSubSwitches} */

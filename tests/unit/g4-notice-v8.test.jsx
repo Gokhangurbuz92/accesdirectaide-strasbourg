@@ -47,8 +47,8 @@ describe('privacy notice v8-2026-11-19 — exactly two changes', () => {
   it('v8 of the notice exists, still a draft; v6 / v7 of the notice unchanged byte for byte; the citizen terms stay at v7', () => {
     expect(v8.version).toBe(LEGAL_DRAFTS_V8);
     expect(v8.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
-    expect(latestDraftVersionOf(ID)).toBe('v13-2026-11-23');   // G14 expansion (23/11/2026): v12 / v13 are newer   // G14 (22/11/2026): v10 (v8 + Mon Parcours) and v11 (v9 + Mon Parcours, for K8) are newer   // G8 (19/11/2026): v9 (professional accounts) is newer; v8 stays approvable by name (tests/unit/g8-notice-v9.test.jsx)
-    expect(latestDraftVersionOf('cgu-citoyen')).toBe('v12-2026-11-23');   // G14: cgu-citoyen v10 (Mon Parcours), then v12 (expansion)
+    expect(latestDraftVersionOf(ID)).toBe('v14-2026-11-24');   // G14-R3 (24/11/2026): v14 proposed   // G14 expansion (23/11/2026): v12 / v13 are newer   // G14 (22/11/2026): v10 (v8 + Mon Parcours) and v11 (v9 + Mon Parcours, for K8) are newer   // G8 (19/11/2026): v9 (professional accounts) is newer; v8 stays approvable by name (tests/unit/g8-notice-v9.test.jsx)
+    expect(latestDraftVersionOf('cgu-citoyen')).toBe('v13-2026-11-24');   // G14-R3: v13-2026-11-24 proposed; G14: cgu-citoyen v10 (Mon Parcours), then v12 (expansion)
     // hashes taken from the commit before this change (8d05312)
     expect(sha(v7)).toBe('4ac5e148ef8a26337c40545a0f249c7c660546b21d0be8cce110adc3c35470e6');
     expect(sha(v6)).toBe('f7cb5dec60ab2186797f89eaf64de5780f7e07221ba4b521c7e627ebf37d8966');
