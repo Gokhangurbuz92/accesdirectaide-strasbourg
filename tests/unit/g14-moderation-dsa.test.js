@@ -77,7 +77,7 @@ describe('retention policy G14', () => {
     expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
     expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
     expect(Object.keys(RETENTION_POLICY.approvedSteps)).toEqual(['unverifiedAccountsDeleted']);
-    expect(policySummary(RETENTION_POLICY)).toMatchObject({ approvedStepCount: 1, decidedStepCount: 28 });   // 25 on 22/11 + the 2 moderation-case steps of 23/11 + G14-PS socialReferralsClosedDeleted (proposal, duration pending the owner)
+    expect(policySummary(RETENTION_POLICY)).toMatchObject({ approvedStepCount: 1, decidedStepCount: 28 });   // 25 on 22/11 + the 2 moderation-case steps of 23/11 + G14-PS socialReferralsClosedDeleted (decided by the owner 23/11/2026)
   });
   it('the durations are the « (önerilen) » answers of the form', () => {
     const d = (k) => policyDays(RETENTION_POLICY, k);
@@ -94,8 +94,8 @@ describe('retention policy G14', () => {
       const step = PURGE_STEPS.find((s) => s.id === id);
       expect(step, id).toBeTruthy();
       if (step.durationKey) expect(() => policyDays(RETENTION_POLICY, step.durationKey), id).not.toThrow();
-      // G14-PS: the social referral duration is still a PROPOSAL (pendingApproval): it is refused even before the approval record is looked at
-      expect(stepApprovalProblem(RETENTION_POLICY, step), id).toBe(id === 'socialReferralsClosedDeleted' ? 'DURATION_PENDING_APPROVAL' : 'STEP_NOT_APPROVED_IN_POLICY');
+      // G14-PS: the social referral duration is decided (owner, 23/11/2026) like the others: only the step's own approval is missing
+      expect(stepApprovalProblem(RETENTION_POLICY, step), id).toBe('STEP_NOT_APPROVED_IN_POLICY');
       expect(stepDecision(RETENTION_POLICY, id)).toBe(dec);
       if (id.startsWith('entraide')) expect(dec.condition).toBe(X03_AIPD_CONDITION);
     }

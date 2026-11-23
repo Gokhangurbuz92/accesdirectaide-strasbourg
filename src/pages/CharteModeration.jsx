@@ -6,6 +6,7 @@
  * safety notices within 24 hours, other notices within 7 days, appeal six months (APPEAL_MONTHS), sole-moderator review after 24 hours
  * (SOLE_REVIEW_DELAY_MS), warning then 1 to 180 days within 12 months (SUSPENSION_MIN_DAYS / MAX_DAYS, WARNING_WINDOW_DAYS), unread text withdrawn after
  * 60 days (TESTIMONIAL_PENDING_DAYS / STORY_PENDING_DAYS). No certified out-of-court body (art. 21) is offered.
+ * Text approved by the owner on 23/11/2026 (OWNER_VALIDATED: the controller's own approval; CONTROL/master/G14_OWNER_LEGAL_APPROVAL_2026-11-23.md).
  */
 import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';

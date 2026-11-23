@@ -1,6 +1,6 @@
 {
   "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
-  "version": "0.5",
+  "version": "0.6",
   "date_mise_a_jour": "2026-11-23",
   "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
   "sources_code": {
@@ -86,7 +86,8 @@
       "id": "T02",
       "nom": "Questionnaire / diagnostic et simulation des droits",
       "finalite": "Estimer de façon indicative les aides possibles",
-      "base_legale_proposee": "Service demandé (art. 6.1.b) ; art. 9.2.a si des réponses révèlent santé ou handicap — à valider",
+      "base_legale_proposee": "Intérêt légitime de l'exploitant à informer le public (art. 6.1.f) — notice v12 / v13, P18, décidé par le responsable le 23/11/2026",
+      "point_ouvert": "Art. 9.2.a si des réponses révèlent santé ou handicap : non tranché par la décision du 23/11/2026 (le calcul n'enregistre rien)",
       "categories_donnees": [
         "Revenus",
         "Loyer",
@@ -112,7 +113,7 @@
         "Neon pour la copie partagée (prévu)",
         "Scaleway SAS (hébergement de notre propre moteur OpenFisca, Paris fr-par ; branche g14-of, non fusionnée ici) — les réponses n'y sont pas enregistrées"
       ],
-      "base_legale_g14": "Notice v12 / v13, P18 : intérêt légitime de l'exploitant à informer le public (art. 6.1.f) — proposé, à valider",
+      "base_legale_g14": "Notice v12 / v13, P18 : intérêt légitime de l'exploitant à informer le public (art. 6.1.f) — décidé par le responsable le 23/11/2026",
       "services_refuses": [
         "OpenFisca (API publique) : refusé en production, prototype de développement uniquement"
       ],
@@ -352,7 +353,7 @@
       "id": "T08",
       "nom": "Assistant IA local (citoyens)",
       "finalite": "Répondre aux questions générales sur les aides à partir des fiches vérifiées, avec citations",
-      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) avec opposition possible — à valider",
+      "base_legale_proposee": "Intérêt légitime de l'exploitant à informer le public (art. 6.1.f), avec opposition possible — notice v12 / v13, P19, décidé par le responsable le 23/11/2026",
       "categories_donnees": [
         "Message",
         "Intention détectée",
@@ -368,7 +369,7 @@
         "Aucun tiers — modèle local"
       ],
       "modele_ia": "Ollama local (qwen3:8b, nomic-embed-text), joint uniquement en boucle locale (127.0.0.1)",
-      "evolution_g14": "Branche g14-ai (non fusionnée ici) : Cloudflare, Inc. — Workers AI (États-Unis), sous-traitant (art. 28) ; question (adresses et téléphones masqués ; NIR, IBAN, carte refusés) et extraits de fiches publiques vérifiées envoyés depuis le serveur, sans compte ni adresse IP ; aucune conversation enregistrée, compteurs techniques anonymes 90 jours ; DPA Cloudflare v6.4 (3 avril 2026) : CCT 2021/914 module 2 et cadre UE–États-Unis ; pas d'entraînement ni de conservation pour une inférence ordinaire (page Workers AI du 16/10/2026) ; base : intérêt légitime (art. 6.1.f) — proposé, à valider",
+      "evolution_g14": "Branche g14-ai (non fusionnée ici) : Cloudflare, Inc. — Workers AI (États-Unis), sous-traitant (art. 28) ; question (adresses et téléphones masqués ; NIR, IBAN, carte refusés) et extraits de fiches publiques vérifiées envoyés depuis le serveur, sans compte ni adresse IP ; aucune conversation enregistrée, compteurs techniques anonymes 90 jours ; DPA Cloudflare v6.4 (3 avril 2026) : CCT 2021/914 module 2 et cadre UE–États-Unis ; pas d'entraînement ni de conservation pour une inférence ordinaire (page Workers AI du 16/10/2026) ; base : intérêt légitime (art. 6.1.f) — décidé par le responsable le 23/11/2026",
       "sous_traitants": [
         "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
@@ -820,7 +821,7 @@
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "12 mois après la clôture (durée proposée — à valider)"
+          "description": "12 mois après la clôture (décision du responsable du 23/11/2026)"
         }
       ],
       "mesures_securite": "Aucun texte libre ni document ; code à usage unique stocké en empreinte ; chaque transition journalisée"
@@ -830,7 +831,7 @@
       "nom": "Observatoire des droits et des services (signaux de demande anonymes)",
       "statut": "branche g14-obs, non fusionnée dans g14-lex (migration 0062)",
       "finalite": "Compter, par jour, les recherches et consultations par codes de listes fermées pour publier des tableaux trimestriels",
-      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — proposé, à valider",
+      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v12 / v13, P20, décidé par le responsable le 23/11/2026",
       "categories_donnees": [
         "Codes de listes fermées",
         "Jour",
@@ -1061,8 +1062,8 @@
       "role": "Assistant citoyen (branche g14-ai, non fusionnée ici)",
       "statut": "prévu",
       "localisation": "États-Unis (réseau mondial)",
-      "mecanisme_transfert": "CCT 2021/914 module 2 (DPA Cloudflare v6.4, 3 avril 2026, clause 6.2) ; cadre UE–États-Unis (clause 6.4) — page lue le 23/11/2026 ; application du DPA sans signature à confirmer",
-      "dpa": "inconnu / non signé"
+      "mecanisme_transfert": "CCT 2021/914 module 2 (DPA Cloudflare v6.4, 3 avril 2026, clause 6.2) ; cadre UE–États-Unis (clause 6.4) — page lue le 23/11/2026",
+      "dpa": "intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du responsable du 23/11/2026)"
     },
     {
       "nom": "Scaleway SAS (OpenFisca)",

@@ -82,7 +82,7 @@ describe('moderation cases: retention decided 23/11/2026, not approved', () => {
     expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
     expect(RETENTION_POLICY.durations.MODERATION_CASE_CLOSED_DAYS.days).toBe(365);
     const steps = expansionSteps({ heldSql: () => 'HELD', personProtectedSql: () => 'PROTECTED' });
-    expect(steps.length).toBe(28);   // g14-r2: 25 + the 2 moderation-case steps + G14-PS socialReferralsClosedDeleted (proposal, duration pending the owner)
+    expect(steps.length).toBe(28);   // g14-r2: 25 + the 2 moderation-case steps + G14-PS socialReferralsClosedDeleted (decided by the owner 23/11/2026)
     for (const id of ['moderationDecisionsDeleted', 'moderationSanctionsDeleted']) {
       const s = steps.find((x) => x.id === id);
       expect(s?.durationKey, id).toBe('MODERATION_CASE_CLOSED_DAYS');

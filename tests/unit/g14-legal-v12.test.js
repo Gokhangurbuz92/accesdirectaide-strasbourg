@@ -1,6 +1,7 @@
 /**
  * G14 (23/11/2026) — the expansion capabilities X04 (events), X02 (testimonials), X01 (community stories) and the DSA « signalements et décisions »
- * block in the legal documents, with the owner as the sole named moderator. PROPOSED (not approved by the owner yet):
+ * block in the legal documents, with the owner as the sole named moderator. APPROVED by the owner on 23/11/2026 (OWNER_VALIDATED: the controller's own
+ * approval, CONTROL/master/G14_OWNER_LEGAL_APPROVAL_2026-11-23.md), with the « à valider » points decided as proposed:
  *   v12-2026-11-23  cgu-citoyen = v10 + § 7 bis + one § 8 paragraph; notice-confidentialite = v10 (no ADA Pro text) + the expansion texts → X04 / X01 / X02 opening;
  *   v13-2026-11-23  notice-confidentialite = v11 (ADA Pro) + the same expansion texts + the ADA Pro opening texts (owner 23/11/2026: verified public
  *                   sign-up, appointments, 8x8 JaaS video, Outlook free / busy), with cgu-professionnel v10-2026-11-23 and conditions-structures v9-2026-11-23.
@@ -58,7 +59,7 @@ const PRO_V9_SHA = '7754710dee1e4e3f4531859742029c05c0a28772b597935835588e249fbc
 const STRUCT_V8_SHA = '51b988dce038d1a155ebbb9844a9d1f4ff6f17ed31d544382f37067a8e9f7821';
 
 describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderation block', () => {
-  it('v12 = cgu-citoyen + notice, v13 = notice only, after v11; v10 / v11 unchanged byte for byte; proposed, not approved', () => {
+  it('v12 = cgu-citoyen + notice, v13 = notice only, after v11; v10 / v11 unchanged byte for byte; approved by the owner on 23/11/2026', () => {
     const order = [...LEGAL_DRAFT_VERSIONS];
     expect(order.slice(-6)).toEqual([LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]);
     expect([LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]).toEqual(['v9-2026-11-23', 'v10-2026-11-23']);
@@ -68,8 +69,11 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     expect(sha(NOTICE_V10)).toBe('a43604b8dd9087a2ca4db08cb1478fdad30f780e1e2e22a0f690f09e01f2e571');
     expect(sha(CGU_V10)).toBe('3471b8b21efc7b4a885498de79e70187925558a3c8fc9684f4d6748bea67b6e4');
     expect(sha(NOTICE_V11)).toBe('482d1511b2ee940cbb34d134330cdb38caa854cb24353a70f9199e77cbd12fea');
-    expect(LEGAL_DRAFTS_V12_STATUS).toMatch(/^PROPOSED/);
-    expect(LEGAL_DRAFTS_V13_ACTIVATION).toMatch(/^APPROVED_FOR_ACTIVATION_AT_K8 — proposée .*pas encore approuvée/);
+    // owner approval 23/11/2026: v12 for the X04 / X01 / X02 opening; v13 (with cgu-professionnel v10 and conditions-structures v9) for the ADA Pro opening,
+    // decided without a pilot structure (no K8 pilot). Like v10 / v11, a document is in force only once the build names it (status unchanged below).
+    expect(LEGAL_DRAFTS_V12_STATUS).toMatch(/^APPROVED — approuvée le 23\/11\/2026 par le responsable/);
+    expect(LEGAL_DRAFTS_V13_ACTIVATION).toMatch(/^APPROVED_FOR_ACTIVATION — approuvée le 23\/11\/2026 par le responsable.*sans structure pilote.*cgu-professionnel v10-2026-11-23 et conditions-structures v9-2026-11-23$/);
+    for (const x of [LEGAL_DRAFTS_V12_STATUS, LEGAL_DRAFTS_V13_ACTIVATION]) expect(x).not.toMatch(/proposée|pas encore approuvée|AT_K8|avocat|expert/);
     for (const d of [n12, n13, cgu, pro, struct]) expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
     expect(latestDraftVersionOf(N)).toBe(LEGAL_DRAFTS_V13);
     expect(latestDraftVersionOf('cgu-citoyen')).toBe(LEGAL_DRAFTS_V12);
@@ -260,12 +264,27 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
 });
 
 describe('G14 consolidation (23/11/2026) — other branches integrated', () => {
-  it('v12 carries the citizen functions, v13 adds the professional side; undecided bases are marked « proposé, à valider »', () => {
+  it('v12 carries the citizen functions, v13 adds the professional side; the bases and the duration decided on 23/11/2026 carry no « à valider » mark', () => {
     const b = keys(n12); const d = keys(n13); const f = keys(cgu);
     for (const k of G14C_CITIZEN) expect(d[k], k).toBe(b[k]);
     for (const k of G14C_PRO) { expect(b[k], k).toBeUndefined(); expect(typeof d[k], k).toBe('string'); }
-    for (const k of ['purposes.p18_g14c', 'purposes.p19_g14c', 'purposes.p20_g14c']) expect(b[k], k).toMatch(/— proposé, à valider\.$/);
-    expect(d['retention.socialReferrals_g14c']).toContain('(durée proposée — à valider)');
+    // owner approval 23/11/2026: P18 / P19 / P20 rest on legitimate interest (art. 6, 1, f); social referrals are erased 12 months after closure
+    for (const k of ['purposes.p18_g14c', 'purposes.p19_g14c']) expect(b[k], k).toMatch(/ Base : intérêt légitime de l'exploitant à informer le public \(art\. 6, 1, f\)\.$/);
+    expect(b['purposes.p20_g14c']).toMatch(/ Base : intérêt légitime \(art\. 6, 1, f\)\.$/);
+    expect(d['retention.socialReferrals_g14c']).toMatch(/^Orientations sociales : 12 mois après la clôture de l'orientation ; votre accord/);
+    for (const x of [...Object.values(b), ...Object.values(d), ...Object.values(f)]) expect(x).not.toMatch(/à valider|Base proposée|durée proposée/);
+    const MARKS = { en: /to be confirmed|Proposed basis|proposed period/, de: /zu bestätigen|Vorgeschlagene|vorgeschlagen/, tr: /onaylanacak|Önerilen|önerilmiş/,
+      ar: /قيد المصادقة|المقترح|مقترح/, uk: /підлягає затвердженню|Запропонован|запропонован/ };
+    const G14C_DECIDED = ['purposes.p18_g14c', 'purposes.p19_g14c', 'purposes.p20_g14c', 'retention.socialReferrals_g14c'];
+    for (const lang of LANGS) {
+      const t = locale(lang);
+      for (const k of G14C_DECIDED) { const v = t[`privacyNotice.${k}`]; expect(typeof v, `${lang} ${k}`).toBe('string'); expect(v, `${lang} ${k}`).not.toMatch(MARKS[lang]); }
+      for (const k of ['purposes.p18_g14c', 'purposes.p19_g14c', 'purposes.p20_g14c']) expect(t[`privacyNotice.${k}`], `${lang} ${k}`).toMatch(/6, 1, f\)\.$|6 Abs\. 1 Buchst\. f\)\.$|6، 1، و\)\.$/);
+      expect(t['privacyNotice.retention.socialReferrals_g14c'], lang).toMatch(/12/);
+    }
+    expect(D.SOCIAL_REFERRAL_CLOSED_DAYS).toMatchObject({ days: 365, decidedOn: '2026-11-23' }); expect(D.SOCIAL_REFERRAL_CLOSED_DAYS.pendingApproval).toBeUndefined();
+    expect(RETENTION_POLICY.decidedSteps.socialReferralsClosedDeleted).toMatchObject({ decidedOn: '2026-11-23', decision: expect.stringMatching(/^décision du responsable 23\/11\/2026/) });
+    expect(RETENTION_POLICY.approvedSteps?.socialReferralsClosedDeleted).toBeUndefined();
     for (const k of ['purposes.p21_g14c']) expect(b[k]).toMatch(/Base : votre consentement \(art\. 6, 1, a\)\.$/);
     expect(d['purposes.p23_g14c']).toMatch(/responsables conjoints, selon l'accord décrit en section 9\. Base : votre consentement/);
     expect(d['purposes.p10c_g14c']).toMatch(/Apple, Google, Mozilla ou Microsoft.*hors de l'Union européenne.*\.ics.*pas sensible/);

@@ -1,9 +1,9 @@
 // @ts-nocheck
 /**
- * G14 — the 27 purge steps of the expansion content (X04 events, X02 testimonials, X01 stories, X05 job listings, X03 Entraide), of the account-free
- * DSA notices and of the moderation cases (decisions, appeals, sanctions). Durations: the versioned policy (api/_services/retention-policy.js, version
+ * G14 — the 28 purge steps of the expansion content (X04 events, X02 testimonials, X01 stories, X05 job listings, X03 Entraide), of the account-free
+ * DSA notices, of the moderation cases (decisions, appeals, sanctions) and of the closed social referrals (G14-PS). Durations: the versioned policy (api/_services/retention-policy.js, version
  * g14-expansion-2-2026-11-23-a7-365d), decided by the controller (décision du responsable 22/11/2026, formulaire G14, questions 14–28; 23/11/2026 for the
- * moderation cases). The steps follow the rules of api/_handlers/cron/gdpr-purge.js: a dry run by
+ * moderation cases and the social referrals). The steps follow the rules of api/_handlers/cron/gdpr-purge.js: a dry run by
  * default; each one executes only once the controller records its OWN approval in the policy (approvedSteps: dry run read, backup verified) and the operator
  * lists it in GDPR_PURGE_APPROVED_STEPS; X03 steps also wait for the dedicated X03 AIPD (decidedSteps condition, STEP_CONDITION_OPEN).
  * Safeguards on every step that touches a person: an ACTIVE legal hold on any id the row carries, a processing restriction (art. 18 GDPR) or an open access
@@ -210,7 +210,7 @@ export function expansionSteps({ heldSql, personProtectedSql }) {
       tables: ['ContentNotice', 'ModerationAppeal', 'LegalHold'],
       ...del('ContentNotice', (ctx) => sql`t.status = 'decided' AND t."decidedAt" < ${ctx.cutoff('CONTENT_NOTICE_AFTER_DECISION_DAYS')} AND NOT ${heldSql(sql`t.id`)}
         AND NOT EXISTS (SELECT 1 FROM "ModerationAppeal" a WHERE a."noticeId" = t.id AND a.status = 'open')`) },
-    // ── G14-PS: social referrals (0061) — PROPOSAL, duration pendingApproval: never executes before the owner confirms it ─────────────────────────
+    // ── G14-PS: social referrals (0061) — decided (décision du responsable 23/11/2026, 12 months after closure); executes only once approved ──────
     { id: 'socialReferralsClosedDeleted', summaryKey: 'social_referrals_deleted', ecode: 'G14-PS', kind: 'delete', table: 'SocialReferral', durationKey: 'SOCIAL_REFERRAL_CLOSED_DAYS',
       tables: ['SocialReferral', 'SocialReferralEvent', 'LegalHold', 'DSRRequest'],
       ...del('SocialReferral', (ctx) => sql`t."closedAt" IS NOT NULL AND t."closedAt" < ${ctx.cutoff('SOCIAL_REFERRAL_CLOSED_DAYS')}

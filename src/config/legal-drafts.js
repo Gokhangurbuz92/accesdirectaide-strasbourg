@@ -729,7 +729,10 @@ export const LEGAL_DRAFT_DOCUMENTS_V11 = [withChanges(LEGAL_DRAFTS_V11_CHANGES, 
  * carried on the v10 / v11 bases) and the code of the expansion (api/_services/academy-events.js, testimonials.js, community-stories.js,
  * moderation-dsa.js, gdpr-purge-expansion-steps.js, retention-policy.js G14 durations). NOT X05 (job listings: needs the `pro` surface) and NOT X03
  * (entraide: closed until its dedicated AIPD). The owner is the sole named moderator (owner, 23/11/2026): the texts say « le responsable du traitement /
- * l'exploitant, qui assure lui-même la modération », without his name. PROPOSED: not approved by the owner yet.
+ * l'exploitant, qui assure lui-même la modération », without his name. APPROVED by the owner on 23/11/2026 (verbatim: CONTROL/master/
+ * G14_OWNER_LEGAL_APPROVAL_2026-11-23.md; OWNER_VALIDATED — the controller's own approval, not a lawyer's or an expert's review): cgu-citoyen v12,
+ * notice v12 and v13, cgu-professionnel v10, conditions-structures v9; the « à valider » points decided as proposed (P18 / P19 / P20: legitimate
+ * interest, art. 6, 1, f; social referrals: 12 months after closure; Cloudflare DPA v6.4 accepted online).
  *  v12  cgu-citoyen            = v10 + § « 7 bis. Contenus que vous publiez » (new section `publishing`, ten items) + one paragraph in § 8.
  *       notice-confidentialite = v10 (Mon Parcours, from v8: no ADA Pro text) + § 2 one paragraph, new § « 3 ter » (`participation`), § 4 five items,
  *                                § 5 one paragraph, § 6 Mailjet item (moderation e-mails), § 8 one paragraph, new § « 13 » (`moderation`).
@@ -738,7 +741,7 @@ export const LEGAL_DRAFT_DOCUMENTS_V11 = [withChanges(LEGAL_DRAFTS_V11_CHANGES, 
  *       (owner decision 23/11/2026: no pilot structure, public sign-up verified by the operator, appointments, 8x8 JaaS video, Outlook free / busy):
  *       § 2 p1_v13, § 3 P4p_v13 + P4 / P5 / P7 moved word for word from § 3 bis + P11 without « (désactivé) », § 4 appointments / Outlook / not-open list,
  *       § 5 p2_v13, § 6 Microsoft / 8x8 items and video paragraph, § 7 video paragraph, § 9 booking (the structure receives neither name, e-mail nor
- *       phone: rdv.js), § 11 p3_v13 (sign-up). Proposed for activation at the ADA Pro opening only (LEGAL_DRAFTS_V13_ACTIVATION), with
+ *       phone: rdv.js), § 11 p3_v13 (sign-up). Approved for activation at the ADA Pro opening (LEGAL_DRAFTS_V13_ACTIVATION), with
  *       cgu-professionnel v10-2026-11-23 and conditions-structures v9-2026-11-23 (below).
  * Facts by text (code wins over the master; differences listed in the master file):
  *  participation  X04 adult account only (isAdultAccount), one need from a closed list with a separate never-pre-ticked agreement, proof in ConsentLog
@@ -766,9 +769,9 @@ export const LEGAL_DRAFTS_V12 = 'v12-2026-11-23';
 export const LEGAL_DRAFTS_V12_DOCUMENT_IDS = Object.freeze(['cgu-citoyen', 'notice-confidentialite']);
 export const LEGAL_DRAFTS_V13 = 'v13-2026-11-23';
 export const LEGAL_DRAFTS_V13_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
-/** v12 and v13 are proposed (23/11/2026), not approved by the owner; v13 carries the v9 / v11 texts on professional accounts and the video provider */
-export const LEGAL_DRAFTS_V12_STATUS = 'PROPOSED — proposée le 23/11/2026, à approuver par le responsable avant l’ouverture de X04, X01 et X02';
-export const LEGAL_DRAFTS_V13_ACTIVATION = 'APPROVED_FOR_ACTIVATION_AT_K8 — proposée le 23/11/2026 (pas encore approuvée par le responsable), à mettre en vigueur seulement à l’ouverture d’ADA Pro (K8 : inscription libre vérifiée, rendez-vous, visioconférence, Outlook), avec cgu-professionnel v10-2026-11-23 et conditions-structures v9-2026-11-23';
+/** v12 and v13 are approved by the owner (23/11/2026, OWNER_VALIDATED); v13 carries the v9 / v11 texts on professional accounts and the video provider */
+export const LEGAL_DRAFTS_V12_STATUS = 'APPROVED — approuvée le 23/11/2026 par le responsable, à mettre en vigueur à l’ouverture de X04, X01 et X02';
+export const LEGAL_DRAFTS_V13_ACTIVATION = 'APPROVED_FOR_ACTIVATION — approuvée le 23/11/2026 par le responsable, à mettre en vigueur à l’ouverture d’ADA Pro, décidée le 23/11/2026 sans structure pilote (inscription vérifiée, rendez-vous, visioconférence, Outlook), avec cgu-professionnel v10-2026-11-23 et conditions-structures v9-2026-11-23';
 
 export const LEGAL_DRAFTS_V12_STATUS_PARAGRAPH = "Elle décrit aussi, lorsqu'elles sont ouvertes, les fonctions de participation (section 3 ter) et la manière dont les contenus publiés sont signalés et modérés (section 13).";
 export const LEGAL_DRAFTS_V12_EVENTS = "Événements de l'Académie : vous inscrire à un événement, annuler votre inscription et recevoir un rappel dans les notifications de Mon Espace à partir de 48 heures avant le début : exécution des conditions d'utilisation (art. 6, 1, b). Si vous le choisissez, un seul besoin d'accessibilité dans une liste (par exemple une interprétation en langue des signes) : votre consentement explicite (art. 9, 2, a), donné par une case distincte jamais cochée d'avance. Chaque accord et chaque retrait est enregistré comme preuve. Vous pouvez retirer ce besoin à tout moment depuis « Mes événements » ; l'annulation de l'inscription l'efface aussi. L'organisateur ne reçoit que des nombres (combien de personnes inscrites, combien de besoins de chaque sorte), jamais votre nom ni votre adresse.";
@@ -835,19 +838,19 @@ export const LEGAL_DRAFTS_V13_PRO_ACCOUNT_PARAGRAPH = "Si un compte professionne
  *  situation  g14-rg cff79996   /situation works in the browser (like /droits, /orientation): typed words and the commune are neither sent nor stored;
  *                               « Ajouter à Mon Parcours » stores the closed-list code only; « Aider l'Observatoire » (opt-in) sends the situation id only.
  *  P18        g14-of cd9bc867   the questionnaire answers (and the optional Eurométropole commune) go to our own OpenFisca engine at Scaleway (fr-par);
- *                               nothing stored; indicative estimate. Basis proposed (owner).
+ *                               nothing stored; indicative estimate. Basis: legitimate interest (owner, 23/11/2026).
  *  P19        g14-ai 31eb23f2   api/lib/workers-ai.js: Cloudflare Workers AI; question (identifiers masked, NIR / IBAN / card refused) + verified public
  *                               extracts, from our server, no account, no IP; no conversation stored, anonymous counters 90 days. Cloudflare DPA v6.4
  *                               (3 April 2026): processor (2.3), EU SCC 2021/914 module 2 (6.2(a)(i)), DPF (6.4); Workers AI data usage page (16/10/2026):
- *                               no training, no retention for standard inference. Basis proposed (owner).
+ *                               no training, no retention for standard inference. Basis: legitimate interest (owner, 23/11/2026); DPA v6.4 accepted online.
  *  P20        g14-obs 2fcab762  demand signals: closed-list codes, day, commune except sensitive subjects; daily counts deleted at the quarterly freeze;
- *                               quarterly tables, values < 5 masked, Licence Ouverte 2.0. Basis proposed (owner).
+ *                               quarterly tables, values < 5 masked, Licence Ouverte 2.0. Basis: legitimate interest (owner, 23/11/2026).
  *  P21        g14-aid 81e00197  assisted mode: person's consent + password, 30 / 60 / 120 minutes, never security / deletion / full export / new access,
  *                               Coffre only if ticked and never for a professional; remote trusted person; every action logged (AuditLog, 1 year).
  *  offline    g14-lite 0cb05297 opt-in local copy of Mon Parcours (IndexedDB), unencrypted, erased on untick / sign-out / account change; read-only offline.
  *  passeport  g14-ps 6e37ee65   the Passeport Social is encrypted on the device only: not a processing of AccesDirectAide.
  *  P23 (v13)  g14-ps 6e37ee65   social referrals (api/_services/social-referrals.js): consent with a one-time code, closed reasons, status, optional contact
- *                               seen by the receiving structure only while open; no document, no health data; retention 12 months after closure (proposed).
+ *                               seen by the receiving structure only while open; no document, no health data; retention 12 months after closure (owner, 23/11/2026).
  *  P10c (v13) g14-chan-a11y aea83e30  Web Push reminders (encrypted payload via the browser vendor's push service), .ics with date, time and public address
  *                               for non-sensitive services only; subscription kept until disabled / account erased (failing subscriptions: PUSH_FAILING_DAYS 30).
  * The Piper « siwis » credit (CC BY 4.0) belongs to the FALC audio page of g14-chan-a11y, not to the notice.
@@ -855,9 +858,9 @@ export const LEGAL_DRAFTS_V13_PRO_ACCOUNT_PARAGRAPH = "Si un compte professionne
 export const LEGAL_DRAFTS_G14C_SITUATION = "La page « Ma situation » (/situation) fonctionne de la même façon : les mots que vous tapez et la commune que vous choisissez restent dans votre navigateur ; ils ne sont ni envoyés ni enregistrés. Si vous êtes connecté et choisissez « Ajouter à Mon Parcours », seul le code de la démarche, pris dans une liste fermée, est enregistré (P17). Si vous cochez « Aider l'Observatoire », seul l'identifiant de la situation choisie est envoyé, sans rien qui vous identifie (P20).";
 export const LEGAL_DRAFTS_G14C_OFFLINE = "Mon Parcours hors ligne : si vous le cochez, une copie de vos étapes est gardée sur votre appareil, dans le stockage de votre navigateur, sans chiffrement ; ne l'activez pas sur un appareil partagé. Elle est effacée quand vous décochez la case, quand vous vous déconnectez ou quand vous changez de compte ; hors connexion, elle se consulte seulement. Le site garde aussi sur l'appareil des fichiers techniques publics. Ce stockage est strictement nécessaire au service que vous demandez (article 82 de la loi Informatique et Libertés) : il ne demande pas d'autre accord.";
 export const LEGAL_DRAFTS_G14C_PASSEPORT = "Le Passeport Social est gardé chiffré sur votre appareil seulement : AccesDirectAide n'en reçoit rien et ne peut pas le récupérer ; si vous perdez l'appareil ou sa clé, il est perdu. Vous seul décidez de le montrer ou de le transmettre. Ce n'est pas un traitement d'AccesDirectAide.";
-export const LEGAL_DRAFTS_G14C_P18 = "P18 — Calcul indicatif d'aides à partir du questionnaire : vos réponses (dont, si vous la choisissez, votre commune de l'Eurométropole) sont envoyées à notre propre moteur de calcul OpenFisca, hébergé par Scaleway SAS en France, qui agit comme sous-traitant ; elles n'y sont pas enregistrées. Le résultat est une estimation indicative : seul l'organisme compétent décide. Base proposée : intérêt légitime de l'exploitant à informer le public (art. 6, 1, f) — proposé, à valider.";
-export const LEGAL_DRAFTS_G14C_P19 = "P19 — Assistant citoyen : votre question et des extraits de fiches publiques vérifiées sont envoyés depuis notre serveur à Cloudflare, Inc. (service Workers AI), qui agit comme sous-traitant (art. 28) ; ni votre adresse IP ni votre compte ne lui sont transmis. Les adresses électroniques et les numéros de téléphone sont masqués, et une question qui contient un numéro de sécurité sociale, un IBAN ou un numéro de carte bancaire est refusée. Nous n'enregistrons pas la conversation. L'assistant ne donne ni conseil médical ni conseil juridique, ne se prononce pas sur vos droits, cite ses sources et rappelle les numéros d'urgence. Base proposée : intérêt légitime de l'exploitant à informer le public (art. 6, 1, f) — proposé, à valider.";
-export const LEGAL_DRAFTS_G14C_P20 = "P20 — Observatoire des droits et des services : lors de certaines recherches et consultations, le service compte, pour le jour, des codes pris dans des listes fermées et, sauf pour les sujets sensibles, la commune ; jamais votre identité, votre adresse IP, l'heure ni un texte. Sur « Ma situation », rien n'est compté si vous ne cochez pas « Aider l'Observatoire ». Les comptes du jour sont supprimés à la clôture de chaque trimestre ; les tableaux trimestriels, dans lesquels les valeurs inférieures à 5 sont masquées, sont publiés sous Licence Ouverte 2.0. Base : intérêt légitime (art. 6, 1, f) — proposé, à valider.";
+export const LEGAL_DRAFTS_G14C_P18 = "P18 — Calcul indicatif d'aides à partir du questionnaire : vos réponses (dont, si vous la choisissez, votre commune de l'Eurométropole) sont envoyées à notre propre moteur de calcul OpenFisca, hébergé par Scaleway SAS en France, qui agit comme sous-traitant ; elles n'y sont pas enregistrées. Le résultat est une estimation indicative : seul l'organisme compétent décide. Base : intérêt légitime de l'exploitant à informer le public (art. 6, 1, f).";
+export const LEGAL_DRAFTS_G14C_P19 = "P19 — Assistant citoyen : votre question et des extraits de fiches publiques vérifiées sont envoyés depuis notre serveur à Cloudflare, Inc. (service Workers AI), qui agit comme sous-traitant (art. 28) ; ni votre adresse IP ni votre compte ne lui sont transmis. Les adresses électroniques et les numéros de téléphone sont masqués, et une question qui contient un numéro de sécurité sociale, un IBAN ou un numéro de carte bancaire est refusée. Nous n'enregistrons pas la conversation. L'assistant ne donne ni conseil médical ni conseil juridique, ne se prononce pas sur vos droits, cite ses sources et rappelle les numéros d'urgence. Base : intérêt légitime de l'exploitant à informer le public (art. 6, 1, f).";
+export const LEGAL_DRAFTS_G14C_P20 = "P20 — Observatoire des droits et des services : lors de certaines recherches et consultations, le service compte, pour le jour, des codes pris dans des listes fermées et, sauf pour les sujets sensibles, la commune ; jamais votre identité, votre adresse IP, l'heure ni un texte. Sur « Ma situation », rien n'est compté si vous ne cochez pas « Aider l'Observatoire ». Les comptes du jour sont supprimés à la clôture de chaque trimestre ; les tableaux trimestriels, dans lesquels les valeurs inférieures à 5 sont masquées, sont publiés sous Licence Ouverte 2.0. Base : intérêt légitime (art. 6, 1, f).";
 export const LEGAL_DRAFTS_G14C_P21 = "P21 — Mode accompagnant : à votre demande, une personne qui vous aide (un proche, un travailleur social, un conseiller France Services, un professionnel) utilise votre compte à côté de vous, pendant 2 heures au plus, avec votre accord, après que vous avez saisi votre mot de passe. Elle ne peut jamais modifier vos réglages de sécurité, supprimer le compte, faire l'export complet de vos données ni donner un nouvel accès ; Mon Coffre seulement si vous l'avez coché, et jamais pour un professionnel. Une personne de confiance à distance peut seulement demander des actions que vous confirmez, sauf si vous lui avez permis d'« agir pour moi » pour une partie de votre espace. Tout ce qui est fait est inscrit dans un journal que vous voyez. Ce mode ne remplace ni une tutelle, ni une curatelle, ni un mandat ; il est réservé aux comptes de personnes majeures. Base : votre consentement (art. 6, 1, a).";
 export const LEGAL_DRAFTS_G14C_RETENTION = Object.freeze([
   ["Assistant citoyen : aucune conversation n'est enregistrée ; des compteurs techniques anonymes sont gardés 90 jours. Calcul indicatif (P18) : vos réponses ne sont pas enregistrées.", 'assistant_g14c'],
@@ -881,7 +884,7 @@ export const LEGAL_DRAFTS_G14C_P23 = "P23 — Orientation sociale vers une autre
 export const LEGAL_DRAFTS_G14C_P10C = "P10c — Notifications du navigateur (Web Push), si vous les activez : un court rappel chiffré passe par le service de notification de l'éditeur de votre navigateur (Apple, Google, Mozilla ou Microsoft), qui peut se trouver hors de l'Union européenne ; il ne contient ni votre nom, ni la structure, ni aucune information de santé. L'e-mail reste l'avis qui fait foi. Le fichier de calendrier (.ics) contient seulement la date, l'heure et l'adresse publique du lieu, et seulement pour un service qui n'est pas sensible. Base : votre consentement (art. 6, 1, a), retirable à tout moment.";
 export const LEGAL_DRAFTS_G14C_P10B = "P10b — Rappel la veille par e-mail : consentement (art. 6, 1, a), retirable à tout moment.";
 export const LEGAL_DRAFTS_G14C_PRO_RETENTION = Object.freeze([
-  ["Orientations sociales : 12 mois après la clôture de l'orientation (durée proposée — à valider) ; votre accord et son retrait suivent la règle des décisions de consentement ci-dessus.", 'socialReferrals_g14c'],
+  ["Orientations sociales : 12 mois après la clôture de l'orientation ; votre accord et son retrait suivent la règle des décisions de consentement ci-dessus.", 'socialReferrals_g14c'],
   ["Notifications du navigateur : l'abonnement est gardé jusqu'à ce que vous désactiviez les notifications ou que votre compte soit effacé ; un abonnement qui ne fonctionne plus est supprimé 30 jours après.", 'push_g14c'],
 ]);
 export const LEGAL_DRAFTS_G14C_PUSH_TRANSFER = "Notifications du navigateur : le service de notification de l'éditeur de votre navigateur peut se trouver hors de l'Union européenne ; il ne transmet qu'un rappel chiffré, qu'il ne peut pas lire.";
@@ -960,7 +963,7 @@ export const LEGAL_DRAFT_DOCUMENTS_V12 = [
   withSections(LEGAL_DRAFTS_V12_CHANGES, LEGAL_DRAFTS_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_V10, 'cgu-citoyen')),
   withSections(LEGAL_DRAFTS_V12_CHANGES, LEGAL_DRAFTS_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_V10, 'notice-confidentialite')),
 ];
-/** @type {DraftDocument[]} the privacy notice (from v11) — proposed for the ADA Pro (K8) opening only */
+/** @type {DraftDocument[]} the privacy notice (from v11) — approved (23/11/2026) for the ADA Pro opening */
 export const LEGAL_DRAFT_DOCUMENTS_V13 = [withSections(LEGAL_DRAFTS_V13_CHANGES, LEGAL_DRAFTS_V13)(docOf(LEGAL_DRAFT_DOCUMENTS_V11, 'notice-confidentialite'))];
 
 /*
@@ -968,7 +971,7 @@ export const LEGAL_DRAFT_DOCUMENTS_V13 = [withSections(LEGAL_DRAFTS_V13_CHANGES,
  * the public sign-up of a structure verified by the operator on an official source (api/_handlers/pro/auth/register.js; verification and MFA invitation:
  * branch g14-pro, api/_services/pro-mfa-invitation.js « Vérifier et activer »), with appointments, video (8x8 JaaS) and Outlook free / busy. Only the
  * statements that the opening makes false are removed or adjusted; no new obligation (owner condition). The signed-convention precondition of the
- * appointments is dropped by owner decision. Opened with notice-confidentialite v13-2026-11-23. PROPOSED: not approved by the owner.
+ * appointments is dropped by owner decision. Opened with notice-confidentialite v13-2026-11-23. APPROVED by the owner on 23/11/2026 (OWNER_VALIDATED).
  *  cgu-professionnel      intro_v10 / account.i1_v10: sign-up of the structure besides the invitation; appointments.title_v10 / p1_v10: no « pas encore
  *                         ouverte »; p3_v10: video offered by the structure (8x8, see the notice); p4_v10: Outlook free / busy only; data.p1_v10: + Outlook.
  *  conditions-structures  intro_v9: appointments open, « aucune structure ne les a signées » removed; agreement.title_v9 / p1_v9: no convention, no referent;

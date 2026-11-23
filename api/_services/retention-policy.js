@@ -70,17 +70,19 @@ const G14_DECIDED_STEPS = Object.fromEntries([
   ['contentNoticesDeleted', 28],
 ].map(([id, q]) => [id, { decidedOn: '2026-11-22', decision: `${G14_DECISION}, question ${q}`,
   ...(String(id).startsWith('entraide') ? { condition: X03_AIPD_CONDITION } : {}) }]));
-/**
- * G14-PS (23/11/2026) — the social referral (migration 0061): a closed referral is erased 12 months after its closure. Recorded as a DECIDED step at the
- * caller's request, but its duration is still marked `pendingApproval` (the owner has not confirmed it): stepApprovalProblem answers
- * DURATION_PENDING_APPROVAL, so the step never executes, whatever approvedSteps and the environment say, until the owner confirms the duration.
- */
-export const SOCIAL_REFERRAL_STEP_ID = 'socialReferralsClosedDeleted';
-G14_DECIDED_STEPS[SOCIAL_REFERRAL_STEP_ID] = { decidedOn: '2026-11-23', decision: 'proposition G14-PS du 23/11/2026 (12 mois après clôture) — à confirmer par le responsable de traitement', condition: 'durée SOCIAL_REFERRAL_CLOSED_DAYS confirmée par le responsable' };
 /** G14 (décision du responsable 23/11/2026, options recommandées) — moderation decisions, appeals and sanctions: 1 year after the case is closed */
 export const G14_MODERATION_DECISION = 'décision du responsable 23/11/2026, options recommandées (décisions de modération, contestations et mesures)';
+/**
+ * G14-PS — the social referral (migration 0061): a closed referral is erased 12 months after its closure. Proposed on 23/11/2026, DECIDED by the owner on
+ * 23/11/2026 (G14 legal approval, « à valider » point 4: CONTROL/master/G14_OWNER_LEGAL_APPROVAL_2026-11-23.md). Like the other decided steps it is not an
+ * approved step: it executes only once the controller records it in `approvedSteps` (dry run read, backup verified) and lists it in
+ * GDPR_PURGE_APPROVED_STEPS.
+ */
+export const SOCIAL_REFERRAL_STEP_ID = 'socialReferralsClosedDeleted';
+export const G14_SOCIAL_REFERRAL_DECISION = 'décision du responsable 23/11/2026, approbation juridique G14 (orientations sociales : 12 mois après la clôture)';
 const G14_DECIDED_STEPS_23 = Object.fromEntries(['moderationDecisionsDeleted', 'moderationSanctionsDeleted']
   .map((id) => [id, { decidedOn: '2026-11-23', decision: G14_MODERATION_DECISION }]));
+G14_DECIDED_STEPS_23[SOCIAL_REFERRAL_STEP_ID] = { decidedOn: '2026-11-23', decision: G14_SOCIAL_REFERRAL_DECISION };
 
 /** @type {RetentionPolicy} */
 export const RETENTION_POLICY = deepFreeze({
@@ -181,9 +183,9 @@ export const RETENTION_POLICY = deepFreeze({
     ENTRAIDE_SUSPENSION_REVIEW_DAYS: { days: 365, anchor: 'EntraideMember.suspendedAt (report only: human review)', basis: G14_X03, ecode: 'X03' },   // q27
     ENTRAIDE_MEMBER_INACTIVE_DAYS: { days: 730, anchor: 'GREATEST(member.updatedAt, MAX(offer.updatedAt), MAX(request.updatedAt))', basis: G14_X03, ecode: 'X03' },   // q27
     CONTENT_NOTICE_AFTER_DECISION_DAYS: { days: 365, anchor: 'ContentNotice.decidedAt (notice sent through the public form, without an account)', basis: G14, ecode: 'DSA' },   // q28
-    // G14-PS: PROPOSAL (not approved) — a closed social referral and its history, 12 months after closedAt (declined, completed, cancelled, withdrawn,
-    // expired, closed). The consent rows stay under CONSENT_SUPERSEDED_DAYS / CONSENT_AFTER_ERASURE_DAYS.
-    SOCIAL_REFERRAL_CLOSED_DAYS: { days: 365, anchor: 'SocialReferral.closedAt (any terminal state); its SocialReferralEvent rows go with it', basis: 'proposition G14-PS 23/11/2026 (pas une obligation légale)', ecode: 'G14-PS', pendingApproval: 'owner (proposition G14-PS 23/11/2026)' },
+    // G14-PS (décision du responsable 23/11/2026) — a closed social referral and its history, 12 months after closedAt (declined, completed, cancelled,
+    // withdrawn, expired, closed). The consent rows stay under CONSENT_SUPERSEDED_DAYS / CONSENT_AFTER_ERASURE_DAYS.
+    SOCIAL_REFERRAL_CLOSED_DAYS: { days: 365, anchor: 'SocialReferral.closedAt (any terminal state); its SocialReferralEvent rows go with it', basis: 'décision du responsable 23/11/2026 (pas une obligation légale)', ecode: 'G14-PS', decidedOn: '2026-11-23' },
     // G14 (décision du responsable 23/11/2026): a moderation case is closed when nothing can change it any more — a decision: its appeal period is over, no
     // appeal is open, its restriction has ended (GREATEST(appealUntil, restrictionEndsAt, last appeal reviewedAt)); a sanction: it no longer counts
     // (a warning: 12 months after it was given, WARNING_WINDOW_DAYS; a suspension: its end), or it was lifted, whichever comes first. Its appeals go with it.

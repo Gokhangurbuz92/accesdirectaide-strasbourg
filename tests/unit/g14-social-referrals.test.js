@@ -127,9 +127,11 @@ describe('gates', () => {
 
 describe('retention proposal', () => {
   it('12 months after closure, recorded as decided but never executable while the duration awaits the owner', () => {
-    expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS).toMatchObject({ days: 365, pendingApproval: expect.any(String) });
+    expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS).toMatchObject({ days: 365, decidedOn: '2026-11-23' });   // owner decision 23/11/2026
+    expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS.pendingApproval).toBeUndefined();
     expect(RETENTION_POLICY.decidedSteps.socialReferralsClosedDeleted).toMatchObject({ decidedOn: '2026-11-23' });
-    expect(stepApprovalProblem(RETENTION_POLICY, { id: 'socialReferralsClosedDeleted', durationKey: 'SOCIAL_REFERRAL_CLOSED_DAYS' })).toBe('DURATION_PENDING_APPROVAL');
+    // decided, not approved: it executes only once the controller records its own approval (dry run read, backup verified)
+    expect(stepApprovalProblem(RETENTION_POLICY, { id: 'socialReferralsClosedDeleted', durationKey: 'SOCIAL_REFERRAL_CLOSED_DAYS' })).toBe('STEP_NOT_APPROVED_IN_POLICY');
     expect(SOCIAL_REASONS.HOUSING).toMatch(/Logement/);
   });
 });

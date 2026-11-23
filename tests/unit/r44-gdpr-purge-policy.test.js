@@ -61,8 +61,8 @@ describe('R44 retention policy object', () => {
     // + 2 steps decided on 23/11/2026 (moderation decisions / appeals and sanctions, 1 year after the case is closed) + G14-PS social referrals (proposal)
     expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(28);
     for (const [id, d] of Object.entries(RETENTION_POLICY.decidedSteps)) {
-      // G14-PS (23/11/2026): the social referral step is a PROPOSAL recorded at the lead's request; its duration stays pendingApproval (never executes)
-      if (id === 'socialReferralsClosedDeleted') { expect(d).toMatchObject({ decidedOn: '2026-11-23', decision: expect.stringMatching(/^proposition G14-PS/) }); expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS.pendingApproval).toBeTruthy(); continue; }
+      // G14-PS: the social referral step, decided by the owner on 23/11/2026 (12 months after closure); no duration is pending any more
+      if (id === 'socialReferralsClosedDeleted') { expect(d).toMatchObject({ decidedOn: '2026-11-23', decision: expect.stringMatching(/^décision du responsable 23\/11\/2026/) }); expect(d.condition).toBeUndefined(); expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS).toMatchObject({ days: 365, decidedOn: '2026-11-23' }); expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS.pendingApproval).toBeUndefined(); continue; }
       if (id.startsWith('moderation')) { expect(d.decidedOn, id).toBe('2026-11-23'); expect(d.decision, id).toMatch(/^décision du responsable 23\/11\/2026/); expect(d.condition, id).toBeUndefined(); continue; }
       expect(d.decidedOn, id).toBe('2026-11-22');
       expect(d.decision, id).toMatch(/^décision du responsable 22\/11\/2026, formulaire G14, question \d+$/);

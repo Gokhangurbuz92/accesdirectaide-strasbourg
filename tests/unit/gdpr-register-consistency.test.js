@@ -72,7 +72,7 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(registre.organisme.responsable_traitement).toMatch(/Personne physique porteuse du projet/);
     expect(registre.organisme.responsable_traitement).toMatch(/n'est pas présentée comme responsable/);
     // legal v5: an agreement incorporated by a provider's terms is recorded as such — never as a signed one
-    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le (15|09)\/11\/2026|accepté dans la console par le responsable de traitement \(déclaration du 13\/11\/2026\) — PDF non archivé, non signé séparément)$/);
+    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le (15|09)\/11\/2026|intégré aux conditions de service \(non signé\) — DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du responsable du 23\/11\/2026\)|accepté dans la console par le responsable de traitement \(déclaration du 13\/11\/2026\) — PDF non archivé, non signé séparément)$/);
     expect(registre.transferts_hors_ue).toMatch(/aucun signé/);
   });
 
@@ -107,6 +107,24 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(registre.droits_exercables.join(' ')).toMatch(/revue humaine/);
     expect(registre.droits_exercables.join(' ')).toMatch(/\/api\/auth\/export-data/);
     expect(registre.droits_exercables.join(' ')).not.toMatch(/gdpr-suite/);
+  });
+
+  it('G14 owner legal approval (23/11/2026): P18, P19, P20 and the social referrals carry decided bases and durations; Cloudflare DPA v6.4 accepted online', () => {
+    const t = (/** @type {string} */ id) => registre.traitements.find((x) => x.id === id);
+    expect(registre.version).toBe('0.6');
+    expect(t('T02').base_legale_g14).toMatch(/P18 : intérêt légitime .*\(art\. 6\.1\.f\) — décidé par le responsable le 23\/11\/2026$/);
+    expect(t('T02').base_legale_proposee).toMatch(/^Intérêt légitime .*P18, décidé par le responsable le 23\/11\/2026$/);
+    expect(t('T08').base_legale_proposee).toMatch(/P19, décidé par le responsable le 23\/11\/2026$/);
+    expect(t('T08').evolution_g14).toMatch(/base : intérêt légitime \(art\. 6\.1\.f\) — décidé par le responsable le 23\/11\/2026$/);
+    expect(t('T25').base_legale_proposee).toMatch(/^Intérêt légitime \(art\. 6\.1\.f\) — notice v12 \/ v13, P20, décidé par le responsable le 23\/11\/2026$/);
+    expect(t('T24').conservation[0].description).toBe('12 mois après la clôture (décision du responsable du 23/11/2026)');
+    for (const id of ['T08', 'T24', 'T25']) expect(JSON.stringify(t(id)), id).not.toMatch(/à valider|proposé|à confirmer/i);
+    expect(JSON.stringify(t('T02'))).not.toMatch(/proposé, à valider|à confirmer/);
+    const cf = registre.sous_traitants.find((x) => x.nom === 'Cloudflare, Inc. (Workers AI)');
+    expect(cf.mecanisme_transfert).not.toMatch(/sans signature|à confirmer/);
+    expect(cf.dpa).toMatch(/DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du responsable du 23\/11\/2026\)$/);
+    expect(JSON.stringify(registre)).not.toMatch(/application du DPA sans signature/);
+    expect(JSON.stringify(registre)).not.toMatch(/avocat|juriste a validé|expert a validé/);
   });
 
   it('date_mise_a_jour is the fixed revision date, not the run date', () => {
