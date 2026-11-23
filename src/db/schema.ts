@@ -3617,3 +3617,68 @@ export const ModerationSanction = pgTable('ModerationSanction', {
 	'ModerationSanction_reason_check': check('ModerationSanction_reason_check', sql`char_length(${t.reason}) BETWEEN 10 AND 1000`),
 	'ModerationSanction_lift_check': check('ModerationSanction_lift_check', sql`(${t.liftedAt} IS NULL) = (${t.liftedBy} IS NULL)`)
 }));
+
+/**
+ * G14-PS (owner decision 23/11/2026) — the SOCIAL referral (« orientation sociale »), non-HDS by construction: closed reasons (1 to 3), no free text, no
+ * document, only between organisations classified NOT_ESSMS (api/lib/social-referral-policy.js), with the person's consent. Separate from "Referral" (the
+ * HDS referral of a dossier, closed until certified hosting): that table requires a shared dossier and its grant. Migration drizzle/0061_g14_ps_social_referrals.sql
+ * (NOT in the journal yet — numbered after g14-ai's 0060; the owner runs it). The code answers SOCIAL_REFERRALS_NOT_AVAILABLE on a database without it.
+ */
+export const SocialReferral = pgTable('SocialReferral', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	fromStructureId: text('fromStructureId').notNull(),
+	toStructureId: text('toStructureId').notNull(),
+	createdByProUserId: text('createdByProUserId'),
+	/** NULL until the person enters the code in Mon Espace (or consents on the professional's screen) */
+	citizenId: text('citizenId'),
+	status: text('status').notNull().default('PENDING_CITIZEN'),
+	reasonCodes: text('reasonCodes').array().notNull(),
+	responseCode: text('responseCode'),
+	/** sha256 of the one-time code given to the person (the code itself is never stored); cleared once used */
+	claimCodeHash: text('claimCodeHash').unique(),
+	claimExpiresAt: timestamp('claimExpiresAt', { precision: 3 }),
+	shareEmail: boolean('shareEmail').notNull().default(false),
+	sharePhone: boolean('sharePhone').notNull().default(false),
+	consentChannel: text('consentChannel'),
+	citizenDecisionAt: timestamp('citizenDecisionAt', { precision: 3 }),
+	sentAt: timestamp('sentAt', { precision: 3 }),
+	dueAt: timestamp('dueAt', { precision: 3 }),
+	overdueNotifiedAt: timestamp('overdueNotifiedAt', { precision: 3 }),
+	respondedAt: timestamp('respondedAt', { precision: 3 }),
+	closedAt: timestamp('closedAt', { precision: 3 }),
+	idempotencyKey: text('idempotencyKey'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow(),
+	updatedAt: timestamp('updatedAt', { precision: 3, mode: 'date' }).$defaultFn(() => new Date()).$onUpdate(() => new Date()).notNull()
+}, (t) => ({
+	'SocialReferral_from_fkey': foreignKey({ name: 'SocialReferral_from_fkey', columns: [t.fromStructureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
+	'SocialReferral_to_fkey': foreignKey({ name: 'SocialReferral_to_fkey', columns: [t.toStructureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
+	'SocialReferral_creator_fkey': foreignKey({ name: 'SocialReferral_creator_fkey', columns: [t.createdByProUserId], foreignColumns: [ProUser.id] }).onDelete('set null').onUpdate('cascade'),
+	'SocialReferral_citizen_fkey': foreignKey({ name: 'SocialReferral_citizen_fkey', columns: [t.citizenId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'SocialReferral_idempotency_key': uniqueIndex('SocialReferral_idempotency_key').on(t.fromStructureId, t.idempotencyKey),
+	'SocialReferral_to_status_idx': index('SocialReferral_to_status_idx').on(t.toStructureId, t.status),
+	'SocialReferral_from_idx': index('SocialReferral_from_idx').on(t.fromStructureId),
+	'SocialReferral_citizen_idx': index('SocialReferral_citizen_idx').on(t.citizenId),
+	'SocialReferral_status_check': check('SocialReferral_status_check', sql`${t.status} IN ('PENDING_CITIZEN', 'SENT', 'ACCEPTED', 'DECLINED', 'COMPLETED', 'CANCELLED', 'WITHDRAWN', 'EXPIRED', 'CLOSED')`),
+	'SocialReferral_reasons_check': check('SocialReferral_reasons_check', sql`cardinality(${t.reasonCodes}) BETWEEN 1 AND 3 AND ${t.reasonCodes} <@ ARRAY['HOUSING', 'EMPLOYMENT', 'TRAINING', 'INCOME_BUDGET', 'ENERGY', 'ADMIN_PROCEDURES', 'ACCESS_TO_RIGHTS', 'MOBILITY', 'DIGITAL', 'FOOD']::text[]`),
+	'SocialReferral_response_check': check('SocialReferral_response_check', sql`(${t.responseCode} IS NULL AND ${t.status} <> 'DECLINED') OR (${t.status} = 'DECLINED' AND ${t.responseCode} IS NOT NULL AND ${t.responseCode} IN ('OUT_OF_SCOPE', 'NO_CAPACITY', 'ALREADY_SUPPORTED', 'OUT_OF_TERRITORY'))`),
+	'SocialReferral_channel_check': check('SocialReferral_channel_check', sql`${t.consentChannel} IS NULL OR ${t.consentChannel} IN ('MON_ESPACE', 'ASSISTED_ON_SCREEN')`),
+	'SocialReferral_distinct_check': check('SocialReferral_distinct_check', sql`${t.fromStructureId} <> ${t.toStructureId}`),
+	'SocialReferral_consent_check': check('SocialReferral_consent_check', sql`${t.status} NOT IN ('SENT', 'ACCEPTED', 'DECLINED', 'COMPLETED', 'WITHDRAWN') OR (${t.citizenId} IS NOT NULL AND ${t.citizenDecisionAt} IS NOT NULL AND ${t.consentChannel} IS NOT NULL AND ${t.sentAt} IS NOT NULL)`),
+	'SocialReferral_closed_check': check('SocialReferral_closed_check', sql`(${t.status} IN ('PENDING_CITIZEN', 'SENT', 'ACCEPTED')) = (${t.closedAt} IS NULL)`)
+}));
+
+/** G14-PS: append-only history of a social referral (transition, actor side, time; the channel of an assisted consent). */
+export const SocialReferralEvent = pgTable('SocialReferralEvent', {
+	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
+	referralId: text('referralId').notNull(),
+	actorType: text('actorType').notNull(),
+	actorId: text('actorId'),
+	fromStatus: text('fromStatus'),
+	toStatus: text('toStatus').notNull(),
+	channel: text('channel'),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'SocialReferralEvent_referral_fkey': foreignKey({ name: 'SocialReferralEvent_referral_fkey', columns: [t.referralId], foreignColumns: [SocialReferral.id] }).onDelete('cascade').onUpdate('cascade'),
+	'SocialReferralEvent_referral_idx': index('SocialReferralEvent_referral_idx').on(t.referralId, t.createdAt),
+	'SocialReferralEvent_actor_check': check('SocialReferralEvent_actor_check', sql`${t.actorType} IN ('SENDER', 'RECEIVER', 'CITIZEN', 'SYSTEM')`)
+}));

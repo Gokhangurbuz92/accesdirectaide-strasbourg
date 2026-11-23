@@ -42,10 +42,10 @@ describe('A-14 export covers every account-keyed table', () => {
     const dialect = new PgDialect();
     const queries = [];
     const rows = async (q) => { const { sql: text, params } = dialect.sqlToQuery(q); queries.push({ text, params }); return /EmailChangeRequest/.test(text) ? [{ id: 'e1', enc: 'sealed', createdAt: 1, expiresAt: 2, usedAt: null }] : []; };
-    const out = await accountLinkedSections('user-1', rows, { open: (id, sealed) => (id === 'e1' && sealed === 'sealed' ? 'new@example.test' : ''), hasEventTables: async () => true, hasTestimonialTables: async () => true, hasCommunityTables: async () => true, hasEntraideTables: async () => true, hasModerationTables: async () => true });
+    const out = await accountLinkedSections('user-1', rows, { open: (id, sealed) => (id === 'e1' && sealed === 'sealed' ? 'new@example.test' : ''), hasEventTables: async () => true, hasTestimonialTables: async () => true, hasCommunityTables: async () => true, hasEntraideTables: async () => true, hasModerationTables: async () => true, hasSocialReferralTables: async () => true });
     expect(Object.keys(out).sort()).toEqual(Object.keys(EXPORT_SECTION_TABLES).sort());
-    expect(queries).toHaveLength(21);   // G14: + moderationDecisions, moderationAppeals, moderationSanctions (with 0059)   // X04: + eventRegistrations (on a database with 0053); X02: + testimonials, testimonialReports (with 0054); X01: + communityMember, communityStories, communityStoryReports (with 0055); X03: + seven entraide sections (with 0057)
-    for (const q of queries) { expect(q.params).toEqual(['user-1']); expect(q.text).toMatch(/"userId" = \$1|"citizenUserId" = \$1|"reporterUserId" = \$1|"subjectUserId" = \$1|"appellantUserId" = \$1/); }
+    expect(queries).toHaveLength(22);   // G14-PS: + socialReferrals (with 0061)   // G14: + moderationDecisions, moderationAppeals, moderationSanctions (with 0059)   // X04: + eventRegistrations (on a database with 0053); X02: + testimonials, testimonialReports (with 0054); X01: + communityMember, communityStories, communityStoryReports (with 0055); X03: + seven entraide sections (with 0057)
+    for (const q of queries) { expect(q.params).toEqual(['user-1']); expect(q.text).toMatch(/"userId" = \$1|"citizenUserId" = \$1|"reporterUserId" = \$1|"subjectUserId" = \$1|"appellantUserId" = \$1|"citizenId" = \$1/); }
     for (const [section, table] of Object.entries(EXPORT_SECTION_TABLES)) expect(queries.some((q) => q.text.includes(`"${table}"`)), section).toBe(true);
     const selected = queries.map((q) => q.text.split(/\bFROM\b/)[0]).join(' ');
     for (const f of ['endpointHash', 'subscriptionEncrypted', 'tokenHash', 'evidenceNote', 'decisionNote', 'proposedBy', 'decidedBy']) expect(selected).not.toContain(f);

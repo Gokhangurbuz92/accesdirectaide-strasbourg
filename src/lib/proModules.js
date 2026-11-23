@@ -23,6 +23,7 @@ export const PRO_SCREEN_MODULES = Object.freeze({
   '/pro/audit': 'audit',
   '/pro/offres-emploi': 'employment',   // X05 (expansion)
   '/pro/accompagnement': 'assist',   // G14-AID: mode accompagnant (helper code)
+  '/pro/orientations-sociales': 'socialReferrals',   // G14-PS: social referral (non-HDS)
 });
 const PREFIXES = Object.keys(PRO_SCREEN_MODULES).sort((a, b) => b.length - a.length);
 

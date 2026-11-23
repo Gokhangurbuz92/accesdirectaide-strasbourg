@@ -41,6 +41,8 @@ const CONFIG = {
     FEEDBACK: { limit: 6, window: 600 },    // 6 per 10 min
     CONTACT_FORM: { limit: 5, window: 3600 }, // PKG-11 / P20: public contact form, 5 per hour per IP
     CONTENT_NOTICE: { limit: 5, window: 3600 }, // G14 / DSA art. 16: account-free notices and notifier appeals, 5 per hour per IP
+    SOCIAL_REFERRAL_ASSISTED: { limit: 5, window: 900 },   // G14-PS: the person's re-authentication on a professional's screen, 5 per 15 min per member+ip
+    SOCIAL_REFERRAL_CLAIM: { limit: 10, window: 900 },     // G14-PS: one-time referral codes entered by a person, 10 per 15 min
     CSP_REPORT: { limit: 20, window: 60 },
     PUBLIC_INDICATORS: { limit: 30, window: 60 },   // G8: public indicators (cached 6 h on the server; a page asks once)
     TRANSLATION_READ: { limit: 120, window: 60 },   // R32: public translations of verified content (a page asks once or twice)

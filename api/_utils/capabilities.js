@@ -110,6 +110,13 @@ export const CAPABILITIES = Object.freeze({
   // own surface « entraide » that nothing opens; never add it to an opening list, a simulator final state or a release configuration.
   'community.entraide': { description: 'Entraide (X03 expansion): peer support between signed-in adults under a pseudonym — anonymous offers in closed categories and areas, double opt-in, e-mail shown only after mutual acceptance, reports, blocks, moderation and suspension',
     aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (practical help only; no health, disability or other sensitive category exists; logistics note with a health warning)', surface: 'entraide', aipdRef: 'X03 (DEDICATED AIPD mandatory before any opening)' },
+  // G14-PS (owner decision 23/11/2026: « we do not host health data and we pay nothing ») — the SOCIAL referral: closed reasons (no health, disability,
+  // sexual life, penal, residence, violence, child or legal protection code), no free text, no document, only between organisations classified NOT_ESSMS
+  // (no FINESS registration, reviewed non-medical kind: api/lib/social-referral-policy.js), with the person's consent (Mon Espace, or on the professional's
+  // screen with re-authentication) and withdrawal at any time. NO HDS: it hosts no health data and serves no ESSMS follow-up by construction — the HDS
+  // referral of a dossier (`pro.referrals`) stays closed. A new processing: outside the AIPD until its line is signed, on its own surface « social_referrals ».
+  'pro.referrals_social': { description: 'social referrals (G14-PS): closed-list reasons, no free text or document, between NOT_ESSMS verified organisations, consent and withdrawal by the person, statuses for both organisations',
+    aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row 10 referral: no health data by construction (closed non-health reasons, no text, no document) and no ESSMS party (FINESS-registered or unreviewed kinds refused)', surface: 'social_referrals', aipdRef: 'G14-PS (AIPD line to sign)' },
   // ── never opened by a switch
   'citizen.minor_accounts': { description: 'independent accounts of minors (closed by the age policy; R42-A07)', aipd: 'out', requiresHds: false, surface: 'accounts', openable: false, aipdRef: 'AIPD § 2.2' },
 });
@@ -178,6 +185,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   employment: ['community.employment'], 'pro/employment': ['community.employment'], 'admin/employment': ['community.employment'],
   // X03 (expansion): every route of the « entraide » surface is refused 503 before its handler while the capability is closed (dedicated AIPD first)
   'citizen/entraide': ['community.entraide'], 'admin/entraide': ['community.entraide'],
+  // G14-PS: both sides of the social referral are refused 503 before their handler while the capability is closed
+  'pro/social-referrals': ['pro.referrals_social'], 'citizen/social-referrals': ['pro.referrals_social'],
 });
 const ROUTE_PREFIXES = Object.keys(ROUTE_CAPABILITIES).sort((a, b) => b.length - a.length);
 

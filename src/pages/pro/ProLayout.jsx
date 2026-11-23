@@ -215,6 +215,8 @@ function ProNavItems({ role, unreadMessages = null, modules = null }) {
             {/* R18 (R31): working baskets of verified aides, démarches and lieux */}
             <ModuleNavLink modules={modules} module="selections" to="/pro/selections" icon={ListChecks}>{t('pro:layout.selections_orientation', 'Sélections d’orientation')}</ModuleNavLink>
             <ModuleNavLink modules={modules} module="referrals" to="/pro/orientations" icon={Users}>{t('pro:layout.orientations', 'Orientations')}</ModuleNavLink>
+            {/* G14-PS: the non-HDS social referral */}
+            <ModuleNavLink modules={modules} module="socialReferrals" to="/pro/orientations-sociales" icon={Users}>{t('socialref:pro.title', 'Orientations sociales')}</ModuleNavLink>
             <ModuleNavLink modules={modules} module="agenda" to="/pro/rdv/agenda" icon={CalendarDays}>{t('pro:layout.agenda_rdv', 'Agenda RDV')}</ModuleNavLink>
             {open('agenda') ? (
                 <>

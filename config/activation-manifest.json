@@ -522,6 +522,15 @@
       ],
       "note": "G4: exactly 1 = browser-only orientation on /orientation (no request with the answers, no storage; /api/diagnostic stays closed); rebuild"
     },
+    "VITE_PASSEPORT_SOCIAL": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "format": "^(local)?$",
+      "note": "G14-PS (owner decision 23/11/2026): exactly « local » = /passeport-social is shown — the Passeport Social runs entirely in the browser (documents and summary encrypted on the person's device, IndexedDB « ada-passeport-social-v1 »; nothing sent to ADA, no HDS). Unset = « pas encore ouverte ». Owner decision: privacy notice update first; rebuild"
+    },
     "ADA_PUBLIC_INDICATORS": {
       "class": "decision",
       "nature": "config",

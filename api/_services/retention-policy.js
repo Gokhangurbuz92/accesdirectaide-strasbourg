@@ -70,6 +70,13 @@ const G14_DECIDED_STEPS = Object.fromEntries([
   ['contentNoticesDeleted', 28],
 ].map(([id, q]) => [id, { decidedOn: '2026-11-22', decision: `${G14_DECISION}, question ${q}`,
   ...(String(id).startsWith('entraide') ? { condition: X03_AIPD_CONDITION } : {}) }]));
+/**
+ * G14-PS (23/11/2026) — the social referral (migration 0061): a closed referral is erased 12 months after its closure. Recorded as a DECIDED step at the
+ * caller's request, but its duration is still marked `pendingApproval` (the owner has not confirmed it): stepApprovalProblem answers
+ * DURATION_PENDING_APPROVAL, so the step never executes, whatever approvedSteps and the environment say, until the owner confirms the duration.
+ */
+export const SOCIAL_REFERRAL_STEP_ID = 'socialReferralsClosedDeleted';
+G14_DECIDED_STEPS[SOCIAL_REFERRAL_STEP_ID] = { decidedOn: '2026-11-23', decision: 'proposition G14-PS du 23/11/2026 (12 mois après clôture) — à confirmer par le responsable de traitement', condition: 'durée SOCIAL_REFERRAL_CLOSED_DAYS confirmée par le responsable' };
 
 /** @type {RetentionPolicy} */
 export const RETENTION_POLICY = deepFreeze({
@@ -167,6 +174,9 @@ export const RETENTION_POLICY = deepFreeze({
     ENTRAIDE_SUSPENSION_REVIEW_DAYS: { days: 365, anchor: 'EntraideMember.suspendedAt (report only: human review)', basis: G14_X03, ecode: 'X03' },   // q27
     ENTRAIDE_MEMBER_INACTIVE_DAYS: { days: 730, anchor: 'GREATEST(member.updatedAt, MAX(offer.updatedAt), MAX(request.updatedAt))', basis: G14_X03, ecode: 'X03' },   // q27
     CONTENT_NOTICE_AFTER_DECISION_DAYS: { days: 365, anchor: 'ContentNotice.decidedAt (notice sent through the public form, without an account)', basis: G14, ecode: 'DSA' },   // q28
+    // G14-PS: PROPOSAL (not approved) — a closed social referral and its history, 12 months after closedAt (declined, completed, cancelled, withdrawn,
+    // expired, closed). The consent rows stay under CONSENT_SUPERSEDED_DAYS / CONSENT_AFTER_ERASURE_DAYS.
+    SOCIAL_REFERRAL_CLOSED_DAYS: { days: 365, anchor: 'SocialReferral.closedAt (any terminal state); its SocialReferralEvent rows go with it', basis: 'proposition G14-PS 23/11/2026 (pas une obligation légale)', ecode: 'G14-PS', pendingApproval: 'owner (proposition G14-PS 23/11/2026)' },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });

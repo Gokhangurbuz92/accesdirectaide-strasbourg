@@ -40,6 +40,137 @@
     { "name": "Institution", "description": "Espace institutionnel (collectivités et partenaires sous convention signée) : statistiques agrégées du territoire autorisé du compte, jamais de dossier ni de donnée personnelle" }
   ],
   "paths": {
+    "/pro/social-referrals": {
+        "get": {
+            "tags": [
+                "Pro"
+            ],
+            "summary": "Orientations sociales de ma structure (G14-PS, non HDS — fermé par défaut)",
+            "description": "Session professionnelle avec double authentification, membre actif d'une structure vérifiée classée NOT_ESSMS (sans numéro FINESS, type non médico-social revu). ?box=inbox|outbox : liste ; ?id= : une orientation (la structure qui reçoit voit le contact choisi par la personne tant que l'orientation est SENT ou ACCEPTED) ; ?receivers=<texte> : structures destinataires éligibles. Tout autre paramètre : 400 FIELD_NOT_ALLOWED.",
+            "security": [
+                {
+                    "bearerAuth": []
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "{ referrals } | { referral, events, side } | { receivers }"
+                },
+                "400": {
+                    "description": "FIELD_NOT_ALLOWED, INVALID_ID, INVALID_BOX"
+                },
+                "401": {
+                    "description": "Session requise"
+                },
+                "403": {
+                    "description": "MFA_REQUIRED, STRUCTURE_NOT_ELIGIBLE, forbidden"
+                },
+                "404": {
+                    "description": "not_found"
+                },
+                "503": {
+                    "description": "CAPABILITY_NOT_OPEN (pro.referrals_social fermée) ou SOCIAL_REFERRALS_NOT_AVAILABLE (migration 0061 absente)"
+                }
+            }
+        },
+        "post": {
+            "tags": [
+                "Pro"
+            ],
+            "summary": "Proposer, répondre, annuler une orientation sociale ; accord assisté sur écran",
+            "description": "{ action: propose, toStructureId, reasonCodes (1 à 3 codes de la liste fermée), idempotencyKey? } → { referral, code } (code à usage unique remis à la personne) ; { action: accept|complete|cancel|new_code, id } ; { action: decline, id, responseCode (liste fermée) } ; { action: assisted_consent, id, email, password, decision, shareEmail?, sharePhone? } (saisis par la personne elle-même ; jamais enregistrés). Aucun champ de texte libre ni de document : tout autre champ est refusé (400 FIELD_NOT_ALLOWED).",
+            "security": [
+                {
+                    "bearerAuth": []
+                }
+            ],
+            "responses": {
+                "200": {
+                    "description": "Étape enregistrée"
+                },
+                "201": {
+                    "description": "Orientation proposée (en attente de l'accord de la personne)"
+                },
+                "400": {
+                    "description": "FIELD_NOT_ALLOWED, INVALID_REASON, INVALID_RESPONSE, INVALID_RECEIVER, INVALID_ACTION"
+                },
+                "401": {
+                    "description": "Session requise"
+                },
+                "403": {
+                    "description": "MFA_REQUIRED, STRUCTURE_NOT_ELIGIBLE, INVALID_CREDENTIALS"
+                },
+                "404": {
+                    "description": "not_found"
+                },
+                "409": {
+                    "description": "INVALID_STATE, ALREADY_DECIDED"
+                },
+                "422": {
+                    "description": "RECEIVER_NOT_ELIGIBLE (structure non vérifiée, établissement sanitaire / médico-social ou FINESS, type non revu)"
+                },
+                "429": {
+                    "description": "Trop d'essais d'accord assisté"
+                },
+                "503": {
+                    "description": "CAPABILITY_NOT_OPEN (pro.referrals_social fermée) ou SOCIAL_REFERRALS_NOT_AVAILABLE (migration 0061 absente)"
+                }
+            }
+        }
+    },
+    "/citizen/social-referrals": {
+        "get": {
+            "tags": [
+                "Auth"
+            ],
+            "summary": "Mes orientations sociales (G14-PS — fermé par défaut)",
+            "description": "Session citoyenne vérifiée. Les orientations sociales rattachées à mon compte : structures, motifs (codes), statut, ce que j'ai choisi de partager.",
+            "responses": {
+                "200": {
+                    "description": "{ available, referrals }"
+                },
+                "401": {
+                    "description": "Session requise"
+                },
+                "503": {
+                    "description": "CAPABILITY_NOT_OPEN (pro.referrals_social fermée) ou SOCIAL_REFERRALS_NOT_AVAILABLE (migration 0061 absente)"
+                }
+            }
+        },
+        "post": {
+            "tags": [
+                "Auth"
+            ],
+            "summary": "Saisir un code, décider, retirer mon accord",
+            "description": "{ action: claim, code } ; { action: decide, id, decision: accept|refuse, shareEmail?, sharePhone? } (rien n'est transmis avant accept ; ConsentLog) ; { action: withdraw, id } (à tout moment après l'accord). Aucun autre champ accepté.",
+            "responses": {
+                "200": {
+                    "description": "Décision enregistrée"
+                },
+                "400": {
+                    "description": "FIELD_NOT_ALLOWED, INVALID_CODE, INVALID_DECISION"
+                },
+                "401": {
+                    "description": "Session requise"
+                },
+                "404": {
+                    "description": "INVALID_CODE, not_found"
+                },
+                "409": {
+                    "description": "ALREADY_DECIDED, INVALID_STATE, STRUCTURE_NOT_ELIGIBLE"
+                },
+                "410": {
+                    "description": "EXPIRED"
+                },
+                "429": {
+                    "description": "RATE_LIMITED"
+                },
+                "503": {
+                    "description": "CAPABILITY_NOT_OPEN (pro.referrals_social fermée) ou SOCIAL_REFERRALS_NOT_AVAILABLE (migration 0061 absente)"
+                }
+            }
+        }
+    },
     "/health": {
       "get": {
         "tags": ["Health"],

@@ -31,6 +31,7 @@ const GUARDED = [
 ];
 /** reviewed: not a citizen-facing content read path (reason in the comment) */
 const REVIEWED_NOT_PUBLIC = {
+  'api/_services/social-referrals.js': 'G14-PS: social referral (MFA professional members of verified organisations, and the person about their own referrals): reads Structure identity / classification of the parties only; never a public read path',
   // administration / operations (authenticated staff; reviewers must see hidden records)
   'api/_handlers/admin/dashboard.js': 'admin', 'api/_handlers/admin/national-stats.js': 'admin', 'api/_handlers/admin/rag-health.js': 'admin', 'api/_handlers/admin/stats.js': 'admin',
   'api/_handlers/cron/health-alert.js': 'cron', 'api/_handlers/cron/ingest-annuaire.js': 'cron ingestion (writes)', 'api/_handlers/cron/ingest-structures.js': 'cron ingestion (writes)', 'api/_handlers/cron/link-check.js': 'cron',

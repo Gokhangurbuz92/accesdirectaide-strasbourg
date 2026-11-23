@@ -209,6 +209,12 @@ export function expansionSteps({ heldSql, personProtectedSql }) {
       tables: ['ContentNotice', 'ModerationAppeal', 'LegalHold'],
       ...del('ContentNotice', (ctx) => sql`t.status = 'decided' AND t."decidedAt" < ${ctx.cutoff('CONTENT_NOTICE_AFTER_DECISION_DAYS')} AND NOT ${heldSql(sql`t.id`)}
         AND NOT EXISTS (SELECT 1 FROM "ModerationAppeal" a WHERE a."noticeId" = t.id AND a.status = 'open')`) },
+    // ── G14-PS: social referrals (0061) — PROPOSAL, duration pendingApproval: never executes before the owner confirms it ─────────────────────────
+    { id: 'socialReferralsClosedDeleted', summaryKey: 'social_referrals_deleted', ecode: 'G14-PS', kind: 'delete', table: 'SocialReferral', durationKey: 'SOCIAL_REFERRAL_CLOSED_DAYS',
+      tables: ['SocialReferral', 'SocialReferralEvent', 'LegalHold', 'DSRRequest'],
+      ...del('SocialReferral', (ctx) => sql`t."closedAt" IS NOT NULL AND t."closedAt" < ${ctx.cutoff('SOCIAL_REFERRAL_CLOSED_DAYS')}
+        AND ${sql`NOT ${heldSql(sql`t."citizenId"`, sql`t.id`, sql`t."fromStructureId"`, sql`t."toStructureId"`)}`}
+        AND (t."citizenId" IS NULL OR NOT ${personProtectedSql(sql`t."citizenId"`)})`) },
   ];
 }
 
