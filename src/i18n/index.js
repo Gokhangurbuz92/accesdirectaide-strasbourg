@@ -59,12 +59,27 @@ const SOURCE_ENTRY = LANGUAGES[0];
 
 const hasWindow = () => typeof window !== 'undefined' && typeof document !== 'undefined';
 
+/**
+ * G14-R2 (QA v74): a namespace file whose download fails once (a transient network or resource error while the page loads its ~30 language files in
+ * parallel) is fetched again, twice at most, before the language is given up: otherwise bootLanguage fell back to French without a word, and the page
+ * showed French to a visitor who had chosen another language (seen intermittently by the QA accessibility self-check, <html lang="fr">).
+ * @param {() => Promise<any>} load @param {number} [tries]
+ */
+export async function loadWithRetry(load, tries = 3) {
+  for (let i = 1; ; i += 1) {
+    try { return await load(); } catch (e) {
+      if (i >= tries) throw e;
+      await new Promise((r) => { setTimeout(r, 150 * i); });
+    }
+  }
+}
+
 /** Loads every namespace file of a language (once). French has none: its strings are the defaults in the components. @param {string} code */
 export async function loadLanguage(code) {
   if (!LANGUAGE_CODES.includes(code) || loaded.has(code)) return;
   const prefix = `./locales/${code}/`;
   await Promise.all(Object.entries(loaders).filter(([p]) => p.startsWith(prefix)).map(async ([p, load]) => {
-    const mod = await load();
+    const mod = await loadWithRetry(load);
     i18n.addResourceBundle(code, p.slice(prefix.length).replace(/\.json$/, ''), mod.default ?? mod, true, true);
   }));
   loaded.add(code);
