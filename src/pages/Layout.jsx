@@ -24,7 +24,7 @@ import { adminClient as client } from '@/api/client';
 import PropTypes from 'prop-types';
 import brand from '@/lib/brand-config';
 import { frontendEnv } from '@/config/env';
-import { accountEntriesShown, openLinks } from '@/lib/publicBeta';
+import { accountEntriesShown, assistantOpened, openLinks } from '@/lib/publicBeta';
 import '@/styles/layout-accessibility.css';
 import LanguageSelector from '@/components/i18n/LanguageSelector';
 import LanguageSuggestion from '@/components/i18n/LanguageSuggestion';
@@ -523,8 +523,8 @@ export default function Layout({ children }) {   // R26: the active menu entry c
       </footer>
 
       {/* Chat Assistant — lazy-loaded (not needed for first paint) */}
-      {/* public beta: the assistant is closed server-side, so its button is not shown */}
-      {!frontendEnv.flags.publicBeta && (
+      {/* public beta: the assistant is closed server-side, so its button is not shown — unless this build opens the « assistant » surface (G14-AI) */}
+      {assistantOpened(frontendEnv.flags.publicBeta) && (
         <Suspense fallback={null}>
           <ChatAssistant />
         </Suspense>

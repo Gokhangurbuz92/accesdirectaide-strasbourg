@@ -6,7 +6,7 @@ import { ensureCsrfHeaders } from '@/lib/csrf';
 import { ASSISTANT_OPEN_EVENT } from '@/lib/assistantBridge';
 import i18n, { useLanguage, useT } from '@/i18n';
 import { Trans } from 'react-i18next';
-import { assistantMessage, chatFailure } from '@/lib/chatOutcome';
+import { assistantMessage, assistantUsesCloud, chatFailure } from '@/lib/chatOutcome';
 
 /** French text inside any interface language: the assistant answers, cites and is asked in French (context.lang = 'fr') */
 const FR = { lang: 'fr', dir: 'ltr' };
@@ -416,6 +416,9 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
                 {message.role === 'assistant' && message.outcome === 'abstention' && (
                   <p className="mb-1 text-xs font-semibold text-slate-700" data-testid="chat-outcome" data-outcome="abstention">{t('shared:chat.outcome_abstention', 'Pas de réponse sourcée : je ne réponds pas sans source vérifiée.')}</p>
                 )}
+                {message.role === 'assistant' && message.outcome === 'emergency' && (
+                  <p className="mb-1 text-xs font-semibold text-red-800" data-testid="chat-outcome" data-outcome="emergency">{t('shared:chat.outcome_emergency', 'Urgence : appelez un numéro gratuit ci-dessous. L’assistant ne traite pas les urgences.')}</p>
+                )}
                 {message.role === 'assistant' && message.outcome === 'grounded' && (
                   <p className="mb-1 text-xs font-semibold text-slate-700" data-testid="chat-outcome" data-outcome="grounded">{t('shared:chat.outcome_grounded', 'Réponse fondée sur les sources officielles listées ci-dessous. Ce n\'est pas une décision sur vos droits.')}</p>
                 )}
@@ -437,6 +440,19 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
               </>
             )}
 
+            {/* G14-AI: emergency numbers, callable */}
+            {message.emergencyNumbers && message.emergencyNumbers.length > 0 && (
+              <ul className="mt-2 space-y-1 border-t border-red-100 pt-2" data-testid="chat-emergency-numbers">
+                {message.emergencyNumbers.map((/** @type {{ number: string, label: string }} */ e) => (
+                  <li key={e.number}>
+                    <a href={`tel:${e.number}`} className="inline-flex min-h-9 items-center gap-2 rounded-md px-1 text-sm font-semibold text-red-800 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-700">
+                      <span>{e.number}</span><span className="font-normal text-slate-700" {...FR}>{e.label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+
             {/* Smart Links */}
             {message.links && message.links.length > 0 && (
               <div className="mt-3 space-y-1.5 border-t border-slate-100 pt-2">
@@ -455,6 +471,13 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
                       <span {...FR}>{link.title}</span>
                     </span>
                     <ExternalLink className="h-3 w-3 flex-shrink-0 ms-1" aria-hidden="true" />
+                  </a>
+                ))}
+                {/* G14-AI: the official source of each cited fiche, beside the fiche itself */}
+                {message.links.filter((link) => link.sourceUrl).map((link, /** @type {string | number} */ j) => (
+                  <a key={`src-${j}`} href={link.sourceUrl} target="_blank" rel="noopener noreferrer" data-testid="chat-official-source"
+                    className="flex items-center gap-1 px-2.5 text-[11px] text-slate-700 underline underline-offset-2 hover:text-teal-800">
+                    {t('shared:chat.official_source', 'Source officielle')} : <span {...FR} className="truncate">{link.title}</span>
                   </a>
                 ))}
               </div>
@@ -490,7 +513,11 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
             <ShieldCheck className="mt-0.5 h-3.5 w-3.5 flex-shrink-0 text-blue-400" aria-hidden="true" />
             <div className="flex-1">
               <p>
-                <Trans i18n={i18n} i18nKey="shared:chat.privacy" defaults="Vos messages sont traités par l’assistant local pour produire la réponse et ne sont pas enregistrés dans un journal de conversation.<0> Ne communiquez aucune donnée personnelle</0> (n° sécu, IBAN, etc.)." components={[<strong key="b" className="text-slate-600" />]} />
+                {assistantUsesCloud() ? (
+                  <Trans i18n={i18n} i18nKey="shared:chat.privacy_cloud" defaults="Votre question est envoyée, sans votre nom ni votre adresse IP, au service d’IA de Cloudflare (sous-traitant, États-Unis) pour produire la réponse, avec des extraits de fiches publiques vérifiées. Elle n’est ni conservée ni utilisée pour entraîner un modèle, et AccesDirectAide n’enregistre pas la conversation.<0> Ne communiquez aucune donnée personnelle</0> (n° sécu, IBAN, santé, etc.)." components={[<strong key="b" className="text-slate-600" />]} />
+                ) : (
+                  <Trans i18n={i18n} i18nKey="shared:chat.privacy" defaults="Vos messages sont traités par l’assistant local pour produire la réponse et ne sont pas enregistrés dans un journal de conversation.<0> Ne communiquez aucune donnée personnelle</0> (n° sécu, IBAN, etc.)." components={[<strong key="b" className="text-slate-600" />]} />
+                )}
                 {' '}<a href="/confidentialite" className="font-medium text-blue-600 hover:underline">{t('shared:chat.privacy_link', 'Politique de confidentialité')}</a>
               </p>
             </div>

@@ -33,6 +33,8 @@ export const SCREEN_SURFACES = {
   employment: ['/offres-emploi', '/pro/offres-emploi', '/admin/offres-emploi'],
   entraide: ['/compte/entraide', '/admin/entraide'],
   notices: ['/signaler-un-contenu', '/compte/moderation'],
+  // G14-AI: the floating assistant widget (no screen of its own: POST /api/assistant/chat, server surface « assistant », capability ai.citizen_assistant)
+  assistant: [],
 };
 const builtOpen = () => {
   let v = '';
@@ -156,6 +158,15 @@ export function bookingOpened(beta, open = builtOpen(), sub = builtSub()) {
  */
 export function shareOpened(beta, open = builtOpen(), sub = builtSub()) {
   return !beta || !isBetaRestrictedPath('/share', open, sub);
+}
+
+/**
+ * G14-AI — is the citizen assistant widget shown in this build: outside the beta, or when the build names « assistant » in VITE_PUBLIC_BETA_OPEN_SURFACES
+ * (mirror of ADA_BETA_OPEN_SURFACES=assistant). The server still needs the capability ai.citizen_assistant in ADA_CAPABILITIES_OPEN.
+ * @param {boolean} beta @param {string[]} [open]
+ */
+export function assistantOpened(beta, open = builtOpen()) {
+  return !beta || open.includes('assistant');
 }
 
 /**

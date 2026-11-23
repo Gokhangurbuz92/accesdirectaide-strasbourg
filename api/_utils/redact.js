@@ -169,6 +169,17 @@ export function containsIdentifiers(text) {
 }
 
 /**
+ * G14-AI — the text sent to an external AI provider (Cloudflare Workers AI): NIR, IBAN, card, e-mail and phone numbers replaced by neutral tags (no partial
+ * value kept, unlike the log masking). The assistant refuses NIR / IBAN / card before this; e-mail and phone are masked, not refused.
+ * @param {unknown} value
+ */
+export function stripIdentifiers(value) {
+  return maskIdentifiers(String(value ?? ''))
+    .replace(new RegExp(EMAIL_REGEX.source, 'g'), '[courriel]')
+    .replace(new RegExp(PHONE_REGEX.source, 'g'), '[téléphone]');
+}
+
+/**
  * PKG-6 / D21 — a log MESSAGE string (logger.info('…')): same masking as values, longer bound. Before this, string-only log calls were not redacted at all.
  * @param {unknown} value
  */

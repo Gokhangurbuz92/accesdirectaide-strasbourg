@@ -17,6 +17,8 @@ export function lexicalTerms(query) {
   return { singles: words.filter((w) => !w.includes(' ')).join(' '), phrases: words.filter((w) => w.includes(' ')) };
 }
 
+/** G14-AI: the Cloudflare Workers AI embedding model, indexed in "Aide".embedding_m3 (vector(1024), migration 0060) */
+const M3_MODEL = '@cf/baai/bge-m3';
 const RRF_K = 60;
 const LEXICAL_CANDIDATE_MULTIPLIER = 5;
 const SEMANTIC_CANDIDATE_MULTIPLIER = 5;
@@ -25,6 +27,7 @@ const CAPABILITY_CACHE_TTL_MS = 5 * 60 * 1000;
 let capabilityCache = {
   checkedAt: 0,
   hasEmbeddingColumn: false,
+  hasEmbeddingM3Column: false,
   hasVectorExtension: false,
   hasTsContentColumn: false,
   hasSearchVectorColumn: false,
@@ -50,6 +53,12 @@ async function getSearchCapabilities() {
           WHERE table_name = 'Aide'
             AND column_name = 'embedding'
         ) AS has_embedding_column,
+        EXISTS (
+          SELECT 1
+          FROM information_schema.columns
+          WHERE table_name = 'Aide'
+            AND column_name = 'embedding_m3'
+        ) AS has_embedding_m3_column,
         EXISTS (
           SELECT 1
           FROM pg_extension
@@ -79,6 +88,7 @@ async function getSearchCapabilities() {
     capabilityCache = {
       checkedAt: now,
       hasEmbeddingColumn: Boolean(row.has_embedding_column),
+      hasEmbeddingM3Column: Boolean(row.has_embedding_m3_column),
       hasVectorExtension: Boolean(row.has_vector_extension),
       hasTsContentColumn: Boolean(row.has_ts_content_column),
       hasSearchVectorColumn: Boolean(row.has_search_vector_column),
@@ -88,6 +98,7 @@ async function getSearchCapabilities() {
     capabilityCache = {
       checkedAt: now,
       hasEmbeddingColumn: false,
+      hasEmbeddingM3Column: false,
       hasVectorExtension: false,
       hasTsContentColumn: false,
       hasSearchVectorColumn: false,
@@ -200,9 +211,13 @@ export async function searchAidesHybrid(params) {
   const vectorLiteral = Array.isArray(embedding) && embedding.length > 0 ? toVectorLiteral(embedding) : null;
 
   const capabilities = await getSearchCapabilities();
+  // G14-AI: a bge-m3 query vector (Cloudflare Workers AI, 1024 dimensions) is compared with the bge-m3 index column (migration 0060), never with the 768-d
+  // local column; without that column (0060 not applied) the search is lexical only
+  const m3 = embeddingModel === M3_MODEL;
   const semanticReady = vectorLiteral
-    ? capabilities.hasEmbeddingColumn && capabilities.hasVectorExtension
+    ? (m3 ? capabilities.hasEmbeddingM3Column : capabilities.hasEmbeddingColumn) && capabilities.hasVectorExtension
     : false;
+  const vectorColumn = m3 ? sql`a."embedding_m3"` : sql`a."embedding"`;
 
   const tsQuery = capabilities.hasUnaccentExtension
     ? sql`websearch_to_tsquery('french', unaccent(${query}))`
@@ -252,7 +267,7 @@ export async function searchAidesHybrid(params) {
       )
     `;
 
-  const semanticFilter = embeddingModel 
+  const semanticFilter = embeddingModel && !m3
     ? sql`AND a."embedding_model" = ${embeddingModel}`
     : sql``;
 
@@ -261,11 +276,11 @@ export async function searchAidesHybrid(params) {
       semantic AS (
         SELECT
           a.id,
-          1 - (a."embedding" <=> CAST(${vectorLiteral} AS vector)) AS semantic_score,
-          ROW_NUMBER() OVER (ORDER BY a."embedding" <=> CAST(${vectorLiteral} AS vector) ASC, a.id ASC) AS semantic_rank
+          1 - (${vectorColumn} <=> CAST(${vectorLiteral} AS vector)) AS semantic_score,
+          ROW_NUMBER() OVER (ORDER BY ${vectorColumn} <=> CAST(${vectorLiteral} AS vector) ASC, a.id ASC) AS semantic_rank
         FROM "Aide" a
         WHERE ${filters}
-          AND a."embedding" IS NOT NULL
+          AND ${vectorColumn} IS NOT NULL
           ${semanticFilter}
         LIMIT ${semanticLimit}
       )

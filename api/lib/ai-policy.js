@@ -8,7 +8,25 @@ export const AUDIENCE = {
 export const PROVIDER = {
   GEMINI: 'GEMINI',
   OLLAMA: 'OLLAMA',
+  // G14-AI (owner decision 23/11/2026, « Cloudflare Workers AI ücretsiz planı … 0 € maliyet »): Cloudflare Workers AI REST, citizen assistant only
+  WORKERS_AI: 'WORKERS_AI',
 };
+
+/**
+ * G14-AI — the ONLY switch set that lets a citizen / public request reach Cloudflare Workers AI (fail-closed, exact values):
+ *   AI_PROVIDER=workers_ai, AI_WORKERS_PRODUCTION_APPROVED=true (owner approval recorded: processor Cloudflare, Inc., AIPD line, notice),
+ *   CF_WORKERS_AI_ACCOUNT_ID (32 hex) and CF_WORKERS_AI_TOKEN present. Anything else = refused. Never for PROFESSIONAL / ADMIN (the pro dossier synthesis
+ *   stays tied to the HDS dossier and closed). Gemini rules are unchanged.
+ * @param {Record<string, string | undefined>} [envVars] @returns {{ enabled: boolean, reason: string | null }}
+ */
+export function workersAiState(envVars = process.env) {
+  const get = (/** @type {string} */ k) => String(envVars[k] ?? '').trim();
+  if (get('AI_PROVIDER').toLowerCase() !== 'workers_ai') return { enabled: false, reason: 'WORKERS_AI_NOT_SELECTED' };
+  if (get('AI_WORKERS_PRODUCTION_APPROVED') !== 'true') return { enabled: false, reason: 'WORKERS_AI_NOT_APPROVED' };
+  if (!/^[0-9a-f]{32}$/i.test(get('CF_WORKERS_AI_ACCOUNT_ID'))) return { enabled: false, reason: 'WORKERS_AI_ACCOUNT_ID_MISSING' };
+  if (get('CF_WORKERS_AI_TOKEN').length < 20) return { enabled: false, reason: 'WORKERS_AI_TOKEN_MISSING' };
+  return { enabled: true, reason: null };
+}
 
 export const LOCALITY = {
   LOCAL_LOOPBACK: 'LOCAL_LOOPBACK',
@@ -63,7 +81,8 @@ export class AIProviderPolicy {
    * @param {{
    *   provider: string,
    *   audience: string,
-   *   locality?: string
+   *   locality?: string,
+   *   env?: Record<string, string | undefined>
    * }} context 
    * @returns {{ allowed: boolean, reason?: string }}
    */
@@ -99,6 +118,12 @@ export class AIProviderPolicy {
         return { allowed: false, reason: 'EXTERNAL_OLLAMA_DENIED_BY_DEFAULT' };
       }
       return { allowed: false, reason: 'UNKNOWN_LOCALITY_DENIED' };
+    }
+
+    if (provider === PROVIDER.WORKERS_AI) {
+      if (audience !== AUDIENCE.CITIZEN && audience !== AUDIENCE.PUBLIC) return { allowed: false, reason: 'WORKERS_AI_CITIZEN_ASSISTANT_ONLY' };
+      const state = workersAiState(context.env || process.env);
+      return state.enabled ? { allowed: true } : { allowed: false, reason: state.reason || 'WORKERS_AI_NOT_ENABLED' };
     }
 
     // Default DENY for unknown providers

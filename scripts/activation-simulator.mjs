@@ -31,7 +31,7 @@ import { RETENTION_POLICY, executionGate, POLICY_STATUS_APPROVED, stepApprovalPr
 import { loadGuardianPolicy } from '../api/_services/guardianship.js';
 import { isBetaRestrictedPath } from '../src/lib/publicBeta.js';
 import { LEGAL_DRAFT_DOCUMENTS, draftVisibility } from '../src/config/legal-drafts.js';
-import { evaluateReleasePreflight, outlookCheck } from './release-preflight.mjs';
+import { evaluateReleasePreflight, outlookCheck, workersAiCheck } from './release-preflight.mjs';
 
 export const SYNTHETIC = 'SYNTHETIC-TEST-ONLY';
 /** the shipped migration that the appointment notices need (api/_utils/schema-features.js NOTICE_KINDS_0045) */
@@ -120,6 +120,9 @@ export function finalConfig(opts = {}) {
     OPENFISCA_URL: m.openfisca, AIDES_TERRITOIRES_API_KEY: `${SYNTHETIC}-${rnd(8)}`,
     SENTRY_DSN: `https://${rnd(8)}@o0.ingest.de.sentry.io/0`, ALERT_WEBHOOK_URL: m.alert,
     OPEN_DATA_EXPORT_ENABLED: 'true',
+    // G14-AI: the citizen assistant on Cloudflare Workers AI (synthetic account and token, never called)
+    AI_PROVIDER: 'workers_ai', AI_WORKERS_PRODUCTION_APPROVED: 'true', CF_WORKERS_AI_ACCOUNT_ID: rnd(16).slice(0, 32).padEnd(32, '0'), CF_WORKERS_AI_TOKEN: `${SYNTHETIC}-${rnd(16)}`,
+    VITE_ASSISTANT_PROVIDER: 'workers_ai',
     // object storage of message attachments (api/_services/message-attachments.js uses api/lib/storage.js directly, not the ProtectedStore)
     STORAGE_ENDPOINT: 'https://storage.example.test', STORAGE_BUCKET: 'synthetic-test-only', STORAGE_ACCESS_KEY_ID: `${SYNTHETIC}-id`, STORAGE_SECRET_ACCESS_KEY: `${SYNTHETIC}-${rnd(8)}`,
     // legal publisher identity (build-time, src/config/legal-documents.js)
@@ -167,6 +170,8 @@ const SURFACE_PROBES = {
   employment: { route: 'employment', method: 'GET', screen: '/offres-emploi', features: ['X05'] },
   entraide: { route: 'citizen/entraide', method: 'GET', screen: '/compte/entraide', features: ['X03'] },
   notices: { route: 'notices', method: 'GET', screen: '/signaler-un-contenu', features: ['X02', 'X01', 'X05', 'X03'] },
+  // G14-AI: the citizen assistant's question route (a widget, no screen of its own)
+  assistant: { route: 'assistant/chat', method: 'POST', screen: null, features: ['P17', 'D17'] },
 };
 const SURFACE_OTHER = {
   accounts: [
@@ -190,9 +195,10 @@ const SURFACE_OTHER = {
   diagnostic: [{ type: 'owner_decision', what: 'extension de l’AIPD au questionnaire / assistant', ref: 'api/_utils/capabilities.js' },
     { type: 'human_review', what: 'expert D11 : aucune règle n’est validée (le résultat reste indicatif)', ref: 'docs/rules/D11_PROCEDURE_VALIDATION_EXPERTE.md' }],
   admin: [{ type: 'operator', what: 'comptes administrateurs nominatifs avec MFA (pas de jeton hérité)', ref: 'scripts/admin-bootstrap.mjs' }],
+  assistant: [{ type: 'owner_decision', what: 'ligne AIPD « assistant » : Cloudflare, Inc. sous-traitant (États-Unis), paragraphe de la notice de confidentialité', ref: 'api/lib/workers-ai.js' }],
 };
 const SURFACE_REQUIRES = { accounts: ['provider.mail'], pro: ['provider.mail'], institution: ['capability.institution.portal'], appointments: ['provider.mail'],
-  communications: ['provider.mail', 'storage.object'], documents: ['capability.citizen.vault', 'protected_store'], video: ['capability.video'] };
+  communications: ['provider.mail', 'storage.object'], documents: ['capability.citizen.vault', 'protected_store'], video: ['capability.video'], assistant: ['provider.workers_ai'] };
 
 /** @returns {Item[]} */
 export function buildItems() {
@@ -228,7 +234,7 @@ export function buildItems() {
     'citizen.shared_dossier': ['C14', 'C15', 'C16', 'C17', 'R13', 'R15'], 'citizen.saved_diagnostic': ['C12'], 'diagnostic.questionnaire': ['P13', 'D10', 'D20'],
     'pro.case_management': ['R03', 'R05', 'R06', 'R07', 'R08', 'R11', 'R12'], 'pro.referrals': ['R09', 'R10', 'E06'], 'pro.orientation_selections': ['R18'], 'pro.siao_interop': ['R22'], 'partner.referral_adapter': ['R09', 'R10', 'E06'],
     'ai.processing': ['P17', 'D17', 'D18', 'R17', 'R23', 'P18'], 'institution.portal': ['I01', 'I02', 'I03', 'I04'], video: ['B07', 'N06'], 'citizen.minor_accounts': [],
-    'community.events': ['X04'], 'community.testimonials': ['X02'], 'community.stories': ['X01'], 'community.employment': ['X05'], 'community.entraide': ['X03'] };
+    'community.events': ['X04'], 'community.testimonials': ['X02'], 'community.stories': ['X01'], 'community.employment': ['X05'], 'community.entraide': ['X03'], 'ai.citizen_assistant': ['P17', 'D17'] };
   for (const [name, cap] of Object.entries(CAPABILITIES)) {
     const env = [tok('ADA_BETA_OPEN_SURFACES', cap.surface)];
     if (cap.accountsFull) env.push(eqv('ADA_BETA_ACCOUNTS_SCOPE', 'full'));
@@ -338,6 +344,12 @@ export function buildItems() {
         return ok;
       } });
   }
+  // G14-AI: the citizen assistant's provider (Cloudflare Workers AI, Free plan) — the release-gate check itself is the probe
+  items.push({ id: 'provider.workers_ai', kind: 'provider', label: 'Fournisseur Cloudflare Workers AI (assistant citoyen, 0 €)', features: ['P17', 'D17'],
+    env: ['AI_PROVIDER', 'AI_WORKERS_PRODUCTION_APPROVED', 'CF_WORKERS_AI_ACCOUNT_ID', 'CF_WORKERS_AI_TOKEN', 'VITE_ASSISTANT_PROVIDER'].map((n) => eqv(n)),
+    other: [{ type: 'provider_account', what: 'compte Cloudflare (plan gratuit Workers AI), jeton limité à Workers AI', ref: 'api/lib/workers-ai.js' }],
+    rollback: 'retirer AI_PROVIDER (l’assistant revient au chemin local, indisponible en Production)',
+    probe: (e) => { const [st, d] = workersAiCheck((k) => String(e[k] ?? '').trim()); return st === 'PASS' && String(e.AI_PROVIDER || '').toLowerCase() === 'workers_ai' ? ok : no(`WORKERS_AI: ${d.slice(0, 60)}`); } });
   items.push({ id: 'provider.sms_stop', kind: 'provider', label: 'Webhook SMS entrant (STOP)', features: ['N02'], env: [eqv('SMS_INBOUND_URL', 'https://…/api/monitor/sms-inbound/twilio'), eqv('TWILIO_AUTH_TOKEN')],
     requires: ['provider.sms'], rollback: 'retirer SMS_INBOUND_URL', probe: (e) => (isSmsInboundRequest('POST', 'monitor/sms-inbound/twilio', e) ? ok : no('SMS_INBOUND_CLOSED')) });
   items.push({ id: 'provider.alert', kind: 'provider', label: 'Canal d’alerte opérationnelle', features: ['Q07'], env: [eqv('ALERT_WEBHOOK_URL', 'https://… (ou ALERT_EMAIL avec un vrai fournisseur d’e-mail)')],

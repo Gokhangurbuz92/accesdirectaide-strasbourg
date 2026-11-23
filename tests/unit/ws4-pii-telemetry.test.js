@@ -6,7 +6,7 @@ const source = readFileSync(new URL('../../api/_handlers/assistant/chat.js', imp
 describe('WS4 PII and telemetry minimization', () => {
   it('blocks NIR and IBAN before retrieval/model execution', () => {
     const piiGate = source.indexOf('containsSensitiveData(trimmedMessage)');
-    const retrieval = source.indexOf('retrieveVerifiedRecords(trimmedMessage, resolvedTerritory)');
+    const retrieval = source.indexOf('retrieveVerifiedRecords(questionText, resolvedTerritory, provider)');
     const model = source.indexOf('generateCitizenLocalStructuredContent({');
     expect(piiGate).toBeGreaterThan(-1);
     expect(retrieval).toBeGreaterThan(piiGate);

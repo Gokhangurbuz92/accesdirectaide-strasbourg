@@ -88,6 +88,9 @@ export const SURFACES = {
   communications: ['messages', 'secure-messages', 'contact', 'support', 'feedback', 'reports', 'public/suggest-structure', 'public/sms-notify', 'assistant/feedback', 'pro/messages'],
   documents: ['citizen/coffre', 'citizen/dossier', 'pro/dossier', 'share', 'public/dossier-revoke', 'public/dossier-grants', 'public/passport', 'download', 'pdf'],
   diagnostic: ['diagnostic', 'drees', 'assistant', 'public/falc', 'public/assistant', 'tts'],
+  // G14-AI (owner 23/11/2026): the citizen assistant's question route alone (capability ai.citizen_assistant). A longer prefix than « assistant »: opening
+  // « diagnostic » does not open it, and opening « assistant » opens nothing else (recommendations, FALC, orientation, feedback stay where they are).
+  assistant: ['assistant/chat'],
   admin: ['admin'],
   // R40 / G2: « jobs » classifies the cron and monitor routes but can NOT be opened as a whole (NOT_OPENABLE below): it used to open every cron and monitor
   // route at once — the legacy importers and hive-scan (a cloud AI provider that is not approved) included. Jobs open one at a time (ADA_BETA_OPEN_JOBS).
