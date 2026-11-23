@@ -45,6 +45,8 @@ const CONFIG = {
     SOCIAL_REFERRAL_CLAIM: { limit: 10, window: 900 },     // G14-PS: one-time referral codes entered by a person, 10 per 15 min
     CSP_REPORT: { limit: 20, window: 60 },
     PUBLIC_INDICATORS: { limit: 30, window: 60 },   // G8: public indicators (cached 6 h on the server; a page asks once)
+    PUBLIC_OBSERVATOIRE: { limit: 30, window: 60 },   // G14-OBS: public observatoire JSON / CSV (cached 1 h on the server)
+    PUBLIC_SIGNAL: { limit: 10, window: 60 },   // G14-OBS: opt-in situation counter (one count per choice; fails closed: a count is dropped, nothing else)
     TRANSLATION_READ: { limit: 120, window: 60 },   // R32: public translations of verified content (a page asks once or twice)
     EMAIL_CHANGE: { limit: 3, window: 3600 },  // launch-readiness item 66: address change requests, 3 per hour per account    // launch-readiness item 49: browser CSP violation reports, 20 per minute per IP (logged, never stored)
     DSR_EXPORT: { limit: 10, window: 3600 },  // PKG-11 audit: each export files a DSR request
@@ -128,7 +130,7 @@ function hashKey(/** @type {string} */ key) {
 const PUBLIC_READ_ACTIONS = new Set([
     'SEARCH_AIDES', 'SEARCH_STRUCTURES', 'SEARCH_RESSOURCES', 
     'DREES_API', 'TAXONOMY', 'RDV_PUBLIC_READ', 'MESSAGE_USER_READ', 
-    'MESSAGE_PRO_READ', 'ASSISTANT_CHAT', 'ASSISTANT_RECOS', 'DIAGNOSTIC', 'PDF_EXPORT', 'TERRITORY_LOOKUP', 'PUBLIC_INDICATORS'
+    'MESSAGE_PRO_READ', 'ASSISTANT_CHAT', 'ASSISTANT_RECOS', 'DIAGNOSTIC', 'PDF_EXPORT', 'TERRITORY_LOOKUP', 'PUBLIC_INDICATORS', 'PUBLIC_OBSERVATOIRE'
 ]);
 
 // R43: the former AUTH_OR_SENSITIVE_MUTATION list was never read: shouldFailClosed() fails closed for EVERY action outside PUBLIC_READ_ACTIONS (unknown ones included)

@@ -39,6 +39,8 @@ const routeTable = [
     { path: 'sitemap.xml', match: 'exact', handler: () => import('./_handlers/sitemap.js') },
     { path: 'public/page', match: 'exact', handler: () => import('./_handlers/public/page.js') },   // P22: the record pages' initial HTML (canonical, title, 404 / 410)
     { path: 'public/indicators', match: 'exact', handler: () => import('./_handlers/public/indicators.js') },   // G8: public indicators of the Observatoire (closed unless ADA_PUBLIC_INDICATORS=open)
+    { path: 'public/observatoire', match: 'exact', handler: () => import('./_handlers/public/observatoire.js') },   // G14-OBS: demand signals + supply map, JSON / CSV (closed unless ADA_OBSERVATOIRE=open)
+    { path: 'public/signal', match: 'exact', handler: () => import('./_handlers/public/signal.js') },   // G14-OBS: opt-in situation counter (closed unless ADA_DEMAND_SIGNALS names « situation »)
     { path: 'sitemap', match: 'exact', handler: () => import('./_handlers/sitemap.js') },
     { path: 'login-pro-guard', match: 'exact', handler: () => import('./_handlers/login-pro-guard.js') },
     { path: 'taxonomy', match: 'exact', handler: () => import('./_handlers/taxonomy.js') },

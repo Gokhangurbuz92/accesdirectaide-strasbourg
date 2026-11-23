@@ -14,6 +14,7 @@ import { structureTypeHint } from '../lib/search-structure-type.js';
 import { offTopicIntent } from '../lib/search-off-topic.js';
 import { safetySignal } from '../lib/search-safety.js';
 import { guideOffices } from '../lib/official-offices.js';
+import { recordSearch } from '../_services/demand-signals.js';
 import { sql } from 'drizzle-orm';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -98,6 +99,8 @@ export default async function handler(req, res) {
     // R37: several needs in one query → the needs, most urgent first, with actions, official sheets and cautions (api/lib/multi-need.js; read before the
     // query is rewritten for the search, never stored)
     const analysis = analyseNeeds([payload.query, cross.changed ? cross.query : ''], { safetyKind: safety?.kind || null });
+    // G14-OBS: anonymous demand signal — only the codes found above and the filters (never the query); nothing unless ADA_DEMAND_SIGNALS names « search »
+    await recordSearch(analysis, { category: payload.category || null, territory: payload.territory || null });
     // a danger searches its French topic too: « my husband hits me » finds the guide on domestic violence and the victim offices; « je veux en finir » has
     // no searchable word of its own (only « finir »)
     if (safety && (cross.changed || (payload.lang && payload.lang !== 'fr'))) { cross.query = safety.topic; cross.changed = true; }

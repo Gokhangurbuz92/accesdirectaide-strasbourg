@@ -6,6 +6,7 @@
  */
 import { isCspReportRequest } from './csp-reporting.js';
 import { PUBLIC_INDICATORS_PATH, publicIndicatorsOpen } from '../lib/public-indicators.js';
+import { OBSERVATOIRE_PATH, SIGNAL_PATH, observatoireOpen, signalRecorded } from '../lib/demand-signals.js';
 
 const EXACT = new Set([
   'health', 'health/live', 'health/ready', 'healthz', 'status',
@@ -62,6 +63,18 @@ export function isPartnerCallbackRequest(method, path, envVars = process.env) {
  */
 export function isPublicIndicatorsRequest(method, path, envVars = process.env) {
   return READ_METHODS.has(String(method || '').toUpperCase()) && path === PUBLIC_INDICATORS_PATH && publicIndicatorsOpen(envVars);
+}
+
+/**
+ * G14-OBS: the public observatoire (anonymous demand signals + supply map of the public directory, aggregates only) — GET / HEAD on that exact path, only
+ * when ADA_OBSERVATOIRE=open; and the opt-in situation counter — POST on that exact path, only when ADA_DEMAND_SIGNALS names « situation » (the handlers
+ * apply the same switches outside the beta). @param {string} method @param {string} path @param {Record<string, string | undefined>} [envVars]
+ */
+export function isObservatoireRequest(method, path, envVars = process.env) {
+  const m = String(method || '').toUpperCase();
+  if (path === OBSERVATOIRE_PATH) return READ_METHODS.has(m) && observatoireOpen(envVars);
+  if (path === SIGNAL_PATH) return m === 'POST' && signalRecorded('situation', envVars);
+  return false;
 }
 
 /** @param {Record<string, string | undefined>} [envVars] */
@@ -295,6 +308,7 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   if (isSmsInboundRequest(method, p, envVars)) return true;
   if (isPartnerCallbackRequest(method, p, envVars)) return true;
   if (isPublicIndicatorsRequest(method, p, envVars)) return true;
+  if (isObservatoireRequest(method, p, envVars)) return true;
   const surface = surfaceOf(p);
   // R47 (activation finding F1): the citizen side of « appointments » acts through a citizen account, so it follows « accounts » too — closing
   // « accounts » (rollback) must also stop an already-open citizen session from booking, rescheduling or cancelling; public slot reading stays

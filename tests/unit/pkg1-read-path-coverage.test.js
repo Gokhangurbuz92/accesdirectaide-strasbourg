@@ -28,6 +28,8 @@ const GUARDED = [
   'api/_services/mon-espace.js',
   // G8: public indicators — counts only, every content query goes through visibleSql(kind, { mode: 'strict' }) or decide(…, { mode: 'strict' })
   'api/_services/public-indicators.js',
+  // G14-OBS: the observatoire's supply map and appointment requests — counts only, every Structure read goes through visibleSql('structure', { mode: 'strict' })
+  'api/_services/demand-signals.js',
 ];
 /** reviewed: not a citizen-facing content read path (reason in the comment) */
 const REVIEWED_NOT_PUBLIC = {

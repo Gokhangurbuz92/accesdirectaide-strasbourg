@@ -548,6 +548,40 @@
       ],
       "note": "G8: exactly « open » = the « Indicateurs publics » section of /impact (rebuild); must match ADA_PUBLIC_INDICATORS"
     },
+    "ADA_OBSERVATOIRE": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(open)?$",
+      "note": "G14-OBS (owner approval 23/11/2026): exactly « open » = GET /api/public/observatoire answers (JSON and ?format=csv, Licence Ouverte 2.0): frozen closed quarters of the anonymous demand signals (cells below 5 masked, complementary suppression, commune breakdown only from 20 searches) and the supply map of the public directory. Unset = 404. Must match VITE_OBSERVATOIRE"
+    },
+    "VITE_OBSERVATOIRE": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "note": "G14-OBS: exactly « open » = the /observatoire page shows the data and the footer / impact links to it (rebuild); must match ADA_OBSERVATOIRE"
+    },
+    "ADA_DEMAND_SIGNALS": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^((search|situation|parcours|referral)(,(search|situation|parcours|referral))*)?$",
+      "note": "G14-OBS: comma list of the anonymous counters recorded (search = subdomain + Eurométropole commune of searches, aid-category filter; situation = opt-in Rights Graph counter POST /api/public/signal; parcours = limited Mon Parcours step types added / closed; referral = social referral reasons). Unset = nothing is written. Needs migration 0062 and the notice/AIPD text of the G14-OBS report before Production"
+    },
+    "VITE_DEMAND_SIGNALS": {
+      "class": "decision",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "note": "G14-OBS: containing « situation » = the Rights Graph page shows the opt-in box (unticked by default) and sends the chosen situation id only when ticked (rebuild); must match ADA_DEMAND_SIGNALS"
+    },
     "MAINTENANCE_MODE": {
       "class": "optional",
       "nature": "config",

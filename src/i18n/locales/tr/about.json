@@ -248,5 +248,7 @@
  "indicators.themes.title": "Resmî kaynağın temasına göre yayımlanan yardımlar",
  "indicators.themes.is_not": "Bir alandaki ihtiyacın önemi değildir: yalnızca katalogdaki sayfa sayısıdır, kaynağın yaptığı gibi sınıflandırılmıştır.",
  "indicators.themes.text": "Tema, resmî kaynağın (Service-Public…) sayfaya verdiği temadır; Fransızca kalır.",
- "indicators.themes.none": "Tema kaynak tarafından belirtilmemiş"
+ "indicators.themes.none": "Tema kaynak tarafından belirtilmemiş",
+ "impact.observatoire": "Sitede aranan haklar ve yayımlanan yardım yerleri, çeyrek çeyrek:",
+ "impact.observatoire_link": "Gözlemevi'ni görün"
 }

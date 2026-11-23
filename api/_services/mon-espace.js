@@ -22,6 +22,9 @@ import { mergePlanStep, planNeeds, planStepFits, planStepFromPlan, readPlanStep,
 import { PLAN_CLOSURES, PLAN_DONE_STATUSES, closureOf, dependencyCycle } from '../../src/lib/parcoursPlan.js';
 import { classifyParcoursStep, parcoursNotesOpen, parcoursSensitiveMode } from '../lib/parcours-sensitivity.js';
 import { STEP_TYPE_PREFIX, allowedTypeStructures, deadlineSourceOf, stepTypeOf, stepTypeOfItem, structureFitsStepType } from '../lib/parcours-step-types.js';
+import { recordParcoursAdded, recordParcoursClosed } from './demand-signals.js';
+/** G14-OBS: the states that end a step (a count of « closed » steps per type) */
+const FINAL_STATUSES = ['CLOSED', 'DECISION_POSITIVE', 'DECISION_NEGATIVE'];
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const notFound = () => bad('NOT_FOUND', 'Élément introuvable.', 404);
@@ -367,6 +370,7 @@ export async function addStepType(userId, input, db = defaultDb) {
     .onConflictDoNothing({ target: [ParcoursItem.userId, ParcoursItem.planKey] }).returning();
   if (!row) return { ok: true, status: 200, added: false, item: itemView(await existing()) };
   await event(db, row, 'CREATED', null, 'NOT_STARTED');
+  await recordParcoursAdded(type.code);   // G14-OBS: anonymous count of the step type (nothing unless ADA_DEMAND_SIGNALS names « parcours »)
   return { ok: true, status: 201, added: true, item: itemView(row) };
 }
 
@@ -430,6 +434,7 @@ export async function setStatus(userId, id, status, db = defaultDb) {
   const planStep = has && was !== closure ? mergePlanStep(row.planStep, {}, closure) : undefined;
   const [up] = await db.update(T).set({ status: next, ...(planStep !== undefined ? { planStep } : {}) }).where(and(eq(ParcoursItem.id, row.id), eq(ParcoursItem.userId, userId))).returning();
   await event(db, row, 'STATUS', row.status, next);
+  if (FINAL_STATUSES.includes(next) && !FINAL_STATUSES.includes(row.status) && stepTypeOfItem(row)) await recordParcoursClosed(stepTypeOfItem(row).code);   // G14-OBS
   return { ok: true, status: 200, item: itemView(up) };
 }
 

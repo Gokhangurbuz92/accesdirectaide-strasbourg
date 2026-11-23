@@ -248,5 +248,7 @@
  "indicators.themes.title": "Published benefits by theme of the official source",
  "indicators.themes.is_not": "It is not how important the needs are in an area: only the number of pages in the catalogue, classified as the source does.",
  "indicators.themes.text": "The theme is the one the official source (Service-Public…) gives the page; it stays in French.",
- "indicators.themes.none": "Theme not given by the source"
+ "indicators.themes.none": "Theme not given by the source",
+ "impact.observatoire": "The rights searched for on the site and the published help places, quarter by quarter:",
+ "impact.observatoire_link": "see the Observatory"
 }
