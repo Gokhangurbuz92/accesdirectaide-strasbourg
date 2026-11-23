@@ -138,14 +138,15 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
   it('the privacy notice covers art. 13 / 14: controller as natural person without address, P1–P16 proposed, A7 pending, processors, transfers, rights, CNIL, booking, sensitive services, art. 14 sources', () => {
     const t = text(notice);
     expect(t).toContain('{{controller}}, personne physique');
-    for (const p of ['P1 ', 'P2 ', 'P2b', 'P3 ', 'P4 ', 'P4p', 'P5 ', 'P5s', 'P6 ', 'P7 ', 'P8 ', 'P9 ', 'P10a', 'P10b/P10c', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16']) expect(t, p).toContain(`${p.trim()} —`);
+    for (const p of ['P1 ', 'P2 ', 'P2b', 'P3 ', 'P4 ', 'P4p', 'P5 ', 'P5s', 'P6 ', 'P7 ', 'P8 ', 'P9 ', 'P10a', 'P10b', 'P10c', 'P11', 'P12', 'P13', 'P14', 'P15', 'P16']) expect(t, p).toContain(`${p.trim()} —`);
     // Release B (D2 V2): the account purposes (P1, P2, P2b, P3, P10a, P12–P16) are a section of their own, without the « proposed » badge; the later-wave
     // purposes stay proposed (3 bis). Since v4 (15/11/2026): the retention periods are the approved policy (retention-policy.js, 09/11/2026) — no badge on § 4
     expect(notice.sections.filter((s) => s.proposed).map((s) => s.id)).toEqual(['purposes-later']);
     const v2 = notice.sections.find((s) => s.id === 'purposes');
     // G8 notice v9 (19/11/2026): P4p (professional accounts) moved from 3 bis to § 3 — ADA Pro opens to a pilot structure (tests/unit/g8-notice-v9.test.jsx)
     // G14 ADA Pro opening (notice v13, 23/11/2026): P4, P5, P7, P11 move from 3 bis to § 3 (appointments and Outlook open)
-    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P4', 'P5', 'P7', 'P11', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17']);
+    // G14 consolidation (23/11/2026): P10c (browser notifications), P18 (indicative calculation), P19 (assistant), P20 (Observatoire), P21 (assisted mode), P23 (social referral)
+    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P4', 'P5', 'P7', 'P11', 'P10c', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', 'P23']);
     expect(t).toContain('ne sont pas des consentements au sens du RGPD');
     expect(t).toContain('Aucun numéro de téléphone n\'est demandé');
     expect(t).toContain('aucune information de ce type n\'est demandée');
@@ -159,7 +160,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
   });
   it('the terms say free service, no entitlement decision, AI limits, structure confirms, deletion, lawful liability, French law and mediation « à vérifier »', () => {
     const c = text(LEGAL_DRAFT_DOCUMENTS[0]);
-    for (const w of ['Le service est gratuit', 'Il ne prend aucune décision sur vos droits', 'Il pourra se tromper', "c'est la structure qui confirmera", 'suppression de votre compte', 'Aucune clause de ces conditions ne réduit les droits que la loi vous reconnaît', 'droit français', 'est à vérifier']) expect(c, w).toContain(w);
+    for (const w of ['Le service est gratuit', 'Il ne prend aucune décision sur vos droits', 'Il peut se tromper', "c'est la structure qui confirmera", 'suppression de votre compte', 'Aucune clause de ces conditions ne réduit les droits que la loi vous reconnaît', 'droit français', 'est à vérifier']) expect(c, w).toContain(w);
     // no abusive-clause style exclusions (consumer code L212-1; civil code 1171 to be checked by counsel)
     for (const d of LEGAL_DRAFT_DOCUMENTS) expect(text(d)).not.toMatch(/décline toute responsabilité|aucune responsabilité|en aucun cas responsable|sans préavis ni indemnité|tribunaux de Strasbourg seuls compétents/i);
     for (const d of LEGAL_DRAFT_DOCUMENTS) expect(text(d), d.id).toMatch(/version française de ce(?:s conditions| cette notice|tte notice)? est la seule juridiquement de référence|La version française de cette notice/);

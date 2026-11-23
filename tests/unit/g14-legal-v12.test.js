@@ -45,6 +45,11 @@ const NOTICE_ADDED = ['moderation.p1_v12', 'moderation.p2_v12', 'moderation.p3_v
   'moderation.title_v12', 'participation.events_v12', 'participation.p1_v12', 'participation.stories_v12', 'participation.testimonials_v12', 'participation.title_v12',
   'recipients.expansion_v12', 'retention.content_v12', 'retention.decisions_v12', 'retention.events_v12', 'retention.notices_v12', 'retention.proofs_v12',
   'rights.expansion_v12', 'status.expansion_v12'];
+/** G14 consolidation (23/11/2026): the citizen texts of the other branches (v12 and v13) */
+const G14C_CITIZEN = ['processors.cloudflare_g14c', 'processors.scaleway_g14c', 'purposes.offline_g14c', 'purposes.p18_g14c', 'purposes.p19_g14c', 'purposes.p20_g14c',
+  'purposes.p21_g14c', 'purposes.passeport_g14c', 'purposes.situation_g14c', 'retention.assistant_g14c', 'retention.assisted_g14c', 'retention.observatory_g14c', 'transfers.cloudflare_g14c'];
+/** and the professional side (v13 only) */
+const G14C_PRO = ['purposes-later.p10b_g14c', 'purposes.p10c_g14c', 'purposes.p23_g14c', 'retention.push_g14c', 'retention.socialReferrals_g14c', 'transfers.push_g14c'];
 /** notice v13: the ADA Pro opening texts (owner 23/11/2026) */
 const PRO_OPENING_KEYS = ['art14.p3_v13', 'booking.p1_v13', 'booking.p2_v13', 'booking.p3_v13', 'booking.p4_v13', 'booking.title_v13', 'processors.i4_v13', 'processors.i5_v13',
   'processors.provider_v13', 'processors.video_v13', 'purposes.p11_v13', 'purposes.p4_v13', 'purposes.p4p_v13', 'purposes.p5_v13', 'purposes.p7_v13', 'recipients.p2_v13',
@@ -75,23 +80,24 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
 
   it('notice v12 = v10 + the expansion texts only (two new sections, Mailjet item); v13 = v11 + the same texts + the video texts', () => {
     const a = keys(NOTICE_V10); const b = keys(n12);
-    expect(diff(a, b)).toEqual([...NOTICE_ADDED, 'processors.i4_v12'].sort());
-    expect(Object.keys(a).filter((k) => !(k in b))).toEqual(['processors.i4']);
+    expect(diff(a, b)).toEqual([...NOTICE_ADDED, ...G14C_CITIZEN, 'processors.i4_v12', 'retention.i14_v12'].sort());
+    expect(Object.keys(a).filter((k) => !(k in b)).sort()).toEqual(['processors.i4', 'retention.i14_v10']);
+    expect(b['retention.i14_v12']).toBe(a['retention.i14_v10'].replace(', assistant', ''));   // the assistant opens (P19)
     expect(n12.sections.map((/** @type {any} */ s) => s.id)).toEqual(['controller', 'status', 'purposes', 'purposes-later', 'participation', 'retention', 'recipients',
       'processors', 'transfers', 'rights', 'booking', 'sensitive', 'art14', 'language', 'moderation']);
     const c = keys(NOTICE_V11); const d = keys(n13);
-    expect(diff(c, d)).toEqual([...NOTICE_ADDED, ...PRO_OPENING_KEYS].sort());
+    expect(diff(c, d)).toEqual([...NOTICE_ADDED, ...PRO_OPENING_KEYS, ...G14C_CITIZEN, ...G14C_PRO].sort());
     expect(Object.keys(c).filter((k) => !(k in d)).sort()).toEqual(['art14.p3_v9', 'booking.p1', 'booking.p2', 'booking.p3', 'booking.p4', 'booking.title', 'processors.i4_v9', 'processors.i5',
-      'purposes-later.i1', 'purposes-later.i10', 'purposes-later.i3', 'purposes-later.i6', 'purposes.p4p_v9', 'recipients.p2', 'retention.i14_v11', 'status.p1_v9']);
+      'purposes-later.i1', 'purposes-later.i10', 'purposes-later.i3', 'purposes-later.i6', 'purposes-later.i9', 'purposes.p4p_v9', 'recipients.p2', 'retention.i14_v11', 'status.p1_v9']);
     // P4, P5, P7 move from § 3 bis to § 3 word for word
     expect([d['purposes.p4_v13'], d['purposes.p5_v13'], d['purposes.p7_v13']]).toEqual([c['purposes-later.i1'], c['purposes-later.i3'], c['purposes-later.i6']]);
-    for (const k of NOTICE_ADDED) expect(d[k], k).toBe(b[k]);
+    for (const k of [...NOTICE_ADDED, ...G14C_CITIZEN]) expect(d[k], k).toBe(b[k]);
     // the retention items sit right after Mon Parcours, before the « not open yet » list
     const r12 = n12.sections.find((/** @type {any} */ s) => s.id === 'retention'); const r13 = n13.sections.find((/** @type {any} */ s) => s.id === 'retention');
     for (const r of [r12, r13]) {
       const ks = Object.values(r.itemKeys);
       expect(ks.slice(ks.indexOf('parcours_v10'), ks.indexOf('parcours_v10') + 6)).toEqual(['parcours_v10', 'events_v12', 'content_v12', 'notices_v12', 'proofs_v12', 'decisions_v12']);
-      expect(String(ks.at(-1))).toMatch(/^i14_v1[013]$/);
+      expect(String(ks.at(-1))).toMatch(/^i14_v1[23]$/);
     }
     expect(b['processors.i4_v12']).toBe(a['processors.i4'].replace('avis du compte)', 'avis du compte et, pour les contenus publiés, accusés de réception des signalements, décisions de modération et réponses aux contestations)'));
     expect(d['processors.i4_v13']).toBe(c['processors.i4_v9'].replace('avis du compte, invitations et avis des comptes professionnels)', 'avis du compte, invitations et avis des comptes professionnels et, pour les contenus publiés, accusés de réception des signalements, décisions de modération et réponses aux contestations)'));
@@ -99,8 +105,11 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
 
   it('cgu-citoyen v12 = v10 + § 7 bis (ten items, after § 7) + one paragraph of § 8', () => {
     const e = keys(CGU_V10); const f = keys(cgu);
-    expect(diff(e, f)).toEqual(['deletion.participation_v12', 'publishing.title_v12', ...Array.from({ length: 10 }, (_, i) => `publishing.i${i + 1}_v12`)].sort());
-    expect(Object.keys(e).filter((k) => !(k in f))).toEqual([]);
+    expect(diff(e, f)).toEqual(['account.assisted_g14c', 'ai.p1_g14c', 'ai.p2_g14c', 'ai.title_g14c', 'deletion.participation_v12', 'noDecision.estimate_g14c', 'publishing.title_v12',
+      ...Array.from({ length: 10 }, (_, i) => `publishing.i${i + 1}_v12`)].sort());
+    // § 4: the assistant is open (consolidation 23/11/2026)
+    expect(Object.keys(e).filter((k) => !(k in f)).sort()).toEqual(['ai.p1', 'ai.p2', 'ai.title']);
+    expect(f['ai.title_g14c']).toBe("4. L'assistant automatique");
     const ids = cgu.sections.map((/** @type {any} */ s) => s.id);
     expect(ids.indexOf('publishing')).toBe(ids.indexOf('use') + 1);
     expect(f['publishing.i4_v12']).toMatch(/autorisez AccesDirectAide à afficher gratuitement votre texte .*n'est pas cédée à des tiers/);
@@ -121,7 +130,7 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     expect(v13['booking.p4_v13']).toMatch(/responsables conjoints \(article 26 du RGPD\)\. L'essentiel de leur accord : l'exploitant fait fonctionner la plateforme .*la structure est responsable du rendez-vous lui-même .*auprès de l'un ou de l'autre/);
     // § 3 bis keeps only what stays closed
     const later = n13.sections.find((/** @type {any} */ s) => s.id === 'purposes-later').items.map((/** @type {string} */ x) => x.split(' — ')[0]);
-    expect(later).toEqual(['P5s', 'P6', 'P8', 'P9', 'P10b/P10c']);
+    expect(later).toEqual(['P5s', 'P6', 'P8', 'P9', 'P10b']);   // P10c (browser notifications) opens with ADA Pro
     // the structure receives neither name, nor e-mail, nor phone (api/_handlers/rdv.js: beneficiaryName « Particulier », no phone; the pro list leaves out citizenEmailSnapshot)
     expect(v13['booking.p2_v13']).toMatch(/ne lui communique ni votre nom, ni votre adresse électronique, ni votre téléphone/);
     expect(v13['booking.p2_v13']).toMatch(/lorsque cette fonction est ouverte et que vous l'avez accepté, votre message/);
@@ -176,9 +185,9 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     const fresh = (/** @type {any} */ doc, /** @type {any} */ base) => { const b = keys(base); return draftTextKeys(doc).filter(([k, x]) => b[k] !== x).map(([k, x]) => [`${doc.key}.${k}`, x]); };
     const fr = Object.fromEntries([...fresh(n12, NOTICE_V10), ...fresh(n13, NOTICE_V11), ...fresh(cgu, CGU_V10), ...fresh(pro, PRO_V9), ...fresh(struct, STRUCT_V8)]);
     const added = Object.keys(fr).sort();
-    expect(added.length).toBe(69);
+    expect(added.length).toBe(94);
     for (const d of [n12, n13, cgu, pro, struct]) { const ks = draftTextKeys(d).map(([k]) => k); expect(new Set(ks).size, d.version).toBe(ks.length); }   // no translation key shared by two texts
-    for (const k of added) { expect(claimsEntitlement(fr[k]), k).toBe(false); expect(fr[k], k).not.toMatch(/vous avez droit/i); expect(k, k).toMatch(/_v(9|1[0-3])$/); }
+    for (const k of added) { expect(claimsEntitlement(fr[k]), k).toBe(false); expect(fr[k], k).not.toMatch(/vous avez droit/i); expect(k, k).toMatch(/_(v(9|1[0-3])|g14c)$/); }
     const figures = (/** @type {string} */ s) => (s.match(/\d+/g) || []).join(',');
     for (const lang of LANGS) {
       const tr = locale(lang);
@@ -247,5 +256,28 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     // nothing approved: a Production build hides both drafts
     expect(draftVisibility(n12, prod(undefined))).toBe('HIDDEN');
     expect(draftVisibility(n13, prod(mp))).toBe('HIDDEN');
+  });
+});
+
+describe('G14 consolidation (23/11/2026) — other branches integrated', () => {
+  it('v12 carries the citizen functions, v13 adds the professional side; undecided bases are marked « proposé, à valider »', () => {
+    const b = keys(n12); const d = keys(n13); const f = keys(cgu);
+    for (const k of G14C_CITIZEN) expect(d[k], k).toBe(b[k]);
+    for (const k of G14C_PRO) { expect(b[k], k).toBeUndefined(); expect(typeof d[k], k).toBe('string'); }
+    for (const k of ['purposes.p18_g14c', 'purposes.p19_g14c', 'purposes.p20_g14c']) expect(b[k], k).toMatch(/— proposé, à valider\.$/);
+    expect(d['retention.socialReferrals_g14c']).toContain('(durée proposée — à valider)');
+    for (const k of ['purposes.p21_g14c']) expect(b[k]).toMatch(/Base : votre consentement \(art\. 6, 1, a\)\.$/);
+    expect(d['purposes.p23_g14c']).toMatch(/responsables conjoints, selon l'accord décrit en section 9\. Base : votre consentement/);
+    expect(d['purposes.p10c_g14c']).toMatch(/Apple, Google, Mozilla ou Microsoft.*hors de l'Union européenne.*\.ics.*pas sensible/);
+    expect(b['purposes.situation_g14c']).toMatch(/ni envoyés ni enregistrés.*seul le code de la démarche.*seul l'identifiant de la situation/);
+    expect(b['purposes.offline_g14c']).toMatch(/sans chiffrement.*article 82 de la loi Informatique et Libertés/);
+    expect(b['purposes.passeport_g14c']).toMatch(/Ce n'est pas un traitement d'AccesDirectAide\./);
+    // Cloudflare DPA v6.4 (3 April 2026): processor, SCC 2021/914 module 2, DPF; Workers AI data usage: no training, no retention for standard inference
+    expect(b['transfers.cloudflare_g14c']).toMatch(/version 6\.4 du 3 avril 2026.*2021\/914, module 2.*cadre de protection des données UE–États-Unis/);
+    expect(b['purposes.p19_g14c']).toMatch(/ni votre adresse IP ni votre compte.*Nous n'enregistrons pas la conversation/);
+    expect(b['retention.assistant_g14c']).toContain('90 jours');
+    expect(f['ai.p1_g14c']).not.toMatch(/pas encore ouvert/);
+    expect(JSON.stringify([n12, cgu])).not.toMatch(/P23|"P10c —|Web Push|orientation sociale/);
+    for (const x of [...Object.values(b), ...Object.values(d), ...Object.values(f)]) expect(claimsEntitlement(x)).toBe(false);
   });
 });

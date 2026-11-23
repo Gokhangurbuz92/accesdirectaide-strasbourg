@@ -22,8 +22,8 @@ const ROOT_DIR = path.join(__dirname, '..');
  */
 
 // Date de révision du contenu (fixe). À changer uniquement quand le contenu du registre est révisé — jamais la date d'exécution.
-export const REGISTRE_VERSION = '0.4';   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
-export const REGISTRE_DATE_REVISION = '2026-11-18';
+export const REGISTRE_VERSION = '0.5';   // G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
+export const REGISTRE_DATE_REVISION = '2026-11-23';
 
 export const CONTACT_PROTECTION_DONNEES = '[À COMPLÉTER : contact protection des données]';
 const DPA_INCONNU = 'inconnu / non signé';
@@ -245,7 +245,8 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                     'Appareil : localStorage ada_diagnostic_state (lisible 24 heures, effacé à la visite suivante ou par « Réinitialiser tout »)',
                     'Partage : copie conservée chiffrée au repos (enveloppe, clé détenue par le serveur) dans SharedDiagnostic.situation quand la personne partage son dossier',
                 ],
-                sous_traitants: [vercel, 'Neon pour la copie partagée (prévu)'],
+                sous_traitants: [vercel, 'Neon pour la copie partagée (prévu)', 'Scaleway SAS (hébergement de notre propre moteur OpenFisca, Paris fr-par ; branche g14-of, non fusionnée ici) — les réponses n\'y sont pas enregistrées'],
+                base_legale_g14: 'Notice v12 / v13, P18 : intérêt légitime de l\'exploitant à informer le public (art. 6.1.f) — proposé, à valider',
                 services_refuses: ['OpenFisca (API publique) : refusé en production, prototype de développement uniquement'],
                 conservation: [
                     texte('Calcul /api/diagnostic', 'appliqué', 'aucune conservation serveur pour le calcul seul'),
@@ -332,6 +333,8 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 categories_personnes: ['Utilisateurs de l\'assistant'],
                 destinataires: ['Aucun tiers — modèle local'],
                 modele_ia: 'Ollama local (qwen3:8b, nomic-embed-text), joint uniquement en boucle locale (127.0.0.1)',
+                // G14-AI (branch g14-ai 31eb23f2, not merged here): the citizen assistant moves to Cloudflare Workers AI (notice v12 / v13 P19)
+                evolution_g14: 'Branche g14-ai (non fusionnée ici) : Cloudflare, Inc. — Workers AI (États-Unis), sous-traitant (art. 28) ; question (adresses et téléphones masqués ; NIR, IBAN, carte refusés) et extraits de fiches publiques vérifiées envoyés depuis le serveur, sans compte ni adresse IP ; aucune conversation enregistrée, compteurs techniques anonymes 90 jours ; DPA Cloudflare v6.4 (3 avril 2026) : CCT 2021/914 module 2 et cadre UE–États-Unis ; pas d\'entraînement ni de conservation pour une inférence ordinaire (page Workers AI du 16/10/2026) ; base : intérêt légitime (art. 6.1.f) — proposé, à valider',
                 sous_traitants: [vercel, neon],
                 fournisseurs_bloques: ['Google Gemini : BLOQUÉ par la politique IA du code (api/lib/ai-policy.js, BLOCKED_PENDING_PROVIDER_REVIEW) — pas un destinataire'],
                 conservation: [
@@ -469,6 +472,68 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 mesures_securite: NON_VERIFIE,
             },
             {
+                // G14 consolidation (23/11/2026): branch g14-aid 81e00197 (not merged here); notice v12 / v13 P21
+                id: 'T23',
+                nom: 'Mode accompagnant (aide dans le compte, à côté de la personne ou à distance)',
+                statut: 'branche g14-aid, non fusionnée dans g14-lex',
+                finalite: 'Permettre à une personne choisie (proche, travailleur social, conseiller France Services, professionnel) d\'aider la personne dans son propre compte, à côté d\'elle, 2 heures au plus ; à distance, une personne de confiance demande des actions que la personne confirme',
+                base_legale_proposee: 'Consentement (art. 6.1.a), donné après saisie du mot de passe',
+                categories_donnees: ['Nom et rôle de l\'aidant (et structure pour un professionnel)', 'Domaines autorisés et durée', 'Journal des consultations, actions et refus'],
+                categories_personnes: ['Citoyens majeurs titulaires d\'un compte', 'Aidants'],
+                destinataires: ['La personne (journal visible)', 'L\'aidant pendant la session, dans les domaines choisis'],
+                sous_traitants: [vercel, neon],
+                conservation: [
+                    texte('Journal du mode accompagnant (AuditLog)', 'appliqué', '1 an (règle des journaux d\'administration et de sécurité)'),
+                    texte('Accord (ConsentLog)', 'appliqué', 'règle des décisions de consentement'),
+                ],
+                mesures_securite: 'Jamais la sécurité du compte, la suppression, l\'export complet ni une nouvelle délégation ; Mon Coffre seulement si coché et jamais pour un professionnel ; session de 2 heures au plus vérifiée à chaque requête ; pas pour un compte sous mesure de protection',
+            },
+            {
+                // G14 consolidation: branch g14-ps 6e37ee65 (not merged here); notice v13 P23
+                id: 'T24',
+                nom: 'Orientations sociales entre structures (hors santé)',
+                statut: 'branche g14-ps, non fusionnée dans g14-lex (capacité pro.referrals_social, migration 0061 en attente)',
+                finalite: 'Orientation d\'une personne d\'une structure vers une autre, hors santé, avec son accord donné par un code à usage unique',
+                base_legale_proposee: 'Consentement (art. 6.1.a) ; responsabilité conjointe exploitant / structure (art. 26) selon les conditions des structures v9',
+                categories_donnees: ['Structures d\'envoi et d\'accueil', 'Motifs (liste fermée)', 'État et dates', 'Adresse électronique ou téléphone, seulement si la personne le coche'],
+                categories_personnes: ['Citoyens orientés', 'Professionnels'],
+                destinataires: ['La structure d\'accueil (contact seulement pendant l\'orientation)', 'La structure d\'envoi (états et motifs, jamais le contact)'],
+                sous_traitants: [vercel, neon],
+                conservation: [texte('Orientation sociale et son historique', 'non appliqué', '12 mois après la clôture (durée proposée — à valider)')],
+                mesures_securite: 'Aucun texte libre ni document ; code à usage unique stocké en empreinte ; chaque transition journalisée',
+            },
+            {
+                // G14 consolidation: branch g14-obs 2fcab762 (not merged here); notice v12 / v13 P20
+                id: 'T25',
+                nom: 'Observatoire des droits et des services (signaux de demande anonymes)',
+                statut: 'branche g14-obs, non fusionnée dans g14-lex (migration 0062)',
+                finalite: 'Compter, par jour, les recherches et consultations par codes de listes fermées pour publier des tableaux trimestriels',
+                base_legale_proposee: 'Intérêt légitime (art. 6.1.f) — proposé, à valider',
+                categories_donnees: ['Codes de listes fermées', 'Jour', 'Commune, sauf sujets sensibles'],
+                categories_personnes: ['Visiteurs (aucune identification)'],
+                destinataires: ['Public (tableaux trimestriels, valeurs inférieures à 5 masquées, Licence Ouverte 2.0)'],
+                sous_traitants: [vercel, neon],
+                conservation: [texte('Comptes du jour (DemandSignalDaily)', 'non appliqué', 'supprimés au gel trimestriel ; tableaux trimestriels anonymes conservés')],
+                mesures_securite: 'Ni identité, ni adresse IP, ni heure, ni texte ; envoi depuis « Ma situation » seulement sur accord explicite',
+            },
+            {
+                // G14 consolidation: branch g14-chan-a11y aea83e30 (not merged here); notice v13 P10c
+                id: 'T26',
+                nom: 'Notifications du navigateur (Web Push) et fichiers de calendrier',
+                statut: 'branche g14-chan-a11y, non fusionnée dans g14-lex',
+                finalite: 'Rappeler un rendez-vous par une notification courte chiffrée, si la personne l\'active ; fichier .ics pour les services non sensibles',
+                base_legale_proposee: 'Consentement (art. 6.1.a), retirable à tout moment',
+                categories_donnees: ['Abonnement de notification du navigateur (adresse du service de notification et clés)', 'Contenu chiffré du rappel (ni nom, ni structure, ni santé)'],
+                categories_personnes: ['Citoyens titulaires d\'un compte qui activent les notifications'],
+                destinataires: ['Service de notification de l\'éditeur du navigateur (Apple, Google, Mozilla, Microsoft) — peut être hors UE ; ne lit pas le rappel chiffré'],
+                sous_traitants: [vercel, neon],
+                conservation: [
+                    texte('Abonnement actif', 'appliqué', 'jusqu\'à la désactivation ou l\'effacement du compte'),
+                    texte('Abonnement en échec', 'non appliqué', '30 jours après le dernier échec (retention-policy PUSH_FAILING_DAYS ; étape pushSubscriptionsFailingDeleted non approuvée)'),
+                ],
+                mesures_securite: 'Contenu chiffré pour le navigateur ; l\'e-mail reste l\'avis qui fait foi',
+            },
+            {
                 // FA-D5 (18/11/2026): P17 + P15b of the V2 register (CONTROL/v2/D2_V2_BASES_LEGALES_FR.md), notice v7 § 4 and § 6
                 id: 'T22',
                 nom: 'Sauvegardes chiffrées, restauration et traces d\'effacement',
@@ -500,6 +565,8 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
             { nom: 'Microsoft (Outlook, boîte contact@accesdirectaide.fr)', role: 'Réception des messages envoyés à l\'adresse de contact publiée', statut: 'en service (boîte existante, R42-A05)', localisation: NON_VERIFIE, entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Autres expéditeurs codés (Microsoft Graph sendMail, Resend)', role: 'E-mails transactionnels', statut: 'non retenus, non configurés', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Mailjet (Sinch)', role: 'E-mails de service des comptes (vérification de l\'adresse, mot de passe, avis du compte)', statut: 'retenu (notice de confidentialité v6, non approuvée) ; envoi réel seulement si MAILER_PROVIDER=mailjet — état de la Production non vérifié ici ; offre (gratuite ou payante) non enregistrée', localisation: 'Google Cloud, Francfort (Allemagne) et Saint-Ghislain (Belgique)', entite_contractante: 'Groupe Sinch AB (Suède) ; Mailjet SAS est une société française — entité signataire exacte non vérifiée', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, module 2 (DPA Sinch § 12 c–d) ; pas de Data Privacy Framework pour Mailjet (la société inscrite est Mailgun Technologies, Inc.)', dpa: DPA_INTEGRE, role_propre: 'Sinch est aussi responsable de traitement indépendant pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau (DPA § 3 a iv)', journaux: 'statistiques : 90 jours (offre gratuite) ou 13 mois (offre payante) ; adresse du destinataire enregistrée comme contact pour la durée du compte, suppression demandée avant l\'effacement du compte (api/_services/mail-contact-erasure.js) ; en cas d\'échec, nouvel essai 3 jours au plus dans le délai d\'un mois, puis effacement du compte et signalement sans adresse « intervention humaine requise » (api/_services/mail-contact-failures.js) ; effacement dans les 90 jours après la fin du contrat ; aucune durée publiée pour le contenu des messages' },
+            { nom: 'Cloudflare, Inc. (Workers AI)', role: 'Assistant citoyen (branche g14-ai, non fusionnée ici)', statut: 'prévu', localisation: 'États-Unis (réseau mondial)', mecanisme_transfert: 'CCT 2021/914 module 2 (DPA Cloudflare v6.4, 3 avril 2026, clause 6.2) ; cadre UE–États-Unis (clause 6.4) — page lue le 23/11/2026 ; application du DPA sans signature à confirmer', dpa: DPA_INCONNU },
+            { nom: 'Scaleway SAS (OpenFisca)', role: 'Hébergement de notre moteur de calcul OpenFisca (branche g14-of, non fusionnée ici)', statut: 'prévu', localisation: 'France (Paris, fr-par)', mecanisme_transfert: 'aucun transfert hors UE', dpa: DPA_SCALEWAY },
             { nom: 'Twilio', role: 'SMS', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Microsoft (Outlook / Graph)', role: 'Agenda des professionnels (disponibilités libre/occupé quand une structure l\'a configuré, R42-A03)', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
         ],
