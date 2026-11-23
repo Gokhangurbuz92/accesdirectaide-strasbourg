@@ -154,7 +154,8 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     expect(t).not.toContain('choix en attente');
     for (const w of ['Vercel Inc.', 'Neon', 'Upstash', "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse", 'États-Unis', 'à tout moment', 'CNIL', 'responsable de son propre traitement', 'La réservation de ces services est fermée', 'FINESS', 'data·inclusion', 'Annuaire de l\'administration']) expect(t, w).toContain(w);
     expect(t).toMatch(/Aucun délégué à la protection des données n'est désigné/);
-    expect(t).not.toMatch(/SIRET|SIREN|association inscrite|DPO\b|partenaire signé/i);
+    // G14 (notice v13): the SIRET appears only as the number a STRUCTURE gives with its own sign-up request — never the operator's (a natural person)
+    expect(t.replace(/avec son numéro SIRET|numéro SIRET, votre adresse/g, '')).not.toMatch(/SIRET|SIREN|association inscrite|DPO\b|partenaire signé/i);
   });
   it('the terms say free service, no entitlement decision, AI limits, structure confirms, deletion, lawful liability, French law and mediation « à vérifier »', () => {
     const c = text(LEGAL_DRAFT_DOCUMENTS[0]);

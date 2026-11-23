@@ -31,7 +31,7 @@ const ADMIN = `x02-admin-${TS}@example.test`;
 const DAY = 86400e3;
 const TEXT_A = `FIXTURE SYNTHÉTIQUE ${TS} — le service m’a aidée à trouver une permanence près de chez moi.`;
 const TEXT_B = `FIXTURE SYNTHÉTIQUE ${TS} — un deuxième texte de test, qui sera refusé par la modération.`;
-const VERSION = 'x02-2026-11-19-lab-proposal';
+const VERSION = 'x02-v12-2026-11-23';
 
 function mkRes() {
   const headers = {}; const fin = [];

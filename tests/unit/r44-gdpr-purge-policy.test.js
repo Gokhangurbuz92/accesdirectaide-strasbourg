@@ -54,11 +54,14 @@ const NOW = new Date('2026-11-04T12:00:00Z');
 describe('R44 retention policy object', () => {
   it('V2 phase 1 (owner, 09/11/2026) + G14 (owner 22/11/2026, question 32): APPROVED with A7 = 365 named in the version, only step 6c approved, frozen; the proposal stays unapproved', () => {
     // G14: a new version (expansion durations), approved together with step 6c in one move; the earlier version is named in « supersedes »
-    expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'g14-expansion-1-2026-11-22-a7-365d', approvedPolicyVersion: 'g14-expansion-1-2026-11-22-a7-365d',
+    // G14 (23/11/2026): one more decided duration (MODERATION_CASE_CLOSED_DAYS) → g14-expansion-2 (g14-expansion-1 was never deployed)
+    expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'g14-expansion-2-2026-11-23-a7-365d', approvedPolicyVersion: 'g14-expansion-2-2026-11-23-a7-365d',
       supersedes: 'r45-proposal-2-2026-11-05-a7-365d', approvedChoices: { A7: 365 } });
     // G14: 25 steps DECIDED (durations) — none of them APPROVED for execution (no dry run read, no backup verified yet); X03 steps wait for their AIPD
-    expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(25);
+    // + 2 steps decided on 23/11/2026 (moderation decisions / appeals and sanctions, 1 year after the case is closed)
+    expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(27);
     for (const [id, d] of Object.entries(RETENTION_POLICY.decidedSteps)) {
+      if (id.startsWith('moderation')) { expect(d.decidedOn, id).toBe('2026-11-23'); expect(d.decision, id).toMatch(/^décision du responsable 23\/11\/2026/); expect(d.condition, id).toBeUndefined(); continue; }
       expect(d.decidedOn, id).toBe('2026-11-22');
       expect(d.decision, id).toMatch(/^décision du responsable 22\/11\/2026, formulaire G14, question \d+$/);
       expect(Boolean(d.condition), id).toBe(id.startsWith('entraide'));

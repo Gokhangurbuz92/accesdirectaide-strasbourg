@@ -75,9 +75,9 @@ describe('art. 23 notifier key', () => {
 describe('retention policy G14', () => {
   it('approved new version (question 32), the earlier one superseded, 6c still the only APPROVED step', () => {
     expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
-    expect(RETENTION_POLICY.version).toBe('g14-expansion-1-2026-11-22-a7-365d');
+    expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
     expect(Object.keys(RETENTION_POLICY.approvedSteps)).toEqual(['unverifiedAccountsDeleted']);
-    expect(policySummary(RETENTION_POLICY)).toMatchObject({ approvedStepCount: 1, decidedStepCount: 25 });
+    expect(policySummary(RETENTION_POLICY)).toMatchObject({ approvedStepCount: 1, decidedStepCount: 27 })   // 25 on 22/11 + the 2 moderation-case steps of 23/11;
   });
   it('the durations are the « (önerilen) » answers of the form', () => {
     const d = (k) => policyDays(RETENTION_POLICY, k);

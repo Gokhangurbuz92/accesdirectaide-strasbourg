@@ -70,6 +70,10 @@ const G14_DECIDED_STEPS = Object.fromEntries([
   ['contentNoticesDeleted', 28],
 ].map(([id, q]) => [id, { decidedOn: '2026-11-22', decision: `${G14_DECISION}, question ${q}`,
   ...(String(id).startsWith('entraide') ? { condition: X03_AIPD_CONDITION } : {}) }]));
+/** G14 (décision du responsable 23/11/2026, options recommandées) — moderation decisions, appeals and sanctions: 1 year after the case is closed */
+export const G14_MODERATION_DECISION = 'décision du responsable 23/11/2026, options recommandées (décisions de modération, contestations et mesures)';
+const G14_DECIDED_STEPS_23 = Object.fromEntries(['moderationDecisionsDeleted', 'moderationSanctionsDeleted']
+  .map((id) => [id, { decidedOn: '2026-11-23', decision: G14_MODERATION_DECISION }]));
 
 /** @type {RetentionPolicy} */
 export const RETENTION_POLICY = deepFreeze({
@@ -82,10 +86,13 @@ export const RETENTION_POLICY = deepFreeze({
   // notices). Question 32 « (önerilen) »: the new version is approved AND step 6c re-approved in ONE move — the version below replaces
   // r45-proposal-2-2026-11-05-a7-365d (still named in `supersedes`); the deployment must re-pin GDPR_PURGE_POLICY_VERSION to it in the same owner action,
   // otherwise every run (6c included) is a dry run (POLICY_VERSION_NOT_PINNED, fail-closed). Durations of the earlier version are unchanged; A7 = 365.
-  version: 'g14-expansion-1-2026-11-22-a7-365d',
+  // G14 (décision du responsable 23/11/2026, options recommandées): one more duration (MODERATION_CASE_CLOSED_DAYS, decisions / appeals / sanctions 1 year
+  // after the case is closed) → a NEW version g14-expansion-2-2026-11-23-a7-365d (g14-expansion-1-2026-11-22-a7-365d was never deployed); the deployment
+  // pins GDPR_PURGE_POLICY_VERSION to it. Every other duration unchanged.
+  version: 'g14-expansion-2-2026-11-23-a7-365d',
   supersedes: 'r45-proposal-2-2026-11-05-a7-365d',
   status: POLICY_STATUS_APPROVED,
-  approvedPolicyVersion: 'g14-expansion-1-2026-11-22-a7-365d',
+  approvedPolicyVersion: 'g14-expansion-2-2026-11-23-a7-365d',
   approvedChoices: { A7: 365 },
   // approvedSteps: one entry per step the controller approved (D4: step by step) — { [stepId]: { approvedOn, dryRunReviewedOn, backupVerified,
   //   sharedControllerBasis? } }. C3 step 6c ONLY (V2 stage 6B): unverified accounts deleted after 7 days. Dry run opened in Production 14/11/2026
@@ -103,7 +110,7 @@ export const RETENTION_POLICY = deepFreeze({
   // per-step approval above: D4 still requires, for each step, a dry-run report READ and a VERIFIED backup before it executes, and neither exists yet for
   // these steps (engineering never invents them). `decidedSteps` records the decision per step; the controller adds the step to `approvedSteps` after
   // reading its dry run. X03 steps carry a condition: the dedicated X03 AIPD must be signed first (question 27).
-  decidedSteps: G14_DECIDED_STEPS,
+  decidedSteps: { ...G14_DECIDED_STEPS, ...G14_DECIDED_STEPS_23 },
   source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]; R44_DECISIONS_RGPD_D1_D6_FR_v2.md annexe A (A7 au choix du responsable); G14_KARAR_FORMU_GENISLETME_TR.md (décision du responsable 22/11/2026, questions 14–28, 32)',
   ownerChoices: {
     A7: { durationKey: 'APPOINTMENT_CONFIRMED_DAYS', options: [365, 730], label: 'rendez-vous confirmés, tenus, absences : 1 an ou 2 ans après startAt (D4 v2, annexe A, ligne A7)' },
@@ -167,6 +174,10 @@ export const RETENTION_POLICY = deepFreeze({
     ENTRAIDE_SUSPENSION_REVIEW_DAYS: { days: 365, anchor: 'EntraideMember.suspendedAt (report only: human review)', basis: G14_X03, ecode: 'X03' },   // q27
     ENTRAIDE_MEMBER_INACTIVE_DAYS: { days: 730, anchor: 'GREATEST(member.updatedAt, MAX(offer.updatedAt), MAX(request.updatedAt))', basis: G14_X03, ecode: 'X03' },   // q27
     CONTENT_NOTICE_AFTER_DECISION_DAYS: { days: 365, anchor: 'ContentNotice.decidedAt (notice sent through the public form, without an account)', basis: G14, ecode: 'DSA' },   // q28
+    // G14 (décision du responsable 23/11/2026): a moderation case is closed when nothing can change it any more — a decision: its appeal period is over, no
+    // appeal is open, its restriction has ended (GREATEST(appealUntil, restrictionEndsAt, last appeal reviewedAt)); a sanction: it no longer counts
+    // (a warning: 12 months after it was given, WARNING_WINDOW_DAYS; a suspension: its end), or it was lifted, whichever comes first. Its appeals go with it.
+    MODERATION_CASE_CLOSED_DAYS: { days: 365, anchor: 'closing of the case: decision GREATEST(appealUntil, restrictionEndsAt, MAX(appeal.reviewedAt)) with no open appeal; sanction LEAST(liftedAt, endsAt or createdAt + 365 days)', basis: 'décision du responsable 23/11/2026 (pas une obligation légale)', ecode: 'DSA', decidedOn: '2026-11-23' },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });

@@ -114,8 +114,11 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     for (const k of ['processors.provider_v13', 'processors.video_v13', 'transfers.video_v13', 'purposes.p11_v13', 'recipients.p2_v13']) expect(v13[k], k).not.toMatch(/pas encore ouverte?s?\b|\(désactivé\)/);
     expect(JSON.stringify(n13)).not.toMatch(/offres? d'emploi|entraide|seules sont ouvertes|Lorsque les rendez-vous seront ouverts/i);
     expect(v13['status.p1_v13']).toMatch(/les rendez-vous .*la visioconférence .*disponibilités Outlook/);
-    expect(v13['purposes.p4p_v13']).toMatch(/création sur invitation ou par l'inscription d'une structure, vérifiée par l'exploitant sur une source officielle/);
-    expect(v13['art14.p3_v13']).toMatch(/inscrit vous-même votre structure .*ne peut servir qu'après que l'exploitant a vérifié la structure sur une source officielle/);
+    expect(v13['purposes.p4p_v13']).toMatch(/création sur invitation ou sur demande d'inscription d'une structure avec son numéro SIRET, vérifiée par l'exploitant sur une source officielle/);
+    // self-registration as a verified request (branch g14-pro 29c1fefc: name, SIRET, e-mail, password, terms; no access until verified; refusal disables)
+    expect(v13['art14.p3_v13']).toMatch(/demande d'inscription de votre structure .*numéro SIRET, votre adresse électronique professionnelle, un mot de passe et votre acceptation .*ne donne accès à rien tant que l'exploitant n'a pas vérifié la structure sur une source officielle et activé votre espace.*Si la demande est refusée, le compte est désactivé et la preuve de votre acceptation des conditions est gardée/);
+    // art. 26: the essence of the joint-controller arrangement
+    expect(v13['booking.p4_v13']).toMatch(/responsables conjoints \(article 26 du RGPD\)\. L'essentiel de leur accord : l'exploitant fait fonctionner la plateforme .*la structure est responsable du rendez-vous lui-même .*auprès de l'un ou de l'autre/);
     // § 3 bis keeps only what stays closed
     const later = n13.sections.find((/** @type {any} */ s) => s.id === 'purposes-later').items.map((/** @type {string} */ x) => x.split(' — ')[0]);
     expect(later).toEqual(['P5s', 'P6', 'P8', 'P9', 'P10b/P10c']);
@@ -134,11 +137,19 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     expect([D.UGC_REPORT_DAYS.days, D.COMMUNITY_MEMBER_INACTIVE_DAYS.days, D.CONTENT_NOTICE_AFTER_DECISION_DAYS.days]).toEqual([90, 730, 365]);
     expect(b['retention.content_v12']).toMatch(/60 jours.*après 3 ans.*après 12 mois.*90 jours.*24 mois/);
     expect(b['retention.notices_v12']).toMatch(/12 mois après la décision.*contestation est en cours/);
-    // no purge step of the expansion is approved yet: no « retiré automatiquement », and no duration for decisions (none decided)
-    for (const id of ['testimonialsPendingExpired', 'storiesPendingExpired', 'contentNoticesDeleted']) expect(RETENTION_POLICY.approvedSteps?.[id]).toBeUndefined();
-    for (const x of [b['retention.content_v12'], f['publishing.i3_v12']]) { expect(x).toMatch(/60 jours est retiré/); expect(x).not.toMatch(/automatiquement/); }
-    expect(b['retention.decisions_v12']).toMatch(/n'est pas encore fixée/);
-    expect(b['retention.decisions_v12']).not.toMatch(/\d/);
+    // owner decisions 23/11/2026: « retiré automatiquement » (steps DECIDED, approved only after their dry run) and decisions / appeals / sanctions 1 year
+    // after the case is closed (MODERATION_CASE_CLOSED_DAYS, two decided steps)
+    for (const id of ['testimonialsPendingExpired', 'storiesPendingExpired', 'contentNoticesDeleted', 'moderationDecisionsDeleted', 'moderationSanctionsDeleted']) {
+      expect(RETENTION_POLICY.approvedSteps?.[id], id).toBeUndefined(); expect(RETENTION_POLICY.decidedSteps?.[id], id).toBeTruthy();
+    }
+    for (const x of [b['retention.content_v12'], f['publishing.i3_v12']]) expect(x).toMatch(/60 jours est retiré automatiquement/);
+    expect(D.MODERATION_CASE_CLOSED_DAYS.days).toBe(365); expect(WARNING_WINDOW_DAYS).toBe(365);
+    expect(b['retention.decisions_v12']).toMatch(/effacées 1 an après la clôture du dossier.*un avertissement, 12 mois après avoir été donné ; une suspension, à sa fin ou à sa levée/);
+    expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
+    // the charter: 24 hours / 7 days, linked from § 13 and CGU § 7 bis
+    expect(b['moderation.p3_v12']).toMatch(/dans les 24 heures ; les autres signalements, dans les 7 jours/);
+    expect(f['publishing.i6_v12']).toMatch(/dans les 24 heures.*autres signalements dans les 7 jours/);
+    for (const x of [b['moderation.p7_v12'], f['publishing.i2_v12'], f['publishing.i5_v12']]) expect(x).toContain('charte de modération');
     expect(REMINDER_WINDOW_HOURS).toBe(48); expect(b['participation.events_v12']).toContain('48 heures avant le début');
     expect(b['participation.events_v12']).toMatch(/art\. 9, 2, a.*jamais cochée d'avance.*que des nombres/);
     expect(APPEAL_MONTHS).toBe(6); expect(SOLE_REVIEW_DELAY_MS).toBe(24 * 3600 * 1000);
@@ -181,8 +192,9 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
   it('cgu-professionnel v10 and conditions-structures v9: only the statements the ADA Pro opening makes false are changed; no new obligation', () => {
     const a = keys(PRO_V9); const b = keys(pro);
     expect(diff(a, b)).toEqual(['account.i1_v10', 'appointments.p1_v10', 'appointments.p3_v10', 'appointments.p4_v10', 'appointments.title_v10', 'data.p1_v10', 'intro_v10']);
-    expect(b['account.i1_v10']).toMatch(/ou lorsque vous inscrivez vous-même votre structure, avec son nom, votre adresse électronique professionnelle et un mot de passe/);
-    expect(b['account.i1_v10']).toMatch(/ne peut servir qu'après que l'exploitant a vérifié la structure sur une source officielle/);
+    expect(b['account.i1_v10']).toMatch(/demande d'inscription de votre structure faite par vous-même, avec son nom, son numéro SIRET, votre adresse électronique professionnelle, un mot de passe et votre acceptation des présentes conditions/);
+    expect(b['account.i1_v10']).toMatch(/ne donne accès à rien tant que l'exploitant n'a pas vérifié la structure sur une source officielle.*Si la demande est refusée, le compte est désactivé/);
+    expect(keys(struct)['roles.p2_v9']).toMatch(/responsables conjoints \(RGPD, art\. 26\)\. Leur accord est le suivant .*auprès de l'un ou de l'autre\. L'essentiel de cet accord est mis à leur disposition dans la notice de confidentialité \(section 9\)/);
     expect(a['appointments.p1_v8']).toMatch(/^La prise de rendez-vous n'est pas encore ouverte\. Lorsqu'elle est ouverte pour votre structure, /);
     expect(b['appointments.p1_v10']).toBe(a['appointments.p1_v8'].replace("La prise de rendez-vous n'est pas encore ouverte. Lorsqu'elle est ouverte", 'Lorsque la prise de rendez-vous est ouverte'));
     expect(b['appointments.title_v10']).toBe('4. Rendez-vous');

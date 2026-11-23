@@ -5,7 +5,7 @@
  */
 
 export const REASONS = Object.freeze(['HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSIVE', 'MISLEADING', 'ADVERTISING', 'OFF_TOPIC']);
-export const STORY_CONSENT_VERSION = 'x01-2026-11-19-lab-proposal';
+export const STORY_CONSENT_VERSION = 'x01-v12-2026-11-23';
 export const TITLE_MIN = 5;
 export const TITLE_MAX = 120;
 export const BODY_MIN = 50;

@@ -203,6 +203,15 @@ export default function MentionsLegales() {
                 <p>
                   {t('legal:mentions.contact.legal', "Pour une question d'ordre légal, un droit d'auteur, signaler un contenu illicite ou une erreur, ou nos conditions d'utilisation : contact@accesdirectaide.fr ou le formulaire de contact.")}
                 </p>
+                {/* G14 (owner decision 23/11/2026): the single point of contact of Regulation (EU) 2022/2065 (art. 11 and 12), the site's existing address */}
+                <p data-testid="legal-dsa-contact">
+                  {t('legal:mentions.contact.dsa', "Point de contact unique au sens du règlement (UE) 2022/2065 sur les services numériques (articles 11 et 12), pour les autorités des États membres, la Commission européenne et les utilisateurs : contact@accesdirectaide.fr. Les messages sont lus par une personne. Langue utilisable : le français.")}
+                </p>
+                <p>
+                  <a href="/charte-de-moderation" className="text-blue-600 underline underline-offset-2 hover:text-blue-800" data-testid="legal-charter-link">
+                    {t('legal:mentions.contact.charter', 'Charte de modération des contenus publiés')}
+                  </a>
+                </p>
                 <p>
                   <Trans i18n={i18n} i18nKey="legal:mentions.contact.security" defaults="Pour signaler une faille de sécurité : <0/>."
                     components={[<em key="security" {...fr}>{LEGAL_PLACEHOLDERS.securityContact}</em>]} />

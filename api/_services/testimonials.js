@@ -39,7 +39,7 @@ export const REASONS = Object.freeze(['HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSI
 export const LANGS = Object.freeze(['fr', 'en', 'de', 'tr', 'ar', 'uk']);
 export const CONSENT_PURPOSE = 'TESTIMONIAL_PUBLICATION';
 /** the version of the consent wording shown next to the box (src/lib/testimonials.js shows the same); a LAB proposal until the controller validates it */
-export const TESTIMONIAL_CONSENT_VERSION = 'x02-2026-11-19-lab-proposal';
+export const TESTIMONIAL_CONSENT_VERSION = 'x02-v12-2026-11-23';
 export const BODY_MIN = 30;
 export const BODY_MAX = 1500;
 export const REPORTS_PER_DAY = 5;
