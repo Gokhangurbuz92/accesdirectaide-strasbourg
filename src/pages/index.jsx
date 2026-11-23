@@ -264,8 +264,9 @@ const PAGES = {
 };
 
 // Loading Fallback
+// G14-LITE: a full screen tall while a page's code loads, so the footer stays below the fold and does not jump (layout shift) when the page appears
 const PageLoader = () => (
-    <div className="flex items-center justify-center min-h-[50vh]">
+    <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
     </div>
 );

@@ -135,5 +135,6 @@
  "coverage.gdelt": "Some links were found with the GDELT Project:",
  "related.title": "See also",
  "saved.count_one": "{{count}} saved article.",
- "saved.count_other": "{{count}} saved articles."
+ "saved.count_other": "{{count}} saved articles.",
+ "image.show_data_saver": "Show the image (data saving is on)"
 }

@@ -12,6 +12,7 @@ import { publicContactEmail, mailtoWithSubject } from '@/lib/contactEmail';
 import useNewsBookmarks from '@/hooks/useNewsBookmarks';
 import NewsIllustration from './NewsIllustration';
 import { geoLabel, laneLabel, topicLabel } from './newsLabels';
+import { useReducedData } from '@/lib/dataSaver';
 
 const LONG = { day: 'numeric', month: 'long', year: 'numeric' };
 /** a thin progress bar of the reading position (decorative: the position is not information) */
@@ -58,6 +59,9 @@ export function NewsArticleTools({ item, news, readerOn, onReader }) {
 /** labels + image (or illustration) of the article @param {{ news: any }} props */
 export function NewsArticleHeader({ news }) {
   const { t } = useT('news');
+  // G14-LITE: with data saving on, the photo is downloaded only when the person asks for it (text first)
+  const saveData = useReducedData();
+  const [imageAsked, setImageAsked] = useState(false);
   if (!news) return null;
   const topic = (news.topics || []).find((x) => x !== 'une') || 'societe';
   return (
@@ -70,7 +74,13 @@ export function NewsArticleHeader({ news }) {
       <figure className="mb-6 overflow-hidden rounded-xl bg-slate-100">
         {news.image ? (
           <>
-            <img src={news.image.url} alt={news.image.alt || ''} className="max-h-[420px] w-full object-cover" referrerPolicy="no-referrer" />
+            {saveData && !imageAsked ? (
+              <div className="flex aspect-[16/7] w-full items-center justify-center p-4">
+                <button type="button" data-testid="news-image-show" onClick={() => setImageAsked(true)} className="min-h-11 rounded-lg border border-slate-400 bg-white px-4 py-2 text-sm font-semibold text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                  {t('news:image.show_data_saver', 'Afficher l’image (économie de données activée)')}
+                </button>
+              </div>
+            ) : <img src={news.image.url} alt={news.image.alt || ''} className="max-h-[420px] w-full object-cover" referrerPolicy="no-referrer" />}
             <figcaption className="px-3 py-2 text-xs text-slate-600" data-testid="news-image-credit">
               {news.image.aiGenerated && <strong className="me-1">{t('news:image.ai_label', 'Illustration générée par IA')} —</strong>}
               {news.image.credit}{news.image.licence ? ` · ${news.image.licence}` : ''}

@@ -139,5 +139,6 @@
  "saved.count_one": "{{count}} збережена стаття.",
  "saved.count_few": "{{count}} збережені статті.",
  "saved.count_many": "{{count}} збережених статей.",
- "saved.count_other": "{{count}} збереженої статті."
+ "saved.count_other": "{{count}} збереженої статті.",
+ "image.show_data_saver": "Показати зображення (економію даних увімкнено)"
 }

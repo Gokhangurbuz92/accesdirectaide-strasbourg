@@ -11,12 +11,15 @@ import { htmlToPlainText } from '@/lib/htmlText';
 import NewsIllustration from './NewsIllustration';
 import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
 import { geoLabel, laneLabel, topicLabel } from './newsLabels';
+import { useReducedData } from '@/lib/dataSaver';
 
 /** `compact`: a secondary story beside the lead one (smaller picture, shorter summary)
  * @param {{ item: any, featured?: boolean, compact?: boolean, saved?: boolean, onToggleSave?: (item: any) => void, falc?: boolean }} props */
 export default function NewsCardV2({ item, featured = false, compact = false, saved = false, onToggleSave, falc = false }) {
   const { t } = useT('news');
   const tr = useContentTranslation('actualite', item);
+  // G14-LITE: with data saving on, the card shows the original drawing (no download) instead of the publisher's photo — the article page offers it
+  const saveData = useReducedData();
   const title = tr.value('titre') || item.titre;
   const summary = (falc && tr.value('summary_falc')) || tr.value('resume') || item.resume || '';
   const excerpt = htmlToPlainText(summary, { maxLength: featured ? 320 : compact ? 140 : 200 });
@@ -34,7 +37,7 @@ export default function NewsCardV2({ item, featured = false, compact = false, sa
       data-testid="actualite-card" data-lane={item.lane} data-geo={item.geo?.scope}>
       <Link to={href} className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none" aria-label={readLabel}><span className="sr-only">{readLabel}</span></Link>
       <div className={`relative overflow-hidden bg-slate-100 ${featured ? 'aspect-[16/9] md:aspect-auto md:min-h-[20rem] md:w-[46%] md:shrink-0 lg:aspect-[2/1] lg:min-h-0 lg:w-full' : compact ? 'aspect-[21/9]' : 'aspect-[16/9]'}`}>
-        {item.image ? (
+        {item.image && !saveData ? (
           <img src={item.image.url} alt={item.image.alt || ''} loading="lazy" decoding="async" referrerPolicy="no-referrer" className={`h-full w-full object-cover ${featured ? 'md:absolute md:inset-0' : ''}`} />
         ) : (
           <NewsIllustration topic={topic} className={`h-full w-full ${featured ? 'md:absolute md:inset-0' : ''}`} />

@@ -61,5 +61,6 @@
  "detail.in_progress": "المحتوى قيد الكتابة.",
  "detail.sources": "المصادر:",
  "detail.next_title": "ماذا بعد؟ تصرّف بالقرب منك",
- "detail.next_see": "عرض"
+ "detail.next_see": "عرض",
+ "image.show_data_saver": "عرض الصورة (توفير البيانات مفعّل)"
 }

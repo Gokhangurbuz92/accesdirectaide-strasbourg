@@ -135,5 +135,6 @@
  "coverage.gdelt": "Bazı bağlantılar GDELT projesi aracılığıyla bulundu:",
  "related.title": "Bunlara da göz atın",
  "saved.count_one": "{{count}} kayıtlı makale.",
- "saved.count_other": "{{count}} kayıtlı makale."
+ "saved.count_other": "{{count}} kayıtlı makale.",
+ "image.show_data_saver": "Görseli göster (veri tasarrufu açık)"
 }

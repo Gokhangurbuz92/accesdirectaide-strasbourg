@@ -164,6 +164,19 @@ export default defineConfig({
             return undefined; // Let Vite tree-shake these out
           }
 
+          // ── Build runtime helpers (G14-LITE) ───────────────
+          // Vite's preload helper is imported by EVERY lazy route; left unassigned, Rollup pulled it into the first manual chunk that used it
+          // (pdf-vendor), so each page also downloaded jspdf + html2canvas. It gets its own tiny chunk.
+          // The same capture happened with tiny shared modules (prop-types, react-is, Babel helpers): the first manual chunk that used them
+          // (charts-vendor, qr-vendor) absorbed them, and every page with a PropTypes declaration downloaded recharts (~380 kB).
+          if (id.includes('vite/preload-helper') || id.includes('commonjsHelpers') ||
+            id.includes('node_modules/prop-types') ||
+            id.includes('node_modules/react-is') ||
+            id.includes('node_modules/@babel/runtime') ||
+            id.includes('node_modules/object-assign')) {
+            return 'runtime-helpers';
+          }
+
           // ── Sentry (isolated for async loading) ────────────
           if (id.includes('node_modules/@sentry')) {
             return 'sentry-vendor';
@@ -182,10 +195,6 @@ export default defineConfig({
             return 'react-router-vendor';
           }
 
-          // ── Framer Motion (lazy-loaded) ────────────────────
-          if (id.includes('node_modules/framer-motion')) {
-            return 'framer-motion';
-          }
 
           // ── Charts (recharts + d3 transitive deps) ─────────
           if (id.includes('node_modules/recharts') ||
@@ -197,9 +206,10 @@ export default defineConfig({
           }
 
           // ── PDF (heavy, lazy-loaded) ───────────────────────
+          // G14-LITE: dompurify left out — the page sanitizer (src/lib/sanitize.js) is on the first-load path, and grouping it here made EVERY page
+          // download jspdf + html2canvas (~580 kB) before its first paint
           if (id.includes('node_modules/jspdf') ||
-            id.includes('node_modules/html2canvas') ||
-            id.includes('node_modules/dompurify')) {
+            id.includes('node_modules/html2canvas')) {
             return 'pdf-vendor';
           }
 
@@ -227,11 +237,6 @@ export default defineConfig({
             return 'react-ecosystem';
           }
 
-          // ── Icons (lucide — deduplicated, PR #4) ───────────
-          if (id.includes('node_modules/lucide-react') ||
-            id.includes('node_modules/lucide')) {
-            return 'icon-vendor';
-          }
 
           // ── UI primitives (Radix + accessories) ────────────
           if (id.includes('node_modules/@radix-ui') ||
@@ -274,21 +279,16 @@ export default defineConfig({
             return 'lodash-vendor';
           }
 
-          // ── Motion DOM (framer-motion runtime deps) ─────────
-          if (id.includes('node_modules/motion-dom') ||
-            id.includes('node_modules/motion-utils')) {
-            return 'motion-vendor';
-          }
 
           // ── Core-JS polyfills ───────────────────────────────
           if (id.includes('node_modules/core-js')) {
             return 'polyfills-vendor';
           }
 
-          // ── Catch-all for remaining node_modules ───────────
-          if (id.includes('node_modules/')) {
-            return 'vendor';
-          }
+          // ── No catch-all (G14-LITE) ─────────────────────────
+          // The former catch-all 'vendor' chunk merged libraries loaded on demand (leaflet for the opt-in map, canvg/pako for PDF export) with the
+          // ones every page needs (i18next): the entry imported it, so every first visit downloaded the map and PDF code. The remaining node_modules
+          // now follow their importers (Rollup's own splitting): on-demand libraries stay in on-demand chunks.
         },
       },
     },

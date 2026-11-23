@@ -2,6 +2,7 @@
 import { csrfFetch } from '@/lib/csrf';
 import i18n from '@/i18n';
 import { toast } from '@/components/ui/use-toast';
+import { clearOfflineParcours } from '@/lib/offlineParcours';
 
 /**
  * K0: logout is a protected POST like every mutation. It used to be sent WITHOUT the CSRF header: the API answered 403, the session cookie stayed, and the page
@@ -9,6 +10,8 @@ import { toast } from '@/components/ui/use-toast';
  * @returns {Promise<boolean>}
  */
 export async function logoutOnServer() {
+    // G14-LITE: the copy of Mon Parcours kept on this device (if the person chose it) is erased FIRST — even when the server cannot be reached
+    try { await clearOfflineParcours(); } catch { /* nothing kept */ }
     try {
         const res = await csrfFetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
         if (res.ok) { await endFranceConnectSession(); return true; }

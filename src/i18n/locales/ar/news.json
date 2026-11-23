@@ -143,5 +143,6 @@
  "saved.count_two": "مقالان محفوظان.",
  "saved.count_few": "{{count}} مقالات محفوظة.",
  "saved.count_many": "{{count}} مقالًا محفوظًا.",
- "saved.count_other": "{{count}} مقال محفوظ."
+ "saved.count_other": "{{count}} مقال محفوظ.",
+ "image.show_data_saver": "عرض الصورة (توفير البيانات مفعّل)"
 }
