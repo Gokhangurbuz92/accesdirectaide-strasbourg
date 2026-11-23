@@ -25,7 +25,7 @@ describe('PKG-6 / N14 R3 prompt contract', () => {
   it('a URL in the model text is still refused by the unchanged post-validation, and handler + harness share the prompt builder', () => {
     expect(evaluationHooks.answerUsesOnlyRetrievedUrls('Voir https://exemple.fr/apl', records)).toBe(false);
     expect(evaluationHooks.buildModelPrompt).toBe(buildModelPrompt);
-    expect(fs.readFileSync('api/_handlers/assistant/chat.js', 'utf8')).toMatch(/prompt: buildModelPrompt\(\{ query: trimmedMessage/);
+    expect(fs.readFileSync('api/_handlers/assistant/chat.js', 'utf8')).toMatch(/const prompt = buildModelPrompt\(\{ query: questionText[\s\S]*?generateCitizenLocalStructuredContent\(\{\s*prompt,/);
     expect(fs.readFileSync('scripts/ai-eval.mjs', 'utf8')).toMatch(/prompt: hooks\.buildModelPrompt\(/);
   });
 });

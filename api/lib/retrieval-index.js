@@ -13,6 +13,14 @@ import { sql } from 'drizzle-orm';
 import { visibleSql } from './publicVisibility.js';
 
 export const DIMENSION = 768;
+/**
+ * G14-AI — the two index targets of "Aide": the local one (nomic-embed-text, 768 d, model kept in embedding_model) and the Cloudflare Workers AI one
+ * (@cf/baai/bge-m3, 1024 d, column embedding_m3 of migration 0060, a single model so no model column). Column names are constants, never input.
+ */
+export const INDEX_TARGETS = Object.freeze({
+  local: Object.freeze({ dimension: 768, vector: 'embedding', hash: 'embedded_text_sha256', at: 'embedded_at', modelColumn: 'embedding_model' }),
+  m3: Object.freeze({ dimension: 1024, vector: 'embedding_m3', hash: 'embedding_m3_sha256', at: 'embedding_m3_at', modelColumn: null, model: '@cf/baai/bge-m3' }),
+});
 const TEXT_FIELDS = ['titre', 'cest_quoi', 'pour_qui', 'ce_que_ca_aide', 'summary_falc'];
 
 /** The exact text an aide is embedded from (same order, normalized spaces). */
@@ -22,13 +30,14 @@ export function embeddingTextOf(row) {
 export const sha256 = (text) => crypto.createHash('sha256').update(text, 'utf8').digest('hex');
 
 /** The visible aides that need a (new) vector for `model`. */
-export async function staleVisibleAides(db, model, { limit = 1000 } = {}) {
-  const rows = (await db.execute(sql`SELECT id, titre, cest_quoi, pour_qui, ce_que_ca_aide, summary_falc, mots_cles, embedding_model, embedded_text_sha256, (embedding IS NULL) AS missing
+export async function staleVisibleAides(db, model, { limit = 1000, target = INDEX_TARGETS.local } = {}) {
+  const modelSel = target.modelColumn ? sql.raw(`"${target.modelColumn}" AS index_model`) : sql`${model}::text AS index_model`;
+  const rows = (await db.execute(sql`SELECT id, titre, cest_quoi, pour_qui, ce_que_ca_aide, summary_falc, mots_cles, ${modelSel}, ${sql.raw(`"${target.hash}"`)} AS index_hash, (${sql.raw(`"${target.vector}"`)} IS NULL) AS missing
     FROM "Aide" WHERE ${visibleSql('aide')} ORDER BY id LIMIT ${limit}`)).rows;
   const out = { visible: rows.length, stale: [] };
   for (const r of rows) {
     const text = embeddingTextOf(r); const hash = sha256(text);
-    const why = r.missing ? 'MISSING' : r.embedding_model !== model ? 'MODEL_CHANGED' : r.embedded_text_sha256 !== hash ? 'TEXT_CHANGED' : null;
+    const why = r.missing ? 'MISSING' : r.index_model !== model ? 'MODEL_CHANGED' : r.index_hash !== hash ? 'TEXT_CHANGED' : null;
     if (why && text) out.stale.push({ id: r.id, text, hash, why });
   }
   return out;
@@ -37,9 +46,10 @@ export async function staleVisibleAides(db, model, { limit = 1000 } = {}) {
 /**
  * @param {{ db: any, embed: (texts: string[]) => Promise<number[][]>, model: string, limit?: number, batchSize?: number, dryRun?: boolean }} opts
  */
-export async function rebuildAideIndex({ db, embed, model, limit = 1000, batchSize = 16, dryRun = false }) {
+export async function rebuildAideIndex({ db, embed, model, limit = 1000, batchSize = 16, dryRun = false, target = INDEX_TARGETS.local }) {
   if (!model || typeof embed !== 'function') throw new Error('rebuildAideIndex: an embedder and its model name are required');
-  const { visible, stale } = await staleVisibleAides(db, model, { limit });
+  if (target.model && target.model !== model) throw new Error('rebuildAideIndex: this index target holds another model');
+  const { visible, stale } = await staleVisibleAides(db, model, { limit, target });
   const summary = { model, visible, stale: stale.length, reasons: {}, embedded: 0, failed: 0, upToDate: visible - stale.length, dryRun };
   for (const s of stale) summary.reasons[s.why] = (summary.reasons[s.why] || 0) + 1;
   if (dryRun) return summary;
@@ -49,9 +59,13 @@ export async function rebuildAideIndex({ db, embed, model, limit = 1000, batchSi
     try { vectors = await embed(batch.map((b) => b.text)); } catch { summary.failed += batch.length; continue; }
     for (let j = 0; j < batch.length; j += 1) {
       const v = vectors?.[j];
-      if (!Array.isArray(v) || v.length !== DIMENSION || !v.every((x) => Number.isFinite(x))) { summary.failed += 1; continue; }
+      if (!Array.isArray(v) || v.length !== target.dimension || !v.every((x) => Number.isFinite(x))) { summary.failed += 1; continue; }
       const literal = `[${v.map((x) => Number(x).toFixed(8)).join(',')}]`;
-      await db.execute(sql`UPDATE "Aide" SET embedding = ${literal}::vector, embedding_model = ${model}, embedded_text_sha256 = ${batch[j].hash}, embedded_at = NOW() WHERE id = ${batch[j].id}`);
+      if (target.modelColumn) {
+        await db.execute(sql`UPDATE "Aide" SET embedding = ${literal}::vector, embedding_model = ${model}, embedded_text_sha256 = ${batch[j].hash}, embedded_at = NOW() WHERE id = ${batch[j].id}`);
+      } else {
+        await db.execute(sql`UPDATE "Aide" SET ${sql.raw(`"${target.vector}"`)} = ${literal}::vector, ${sql.raw(`"${target.hash}"`)} = ${batch[j].hash}, ${sql.raw(`"${target.at}"`)} = NOW() WHERE id = ${batch[j].id}`);
+      }
       summary.embedded += 1;
     }
   }

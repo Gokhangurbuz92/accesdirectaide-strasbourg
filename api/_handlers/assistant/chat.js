@@ -9,6 +9,10 @@ import { recordLocalAiEvent } from '../../lib/local-ai-metrics.js';
 import { searchAidesHybrid } from '../../lib/hybrid-search.js';
 import { searchDemarches, searchStructures } from '../../lib/search-query.js';
 import { resolveAssistantTerritory } from '../../lib/geography/AssistantTerritoryResolver.js';
+// G14-AI: Cloudflare Workers AI (0 €, Free plan) when AI_PROVIDER=workers_ai + AI_WORKERS_PRODUCTION_APPROVED=true + CF_WORKERS_AI_* (api/lib/ai-policy.js)
+import { citizenAssistantProvider, generateCitizenWorkersStructuredContent, generateCitizenWorkersQueryEmbedding } from '../../lib/workers-ai.js';
+import { claimsEntitlement } from '../../lib/entitlementWording.js';
+import { stripIdentifiers } from '../../_utils/redact.js';
 
 const NIR_RE = /\b[12]\s?\d{2}\s?\d{2}\s?\d{2}\s?\d{3}\s?\d{3}\s?\d{2}\b/;
 const IBAN_FR_RE = /\bFR\s?\d{2}\s?[\dA-Z]{4}\s?[\dA-Z]{4}\s?[\dA-Z]{4}\s?[\dA-Z]{4}\s?[\dA-Z]{4}\s?[\dA-Z]{3}\b/i;
@@ -48,8 +52,57 @@ export const ASSISTANT_SYSTEM_INSTRUCTION = [
  * adds the link of each cited record to `citations`); any URL in the model's text is therefore invented and the answer is refused (answerUsesOnlyRetrievedUrls).
  */
 export function buildModelPrompt({ query, territory, verifiedRecords, assessment }) {
-  const records = (verifiedRecords || []).map((/** @type {Record<string, unknown>} */ r) => { const { sourceUrl, ...rest } = r; void sourceUrl; return rest; });
+  const records = (verifiedRecords || []).map((/** @type {Record<string, unknown>} */ r) => { const { sourceUrl, ficheUrl, ...rest } = r; void sourceUrl; void ficheUrl; return rest; });
   return JSON.stringify({ query, territory, verifiedRecords: records, ...(Array.isArray(assessment) ? { assessmentReadOnly: assessment } : {}) });
+}
+
+/** G14-AI: the JSON contract said in words (Workers AI also receives it as guided_json); the answer is still parsed and validated with zod */
+const WORKERS_JSON_INSTRUCTION = 'Reponds uniquement par un objet JSON de la forme {"answer": "...", "citedSourceIds": ["..."], "abstain": false}, sans aucun texte avant ou apres.';
+const GROUNDED_JSON_SCHEMA = (() => { const { $schema, ...rest } = z.toJSONSchema(GroundedResponseSchema); void $schema; return rest; })();
+/** G14-AI: bounded prompt for the free daily allocation (≈ 100–150 neurons a question): at most 8 records, 600 characters of summary each */
+const WORKERS_MAX_RECORDS = 8;
+const WORKERS_SUMMARY_CHARS = 600;
+
+/**
+ * G14-AI — emergencies are never handled by the assistant: the free emergency numbers are given at once, before any retrieval or model call.
+ * Deliberately narrow (« aide d'urgence », « hébergement d'urgence » are catalogue questions, not emergencies).
+ */
+export const EMERGENCY_NUMBERS = Object.freeze([
+  { number: '112', label: 'Urgence (tout téléphone, toute l’Europe)' },
+  { number: '15', label: 'SAMU — urgence médicale' },
+  { number: '17', label: 'Police secours' },
+  { number: '115', label: 'Hébergement d’urgence (SAMU social)' },
+  { number: '119', label: 'Enfance en danger' },
+  { number: '3919', label: 'Violences faites aux femmes' },
+  { number: '3114', label: 'Prévention du suicide' },
+]);
+const EMERGENCY_ANSWER = 'Si vous êtes en danger, ou si quelqu’un l’est, appelez tout de suite un numéro d’urgence gratuit : 112 (urgence), 15 (SAMU), 17 (police), '
+  + '115 (hébergement d’urgence), 119 (enfance en danger), 3919 (violences faites aux femmes), 3114 (prévention du suicide). L’assistant ne peut pas traiter une urgence.';
+const HEALTH_ANSWER = 'Je ne peux pas donner d’avis médical. Pour une question de santé, adressez-vous à votre médecin ou à un pharmacien ; en cas d’urgence, appelez le 15 ou le 112.';
+const LEGAL_ANSWER = 'Je ne peux pas donner de conseil juridique personnalisé. Pour un avis gratuit, adressez-vous à un point-justice (numéro 3039) ou à une structure d’accès au droit.';
+export const DAILY_LIMIT_MESSAGE = "L'assistant a atteint sa limite du jour, réessayez demain.";
+
+/** @param {string} text */
+export function isEmergency(text) {
+  const t = normalizeForGuard(text);
+  return [
+    /\b(suicide|suicider|me tuer|mettre fin a (mes|ma) (jours|vie)|en finir avec (la|ma) vie|envie de mourir|veux mourir|plus envie de vivre)\b/,
+    /\b(il|elle|on|mon (mari|conjoint|compagnon|pere|ex)|ma (femme|conjointe|compagne|mere)) (me|nous) (frappe|bat|battent|frappent|menace de mort|viole)\b/,
+    /\b(je suis|nous sommes|il est|elle est|mon enfant est|un enfant est) en danger\b/,
+    /\b(violences? conjugales?|viol|agression sexuelle|enfant maltraite|maltraitance)\b/,
+    /\b(ne respire plus|inconscient|overdose|crise cardiaque|avc|je saigne beaucoup)\b/,
+    /\b(dormir|dors|je suis) (dehors|a la rue|sans abri) (ce soir|cette nuit)\b/,
+  ].some((re) => re.test(t));
+}
+
+/** G14-AI: a request for medical advice (not a question about health-related aides such as the C2S or the AAH) @param {string} text */
+export function isHealthAdviceRequest(text) {
+  const t = normalizeForGuard(text);
+  return [
+    /\b(posologie|dosage|effets? secondaires?|symptomes?|diagnostic medical|ordonnance pour)\b/,
+    /\b(quels? medicaments?|dois-je prendre|puis-je prendre|combien de (comprimes|cachets|mg))\b/,
+    /\b(j.?ai (mal|de la fievre|une douleur)|est-ce (grave|une maladie)|quelle maladie|que faire contre (la|le|les|mon|ma|mes) (douleur|fievre|toux|infection))\b/,
+  ].some((re) => re.test(t));
 }
 
 const SAFE_ABSTENTION = "Je ne dispose pas de source locale officielle verifiee suffisante pour repondre de facon fiable a cette demande. Consultez une structure d'accueil ou la source officielle correspondante avant d'engager une demarche.";
@@ -148,10 +201,14 @@ function normalizeVerifiedRecord(item, /** @type {string | number | boolean | nu
   if (!entityId || !sourceUrl || !verifiedAt) return null;
   const title = String(item.titre || item.nom || item.label || item.name || item.slug || entityId).slice(0, 240);
   const summary = String(item.description_courte || item.resume || item.summary_falc || item.contenu_detaille || item.description || '').slice(0, 1200);
+  // G14-AI: the link of the platform's own fiche (cited with the official source): /aides/<slug>, /demarches/<slug>, /structures/<slug>
+  const slug = String(item.slug || entityId);
+  const base = { aide: '/aides/', demarche: '/demarches/', structure: '/structures/' }[String(entityType)] || null;
   return {
     sourceId: `${entityType}:${entityId}`,
     entityType,
     entityId,
+    ficheUrl: base ? `${base}${encodeURIComponent(slug)}` : null,
     title,
     summary,
     sourceUrl: String(sourceUrl),
@@ -172,8 +229,11 @@ function uniqueRecords(records) {
   });
 }
 
-async function retrieveVerifiedRecords(/** @type {string | number | boolean | null | undefined} */ message, /** @type {{ territoryIds: unknown }} */ resolvedTerritory) {
-  const { embedding, embeddingModel } = await generateCitizenLocalQueryEmbedding(message);
+async function retrieveVerifiedRecords(/** @type {string | number | boolean | null | undefined} */ message, /** @type {{ territoryIds: unknown }} */ resolvedTerritory, provider = 'ollama') {
+  // G14-AI: with Workers AI the query vector is bge-m3 (index column embedding_m3); when it fails, retrieval is lexical only — never a cloud fallback of another kind
+  const { embedding, embeddingModel } = provider === 'workers_ai'
+    ? ((await generateCitizenWorkersQueryEmbedding(message)) || { embedding: null, embeddingModel: null })
+    : await generateCitizenLocalQueryEmbedding(message);
   const territoryFilter = { userTerritoryIds: resolvedTerritory.territoryIds };
   const results = await Promise.allSettled([
     searchAidesHybrid({
@@ -224,6 +284,9 @@ function abstentionPayload(/** @type {string | number | boolean | null | undefin
     territory_not_resolved: "Je n'ai pas pu identifier ce territoire de facon fiable. Indiquez le nom exact de votre commune.",
     territory_ambiguous: "Plusieurs territoires correspondent a votre indication. Precisez le nom exact de votre commune.",
     territory_historical_only: "Ce territoire n'est plus un territoire courant dans le referentiel local. Indiquez votre commune actuelle.",
+    emergency_redirect: EMERGENCY_ANSWER,
+    health_advice_out_of_scope: HEALTH_ANSWER,
+    legal_advice_out_of_scope: LEGAL_ANSWER,
   };
   return {
     status,
@@ -235,6 +298,7 @@ function abstentionPayload(/** @type {string | number | boolean | null | undefin
       verified: false,
       grounded: false,
       abstention: true,
+      ...(reason === 'emergency_redirect' ? { emergencyNumbers: EMERGENCY_NUMBERS } : {}),
       mock: process.env.NODE_ENV === 'development',
       meta: {
         model: process.env.NODE_ENV === 'development' ? 'mock-dev' : null,
@@ -282,6 +346,13 @@ export default async function handler(req, res) {
   const ctxError = validateContext(context);
   if (ctxError) return res.status(400).json({ ok: false, requestId, error: 'invalid_context', message: ctxError });
 
+  // G14-AI: an emergency is answered with the emergency numbers first, before anything else is read or sent
+  if (isEmergency(trimmedMessage)) {
+    const out = abstentionPayload(requestId, 'emergency_redirect');
+    recordLocalAiEvent({ feature: 'assistant', outcome: 'blocked', reason: 'emergency_redirect' });
+    return res.status(out.status).json(out.body);
+  }
+
   if (containsSensitiveData(trimmedMessage)) {
     log.warn({ msg: 'assistant.sensitive_data_blocked', requestId });
     recordLocalAiEvent({ feature: 'assistant', outcome: 'blocked', reason: 'sensitive_data_detected' });
@@ -306,6 +377,18 @@ export default async function handler(req, res) {
     return res.status(out.status).json(out.body);
   }
 
+  if (isHealthAdviceRequest(trimmedMessage)) {
+    const out = abstentionPayload(requestId, 'health_advice_out_of_scope');
+    recordLocalAiEvent({ feature: 'assistant', outcome: 'blocked', reason: 'health_advice_out_of_scope' });
+    return res.status(out.status).json(out.body);
+  }
+
+  // G14-AI: which provider answers (fail-closed policy); with the cloud provider, e-mail addresses and phone numbers never leave the server
+  const provider = citizenAssistantProvider();
+  const cloud = provider === 'workers_ai';
+  const unavailableMessage = cloud ? 'Le service assistant est temporairement indisponible.' : 'Le service assistant local est temporairement indisponible.';
+  const questionText = cloud ? stripIdentifiers(trimmedMessage) : trimmedMessage;
+
   const suppliedTerritory = typeof context?.territory === 'string' ? context.territory.trim() : '';
 
   let territoryResolution;
@@ -321,7 +404,7 @@ export default async function handler(req, res) {
   if (territoryResolution?.status === 'UNAVAILABLE') {
     log.error({ msg: 'assistant.territory_resolution_unavailable', requestId });
     recordLocalAiEvent({ feature: 'assistant', outcome: 'error', reason: 'territory_resolution_unavailable' });
-    return res.status(503).json({ ok: false, requestId, error: 'service_unavailable', message: 'Le service assistant local est temporairement indisponible.' });
+    return res.status(503).json({ ok: false, requestId, error: 'service_unavailable', message: unavailableMessage });
   }
   if (territoryResolution?.status !== 'RESOLVED' || !territoryResolution.territory) {
     const reason = territoryResolution?.status === 'AMBIGUOUS'
@@ -345,7 +428,10 @@ export default async function handler(req, res) {
   const resolvedTerritory = territoryResolution.territory;
 
   try {
-    const verifiedRecords = await retrieveVerifiedRecords(trimmedMessage, resolvedTerritory);
+    const retrieved = await retrieveVerifiedRecords(questionText, resolvedTerritory, provider);
+    const verifiedRecords = cloud
+      ? retrieved.slice(0, WORKERS_MAX_RECORDS).map((r) => ({ ...r, summary: r.summary.slice(0, WORKERS_SUMMARY_CHARS) }))
+      : retrieved;
     if (verifiedRecords.length === 0) {
       const out = abstentionPayload(requestId, 'no_verified_local_source', 200, resolvedTerritory);
       log.info({ msg: 'assistant.chat_abstained', requestId, searchMode: 'local_grounded', sourceCount: 0, grounded: false, latencyMs: Date.now() - startedAt });
@@ -354,26 +440,44 @@ export default async function handler(req, res) {
     }
 
     const modelStartedAt = Date.now();
-    const result = await generateCitizenLocalStructuredContent({
-      prompt: buildModelPrompt({ query: trimmedMessage, territory: resolvedTerritory, verifiedRecords, assessment: Array.isArray(context?.assessment) ? context.assessment.map((a) => ({ rightId: a.rightId, state: a.state })) : undefined }),   // R14: the server keeps the promise « code and state only » (extra keys used to reach the model)
-      systemInstruction: ASSISTANT_SYSTEM_INSTRUCTION,
-      zodSchema: GroundedResponseSchema,
-      tools: [],
-      timeoutMs: 30000,
-    });
-    const modelMetric = { feature: 'assistant', model: result?.model, latencyMs: Date.now() - modelStartedAt, usage: result?.usage };
+    const prompt = buildModelPrompt({ query: questionText, territory: cloud ? { id: resolvedTerritory.id, officialCode: resolvedTerritory.officialCode, label: resolvedTerritory.label } : resolvedTerritory, verifiedRecords, assessment: Array.isArray(context?.assessment) ? context.assessment.map((a) => ({ rightId: a.rightId, state: a.state })) : undefined });   // R14: the server keeps the promise « code and state only » (extra keys used to reach the model)
+    const result = cloud
+      ? await generateCitizenWorkersStructuredContent({
+        prompt,
+        systemInstruction: `${ASSISTANT_SYSTEM_INSTRUCTION}\n${WORKERS_JSON_INSTRUCTION}`,
+        zodSchema: GroundedResponseSchema,
+        jsonSchema: GROUNDED_JSON_SCHEMA,
+        maxTokens: 600,
+        timeoutMs: 20000,
+      })
+      : await generateCitizenLocalStructuredContent({
+        prompt,
+        systemInstruction: ASSISTANT_SYSTEM_INSTRUCTION,
+        zodSchema: GroundedResponseSchema,
+        tools: [],
+        timeoutMs: 30000,
+      });
+    // the metric row accepts a short model name only (local-ai-metrics MODEL pattern)
+    const modelMetric = { feature: 'assistant', model: cloud ? 'workers-mistral-small-3.1' : result?.model, latencyMs: Date.now() - modelStartedAt, usage: result?.usage };
+
+    if (cloud && result?.safeErrorState === 'DAILY_LIMIT') {
+      recordLocalAiEvent({ ...modelMetric, outcome: 'error', reason: 'daily_limit_reached' });
+      log.warn({ msg: 'assistant.daily_limit_reached', requestId });
+      return res.status(503).json({ ok: false, requestId, error: 'daily_limit_reached', message: DAILY_LIMIT_MESSAGE });
+    }
 
     if (!result || result.safeErrorState || !result.content) {
       recordLocalAiEvent({ ...modelMetric, outcome: 'error', reason: String(result?.safeErrorState || 'empty_output').toLowerCase() });
       log.warn({ msg: 'assistant.local_provider_unavailable', requestId, sourceCount: verifiedRecords.length });
-      return res.status(503).json({ ok: false, requestId, error: 'service_unavailable', message: 'Le service assistant local est temporairement indisponible.' });
+      return res.status(503).json({ ok: false, requestId, error: 'service_unavailable', message: unavailableMessage });
     }
 
     const content = result.content;
     const allowedIds = new Set(verifiedRecords.map((/** @type {{ sourceId: string | number | boolean | null | undefined }} */ r) => r.sourceId));
     const cited = Array.isArray(content.citedSourceIds) ? content.citedSourceIds : [];
     const citationIdsValid = cited.length > 0 && cited.every((/** @type {number} */ id) => allowedIds.has(id));
-    const promisesEligibility = !content.abstain && claimsEligibility(content.answer);
+    // R31 (P13) + G14-AI: both entitlement guards (the assistant's own and the public-text one, api/lib/entitlementWording.js) apply to every answer
+    const promisesEligibility = !content.abstain && (claimsEligibility(content.answer) || claimsEntitlement(content.answer));
     if (content.abstain || !citationIdsValid || !answerUsesOnlyRetrievedUrls(content.answer, verifiedRecords) || promisesEligibility) {
       const reason = content.abstain ? 'model_abstained' : promisesEligibility ? 'eligibility_claim_blocked' : 'grounding_validation_failed';
       const out = abstentionPayload(requestId, reason, 200, resolvedTerritory);
@@ -389,6 +493,7 @@ export default async function handler(req, res) {
         entityType: source.entityType,
         entityId: source.entityId,
         title: source.title,
+        ficheUrl: source.ficheUrl,
         sourceUrl: source.sourceUrl,
         verifiedAt: source.verifiedAt,
       };
@@ -426,9 +531,9 @@ export default async function handler(req, res) {
   } catch {
     log.error({ msg: 'assistant.local_failure', requestId });
     recordLocalAiEvent({ feature: 'assistant', outcome: 'error', reason: 'local_failure' });
-    return res.status(503).json({ ok: false, requestId, error: 'service_unavailable', message: 'Le service assistant local est temporairement indisponible.' });
+    return res.status(503).json({ ok: false, requestId, error: 'service_unavailable', message: unavailableMessage });
   }
 }
 
 /** PKG-6 / D18: the exact guards and checks of this handler, for the evaluation harness (no behaviour change). */
-export const evaluationHooks = { GroundedResponseSchema, containsSensitiveData, isPromptInjectionAttempt, isLegalAdviceRequest, answerUsesOnlyRetrievedUrls, claimsEligibility, buildModelPrompt };
+export const evaluationHooks = { GroundedResponseSchema, containsSensitiveData, isPromptInjectionAttempt, isLegalAdviceRequest, isHealthAdviceRequest, isEmergency, answerUsesOnlyRetrievedUrls, claimsEligibility, claimsEntitlement, buildModelPrompt };

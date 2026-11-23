@@ -69,6 +69,11 @@ export const CAPABILITIES = Object.freeze({
     aipd: 'out', requiresHds: true, hdsNote: `${M} row 10 (referrals): yes / probable — closed until HDS`, surface: 'pro', aipdRef: 'P8' },
   'pro.siao_interop': { description: 'SI-SIAO interoperability export of a dossier', aipd: 'out', requiresHds: true, hdsNote: `${M} rows 7 and 10 (dossier of an orientation): probable`, surface: 'pro', aipdRef: 'AIPD § 2.1 « SIAO »' },
   'ai.processing': { description: 'assistant, AI recommendations, FALC summaries, AI discovery agents, AI dossier synthesis', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row: no (the AI policy and art. 9 apply separately)`, surface: 'diagnostic', aipdRef: 'AIPD § 2.1 « assistant »' },
+  // G14-AI (owner 23/11/2026): the citizen assistant ALONE (POST assistant/chat), answered by Cloudflare Workers AI (processor Cloudflare, Inc., US) from verified
+  // public fiches. Its own surface « assistant » and its own name: opening it opens neither ai.processing (recommendations, FALC, agents, pro synthesis)
+  // nor the diagnostic. Needs ADA_BETA_OPEN_SURFACES=assistant (during the beta) AND this name in ADA_CAPABILITIES_OPEN (AIPD line « assistant » signed).
+  'ai.citizen_assistant': { description: 'citizen assistant (assistant/chat): grounded answers from verified public fiches by the approved AI provider (AI_PROVIDER, api/lib/ai-policy.js); no account, no conversation stored',
+    aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (no dossier, no follow-up; medical questions are refused, art. 9 data are not asked)', surface: 'assistant', aipdRef: 'AIPD § 2.1 « assistant » (Workers AI line to sign)' },
   'institution.portal': { description: 'territory / institution space and the creation of institution accounts', aipd: 'out', requiresHds: false, surface: 'institution', aipdRef: 'AIPD § 2.1 « institution »' },
   video: { description: 'video appointments: offering the VIDEO modality, consent, approval, joining (its own VIDEO_* switches still apply)', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row: no (transient stream, no recording)`, surface: 'video', aipdRef: 'AIPD § 2.1 « visio »' },
   // X04 (EXPANSION, founder 19/11/2026 — not one of the 173): academy pages and events, the registration of a signed-in adult citizen (optional closed-list
@@ -150,7 +155,7 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'public/dossier-revoke': ['citizen.shared_dossier'], 'public/dossier-grants': ['citizen.shared_dossier'], 'public/passport': ['citizen.shared_dossier'],
   download: ['citizen.shared_dossier'],
   // diagnostic / AI
-  diagnostic: ['diagnostic.questionnaire'], assistant: ['ai.processing'], 'public/assistant': ['ai.processing'], 'public/falc': ['ai.processing'],
+  diagnostic: ['diagnostic.questionnaire'], assistant: ['ai.processing'], 'assistant/chat': ['ai.citizen_assistant'], 'public/assistant': ['ai.processing'], 'public/falc': ['ai.processing'],
   // institution, video
   'admin/guardianships': ['citizen.guardians'],   // R46 / C05 verifier side
   institution: ['institution.portal'], 'admin/institutions': ['institution.portal'],

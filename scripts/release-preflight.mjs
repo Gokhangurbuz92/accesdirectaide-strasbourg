@@ -13,6 +13,31 @@ import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/ca
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
 import { RETENTION_POLICY, executionGate, stepApprovalProblem } from '../api/_services/retention-policy.js';
+import { workersAiState } from '../api/lib/ai-policy.js';
+import { dailyNeuronBudget } from '../api/lib/workers-ai.js';
+
+/**
+ * G14-AI — the citizen assistant on Cloudflare Workers AI (owner decision 23/11/2026, 0 €). Off (AI_PROVIDER unset, no CF_WORKERS_AI_*) = PASS.
+ * Selected = every prerequisite named (never a value): the approval flag, both Cloudflare variables, no Gemini / Google key, the shared KV counter, the
+ * daily budget under the free allocation, and the build's privacy line naming the processor (VITE_ASSISTANT_PROVIDER=workers_ai).
+ * @param {(k: string) => string} get @returns {['PASS' | 'WARN' | 'FAIL', string]}
+ */
+export function workersAiCheck(get) {
+  const selected = get('AI_PROVIDER').toLowerCase() === 'workers_ai';
+  const cfSet = Boolean(get('CF_WORKERS_AI_ACCOUNT_ID') || get('CF_WORKERS_AI_TOKEN'));
+  if (!selected) return cfSet ? ['WARN', 'CF_WORKERS_AI_* are set but AI_PROVIDER is not "workers_ai": unused credentials (delete them or select the provider)'] : ['PASS', 'Workers AI off (AI_PROVIDER is not "workers_ai")'];
+  const env = { AI_PROVIDER: get('AI_PROVIDER'), AI_WORKERS_PRODUCTION_APPROVED: get('AI_WORKERS_PRODUCTION_APPROVED'), CF_WORKERS_AI_ACCOUNT_ID: get('CF_WORKERS_AI_ACCOUNT_ID'), CF_WORKERS_AI_TOKEN: get('CF_WORKERS_AI_TOKEN') };
+  const missing = [];
+  if (get('AI_WORKERS_PRODUCTION_APPROVED') !== 'true') missing.push('AI_WORKERS_PRODUCTION_APPROVED=true (owner approval: processor Cloudflare, Inc., AIPD line, privacy notice)');
+  if (!/^[0-9a-f]{32}$/i.test(get('CF_WORKERS_AI_ACCOUNT_ID'))) missing.push('CF_WORKERS_AI_ACCOUNT_ID (32 hex characters)');
+  if (get('CF_WORKERS_AI_TOKEN').length < 20) missing.push('CF_WORKERS_AI_TOKEN (Workers AI read/run API token)');
+  if (get('GEMINI_API_KEY') || get('GOOGLE_API_KEY')) missing.push('no GEMINI_API_KEY / GOOGLE_API_KEY (Gemini stays refused)');
+  if (!((get('KV_REST_API_URL') || get('UPSTASH_KV_REST_API_URL')) && (get('KV_REST_API_TOKEN') || get('UPSTASH_KV_REST_API_TOKEN')))) missing.push('Upstash KV (the daily neuron counter is shared there)');
+  if (get('AI_WORKERS_DAILY_NEURON_BUDGET') && Number(get('AI_WORKERS_DAILY_NEURON_BUDGET')) > 9500) missing.push('AI_WORKERS_DAILY_NEURON_BUDGET <= 9500 (free allocation 10 000 / day)');
+  if (get('VITE_ASSISTANT_PROVIDER').toLowerCase() !== 'workers_ai') missing.push('VITE_ASSISTANT_PROVIDER=workers_ai (the widget privacy line must name the processor)');
+  if (missing.length || !workersAiState(env).enabled) return ['FAIL', `AI_PROVIDER=workers_ai needs: ${missing.join('; ') || workersAiState(env).reason}`];
+  return ['PASS', `Workers AI approved and configured (citizen assistant only; daily budget ${dailyNeuronBudget({ AI_WORKERS_DAILY_NEURON_BUDGET: get('AI_WORKERS_DAILY_NEURON_BUDGET') })} neurons, refused beyond)`];
+}
 
 /**
  * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
@@ -92,6 +117,12 @@ export function evaluateReleasePreflight(env, opts = {}) {
   else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) || (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(get('ALERT_EMAIL')) && ['resend', 'mailjet', 'msgraph'].includes(get('MAILER_PROVIDER').toLowerCase())) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https) or ALERT_EMAIL with a real mail provider: operational alerts must reach a person, not only the logs');
   add('content.strict_mode', get('ADA_PUBLIC_CONTENT_MODE').toLowerCase() === 'lab' ? 'FAIL' : 'PASS', 'ADA_PUBLIC_CONTENT_MODE must not be "lab" (unverified records would be shown)');
   add('share.legacy_off', get('ADA_LEGACY_SHARE_READ') === '1' ? 'FAIL' : 'PASS', 'ADA_LEGACY_SHARE_READ stays off (a bare link would open a dossier)');
+  add('ai.workers_ai', ...workersAiCheck(get));
+  // G14-AI: the assistant opened (ai.citizen_assistant named) needs an approved provider that Production can reach — the local Ollama never is there
+  if (get('ADA_CAPABILITIES_OPEN').split(',').map((x) => x.trim().toLowerCase()).includes('ai.citizen_assistant')) {
+    const ok = workersAiCheck(get)[0] === 'PASS' && get('AI_PROVIDER').toLowerCase() === 'workers_ai';
+    add('ai.assistant_provider', ok ? 'PASS' : 'FAIL', ok ? 'the citizen assistant is answered by the approved provider (Workers AI)' : 'ai.citizen_assistant is opened but no approved provider is configured (AI_PROVIDER=workers_ai and ai.workers_ai PASS): every question would end in « indisponible »');
+  }
   add('ai.no_unapproved_provider_key', get('GEMINI_API_KEY') || get('GOOGLE_API_KEY') ? 'FAIL' : 'PASS', 'GEMINI_API_KEY / GOOGLE_API_KEY must not exist until an AI provider is approved (DPIA, DPA)');
   add('observability.sentry', get('SENTRY_DSN') ? 'PASS' : 'WARN', 'SENTRY_DSN (EU region, DPA) for error tracking');
   const dsnHosts = ['SENTRY_DSN', 'VITE_SENTRY_DSN'].map((k) => get(k)).filter(Boolean).map((d) => { try { return new URL(d).hostname; } catch { return '?'; } });

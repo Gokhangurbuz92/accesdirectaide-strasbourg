@@ -1269,6 +1269,58 @@
       "class": "lab",
       "nature": "config"
     },
+    "AI_PROVIDER": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^workers_ai$",
+      "note": "G14-AI: selects Cloudflare Workers AI for the citizen assistant only (api/lib/ai-policy.js workersAiState); unset = local Ollama path"
+    },
+    "AI_WORKERS_PRODUCTION_APPROVED": {
+      "class": "approval",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^true$",
+      "note": "G14-AI: owner approval (processor Cloudflare, Inc., AIPD line « assistant », privacy notice); fail-closed"
+    },
+    "CF_WORKERS_AI_ACCOUNT_ID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "cloudflare",
+      "account": true,
+      "format": "^[0-9a-fA-F]{32}$"
+    },
+    "CF_WORKERS_AI_TOKEN": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "cloudflare",
+      "account": true,
+      "note": "API token with the Workers AI permission only"
+    },
+    "AI_WORKERS_DAILY_NEURON_BUDGET": {
+      "class": "optional",
+      "nature": "config",
+      "note": "G14-AI: daily neuron budget counted in Upstash KV (default 9000, capped at 9500 < the free 10 000)"
+    },
+    "VITE_ASSISTANT_PROVIDER": {
+      "class": "conditional",
+      "nature": "public",
+      "scope": [
+        "production"
+      ],
+      "format": "^workers_ai$",
+      "note": "G14-AI: the widget privacy line names the processor (rebuild); must match AI_PROVIDER"
+    },
     "ADA_TRANSLATION_CACHE": {
       "class": "lab",
       "nature": "config"
@@ -2178,6 +2230,11 @@
       "label": "ProConnect (State identity federation for professionals, DINUM)",
       "account": "to create (partner registration of ADA Pro as a service provider)",
       "cost": "free"
+    },
+    "cloudflare": {
+      "label": "Cloudflare Workers AI (citizen assistant: mistral-small-3.1, bge-m3)",
+      "account": "to create",
+      "cost": "Free plan: 10 000 neurons/day, 0 € (refused beyond, never billed); server counter stops at 9 000"
     }
   },
   "modules": [
@@ -2896,6 +2953,48 @@
         }
       ],
       "order": 13
+    },
+    {
+      "id": "assistant-workers-ai",
+      "surfaces": [
+        "public"
+      ],
+      "label": "Citizen assistant on Cloudflare Workers AI (0 €, verified fiches only)",
+      "code": [
+        "api/lib/workers-ai.js",
+        "api/lib/ai-policy.js",
+        "api/_handlers/assistant/chat.js"
+      ],
+      "routes": [
+        "assistant/chat"
+      ],
+      "requires": [
+        "AI_PROVIDER",
+        "CF_WORKERS_AI_ACCOUNT_ID",
+        "CF_WORKERS_AI_TOKEN",
+        "VITE_ASSISTANT_PROVIDER",
+        "KV_REST_API_URL",
+        "KV_REST_API_TOKEN"
+      ],
+      "requires_module": [
+        "core"
+      ],
+      "tests": [
+        "g14-ai-workers.test.js",
+        "g14-ai-assistant-ui.test.jsx"
+      ],
+      "approval": "AI_WORKERS_PRODUCTION_APPROVED",
+      "gates": [
+        {
+          "id": "workers-ai-aipd",
+          "kind": "privacy",
+          "text": "AIPD line « assistant » with Cloudflare, Inc. as processor (US; DPA and SCC / DPF), privacy notice paragraph, register entry"
+        }
+      ],
+      "order": 13,
+      "optional": [
+        "AI_WORKERS_DAILY_NEURON_BUDGET"
+      ]
     },
     {
       "id": "openfisca",

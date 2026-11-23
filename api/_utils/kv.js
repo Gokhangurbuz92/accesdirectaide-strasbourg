@@ -77,10 +77,15 @@ export const kv = {
         memoryStore.set(key, { value: val, expires: data?.expires });
         return val;
     },
-    /**
-     * @param {string} key
-     * @param {number} seconds
-     */
+    /** G14-AI: add n (may be negative) and return the new value (Redis INCRBY) @param {string} key @param {number} n */
+    async incrby(key, n) {
+        if (kvClient) return kvClient.incrby(key, n);
+        const data = memoryStore.get(key);
+        const live = data && (!data.expires || Date.now() <= data.expires) ? data : null;
+        const val = (Number(live?.value) || 0) + Number(n);
+        memoryStore.set(key, { value: val, expires: live?.expires ?? null });
+        return val;
+    },
     /** true when a real KV store is configured (Production), false for the in-memory development fallback */
     get isRemote() { return Boolean(kvClient); },
     /** list push at the head (Redis LPUSH) @param {string} key @param {string} value */

@@ -42,7 +42,7 @@ describe('WS4 endpoint and territory boundary', () => {
 
   it('resolves canonical territory before embedding and retrieval', () => {
     const territoryIndex = chat.indexOf('resolveAssistantTerritory({');
-    const retrievalIndex = chat.indexOf('retrieveVerifiedRecords(trimmedMessage, resolvedTerritory)');
+    const retrievalIndex = chat.indexOf('retrieveVerifiedRecords(questionText, resolvedTerritory, provider)');
     expect(territoryIndex).toBeGreaterThan(-1);
     expect(retrievalIndex).toBeGreaterThan(territoryIndex);
     expect(chat).toContain('generateCitizenLocalQueryEmbedding(message)');
