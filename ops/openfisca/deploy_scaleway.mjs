@@ -247,7 +247,14 @@ function scwKey() {
 }
 function scw(key) {
   const call = async (method, p, body) => {
-    const r = await fetch(`${API}${p}`, { method, headers: { 'X-Auth-Token': key, 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+    let r;
+    // 409 = the resource is still in a transient state (a container just created is « creating » for a while): wait and retry, up to ~5 min
+    for (let i = 0; ; i++) {
+      r = await fetch(`${API}${p}`, { method, headers: { 'X-Auth-Token': key, 'content-type': 'application/json' }, body: body ? JSON.stringify(body) : undefined });
+      if (r.status !== 409 || method === 'GET' || i >= 60) break;
+      if (i === 0) console.log(`wait: Scaleway ${method} ${p.split('?')[0]} → 409 (resource busy), retrying every 5 s`);
+      await r.text(); await sleep(5000);
+    }
     const text = await r.text();
     if (!r.ok) die(`Scaleway ${method} ${p.split('?')[0]} HTTP ${r.status}`);   // the body is not printed (it may echo values)
     return text ? JSON.parse(text) : {};
