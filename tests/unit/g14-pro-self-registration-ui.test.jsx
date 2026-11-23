@@ -29,7 +29,7 @@ describe('G14 — /pro/register is a request', () => {
   it('asks for the SIRET, states the terms, sends termsAccepted: true and shows « demande reçue » without storing a session', async () => {
     const fetchMock = vi.fn(async () => ({ ok: true, status: 202, json: async () => ({ ok: true, status: 'PENDING_VERIFICATION' }) }));
     vi.stubGlobal('fetch', fetchMock);
-    const setItem = vi.spyOn(Storage.prototype, 'setItem');
+    const setItem = vi.spyOn(globalThis.Storage.prototype, 'setItem');
     render(h(MemoryRouter, { initialEntries: ['/pro/register'] }, h(Routes, null, h(Route, { path: '/pro/register', element: h(ProRegister) }))));
     expect(screen.getByTestId('pro-register-terms-statement')).toHaveTextContent(/En envoyant ma demande, j’accepte les conditions d’utilisation des professionnels et, pour ma structure, les conditions pour les structures/);
     fireEvent.change(screen.getByLabelText('Nom de la structure'), { target: { value: 'Association Synthétique' } });
