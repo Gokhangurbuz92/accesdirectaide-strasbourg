@@ -1656,24 +1656,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "embedding_m3": {
-          "name": "embedding_m3",
-          "type": "vector(1024)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "embedding_m3_sha256": {
-          "name": "embedding_m3_sha256",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "embedding_m3_at": {
-          "name": "embedding_m3_at",
-          "type": "timestamp (3)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "etapes_falc": {
           "name": "etapes_falc",
           "type": "jsonb",
@@ -1693,22 +1675,6 @@
           "columns": [
             {
               "expression": "embedding",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last",
-              "opclass": "vector_cosine_ops"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "hnsw",
-          "with": {}
-        },
-        "Aide_embedding_m3_hnsw_idx": {
-          "name": "Aide_embedding_m3_hnsw_idx",
-          "columns": [
-            {
-              "expression": "embedding_m3",
               "isExpression": false,
               "asc": true,
               "nulls": "last",

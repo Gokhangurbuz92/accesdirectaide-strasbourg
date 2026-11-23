@@ -123,8 +123,9 @@ export const Aide = pgTable('Aide', {
 	// "Aide_embedding_m3_hnsw_idx" are NOT declared here (g14-r2 integration): Drizzle names every declared column in select() / insert(), so declaring them
 	// made every read of "Aide" fail (« column "embedding_m3" does not exist ») on a database where 0060 is not applied yet — Production receives its
 	// migrations later, separately authorised (tests/integration/m1-parcours-without-0046-db.test.js). They are read and written only through raw SQL guarded
-	// by a column-presence check (api/lib/hybrid-search.js, api/lib/retrieval-index.js, scripts/reindex-embeddings.mjs). drizzle/0060…0062 and their
-	// snapshots own them: a schema diff (drizzle-kit generate) must NOT turn their absence here into a DROP.
+	// by a column-presence check (api/lib/hybrid-search.js, api/lib/retrieval-index.js, scripts/reindex-embeddings.mjs). The SQL of drizzle/0060 and
+	// drizzle/rollback/0060_down.sql own them; the 0060–0062 snapshots leave them out like this schema (QA v72: snapshots that kept them made
+	// drizzle-kit generate emit a 0063 that DROPs them). Guard: tests/unit/g14-snapshot-schema-sync.test.js (generate must be a no-op).
 	// automatic verification chain (api/_services/verification/chain.js): the FALC steps, and the summary of the last automatic check (sources read, result, texts)
 	etapes_falc: jsonb('etapes_falc'),
 	auto_check: jsonb('auto_check'),

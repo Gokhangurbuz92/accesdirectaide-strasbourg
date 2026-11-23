@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { LANGUAGE_EVENT, SOURCE_LANGUAGE, STORAGE_KEY, browserLanguage, languageOf, loadLanguage, setLanguage, storedLanguage, useLanguage } from '@/i18n';
 import i18n from '@/i18n';
 
@@ -7,10 +7,13 @@ import i18n from '@/i18n';
  * « This site is also available in English — Switch / Stay in French ». The site never switches by itself (French is the authoritative language and
  * the visitor may read it well). Either answer is remembered (localStorage « ada_lang »), so the offer appears once. Not a dialog: no focus trap,
  * nothing covers the page, no announcement interrupts a screen reader.
+ * G14-R2 (QA v72, axe « region »): the offer sits above the header, so it is its own landmark — a <section> named by its sentence (a named region), no new
+ * text to translate.
  */
 export default function LanguageSuggestion() {
   const { code } = useLanguage();
   const [offer, setOffer] = useState(/** @type {string | null} */ (null));
+  const textId = useId();
 
   useEffect(() => {
     const suggested = browserLanguage();
@@ -31,9 +34,9 @@ export default function LanguageSuggestion() {
   const t = i18n.getFixedT(offer, 'common');
   const stay = () => { try { window.localStorage.setItem(STORAGE_KEY, SOURCE_LANGUAGE); } catch { /* private browsing */ } setOffer(null); };
   return (
-    <div className="border-b border-sky-200 bg-sky-50" data-testid="language-suggestion" lang={offer} dir={l?.dir}>
+    <section className="border-b border-sky-200 bg-sky-50" data-testid="language-suggestion" aria-labelledby={textId} lang={offer} dir={l?.dir}>
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 text-sm text-sky-950">
-        <p>{t('common:suggestion.text', 'Ce site existe aussi en {{language}}.', { language: l?.name })}</p>
+        <p id={textId}>{t('common:suggestion.text', 'Ce site existe aussi en {{language}}.', { language: l?.name })}</p>
         <div className="flex flex-wrap gap-2">
           <button type="button" className="min-h-11 rounded-md bg-brand-primary px-3 py-1 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
             onClick={() => { void setLanguage(offer); }}>
@@ -44,6 +47,6 @@ export default function LanguageSuggestion() {
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

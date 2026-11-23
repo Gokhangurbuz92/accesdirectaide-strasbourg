@@ -64,7 +64,7 @@ export default function Sources() {
                 <h2 className="font-bold text-lg mb-2 text-gray-900">{t('about:sourcespage.engine.title', 'Moteur du calcul indicatif')}</h2>
                 <p>
                     {t('about:sourcespage.engine.text', 'Lorsque le calcul indicatif est disponible, il utilise OpenFisca-France, un logiciel libre publié sous licence AGPL-3.0, que nous faisons fonctionner sans modification sur notre propre serveur. Son code source :')}{' '}
-                    <a href={ENGINE_SOURCE} target="_blank" rel="noreferrer noopener" className="text-blue-700 hover:underline">{ENGINE_SOURCE.replace(/^https:\/\//, '')}</a>
+                    <a href={ENGINE_SOURCE} target="_blank" rel="noreferrer noopener" className="text-blue-700 underline">{ENGINE_SOURCE.replace(/^https:\/\//, '')}</a>
                 </p>
             </div>
 
