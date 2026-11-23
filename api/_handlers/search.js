@@ -15,6 +15,25 @@ import { offTopicIntent } from '../lib/search-off-topic.js';
 import { safetySignal } from '../lib/search-safety.js';
 import { guideOffices } from '../lib/official-offices.js';
 import { sql } from 'drizzle-orm';
+import fs from 'node:fs';
+import path from 'node:path';
+
+/** G14-FIND: the INSEE codes of the covered territory (data/geography/service-territory.v1.json, deployed with data/**) @type {string[] | null} */
+/** @type {[string, string][] | null} */
+let TERRITORY = null;
+const territoryCommunes = () => {
+  try { TERRITORY ??= JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/geography/service-territory.v1.json'), 'utf8')).communes; } catch { return []; }
+  return TERRITORY || [];
+};
+function territoryCodes() { return territoryCommunes().map((c) => c[0]); }
+const foldName = (/** @type {string} */ v) => String(v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[-'’\s]+/g, ' ').trim();
+/** G14-FIND: the INSEE code of a commune of the covered territory named in the words left after an office type (« CCAS Schiltigheim »), or null @param {string} rest */
+export function communeNamed(rest) {
+  const f = foldName(rest);
+  if (!f) return null;
+  const hit = territoryCommunes().find(([, name]) => foldName(name) === f);
+  return hit ? hit[0] : null;
+}
 
 /**
  * Universal search handler — searches Aides, Démarches, Dispositifs, Structures, Actualités, Guides.
@@ -103,7 +122,7 @@ export default async function handler(req, res) {
       territory: payload.territory || null,
       limit: payload.limit || 10,
       // SRCH-DISP-1: the response shape (a result cached before the dispositifs group existed has no `dispositifs`: never served for the new shape)
-      shape: 2,
+      shape: 2,   // G14-FIND: structuresScope is additive (a cached answer without it just shows no scope note until it expires)
     };
 
     // R12 (P08): the commune's hierarchy (commune → EPCI → département → région → national) selects the applicable aides before ranking
@@ -114,6 +133,23 @@ export default async function handler(req, res) {
       const { hierarchy } = await getHierarchy(payload.territory.toUpperCase(), db, schemas);
       if (hierarchy && hierarchy.length > 0) territoryFilter = { userTerritoryIds: hierarchy.map((h) => h.id) };
     }
+
+    // G14-FIND: with a commune, the places are chosen the way the directory does (`serves`: the commune's INSEE code among the place's recorded communes),
+    // then within the covered territory (Eurométropole), then anywhere — and the answer says which (structuresScope), so a place elsewhere is never shown
+    // as « in your commune »
+    // « CCAS Schiltigheim » without a commune chosen: the commune named after the office type is used the same way
+    const namedHint = structureTypeHint(payload.query);
+    const namedCode = !payload.territory && namedHint?.rest ? communeNamed(namedHint.rest) : null;
+    const servesCode = /^(\d{5}|2[AB]\d{3})$/.test(String(payload.territory || '').toUpperCase()) ? String(payload.territory).toUpperCase() : namedCode;
+    const TERRITORY_CODES = territoryCodes();
+    /** the place attempts of one search, nearest first, each tagged with its scope @param {Record<string, unknown>[]} attempts */
+    const placeAttempts = (attempts) => (servesCode
+      ? [...attempts.filter((a) => !a.city).map((a) => ({ ...a, serves: servesCode, scope: 'commune' })),
+        ...(TERRITORY_CODES.includes(servesCode) ? attempts.filter((a) => !a.city).map((a) => ({ ...a, servesAny: TERRITORY_CODES, scope: 'territory' })) : []),
+        ...attempts.filter((a) => !a.city).map((a) => ({ ...a, scope: 'all' }))]
+      : attempts.map((a) => ({ ...a, scope: 'all' })));
+    /** @param {Record<string, unknown>} a */
+    const strip = (a) => Object.fromEntries(Object.entries(a).filter(([k]) => k !== 'scope'));
 
     // R40: a query left with no meaningful word (« loi », « aide ») matches nothing in the word searches; without a plan they listed their first records
     const hasWords = searchWords(payload.query).length > 0;
@@ -161,27 +197,33 @@ export default async function handler(req, res) {
       }
 
       let structures = [];
+      let structuresScope = servesCode ? 'commune' : null;
       try {
         // R33: a query naming a kind of office gets that kind first (Strasbourg first when no place is named), then the ordinary word search
         const hint = structureTypeHint(payload.query);
         let found = [];
         if (hint) {
-          for (const attempt of hint.rest ? [{ q: hint.rest }, {}] : [{ city: 'Strasbourg' }, {}]) {
-            found = (await searchStructures({ ...attempt, type: hint.type, page: 1, pageSize: 5 })).items;
-            if (found.length) break;
+          for (const attempt of placeAttempts(hint.rest && !namedCode ? [{ q: hint.rest }, {}] : [{ city: 'Strasbourg' }, {}])) {
+            found = (await searchStructures({ ...strip(attempt), type: hint.type, page: 1, pageSize: 5 })).items;
+            if (found.length) { if (servesCode) structuresScope = String(attempt.scope); break; }
           }
         }
         // R34: danger → the offices that receive victims (Strasbourg first), before any place that merely shares a word with the query
         if (!hint && safety) {
           for (const type of safety.structureTypes) {
-            for (const attempt of [{ city: 'Strasbourg' }, {}]) {
-              const items = (await searchStructures({ ...attempt, type, page: 1, pageSize: 3 })).items;
-              if (items.length) { found.push(...items.filter((x) => !found.some((f) => f.id === x.id))); break; }
+            for (const attempt of placeAttempts([{ city: 'Strasbourg' }, {}])) {
+              const items = (await searchStructures({ ...strip(attempt), type, page: 1, pageSize: 3 })).items;
+              if (items.length) { found.push(...items.filter((x) => !found.some((f) => f.id === x.id))); if (servesCode) structuresScope = String(attempt.scope); break; }
             }
           }
           found = found.slice(0, 5);
         }
-        if (!found.length && hasWords) found = (await searchStructures({ q: payload.query, sort: 'pertinence', page: 1, pageSize: 5 })).items;
+        if (!found.length && hasWords) {
+          for (const attempt of placeAttempts([{}])) {
+            found = (await searchStructures({ q: payload.query, sort: 'pertinence', page: 1, pageSize: 5, ...strip(attempt) })).items;
+            if (found.length) { if (servesCode) structuresScope = String(attempt.scope); break; }
+          }
+        }
         structures = found
           .map((s) => ({ id: s.id, slug: s.slug, nom: s.nom, description_courte: s.description_courte, type_structure: s.type_structure, ville: s.ville, code_postal: s.code_postal }));
       } catch (e) {
@@ -228,8 +270,8 @@ export default async function handler(req, res) {
         if (sheet && !structures.some((x) => sheet.types.includes(x.type_structure))) {
           const official = [];
           for (const type of sheet.types) {
-            for (const attempt of [{ city: 'Strasbourg' }, {}]) {
-              const items = (await searchStructures({ ...attempt, type, page: 1, pageSize: 2 })).items;
+            for (const attempt of placeAttempts([{ city: 'Strasbourg' }, {}])) {
+              const items = (await searchStructures({ ...strip(attempt), type, page: 1, pageSize: 2 })).items;
               if (items.length) { official.push(...items); break; }
             }
             if (official.length >= 3) break;
@@ -280,6 +322,8 @@ export default async function handler(req, res) {
       return {
         items: aideItems,
         total: aideTotal,
+        // G14-FIND: with a commune, where the places come from: 'commune' (recorded for it), 'territory' (elsewhere in the Eurométropole), 'all'
+        ...(structuresScope && structures.length ? { structuresScope, structuresCommune: (territoryCommunes().find(([c]) => c === servesCode) || [])[1] || servesCode } : {}),
         demarches: demarches.map(d => ({
           id: d.id,
           slug: d.slug,

@@ -128,5 +128,9 @@
   "form.territory-all": "All municipalities",
   "form.territory-help": "With a municipality selected, benefits reserved for another area are not shown. Procedures, places and news are not filtered.",
   "section.glossary": "Definitions ({{n}})",
-  "link.glossary": "See the whole glossary"
+  "link.glossary": "See the whole glossary",
+  "form.territory-help-v2": "With a municipality selected, benefits reserved for another area are not shown and the places of that municipality are offered first. Procedures and news are not filtered.",
+  "structures_scope.commune": "Places recorded for {{commune}}.",
+  "structures_scope.territory": "No matching place is recorded for {{commune}}: here are those of other municipalities of the Eurométropole de Strasbourg.",
+  "structures_scope.all": "No matching place is recorded for {{commune}} or in the Eurométropole: here are those of other municipalities."
 }

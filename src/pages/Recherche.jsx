@@ -210,6 +210,7 @@ export default function Recherche() {
   const recordHistory = useCitizenHistory();
   const [demarches, setDemarches] = useState([]);
   const [structures, setStructures] = useState([]);
+  const [structuresScope, setStructuresScope] = useState(/** @type {{ scope: string, commune: string } | null} */ (null));
   const [actualites, setActualites] = useState([]);
   const [guides, setGuides] = useState([]);
   const [dispositifs, setDispositifs] = useState([]);
@@ -231,7 +232,7 @@ export default function Recherche() {
       setStatus('idle');
       setResults([]);
       setDemarches([]);
-      setStructures([]);
+      setStructures([]); setStructuresScope(null);
       setActualites([]);
       setGuides([]);
       setDispositifs([]);
@@ -247,7 +248,7 @@ export default function Recherche() {
       setStatus('error');
       setResults([]);
       setDemarches([]);
-      setStructures([]);
+      setStructures([]); setStructuresScope(null);
       setActualites([]);
       setGuides([]);
       setDispositifs([]);
@@ -279,6 +280,7 @@ export default function Recherche() {
         setResults(response.results);
         setDemarches(response.demarches || []);
         setStructures(response.structures || []);
+        setStructuresScope(response.structuresScope ? { scope: response.structuresScope, commune: response.structuresCommune || '' } : null);
         setActualites(response.actualites || []);
         setGuides(response.guides || []);
         setDispositifs(response.dispositifs || []);
@@ -293,7 +295,7 @@ export default function Recherche() {
         if (!isMounted || isAbortError(error)) return;
         setResults([]);
         setDemarches([]);
-        setStructures([]);
+        setStructures([]); setStructuresScope(null);
         setActualites([]);
         setGuides([]);
         setDispositifs([]);
@@ -549,6 +551,16 @@ export default function Recherche() {
                     <Building2 className="h-5 w-5 text-green-600" />
                     {t('search:section.structures', 'Structures ({{n}})', { n: structures.length })}
                   </h2>
+                  {/* G14-FIND: with a commune, say where the places come from — a place elsewhere is never presented as « in your commune » */}
+                  {structuresScope ? (
+                    <p className="mb-3 text-sm text-slate-800" data-testid="search-structures-scope" data-scope={structuresScope.scope}>
+                      {structuresScope.scope === 'commune'
+                        ? t('search:structures_scope.commune', 'Lieux enregistrés pour {{commune}}.', { commune: structuresScope.commune })
+                        : structuresScope.scope === 'territory'
+                          ? t('search:structures_scope.territory', 'Aucun lieu correspondant n’est enregistré pour {{commune}} : voici ceux d’autres communes de l’Eurométropole de Strasbourg.', { commune: structuresScope.commune })
+                          : t('search:structures_scope.all', 'Aucun lieu correspondant n’est enregistré pour {{commune}} ni dans l’Eurométropole : voici ceux d’autres communes.', { commune: structuresScope.commune })}
+                    </p>
+                  ) : null}
                   <ul className="grid gap-3 md:grid-cols-2">
                     {structures.map((/** @type {{ description: string | number, id: string | number, slug: string | number, title: string | number, ville: string | number }} */ s) => (
                       <StructureResult key={s.id} s={s} />

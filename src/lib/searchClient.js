@@ -157,6 +157,9 @@ function normalizeResponse(payload) {
     results,
     demarches,
     structures,
+    // G14-FIND: with a commune, where the places come from ('commune' | 'territory' | 'all'), or null
+    structuresScope: ['commune', 'territory', 'all'].includes(payload?.structuresScope) ? payload.structuresScope : null,
+    structuresCommune: typeof payload?.structuresCommune === 'string' ? payload.structuresCommune.slice(0, 80) : null,
     actualites,
     guides,
     dispositifs,

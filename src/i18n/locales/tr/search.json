@@ -128,5 +128,9 @@
   "form.territory-all": "Tüm belediyeler",
   "form.territory-help": "Bir belediye seçildiğinde, başka bir bölgeye ayrılmış yardımlar gösterilmez. İşlemler, yerler ve haberler filtrelenmez.",
   "section.glossary": "Tanımlar ({{n}})",
-  "link.glossary": "Tüm sözlüğü gör"
+  "link.glossary": "Tüm sözlüğü gör",
+  "form.territory-help-v2": "Bir belediye seçildiğinde, başka bir bölgeye ayrılmış yardımlar gösterilmez ve bu belediyedeki yerler önce önerilir. İşlemler ve haberler filtrelenmez.",
+  "structures_scope.commune": "{{commune}} için kayıtlı yerler.",
+  "structures_scope.territory": "{{commune}} için uygun bir yer kayıtlı değil: Eurométropole de Strasbourg’un diğer belediyelerindeki yerler aşağıdadır.",
+  "structures_scope.all": "{{commune}} için veya Eurométropole’de uygun bir yer kayıtlı değil: diğer belediyelerdeki yerler aşağıdadır."
 }
