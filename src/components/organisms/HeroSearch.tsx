@@ -1,6 +1,6 @@
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { useT } from "@/i18n";
 
@@ -100,6 +100,17 @@ export default function HeroSearch({
                         {t("home:hero.submit", "Rechercher")}
                     </button>
                 </form>
+
+                {/* G14-RG: the one-door flow « Ma situation » (browser-only, no account) */}
+                <p className="mt-5">
+                    <Link
+                        to="/situation"
+                        data-testid="hero-situation-link"
+                        className="inline-flex min-h-11 items-center rounded-lg px-3 text-base font-semibold text-white underline underline-offset-4 hover:text-blue-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    >
+                        {t("home:hero.situation", "Ou dites-nous ce qui vous arrive : loyer, emploi, arrivée à Strasbourg…")}
+                    </Link>
+                </p>
             </div>
         </section>
     );
