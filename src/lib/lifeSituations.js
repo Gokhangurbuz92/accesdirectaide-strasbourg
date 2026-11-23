@@ -8,6 +8,7 @@
  *   data/reference/parcours-step-types.v1.json the closed Mon Parcours list (codes, labels, official sources with dates)
  *   data/reference/social-domains.v1.json      the 20 × 86 catalogue, its structure types and the emergency numbers
  *   data/reference/guide-offices.v1.json        the « Où s'adresser » types of the fiches (DILA)
+ *   …/life-situations.v1.json « liveChecks »     fiches read live on service-public.gouv.fr (title, « Vérifié le » date, read date), checked before the ledger
  *   data/rules/rights-graph-sources.v1.json     the Rights Graph source ledger (DILA fiches with their dates, archive read 2026-11-18): titles and dates
  *                                              only — no D11 rule, condition or LEGI article is read from it (owner decision C4)
  *
@@ -21,7 +22,7 @@ import offices from '../../data/reference/guide-offices.v1.json';
 import ledger from '../../data/rules/rights-graph-sources.v1.json';
 import { FICHES, NEEDS } from './rightsPublicView.js';
 
-/** @typedef {{ id: string, title: string | null, url: string, modifiedAt: string | null, readAt: string | null, origin: 'rights-view' | 'parcours-list' | 'rights-graph-sources' }} SourcedFiche */
+/** @typedef {{ id: string, title: string | null, url: string, modifiedAt: string | null, readAt: string | null, origin: 'rights-view' | 'parcours-list' | 'live-check' | 'rights-graph-sources' }} SourcedFiche */
 
 export const EMERGENCY_NUMBERS = Object.freeze({ ...reference.emergency });
 export const STEP_TYPES = new Map(steps.types.map((t) => [t.code, t]));
@@ -44,6 +45,10 @@ export function sourcedFiche(id) {
   for (const t of steps.types) {
     const s = t.sources.find((x) => x.id === id);
     if (s && s.modified) return { id, title: s.title, url: s.url, modifiedAt: s.modified, readAt: steps.readAt, origin: 'parcours-list' };
+  }
+  const live = (situationsFile.liveChecks?.fiches || []).find((x) => x.id === id);
+  if (live && live.verifiedAt && live.readAt && live.url === `https://www.service-public.gouv.fr/particuliers/vosdroits/${id}`) {
+    return { id, title: live.title, url: live.url, modifiedAt: live.verifiedAt, readAt: live.readAt, origin: 'live-check' };
   }
   const g = ledger.fiches.find((x) => x.id === id);
   if (g && g.present === true && !g.redirectedTo && (g.modifiedAt || g.importantChangeAt) && /^[FN]\d{1,6}$/.test(id)) {
