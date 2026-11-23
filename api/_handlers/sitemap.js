@@ -1,6 +1,8 @@
 import { visibleWhere } from '../lib/publicVisibility.js';
 import logger from '../_utils/logger.js';
 import { randomUUID } from 'crypto';
+import fs from 'node:fs';
+import path from 'node:path';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
 import { eq, and, isNotNull, desc } from 'drizzle-orm';
@@ -8,6 +10,20 @@ import { getCanonicalOrigin } from '../_utils/site-origin.js';
 import { isPublicBetaRestricted } from '../_utils/public-beta.js';
 import { isBetaRestrictedPath } from '../../src/lib/publicBeta.js';
 import { NEED_DEFINITIONS } from '../lib/multi-need.js';
+
+/**
+ * G14-RG: « Ma situation » (src/pages/Situation.jsx) — the index and one page per curated situation of data/reference/life-situations.v1.json (public,
+ * no account, static data). An unreadable file leaves only the index (the pages stay reachable from it).
+ * @returns {string[]}
+ */
+export function situationPaths() {
+  try {
+    const file = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'data/reference/life-situations.v1.json'), 'utf8'));
+    return ['/situation', ...file.situations.map((/** @type {{ id: string }} */ s) => `/situation/${s.id}`)];
+  } catch {
+    return ['/situation'];
+  }
+}
 
 const CACHE_CONTROL = 'public, max-age=0, s-maxage=3600, stale-while-revalidate=86400';
 const MAX_DYNAMIC_URLS = 10000;
@@ -83,8 +99,8 @@ export function buildSitemapXml(baseUrl, aides, demarches, structures, dispositi
   // public beta: a closed screen (assistant, contact…) answers with a notice, not with content — it is not offered to crawlers
   // G3: the public rights view, one page per need of the orientation (src/pages/Droits.jsx, data/reference/rights-public-view.v1.json)
   const rightsPaths = NEED_DEFINITIONS.map((/** @type {{ id: string }} */ n) => `/droits/${n.id}`);
-  for (const path of [...STATIC_PUBLIC_PATHS, ...rightsPaths].filter((x) => !(isPublicBetaRestricted() && isBetaRestrictedPath(x)))) {
-    nodes.push(buildUrlNode(baseUrl, path, null));
+  for (const p of [...STATIC_PUBLIC_PATHS, ...rightsPaths, ...situationPaths()].filter((x) => !(isPublicBetaRestricted() && isBetaRestrictedPath(x)))) {
+    nodes.push(buildUrlNode(baseUrl, p, null));
   }
 
   // Dynamic: aides

@@ -12,7 +12,8 @@ import { rdvMessagingClient } from '@/api/rdv-messaging-client';
 import { citizenApi } from '@/lib/citizenApi';
 import { bookingOpened, isBetaRestrictedPath, parcoursOpened } from '@/lib/publicBeta';
 import { needLabel } from '@/lib/rightsPublicView';
-import { EMERGENCY_FICHE, EMERGENCY_NUMBERS, SITUATIONS, SITUATION_BY_ID, directoryHref, matchSituations } from '@/lib/lifeSituations';
+import { EMERGENCY_FICHE, EMERGENCY_NUMBERS, FAMILIES, SITUATIONS, SITUATION_BY_ID, directoryHref, searchSituations } from '@/lib/lifeSituations';
+import { familyLabel, situationLabel } from '@/lib/situationLabels';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 /**
@@ -31,31 +32,6 @@ const tel = (/** @type {string} */ n) => (n.length === 10 && n.startsWith('0') ?
 const day = (/** @type {string | null} */ d) => (d ? formatDate(`${d}T12:00:00Z`) : '');
 const linkClass = 'inline-flex min-h-11 items-center gap-1.5 font-semibold text-blue-800 underline underline-offset-2 hover:text-blue-950';
 
-/** the situation's name in the interface language (explicit keys, so scripts/i18n-check.mjs checks every language) */
-function situationLabel(id, t) {
-  const labels = {
-    'loyer-impaye': () => t('situation:item.loyer-impaye', 'Je n’arrive plus à payer mon loyer'),
-    expulsion: () => t('situation:item.expulsion', 'Je risque de perdre mon logement (expulsion)'),
-    'sans-logement': () => t('situation:item.sans-logement', 'Je n’ai pas d’endroit où dormir'),
-    'factures-impayees': () => t('situation:item.factures-impayees', 'Je n’arrive plus à payer l’électricité, le gaz ou l’eau'),
-    dettes: () => t('situation:item.dettes', 'J’ai trop de dettes'),
-    'perte-emploi': () => t('situation:item.perte-emploi', 'J’ai perdu mon emploi'),
-    'sans-ressources': () => t('situation:item.sans-ressources', 'Je n’ai pas ou presque pas d’argent pour vivre'),
-    'arrivee-strasbourg': () => t('situation:item.arrivee-strasbourg', 'Je viens d’arriver à Strasbourg ou dans l’Eurométropole'),
-    violences: () => t('situation:item.violences', 'Je subis des violences'),
-    'enfant-danger': () => t('situation:item.enfant-danger', 'Un enfant est en danger'),
-    detresse: () => t('situation:item.detresse', 'Je vais très mal, j’ai des idées noires'),
-    'parent-seul': () => t('situation:item.parent-seul', 'Je me sépare ou j’élève seul mon enfant'),
-    'proche-age': () => t('situation:item.proche-age', 'Un proche âgé a besoin d’aide'),
-    handicap: () => t('situation:item.handicap', 'Je vis avec un handicap, ou mon enfant'),
-    'sans-titre-sejour': () => t('situation:item.sans-titre-sejour', 'Je n’ai pas de titre de séjour'),
-    'sortie-ase': () => t('situation:item.sortie-ase', 'J’ai 18 ans et je quitte l’aide sociale à l’enfance'),
-    'demarches-papiers': () => t('situation:item.demarches-papiers', 'J’ai besoin d’aide pour mes papiers et mes démarches'),
-    scolarite: () => t('situation:item.scolarite', 'Mon enfant va à l’école : frais, cantine, bourse'),
-    retraite: () => t('situation:item.retraite', 'Je vais prendre ma retraite'),
-  };
-  return labels[id] ? labels[id]() : id;
-}
 
 /** the official fiche, with the date Service-Public last changed it and the date the archive was read */
 function FicheLink({ fiche, fr }) {
@@ -177,7 +153,8 @@ function Result({ s }) {
 
       <section aria-labelledby="situation-steps">
         <h2 id="situation-steps" className="text-xl font-semibold text-slate-900">{t('situation:steps.title', 'Les démarches')}</h2>
-        <ol className="mt-3 space-y-3" data-testid="situation-steps">
+        {s.steps.length === 0 && <p className="mt-2 rounded-md bg-slate-50 p-3 text-slate-800" data-testid="situation-steps-none">{t('situation:steps.none', 'Aucune démarche n’est listée ici pour cette situation. Les lieux ci-dessous peuvent vous aider à la faire.')}</p>}
+        {s.steps.length > 0 && <ol className="mt-3 space-y-3" data-testid="situation-steps">
           {s.steps.map((st) => (st.kind === 'stepType' ? (
             <li key={st.code} className="rounded-lg border border-slate-200 bg-white p-4" data-step={st.code}>
               <p className="font-semibold text-slate-900">{t(`compte:parcours.type.${st.code}`, st.label)}</p>
@@ -187,7 +164,7 @@ function Result({ s }) {
           ) : (
             <li key={st.fiche.id} className="rounded-lg border border-slate-200 bg-white p-4" data-fiche={st.fiche.id}><FicheLink fiche={st.fiche} fr={fr} /></li>
           )))}
-        </ol>
+        </ol>}
         {stepCodes.length > 0 && (
           <WithParcours fallback={(
             <p className="mt-3 text-sm text-slate-800" data-testid="situation-parcours-signin">
@@ -271,7 +248,7 @@ function Finder() {
   const [text, setText] = useState('');
   const [hits, setHits] = useState(null);
   const inputId = useId();
-  const submit = (e) => { e.preventDefault(); setHits(matchSituations(text)); };
+  const submit = (e) => { e.preventDefault(); setHits(searchSituations(text, (id) => situationLabel(id, t))); };
   return (
     <section aria-labelledby="situation-finder" className="rounded-lg border border-slate-200 bg-white p-4" data-testid="situation-finder">
       <h2 id="situation-finder" className="text-xl font-semibold text-slate-900">{t('situation:finder.title', 'Dites-le avec vos mots')}</h2>
@@ -333,20 +310,39 @@ export default function Situation() {
 
         {s ? <Result s={s} /> : (
           <>
-            <Finder />
-            <nav aria-labelledby="situation-list-title">
-              <h2 id="situation-list-title" className="text-xl font-semibold text-slate-900">{t('situation:list.title', 'Ou choisissez votre situation')}</h2>
-              <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2" data-testid="situation-list">
-                {SITUATIONS.map((x) => (
-                  <li key={x.id}>
-                    <Link to={`/situation/${x.id}`} data-situation={x.id}
-                      className={`flex min-h-11 h-full items-center justify-between gap-2 rounded-lg border bg-white px-3 py-2 font-medium text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${x.danger ? 'border-red-300' : 'border-slate-300'}`}>
-                      <span>{situationLabel(x.id, t)}</span>
-                      {x.danger && <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-900">{t('situation:list.urgent', 'Urgent')}</span>}
-                    </Link>
-                  </li>
+            <section aria-labelledby="situation-urgent-title" className="rounded-lg border-2 border-red-300 bg-white p-4" data-testid="situation-urgent">
+              <h2 id="situation-urgent-title" className="flex items-center gap-2 text-xl font-semibold text-red-950"><AlertTriangle className="h-5 w-5 shrink-0" aria-hidden="true" />{t('situation:urgent.title', 'En danger maintenant ?')}</h2>
+              <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {SITUATIONS.filter((x) => x.danger).map((x) => (
+                  <li key={x.id}><Link to={`/situation/${x.id}`} data-situation={x.id} className={`${linkClass} text-red-900`}>{situationLabel(x.id, t)}</Link></li>
                 ))}
               </ul>
+            </section>
+            <Finder />
+            <nav aria-labelledby="situation-list-title" data-testid="situation-list">
+              <h2 id="situation-list-title" className="text-xl font-semibold text-slate-900">{t('situation:list.title', 'Ou choisissez votre situation')}</h2>
+              <p className="mt-1 text-slate-800">{t('situation:list.families', 'Les situations sont rangées par thème :')}</p>
+              <ul className="mt-2 flex flex-wrap gap-2" data-testid="situation-families">
+                {FAMILIES.map((f) => (
+                  <li key={f}><a href={`#famille-${f}`} className="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-3 text-sm font-medium text-blue-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700">{familyLabel(f, t)}</a></li>
+                ))}
+              </ul>
+              {FAMILIES.map((f) => (
+                <section key={f} id={`famille-${f}`} aria-labelledby={`famille-${f}-title`} className="mt-6 scroll-mt-24" data-family={f}>
+                  <h3 id={`famille-${f}-title`} className="text-lg font-semibold text-slate-900">{familyLabel(f, t)}</h3>
+                  <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    {SITUATIONS.filter((x) => x.family === f).map((x) => (
+                      <li key={x.id}>
+                        <Link to={`/situation/${x.id}`} data-situation={x.id}
+                          className={`flex min-h-11 h-full items-center justify-between gap-2 rounded-lg border bg-white px-3 py-2 font-medium text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${x.danger ? 'border-red-300' : 'border-slate-300'}`}>
+                          <span>{situationLabel(x.id, t)}</span>
+                          {x.danger && <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-900">{t('situation:list.urgent', 'Urgent')}</span>}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
             </nav>
           </>
         )}

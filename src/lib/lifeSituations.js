@@ -8,6 +8,8 @@
  *   data/reference/parcours-step-types.v1.json the closed Mon Parcours list (codes, labels, official sources with dates)
  *   data/reference/social-domains.v1.json      the 20 × 86 catalogue, its structure types and the emergency numbers
  *   data/reference/guide-offices.v1.json        the « Où s'adresser » types of the fiches (DILA)
+ *   data/rules/rights-graph-sources.v1.json     the Rights Graph source ledger (DILA fiches with their dates, archive read 2026-11-18): titles and dates
+ *                                              only — no D11 rule, condition or LEGI article is read from it (owner decision C4)
  *
  * Fail closed: an id that does not resolve to a sourced record is dropped (and the unit test fails on it), so nothing unsourced is ever shown.
  * The free-text matching is deterministic (normalised keywords / synonyms of the six interface languages): no AI, no server, no storage.
@@ -16,9 +18,10 @@ import situationsFile from '../../data/reference/life-situations.v1.json';
 import steps from '../../data/reference/parcours-step-types.v1.json';
 import reference from '../../data/reference/social-domains.v1.json';
 import offices from '../../data/reference/guide-offices.v1.json';
+import ledger from '../../data/rules/rights-graph-sources.v1.json';
 import { FICHES, NEEDS } from './rightsPublicView.js';
 
-/** @typedef {{ id: string, title: string | null, url: string, modifiedAt: string | null, readAt: string | null, origin: 'rights-view' | 'parcours-list' }} SourcedFiche */
+/** @typedef {{ id: string, title: string | null, url: string, modifiedAt: string | null, readAt: string | null, origin: 'rights-view' | 'parcours-list' | 'rights-graph-sources' }} SourcedFiche */
 
 export const EMERGENCY_NUMBERS = Object.freeze({ ...reference.emergency });
 export const STEP_TYPES = new Map(steps.types.map((t) => [t.code, t]));
@@ -41,6 +44,10 @@ export function sourcedFiche(id) {
   for (const t of steps.types) {
     const s = t.sources.find((x) => x.id === id);
     if (s && s.modified) return { id, title: s.title, url: s.url, modifiedAt: s.modified, readAt: steps.readAt, origin: 'parcours-list' };
+  }
+  const g = ledger.fiches.find((x) => x.id === id);
+  if (g && g.present === true && !g.redirectedTo && (g.modifiedAt || g.importantChangeAt) && /^[FN]\d{1,6}$/.test(id)) {
+    return { id, title: g.title, url: `https://www.service-public.gouv.fr/particuliers/vosdroits/${id}`, modifiedAt: g.modifiedAt || g.importantChangeAt, readAt: ledger.archive.readAt, origin: 'rights-graph-sources' };
   }
   return null;
 }
@@ -69,6 +76,7 @@ function resolve(raw) {
   for (const n of needs) for (const b of n.bodies) if (!bodies.some((x) => x.id === b.id)) bodies.push(b);
   return {
     id: raw.id,
+    family: raw.family,
     danger: raw.danger === true,
     emergency: raw.emergency.filter((x) => Object.prototype.hasOwnProperty.call(EMERGENCY_NUMBERS, x)),
     subdomains: raw.subdomains.filter((x) => SUBDOMAINS.has(x)),
@@ -82,6 +90,8 @@ function resolve(raw) {
 }
 
 export const RAW_SITUATIONS = situationsFile.situations;
+/** the groups of the /situation index, in their order */
+export const FAMILIES = Object.freeze([...situationsFile.families]);
 export const SITUATIONS = Object.freeze(RAW_SITUATIONS.map(resolve));
 export const SITUATION_BY_ID = new Map(SITUATIONS.map((s) => [s.id, s]));
 /** the source of the emergency numbers (fiche « Quels sont les numéros en cas d'urgence… ») */
@@ -106,10 +116,14 @@ export function normalise(text) {
   return base.split(' ').map((w) => (/[؀-ۿ]/.test(w) ? arStem(w) : w)).join(' ');
 }
 
-/** a keyword is found at the start of a word; a short keyword (under five letters) must be the whole word, a longer one may be a stem */
+/**
+ * a keyword is found at the start of a word; a short keyword must be the whole word, a longer one may be a stem (« loyer » → « loyers »). Short means
+ * under five letters, or under four in Arabic script (its words are shorter once the proclitics are dropped: « طعام » → « طعاما »)
+ */
 const found = (text, kw) => {
   const padded = ` ${text} `;
-  if (kw.length < 5) return padded.includes(` ${kw} `);
+  const min = /[\u0600-\u06FF]/.test(kw) ? 4 : 5;
+  if (kw.length < min) return padded.includes(` ${kw} `);
   return padded.includes(` ${kw}`);
 };
 
@@ -138,4 +152,20 @@ export function directoryHref(type, commune = '', bookable = false) {
   if (commune) p.set('city', commune);
   if (bookable) p.set('bookable', '1');
   return `/structures?${p}`;
+}
+
+/**
+ * The search of the /situation index: the keyword matcher, plus the situations whose name in the interface language contains the typed words
+ * (so a person finds what they read on the list, in any of the six languages). Local and pure, like matchSituations.
+ * @param {string} text @param {(id: string) => string} labelOf @param {number} [limit] @returns {{ id: string, danger: boolean, score: number }[]}
+ */
+export function searchSituations(text, labelOf, limit = 6) {
+  const hits = matchSituations(text, SITUATIONS.length);
+  const t = normalise(text);
+  if (t.length >= 3) {
+    for (const s of SITUATIONS) {
+      if (!hits.some((h) => h.id === s.id) && normalise(labelOf(s.id)).includes(t)) hits.push({ id: s.id, danger: s.danger, score: t.length });
+    }
+  }
+  return hits.sort((a, b) => Number(b.danger) - Number(a.danger) || b.score - a.score).slice(0, limit);
 }
