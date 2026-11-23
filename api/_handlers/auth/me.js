@@ -84,6 +84,13 @@ export default async function handler(req, res) {
     if (!user || !user.emailVerifiedAt || normalizeEmail(user.email) !== normalizeEmail(userClaims.email) || citizenSessionRevoked(userClaims.iat, user.sessionsValidAfter, userClaims.iatMs)) {
         return res.status(401).json({ error: 'Unauthorized' });
     }
+    // G14-AID: an assisted session (« mode accompagnant ») only while live; its claim is shown by the banner (helper's name and role, areas, end)
+    let assist = null;
+    if (userClaims.assist) {
+        const { assistSessionLive, assistClaimView } = await import('../../_services/assisted-mode.js');
+        if (!(await assistSessionLive(user.id, userClaims.assist))) return res.status(401).json({ error: 'Unauthorized' });
+        assist = assistClaimView(userClaims.assist);
+    }
 
     // A-23: the account's stored interface language, so the application can apply it once at session start (before: only the profile page did).
     // A failed read is not a sign-in failure: the language is then simply not applied.
@@ -95,6 +102,7 @@ export default async function handler(req, res) {
             kind: 'user',
             authType: 'user_cookie',
             role: 'user',
+            assist,
         },
         user: {
             id: user.id,

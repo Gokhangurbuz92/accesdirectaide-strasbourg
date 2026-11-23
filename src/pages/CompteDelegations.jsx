@@ -30,7 +30,7 @@ export default function CompteDelegations() {
   const load = useCallback(async () => {
     try {
       const d = await citizenApi.listDelegations();
-      setState({ loading: false, error: '', granted: d.granted || [], received: d.received || [], offeredScopes: d.offeredScopes });
+      setState({ loading: false, error: '', granted: d.granted || [], received: d.received || [], offeredScopes: d.offeredScopes, actions: d.actions || { open: false }, requests: d.requests || [] });
       // A-18: a part that is not open on this service is not offered (the server refuses it too)
       if (Array.isArray(d.offeredScopes)) setForm((f) => ({ ...f, scopes: f.scopes.filter((x) => d.offeredScopes.includes(x)) }));
     }
@@ -56,7 +56,32 @@ export default function CompteDelegations() {
       setParams({}, { replace: true });
     }
   };
-  const showLog = async (id) => { try { const d = await citizenApi.delegationLog(id); setLogs((l) => ({ ...l, [id]: d.events || [] })); } catch (err) { setProblem(err.message); } };
+  const showLog = async (id) => {
+    try {
+      const d = await citizenApi.delegationLog(id);
+      // G14-AID: what the trusted person asked or did (requests, confirmations, refusals, « agir pour moi ») with what they viewed, newest first
+      const acts = (d.actionEvents || []).map((e) => ({ at: e.at, act: e }));
+      setLogs((l) => ({ ...l, [id]: [...(d.events || []), ...acts].sort((a, b) => new Date(b.at) - new Date(a.at)) }));
+    } catch (err) { setProblem(err.message); }
+  };
+  // G14-AID — mode accompagnant à distance: the person confirms each request, or lets the trusted person act alone for one part
+  const [actPw, setActPw] = useState({});
+  const describe = (type, target) => (type === 'RDV_CANCEL'
+    ? t('compte:delegations.req_rdv_cancel', 'annuler le rendez-vous du {{date}} ({{structure}})', { date: formatDate(target?.startAt, { dateStyle: 'medium', timeStyle: 'short' }), structure: target?.structure || '' })
+    : t('compte:delegations.req_parcours_status', 'mettre l’étape « {{title}} » à l’état « {{status}} »', { title: target?.title || '', status: L.parcoursStatus?.[target?.status] || target?.status || '' }));
+  const actLine = (e) => {
+    const what = describe(e.type, e.target);
+    if (e.event === 'REQUESTED') return t('compte:delegations.log_requested', 'a demandé de {{what}}', { what });
+    if (e.event === 'CONFIRMED') return t('compte:delegations.log_confirmed', 'vous avez accepté : {{what}}', { what });
+    if (e.event === 'REFUSED') return t('compte:delegations.log_refused', 'demande non faite : {{what}}', { what });
+    return t('compte:delegations.log_executed', 'a fait pour vous (sans vous demander) : {{what}}', { what });
+  };
+  const resolve = (id, accept) => run(() => citizenApi.resolveDelegateRequest(id, accept), accept ? t('compte:delegations.req_done', 'C’est fait.') : t('compte:delegations.req_declined', 'Demande refusée : rien n’a été fait.'));
+  const setAct = async (d, scope, on) => {
+    const out = await run(() => citizenApi.setActForMe({ id: d.id, scope, on, ...(on ? { password: actPw[`${d.id}:${scope}`] || '' } : {}) }),
+      on ? t('compte:delegations.act_on_done', 'Cette personne peut maintenant agir pour vous dans cette partie, sans vous demander. Vous pouvez retirer cet accord à tout moment.') : t('compte:delegations.act_off_done', 'Accord retiré : chaque action vous sera de nouveau demandée.'));
+    setActPw((p) => ({ ...p, [`${d.id}:${scope}`]: out ? undefined : '' }));
+  };
   if (state.loading) return <div className="container mx-auto max-w-3xl px-4 py-8" role="status">{t('compte:delegations.chargement', 'Chargement…')}</div>;
   return (
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8" data-testid="compte-delegations">
@@ -69,6 +94,7 @@ export default function CompteDelegations() {
           {state.unauth ? <Button asChild variant="outline" className="mt-2"><Link to={`/auth/login?next=${encodeURIComponent(invitation ? `/compte/delegations?invitation=${invitation}` : '/compte/delegations')}`}>{t('compte:delegations.connecter', 'Se connecter')}</Link></Button> : null}
         </div>
       ) : null}
+      {state.actions?.open ? <p className="text-sm text-slate-700" data-testid="delegation-actions-intro">{t('compte:delegations.actions_intro', 'Elle peut aussi vous DEMANDER de faire une action (annuler un rendez-vous, mettre à jour une étape). Rien n’est fait sans votre accord, sauf si vous l’autorisez à agir pour vous dans une partie.')}</p> : null}
       {problem ? <p role="alert" data-testid="delegation-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
       <div aria-live="polite" role="status" data-testid="delegation-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
 
@@ -87,6 +113,27 @@ export default function CompteDelegations() {
 
       {/* R7: the forms and lists only for a signed-in person (the invite form was shown, unusable, to a signed-out visitor) */}
       {state.unauth ? null : (<>
+      {state.actions?.open ? (
+        <Card id="demandes" data-testid="delegation-requests">
+          <CardHeader><CardTitle className="text-lg">{t('compte:delegations.requests_title', 'Demandes à confirmer')}</CardTitle></CardHeader>
+          <CardContent>
+            {state.requests.length ? (
+              <ul className="space-y-2">
+                {state.requests.map((r) => (
+                  <li key={r.id} className="space-y-2 rounded-md border border-slate-200 p-2 text-sm" data-testid="delegation-request">
+                    <p>{t('compte:delegations.request_line', '{{who}} vous demande de {{what}}.', { who: r.delegateEmail, what: describe(r.type, r.target) })}</p>
+                    <p className="text-slate-700">{t('compte:delegations.request_until', 'Sans réponse, la demande s’annule le {{date}}.', { date: formatDate(r.expiresAt, { dateStyle: 'medium', timeStyle: 'short' }) })}</p>
+                    <div className="flex flex-wrap gap-2">
+                      <Button type="button" size="sm" onClick={() => resolve(r.id, true)} data-testid="delegation-request-accept">{t('compte:delegations.request_accept', 'Oui, le faire')}</Button>
+                      <Button type="button" size="sm" variant="outline" onClick={() => resolve(r.id, false)} data-testid="delegation-request-refuse">{t('compte:delegations.request_refuse', 'Non')}</Button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : <p className="text-sm text-slate-700" data-testid="delegation-requests-empty">{t('compte:delegations.requests_empty', 'Aucune demande en attente.')}</p>}
+          </CardContent>
+        </Card>
+      ) : null}
       <Card>
         <CardHeader><CardTitle className="text-lg">{t('compte:delegations.donner_acces', 'Donner un accès')}</CardTitle></CardHeader>
         <CardContent>
@@ -127,7 +174,24 @@ export default function CompteDelegations() {
                     {LIVE.includes(d.status) || d.status === 'INVITATION_EXPIRED' ? <Button type="button" size="sm" variant="outline" className="border-red-300 text-red-800" data-testid="delegation-revoke" onClick={() => run(() => citizenApi.endDelegation(d.id), t('compte:delegations.ended', 'Accès arrêté.'))}>{t('compte:delegations.arreter_acces', 'Arrêter l’accès')}</Button> : null}
                     <Button type="button" size="sm" variant="outline" data-testid="delegation-show-log" onClick={() => showLog(d.id)}>{t('compte:delegations.elle_consulte', 'Ce qu’elle a consulté')}</Button>
                   </div>
-                  {logs[d.id] ? (logs[d.id].length ? <ol className="list-inside list-disc text-slate-800" data-testid="delegation-log">{logs[d.id].map((e, i) => <li key={i} data-testid="delegation-log-event">{formatDate(e.at, { dateStyle: 'short', timeStyle: 'medium' })} — {ACTION_LABELS[e.action] || <span lang="fr" dir="ltr">{e.label}</span>}</li>)}</ol>
+                  {state.actions?.open && d.status === 'ACTIVE' ? (state.actions.actScopes || []).filter((sc) => d.scopes.includes(sc)).map((sc) => {
+                    const on = state.actions.actForMe?.[d.id]?.[sc] === true; const k = `${d.id}:${sc}`;
+                    return (
+                      <div key={sc} className="rounded-md border border-slate-200 p-2" data-testid="delegation-act-for-me">
+                        <p>{on ? t('compte:delegations.act_on', 'Agit pour vous sans vous demander : {{part}}', { part: L.delegationScope[sc] }) : t('compte:delegations.act_off', 'Vous confirmez chaque action : {{part}}', { part: L.delegationScope[sc] })}</p>
+                        {on ? <Button type="button" size="sm" variant="outline" className="mt-1" onClick={() => setAct(d, sc, false)} data-testid="delegation-act-off">{t('compte:delegations.act_withdraw', 'Retirer cet accord')}</Button>
+                          : actPw[k] === undefined ? <Button type="button" size="sm" variant="outline" className="mt-1" onClick={() => setActPw((p) => ({ ...p, [k]: '' }))} data-testid="delegation-act-ask">{t('compte:delegations.act_allow', 'L’autoriser à agir sans me demander')}</Button>
+                          : (
+                            <form className="mt-1 space-y-1" onSubmit={(e) => { e.preventDefault(); setAct(d, sc, true); }}>
+                              <label htmlFor={`act-pw-${k}`} className="block">{t('compte:delegations.act_password', 'Votre mot de passe, pour confirmer')}</label>
+                              <input id={`act-pw-${k}`} type="password" required autoComplete="current-password" className="w-full rounded-md border border-slate-300 p-2" value={actPw[k]} onChange={(e) => setActPw((p) => ({ ...p, [k]: e.target.value }))} data-testid="delegation-act-password" />
+                              <Button type="submit" size="sm" data-testid="delegation-act-on">{t('compte:delegations.act_confirm', 'Confirmer')}</Button>
+                            </form>
+                          )}
+                      </div>
+                    );
+                  }) : null}
+                  {logs[d.id] ? (logs[d.id].length ? <ol className="list-inside list-disc text-slate-800" data-testid="delegation-log">{logs[d.id].map((e, i) => <li key={i} data-testid="delegation-log-event">{formatDate(e.at, { dateStyle: 'short', timeStyle: 'medium' })} — {e.act ? actLine(e.act) : ACTION_LABELS[e.action] || <span lang="fr" dir="ltr">{e.label}</span>}</li>)}</ol>
                     : <p className="text-slate-700" data-testid="delegation-log-empty">{t('compte:delegations.rien_encore_ete_consulte', 'Rien n’a encore été consulté.')}</p>) : null}
                 </li>
               ))}

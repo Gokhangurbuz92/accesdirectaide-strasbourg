@@ -179,10 +179,14 @@ export function inAccountsBookingScope(path) {
  *   parcours  Mon Parcours (C07): GET / POST / DELETE citizen/parcours — capability citizen.parcours. Its in-app deadline notices come through
  *             citizen/notifications (already narrow); the plan import from a shared dossier stays refused while citizen.shared_dossier (HDS) is closed;
  *             its e-mail reminders are the category C job « parcours-reminder » (ADA_BETA_OPEN_JOBS + ADA_JOBS_APPROVED, separately).
+ *   assist    G14-AID « mode accompagnant » next to the person: GET / POST citizen/assist — capability citizen.assisted_mode.
  * @type {Readonly<Record<string, Readonly<{ routes: readonly string[], capabilities: readonly string[] }>>>}
  */
 export const ACCOUNTS_EXTRAS = Object.freeze({
   parcours: Object.freeze({ routes: Object.freeze(['citizen/parcours']), capabilities: Object.freeze(['citizen.parcours']) }),
+  // G14-AID: the « mode accompagnant » next to the person (citizen/assist) in the narrow scope — the helper then reaches only what the narrow scope serves
+  // (booking, profile); the remote action requests also need citizen.delegations (full scope)
+  assist: Object.freeze({ routes: Object.freeze(['citizen/assist']), capabilities: Object.freeze(['citizen.assisted_mode']) }),
 });
 /** the additions to the narrow accounts scope named in this environment (empty in the full scope) @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
 export function accountsExtras(envVars = process.env) {

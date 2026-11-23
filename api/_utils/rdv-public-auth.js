@@ -29,6 +29,11 @@ export async function requireCitizenUser(req) {
   if (!user || normalizeEmail(user.email) !== normalizeEmail(claims.email) || citizenSessionRevoked(claims.iat, user.sessionsValidAfter, claims.iatMs)) {
     return { ok: false, status: 401, error: 'Unauthorized' };
   }
+  // G14-AID: an assisted session (« mode accompagnant ») is a session only while its row is live (the router gate also limits it to the areas opened)
+  if (claims.assist) {
+    const { assistSessionLive } = await import('../_services/assisted-mode.js');
+    if (!(await assistSessionLive(user.id, claims.assist))) return { ok: false, status: 401, error: 'Unauthorized' };
+  }
 
   if (!user.emailVerifiedAt) {
     return {

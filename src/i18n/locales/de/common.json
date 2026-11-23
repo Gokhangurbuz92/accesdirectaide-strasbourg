@@ -74,5 +74,12 @@
  "api_error.generic": "Ein Fehler ist aufgetreten.",
  "api_error.sensitive_step_excluded": "Mon Parcours speichert derzeit nichts zu Gesundheit, Behinderung, einer Sucht, dem Aufenthaltsrecht, der Justiz, einer Schutzmaßnahme, dem Sexualleben oder erlittener Gewalt. Es wurde nichts gespeichert: Beschreiben Sie den Schritt ohne diese Information.",
  "api_error.sensitive_step_consent": "Dieser Schritt scheint eine sensible Information zu enthalten. Er wird nur mit Ihrer ausdrücklichen Einwilligung gespeichert. Es wurde nichts gespeichert.",
- "api_error.notes_closed": "Persönliche Notizen werden auf diesem Dienst nicht mehr angeboten. Sie können eine vorhandene Notiz löschen."
+ "api_error.notes_closed": "Persönliche Notizen werden auf diesem Dienst nicht mehr angeboten. Sie können eine vorhandene Notiz löschen.",
+ "api_error.assist_not_allowed": "Im Begleitmodus ist dieser Teil des Kontos nicht zugänglich. Die Person kann ihn allein ansehen, nachdem sie den Begleitmodus beendet hat.",
+ "api_error.assist_ended": "Der Begleitmodus ist beendet: Melden Sie sich erneut an, um fortzufahren.",
+ "api_error.assist_adult_only": "Der Begleitmodus ist Konten von Volljährigen vorbehalten.",
+ "api_error.assist_legal_protection": "Der Begleitmodus ersetzt keine Vormundschaft, keine Betreuung und keine Vollmacht: er ist für dieses Konto nicht verfügbar.",
+ "api_error.pro_helper_not_verified": "Der Code der ADA-Pro-Fachkraft ist ungültig. Bitten Sie um einen neuen Code.",
+ "api_error.request_not_found": "Diese Anfrage gibt es nicht mehr: sie ist abgelaufen oder wurde bereits bearbeitet.",
+ "api_error.delegation_inactive": "Dieser Zugang ist nicht mehr aktiv: nichts wurde getan."
 }

@@ -1478,5 +1478,20 @@
  "register_pro.terms_after": ".",
  "register_pro.privacy_before": "Meine Daten werden so verarbeitet, wie es in den",
  "register_pro.privacy_link": "Datenschutzhinweisen",
- "register_pro.privacy_after": " erklärt ist."
+ "register_pro.privacy_after": " erklärt ist.",
+ "assist.err_mfa": "Melden Sie sich erneut mit Zwei-Faktor-Authentifizierung an, um einen Code zu erhalten.",
+ "assist.err_not_eligible": "Nur ein aktives ADA-Pro-Konto mit Zwei-Faktor-Authentifizierung kann eine Person begleiten.",
+ "assist.err_closed": "Der Begleitmodus ist auf diesem Dienst noch nicht geöffnet.",
+ "assist.err_generic": "Der Code konnte nicht abgerufen werden. Versuchen Sie es erneut.",
+ "assist.title": "Eine Person begleiten",
+ "assist.how_title": "So funktioniert es",
+ "assist.step1": "Die Person meldet sich selbst in ihrem Konto an, am Telefon oder an einem Computer.",
+ "assist.step2": "Sie öffnet „Begleitmodus“ in Mon Espace und wählt, was Sie mit ihr tun dürfen.",
+ "assist.step3": "Sie gibt Ihre berufliche E-Mail-Adresse und den Code unten ein, dann ihr Passwort.",
+ "assist.never": "Sie kennen ihr Passwort nie. Sie können weder ihre Zugangsdaten ändern noch ihr Konto löschen, ihre Daten exportieren oder Mon Coffre öffnen. Alles, was Sie tun, wird in ihrem Verlauf vermerkt. Sie kann jederzeit aufhören; die Sitzung endet spätestens nach 2 Stunden von selbst.",
+ "assist.code_title": "Mein Begleitcode",
+ "assist.get_code": "Code anzeigen",
+ "assist.valid_until": "Gültig bis etwa {{time}}. Geben Sie ihn nur der Person, die Sie begleiten.",
+ "assist.structure": "Erfasste Einrichtung: {{name}}",
+ "layout.accompagnement": "Eine Person begleiten"
 }

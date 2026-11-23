@@ -36,6 +36,8 @@ export default async function handler(req, res) {
     if (!citizen) {
         return res.status(401).json({ error: 'Authentication required' });
     }
+    // G14-AID: never in an assisted session (« mode accompagnant »): the account's security and full export stay with the person alone
+    if (citizen.assist) return res.status(403).json({ error: 'ASSIST_NOT_ALLOWED', message: 'En mode accompagnant, cette partie du compte n’est pas accessible.' });
 
     const { id: userId } = citizen;
     const latest = async () => (await db.execute(sql`SELECT id, status, "reasonCode", "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "subjectId" = ${userId} AND "requestType" = 'DELETE' ORDER BY "createdAt" DESC LIMIT 1`)).rows[0] || null;

@@ -31,6 +31,8 @@ const kindLabels = (t) => ({
   // X04 (expansion): the person's event registrations — kind, time and link only (no title, no place, no accessibility need)
   EVENT_REMINDER: t('compte:notifications.kind.event_reminder', 'Rappel : un événement auquel vous êtes inscrit ou inscrite a lieu dans moins de 48 heures.'),
   EVENT_CANCELLED: t('compte:notifications.kind.event_cancelled', 'Un événement auquel vous êtes inscrit ou inscrite a été annulé par l’organisateur.'),
+  // G14-AID: a trusted person asks to do something for you — nothing is done before you confirm
+  DELEGATION_ACTION_REQUEST: t('compte:notifications.kind.delegation_action_request', 'Une personne de confiance vous demande de confirmer une action. Rien n’est fait sans votre accord.'),
 });
 
 /**

@@ -100,6 +100,8 @@ const CONFIG = {
     // PKG-1 citizen account (per user + ip)
     CITIZEN_ACCOUNT_READ: { limit: 60, window: 60 },
     CITIZEN_ACCOUNT_WRITE: { limit: 30, window: 60 },
+    // G14-AID: starting an assisted session (password + optional ADA Pro helper code), resuming alone with the password, « agir pour moi »: 6 per 15 min per account
+    ASSIST_REAUTH: { limit: 6, window: 900 },
     // R12: endpoints that called a provider, a model or the mailer without any limit
     ASSISTANT_FEEDBACK: { limit: 20, window: 600 },
     PDF_EXPORT: { limit: 30, window: 60 },        // public record PDF, per IP (CPU)

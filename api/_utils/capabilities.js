@@ -56,6 +56,11 @@ export const CAPABILITIES = Object.freeze({
   'citizen.franceconnect': { description: 'FranceConnect sign-in and account link (N08 / C26: OIDC adapter; needs the DataPass habilitation and FRANCECONNECT_PRODUCTION_APPROVED)',
     aipd: 'out', requiresHds: false, surface: 'accounts', aipdRef: 'C-PER' },
   'citizen.delegations': { description: 'trusted persons with read-only access', aipd: 'out', requiresHds: false, hdsNote: `${M} row 2 (ordinary account): no`, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
+  // G14-AID (owner 23/11/2026): « mode accompagnant » — a helper acts WITH the person: next to them on their own signed-in device (password + consent, ≤ 2 h,
+  // the areas they chose, never the account's security) and, together with citizen.delegations, a trusted person's action requests confirmed one by one by
+  // the person (or « agir pour moi » for one part). HDS-gated parts stay unreachable to a professional helper (api/_services/assisted-mode.js).
+  'citizen.assisted_mode': { description: 'assisted mode: a helper next to the person (password + consent, ≤ 2 h, chosen areas) and confirmed action requests of a trusted person',
+    aipd: 'out', requiresHds: false, hdsNote: `${M} row 2 (ordinary account): no — the vault (HDS) is never opened to a professional helper`, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
   'citizen.orientation_records': { description: 'the person’s orientations / referral proposals', aipd: 'out', requiresHds: true, hdsNote: `${M} row 10: yes for medical pieces, probable to / from an ESSMS — closed until HDS`, surface: 'accounts', accountsFull: true, aipdRef: 'P8' },
   'citizen.vault': { description: 'Mon Coffre: the person’s encrypted documents (C09)', aipd: 'out', requiresHds: true, hdsNote: `${M} row 8: yes (ANS example of hosting on behalf of the patient)`, surface: 'documents', aipdRef: 'AIPD § 2.1 « coffre »' },
   'citizen.shared_dossier': { description: 'dossiers shared with organisations, their grants, files, passport, downloads and the professional side (consent, attestation, export)', aipd: 'out', requiresHds: true, hdsNote: `${M} row 7: probable once the dossier serves an ESSMS or holds medical pieces — closed until HDS`, surface: 'documents', aipdRef: 'P9' },
@@ -127,6 +132,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   // G14: my moderation decisions and appeals — the account capability; the handler also answers 503 unless a content capability is open
   'citizen/moderation': ['citizen.account'],
   'citizen/delegations': ['citizen.delegations'], 'citizen/referrals': ['citizen.orientation_records'], 'citizen/shares': ['citizen.shared_dossier'],
+  // G14-AID: the assisted session of the person (start with password + consent, end, history) — and the professional's one-time helper code
+  'citizen/assist': ['citizen.assisted_mode'],
   // appointments
   rdv: ['citizen.booking'], 'auth/callback/outlook': ['calendar.outlook'],
   'pro/slots': ['pro.agenda'], 'pro/availability': ['pro.agenda'], 'pro/timeoff': ['pro.agenda'], 'pro/rdv': ['pro.agenda'], 'pro/appointments': ['pro.agenda'],
@@ -134,6 +141,7 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   // pro
   'pro/auth': ['pro.account'], 'pro/me': ['pro.account'], 'pro/profile': ['pro.account'], 'pro/mfa-setup': ['pro.account'], 'pro/mfa-enrolment': ['pro.account'], 'pro/mfa-invitation': ['pro.account'],
   'pro/notifications': ['pro.account'], 'pro/audit': ['pro.account'],
+  'pro/assist-code': ['pro.account', 'citizen.assisted_mode'],
   'pro/team': ['pro.structure_admin'], 'pro/regional-stats': ['pro.structure_admin'], 'pro/invite': ['pro.structure_admin'], 'pro/resend-invite': ['pro.structure_admin'],
   'pro/structure': ['pro.structure_admin'], 'pro/reports': ['pro.structure_admin'],
   'pro/health-check': ['pro.platform_ops'], 'pro/system-maintenance': ['pro.platform_ops'],

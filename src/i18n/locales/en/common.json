@@ -74,5 +74,12 @@
  "api_error.generic": "An error occurred.",
  "api_error.sensitive_step_excluded": "For now, Mon Parcours does not record anything about health, disability, an addiction, the right of residence, justice, a protection measure, sex life or violence suffered. Nothing has been recorded: describe the step without this information.",
  "api_error.sensitive_step_consent": "This step seems to reveal sensitive information. It is recorded only with your explicit consent. Nothing has been recorded.",
- "api_error.notes_closed": "Personal notes are no longer offered on this service. You can clear an existing note."
+ "api_error.notes_closed": "Personal notes are no longer offered on this service. You can clear an existing note.",
+ "api_error.assist_not_allowed": "In assisted mode, this part of the account is not available. The person can view it alone, after stopping the assisted mode.",
+ "api_error.assist_ended": "The assisted mode has ended: sign in again to continue.",
+ "api_error.assist_adult_only": "The assisted mode is reserved for accounts of adults.",
+ "api_error.assist_legal_protection": "The assisted mode does not replace a guardianship, a curatorship or a mandate: it is not available for this account.",
+ "api_error.pro_helper_not_verified": "The ADA Pro helper’s code is not valid. Ask them for a new code.",
+ "api_error.request_not_found": "This request no longer exists: it expired or was already handled.",
+ "api_error.delegation_inactive": "This access is no longer active: nothing was done."
 }

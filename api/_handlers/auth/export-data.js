@@ -18,6 +18,8 @@ export default async function handler(/** @type {import('../../_utils/http-types
     if (!citizen) {
         return res.status(401).json({ error: 'Authentication required' });
     }
+    // G14-AID: never in an assisted session (« mode accompagnant »): the account's security and full export stay with the person alone
+    if (citizen.assist) return res.status(403).json({ error: 'ASSIST_NOT_ALLOWED', message: 'En mode accompagnant, cette partie du compte n’est pas accessible.' });
 
     const userId = citizen.id;
     const limit = await checkRateLimit('DSR_EXPORT', `user:${userId}`);   // every export files a DSR request: bounded

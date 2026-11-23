@@ -1478,5 +1478,20 @@
  "register_pro.terms_after": ".",
  "register_pro.privacy_before": "My data are processed as explained in the",
  "register_pro.privacy_link": "privacy notice",
- "register_pro.privacy_after": "."
+ "register_pro.privacy_after": ".",
+ "assist.err_mfa": "Sign in again with two-factor authentication to get a code.",
+ "assist.err_not_eligible": "Only an active ADA Pro account with two-factor authentication can assist a person.",
+ "assist.err_closed": "The assisted mode is not open yet on this service.",
+ "assist.err_generic": "The code could not be obtained. Try again.",
+ "assist.title": "Assist a person",
+ "assist.how_title": "How it works",
+ "assist.step1": "The person signs in to their own account themselves, on their phone or on a computer.",
+ "assist.step2": "They open “Assisted mode” in Mon Espace and choose what you can do with them.",
+ "assist.step3": "They enter your work e-mail address and the code below, then their password.",
+ "assist.never": "You never know their password. You cannot change their sign-in details, delete their account, export their data or open Mon Coffre. Everything you do is written in their history. They can stop at any time; the session stops by itself after 2 hours at most.",
+ "assist.code_title": "My assistance code",
+ "assist.get_code": "Show a code",
+ "assist.valid_until": "Valid until about {{time}}. Give it only to the person you are assisting.",
+ "assist.structure": "Organisation recorded: {{name}}",
+ "layout.accompagnement": "Assist a person"
 }

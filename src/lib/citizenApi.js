@@ -118,6 +118,16 @@ export const citizenApi = {
   endDelegation: (/** @type {string} */ id) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'end', id } }),
   delegationLog: (/** @type {string} */ id) => call(`/api/citizen/delegations?log=${encodeURIComponent(id)}`),
   delegateView: (/** @type {string} */ id, /** @type {string} */ view) => call(`/api/citizen/delegations?id=${encodeURIComponent(id)}&view=${encodeURIComponent(view)}`),
+  // G14-AID — mode accompagnant à distance: a trusted person ASKS, the person confirms (or « agir pour moi » for one part)
+  requestDelegateAction: (/** @type {Record<string, unknown>} */ input) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'request-action', ...input } }),
+  resolveDelegateRequest: (/** @type {string} */ requestId, /** @type {boolean} */ accept) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'resolve-request', requestId, accept } }),
+  setActForMe: (/** @type {Record<string, unknown>} */ input) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'act-for-me', ...input } }),
+  delegateRequests: (/** @type {string} */ id) => call(`/api/citizen/delegations?requests=${encodeURIComponent(id)}`),
+  // G14-AID — mode accompagnant next to the person (/compte/accompagnement)
+  assistOverview: () => call('/api/citizen/assist'),
+  startAssist: (/** @type {Record<string, unknown>} */ input) => call('/api/citizen/assist', { method: 'POST', body: { action: 'start', ...input } }),
+  endAssist: (/** @type {{ continueAlone?: boolean, password?: string }} */ input = {}) => call('/api/citizen/assist', { method: 'POST', body: { action: 'end', ...input } }),
+  endAssistSession: (/** @type {string} */ sid) => call('/api/citizen/assist', { method: 'POST', body: { action: 'end-session', sid } }),
   // PKG-3 / K3 — my appointments: list, cancel, reschedule (D-2), free slots of the same service
   // PKG-4 — referrals proposed by organizations (nothing is shared before 'accept') and the follow-ups of a dossier
   referrals: () => call('/api/citizen/referrals'),

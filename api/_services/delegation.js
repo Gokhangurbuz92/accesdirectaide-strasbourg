@@ -175,10 +175,11 @@ export async function delegateView(userId, id, what, db = defaultDb, opts = {}) 
   } else if (what === 'coffre') {
     data = { documents: (await listCoffre(owner, db)).documents.map((d) => ({ name: d.name, category: d.category, byteLength: d.byteLength, createdAt: d.createdAt, expired: d.expired })) };
   } else {
-    const rows = await db.select({ startAt: ProAppointment.startAt, status: ProAppointment.status, structure: Structure.nom }).from(ProAppointment)
+    // G14-AID: the appointment id too — the trusted person can then ASK to cancel it (api/_services/delegation-actions.js), never do it alone
+    const rows = await db.select({ id: ProAppointment.id, startAt: ProAppointment.startAt, status: ProAppointment.status, structure: Structure.nom }).from(ProAppointment)
       .leftJoin(Structure, eq(Structure.id, ProAppointment.structureId))
       .where(and(eq(ProAppointment.citizenUserId, owner), sql`${ProAppointment.startAt} > NOW()`, sql`${ProAppointment.status} <> 'cancelled'`)).orderBy(asc(ProAppointment.startAt)).limit(20);
-    data = { appointments: rows.map((a) => ({ startAt: a.startAt, status: a.status, structure: a.structure || '' })) };
+    data = { appointments: rows.map((a) => ({ id: a.id, startAt: a.startAt, status: a.status, structure: a.structure || '' })) };
   }
   await db.insert(DelegationAccessEvent).values({ delegationId: r.id, principalUserId: owner, action: spec[1] });
   const who = await emails([owner], db);

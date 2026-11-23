@@ -74,5 +74,12 @@
  "api_error.generic": "Bir hata oluştu.",
  "api_error.sensitive_step_excluded": "Mon Parcours şimdilik sağlık, engellilik, bir bağımlılık, oturma hakkı, adalet, bir koruma tedbiri, cinsel yaşam veya maruz kalınan şiddetle ilgili hiçbir şeyi kaydetmez. Hiçbir şey kaydedilmedi: adımı bu bilgi olmadan tanımlayın.",
  "api_error.sensitive_step_consent": "Bu adım hassas bir bilgi içeriyor gibi görünüyor. Yalnızca açık izninizle kaydedilir. Hiçbir şey kaydedilmedi.",
- "api_error.notes_closed": "Kişisel notlar bu hizmette artık sunulmuyor. Mevcut bir notu silebilirsiniz."
+ "api_error.notes_closed": "Kişisel notlar bu hizmette artık sunulmuyor. Mevcut bir notu silebilirsiniz.",
+ "api_error.assist_not_allowed": "Refakat modunda hesabın bu bölümüne erişilemez. Kişi, refakat modunu durdurduktan sonra bu bölümü yalnız görüntüleyebilir.",
+ "api_error.assist_ended": "Refakat modu sona erdi: devam etmek için yeniden giriş yapın.",
+ "api_error.assist_adult_only": "Refakat modu yalnızca reşit kişilerin hesaplarına açıktır.",
+ "api_error.assist_legal_protection": "Refakat modu vesayet, kayyumluk veya vekâletin yerini tutmaz: bu hesap için kullanılamaz.",
+ "api_error.pro_helper_not_verified": "ADA Pro görevlisinin kodu geçerli değil. Yeni bir kod isteyin.",
+ "api_error.request_not_found": "Bu istek artık yok: süresi doldu veya zaten işlendi.",
+ "api_error.delegation_inactive": "Bu erişim artık etkin değil: hiçbir şey yapılmadı."
 }

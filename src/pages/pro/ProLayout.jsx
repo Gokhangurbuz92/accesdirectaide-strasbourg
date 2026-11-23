@@ -4,7 +4,7 @@ import { SkeletonList } from '@/components/ui/skeleton';
 // @ts-nocheck
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, Link, Outlet } from 'react-router-dom';
-import { LayoutDashboard, Building2, Users, FileText, LogOut, CalendarDays, Clock3, MessageCircle, Shield, BarChart3, Settings, Menu, X, Globe, ListChecks } from 'lucide-react';
+import { LayoutDashboard, Building2, Users, FileText, LogOut, CalendarDays, Clock3, MessageCircle, Shield, BarChart3, Settings, Menu, X, Globe, ListChecks, HeartHandshake } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SEO from '@/components/SEO';
 import useMainHeadingText from '@/hooks/useMainHeadingText';
@@ -239,6 +239,8 @@ function ProNavItems({ role, unreadMessages = null, modules = null }) {
                     {modules?.employment === true ? <NavLink to="/pro/offres-emploi" icon={FileText}>{t('pro:layout.job_listings', 'Offres d’emploi')}</NavLink> : null}
                 </>
             ) : null}
+            {/* G14-AID: the helper code of the « mode accompagnant » — shown only when the server serves it (out of the AIPD until extended) */}
+            {modules?.assist === true ? <NavLink to="/pro/accompagnement" icon={HeartHandshake}>{t('pro:layout.accompagnement', 'Accompagner une personne')}</NavLink> : null}
             {/* Paramètres (notifications, MFA) was only in the phone menu: unreachable on a computer */}
             <NavLink to="/pro/parametres" icon={Settings}>{t('pro:layout.parametres', 'Paramètres')}</NavLink>
         </>
