@@ -16,7 +16,7 @@ concurrency:
 jobs:
   quality:
     name: Quality gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
@@ -48,7 +48,7 @@ jobs:
     # (scripts/release-production.sh waits for this workflow) is not slowed while this job stays shorter than « quality ».
     # Automated checks only: they catch regressions; they are not an RGAA audit and replace no test with real users (none has been made).
     name: Accessibility (axe WCAG 2.2 AA + best practices, keyboard, reflow / 400 %, text spacing, RTL, forced colours, contrast states, screen-reader patterns)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -91,7 +91,7 @@ jobs:
     # push. Same scan as `npm run security:secrets` (scripts/security-secrets-scan.mjs): gitleaks over the tracked files, with the repository's
     # .gitleaks.toml and .gitleaksignore, findings redacted. The binary is pinned by version AND sha256; the actions are pinned by commit. No token needed.
     name: Secret scan (gitleaks)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     env:
       GITLEAKS_VERSION: 8.30.1
