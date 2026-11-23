@@ -722,20 +722,308 @@ export const LEGAL_DRAFT_DOCUMENTS_V10 = [
 /** @type {DraftDocument[]} the privacy notice (from v9) — to be put in force at the ADA Pro (K8) opening only */
 export const LEGAL_DRAFT_DOCUMENTS_V11 = [withChanges(LEGAL_DRAFTS_V11_CHANGES, LEGAL_DRAFTS_V11)(docOf(LEGAL_DRAFT_DOCUMENTS_V9, 'notice-confidentialite'))];
 
+/*
+ * v12-2026-11-23 / v13-2026-11-23 — G14 (23/11/2026): the expansion capabilities X04 (Académie, events), X02 (testimonials) and X01 (community stories),
+ * with the « signalements et décisions » block (DSA notice and action, statement of reasons, internal complaint, repeated misuse), to open right after
+ * Mon Parcours. Master: CONTROL/master/completion/G14_LEGAL_V12_V13_FR.md, from G14_EXPANSION_NOTICE_CGU_FR.md (written as a diff on notice v9; here
+ * carried on the v10 / v11 bases) and the code of the expansion (api/_services/academy-events.js, testimonials.js, community-stories.js,
+ * moderation-dsa.js, gdpr-purge-expansion-steps.js, retention-policy.js G14 durations). NOT X05 (job listings: needs the `pro` surface) and NOT X03
+ * (entraide: closed until its dedicated AIPD). The owner is the sole named moderator (owner, 23/11/2026): the texts say « le responsable du traitement /
+ * l'exploitant, qui assure lui-même la modération », without his name. PROPOSED: not approved by the owner yet.
+ *  v12  cgu-citoyen            = v10 + § « 7 bis. Contenus que vous publiez » (new section `publishing`, ten items) + one paragraph in § 8.
+ *       notice-confidentialite = v10 (Mon Parcours, from v8: no ADA Pro text) + § 2 one paragraph, new § « 3 ter » (`participation`), § 4 five items,
+ *                                § 5 one paragraph, § 6 Mailjet item (moderation e-mails), § 8 one paragraph, new § « 13 » (`moderation`).
+ *       → put in force at the X04 / X01 / X02 opening (with cgu-professionnel@v8 and conditions-structures@v8 unchanged).
+ *  v13  notice-confidentialite = v11 (ADA Pro, from v9) + the SAME expansion texts (Mailjet item from the v9 wording) + the ADA Pro opening texts
+ *       (owner decision 23/11/2026: no pilot structure, public sign-up verified by the operator, appointments, 8x8 JaaS video, Outlook free / busy):
+ *       § 2 p1_v13, § 3 P4p_v13 + P4 / P5 / P7 moved word for word from § 3 bis + P11 without « (désactivé) », § 4 appointments / Outlook / not-open list,
+ *       § 5 p2_v13, § 6 Microsoft / 8x8 items and video paragraph, § 7 video paragraph, § 9 booking (the structure receives neither name, e-mail nor
+ *       phone: rdv.js), § 11 p3_v13 (sign-up). Proposed for activation at the ADA Pro opening only (LEGAL_DRAFTS_V13_ACTIVATION), with
+ *       cgu-professionnel v10-2026-11-23 and conditions-structures v9-2026-11-23 (below).
+ * Facts by text (code wins over the master; differences listed in the master file):
+ *  participation  X04 adult account only (isAdultAccount), one need from a closed list with a separate never-pre-ticked agreement, proof in ConsentLog
+ *                 (EVENT_ACCESSIBILITY_NEED, true / false), organizer counts only (registrationCounts), reminder in the notification centre from 48 h
+ *                 before (REMINDER_WINDOW_HOURS). X02 / X01: consent per text (TESTIMONIAL_PUBLICATION / COMMUNITY_STORY_PUBLICATION), withdrawal erases
+ *                 text and name, pseudonym member row with its own id, LEAVE deletes it with the stories.
+ *  retention      EVENT_NEED_AFTER_END_DAYS 1, EVENT_REGISTRATION_AFTER_END_DAYS 30, ACADEMY_EVENT_ENDED_DAYS 365, *_PENDING_DAYS 60, *_REVIEW_DAYS 1095
+ *                 (report only), *_SKELETON_DAYS 365, UGC_REPORT_DAYS 90, COMMUNITY_MEMBER_INACTIVE_DAYS 730, CONTENT_NOTICE_AFTER_DECISION_DAYS 365 (kept
+ *                 while an appeal is open: contentNoticesDeleted). Owner decisions 23/11/2026: « retiré automatiquement » after 60 days (steps decided,
+ *                 approved after their dry run; § 4 p0 already says the automatic deletion is not fully active); decisions / appeals / sanctions erased
+ *                 1 year after the case is closed (MODERATION_CASE_CLOSED_DAYS, steps moderationDecisionsDeleted / moderationSanctionsDeleted, policy
+ *                 g14-expansion-2-2026-11-23-a7-365d). Public charter /charte-de-moderation (src/pages/CharteModeration.jsx): one moderator, 24 hours /
+ *                 7 days; § 13 p7, CGU § 7 bis i2 / i5 point to it. Conditions des structures v9 / notice v13 § 9: the essence of the art. 26 arrangement.
+ *  moderation     moderation-dsa.js: public form (four elements of art. 16(2), identity optional for CHILD_SAFETY), acknowledgement + appeal code by
+ *                 e-mail, statementText (art. 17(3) a–f, e-mail + /compte/moderation), six-month free appeal, sole moderator = same person after 24 h
+ *                 (SOLE_REVIEW_DELAY_MS) and the answer says so, warnings then 1–180 days (WARNING_WINDOW_DAYS 365), notifier keyed by HMAC (notifierKey).
+ *  video (v13)    api/lib/video-provider.js issueJaasJoin: room = HMAC (no name, date, structure), user id = HMAC per appointment, generic display name,
+ *                 moderator flag, nbf / exp = 15 min before / after; recording, live streaming, transcription, calls, file upload off. 8x8 Global DPA
+ *                 2025-02 (owner accepted 23/11/2026): processor, SCC 2021/914 module 2. Opens with ADA Pro (owner 23/11/2026).
+ *  appointments   gdpr-purge.js: A7 = 365 (approvedChoices) confirmed, 90 unconfirmed / refused / expired after startAt, 90 cancelled after cancelledAt,
+ *  (v13)          30 message (LEAST(startAt, cancelledAt)); Outlook tokens 30 days after expiry; busy read kept 2 min in memory (CALENDAR_FRESH_MS).
+ * Every earlier version unchanged byte for byte. Translations: the « …_v12 » / « …_v13 » keys of src/i18n/locales/<lang>/legaldraft.json.
+ */
+export const LEGAL_DRAFTS_V12 = 'v12-2026-11-23';
+export const LEGAL_DRAFTS_V12_DOCUMENT_IDS = Object.freeze(['cgu-citoyen', 'notice-confidentialite']);
+export const LEGAL_DRAFTS_V13 = 'v13-2026-11-23';
+export const LEGAL_DRAFTS_V13_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
+/** v12 and v13 are proposed (23/11/2026), not approved by the owner; v13 carries the v9 / v11 texts on professional accounts and the video provider */
+export const LEGAL_DRAFTS_V12_STATUS = 'PROPOSED — proposée le 23/11/2026, à approuver par le responsable avant l’ouverture de X04, X01 et X02';
+export const LEGAL_DRAFTS_V13_ACTIVATION = 'APPROVED_FOR_ACTIVATION_AT_K8 — proposée le 23/11/2026 (pas encore approuvée par le responsable), à mettre en vigueur seulement à l’ouverture d’ADA Pro (K8 : inscription libre vérifiée, rendez-vous, visioconférence, Outlook), avec cgu-professionnel v10-2026-11-23 et conditions-structures v9-2026-11-23';
+
+export const LEGAL_DRAFTS_V12_STATUS_PARAGRAPH = "Elle décrit aussi, lorsqu'elles sont ouvertes, les fonctions de participation (section 3 ter) et la manière dont les contenus publiés sont signalés et modérés (section 13).";
+export const LEGAL_DRAFTS_V12_EVENTS = "Événements de l'Académie : vous inscrire à un événement, annuler votre inscription et recevoir un rappel dans les notifications de Mon Espace à partir de 48 heures avant le début : exécution des conditions d'utilisation (art. 6, 1, b). Si vous le choisissez, un seul besoin d'accessibilité dans une liste (par exemple une interprétation en langue des signes) : votre consentement explicite (art. 9, 2, a), donné par une case distincte jamais cochée d'avance. Chaque accord et chaque retrait est enregistré comme preuve. Vous pouvez retirer ce besoin à tout moment depuis « Mes événements » ; l'annulation de l'inscription l'efface aussi. L'organisateur ne reçoit que des nombres (combien de personnes inscrites, combien de besoins de chaque sorte), jamais votre nom ni votre adresse.";
+export const LEGAL_DRAFTS_V12_TESTIMONIALS = "Témoignages : publier votre témoignage après relecture, sous le prénom ou le pseudonyme que vous choisissez : votre consentement (art. 6, 1, a), donné pour chaque texte par une case jamais cochée d'avance, que vous pouvez retirer à tout moment ; le texte et le nom sont alors effacés. N'écrivez rien sur votre santé, un handicap ou une autre personne : un texte qui en parle n'est pas publié. Signalements et relecture : intérêt légitime (art. 6, 1, f).";
+export const LEGAL_DRAFTS_V12_STORIES = "Histoires de la communauté : même règle, sous un pseudonyme que vous choisissez et qui n'est jamais relié publiquement à votre compte. Quitter la communauté supprime votre pseudonyme et vos histoires.";
+export const LEGAL_DRAFTS_V12_PARTICIPATION_NOTE = "Ces fonctions sont réservées aux comptes de personnes qui ont déclaré avoir 18 ans ou plus. Leurs durées de conservation sont indiquées en section 4, leurs destinataires en section 5, les signalements et décisions de modération en section 13.";
+export const LEGAL_DRAFTS_V12_EVENTS_RETENTION = "Événements : le besoin d'accessibilité est effacé dès que vous annulez, et au plus tard le lendemain de la fin de l'événement ; l'inscription est supprimée 30 jours après la fin de l'événement (ou après votre annulation si elle vient avant) ; la page d'un événement terminé est supprimée après 12 mois.";
+export const LEGAL_DRAFTS_V12_CONTENT_RETENTION = "Témoignages et histoires : un texte qui n'a pas été relu dans les 60 jours est retiré automatiquement (texte effacé, retrait de votre accord enregistré) ; un texte publié reste en ligne tant que vous ne le retirez pas, et nous vous demanderons de le confirmer après 3 ans (rien n'est retiré sans votre réponse ou une décision) ; après un retrait ou un refus, le texte est effacé aussitôt et la ligne qui garde l'état et les dates, sans texte, est supprimée après 12 mois ; un signalement est supprimé à la décision, et au plus tard après 90 jours ; un pseudonyme sans histoire publiée ni en attente est supprimé après 24 mois sans activité.";
+export const LEGAL_DRAFTS_V12_NOTICES_RETENTION = "Signalements envoyés sans compte (formulaire « Signaler un contenu ») : supprimés 12 mois après la décision, et gardés tant qu'une contestation est en cours.";
+export const LEGAL_DRAFTS_V12_PROOFS_RETENTION = "Preuves d'accord (témoignages, histoires, besoin d'accessibilité) : selon la règle des décisions de consentement ci-dessus.";
+export const LEGAL_DRAFTS_V12_DECISIONS_RETENTION = "Décisions de modération, contestations et mesures contre les abus : effacées 1 an après la clôture du dossier. Une décision est close lorsque le délai de contestation et la mesure ont pris fin et qu'aucune contestation n'est en cours (ses contestations sont effacées avec elle) ; un avertissement, 12 mois après avoir été donné ; une suspension, à sa fin ou à sa levée.";
+export const LEGAL_DRAFTS_V12_RECIPIENTS = "Ce que vous choisissez de publier (témoignage, histoire, avec le nom ou le pseudonyme choisi) est visible de tous. La modération est assurée par le responsable du traitement lui-même, personne physique, seul modérateur nommé à la date de cette version, avec un compte d'administration à son nom protégé par une double authentification. Dans l'outil de modération, il voit le texte et le nom ou le pseudonyme choisi, jamais votre adresse électronique ni votre compte, ni qui a signalé un contenu ; l'auteur n'apprend pas non plus qui l'a signalé.";
+export const LEGAL_DRAFTS_V12_RIGHTS = "Retirer un témoignage ou une histoire, retirer un besoin d'accessibilité, quitter la communauté : depuis votre espace, en un geste. Les décisions de modération qui vous concernent et vos contestations sont dans « Décisions de modération ». L'export de vos données comprend ces éléments.";
+export const LEGAL_DRAFTS_V12_MAILJET = "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte et, pour les contenus publiés, accusés de réception des signalements, décisions de modération et réponses aux contestations) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).";
+export const LEGAL_DRAFTS_V13_MAILJET = "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte, invitations et avis des comptes professionnels et, pour les contenus publiés, accusés de réception des signalements, décisions de modération et réponses aux contestations) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).";
+/** § 13 — the DSA block (notice and action, statement of reasons, internal complaint, repeated misuse) */
+export const LEGAL_DRAFTS_V12_MODERATION = Object.freeze([
+  "AccesDirectAide stocke et publie, à votre demande, les contenus que vous écrivez (témoignages, histoires). Pour ces contenus, il fournit un service d'hébergement au sens du règlement (UE) 2022/2065 sur les services numériques.",
+  "Signaler. Toute personne, avec ou sans compte, peut signaler un contenu qu'elle estime illicite ou contraire à la charte de modération (page « Charte de modération ») ou aux règles de la section 7 bis des conditions d'utilisation des particuliers, depuis la page « Signaler un contenu » ou en écrivant au point de contact indiqué dans les mentions légales. Le signalement indique pourquoi le contenu pose problème, où il se trouve (l'adresse de la page), votre nom et votre adresse électronique — sauf pour un contenu mettant en danger un enfant — et vous déclarez de bonne foi que ces informations sont exactes et complètes. Les titulaires d'un compte peuvent aussi signaler depuis la page du contenu. Si vous avez donné une adresse, vous recevez un accusé de réception, puis la décision et les recours possibles. Nom et adresse servent seulement à cela ; l'auteur du contenu ne les voit jamais. Base : intérêt légitime (art. 6, 1, f).",
+  "Décider. Le responsable du traitement, qui assure lui-même la modération, examine chaque signalement ; aucun contenu n'est retiré automatiquement et aucune décision n'est automatisée. Un signalement qui laisse craindre une menace pour la vie ou la sécurité d'une personne est traité en priorité, dans les 24 heures ; les autres signalements, dans les 7 jours. S'il fait soupçonner une infraction de ce type, les autorités sont informées. En cas de danger immédiat, appelez le 112 (ou le 15, le 17) : AccesDirectAide n'est pas un service d'urgence.",
+  "Motiver. Si votre contenu n'est pas publié ou est retiré, ou si votre participation est suspendue, vous recevez un exposé des motifs : la mesure et sa durée, les faits, si la décision fait suite à un signalement, la règle appliquée ou, pour un contenu jugé illicite, le texte de loi en cause, l'absence de moyen automatisé, et vos recours. Il vous est envoyé par e-mail et reste dans votre espace (« Décisions de modération »).",
+  "Contester. Vous pouvez contester gratuitement une décision pendant six mois — que vous soyez l'auteur du contenu ou la personne qui l'a signalé — depuis votre espace, ou, sans compte, avec la référence et le code de votre accusé de réception. Lorsqu'une autre personne assure aussi la modération, c'est elle qui réexamine la décision. À la date de cette version, une seule personne assure la modération : elle réexamine elle-même la décision, au plus tôt 24 heures après votre contestation, et la réponse vous le dit. La réponse est motivée. Vous pouvez aussi saisir le juge.",
+  "Abus répétés. Une personne qui publie à plusieurs reprises des contenus manifestement illicites, ou qui envoie à plusieurs reprises des signalements ou contestations manifestement infondés, reçoit d'abord un avertissement ; si cela se reproduit dans les 12 mois, la publication, ou le traitement de ses signalements, peut être suspendu pour une durée de 1 à 180 jours, fixée au cas par cas (nombre, proportion, gravité, intention). La personne en reçoit les motifs et peut contester. Pour une personne sans compte, la mesure est enregistrée avec une empreinte de son adresse calculée avec une clé secrète, jamais avec l'adresse elle-même.",
+  "Règles appliquées. Les contenus refusés, les délais et les recours sont décrits dans la charte de modération, publiée sur la page « Charte de modération », et à la section 7 bis des conditions d'utilisation des particuliers. Aucun organe certifié de règlement extrajudiciaire des litiges n'est proposé.",
+]);
+/** cgu-citoyen § 7 bis (ten items) and § 8 (one paragraph) */
+export const LEGAL_DRAFTS_V12_CGU_PUBLISHING = Object.freeze([
+  "Certaines fonctions vous permettent de publier un texte (témoignage, histoire). Vous en êtes l'auteur et vous en répondez ; vous ne publiez que ce que vous êtes libre de publier.",
+  "Avant toute publication, l'exploitant, qui assure lui-même la modération, relit le texte. Il refuse un texte contraire à la charte de modération (page « Charte de modération ») : information sur la santé ou un handicap, coordonnées ou détails qui permettent de reconnaître une personne, propos injurieux, menaçants ou discriminatoires, publicité, information trompeuse ou promesse de droit, texte hors sujet, et tout contenu illicite. En cas de doute sur la santé ou la reconnaissance d'un tiers, le texte est refusé et vous pouvez le réécrire.",
+  "Vous pouvez retirer votre texte à tout moment ; il est alors effacé. Un texte qui n'a pas été relu dans les 60 jours est retiré automatiquement.",
+  "En publiant, vous autorisez AccesDirectAide à afficher gratuitement votre texte sur le site, sous le nom ou le pseudonyme choisi, tant que vous ne le retirez pas. Cette autorisation n'est pas cédée à des tiers.",
+  "Signaler. Toute personne, avec ou sans compte, peut signaler un contenu qu'elle estime illicite ou contraire à la charte de modération (notice de confidentialité, section 13). Un signalement ne retire jamais un texte à lui seul : une personne décide.",
+  "Délais : accusé de réception d'un signalement envoyé par e-mail sous 2 jours ouvrés ; relecture d'un texte en attente sous 5 jours ouvrés ; signalement de sécurité (menace pour la vie ou la sécurité d'une personne, enfant en danger) dans les 24 heures, avec mesure conservatoire possible ; autres signalements dans les 7 jours ; réponse à une contestation sous 15 jours ouvrés.",
+  "Motifs et recours. Si votre texte est refusé ou retiré, ou si votre participation est suspendue, vous recevez un exposé des motifs. Vous pouvez contester pendant six mois, gratuitement, depuis votre espace ; la décision est réexaminée et la réponse est motivée. Vous pouvez aussi saisir le juge.",
+  "Abus répétés. Après un avertissement, la publication — ou le traitement de vos signalements — peut être suspendu de 1 à 180 jours en cas de contenus manifestement illicites, ou de signalements ou contestations manifestement infondés, répétés dans les 12 mois (notice de confidentialité, section 13).",
+  "Danger pour une personne. Si un contenu laisse penser qu'une infraction menaçant la vie ou la sécurité d'une personne a été commise ou risque de l'être, AccesDirectAide en informe les autorités. En cas d'urgence, appelez le 112 (ou le 15, le 17).",
+  "Âge. Ces fonctions sont réservées aux personnes qui déclarent avoir 18 ans ou plus.",
+]);
+export const LEGAL_DRAFTS_V12_CGU_SUSPENSION = "La participation à une fonction (communauté, témoignages) peut aussi être suspendue seule, sans toucher au reste du compte, avec les mêmes garanties (motifs et recours de la section 7 bis).";
+/** v13 only — 8x8 JaaS (video stays closed, like the appointments) */
+export const LEGAL_DRAFTS_V13_VIDEO_PROCESSOR = "8x8, Inc. (États-Unis) : visioconférence des rendez-vous (service « Jitsi as a Service »). 8x8 agit comme sous-traitant selon son accord de traitement des données (« Global Data Processing Addendum », version de février 2025), intégré à ses conditions de service.";
+export const LEGAL_DRAFTS_V13_VIDEO_DATA = "Visioconférence : elle n'est proposée que pour un rendez-vous dont la structure a validé la visioconférence et pour lequel vous avez donné votre accord ; sa base est celle des rendez-vous (P5, section 3). AccesDirectAide transmet alors à 8x8 seulement un jeton d'accès valable de 15 minutes avant le début à 15 minutes après la fin du rendez-vous, qui contient un nom de salle calculé (une suite de caractères qui ne contient ni votre nom, ni la date, ni la structure), un identifiant technique propre au rendez-vous, un nom affiché générique (« Personne accompagnée » ou « Conseiller·e ») et le rôle dans la salle ; ni votre nom, ni votre adresse électronique, ni l'objet du rendez-vous. Pendant l'appel, votre navigateur se connecte directement aux serveurs de 8x8 : le son, l'image et les messages écrits dans la salle passent par eux, et 8x8 reçoit les données techniques de la connexion (notamment votre adresse IP). L'appel n'est pas enregistré : l'enregistrement, la diffusion en direct, la transcription, les appels téléphoniques et l'envoi de fichiers sont désactivés.";
+export const LEGAL_DRAFTS_V13_VIDEO_TRANSFER = "Visioconférence : 8x8, Inc. est établie aux États-Unis ; les données de la visioconférence peuvent y être transférées. La garantie prévue est celle des clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914, module 2 : de responsable du traitement à sous-traitant), prévues par l'accord de traitement des données de 8x8.";
+
+/** v13 — the ADA Pro opening (owner 23/11/2026: no pilot structure, public sign-up verified by the operator, appointments, video and Outlook open) */
+export const LEGAL_DRAFTS_V13_STATUS_PARAGRAPH = "Cette notice décrit les traitements des comptes personnels (section 3) et des comptes professionnels ADA Pro (section 3, P4p, et section 11). Dans ADA Pro sont ouvertes les fonctions de compte, d'équipe et de fiche de la structure (avec son journal et ses statistiques), les rendez-vous (demande, confirmation, report, annulation, affectation à un professionnel), la visioconférence des rendez-vous et la lecture des disponibilités Outlook (occupé ou libre) des professionnels qui connectent leur calendrier. Les orientations sociales entre structures (P23) et les notifications du navigateur (P10c) sont aussi ouvertes. Le message joint à une demande, le rappel la veille par e-mail, les orientations de dossiers entre professionnels et le partage de dossiers ne sont pas encore ouverts : leurs bases légales sont indiquées à titre de proposition (section 3 bis) et seront confirmées avant leur ouverture.";
+export const LEGAL_DRAFTS_V13_P4P = "P4p — Comptes professionnels ADA Pro (création sur invitation ou sur demande d'inscription d'une structure avec son numéro SIRET, vérifiée par l'exploitant sur une source officielle, connexion avec double authentification obligatoire, gestion de l'équipe et des invitations par l'administrateur de la structure, propositions de mise à jour de la fiche de la structure, nom affiché et fonction facultatifs, notifications et e-mails de service, journal des actions) : exécution des conditions d'utilisation des professionnels acceptées à l'inscription (art. 6, 1, b) ; sécurité des comptes et journal des actions : intérêt légitime de l'exploitant et de la structure à protéger les accès (art. 6, 1, f).";
+export const LEGAL_DRAFTS_V13_P11 = "P11 — Disponibilités Outlook d'un professionnel qui connecte son calendrier (occupé ou libre seulement) : base choisie par la structure ; l'exploitant agit pour elle.";
+export const LEGAL_DRAFTS_V13_APPOINTMENTS_RETENTION = "Rendez-vous : un rendez-vous confirmé, tenu ou manqué est anonymisé 1 an après sa date ; une demande refusée, expirée ou restée sans réponse est anonymisée 90 jours après la date prévue du rendez-vous, et un rendez-vous annulé 90 jours après son annulation ; le message joint à une demande, lorsque cette fonction est ouverte, est effacé 30 jours après la date du rendez-vous (ou après l'annulation si elle vient avant).";
+export const LEGAL_DRAFTS_V13_OUTLOOK_RETENTION = "Calendrier Outlook d'un professionnel : les jetons de connexion, chiffrés, sont gardés tant que la connexion est active ; un jeton expiré et non renouvelé est supprimé 30 jours après son expiration. Les plages occupées ou libres lues ne sont pas enregistrées dans la base de données : elles sont gardées 2 minutes au plus, en mémoire.";
+export const LEGAL_DRAFTS_V13_NOT_OPEN = "Fonctions pas encore ouvertes (notamment message facultatif, rappel la veille par e-mail, orientations de dossiers entre professionnels, membres du foyer, historique de consultation, favoris) : leurs durées seront annoncées dans cette notice avant leur ouverture.";
+export const LEGAL_DRAFTS_V13_RECIPIENTS = "La structure que vous choisissez pour un rendez-vous reçoit aussi ce qui lui est transmis (section 9). Lorsqu'un professionnel a connecté son calendrier Outlook, Microsoft reçoit les demandes de disponibilité (occupé ou libre) de ce calendrier ; aucune information sur vous ne lui est envoyée.";
+export const LEGAL_DRAFTS_V13_MICROSOFT = "Microsoft : boîte de réception de l'adresse de contact ; pour les professionnels qui connectent leur calendrier Outlook, lecture des seules plages occupées ou libres de ce calendrier (autorisation « Calendars.ReadBasic »), sans l'objet, les participants ni le lieu des événements ; rien n'est écrit dans le calendrier. Selon les règles de l'organisation Microsoft du professionnel, l'accord de son administrateur peut être nécessaire.";
+export const LEGAL_DRAFTS_V13_BOOKING = Object.freeze([
+  "Une demande de rendez-vous se fait depuis votre compte. Selon le choix de la structure, le rendez-vous est confirmé aussitôt, ou la structure confirme, propose un autre créneau ou refuse.",
+  "La structure choisie reçoit dans ADA Pro le service, le créneau et la modalité (sur place ou en visioconférence) que vous avez choisis et, lorsque cette fonction est ouverte et que vous l'avez accepté, votre message. La plateforme ne lui communique ni votre nom, ni votre adresse électronique, ni votre téléphone ; les avis sur le rendez-vous vous sont envoyés par la plateforme.",
+  "Pour ce qu'elle reçoit, la structure est responsable de son propre traitement : elle décide de ce qu'elle en fait dans ses dossiers, selon ses obligations. Vous pouvez exercer vos droits auprès d'elle.",
+  "Pour la gestion de la demande dans la plateforme, l'exploitant et la structure sont responsables conjoints (article 26 du RGPD). L'essentiel de leur accord : l'exploitant fait fonctionner la plateforme et traite les demandes d'exercice des droits faites par son intermédiaire ; la structure est responsable du rendez-vous lui-même et de ses suites en dehors de la plateforme. Vous pouvez exercer vos droits auprès de l'un ou de l'autre.",
+]);
+export const LEGAL_DRAFTS_V13_PRO_ACCOUNT_PARAGRAPH = "Si un compte professionnel vous est ouvert, c'est sur invitation envoyée à votre adresse électronique professionnelle par un administrateur de votre structure ou par l'exploitant, ou à la suite de la demande d'inscription de votre structure que vous avez faite vous-même (nom de la structure, numéro SIRET, votre adresse électronique professionnelle, un mot de passe et votre acceptation des conditions d'utilisation des professionnels). Dans ce cas, le compte ne donne accès à rien tant que l'exploitant n'a pas vérifié la structure sur une source officielle et activé votre espace ; vous recevez alors un e-mail pour activer votre accès avec la double authentification. Si la demande est refusée, le compte est désactivé et la preuve de votre acceptation des conditions est gardée. Ce compte contient votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification, ainsi que, si vous les indiquez, votre nom affiché et votre fonction. Votre acceptation des conditions d'utilisation des professionnels (et, pour un administrateur de structure, des conditions des structures) est enregistrée avec leur version dans le registre des consentements ; ce n'est pas un consentement au sens du RGPD. Les sections 3 à 8 s'appliquent aussi à vous, avec les règles propres aux comptes professionnels qu'elles indiquent : finalité et base en section 3 (P4p), durées en section 4, destinataires en section 5, exercice de vos droits en section 8.";
+/*
+ * G14 consolidation (23/11/2026) — the citizen and professional functions finished on other branches, integrated into v12 (citizen side, opens without
+ * ADA Pro) and v13 (= the v12 citizen texts + the professional side). Branch facts (heads read 23/11/2026):
+ *  situation  g14-rg cff79996   /situation works in the browser (like /droits, /orientation): typed words and the commune are neither sent nor stored;
+ *                               « Ajouter à Mon Parcours » stores the closed-list code only; « Aider l'Observatoire » (opt-in) sends the situation id only.
+ *  P18        g14-of cd9bc867   the questionnaire answers (and the optional Eurométropole commune) go to our own OpenFisca engine at Scaleway (fr-par);
+ *                               nothing stored; indicative estimate. Basis proposed (owner).
+ *  P19        g14-ai 31eb23f2   api/lib/workers-ai.js: Cloudflare Workers AI; question (identifiers masked, NIR / IBAN / card refused) + verified public
+ *                               extracts, from our server, no account, no IP; no conversation stored, anonymous counters 90 days. Cloudflare DPA v6.4
+ *                               (3 April 2026): processor (2.3), EU SCC 2021/914 module 2 (6.2(a)(i)), DPF (6.4); Workers AI data usage page (16/10/2026):
+ *                               no training, no retention for standard inference. Basis proposed (owner).
+ *  P20        g14-obs 2fcab762  demand signals: closed-list codes, day, commune except sensitive subjects; daily counts deleted at the quarterly freeze;
+ *                               quarterly tables, values < 5 masked, Licence Ouverte 2.0. Basis proposed (owner).
+ *  P21        g14-aid 81e00197  assisted mode: person's consent + password, 30 / 60 / 120 minutes, never security / deletion / full export / new access,
+ *                               Coffre only if ticked and never for a professional; remote trusted person; every action logged (AuditLog, 1 year).
+ *  offline    g14-lite 0cb05297 opt-in local copy of Mon Parcours (IndexedDB), unencrypted, erased on untick / sign-out / account change; read-only offline.
+ *  passeport  g14-ps 6e37ee65   the Passeport Social is encrypted on the device only: not a processing of AccesDirectAide.
+ *  P23 (v13)  g14-ps 6e37ee65   social referrals (api/_services/social-referrals.js): consent with a one-time code, closed reasons, status, optional contact
+ *                               seen by the receiving structure only while open; no document, no health data; retention 12 months after closure (proposed).
+ *  P10c (v13) g14-chan-a11y aea83e30  Web Push reminders (encrypted payload via the browser vendor's push service), .ics with date, time and public address
+ *                               for non-sensitive services only; subscription kept until disabled / account erased (failing subscriptions: PUSH_FAILING_DAYS 30).
+ * The Piper « siwis » credit (CC BY 4.0) belongs to the FALC audio page of g14-chan-a11y, not to the notice.
+ */
+export const LEGAL_DRAFTS_G14C_SITUATION = "La page « Ma situation » (/situation) fonctionne de la même façon : les mots que vous tapez et la commune que vous choisissez restent dans votre navigateur ; ils ne sont ni envoyés ni enregistrés. Si vous êtes connecté et choisissez « Ajouter à Mon Parcours », seul le code de la démarche, pris dans une liste fermée, est enregistré (P17). Si vous cochez « Aider l'Observatoire », seul l'identifiant de la situation choisie est envoyé, sans rien qui vous identifie (P20).";
+export const LEGAL_DRAFTS_G14C_OFFLINE = "Mon Parcours hors ligne : si vous le cochez, une copie de vos étapes est gardée sur votre appareil, dans le stockage de votre navigateur, sans chiffrement ; ne l'activez pas sur un appareil partagé. Elle est effacée quand vous décochez la case, quand vous vous déconnectez ou quand vous changez de compte ; hors connexion, elle se consulte seulement. Le site garde aussi sur l'appareil des fichiers techniques publics. Ce stockage est strictement nécessaire au service que vous demandez (article 82 de la loi Informatique et Libertés) : il ne demande pas d'autre accord.";
+export const LEGAL_DRAFTS_G14C_PASSEPORT = "Le Passeport Social est gardé chiffré sur votre appareil seulement : AccesDirectAide n'en reçoit rien et ne peut pas le récupérer ; si vous perdez l'appareil ou sa clé, il est perdu. Vous seul décidez de le montrer ou de le transmettre. Ce n'est pas un traitement d'AccesDirectAide.";
+export const LEGAL_DRAFTS_G14C_P18 = "P18 — Calcul indicatif d'aides à partir du questionnaire : vos réponses (dont, si vous la choisissez, votre commune de l'Eurométropole) sont envoyées à notre propre moteur de calcul OpenFisca, hébergé par Scaleway SAS en France, qui agit comme sous-traitant ; elles n'y sont pas enregistrées. Le résultat est une estimation indicative : seul l'organisme compétent décide. Base proposée : intérêt légitime de l'exploitant à informer le public (art. 6, 1, f) — proposé, à valider.";
+export const LEGAL_DRAFTS_G14C_P19 = "P19 — Assistant citoyen : votre question et des extraits de fiches publiques vérifiées sont envoyés depuis notre serveur à Cloudflare, Inc. (service Workers AI), qui agit comme sous-traitant (art. 28) ; ni votre adresse IP ni votre compte ne lui sont transmis. Les adresses électroniques et les numéros de téléphone sont masqués, et une question qui contient un numéro de sécurité sociale, un IBAN ou un numéro de carte bancaire est refusée. Nous n'enregistrons pas la conversation. L'assistant ne donne ni conseil médical ni conseil juridique, ne se prononce pas sur vos droits, cite ses sources et rappelle les numéros d'urgence. Base proposée : intérêt légitime de l'exploitant à informer le public (art. 6, 1, f) — proposé, à valider.";
+export const LEGAL_DRAFTS_G14C_P20 = "P20 — Observatoire des droits et des services : lors de certaines recherches et consultations, le service compte, pour le jour, des codes pris dans des listes fermées et, sauf pour les sujets sensibles, la commune ; jamais votre identité, votre adresse IP, l'heure ni un texte. Sur « Ma situation », rien n'est compté si vous ne cochez pas « Aider l'Observatoire ». Les comptes du jour sont supprimés à la clôture de chaque trimestre ; les tableaux trimestriels, dans lesquels les valeurs inférieures à 5 sont masquées, sont publiés sous Licence Ouverte 2.0. Base : intérêt légitime (art. 6, 1, f) — proposé, à valider.";
+export const LEGAL_DRAFTS_G14C_P21 = "P21 — Mode accompagnant : à votre demande, une personne qui vous aide (un proche, un travailleur social, un conseiller France Services, un professionnel) utilise votre compte à côté de vous, pendant 2 heures au plus, avec votre accord, après que vous avez saisi votre mot de passe. Elle ne peut jamais modifier vos réglages de sécurité, supprimer le compte, faire l'export complet de vos données ni donner un nouvel accès ; Mon Coffre seulement si vous l'avez coché, et jamais pour un professionnel. Une personne de confiance à distance peut seulement demander des actions que vous confirmez, sauf si vous lui avez permis d'« agir pour moi » pour une partie de votre espace. Tout ce qui est fait est inscrit dans un journal que vous voyez. Ce mode ne remplace ni une tutelle, ni une curatelle, ni un mandat ; il est réservé aux comptes de personnes majeures. Base : votre consentement (art. 6, 1, a).";
+export const LEGAL_DRAFTS_G14C_RETENTION = Object.freeze([
+  ["Assistant citoyen : aucune conversation n'est enregistrée ; des compteurs techniques anonymes sont gardés 90 jours. Calcul indicatif (P18) : vos réponses ne sont pas enregistrées.", 'assistant_g14c'],
+  ["Mode accompagnant : le journal de ce qui a été fait avec l'aide d'une autre personne est gardé 1 an ; votre accord suit la règle des décisions de consentement ci-dessus.", 'assisted_g14c'],
+  ["Observatoire : les comptes du jour sont supprimés à la clôture du trimestre ; les tableaux trimestriels publiés ne contiennent aucune donnée personnelle.", 'observatory_g14c'],
+]);
+/** v12: the v10 list without « assistant » (now open) */
+export const LEGAL_DRAFTS_G14C_NOT_OPEN_V12 = "Fonctions pas encore ouvertes (notamment rendez-vous, message facultatif, notifications des professionnels, membres du foyer, historique de consultation, favoris) : leurs durées seront annoncées dans cette notice avant leur ouverture. Pour les rendez-vous confirmés, tenus ou manqués, la durée envisagée est de 1 an après la date du rendez-vous, puis anonymisation.";
+export const LEGAL_DRAFTS_G14C_CLOUDFLARE = "Cloudflare, Inc. (service Workers AI) : réponses de l'assistant citoyen, à partir de la question et d'extraits de fiches publiques envoyés par notre serveur. Cloudflare indique ne pas utiliser ces contenus pour entraîner des modèles et ne pas les conserver après la réponse pour une demande ordinaire.";
+export const LEGAL_DRAFTS_G14C_SCALEWAY = "Scaleway SAS (France) : hébergement de notre moteur de calcul OpenFisca, à Paris ; les réponses au questionnaire n'y sont pas enregistrées.";
+export const LEGAL_DRAFTS_G14C_TRANSFER = "Assistant citoyen : Cloudflare, Inc. est établie aux États-Unis. Son accord de traitement des données (version 6.4 du 3 avril 2026) prévoit les clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914, module 2 : de responsable du traitement à sous-traitant), et Cloudflare déclare respecter le cadre de protection des données UE–États-Unis.";
+export const LEGAL_DRAFTS_G14C_CGU_AI = Object.freeze([
+  ["4. L'assistant automatique", 'title_g14c'],
+  ["L'assistant automatique cherche dans les fiches vérifiées, explique et cite ses sources. Il peut se tromper. Il ne donne ni conseil médical ni conseil juridique et ne décide de rien sur vos droits ; en cas d'urgence, appelez le 112.", 'p1_g14c'],
+  ["N'y écrivez pas d'information sur votre santé, un handicap, votre situation administrative ou celle d'une autre personne.", 'p2_g14c'],
+]);
+export const LEGAL_DRAFTS_G14C_CGU_ESTIMATE = "Les montants calculés à partir du questionnaire sont des estimations indicatives : seul l'organisme compétent décide.";
+export const LEGAL_DRAFTS_G14C_CGU_ASSISTED = "Mode accompagnant : vous pouvez laisser une personne de votre choix vous aider dans votre compte, à côté de vous, pendant 2 heures au plus, après avoir saisi votre mot de passe ; elle ne peut jamais modifier votre sécurité, supprimer le compte ni donner un nouvel accès, et tout ce qu'elle fait est inscrit dans un journal que vous voyez. Ce mode ne remplace ni une tutelle, ni une curatelle, ni un mandat.";
+/** v13 — professional side */
+export const LEGAL_DRAFTS_G14C_P23 = "P23 — Orientation sociale vers une autre structure (hors santé) : un professionnel vous propose une orientation et vous la confirmez dans Mon Espace avec un code à usage unique. Sont traités les structures d'envoi et d'accueil, des motifs pris dans une liste fermée, l'état de l'orientation et, si vous le cochez, votre adresse électronique ou votre téléphone, que seule la structure d'accueil voit tant que l'orientation est en cours. Aucun document ni aucune information de santé. Vous pouvez retirer votre accord à tout moment. Pour la gestion de l'orientation dans la plateforme, l'exploitant et les structures sont responsables conjoints, selon l'accord décrit en section 9. Base : votre consentement (art. 6, 1, a).";
+export const LEGAL_DRAFTS_G14C_P10C = "P10c — Notifications du navigateur (Web Push), si vous les activez : un court rappel chiffré passe par le service de notification de l'éditeur de votre navigateur (Apple, Google, Mozilla ou Microsoft), qui peut se trouver hors de l'Union européenne ; il ne contient ni votre nom, ni la structure, ni aucune information de santé. L'e-mail reste l'avis qui fait foi. Le fichier de calendrier (.ics) contient seulement la date, l'heure et l'adresse publique du lieu, et seulement pour un service qui n'est pas sensible. Base : votre consentement (art. 6, 1, a), retirable à tout moment.";
+export const LEGAL_DRAFTS_G14C_P10B = "P10b — Rappel la veille par e-mail : consentement (art. 6, 1, a), retirable à tout moment.";
+export const LEGAL_DRAFTS_G14C_PRO_RETENTION = Object.freeze([
+  ["Orientations sociales : 12 mois après la clôture de l'orientation (durée proposée — à valider) ; votre accord et son retrait suivent la règle des décisions de consentement ci-dessus.", 'socialReferrals_g14c'],
+  ["Notifications du navigateur : l'abonnement est gardé jusqu'à ce que vous désactiviez les notifications ou que votre compte soit effacé ; un abonnement qui ne fonctionne plus est supprimé 30 jours après.", 'push_g14c'],
+]);
+export const LEGAL_DRAFTS_G14C_PUSH_TRANSFER = "Notifications du navigateur : le service de notification de l'éditeur de votre navigateur peut se trouver hors de l'Union européenne ; il ne transmet qu'un rappel chiffré, qu'il ne peut pas lire.";
+/** @type {DraftSection} the new § 3 ter of the notice (v12 and v13) */
+const PARTICIPATION_SECTION = Object.freeze({ id: 'participation', title: '3 ter. Fonctions de participation', titleKey: 'title_v12',
+  items: [LEGAL_DRAFTS_V12_EVENTS, LEGAL_DRAFTS_V12_TESTIMONIALS, LEGAL_DRAFTS_V12_STORIES], itemKeys: { 0: 'events_v12', 1: 'testimonials_v12', 2: 'stories_v12' },
+  paras: [LEGAL_DRAFTS_V12_PARTICIPATION_NOTE], paraKeys: { 0: 'p1_v12' } });
+/** @type {DraftSection} the new § 13 of the notice (v12 and v13) */
+const MODERATION_SECTION = Object.freeze({ id: 'moderation', title: '13. Contenus publiés, signalements et décisions de modération', titleKey: 'title_v12',
+  paras: [...LEGAL_DRAFTS_V12_MODERATION], paraKeys: Object.fromEntries(LEGAL_DRAFTS_V12_MODERATION.map((_, i) => [i, `p${i + 1}_v12`])) });
+/** @type {DraftSection} the new § 7 bis of the citizen terms (v12) */
+const PUBLISHING_SECTION = Object.freeze({ id: 'publishing', title: '7 bis. Contenus que vous publiez', titleKey: 'title_v12',
+  items: [...LEGAL_DRAFTS_V12_CGU_PUBLISHING], itemKeys: Object.fromEntries(LEGAL_DRAFTS_V12_CGU_PUBLISHING.map((_, i) => [i, `i${i + 1}_v12`])) });
+const RETENTION_V12 = [[LEGAL_DRAFTS_V12_EVENTS_RETENTION, 'events_v12'], [LEGAL_DRAFTS_V12_CONTENT_RETENTION, 'content_v12'], [LEGAL_DRAFTS_V12_NOTICES_RETENTION, 'notices_v12'],
+  [LEGAL_DRAFTS_V12_PROOFS_RETENTION, 'proofs_v12'], [LEGAL_DRAFTS_V12_DECISIONS_RETENTION, 'decisions_v12']];
+/**
+ * changes in the v9 change format, plus `addSections: { <id of the section they follow>: [section, …] }` (new sections, v12+); indexes = those of the base
+ * document (cgu-citoyen v10, notice v10 for v12, notice v11 for v13)
+ */
+const G14C_PURPOSE_PARAS = [[LEGAL_DRAFTS_G14C_SITUATION, 'situation_g14c'], [LEGAL_DRAFTS_G14C_OFFLINE, 'offline_g14c'], [LEGAL_DRAFTS_G14C_PASSEPORT, 'passeport_g14c']];
+const G14C_PURPOSE_ITEMS = [[LEGAL_DRAFTS_G14C_P18, 'p18_g14c'], [LEGAL_DRAFTS_G14C_P19, 'p19_g14c'], [LEGAL_DRAFTS_G14C_P20, 'p20_g14c'], [LEGAL_DRAFTS_G14C_P21, 'p21_g14c']];
+const G14C_PROCESSORS = [[LEGAL_DRAFTS_G14C_CLOUDFLARE, 'cloudflare_g14c'], [LEGAL_DRAFTS_G14C_SCALEWAY, 'scaleway_g14c']];
+/** cgu-citoyen v12 (base v10): § 3 estimate, § 4 assistant open, § 5 assisted mode, § 8 participation suspension */
+const G14C_CGU_SECTIONS = {
+  noDecision: { paras: { insertAfter: { 1: [[LEGAL_DRAFTS_G14C_CGU_ESTIMATE, 'estimate_g14c']] } } },
+  ai: { title: LEGAL_DRAFTS_G14C_CGU_AI[0], paras: { replace: { 0: LEGAL_DRAFTS_G14C_CGU_AI[1], 1: LEGAL_DRAFTS_G14C_CGU_AI[2] } } },
+  account: { items: { insertAfter: { 1: [[LEGAL_DRAFTS_G14C_CGU_ASSISTED, 'assisted_g14c']] } } },
+  deletion: { paras: { insertAfter: { 2: [[LEGAL_DRAFTS_V12_CGU_SUSPENSION, 'participation_v12']] } } },
+};
+export const LEGAL_DRAFTS_V12_CHANGES = Object.freeze({
+  'notice-confidentialite': { addSections: { 'purposes-later': [PARTICIPATION_SECTION], language: [MODERATION_SECTION] }, sections: {
+    status: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_STATUS_PARAGRAPH, 'expansion_v12']] } } },
+    purposes: { paras: { insertAfter: { 2: G14C_PURPOSE_PARAS } }, items: { insertAfter: { 10: G14C_PURPOSE_ITEMS } } },
+    retention: { items: { insertAfter: { 13: [...RETENTION_V12, ...LEGAL_DRAFTS_G14C_RETENTION] }, replace: { 14: [LEGAL_DRAFTS_G14C_NOT_OPEN_V12, 'i14_v12'] } } },
+    recipients: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RECIPIENTS, 'expansion_v12']] } } },
+    processors: { items: { replace: { 3: [LEGAL_DRAFTS_V12_MAILJET, 'i4_v12'] }, insertAfter: { 5: G14C_PROCESSORS } } },
+    transfers: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_G14C_TRANSFER, 'cloudflare_g14c']] } } },
+    rights: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RIGHTS, 'expansion_v12']] } } },
+  } },
+  'cgu-citoyen': { addSections: { use: [PUBLISHING_SECTION] }, sections: G14C_CGU_SECTIONS },
+});
+/** the § 3 bis items of notice v11 (P4 … P11), some of which move to § 3 in v13 */
+const V11_LATER = /** @type {string[]} */ (/** @type {any} */ (docOf(LEGAL_DRAFT_DOCUMENTS_V11, 'notice-confidentialite').sections.find((x) => x.id === 'purposes-later')).items);
+export const LEGAL_DRAFTS_V13_CHANGES = Object.freeze({
+  'notice-confidentialite': { addSections: { 'purposes-later': [PARTICIPATION_SECTION], language: [MODERATION_SECTION] }, sections: {
+    status: { paras: { replace: { 0: [LEGAL_DRAFTS_V13_STATUS_PARAGRAPH, 'p1_v13'] }, insertAfter: { 0: [[LEGAL_DRAFTS_V12_STATUS_PARAGRAPH, 'expansion_v12']] } } },
+    // P4, P5, P7 move from § 3 bis to § 3 word for word (their translations are copied under the new keys); P11 without « (désactivé) »
+    purposes: { paras: { insertAfter: { 2: G14C_PURPOSE_PARAS } }, items: { replace: { 4: [LEGAL_DRAFTS_V13_P4P, 'p4p_v13'] },
+      insertAfter: { 4: [[V11_LATER[0], 'p4_v13'], [V11_LATER[1], 'p5_v13'], [V11_LATER[4], 'p7_v13'], [LEGAL_DRAFTS_V13_P11, 'p11_v13'], [LEGAL_DRAFTS_G14C_P10C, 'p10c_g14c']],
+        11: [...G14C_PURPOSE_ITEMS, [LEGAL_DRAFTS_G14C_P23, 'p23_g14c']] } } },
+    // P10b/P10c (§ 3 bis) becomes P10b only: the browser notifications (P10c) open with ADA Pro
+    'purposes-later': { items: { remove: [0, 1, 4, 8], replace: { 7: [LEGAL_DRAFTS_G14C_P10B, 'p10b_g14c'] } } },
+    retention: { items: { insertAfter: { 16: [...RETENTION_V12, ...LEGAL_DRAFTS_G14C_RETENTION, [LEGAL_DRAFTS_V13_APPOINTMENTS_RETENTION, 'appointments_v13'],
+      [LEGAL_DRAFTS_V13_OUTLOOK_RETENTION, 'outlook_v13'], ...LEGAL_DRAFTS_G14C_PRO_RETENTION] },
+      replace: { 17: [LEGAL_DRAFTS_V13_NOT_OPEN, 'i14_v13'] } } },
+    recipients: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RECIPIENTS, 'expansion_v12']] }, replace: { 2: [LEGAL_DRAFTS_V13_RECIPIENTS, 'p2_v13'] } } },
+    processors: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V13_VIDEO_DATA, 'video_v13']] } },
+      items: { replace: { 3: [LEGAL_DRAFTS_V13_MAILJET, 'i4_v13'], 4: [LEGAL_DRAFTS_V13_MICROSOFT, 'i5_v13'] }, insertAfter: { 5: [[LEGAL_DRAFTS_V13_VIDEO_PROCESSOR, 'provider_v13'], ...G14C_PROCESSORS] } } },
+    transfers: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V13_VIDEO_TRANSFER, 'video_v13'], [LEGAL_DRAFTS_G14C_TRANSFER, 'cloudflare_g14c'], [LEGAL_DRAFTS_G14C_PUSH_TRANSFER, 'push_g14c']] } } },
+    rights: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RIGHTS, 'expansion_v12']] } } },
+    booking: { title: ['9. Quand vous demandez un rendez-vous', 'title_v13'],
+      paras: { replace: Object.fromEntries(LEGAL_DRAFTS_V13_BOOKING.map((t, i) => [i, [t, `p${i + 1}_v13`]])) } },
+    art14: { paras: { replace: { 2: [LEGAL_DRAFTS_V13_PRO_ACCOUNT_PARAGRAPH, 'p3_v13'] } } },
+  } },
+});
+/** withChanges + new sections inserted after the section they follow @param {any} changes @param {string} version @returns {(d: DraftDocument) => DraftDocument} */
+const withSections = (changes, version) => (d) => {
+  const doc = withChanges(changes, version)(d);
+  const c = changes[d.id]; const add = c.addSections || {};
+  const titled = doc.sections.map((s) => (c.sections[s.id]?.title ? { ...s, title: c.sections[s.id].title[0], titleKey: c.sections[s.id].title[1] } : s));
+  return { ...doc, ...(c.intro ? { intro: c.intro[0], introKey: c.intro[1] } : {}), sections: titled.flatMap((s) => [s, ...(add[s.id] || []).map((x) => ({ ...x, ...(x.items ? { items: [...x.items], itemKeys: { ...x.itemKeys } } : {}),
+    ...(x.paras ? { paras: [...x.paras], paraKeys: { ...x.paraKeys } } : {}) }))]) };
+};
+/** @type {DraftDocument[]} the citizen terms (from v10) and the privacy notice (from v10: no ADA Pro text) — X04 / X01 / X02 opening */
+export const LEGAL_DRAFT_DOCUMENTS_V12 = [
+  withSections(LEGAL_DRAFTS_V12_CHANGES, LEGAL_DRAFTS_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_V10, 'cgu-citoyen')),
+  withSections(LEGAL_DRAFTS_V12_CHANGES, LEGAL_DRAFTS_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_V10, 'notice-confidentialite')),
+];
+/** @type {DraftDocument[]} the privacy notice (from v11) — proposed for the ADA Pro (K8) opening only */
+export const LEGAL_DRAFT_DOCUMENTS_V13 = [withSections(LEGAL_DRAFTS_V13_CHANGES, LEGAL_DRAFTS_V13)(docOf(LEGAL_DRAFT_DOCUMENTS_V11, 'notice-confidentialite'))];
+
+/*
+ * cgu-professionnel v10-2026-11-23 and conditions-structures v9-2026-11-23 — G14 (owner decision 23/11/2026): ADA Pro opens WITHOUT a pilot structure, by
+ * the public sign-up of a structure verified by the operator on an official source (api/_handlers/pro/auth/register.js; verification and MFA invitation:
+ * branch g14-pro, api/_services/pro-mfa-invitation.js « Vérifier et activer »), with appointments, video (8x8 JaaS) and Outlook free / busy. Only the
+ * statements that the opening makes false are removed or adjusted; no new obligation (owner condition). The signed-convention precondition of the
+ * appointments is dropped by owner decision. Opened with notice-confidentialite v13-2026-11-23. PROPOSED: not approved by the owner.
+ *  cgu-professionnel      intro_v10 / account.i1_v10: sign-up of the structure besides the invitation; appointments.title_v10 / p1_v10: no « pas encore
+ *                         ouverte »; p3_v10: video offered by the structure (8x8, see the notice); p4_v10: Outlook free / busy only; data.p1_v10: + Outlook.
+ *  conditions-structures  intro_v9: appointments open, « aucune structure ne les a signées » removed; agreement.title_v9 / p1_v9: no convention, no referent;
+ *                         roles.p1_v9 / p2_v9: present tense, « coordonnées » removed (the structure receives no name, address or phone: rdv.js values,
+ *                         pro appointments list without citizenEmailSnapshot); commitments.i1_v9; end.p1_v9: no notice period « fixé dans la convention ».
+ */
+export const LEGAL_DRAFTS_PRO_V10 = 'v10-2026-11-23';
+export const LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS = Object.freeze(['cgu-professionnel']);
+export const LEGAL_DRAFTS_STRUCTURES_V9 = 'v9-2026-11-23';
+export const LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS = Object.freeze(['conditions-structures']);
+export const LEGAL_DRAFTS_PRO_V10_CHANGES = Object.freeze({
+  'cgu-professionnel': { intro: ["Ces conditions s'appliquent aux professionnels qui utilisent un compte ADA Pro, créé sur invitation d'un administrateur de leur structure ou de l'exploitant, ou ouvert par l'inscription de leur structure.", 'intro_v10'], sections: {
+    account: { items: { replace: { 0: ["Le compte est créé sur invitation envoyée à votre adresse électronique professionnelle par un administrateur de votre structure ou par l'exploitant (par exemple pour le premier administrateur d'une structure), ou à la suite d'une demande d'inscription de votre structure faite par vous-même, avec son nom, son numéro SIRET, votre adresse électronique professionnelle, un mot de passe et votre acceptation des présentes conditions. Dans ce cas, le compte ne donne accès à rien tant que l'exploitant n'a pas vérifié la structure sur une source officielle et activé son espace ; vous recevez alors un e-mail pour activer votre accès avec la double authentification. Si la demande est refusée, le compte est désactivé et la preuve de votre acceptation est gardée. Le compte est personnel : ne le partagez pas.", 'i1_v10'] } } },
+    appointments: { title: ['4. Rendez-vous', 'title_v10'], paras: {
+      replace: {
+        0: ["Lorsque la prise de rendez-vous est ouverte pour votre structure, vous confirmez, proposez un autre créneau ou refusez les demandes qui vous sont adressées, dans un délai raisonnable, et vous tenez vos créneaux à jour.", 'p1_v10'],
+        2: ["Si votre structure propose la visioconférence pour un rendez-vous, son traitement et son prestataire (8x8) sont décrits dans la notice de confidentialité.", 'p3_v10'],
+      },
+      insertAfter: { 2: [["Si vous connectez votre calendrier Outlook, seules vos plages occupées ou libres sont lues, pour ne pas proposer un créneau où vous êtes occupé ; rien n'est écrit dans votre calendrier. Vous pouvez le déconnecter à tout moment.", 'p4_v10']] },
+    } },
+    data: { paras: { replace: { 0: ["Pour votre compte, la plateforme traite votre adresse électronique professionnelle, votre rôle, votre structure, votre mot de passe sous forme hachée (irréversible), le secret de votre double authentification, le journal de vos actions et vos préférences de notification, ainsi que, si vous les indiquez, votre nom affiché et votre fonction. Lorsque la prise de rendez-vous est ouverte pour votre structure, elle traite aussi vos créneaux et, si vous connectez votre calendrier Outlook, les jetons de connexion chiffrés et vos plages occupées ou libres. Ces traitements reposent sur l'exécution des présentes conditions (article 6, 1, b du RGPD) et, pour la sécurité des comptes et le journal des actions, sur l'intérêt légitime de l'exploitant et de votre structure à protéger les accès (article 6, 1, f). La notice de confidentialité les décrit (section 3, P4p et P11), avec leurs durées (section 4) et la façon d'exercer vos droits (section 8).", 'p1_v10'] } } },
+  } },
+});
+export const LEGAL_DRAFTS_STRUCTURES_V9_CHANGES = Object.freeze({
+  'conditions-structures': { intro: ["Ces conditions décrivent les règles proposées aux structures (associations, services publics, établissements) qui figurent dans l'annuaire, dont l'équipe utilise des comptes ADA Pro ou qui reçoivent des demandes de rendez-vous.", 'intro_v9'], sections: {
+    agreement: { title: ['2. Raccordement aux rendez-vous', 'title_v9'], paras: { replace: { 0: ["Une structure reçoit des demandes de rendez-vous lorsqu'elle a ouvert la prise de rendez-vous dans son espace ADA Pro. Le raccordement est gratuit : aucune somme n'est versée par la structure ni à la structure.", 'p1_v9'] } } },
+    roles: { paras: { replace: {
+      0: ["La structure est responsable de son propre traitement pour ce qu'elle reçoit (demandes et, lorsque cette fonction est ouverte, message accepté par la personne), dans ses dossiers et selon ses obligations.", 'p1_v9'],
+      1: ["Pour la gestion d'une demande de rendez-vous ou d'une orientation sociale dans la plateforme, l'exploitant et la structure sont responsables conjoints (RGPD, art. 26). Leur accord est le suivant : l'exploitant fait fonctionner la plateforme et traite les demandes d'exercice des droits qui lui sont adressées par son intermédiaire ; la structure est responsable du rendez-vous ou de l'accompagnement lui-même et de ses suites en dehors de la plateforme. Les personnes peuvent exercer leurs droits auprès de l'un ou de l'autre. L'essentiel de cet accord est mis à leur disposition dans la notice de confidentialité (section 9).", 'p2_v9'],
+    } } },
+    commitments: { items: { replace: { 0: ['Répondre aux demandes de rendez-vous dans un délai raisonnable et tenir ses créneaux à jour.', 'i1_v9'] } } },
+    end: { paras: { replace: { 0: ["Chaque partie peut mettre fin au raccordement. Les données sont ensuite traitées selon les durées indiquées dans la notice de confidentialité.", 'p1_v9'] } } },
+  } },
+});
+/** @type {DraftDocument[]} the professional terms (from v9-2026-11-22) — ADA Pro opening */
+export const LEGAL_DRAFT_DOCUMENTS_PRO_V10 = [withSections(LEGAL_DRAFTS_PRO_V10_CHANGES, LEGAL_DRAFTS_PRO_V10)(docOf(LEGAL_DRAFT_DOCUMENTS_V9_PRO, 'cgu-professionnel'))];
+/** @type {DraftDocument[]} the structure conditions (from v8) — ADA Pro opening */
+export const LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9 = [withSections(LEGAL_DRAFTS_STRUCTURES_V9_CHANGES, LEGAL_DRAFTS_STRUCTURES_V9)(docOf(LEGAL_DRAFT_DOCUMENTS_V8, 'conditions-structures'))];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
- * (draft; v8 stays approvable); G14: the citizen terms and the notice at LEGAL_DRAFTS_V10 (Mon Parcours opening), the notice also at LEGAL_DRAFTS_V11 (K8). LEGAL_DRAFT_DOCUMENTS = the newest draft
+ * (draft; v8 stays approvable); G14: the citizen terms and the notice at LEGAL_DRAFTS_V10 (Mon Parcours opening), the notice also at LEGAL_DRAFTS_V11 (K8); G14 expansion: the citizen terms and the notice at LEGAL_DRAFTS_V12 (X04 / X01 / X02 opening), the notice also at LEGAL_DRAFTS_V13 (ADA Pro opening, with appointments, video and Outlook), the structure conditions at LEGAL_DRAFTS_STRUCTURES_V9 and the professional terms at LEGAL_DRAFTS_PRO_V10 (same opening). LEGAL_DRAFT_DOCUMENTS = the newest draft
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
   [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO],
-  [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10], [LEGAL_DRAFTS_V11]: [...LEGAL_DRAFT_DOCUMENTS_V11] });
+  [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10], [LEGAL_DRAFTS_V11]: [...LEGAL_DRAFT_DOCUMENTS_V11],
+  [LEGAL_DRAFTS_V12]: [...LEGAL_DRAFT_DOCUMENTS_V12], [LEGAL_DRAFTS_V13]: [...LEGAL_DRAFT_DOCUMENTS_V13],
+  [LEGAL_DRAFTS_STRUCTURES_V9]: [...LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9], [LEGAL_DRAFTS_PRO_V10]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V10] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {

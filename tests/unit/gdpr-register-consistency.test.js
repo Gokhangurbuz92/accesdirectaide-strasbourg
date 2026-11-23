@@ -110,8 +110,8 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
   });
 
   it('date_mise_a_jour is the fixed revision date, not the run date', () => {
-    expect(registre.date_mise_a_jour).toBe('2026-11-18');   // FA-D5: backups, Scaleway, Cloudflare, erasure traces (2026-11-17 = legal v6, 2026-11-15 = v5, 2026-11-04 = R42-LEGAL)
-    expect(REGISTRE_DATE_REVISION).toBe('2026-11-18');
+    expect(registre.date_mise_a_jour).toBe('2026-11-23');   // G14 consolidation: T23–T26, Cloudflare Workers AI, Scaleway OpenFisca; FA-D5 (2026-11-18): backups, Scaleway, Cloudflare, erasure traces (2026-11-17 = legal v6, 2026-11-15 = v5, 2026-11-04 = R42-LEGAL)
+    expect(REGISTRE_DATE_REVISION).toBe('2026-11-23');
     const built = buildRegistre(readCodeSources(ROOT));
     expect(built.date_mise_a_jour).toBe(REGISTRE_DATE_REVISION);
   });

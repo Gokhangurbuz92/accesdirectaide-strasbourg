@@ -1,8 +1,9 @@
 // @ts-nocheck
 /**
- * G14 — the 25 purge steps of the expansion content (X04 events, X02 testimonials, X01 stories, X05 job listings, X03 Entraide) and of the account-free
- * DSA notices. Durations: the versioned policy (api/_services/retention-policy.js, version g14-expansion-1-2026-11-22-a7-365d), decided by the controller
- * (décision du responsable 22/11/2026, formulaire G14, questions 14–28). The steps follow the rules of api/_handlers/cron/gdpr-purge.js: a dry run by
+ * G14 — the 27 purge steps of the expansion content (X04 events, X02 testimonials, X01 stories, X05 job listings, X03 Entraide), of the account-free
+ * DSA notices and of the moderation cases (decisions, appeals, sanctions). Durations: the versioned policy (api/_services/retention-policy.js, version
+ * g14-expansion-2-2026-11-23-a7-365d), decided by the controller (décision du responsable 22/11/2026, formulaire G14, questions 14–28; 23/11/2026 for the
+ * moderation cases). The steps follow the rules of api/_handlers/cron/gdpr-purge.js: a dry run by
  * default; each one executes only once the controller records its OWN approval in the policy (approvedSteps: dry run read, backup verified) and the operator
  * lists it in GDPR_PURGE_APPROVED_STEPS; X03 steps also wait for the dedicated X03 AIPD (decidedSteps condition, STEP_CONDITION_OPEN).
  * Safeguards on every step that touches a person: an ACTIVE legal hold on any id the row carries, a processing restriction (art. 18 GDPR) or an open access
@@ -215,6 +216,22 @@ export function expansionSteps({ heldSql, personProtectedSql }) {
       ...del('SocialReferral', (ctx) => sql`t."closedAt" IS NOT NULL AND t."closedAt" < ${ctx.cutoff('SOCIAL_REFERRAL_CLOSED_DAYS')}
         AND ${sql`NOT ${heldSql(sql`t."citizenId"`, sql`t.id`, sql`t."fromStructureId"`, sql`t."toStructureId"`)}`}
         AND (t."citizenId" IS NULL OR NOT ${personProtectedSql(sql`t."citizenId"`)})`) },
+
+    // ── moderation cases (décision du responsable 23/11/2026) ─────────────────────────────────────────────────────────────
+    // 26. a decision (statement of reasons) and its appeals (ON DELETE CASCADE), 1 year after the case is closed: appeal period over, no appeal open,
+    //     restriction ended — not held (decision, its content, its person)
+    { id: 'moderationDecisionsDeleted', summaryKey: 'moderation_decisions_deleted', ecode: 'DSA', kind: 'delete', table: 'ModerationDecision', durationKey: 'MODERATION_CASE_CLOSED_DAYS',
+      tables: ['ModerationDecision', 'ModerationAppeal', 'LegalHold'],
+      ...del('ModerationDecision', (ctx) => sql`GREATEST(t."appealUntil", COALESCE(t."restrictionEndsAt", t."appealUntil"),
+          COALESCE((SELECT max(ap."reviewedAt") FROM "ModerationAppeal" ap WHERE ap."decisionId" = t.id), t."appealUntil")) < ${ctx.cutoff('MODERATION_CASE_CLOSED_DAYS')}
+        AND NOT EXISTS (SELECT 1 FROM "ModerationAppeal" ap WHERE ap."decisionId" = t.id AND ap.status = 'open')
+        AND NOT ${heldSql(sql`t.id`, sql`t."contentId"`, sql`t."subjectUserId"`)}`) },
+    // 27. a sanction (warning or suspension), 1 year after it stopped counting: lifted, or its end (a warning counts 12 months: WARNING_WINDOW_DAYS)
+    { id: 'moderationSanctionsDeleted', summaryKey: 'moderation_sanctions_deleted', ecode: 'DSA', kind: 'delete', table: 'ModerationSanction', durationKey: 'MODERATION_CASE_CLOSED_DAYS',
+      tables: ['ModerationSanction', 'LegalHold'],
+      ...del('ModerationSanction', (ctx) => sql`LEAST(COALESCE(t."liftedAt", 'infinity'::timestamp),
+          COALESCE(t."endsAt", t."createdAt" + interval '365 days')) < ${ctx.cutoff('MODERATION_CASE_CLOSED_DAYS')}
+        AND NOT ${heldSql(sql`t.id`, sql`t."subjectUserId"`)}`) },
   ];
 }
 

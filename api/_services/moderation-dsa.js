@@ -51,7 +51,9 @@ export const SUSPENSION_MAX_DAYS = 180;
 export const WARNING_WINDOW_DAYS = 365;
 export const FACTS_MIN = 10;
 export const FACTS_MAX = 2000;
-export const TERMS_CLAUSE = 'Charte de modération, § 2 (contenus refusés)';
+/** the published rule a restriction applies (DSA art. 17(3)(e)): the public charter page (src/pages/CharteModeration.jsx), section « Contenus refusés » */
+export const CHARTER_PATH = '/charte-de-moderation';
+export const TERMS_CLAUSE = 'Charte de modération, § 3 « Contenus refusés » — https://www.accesdirectaide.fr/charte-de-moderation#contenus-refuses';
 const DAY = 86_400_000;
 
 const err = (code, status = 400, extra = {}) => Object.assign(new Error(code), { code, status, ...extra });

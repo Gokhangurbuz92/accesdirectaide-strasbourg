@@ -5,7 +5,7 @@
  */
 
 export const REASONS = Object.freeze(['HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSIVE', 'MISLEADING', 'ADVERTISING', 'OFF_TOPIC']);
-export const TESTIMONIAL_CONSENT_VERSION = 'x02-2026-11-19-lab-proposal';
+export const TESTIMONIAL_CONSENT_VERSION = 'x02-v12-2026-11-23';
 export const BODY_MIN = 30;
 export const BODY_MAX = 1500;
 export const TESTIMONIAL_LANGS = Object.freeze(['fr', 'en', 'de', 'tr', 'ar', 'uk']);

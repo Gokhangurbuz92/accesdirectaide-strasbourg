@@ -6,10 +6,13 @@
  */
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V11_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V11_DOCUMENT_IDS, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V12_DOCUMENT_IDS, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_V13_DOCUMENT_IDS, LEGAL_DRAFTS_PRO_V10, LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS, LEGAL_DRAFT_DOCUMENTS_V12, LEGAL_DRAFT_DOCUMENTS_V10 } from '../../src/config/legal-drafts.js';
 import { appendConsent, notificationOptionOpen, notificationOptionsOpen, NOTIFICATION_OPTION_CLOSED, setPreference } from '../../api/_services/citizen-account.js';
 
-const doc = (/** @type {string} */ id) => LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === id);
+// G14: the notice v13 describes the ADA Pro opening (appointments open); the v3 statements on functions not open yet are checked on notice v12, the version
+// of the citizen-only opening (X04 / X01 / X02, no ADA Pro text)
+// the citizen terms v12 open the assistant (§ 4): the v3 « not open yet » statements are checked on the citizen terms v10
+const doc = (/** @type {string} */ id) => (id === 'notice-confidentialite' ? LEGAL_DRAFT_DOCUMENTS_V12 : id === 'cgu-citoyen' ? LEGAL_DRAFT_DOCUMENTS_V10 : LEGAL_DRAFT_DOCUMENTS).find((d) => d.id === id);
 const section = (/** @type {string} */ id, /** @type {string} */ s) => doc(id).sections.find((x) => x.id === s);
 const textOf = (/** @type {any} */ s) => [s.title, ...(s.items || []), ...(s.paras || [])].join('\n');
 // the narrow V2 scope as configured for the opening (accounts + admin, restricted beta)
@@ -20,7 +23,7 @@ describe('legal drafts: what the v3 review (14/11/2026) changed still holds', ()
     expect(LEGAL_DRAFTS_VERSION).toMatch(/^v\d+-\d{4}-\d{2}-\d{2}$/);
     expect(Number(LEGAL_DRAFTS_VERSION.slice(1).split('-')[0])).toBeGreaterThanOrEqual(3);
     // G4 (19/11/2026): v8 covers the two professional documents only; the others keep the shared version
-    for (const d of LEGAL_DRAFT_DOCUMENTS) expect(d.version).toBe(LEGAL_DRAFTS_V11_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V11 : LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9_PRO : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G8: the notice is at v9; G14: the professional terms at v9-2026-11-22 (draft)
+    for (const d of LEGAL_DRAFT_DOCUMENTS) expect(d.version).toBe(LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_PRO_V10 : LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_STRUCTURES_V9 : LEGAL_DRAFTS_V13_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V13 : LEGAL_DRAFTS_V12_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V12 : LEGAL_DRAFTS_V11_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V11 : LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9_PRO : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);   // G8: the notice is at v9; G14: the professional terms at v9-2026-11-22 (draft)
   });
   it('cgu §5 / §6 carry the « pas encore ouvert » qualifier and no present-tense booking promise', () => {
     const account = textOf(section('cgu-citoyen', 'account'));

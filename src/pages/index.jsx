@@ -106,6 +106,7 @@ const Droits = lazy(() => import("./Droits.jsx"));   // G3: public Rights Graph 
 const Situation = lazy(() => import("./Situation.jsx"));   // G14-RG: « Ma situation », one-door flow (browser-only matching, static data)
 const ToolDetail = lazy(() => import("./ToolDetail.jsx"));
 const MentionsLegales = lazy(() => import("./MentionsLegales.jsx"));
+const CharteModeration = lazy(() => import("./CharteModeration.jsx"));   // G14: the public moderation charter (always public, DSA art. 14)
 const LegalDraftDocument = lazy(() => import("./LegalDraftDocument.jsx"));   // R45 (ENG-LR-5): draft legal documents, shown only when approved or in LAB preview
 const SourcesMethode = lazy(() => import("./SourcesMethode.jsx"));
 const Impact = lazy(() => import("./Impact.jsx"));
@@ -650,6 +651,7 @@ function PagesContent() {
                                 <Route path="/demarches" element={<Demarches />} />
                                 <Route path="/home" element={<Navigate to="/" replace />} />
                                 <Route path="/mentions-legales" element={<MentionsLegales />} />
+                                <Route path="/charte-de-moderation" element={<CharteModeration />} />
                                 <Route path="/cgu" element={<CGU />} />
                                 <Route path="/conditions-generales" element={<Navigate to="/cgu" replace />} />
                                 <Route path="/cgu/citoyen" element={<LegalDraftDocument />} />

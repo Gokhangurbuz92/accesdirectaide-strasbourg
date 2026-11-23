@@ -43,7 +43,7 @@ export const REASONS = Object.freeze(['HEALTH_DETAIL', 'PERSONAL_DATA', 'OFFENSI
 export const LANGS = Object.freeze(['fr', 'en', 'de', 'tr', 'ar', 'uk']);
 export const CONSENT_PURPOSE = 'COMMUNITY_STORY_PUBLICATION';
 /** the version of the consent wording shown next to the box (src/lib/communityStories.js shows the same); a LAB proposal until the controller validates it */
-export const STORY_CONSENT_VERSION = 'x01-2026-11-19-lab-proposal';
+export const STORY_CONSENT_VERSION = 'x01-v12-2026-11-23';
 export const TITLE_MIN = 5;
 export const TITLE_MAX = 120;
 export const BODY_MIN = 50;

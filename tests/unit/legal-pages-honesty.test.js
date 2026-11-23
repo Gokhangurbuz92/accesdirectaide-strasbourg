@@ -23,7 +23,7 @@ const FALSE_CLAIMS = [
   /Privacy-First/i, /certifiée/i, /zéro bandeau/i, /pas de bandeau/i, /dpo@/i, /Délégué à la Protection des Données \(DPO\)\.?<?/,
   /agit en tant que/i, /contrôle absolu/i, /garantie par charte/i, /souveraineté/i, /Isolation 100/i,
   /(?<!pas un )(?<!pas de )chiffr\w*\s+de\s+bout\s+en\s+bout/i, /garantit l'anonymat/i, /blobs\s+opaques/i, /technologie sécurisée Microsoft Outlook/i,
-  /\bada_session\b/, /\bcsrf_token\b/, /ada\.falc/, /gmail/i, /OpenFisca/, /générés dynamiquement/i,
+  /\bada_session\b/, /\bcsrf_token\b/, /ada\.falc/, /gmail/i, /(?<!moteur de calcul )(?<!our own )OpenFisca/, /générés dynamiquement/i,   // G14 (g14-of): « notre moteur de calcul OpenFisca » at Scaleway is a real processing (notice P18); any other OpenFisca claim stays refused
 ];
 
 describe('legal pages make no false privacy / security claim', () => {

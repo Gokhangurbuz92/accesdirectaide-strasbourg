@@ -34,7 +34,7 @@ const DAY = 86400e3;
 const TITLE = `FIXTURE ${TS} titre`;
 const TEXT_A = `FIXTURE SYNTHÉTIQUE ${TS} — une permanence près de chez moi m’a aidé à préparer mon dossier et à comprendre les étapes.`;
 const TEXT_B = `FIXTURE SYNTHÉTIQUE ${TS} — un deuxième texte de test, qui sera refusé par la modération pour ce test.`;
-const VERSION = 'x01-2026-11-19-lab-proposal';
+const VERSION = 'x01-v12-2026-11-23';
 const PS = { A: `FxA${TAG}`, B: `FxB${TAG}`, D: `FxD${TAG}`, E: `FxE${TAG}` };
 
 function mkRes() {

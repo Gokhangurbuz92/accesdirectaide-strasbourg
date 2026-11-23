@@ -35,7 +35,7 @@ describe('legal drafts v10 / v11 (22/11/2026) — Mon Parcours (limited)', () =>
     // mergeable with g14-cgupro (cgu-professionnel v9-2026-11-22 sits between v9-2026-11-19 and v10): only the relative order is required
     const order = [...LEGAL_DRAFT_VERSIONS];
     expect(order.indexOf(LEGAL_DRAFTS_V10)).toBeGreaterThan(order.indexOf('v9-2026-11-19'));
-    expect(order.slice(-2)).toEqual([LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11]);
+    expect(order.indexOf(LEGAL_DRAFTS_V11)).toBe(order.indexOf(LEGAL_DRAFTS_V10) + 1);   // G14 expansion: v12 / v13 follow (tests/unit/g14-legal-v12.test.js)
     expect([...LEGAL_DRAFTS_V10_DOCUMENT_IDS]).toEqual(['cgu-citoyen', N]);
     expect([...LEGAL_DRAFTS_V11_DOCUMENT_IDS]).toEqual([N]);
     expect(sha(NOTICE_V8)).toBe('f9093d3282a487f7bca854c1497ea4732d8f7d2b551655da27bee00adda74778');
