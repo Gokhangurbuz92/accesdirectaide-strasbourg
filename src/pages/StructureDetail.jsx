@@ -44,6 +44,8 @@ import { mapUrl } from '@/lib/structureMapUrl';
 import { frontendEnv } from '@/config/env';
 import { bookingOpened } from '@/lib/publicBeta';
 import FeedbackButton from '@/components/FeedbackButton';
+import StructureBookingBlock from '@/components/StructureBookingBlock';
+import { fetchBookingProfile, openServices } from '@/lib/bookingProfile';
 
 // R32: the French labels (a badge is shown only for these types); typeLabel() gives them in the interface language — the names of public bodies and the
 // acronyms are not translated
@@ -90,6 +92,17 @@ export default function StructureDetail() {
   const structure = Array.isArray(queryData)
     ? queryData[0]
     : (queryData?.items ? queryData?.items[0] : queryData);
+
+  // G14-FIND: the public booking profile (services open to an online request, first free day) — read only when the place's booking is published and
+  // online booking is open in this build; a failed read keeps the plain booking entry (the booking page itself says when it is unavailable)
+  const bookingCandidate = Boolean(structure?.is_pro_enabled) && bookingOpened(frontendEnv.flags.publicBeta) && Boolean(structure?.slug);
+  const { data: bookingProfile, isLoading: profileLoading } = useQuery({
+    queryKey: ['structure-booking-profile', structure?.slug],
+    queryFn: () => fetchBookingProfile(structure.slug),
+    enabled: bookingCandidate,
+    retry: false,
+    staleTime: 60_000,
+  });
 
   // R32: names, addresses, phone numbers, e-mails, websites and opening hours are never translated — tr.attrs() marks them as French; the descriptions
   // follow the content translation
@@ -155,7 +168,8 @@ export default function StructureDetail() {
   const provenance = getProvenance(structure);
   const rdvPath = buildPublicRdvPath(structure);
   // A-8: the booking entry is offered only when booking is open in this build (in the restricted beta « Voir les créneaux » led to the closed notice)
-  const bookable = Boolean(structure.is_pro_enabled) && bookingOpened(frontendEnv.flags.publicBeta);
+  // G14-FIND: a profile that answers with NO service open to an online request withdraws the entry (the request would be refused)
+  const bookable = bookingCandidate && !(bookingProfile && openServices(bookingProfile).length === 0);
   const services = tr.value('services');
   const finess = isFinessRecord(structure);   // R37: FINESS « activités autorisées », never shown as services offered
   const publics = tr.value('publics_accueillis');
@@ -342,6 +356,11 @@ export default function StructureDetail() {
               </CardContent>
             </Card>
 
+            {/* G14-FIND: the booking block comes right after the place's name, above the fold on a phone (it was below the contact card and the services) */}
+            {bookingCandidate && (
+              <StructureBookingBlock rdvPath={rdvPath} profile={bookingProfile || null} profileLoading={profileLoading} />
+            )}
+
             {/* automatic verification: when, against which official registers */}
             <div className="mb-4"><AutoVerificationNote record={structure} kind="structure" /></div>
 
@@ -394,33 +413,6 @@ export default function StructureDetail() {
 
                 {/* R11 / D05: the services other public platforms list, each attributed to its producer */}
                 <ExternalServices data={tr.value('services_externes')} textAttrs={tr.attrs('services_externes')} />
-
-                {/* Pro Services (Lot 4) */}
-                {bookable && (
-                  <Card className="border-indigo-100 bg-indigo-50/30">
-                    <CardContent className="p-6">
-                      <h2 className="text-lg font-bold text-indigo-900 mb-4 flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        {t('structures:detail.booking.title', 'Prendre rendez-vous')}
-                      </h2>
-                      <p className="text-slate-700 mb-4">
-                        {t('structures:detail.booking.text', 'Cette structure propose la prise de rendez-vous en ligne.')}
-                      </p>
-                      <Button className="w-full bg-indigo-600 hover:bg-indigo-700" asChild>
-                        <Link to={rdvPath}>
-                          {t('structures:detail.booking.slots', 'Voir les créneaux disponibles')}
-                        </Link>
-                      </Button>
-                      {/* R42 (DEC-R42-01): an account is required to ask for an appointment; the page itself stays open to everyone */}
-                      <p className="mt-3 text-sm text-slate-700" data-testid="structure-booking-account-required">
-                        {t('structures:detail.booking.account_required', 'Un compte particulier est nécessaire pour demander un rendez-vous. Les informations de cette page restent consultables sans compte.')}
-                      </p>
-                      <p className="mt-2 text-xs text-slate-600" data-testid="structure-not-partner">
-                        {t('structures:detail.booking.not_partner', 'La présence de cette structure dans l’annuaire ne signifie pas un partenariat avec AccesDirectAide.')}
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
 
                 {/* Publics accueillis */}
                 {structure.publics_accueillis?.length > 0 && (

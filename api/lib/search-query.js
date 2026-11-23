@@ -28,6 +28,7 @@ const territorySlugSql = (col) => sql`trim(both '-' from regexp_replace(translat
 const CURATED_FIRST = sql`(coalesce(auto_check->'texts'->>'mode', '') = 'OFFICIAL_SOURCE') ASC, (auto_check->'classification'->>'subdomain' IS NULL) ASC,`;
 const categoryIn = (c) => sql`"categorie" IN (${sql.join(categoryVariants(c).map((v) => sql`${v}`), sql`, `)})`;
 import { buildProvenance } from '../_utils/provenance.js';
+import { bookableStructureSqlNow, bookingOpenOnServer } from './bookable-structures.js';
 
 // DTA S3B: `search_vector` is NOT created by any migration of this repository (drizzle/*.sql, src/db/schema*). PostgreSQL resolves a column at parse time, even inside a CASE branch,
 // so the former runtime `pg_extension`/`information_schema` CASE guards could not protect the query: on a schema without the column every keyword (`q`) search answered 500
@@ -723,7 +724,7 @@ export async function searchDispositifs(params) {
  * @param {any} params
  */
 export async function searchStructures(params) {
-  const { q, city, zip, type, departement, pmr, sort, page, pageSize, serves } = params;
+  const { q, city, zip, type, departement, pmr, sort, page, pageSize, serves, bookable } = params;
   const LIMIT = Number(pageSize) || 20;
   const OFFSET = (Math.max(1, Number(page) || 1) - 1) * LIMIT;
 
@@ -796,6 +797,12 @@ export async function searchStructures(params) {
   if (wantsPmr) {
     conditions.push(sql`"accessibilite_pmr" = true`);
   }
+
+  // G14-FIND: « Rendez-vous en ligne » — only the places that can really be asked for an appointment online now; while booking is closed on this
+  // deployment the filter matches nothing (fail closed: it never falls back to the whole list) and no item carries the flag
+  const bookingOpen = bookingOpenOnServer();
+  const wantsBookable = bookable === 'true' || bookable === '1';
+  if (wantsBookable) conditions.push(bookingOpen ? bookableStructureSqlNow() : sql`false`);
 
   if (plan) conditions.push(await bestMatchCondition('Structure', conditions, plan));
   const whereClause = conditions.length > 0
@@ -912,6 +919,16 @@ export async function searchStructures(params) {
       },
     });
     const itemMap = new Map(fullItems.map((/** @type {{ id: string }} */ i) => [i.id, i]));
+    // G14-FIND: the online-booking flag of the page's places in ONE query (no query per place); under the filter every place already matched it
+    /** @type {Set<string>} */
+    const onlineBooking = new Set();
+    if (bookingOpen) {
+      if (wantsBookable) for (const i of itemIds) onlineBooking.add(String(i));
+      else {
+        const rows = (await db.execute(sql`SELECT id FROM "Structure" WHERE id IN (${sql.join(itemIds.map((/** @type {string} */ i) => sql`${i}`), sql`, `)}) AND ${bookableStructureSqlNow()}`)).rows || [];
+        for (const r of rows) onlineBooking.add(String(r.id));
+      }
+    }
     // E04 « why shown »: the declared or bookable services that match the words searched (max 3 per structure; text as the structure wrote it)
     /** @type {Map<string, string[]>} */
     const whyShown = new Map();
@@ -942,6 +959,7 @@ export async function searchStructures(params) {
           sourceUrl: sourceDocument?.source_url || safeFull.source_url || safeFull.source_url_exact,
         }),
         contentStatus: visibility.contentStatus,
+        online_booking: onlineBooking.has(String(raw.id)),
       };
       if (q) return { ...baseItem, rank: raw.rank, ...(whyShown.has(raw.id) ? { whyShown: { services: whyShown.get(raw.id) } } : {}) };
       return baseItem;
