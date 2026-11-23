@@ -11,8 +11,23 @@ import { captureSafe, classifyError } from './diagnosticErrors.js';
 // Canonical key is OPENFISCA_URL. Aliases OPENFISCA_API_URL and OPENFISCA_URL are supported for backward compatibility.
 const RAW_URL = process.env.OPENFISCA_URL || process.env.OPENFISCA_API_URL || process.env.OPENFISCA_URL || 'https://api.fr.openfisca.org/latest';
 const OPENFISCA_URL = RAW_URL.replace(/\/+$/, ''); // normalise: strip trailing slash(es)
-const OPENFISCA_TIMEOUT_MS = 5000; // Strict 5000ms timeout
+// G14 (owner 23/11/2026, self-hosted engine on a scale-to-zero Serverless Container): the first call after an idle period waits for the container to start,
+// so the timeouts are configurable. Defaults unchanged (5000 ms calculation, 2000 ms health probe); bounded to [1 s, 60 s].
+const boundedMs = (v, dflt) => { const n = Number.parseInt(String(v ?? ''), 10); return Number.isFinite(n) && n > 0 ? Math.min(Math.max(n, 1000), 60_000) : dflt; };
+const OPENFISCA_TIMEOUT_MS = boundedMs(process.env.OPENFISCA_TIMEOUT_MS, 5000); // strict timeout (default 5000 ms)
+const OPENFISCA_HEALTH_TIMEOUT_MS = boundedMs(process.env.OPENFISCA_HEALTH_TIMEOUT_MS, 2000);
 const OPENFISCA_ENABLE_TRACE = process.env.OPENFISCA_ENABLE_TRACE === 'true';
+
+/**
+ * G14: the self-hosted engine is not publicly usable. OPENFISCA_AUTH_TOKEN (a Scaleway container token, never logged) is sent as X-Auth-Token (checked by
+ * the Scaleway gateway of a private container, before the container wakes) and as X-ADA-OpenFisca-Token (checked again inside the container,
+ * ops/openfisca/ada_openfisca_app.py). Unset (LAB loopback engine): no header, exactly as before.
+ * @returns {Record<string, string>}
+ */
+export function authHeaders() {
+    const token = (process.env.OPENFISCA_AUTH_TOKEN || '').trim();
+    return token ? { 'X-Auth-Token': token, 'X-ADA-OpenFisca-Token': token } : {};
+}
 
 // Enforce Public Prototype Safety Gate
 if (OPENFISCA_URL.includes('api.fr.openfisca.org')) {
@@ -88,7 +103,7 @@ async function post(endpoint, payload) {
     try {
         const res = await fetch(url, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', ...authHeaders() },
             body: JSON.stringify(payload),
             signal: controller.signal,
         });
@@ -176,8 +191,9 @@ export async function isAvailable() {
 
     try {
         const controller = new AbortController();
-        const timer = setTimeout(() => controller.abort(), 2000);
+        const timer = setTimeout(() => controller.abort(), OPENFISCA_HEALTH_TIMEOUT_MS);
         const res = await fetch(`${OPENFISCA_URL}/spec`, {
+            headers: authHeaders(),
             signal: controller.signal,
         });
         clearTimeout(timer);
@@ -189,4 +205,4 @@ export async function isAvailable() {
     }
 }
 
-export default { calculate, trace, isAvailable };
+export default { calculate, trace, isAvailable, authHeaders };

@@ -15,6 +15,7 @@ const openfisca = async () => (openfiscaModule ??= await import('../lib/openfisc
 import { buildTestCase, parseResults, getCurrentPeriod } from '../lib/openfiscaMapping.js';
 import { qualifyEstimates, traceQualification } from '../lib/openfiscaEstimate.js';
 import { IDENTITY_FAILURES, cachedEngineHealth } from '../lib/openfiscaEngine.js';
+import { reserveOpenfiscaCall, QUOTA_MESSAGE_FR } from '../lib/openfiscaQuota.js';
 import { runLocalSimulation } from '../lib/LocalRulesEngine.js';
 import { ageFromBand } from '../lib/ageBands.js';
 import { checkRateLimit } from '../_utils/rateLimit.js';
@@ -38,6 +39,23 @@ const readings = (answers, referenceDate) => {
 };
 import { ERROR_CODES, SAFE_MESSAGES, captureSafe, classifyError, parseJsonBody } from '../lib/diagnosticErrors.js';
 import { clientIp } from '../_utils/client-ip.js';
+
+/**
+ * G14 — the monthly free-tier guard of the self-hosted OpenFisca engine (api/lib/openfiscaQuota.js). null = the call may go; otherwise the 503 body of the
+ * existing « simulation unavailable » path (no fallback result). Quota reached → OPENFISCA_QUOTA_REACHED (not retryable this month); guard store down →
+ * OPENFISCA_UNAVAILABLE (fail closed: without the counter, 0 € cannot be guaranteed).
+ * @param {string} requestId
+ */
+async function openfiscaQuotaRefusal(requestId) {
+    const q = await reserveOpenfiscaCall();
+    if (q.allowed) return null;
+    logger.warn('[Diagnostic] OpenFisca call refused by the monthly guard', { requestId, code: q.code });
+    if (q.code === 'OPENFISCA_QUOTA_REACHED') {
+        return { code: 'OPENFISCA_QUOTA_REACHED', error: 'OPENFISCA_QUOTA_REACHED', message: QUOTA_MESSAGE_FR, assessment: engineUnavailableAssessment({ retryable: false }), requestId };
+    }
+    return { code: 'OPENFISCA_UNAVAILABLE', error: 'OPENFISCA_UNAVAILABLE', message: 'Service de calcul temporairement indisponible. Veuillez réessayer dans quelques instants.',
+        assessment: engineUnavailableAssessment({ retryable: true }), requestId };
+}
 
 // Simple input validation — we use manual checks to avoid adding a Zod dependency
 /**
@@ -204,6 +222,9 @@ async function handleDiagnosticInner(req, res, track) {
         }
 
         // AUTHORITATIVE_MODE remains fail-closed. Never fall back to LocalRulesEngine.
+        // G14 (owner 23/11/2026, 0 €): the self-hosted engine runs on a free tier with no spending cap — every call is charged first against the monthly guard
+        const quotaRefusal = await openfiscaQuotaRefusal(requestId);
+        if (quotaRefusal) return res.status(503).json(quotaRefusal);
         let engineUp = false;
         let health = null;
         try {
@@ -388,6 +409,10 @@ async function handleTrace(/** @type {{ body: string | number | boolean | null |
 
         const period = getCurrentPeriod();
         const situation = buildTestCase(answers, period);
+
+        // G14: the trace wakes the same free-tier container — charged like a calculation (only when the trace is enabled: otherwise the client refuses it unsent)
+        const quotaRefusal = process.env.OPENFISCA_ENABLE_TRACE === 'true' ? await openfiscaQuotaRefusal(requestId) : null;
+        if (quotaRefusal) return res.status(503).json(quotaRefusal);
 
         const result = await (await openfisca()).trace(situation);
 

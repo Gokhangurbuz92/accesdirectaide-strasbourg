@@ -31,6 +31,7 @@
   "page.legal_summary": "Kısaca: bu bir karar değildir. Kararı yalnızca yetkili kurum (CAF, CPAM, Département) verir.",
   "error.title": "Yönlendirme önerileri alınamadı",
   "error.retry": "Yeniden dene",
+  "error.quota_reached": "Gösterge niteliğindeki hesaplama gelecek ayın başına kadar durduruldu: hesaplama hizmetinin aylık kullanım sınırına ulaşıldı. Yerine başka bir sonuç gösterilmez. Bir uzmandan tavsiye isteyebilirsiniz.",
   "results.announce": "Yeni yönlendirme önerileri gösteriliyor.",
   "results.empty_title": "Değerlendirmeyi başlatın",
   "results.empty_text": "Yönlendirme önerileri (RSA, APL, FAJ'EMS…) almak için soldaki bilgileri doldurun. Bu bir karar değildir.",

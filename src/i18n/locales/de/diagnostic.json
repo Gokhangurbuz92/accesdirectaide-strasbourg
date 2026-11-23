@@ -31,6 +31,7 @@
   "page.legal_summary": "Kurz gesagt: Dies ist keine Entscheidung. Nur die zuständige Stelle (CAF, CPAM, Département) entscheidet.",
   "error.title": "Die Orientierungshinweise konnten nicht abgerufen werden",
   "error.retry": "Erneut versuchen",
+  "error.quota_reached": "Die Richtwert-Berechnung ist bis zum Anfang des nächsten Monats ausgesetzt: Die monatliche Nutzungsgrenze des Berechnungsdienstes ist erreicht. Es wird kein Ersatzergebnis angezeigt. Sie können eine Fachkraft um Rat fragen.",
   "results.announce": "Neue Orientierungshinweise werden angezeigt.",
   "results.empty_title": "Diagnose starten",
   "results.empty_text": "Füllen Sie die Angaben links aus, um Orientierungshinweise zu erhalten (RSA, APL, FAJ'EMS…). Dies ist keine Entscheidung.",

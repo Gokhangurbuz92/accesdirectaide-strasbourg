@@ -87,7 +87,7 @@ export function providerStatuses(env = process.env) {
   row({ id: 'openfisca', category: 'rules', label: 'OpenFisca (calcul indicatif)', state: !ofName ? 'SIMULATED' : ofPrototype ? 'SIMULATED' : 'CONNECTED',
     reasonCode: !ofName ? 'SIMULATION_MODE' : ofPrototype ? 'PUBLIC_PROTOTYPE' : 'COMPLETE',
     reason: !ofName ? 'aucune instance : mode simulation du diagnostic' : ofPrototype ? (production ? 'point d’accès public de prototype : refusé en production' : 'point d’accès public de prototype (développement seulement)') : 'instance configurée',
-    variables: presence(env, ['OPENFISCA_URL', 'OPENFISCA_API_URL', 'OPENFISCA_FRANCE_VERSION', 'ALLOW_OPENFISCA_PUBLIC_PROTOTYPE']) });
+    variables: presence(env, ['OPENFISCA_URL', 'OPENFISCA_API_URL', 'OPENFISCA_FRANCE_VERSION', 'OPENFISCA_AUTH_TOKEN', 'ALLOW_OPENFISCA_PUBLIC_PROTOTYPE']) });
 
   // Aides-territoires (api/lib/ingestion/AidesTerritoiresConnector.js)
   row({ id: 'aides-territoires', category: 'sources', label: 'Aides-territoires (API)', state: has(env, 'AIDES_TERRITOIRES_API_KEY') ? 'CONNECTED' : 'NOT_CONFIGURED',

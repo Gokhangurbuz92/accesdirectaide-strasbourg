@@ -13,6 +13,38 @@ import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/ca
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
 import { RETENTION_POLICY, executionGate, stepApprovalProblem } from '../api/_services/retention-policy.js';
+import { OPENFISCA_FRANCE_PIN, SCALEWAY_TIERS } from '../api/lib/openfiscaPins.js';
+
+/**
+ * G14 (owner 23/11/2026) — the indicative calculator's engine in Production: not configured = PASS (only the simulation mode answers); configured = the
+ * self-hosted, token-protected engine of ops/openfisca/ (never the public prototype api.fr.openfisca.org), pinned version, a container shape the 0 € guard
+ * knows (api/lib/openfiscaQuota.js), timeouts long enough for a cold start. Names only, never values.
+ * @param {(k: string) => string} get
+ * @returns {['PASS' | 'WARN' | 'FAIL', string]}
+ */
+export function openfiscaCheck(get) {
+  const name = ['OPENFISCA_URL', 'OPENFISCA_API_URL'].find((k) => get(k));
+  if (get('ALLOW_OPENFISCA_PUBLIC_PROTOTYPE') === 'true') return ['FAIL', 'ALLOW_OPENFISCA_PUBLIC_PROTOTYPE must not exist in Production'];
+  if (!name) return ['PASS', 'OpenFisca not configured: only the simulation mode of the diagnostic answers (the indicative calculation stays unavailable)'];
+  let u = null; try { u = new URL(get(name)); } catch { u = null; }
+  const problems = [];
+  if (!u) problems.push(`${name} is not a URL`);
+  else {
+    if (/(^|\.)openfisca\.org$/i.test(u.hostname)) problems.push(`${name} points to the public OpenFisca prototype (forbidden in Production): use the self-hosted engine (ops/openfisca/deploy_scaleway.mjs)`);
+    if (u.protocol !== 'https:' || /^(localhost|127\.0\.0\.1|\[::1\])$/i.test(u.hostname)) problems.push(`${name} must be the https endpoint of the self-hosted container`);
+  }
+  if (get('OPENFISCA_AUTH_TOKEN').length < 20) problems.push('OPENFISCA_AUTH_TOKEN (the container token; the engine is private)');
+  if (get('OPENFISCA_FRANCE_VERSION') !== OPENFISCA_FRANCE_PIN) problems.push(`OPENFISCA_FRANCE_VERSION=${OPENFISCA_FRANCE_PIN} (the verified engine version; another engine then fails closed)`);
+  const mem = get('OPENFISCA_CONTAINER_MEMORY_MB'); const cpu = get('OPENFISCA_CONTAINER_MVCPU');
+  if ((mem || cpu) && /** @type {Record<string, number>} */ (SCALEWAY_TIERS)[String(Number(mem || 1024))] !== Number(cpu || 560)) problems.push('OPENFISCA_CONTAINER_MEMORY_MB / OPENFISCA_CONTAINER_MVCPU must be one Scaleway tier, the one deployed (512/280, 1024/560 or 2048/1120)');
+  if (problems.length) return ['FAIL', problems.join('; ')];
+  const warns = [];
+  if (!u || !/\.scw\.cloud$/i.test(u.hostname)) warns.push('endpoint is not a Scaleway default domain: check it is the container deployed by ops/openfisca/deploy_scaleway.mjs');
+  if (Number(get('OPENFISCA_TIMEOUT_MS') || 5000) < 20000 || Number(get('OPENFISCA_HEALTH_TIMEOUT_MS') || 2000) < 20000) warns.push('OPENFISCA_TIMEOUT_MS / OPENFISCA_HEALTH_TIMEOUT_MS below 20000: the first call after 15 idle minutes (cold start) will time out');
+  if (get('OPENFISCA_QUOTA_GUARD').toLowerCase() === 'off') warns.push('OPENFISCA_QUOTA_GUARD=off is ignored in Production (the 0 € guard always applies): remove it');
+  return warns.length ? ['WARN', `self-hosted engine configured; ${warns.join('; ')}`]
+    : ['PASS', 'self-hosted OpenFisca (private container + token, pinned version; monthly free-tier guard in KV, stops at 80 %)'];
+}
 
 /**
  * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
@@ -92,6 +124,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
   else add('alerts.webhook', /^https:\/\//.test(get('ALERT_WEBHOOK_URL')) || (/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(get('ALERT_EMAIL')) && ['resend', 'mailjet', 'msgraph'].includes(get('MAILER_PROVIDER').toLowerCase())) ? 'PASS' : 'FAIL', 'ALERT_WEBHOOK_URL (https) or ALERT_EMAIL with a real mail provider: operational alerts must reach a person, not only the logs');
   add('content.strict_mode', get('ADA_PUBLIC_CONTENT_MODE').toLowerCase() === 'lab' ? 'FAIL' : 'PASS', 'ADA_PUBLIC_CONTENT_MODE must not be "lab" (unverified records would be shown)');
   add('share.legacy_off', get('ADA_LEGACY_SHARE_READ') === '1' ? 'FAIL' : 'PASS', 'ADA_LEGACY_SHARE_READ stays off (a bare link would open a dossier)');
+  add('openfisca.self_hosted', ...openfiscaCheck(get));
   add('ai.no_unapproved_provider_key', get('GEMINI_API_KEY') || get('GOOGLE_API_KEY') ? 'FAIL' : 'PASS', 'GEMINI_API_KEY / GOOGLE_API_KEY must not exist until an AI provider is approved (DPIA, DPA)');
   add('observability.sentry', get('SENTRY_DSN') ? 'PASS' : 'WARN', 'SENTRY_DSN (EU region, DPA) for error tracking');
   const dsnHosts = ['SENTRY_DSN', 'VITE_SENTRY_DSN'].map((k) => get(k)).filter(Boolean).map((d) => { try { return new URL(d).hostname; } catch { return '?'; } });

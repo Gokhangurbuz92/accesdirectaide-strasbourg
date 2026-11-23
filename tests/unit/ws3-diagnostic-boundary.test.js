@@ -29,6 +29,8 @@ describe('WS3 diagnostic mode boundary', () => {
         // SIMULATION_MODE no longer depends on OpenFisca's environment; it still calls the same adapter functions in the same way, and the adapter itself is byte-identical (hash-pinned below).
         expect(source).toContain("import('../lib/openfiscaClient.js')");
         expect(source).toContain('const result = await (await openfisca()).calculate(situation);');
-        expect(createHash('sha256').update(readFileSync('api/lib/openfiscaClient.js')).digest('hex')).toBe('af908bc574df28e634786913c9635f9ecccf2c731da8f66e6bae35860ea1c7f1');
+        // G14 (owner 23/11/2026, normative change explained): the adapter gained the self-hosted engine's token headers (OPENFISCA_AUTH_TOKEN) and configurable
+        // timeouts (OPENFISCA_TIMEOUT_MS / OPENFISCA_HEALTH_TIMEOUT_MS, defaults unchanged) — tests/unit/g14-openfisca-selfhost.test.js. Was af908bc5….
+        expect(createHash('sha256').update(readFileSync('api/lib/openfiscaClient.js')).digest('hex')).toBe('81f1e81413c9b4decd2f1f5d0df89fb332696661bce7fc6f24a2b309f8c5cbb4');
     });
 });

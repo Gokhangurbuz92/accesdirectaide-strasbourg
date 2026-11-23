@@ -31,6 +31,7 @@
   "page.legal_summary": "In short: this is not a decision. Only the competent body (CAF, CPAM, Département) decides.",
   "error.title": "The orientation leads could not be obtained",
   "error.retry": "Try again",
+  "error.quota_reached": "The indicative calculation is paused until the start of next month: the monthly usage limit of the calculation service has been reached. No replacement result is shown. You can ask a professional for advice.",
   "results.announce": "New orientation leads are shown.",
   "results.empty_title": "Start the diagnostic",
   "results.empty_text": "Fill in the information on the left to get orientation leads (RSA, APL, FAJ'EMS…). This is not a decision.",
