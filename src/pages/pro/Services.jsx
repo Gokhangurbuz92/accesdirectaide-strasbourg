@@ -19,6 +19,9 @@ import {
 import { proRdvClient } from '@/api/pro-rdv-client';
 import BookingConfigPanel from '@/components/rdv/BookingConfigPanel.jsx';
 import ChannelStatusPanel from '@/components/rdv/ChannelStatusPanel.jsx';
+import ExternalBookingPanel from '@/components/rdv/ExternalBookingPanel.jsx';
+import NeedPicker from '@/components/needs/NeedPicker';
+import { needName } from '@/lib/socialNeeds';
 import { useT } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
 
@@ -46,6 +49,7 @@ export default function ProServices() {
   const structureSlug = String(user?.structure?.slug || '').trim();
 
   const [services, setServices] = useState([]);
+  const [needsAvailable, setNeedsAvailable] = useState(false);   // G14 release 3: the server stores the needs of a service (migration 0063)
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -93,8 +97,9 @@ export default function ProServices() {
     setLoading(true);
     setError('');
     try {
-      const response = await proRdvClient.services.list();
-      setServices(Array.isArray(response) ? response : []);
+      const response = await proRdvClient.services.listWithNeeds();
+      setServices(Array.isArray(response?.items) ? response.items : []);
+      setNeedsAvailable(response?.needsAvailable === true);
     } catch {
       setError(t('pro:services.load_error', 'Impossible de charger les services.'));
     } finally {
@@ -158,6 +163,7 @@ export default function ProServices() {
       bufferAfterMinutes: '0',
       isActive: true,
       modes: ['IN_PERSON'],
+      subdomains: [],
     });
     setIsDialogOpen(true);
   };
@@ -171,6 +177,7 @@ export default function ProServices() {
       bufferAfterMinutes: String(service.bufferAfterMinutes || 0),
       isActive: Boolean(service.isActive),
       modes: Array.isArray(service.modes) && service.modes.length ? service.modes : ['IN_PERSON'],
+      subdomains: Array.isArray(service.subdomains) ? service.subdomains : [],
     });
     setIsDialogOpen(true);
   };
@@ -187,6 +194,7 @@ export default function ProServices() {
       bufferAfterMinutes: toNonNegativeInt(formData.bufferAfterMinutes, 0),
       isActive: Boolean(formData.isActive),
       modes: Array.isArray(formData.modes) && formData.modes.length ? formData.modes : ['IN_PERSON'],
+      ...(needsAvailable ? { subdomains: Array.isArray(formData.subdomains) ? formData.subdomains : [] } : {}),
     };
 
     if (!payload.name) {
@@ -355,6 +363,8 @@ export default function ProServices() {
 
       <ChannelStatusPanel channels={channels} />
 
+      <ExternalBookingPanel canEdit={canEdit} />
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-xl font-bold text-slate-900">{t('pro:services.heading', 'Services')}</h2>
         {canEdit ? (
@@ -406,6 +416,11 @@ export default function ProServices() {
               <CardContent className="space-y-3 text-sm text-slate-700">
                 <p>{t('pro:services.duration_line', 'Durée : {{n}} min', { n: service.durationMinutes })}</p>
                 <p>{t('pro:services.buffers_line', 'Buffers: -{{before}} min / +{{after}} min', { before: service.bufferBeforeMinutes, after: service.bufferAfterMinutes })}</p>
+                {needsAvailable ? (
+                  <p data-testid="pro-service-needs">{Array.isArray(service.subdomains) && service.subdomains.length
+                    ? t('pro:needs.line', 'Besoins : {{needs}}', { needs: service.subdomains.map((id) => needName(t, id)).join(' · ') })
+                    : t('pro:needs.none', 'Besoins : aucun choisi (le lieu n’apparaît pas quand on cherche où prendre rendez-vous pour un besoin).')}</p>
+                ) : null}
                 <p data-testid="pro-service-modes">{t('pro:services.modes_line', 'Modalités : {{modes}}', { modes: (Array.isArray(service.modes) && service.modes.length ? service.modes : ['IN_PERSON']).map((m) => (m === 'VIDEO' ? t('pro:services.modality_video', 'À distance (visio)') : t('pro:services.modality_in_person', 'En présentiel'))).join(' · ') })}</p>
                 {canEdit ? (
                   <div className="flex flex-wrap gap-2">
@@ -430,7 +445,7 @@ export default function ProServices() {
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingService ? t('pro:services.dialog_edit', 'Modifier le service') : t('pro:services.dialog_create', 'Créer un service')}</DialogTitle>
             <DialogDescription>{t('pro:services.dialog_description', 'Configuration minimale d\'un motif de rendez-vous.')}</DialogDescription>
@@ -508,6 +523,10 @@ export default function ProServices() {
               ))}
               <p className="text-xs text-slate-700">{t('pro:services.video_hint', 'La visio n’est proposée aux personnes que si la structure l’accepte (mode de réservation) et si le service vidéo est activé.')}</p>
             </fieldset>
+
+            {needsAvailable ? (
+              <NeedPicker value={formData.subdomains || []} onChange={(next) => setFormData((prev) => ({ ...prev, subdomains: next }))} disabled={saving} testId="pro-service-needs-picker" />
+            ) : null}
 
             <DialogFooter>
               <Button type="submit" disabled={saving}>

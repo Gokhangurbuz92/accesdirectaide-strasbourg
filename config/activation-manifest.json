@@ -557,6 +557,15 @@
       "format": "^(open)?$",
       "note": "G14-OBS (owner approval 23/11/2026): exactly « open » = GET /api/public/observatoire answers (JSON and ?format=csv, Licence Ouverte 2.0): frozen closed quarters of the anonymous demand signals (cells below 5 masked, complementary suppression, commune breakdown only from 20 searches) and the supply map of the public directory. Unset = 404. Must match VITE_OBSERVATOIRE"
     },
+    "ADA_EXTERNAL_BOOKING": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(open|platforms)?$",
+      "note": "G14 release 3 (owner approval 24/11/2026): « Rendez-vous sur leur site » — exactly « open » = a place's own booking page APPROVED by an administrator is shown (StructureDetail block, Annuaire badge, need filter); « platforms » = only on a recognised public platform (RDV Solidarités / RDV Service Public family); unset = nothing public (professionals and administrators still record and review). Never counted as AccesDirectAide online booking. Needs migration 0063"
+    },
     "VITE_OBSERVATOIRE": {
       "class": "decision",
       "nature": "public",

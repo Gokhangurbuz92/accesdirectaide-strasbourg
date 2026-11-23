@@ -279,3 +279,25 @@ export function dispositifReportKind(row) {
 }
 /** a refused enum value (22P02 invalid_text_representation, as PostgreSQL reports « invalid input value for enum ») @param {any} e */
 export const isEnumValueRefusal = (e) => (e?.code || e?.cause?.code) === '22P02';
+
+/**
+ * G14 release 3 — migration 0063 ("ProRdvServiceSubdomain": the needs of a bookable service; "StructureExternalBooking": a place's own booking page). The
+ * code is released before the owner runs 0063 on Production: there the service editor saves no need, the need filter matches nothing and the external
+ * booking routes answer 503. Read at most once per GUEST_SCHEMA_TTL_MS per database object; a failed read is not remembered and answers « absent ». A
+ * database double without execute() is taken as WITHOUT the tables (nothing new is written or shown).
+ */
+const bookingReachCache = new WeakMap();
+/** @param {any} database @returns {Promise<{ needs: boolean, external: boolean }>} */
+export function bookingReachSchema(database) {
+  if (!database || typeof database.execute !== 'function') return Promise.resolve({ needs: false, external: false });
+  const hit = bookingReachCache.get(database);
+  if (hit && Date.now() - hit.at < GUEST_SCHEMA_TTL_MS) return hit.value;
+  const read = Promise.resolve().then(() => database.execute(sql`SELECT to_regclass('"ProRdvServiceSubdomain"') IS NOT NULL AS needs, to_regclass('"StructureExternalBooking"') IS NOT NULL AS external`))
+    .then((res) => { const row = (res?.rows || res || [])[0] || {}; return { needs: row.needs === true, external: row.external === true }; });
+  const value = read.catch(() => ({ needs: false, external: false }));
+  bookingReachCache.set(database, { at: Date.now(), value });
+  read.catch(() => { if (bookingReachCache.get(database)?.value === value) bookingReachCache.delete(database); });
+  return value;
+}
+/** for the tests: forget what was read (a migration applied or rolled back inside one process) */
+export function forgetBookingReachSchema(database) { bookingReachCache.delete(database); }

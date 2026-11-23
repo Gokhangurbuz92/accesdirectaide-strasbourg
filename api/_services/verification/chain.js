@@ -44,6 +44,7 @@ import { claimsEntitlement } from '../../lib/entitlementWording.js';
 import { refreshRegistry, refreshOnlineServices, onlineServiceTerritory, ensureSeed, listDepartmentOffices, recordFeedHealth, reviewSources } from './sources.js';
 import { officeRecord, officeTexts } from './offices.js';
 import { fetchFiness, readFiness, finessTexts, termsVersion } from './finess.js';
+import { proposeImportedExternalBookings } from '../external-booking.js';
 import { fetchDataInclusion, readDataInclusion, servicesValue, servicesFor, sameServices, producerOf, NOT_A_PLACE_NAME, termsVersion as diTermsVersion } from './datainclusion.js';
 import { nominativeEmail, publicEmail } from './contacts.js';
 import { probe as probeMachine, allowed, guardEnabled, modelOptions, unloadModel } from './resources.js';
@@ -1281,7 +1282,9 @@ async function loadDataInclusion(ctx) {
       detail: { files: fileMeta, ...r.counts, unknownValues: r.unknown, terms: diTermsVersion(), licence: files.licence || null, publisher: files.publisher || null } });
     if (reason) { await note(ctx, { kind: 'REGISTRY', outcome: 'RETRY', summary: `data·inclusion de la semaine écarté : ${reason}. Les services déjà listés restent en l’état ; nouvel essai à la prochaine veille.` }); return; }
     ctx.di = await matchDataInclusion(ctx, r, version, p && p.version === version ? p : null);
-    ctx.di.summary = { ...ctx.di.summary, files: fileMeta, structures: r.counts.structures, services: r.counts.services, inScope: r.counts.inScope, withSiret: r.counts.withSiret,
+    // G14 release 3: booking pages given by the source → PENDING records of "StructureExternalBooking" (an administrator approves; nothing is shown before)
+    const externalBooking = await proposeImportedExternalBookings(ctx.di.bookingCandidates, {}, ctx.db).catch(() => ({ available: false, proposed: 0, kept: 0, invalid: 0 }));
+    ctx.di.summary = { ...ctx.di.summary, externalBooking: { candidates: ctx.di.bookingCandidates.size, ...externalBooking }, files: fileMeta, structures: r.counts.structures, services: r.counts.services, inScope: r.counts.inScope, withSiret: r.counts.withSiret,
       servicesInScope: r.counts.servicesInScope, bySource: r.counts.bySource, unknownValues: r.unknown, terms: diTermsVersion() };
   } catch (e) {
     await recordFeedHealth(ctx.db, 'data-inclusion', { ok: false, ms: Date.now() - t1, error: e?.code || e?.message || String(e) }).catch(() => {});
@@ -1349,7 +1352,13 @@ async function matchDataInclusion(ctx, r, version, prev) {
   const fresh = [...candidates.entries()].map(([key, places]) => ({ key, siret: places[0].siret, places: [...places].sort((a, b) => rank[producerOf(a.source).authority] - rank[producerOf(b.source).authority] || a.id.localeCompare(b.id)) }))
     .filter((c) => servicesFor(c.places, r.servicesOf, { asOf: version }).services.length);
   const pending = fresh.filter((c) => !examined.has(c.key)).sort((a, b) => rank[producerOf(a.places[0].source).authority] - rank[producerOf(b.places[0].source).authority] || a.key.localeCompare(b.key));
-  return { version, r, byRecord, changed, gone, pending, examined,
+  // G14 release 3: the producer's booking link of a matched place (« prise_rdv »), per record — proposed for review, never published by the veille
+  const bookingCandidates = new Map();
+  for (const [recordId, list] of placesOf) {
+    const b = list.map((pl) => r.bookingOf?.get(pl.id)).find(Boolean);
+    if (b) bookingCandidates.set(recordId, b);
+  }
+  return { version, r, byRecord, changed, gone, pending, examined, bookingCandidates,
     summary: { version, matched: placesOf.size, ...n, changed: changed.size, gone: gone.size, candidates: fresh.length, examinedBefore: examined.size, examined: [...examined], created: 0, skipped: {} } };
 }
 

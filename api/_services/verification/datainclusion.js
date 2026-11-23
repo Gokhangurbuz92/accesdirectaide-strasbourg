@@ -176,12 +176,20 @@ export async function readDataInclusion({ structures, services, departement = '6
     const p = placeOf(s); places.set(p.id, p); bySource[p.source] = (bySource[p.source] || 0) + 1;
   }
   const servicesOf = new Map(); let servicesTotal = 0; let kept = 0; const unknown = {};
+  // G14 release 3: the link a PERSON uses to engage a service on the producer's side (schema v1: « lien_mobilisation » when « modes_mobilisation »
+  // includes « utiliser-lien-mobilisation » and « mobilisable_par » includes « usagers »; the older « prise_rdv » of schema v0), first https one per
+  // place — only PROPOSED as a PENDING own booking page for an administrator to check (it may be a form, not a booking page); never shown by the import
+  const bookingOf = new Map();
   for await (const v of arrayElements(jsonText(services), null)) {
     servicesTotal += 1;
     if (!v || !places.has(String(v.structure_id))) continue;
     const list = servicesOf.get(String(v.structure_id)) || []; list.push(serviceOf(v, unknown)); servicesOf.set(String(v.structure_id), list); kept += 1;
+    const byPerson = Array.isArray(v.modes_mobilisation) && v.modes_mobilisation.includes('utiliser-lien-mobilisation')
+      && (!Array.isArray(v.mobilisable_par) || v.mobilisable_par.includes('usagers'));
+    const booking = httpsUrl(v.prise_rdv) || (byPerson ? httpsUrl(v.lien_mobilisation) : null);
+    if (booking && !bookingOf.has(String(v.structure_id))) bookingOf.set(String(v.structure_id), { url: booking, ref: `data-inclusion:${String(v.id).slice(0, 120)}` });
   }
-  return { places, servicesOf, counts: { structures: total, inScope: places.size, withSiret: [...places.values()].filter((p) => p.siret).length, services: servicesTotal, servicesInScope: kept, bySource }, unknown };
+  return { places, servicesOf, bookingOf, counts: { structures: total, inScope: places.size, withSiret: [...places.values()].filter((p) => p.siret).length, services: servicesTotal, servicesInScope: kept, bySource }, unknown };
 }
 
 /**

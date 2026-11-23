@@ -6,6 +6,8 @@ import { eq } from 'drizzle-orm';
 import { checkRateLimit, getClientIp } from '../_utils/rateLimit.js';
 import { searchStructuresSchema } from '../_utils/validators.js';
 import { searchStructures } from '../lib/search-query.js';
+import { externalBookingMode, publicExternalBooking } from '../lib/external-booking.js';
+import { approvedExternalBookings } from '../_services/external-booking.js';
 import { buildProvenance } from '../_utils/provenance.js';
 import { decide, stripReviewFields } from '../lib/publicVisibility.js';
 
@@ -205,8 +207,16 @@ async function handler(/** @type {import('../_utils/http-types').ApiRequest} */ 
           ? rdvSettings.bookingMode
           : 'IN_PERSON';
 
+      // G14 release 3: the place's own booking page, only APPROVED by an administrator and only while ADA_EXTERNAL_BOOKING is open (a read failure or a
+      // database without migration 0063 shows nothing). Not AccesDirectAide booking: is_pro_enabled / rdv are unchanged by it.
+      let externalBooking = null;
+      if (externalBookingMode() !== 'closed') {
+        try { externalBooking = publicExternalBooking((await approvedExternalBookings([String(structure.id)], db)).get(String(structure.id))); } catch { externalBooking = null; }
+      }
+
       return res.status(200).json({
         ...safeStructure,
+        ...(externalBooking ? { external_booking: externalBooking } : {}),
         is_pro_enabled: isRdvPublished,
         proServices: isRdvPublished ? (proRdvServices || []) : [],   // public shape kept for PublicRdvEntry; only active services, no internal columns
         rdv: {

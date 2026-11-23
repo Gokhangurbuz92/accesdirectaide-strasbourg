@@ -7,6 +7,8 @@
  "back": "Tüm durumlar",
  "booking.intro": "Bu bağlantılar yalnızca çevrimiçi randevu isteyebileceğiniz yerleri gösterir.",
  "booking.link": ": çevrimiçi randevulu yerler",
+ "booking.need_link": ": bu ihtiyaç için randevu alınabilecek yerler",
+ "booking.needs_title": "İhtiyaca göre",
  "booking.title": "Randevu al",
  "emergency.body": "Bu numaralar ücretsizdir. Biri size cevap verir.",
  "emergency.source": "Kaynak: Service-Public {{id}} sayfası.",

@@ -702,6 +702,51 @@ export const ProRdvService = pgTable('ProRdvService', {
 		.onUpdate('cascade')
 }));
 
+// G14-R3 (drizzle/0063) — the needs a bookable service answers: subdomains of the 20 × 86 taxonomy (data/reference/social-domains.v1.json), with their
+// domain, so the directory can list « every place that books an appointment for <subdomain> ». A separate table (not a column of "ProRdvService"): the
+// code reads "ProRdvService" on databases without 0063 (Production) and Drizzle names every declared column. Only writer: api/_handlers/pro/services.js.
+export const ProRdvServiceSubdomain = pgTable('ProRdvServiceSubdomain', {
+	serviceId: text('serviceId').notNull(),
+	subdomain: text('subdomain').notNull(),
+	domain: text('domain').notNull(),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'ProRdvServiceSubdomain_pkey': primaryKey({ name: 'ProRdvServiceSubdomain_pkey', columns: [t.serviceId, t.subdomain] }),
+	'ProRdvServiceSubdomain_service_fkey': foreignKey({ name: 'ProRdvServiceSubdomain_service_fkey', columns: [t.serviceId], foreignColumns: [ProRdvService.id] }).onDelete('cascade').onUpdate('cascade'),
+	'ProRdvServiceSubdomain_subdomain_idx': index('ProRdvServiceSubdomain_subdomain_idx').on(t.subdomain),
+	'ProRdvServiceSubdomain_domain_idx': index('ProRdvServiceSubdomain_domain_idx').on(t.domain),
+	'ProRdvServiceSubdomain_subdomain_check': check('ProRdvServiceSubdomain_subdomain_check', sql`${t.subdomain} ~ '^[a-z0-9-]{1,64}$'`),
+	'ProRdvServiceSubdomain_domain_check': check('ProRdvServiceSubdomain_domain_check', sql`${t.domain} ~ '^[a-z0-9-]{1,64}$'`)
+}));
+
+// G14-R3 (drizzle/0063) — « appointments on our own system »: the https page where a place takes appointments itself (not an AccesDirectAide booking).
+// Recorded by the structure (ADA Pro), an administrator, or proposed by an open-data import; shown publicly ONLY once an administrator APPROVED it and
+// while ADA_EXTERNAL_BOOKING is open (api/lib/external-booking.js). A changed URL goes back to PENDING. Only writer: api/_services/external-booking.js.
+export const StructureExternalBooking = pgTable('StructureExternalBooking', {
+	structureId: text('structureId').notNull().primaryKey(),
+	url: text('url').notNull(),
+	platform: text('platform').notNull().default('other'),
+	subdomains: text('subdomains').array().notNull().default(sql`'{}'::text[]`),
+	status: text('status').notNull().default('PENDING'),
+	source: text('source').notNull(),
+	sourceRef: text('sourceRef'),
+	submittedBy: text('submittedBy'),
+	submittedAt: timestamp('submittedAt', { precision: 3 }).notNull().defaultNow(),
+	reviewedBy: text('reviewedBy'),
+	reviewedAt: timestamp('reviewedAt', { precision: 3 }),
+	reviewNote: text('reviewNote'),
+	updatedAt: timestamp('updatedAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'StructureExternalBooking_structure_fkey': foreignKey({ name: 'StructureExternalBooking_structure_fkey', columns: [t.structureId], foreignColumns: [Structure.id] }).onDelete('cascade').onUpdate('cascade'),
+	'StructureExternalBooking_status_idx': index('StructureExternalBooking_status_idx').on(t.status),
+	'StructureExternalBooking_url_check': check('StructureExternalBooking_url_check', sql`${t.url} ~ '^https://[A-Za-z0-9.-]+(/[^[:space:]]*)?$' AND length(${t.url}) <= 2048`),
+	'StructureExternalBooking_platform_check': check('StructureExternalBooking_platform_check', sql`${t.platform} ~ '^[a-z0-9-]{1,40}$'`),
+	'StructureExternalBooking_status_check': check('StructureExternalBooking_status_check', sql`${t.status} IN ('PENDING', 'APPROVED', 'REJECTED')`),
+	'StructureExternalBooking_source_check': check('StructureExternalBooking_source_check', sql`${t.source} IN ('PRO', 'ADMIN', 'IMPORT')`),
+	'StructureExternalBooking_review_check': check('StructureExternalBooking_review_check', sql`${t.status} = 'PENDING' OR (${t.reviewedBy} IS NOT NULL AND ${t.reviewedAt} IS NOT NULL)`),
+	'StructureExternalBooking_subdomains_check': check('StructureExternalBooking_subdomains_check', sql`cardinality(${t.subdomains}) <= 10`)
+}));
+
 export const ProAvailabilityRule = pgTable('ProAvailabilityRule', {
 	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
 	structureId: text('structureId').notNull(),

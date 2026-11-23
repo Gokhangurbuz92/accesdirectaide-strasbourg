@@ -410,6 +410,26 @@
         "responses": { "200": { "description": "Liste des congés" } }
       }
     },
+    "/pro/rdv/external-booking": {
+      "get": {
+        "tags": ["Pro"],
+        "summary": "Page de rendez-vous propre à la structure : enregistrement et état de la revue (G14 release 3)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "{ record: { url, platform, subdomains, status PENDING | APPROVED | REJECTED }, shownPublicly, publicDisplay, platforms }" }, "503": { "description": "EXTERNAL_BOOKING_NOT_AVAILABLE (migration 0063 absente)" } }
+      },
+      "put": {
+        "tags": ["Pro"],
+        "summary": "Enregistrer la page de rendez-vous propre à la structure ({ url, subdomains? }) — en attente de revue, rien n'est publié par cette route",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Enregistrée (PENDING si nouvelle ou modifiée)" }, "400": { "description": "URL_INVALID, HTTPS_REQUIRED, CREDENTIALS_IN_URL, HOST_NOT_PUBLIC, PERSONAL_DATA_IN_URL, NEEDS_*" }, "403": { "description": "Réservé aux administrateurs de la structure" }, "503": { "description": "EXTERNAL_BOOKING_NOT_AVAILABLE" } }
+      },
+      "delete": {
+        "tags": ["Pro"],
+        "summary": "Retirer la page de rendez-vous propre à la structure",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Retirée" }, "403": { "description": "Réservé aux administrateurs de la structure" }, "404": { "description": "Aucune page" } }
+      }
+    },
     "/pro/rdv/settings": {
       "get": {
         "tags": ["Pro"],
@@ -665,7 +685,9 @@
           { "name": "lat", "in": "query", "schema": { "type": "number" }, "description": "Latitude" },
           { "name": "lon", "in": "query", "schema": { "type": "number" }, "description": "Longitude" },
           { "name": "radius", "in": "query", "schema": { "type": "integer" }, "description": "Rayon en km" },
-          { "name": "type", "in": "query", "schema": { "type": "string" }, "description": "Type de structure" }
+          { "name": "type", "in": "query", "schema": { "type": "string" }, "description": "Type de structure" },
+          { "name": "subdomain", "in": "query", "schema": { "type": "string", "pattern": "^[a-z0-9-]{1,64}$" }, "description": "G14 release 3 : lieux qui prennent rendez-vous pour ce besoin (sous-domaine de la taxonomie 20 × 86) — un service réservable sur AccesDirectAide étiqueté, ou une page de rendez-vous propre approuvée tant que ADA_EXTERNAL_BOOKING est ouvert. Un identifiant inconnu ne renvoie rien." },
+          { "name": "domain", "in": "query", "schema": { "type": "string", "pattern": "^[a-z0-9-]{1,64}$" }, "description": "Comme subdomain, pour tous les sous-domaines d'un domaine." }
         ],
         "responses": {
           "200": { "description": "Liste des structures" }
@@ -1151,6 +1173,15 @@
           "200": { "description": "Contenu partagé" },
           "404": { "description": "Lien expiré ou invalide" }
         }
+      }
+    },
+    "/admin/external-booking": {
+      "post": {
+        "tags": ["Admin"],
+        "summary": "Revue des pages de rendez-vous propres aux structures (G14 release 3)",
+        "description": "{ action: list | review | set, status?, structureId?, decision?: APPROVE | REJECT, note?, url?, subdomains? } — une décision demande une session administrateur nominative avec MFA et un motif (10 à 500 caractères). Approuver n'affiche rien tant que ADA_EXTERNAL_BOOKING est fermé.",
+        "security": [{ "AdminToken": [] }],
+        "responses": { "200": { "description": "File de revue, décision ou enregistrement" }, "400": { "description": "NOTE_REQUIRED, INVALID_REQUEST, URL_*" }, "401": { "description": "Session administrateur requise" }, "403": { "description": "HUMAN_MFA_SESSION_REQUIRED" }, "404": { "description": "NOT_FOUND" }, "409": { "description": "URL_NO_LONGER_VALID" }, "503": { "description": "EXTERNAL_BOOKING_NOT_AVAILABLE" } }
       }
     },
     "/admin/resources": {

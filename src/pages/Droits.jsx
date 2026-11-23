@@ -6,6 +6,9 @@ import { OFFICIAL_TOOLS, toolText } from '@/config/officialTools';
 import { formatDate, useLanguage, useT } from '@/i18n';
 import { FICHES, NEEDS, SOURCES_READ_AT, TERRITORIES, inWindow, needLabel } from '@/lib/rightsPublicView';
 import reference from '../../data/reference/social-domains.v1.json';
+import { frontendEnv } from '@/config/env';
+import { bookingOpened } from '@/lib/publicBeta';
+import { NEED_BY_ID, needBookingHref } from '@/lib/socialNeeds';
 
 /**
  * G3 (19/11/2026) — « Explorer les droits par besoin »: the public, anonymous view of the Rights Graph (founder directive 19/11, track 1).
@@ -117,6 +120,15 @@ function NeedDetail({ need }) {
               ))}
             </ul>
           </>
+        )}
+        {/* G14 release 3: « Prendre rendez-vous » for this need — the places where an appointment for it can be asked on AccesDirectAide or that book on
+            their own reviewed page; offered only while booking is open in this build (the directory applies the server's rules) */}
+        {bookingOpened(frontendEnv.flags.publicBeta) && NEED_BY_ID.has(need.id) && (
+          <p className="mt-4">
+            <Link to={needBookingHref(need.id)} className="inline-flex min-h-11 items-center gap-1.5 font-medium text-blue-800 underline underline-offset-2 hover:text-blue-950" data-testid="rights-need-booking">
+              <CalendarClock className="h-4 w-4 shrink-0" aria-hidden="true" />{t('rights:booking.link', 'Trouver où prendre rendez-vous pour ce besoin')}
+            </Link>
+          </p>
         )}
       </section>
 

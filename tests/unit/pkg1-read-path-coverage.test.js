@@ -46,6 +46,7 @@ const REVIEWED_NOT_PUBLIC = {
   'api/_handlers/rdv.js': 'booking governed by StructureRdvSettings.isPublished', 
   'api/_services/rdv-booking-config.js': 'R42: the structure\'s own booking configuration (settings_json.rdvBooking), read by the booking engine; never returned publicly',
   'api/_services/rdv-member-hours.js': 'R42-CDGG: the members\' own working hours (settings_json.rdvMemberHours) of one structure by id, read by the booking engine and the pro hours screen; never returned publicly',
+  'api/_services/external-booking.js': 'G14 release 3: a place\'s own booking page — reads "Structure" only to check that an id exists (writes) and for the administrator review queue (name, slug, website); its public reads take ids the D-5-filtered directory list or record already returned',
   'api/_services/service-sensitivity-review.js': 'R45 ENG-LR-2: the administrator-verified sensitivity of a structure\'s services (settings_json.serviceSensitivity) by structure id, read by the booking engine and the administrator review route; never returned publicly',
   'api/_handlers/public/dossier-grants.js': 'sharing targets = Pro organizations with active members', 'api/_utils/share-access.js': 'authorization helper (membership)', 'api/_handlers/auth/outlook-callback.js': 'OAuth callback (writes)',
   // PKG-4: organization NAMES in the person's own DSR export / follow-ups, and in the professional back office (cases of the caller's organization; referral targets limited

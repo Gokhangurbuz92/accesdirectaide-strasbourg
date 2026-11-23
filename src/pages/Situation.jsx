@@ -12,6 +12,7 @@ import { rdvMessagingClient } from '@/api/rdv-messaging-client';
 import { citizenApi } from '@/lib/citizenApi';
 import { bookingOpened, isBetaRestrictedPath, parcoursOpened } from '@/lib/publicBeta';
 import { needLabel } from '@/lib/rightsPublicView';
+import { NEED_BY_ID, needBookingHref, needName } from '@/lib/socialNeeds';
 import { EMERGENCY_FICHE, EMERGENCY_NUMBERS, FAMILIES, SITUATIONS, SITUATION_BY_ID, directoryHref, searchSituations } from '@/lib/lifeSituations';
 import { familyLabel, situationLabel } from '@/lib/situationLabels';
 import SituationSignalOptIn from '@/components/observatoire/SituationSignalOptIn';
@@ -133,7 +134,9 @@ function Result({ s }) {
   const [commune, setCommune] = useState('');
   const communeId = useId();
   const beta = frontendEnv.flags.publicBeta;
-  const booking = bookingOpened(beta) && s.structures.length > 0;
+  // G14 release 3: the situation's needs (subdomains of the 20 × 86 taxonomy) → the places that take appointments for each of them
+  const bookingNeeds = (s.subdomains || []).filter((id) => NEED_BY_ID.has(id));
+  const booking = bookingOpened(beta) && (s.structures.length > 0 || bookingNeeds.length > 0);
   const orientationOpen = !beta || !isBetaRestrictedPath('/orientation');
   const label = situationLabel(s.id, t);
   const stepCodes = s.steps.filter((x) => x.kind === 'stepType');
@@ -227,6 +230,21 @@ function Result({ s }) {
               </li>
             ))}
           </ul>
+          {bookingNeeds.length > 0 && (
+            <>
+              <h3 className="mt-3 text-base font-semibold text-slate-900">{t('situation:booking.needs_title', 'Par besoin')}</h3>
+              <ul className="mt-1 space-y-1" data-testid="situation-booking-needs">
+                {bookingNeeds.map((id) => (
+                  <li key={id}>
+                    <Link to={needBookingHref(id)} className={linkClass}>
+                      <CalendarCheck className="h-4 w-4 shrink-0" aria-hidden="true" /><span>{needName(t, id)}</span>
+                      <span className="sr-only">{t('situation:booking.need_link', ' : lieux où prendre rendez-vous pour ce besoin')}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </section>
       )}
 

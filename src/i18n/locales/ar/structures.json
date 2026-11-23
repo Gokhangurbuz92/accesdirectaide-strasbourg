@@ -199,5 +199,18 @@
   "detail.booking.duration": "({{n}} دقيقة)",
   "detail.booking.next_day": "أول يوم فيه موعد متاح: {{date}}.",
   "detail.booking.no_slot_14": "لا يوجد موعد متاح خلال الأيام الأربعة عشر القادمة. يمكنك المحاولة لاحقًا أو التواصل مع الجهة.",
-  "detail.booking.loading": "جارٍ تحميل المواعيد المتاحة…"
+  "detail.booking.loading": "جارٍ تحميل المواعيد المتاحة…",
+  "ownbooking.title": "المواعيد على موقعهم",
+  "ownbooking.text": "تأخذ هذه الجهة المواعيد عبر نظامها الخاص. هذا ليس حجزًا عبر AccesDirectAide: الطلب والشروط والتأكيد تتعلق بذلك الموقع.",
+  "ownbooking.platform": "منصة عامة لحجز المواعيد: {{name}}.",
+  "ownbooking.needs": "لـ: {{needs}}.",
+  "ownbooking.leave": "أنت تغادر AccesDirectAide. للموقع الذي سيُفتح شروطه الخاصة وسياسة الخصوصية الخاصة به. لا يرسل AccesDirectAide إليه أي معلومة عنك.",
+  "ownbooking.link": "احجز موعدًا على {{host}}",
+  "ownbooking.new_window": " (نافذة جديدة، موقع خارجي)",
+  "card.external_booking_hint": "تأخذ هذه الجهة المواعيد على موقعها الخاص، وليس على AccesDirectAide.",
+  "card.external_booking": "المواعيد على موقعهم",
+  "filters.need_chip": "موعد بشأن: {{need}}",
+  "filters.need": "حجز موعد بشأن",
+  "filters.need_all": "كل الاحتياجات",
+  "filters.need_hint": "أماكن يمكن فيها طلب موعد لهذا الاحتياج على AccesDirectAide، أو تأخذ المواعيد على موقعها الخاص (صفحة تم التحقق منها)."
 }

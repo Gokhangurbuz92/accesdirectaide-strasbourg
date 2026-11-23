@@ -201,7 +201,7 @@ describe('G14-OBS D the schema holds no personal data', () => {
     const snap = JSON.parse(fs.readFileSync('drizzle/meta/0062_snapshot.json', 'utf8'));
     expect(Object.keys(snap.tables['public.DemandSignalDaily'].columns)).toEqual(['day', 'signal', 'code', 'commune', 'count']);
     const journal = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries;
-    expect(journal.at(-1)).toMatchObject({ tag: '0062_g14_obs_demand_signals', when: 1795040000000 });
+    expect(journal.find((e) => e.idx === 62)).toMatchObject({ tag: '0062_g14_obs_demand_signals', when: 1795040000000 });
     const down = fs.readFileSync('drizzle/rollback/0062_down.sql', 'utf8');
     expect(down).toMatch(/DROP TABLE IF EXISTS "DemandSignalDaily"/); expect(down).toMatch(/DROP TABLE IF EXISTS "DemandSignalQuarter"/);
     expect(down).toMatch(/created_at = 1795040000000/);

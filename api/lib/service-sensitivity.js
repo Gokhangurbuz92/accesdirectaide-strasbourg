@@ -98,12 +98,15 @@ const KEYWORDS = [
 const fold = (/** @type {unknown} */ s) => ` ${String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ')} `;
 
 /**
- * @param {{ serviceName?: string, structure?: { type_structure?: string | null, type_finess?: string | null, categories_aidees?: string[] | null, services?: string[] | null } }} input
+ * G14 release 3: `sensitiveNeeds` — the service's need tags that are sensitive subdomains (api/lib/service-needs.js sensitiveTags), listed as « besoin : <id> ».
+ * @param {{ serviceName?: string, sensitiveNeeds?: string[], structure?: { type_structure?: string | null, type_finess?: string | null, categories_aidees?: string[] | null, services?: string[] | null } }} input
  * @returns {{ suggestion: 'sensitive' | 'no_signal', matched: string[] }} never a verified value
  */
 export function suggestSensitivity(input = {}) {
   const st = input.structure || {};
   const text = fold([input.serviceName, st.type_structure, st.type_finess, ...(st.categories_aidees || []), ...(st.services || [])].join(' '));
   const matched = KEYWORDS.filter((k) => (k.endsWith(' ') ? text.includes(` ${k}`) : text.includes(k)));   // « cmp » / « ime »: whole words only
-  return { suggestion: matched.length ? 'sensitive' : 'no_signal', matched: [...new Set(matched.map((k) => k.trim()))].slice(0, 10) };
+  const needs = (Array.isArray(input.sensitiveNeeds) ? input.sensitiveNeeds : []).map((id) => `besoin : ${id}`);
+  const all = [...needs, ...matched.map((k) => k.trim())];
+  return { suggestion: all.length ? 'sensitive' : 'no_signal', matched: [...new Set(all)].slice(0, 10) };
 }

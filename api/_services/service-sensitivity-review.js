@@ -12,6 +12,8 @@ import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog } from '../../src/db/schema.js';
 import { SENSITIVITY, resolveServiceSensitivity, suggestSensitivity } from '../lib/service-sensitivity.js';
+import { sensitiveTags } from '../lib/service-needs.js';
+import { readServiceNeeds } from './service-needs.js';
 
 export const REVIEW_ACTION = 'service.sensitivity_reviewed';
 const ID = /^[A-Za-z0-9_-]{1,128}$/;
@@ -57,12 +59,14 @@ export async function listForReview(structureId, database = defaultDb) {
   if (!st) return null;
   const services = rowsOf(await database.execute(sql`SELECT id, name, "isActive" FROM "ProRdvService" WHERE "structureId" = ${structureId} ORDER BY name`));
   const records = await readSensitivityRecords(structureId, database);
+  // G14 release 3: a need tag of a sensitive subdomain is a signal for the review (never a value)
+  const needs = await readServiceNeeds(database, services.map((/** @type {any} */ s) => String(s.id))).catch(() => new Map());
   const items = services.map((/** @type {any} */ s) => {
     const record = /** @type {any} */ (records[s.id]);
     const value = resolveServiceSensitivity(record);
     return { id: s.id, name: s.name, active: s.isActive === true, value,
       reviewedAt: value === SENSITIVITY.UNKNOWN ? null : record.reviewedAt, reviewedBy: value === SENSITIVITY.UNKNOWN ? null : record.reviewedBy,
-      ...suggestSensitivity({ serviceName: s.name, structure: st }) };
+      subdomains: needs.get(String(s.id)) || [], ...suggestSensitivity({ serviceName: s.name, structure: st, sensitiveNeeds: sensitiveTags(needs.get(String(s.id)) || []) }) };
   });
   const bookable = items.filter((/** @type {any} */ i) => i.active);
   return { structure: { id: st.id, name: st.nom }, items, reviewComplete: bookable.length > 0 && bookable.every((/** @type {any} */ i) => i.value !== SENSITIVITY.UNKNOWN) };

@@ -7,6 +7,8 @@
  "back": "Alle Situationen",
  "booking.intro": "Diese Links zeigen nur die Orte, bei denen Sie online einen Termin anfragen können.",
  "booking.link": ": Orte mit Online-Termin",
+ "booking.need_link": ": Orte, an denen Sie für diesen Bedarf einen Termin bekommen",
+ "booking.needs_title": "Nach Bedarf",
  "booking.title": "Einen Termin vereinbaren",
  "emergency.body": "Diese Nummern sind kostenlos. Jemand antwortet Ihnen.",
  "emergency.source": "Quelle: Service-Public-Merkblatt {{id}}.",

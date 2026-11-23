@@ -251,6 +251,12 @@ export const proRdvClient = {
       const payload = await proRdvRequest('/api/pro/services');
       return Array.isArray(payload) ? payload : Array.isArray(payload?.items) ? payload.items : [];
     },
+    /** G14 release 3: the services and whether this server can store their needs (migration 0063) @returns {Promise<{ items: any[], needsAvailable: boolean }>} */
+    async listWithNeeds() {
+      const payload = await proRdvRequest('/api/pro/services');
+      const items = Array.isArray(payload) ? payload : Array.isArray(payload?.items) ? payload.items : [];
+      return { items, needsAvailable: payload?.needsAvailable === true };
+    },
     create(/** @type {string | number | boolean | null | undefined} */ payload) {
       return proRdvRequest('/api/pro/services', { method: 'POST', body: payload });
     },
@@ -277,6 +283,19 @@ export const proRdvClient = {
      */
     updateBooking(payload) {
       return proRdvRequest('/api/pro/rdv/settings', { method: 'PATCH', body: payload });
+    },
+  },
+  // G14 release 3: « we take appointments on our own system » — the structure's own booking page (PENDING until an administrator approves it)
+  externalBooking: {
+    get() {
+      return proRdvRequest('/api/pro/rdv/external-booking');
+    },
+    /** @param {{ url: string, subdomains: string[] }} payload */
+    save(payload) {
+      return proRdvRequest('/api/pro/rdv/external-booking', { method: 'PUT', body: payload });
+    },
+    remove() {
+      return proRdvRequest('/api/pro/rdv/external-booking', { method: 'DELETE' });
     },
   },
   // R42-CDGG: a professional's own weekly hours and dated exceptions (an administrator / schedule manager: every member of the structure)
