@@ -29,7 +29,8 @@ const T55 = '0055_x01_community_stories';   // X01 expansion (additive: communit
 const T56 = '0056_x05_job_board';   // X05 expansion (additive: job listings of verified employers)
 const T57 = '0057_x03_entraide';   // X03 expansion (additive: Entraide — dedicated AIPD before any opening)
 const T58 = '0058_g12_sole_admin_checks';   // G12 / G13: two boolean columns + the two-person CHECK rules admit the sole administrator
-const T59 = '0059_g14_moderation_dsa';   // G14: the newest migration (additive: named moderation roles, DSA notices, decisions, appeals, sanctions)
+const T59 = '0059_g14_moderation_dsa';   // G14: additive: named moderation roles, DSA notices, decisions, appeals, sanctions
+const T62 = '0062_g14_obs_demand_signals';   // G14-OBS: the newest migration on this branch (additive: anonymous demand signals; 0060 / 0061 are other branches)
 /** the history rows a database holds after these tags (drizzle's shape: id, sha256 of the file, created_at = « when ») */
 const rowsFor = (tags) => tags.map((t, i) => ({ id: i + 1, hash: real.files[t].hash, created_at: String(byTag(t).when) }));
 const upTo = (idx) => E.filter((e) => e.idx <= idx).map((e) => e.tag);
@@ -51,28 +52,29 @@ async function drizzleWouldApply(lastCreatedAt) {
 
 describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
   it('compares « when » with the NEWEST created_at only — on Production 0042 it would apply 0043, 0044 and 0045 (and the later 0046, 0047, 0048, 0049, 0050, 0051)', async () => {
-    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59]);
+    expect(await drizzleWouldApply(byTag(T42).when)).toEqual([T43, T44, T45, T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
   });
   it('after 0045 applied out of order, 0043 / 0044 are skipped for good: only the later 0046, 0047, 0048, 0049, 0050, 0051 are pending, and nothing after them', async () => {
     const pending = await drizzleWouldApply(byTag(T45).when);
-    expect(pending).toEqual([T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59]);
+    expect(pending).toEqual([T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
     expect(pending).not.toContain(T43);
     expect(pending).not.toContain(T44);
-    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T47).when)).toEqual([T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T48).when)).toEqual([T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T49).when)).toEqual([T50, T51, T52, T53, T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T50).when)).toEqual([T51, T52, T53, T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T51).when)).toEqual([T52, T53, T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T52).when)).toEqual([T53, T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T53).when)).toEqual([T54, T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T54).when)).toEqual([T55, T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T55).when)).toEqual([T56, T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T56).when)).toEqual([T57, T58, T59]);
-    expect(await drizzleWouldApply(byTag(T57).when)).toEqual([T58, T59]);
-    expect(await drizzleWouldApply(byTag(T58).when)).toEqual([T59]);
-    expect(await drizzleWouldApply(byTag(T59).when)).toEqual([]);
-    expect(E[E.length - 1].tag).toBe(T59);
+    expect(await drizzleWouldApply(byTag(T46).when)).toEqual([T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T47).when)).toEqual([T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T48).when)).toEqual([T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T49).when)).toEqual([T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T50).when)).toEqual([T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T51).when)).toEqual([T52, T53, T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T52).when)).toEqual([T53, T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T53).when)).toEqual([T54, T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T54).when)).toEqual([T55, T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T55).when)).toEqual([T56, T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T56).when)).toEqual([T57, T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T57).when)).toEqual([T58, T59, T62]);
+    expect(await drizzleWouldApply(byTag(T58).when)).toEqual([T59, T62]);
+    expect(await drizzleWouldApply(byTag(T59).when)).toEqual([T62]);
+    expect(await drizzleWouldApply(byTag(T62).when)).toEqual([]);
+    expect(E[E.length - 1].tag).toBe(T62);
   });
   it('planDeploy() computes the same pending set as drizzle for every level, and refuses while an obsolete one is pending', async () => {
     for (const lvl of [null, ...E.map((e) => e.when)]) {
@@ -84,11 +86,11 @@ describe('drizzle-orm migrator semantics (the guard depends on them)', () => {
   });
   it('0046 … 0059 are the only pending migrations on Production 0042 + 0045; a future 0060 after them is the only one pending once they are applied', () => {
     const now = planDeploy(E, byTag(T45).when);
-    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59]);
-    const e60 = { idx: 60, when: byTag(T59).when + 1000, tag: '0060_future' };
+    expect(now.ok && now.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62]);
+    const e60 = { idx: 63, when: byTag(T62).when + 1000, tag: '0060_future' };
     const all = planDeploy([...E, e60], byTag(T45).when);
-    expect(all.ok && all.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, '0060_future']);
-    const p = planDeploy([...E, e60], byTag(T59).when);
+    expect(all.ok && all.apply.map((e) => e.tag)).toEqual([T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T62, '0060_future']);
+    const p = planDeploy([...E, e60], byTag(T62).when);
     expect(p.ok && p.apply.map((e) => e.tag)).toEqual(['0060_future']);
     // 0057 needs 0053, 0054, 0055 and 0056 first
     expect(planDeploy(E, byTag(T52).when, T57)).toEqual({ ok: false, reason: 'EARLIER_MIGRATION_PENDING', pending: [T53, T54, T55, T56] });

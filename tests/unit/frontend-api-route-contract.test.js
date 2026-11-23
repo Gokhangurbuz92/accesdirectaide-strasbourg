@@ -36,7 +36,8 @@ function walk(dir, out = []) {
 describe('frontend → api route contract', () => {
   const used = new Set();
   for (const f of walk('src')) {
-    for (const m of readFileSync(f, 'utf8').matchAll(/['"`]\/api\/([A-Za-z0-9_\-/]+)/g)) used.add(m[1].replace(/\/$/, ''));
+    // G14-OBS: a dot is part of a path (« docs/openapi.json » is routed exactly; before, the scan cut it to « docs/openapi », a path that exists nowhere)
+    for (const m of readFileSync(f, 'utf8').matchAll(/['"`]\/api\/([A-Za-z0-9_\-/.]+)/g)) used.add(m[1].replace(/\/$/, ''));
   }
   const unresolved = [...used].filter((p) => !resolves(p)).sort();
 

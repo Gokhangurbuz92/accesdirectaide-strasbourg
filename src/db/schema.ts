@@ -909,6 +909,35 @@ export const ObservatoryQuarterSnapshot = pgTable('ObservatoryQuarterSnapshot', 
 	'ObservatoryQuarterSnapshot_quarter_format_check': check('ObservatoryQuarterSnapshot_quarter_format_check', sql`${ObservatoryQuarterSnapshot.quarter} ~ '^[0-9]{4}-T[1-4]$'`)
 }));
 
+// G14-OBS (drizzle/0062) — anonymous demand signals of the public site: a count per UTC day, closed-list signal and code, and (searches only) an INSEE
+// commune of the Eurométropole. No user id, no IP, no time of day, no free text (CHECK constraints). Rolled up and DELETED once the quarter is frozen
+// (api/_services/demand-signals.js is the only writer and reader).
+export const DemandSignalDaily = pgTable('DemandSignalDaily', {
+	day: date('day').notNull(),
+	signal: text('signal').notNull(),
+	code: text('code').notNull(),
+	commune: text('commune').notNull().default(''),
+	count: integer('count').notNull().default(0)
+}, (t) => ({
+	'DemandSignalDaily_pkey': primaryKey({ name: 'DemandSignalDaily_pkey', columns: [t.day, t.signal, t.code, t.commune] }),
+	'DemandSignalDaily_signal_check': check('DemandSignalDaily_signal_check', sql`${t.signal} IN ('search_need', 'search_category', 'situation', 'parcours_added', 'parcours_closed', 'social_referral')`),
+	'DemandSignalDaily_code_check': check('DemandSignalDaily_code_check', sql`${t.code} ~ '^[A-Za-z0-9_-]{1,64}$'`),
+	'DemandSignalDaily_commune_check': check('DemandSignalDaily_commune_check', sql`${t.commune} ~ '^(67[0-9]{3}|HORS)?$' AND (${t.commune} = '' OR ${t.signal} = 'search_need')`),
+	'DemandSignalDaily_count_check': check('DemandSignalDaily_count_check', sql`${t.count} >= 0`)
+}));
+
+// G14-OBS (drizzle/0062) — the PUBLISHED grid of one closed quarter of the demand signals (cells below the threshold stored masked), frozen once; UPDATE refused by a trigger.
+export const DemandSignalQuarter = pgTable('DemandSignalQuarter', {
+	quarter: text('quarter').notNull().primaryKey(),
+	schemaVersion: text('schemaVersion').notNull(),
+	rules: jsonb('rules').notNull(),
+	published: jsonb('published').notNull(),
+	frozenAt: timestamp('frozenAt', { precision: 3 }).notNull().defaultNow(),
+	release: text('release')
+}, (t) => ({
+	'DemandSignalQuarter_quarter_format_check': check('DemandSignalQuarter_quarter_format_check', sql`${t.quarter} ~ '^[0-9]{4}-T[1-4]$'`)
+}));
+
 export const RdvNotificationLog = pgTable('RdvNotificationLog', {
 	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
 	kind: text('kind').notNull().default("MESSAGE_EMAIL"),

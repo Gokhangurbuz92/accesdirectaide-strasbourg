@@ -246,5 +246,7 @@
  "indicators.themes.title": "المساعدات المنشورة حسب موضوع المصدر الرسمي",
  "indicators.themes.is_not": "ليس هذا مدى أهمية الاحتياجات في مجال ما: بل عدد الصفحات في الدليل فقط، مصنّفة كما يصنّفها المصدر.",
  "indicators.themes.text": "الموضوع هو الذي يعطيه المصدر الرسمي (Service-Public…) للصفحة؛ ويبقى بالفرنسية.",
- "indicators.themes.none": "موضوع غير محدد من المصدر"
+ "indicators.themes.none": "موضوع غير محدد من المصدر",
+ "impact.observatoire": "الحقوق المبحوث عنها في الموقع وأماكن المساعدة المنشورة، فصلًا بفصل:",
+ "impact.observatoire_link": "اطّلع على المرصد"
 }

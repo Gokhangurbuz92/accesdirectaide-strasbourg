@@ -772,6 +772,35 @@
         }
       }
     },
+    "/public/observatoire": {
+      "get": {
+        "tags": ["Public"],
+        "summary": "Observatoire des droits et des services (G14-OBS) : signaux d'usage anonymes du site (recherches par domaine et sous-domaine du référentiel 20 × 86 et par commune de l'Eurométropole, situations choisies avec accord, étapes de Mon Parcours, motifs d'orientation sociale, demandes de rendez-vous) par trimestre civil clos et figé, et lieux publiés de l'annuaire. Pas une mesure du non-recours officiel, pas des statistiques officielles. Valeurs < 5 masquées (zéro compris), masquage complémentaire, communes détaillées à partir de 20 recherches, totaux = sommes des valeurs publiées. Licence Ouverte 2.0 (etalab-2.0). Lecture seule, sans compte, 30 lectures par minute et par adresse. Fermé (404) sauf ADA_OBSERVATOIRE=open",
+        "parameters": [
+          { "name": "format", "in": "query", "required": false, "schema": { "type": "string", "enum": ["json", "csv"], "default": "json" }, "description": "json : schéma ada.observatoire.v1 ; csv : une ligne par cellule publiée (jeu, trimestre, date_gel, signal, domaine, code, commune_insee, commune, valeur, statut), UTF-8, fins de ligne CRLF. Tout autre paramètre est refusé (400)." }
+        ],
+        "responses": {
+          "200": { "description": "schema ada.observatoire.v1 : computedAt, licence, territory (EPCI, communes), rules (kMin 5, communeTableMin 20, supplyBand 1-4), collecting, codes, quarters[] (quarter, frozenAt, collected, search, categories, situations, parcoursAdded, parcoursClosed, referrals, bookings, supplyAtFreeze, gaps ; null = non collecté ; valeur null = masquée), supply (lieux publiés par domaine et par commune ; null = 1 à 4)" },
+          "400": { "description": "QUERY_PARAMETER_NOT_ACCEPTED" },
+          "404": { "description": "Fermé : ADA_OBSERVATOIRE n'est pas « open »" },
+          "429": { "description": "Trop de demandes" },
+          "500": { "description": "OBSERVATOIRE_UNAVAILABLE" }
+        }
+      }
+    },
+    "/public/signal": {
+      "post": {
+        "tags": ["Public"],
+        "summary": "Compteur facultatif d'une situation choisie sur « Ma situation » (G14-OBS) : envoyé seulement si la personne a coché la case ; corps exactement { \"situation\": \"<identifiant de la liste fermée>\" } ; enregistre +1 pour ce jour, sans identifiant, adresse IP, heure ni texte. 10 par minute et par adresse. Fermé (404) sauf ADA_DEMAND_SIGNALS contenant « situation »",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "additionalProperties": false, "required": ["situation"], "properties": { "situation": { "type": "string", "maxLength": 64 } } } } } },
+        "responses": {
+          "204": { "description": "Compté" },
+          "400": { "description": "INVALID_BODY, FIELD_NOT_ALLOWED (noms des champs seulement) ou UNKNOWN_SITUATION" },
+          "404": { "description": "Fermé" },
+          "429": { "description": "Trop de demandes" }
+        }
+      }
+    },
     "/contact": {
       "get": {
         "tags": ["Core Data"],

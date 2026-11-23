@@ -108,6 +108,7 @@ const MentionsLegales = lazy(() => import("./MentionsLegales.jsx"));
 const LegalDraftDocument = lazy(() => import("./LegalDraftDocument.jsx"));   // R45 (ENG-LR-5): draft legal documents, shown only when approved or in LAB preview
 const SourcesMethode = lazy(() => import("./SourcesMethode.jsx"));
 const Impact = lazy(() => import("./Impact.jsx"));
+const Observatoire = lazy(() => import("./Observatoire.jsx"));   // G14-OBS
 const Mission = lazy(() => import("./Mission.jsx"));
 const Method = lazy(() => import("./Method.jsx"));
 const Sources = lazy(() => import("./Sources.jsx"));
@@ -669,6 +670,7 @@ function PagesContent() {
                                 <Route path="/ressources/view" element={<RessourceDetail />} />
 
                                 <Route path="/impact" element={<Impact />} />
+                                <Route path="/observatoire" element={<Observatoire />} />
                                 <Route path="/notre-mission" element={<Mission />} />
                                 <Route path="/notre-methode" element={<Method />} />
                                 <Route path="/sources" element={<Sources />} />

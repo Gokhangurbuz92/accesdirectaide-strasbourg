@@ -6,6 +6,7 @@ import VerifiedCatalogue from '@/components/layout/VerifiedCatalogue';
 import i18n, { useT } from '@/i18n';
 import PublicIndicators from '@/components/impact/PublicIndicators';
 import { accountsOpened, publicIndicatorsOpened } from '@/lib/publicBeta';
+import { observatoireOpened } from '@/lib/observatoire';
 
 /**
  * PKG-11 / P25: only measured figures. R26: what is measured today is what is published — the live counts of verified records, read from the public
@@ -30,6 +31,14 @@ export default function Impact() {
 
                 {/* G8: the public indicators of the Observatoire — closed unless the build sets VITE_PUBLIC_INDICATORS=open (owner decision C8/D4) */}
                 {publicIndicatorsOpened() && <PublicIndicators />}
+
+                {/* G14-OBS: the observatoire of searched rights and published places — linked only once the build opens it (VITE_OBSERVATOIRE=open) */}
+                {observatoireOpened() && (
+                    <p className="rounded-2xl border border-slate-200 bg-white p-6 text-slate-800 shadow-sm" data-testid="impact-observatoire-link">
+                        {t('about:impact.observatoire', 'Les droits recherchés sur le site et les lieux d’aide publiés, trimestre par trimestre :')}{' '}
+                        <Link to="/observatoire" className="font-semibold text-blue-700 hover:underline">{t('about:impact.observatoire_link', 'voir l’Observatoire')}</Link>
+                    </p>
+                )}
 
                 <section aria-labelledby="impact-not-measured" className="grid gap-6 lg:grid-cols-2">
                     <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-testid="impact-no-figures">

@@ -33,7 +33,7 @@ describe.skipIf(!hasDatabase)('migration 0057: up → down → code without it �
   const ALL_DOWN = { t0: false, t1: false, t2: false, t3: false, t4: false, t5: false, x05: true, x01: true };
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
-  const down = async () => { for (const f of ['drizzle/rollback/0059_down.sql', 'drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql']) await pool.query(fs.readFileSync(f, 'utf8')); };   // G13: 0058 is newer and is rolled back first
+  const down = async () => { for (const f of ['drizzle/rollback/0062_down.sql', 'drizzle/rollback/0059_down.sql', 'drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql']) await pool.query(fs.readFileSync(f, 'utf8')); };   // G13: 0058 is newer and is rolled back first
   const REL = `(${TABLES.map((t) => `'"${t}"'::regclass`).join(', ')})`;
 
   beforeAll(async () => {
@@ -57,7 +57,7 @@ describe.skipIf(!hasDatabase)('migration 0057: up → down → code without it �
     const journal = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries;
     const at = journal.findIndex((e) => e.tag === TAG);   // G13: 0058 (sole administrator) follows 0057
     expect(journal[at]).toMatchObject({ idx: 57, tag: TAG }); expect(journal[at - 1].tag).toBe('0056_x05_job_board'); expect(when).toBeGreaterThan(journal[at - 1].when);
-    expect(journal.slice(at + 1).map((e) => e.tag)).toEqual(['0058_g12_sole_admin_checks', '0059_g14_moderation_dsa']);   // G14: 0059 (moderation, DSA) follows
+    expect(journal.slice(at + 1).map((e) => e.tag)).toEqual(['0058_g12_sole_admin_checks', '0059_g14_moderation_dsa', '0062_g14_obs_demand_signals']);   // G14: 0059 (moderation, DSA) follows; G14-OBS: 0062
     const fks = await q(`SELECT conname, confdeltype FROM pg_constraint WHERE conrelid IN ${REL} AND contype = 'f' ORDER BY 1`);
     expect(fks).toHaveLength(10); for (const f of fks) expect(f.confdeltype, f.conname).toBe('c');
     expect((await q(`SELECT conname FROM pg_constraint WHERE conrelid IN ${REL} AND contype = 'c' ORDER BY 1`)).map((r) => r.conname)).toEqual([

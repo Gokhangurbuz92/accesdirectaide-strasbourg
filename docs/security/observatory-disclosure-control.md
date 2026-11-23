@@ -112,3 +112,24 @@ masked-cell sums (visibility audit).
 6. **Small populations of the future**: the thresholds were chosen for Strasbourg / Eurométropole densities; a sparse territory can make most cells
    masked (utility) or, with a rare need, keep residual 2 meaningful.
 7. **Validation**: no DPO, CNIL, statistician or institutional review of the method; publication stays DEFERRED until privacy review and owner authorisation.
+
+## G14-OBS (23/11/2026) — anonymous demand signals and the public Observatoire
+
+Scope: GET /api/public/observatoire (JSON, `?format=csv`), the page /observatoire, POST /api/public/signal (opt-in situation counter). Code:
+`api/lib/demand-signals.js` (registry, publication rules, CSV), `api/_services/demand-signals.js` (only reader / writer), migration 0062, ADR 023.
+All switches closed by default (`ADA_DEMAND_SIGNALS`, `ADA_OBSERVATOIRE`, `VITE_OBSERVATOIRE`, `VITE_DEMAND_SIGNALS`).
+
+- **What is stored**: per UTC day, a closed-list code and a count; for searches only, an Eurométropole INSEE code or « HORS » — never for a sensitive
+  subdomain (`SENSITIVE_NEEDS`). No identifier, IP, time of day or text (CHECK constraints). Daily rows are deleted once their quarter is frozen.
+- **Same thresholds, nothing loosened**: k = 5 (zero included, every code listed), complementary suppression per column, the C8 marginal protection
+  (`alignColumns` + `protectMarginals`) between the subdomain and the commune table of each domain, commune tables only from 20 searches in the domain,
+  totals = sums of published cells, closed quarters only, frozen once (UPDATE refused). Appointment requests per domain: `primaryCell` with the
+  organisations' contributions (p % rule, c = 2, p = 20).
+- **Supply**: the public directory (D-5 strict), Eurométropole only; 0 exact, 1–4 banded, ≥ 5 exact.
+- **Query surface**: only `format=json|csv`; any other parameter refused before reading (H1); 30 reads / minute / address; 1 h server cache.
+- **Residual risks**: (1) heuristics, not a proof of anonymity; (2) a listed code at « masqué » says nothing (all codes are listed, zeros masked) but a
+  published value ≥ 5 says « at least 5 events », not people; (3) counts can be inflated by automated searches within the search rate limit (signals,
+  not measurements); (4) a quarter is frozen at the job's first run after it closes; until then nothing of it is published (no live window); (5) the
+  supply classification is a keyword heuristic (place kind + declared services) and the directory is incomplete — the « leads » say so.
+- Tests: `tests/unit/g14-obs-demand-signals.test.js` (suppression, marginal intervals, schema without personal data, handlers, gate),
+  `tests/integration/g14-obs-demand-signals-db.test.js` (CHECK refusals, recording, freeze + deletion, no personal table read).

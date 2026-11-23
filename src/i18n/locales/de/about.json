@@ -246,5 +246,7 @@
  "indicators.themes.title": "Veröffentlichte Leistungen nach Thema der offiziellen Quelle",
  "indicators.themes.is_not": "Es ist nicht die Bedeutung des Bedarfs in einem Bereich, sondern nur die Zahl der Seiten im Katalog, so eingeordnet wie von der Quelle.",
  "indicators.themes.text": "Das Thema ist das, das die offizielle Quelle (Service-Public…) der Seite gibt; es bleibt auf Französisch.",
- "indicators.themes.none": "Thema von der Quelle nicht angegeben"
+ "indicators.themes.none": "Thema von der Quelle nicht angegeben",
+ "impact.observatoire": "Die auf der Website gesuchten Rechte und die veröffentlichten Anlaufstellen, Quartal für Quartal:",
+ "impact.observatoire_link": "zur Beobachtungsstelle"
 }
