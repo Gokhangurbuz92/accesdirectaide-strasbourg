@@ -50,7 +50,9 @@ export const proLoginSchema = z.object({
 export const proRegisterSchema = z.object({
     email: z.string().email('Format email invalide'),
     password: z.string().min(8, 'Mot de passe trop court'),
-    structureName: z.string().min(1, 'Nom de structure requis'),
+    structureName: z.string().min(1, 'Nom de structure requis').max(1000, 'Nom de structure trop long'),   // G14: the handler applies the 2–200 bound with its own message
+    siret: z.string().min(1, 'SIRET requis').max(40, 'SIRET invalide'),   // G14: 14 digits + Luhn key checked by the handler (api/_utils/siret.js)
+    termsAccepted: z.boolean().optional(),   // G14: only true is an acceptance (the handler refuses anything else)
 });
 
 export const proRegisterInviteSchema = z.object({

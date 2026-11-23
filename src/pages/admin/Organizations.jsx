@@ -23,15 +23,65 @@ const explain = (e) => {
  * activity (active / suspended / not activated) and D-5 public visibility (derived). Only an active AND verified organization with members can receive a NEW
  * dossier access or NEW bookings. Every write needs an administrator session with MFA; the reason is kept in the audit log.
  */
-const DECISIONS = ['never', 'hold', 'rejected', 'verified'];
+const DECISIONS = ['never', 'hold', 'rejected', 'verified', 'pro_pending'];
 const ROLE_LABEL = () => ({ STRUCTURE_ADMIN: i18n.t('admin:organizations.members.role_admin', 'Administrateur de la structure'), PRO: i18n.t('admin:organizations.members.role_pro', 'Professionnel') });
+
+/**
+ * G14 (owner 23/11/2026: ADA Pro opens without a pilot structure) — a structure's own sign-up request (api/_services/pro-self-registration.js). « Vérifier et
+ * activer »: the structure is verified on an official source (note ≥ 20 characters, https source of an allowed domain, territory confirmed, bound to the
+ * version of the record read above), activated, and its administrator receives the e-mail that opens the second factor — in one step. « Refuser »: the
+ * pending account is disabled with the reason of the card (kept in the journal).
+ */
+function PendingRegistration({ orgId, member, activeMembers, busy, reasonOk, reason, run, onChanged }) {
+  const { t } = useT('admin');
+  const [v, setV] = useState({ sourceUrl: '', note: '', territory: false, version: '' });
+  const errs = useFormErrors();
+  useEffect(() => { let live = true; apiClient.admin.getVerification('structure', orgId).then((r) => { if (live) setV((x) => ({ ...x, version: r.version || '' })); }).catch(() => {}); return () => { live = false; }; }, [orgId]);
+  const id = (k) => `pro-reg-${k}-${member.id}`;
+  const check = () => {
+    const e = {};
+    if (!/^https:\/\//.test(v.sourceUrl.trim())) e[id('source')] = t('admin:organizations.pro_registration.source_required', 'Indiquez l’adresse https de la source officielle consultée (annuaire des entreprises, INSEE, Journal officiel…).');
+    if (v.note.trim().length < 20) e[id('note')] = minLengthMessage(t, t('admin:organizations.pro_registration.note_label', 'Ce que la source montre (au moins 20 caractères)'), 20);
+    if (!v.territory) e[id('territory')] = t('admin:organizations.pro_registration.territory_required', 'Confirmez le territoire de la structure.');
+    return errs.check(e);
+  };
+  const activate = () => check() && run(async () => {
+    await apiClient.admin.verifyAndActivateProRegistration(member.id, { sourceUrl: v.sourceUrl.trim(), evidenceNote: v.note.trim(), territoryConfirmed: v.territory === true, expectedVersion: v.version });
+    await onChanged();
+  }, t('admin:organizations.pro_registration.done_activated', 'Structure vérifiée et activée : l’e-mail d’activation de la double authentification a été remis à la messagerie.'));
+  const refuse = () => reasonOk() && run(async () => { await apiClient.admin.refuseProRegistration(member.id, reason); await onChanged(); },
+    t('admin:organizations.pro_registration.done_refused', 'Demande refusée : le compte est désactivé, le motif est conservé dans le journal.'));
+  return (
+    <div className="space-y-2 rounded border border-amber-300 bg-amber-50 p-2 text-amber-950" data-testid="admin-org-pro-registration">
+      <p className="font-semibold">{t('admin:organizations.pro_registration.title', 'Demande d’inscription ADA Pro à vérifier')}</p>
+      <p>{t('admin:organizations.pro_registration.intro', 'Vérifiez la structure et son SIRET sur une source officielle, puis lisez la fiche ci-dessus. « Vérifier et activer » vérifie la fiche, active l’organisation et envoie à cette personne le lien d’activation de la double authentification.')}</p>
+      {activeMembers > 0 ? <p className="font-semibold" data-testid="admin-org-pro-registration-existing">{t('admin:organizations.pro_registration.existing_members', 'Attention : cette organisation a déjà {{n}} membre(s) actif(s). Cette personne en deviendrait administratrice.', { n: activeMembers })}</p> : null}
+      <ErrorSummary ref={errs.summaryRef} errors={errs.errors} order={[id('source'), id('note'), id('territory')]} testid={`admin-org-pro-registration-errors-${member.id}`} />
+      <label className="block" htmlFor={id('source')}>{t('admin:organizations.pro_registration.source_label', 'Source officielle consultée (adresse https)')}</label>
+      <input id={id('source')} type="url" aria-required="true" className="w-full rounded border bg-white p-2" value={v.sourceUrl} {...fieldA11y(id('source'), errs.errors)} onChange={(e) => { setV((x) => ({ ...x, sourceUrl: e.target.value })); errs.clear(id('source')); }} />
+      <FieldError field={id('source')} errors={errs.errors} />
+      <label className="block" htmlFor={id('note')}>{t('admin:organizations.pro_registration.note_label', 'Ce que la source montre (au moins 20 caractères)')}</label>
+      <textarea id={id('note')} aria-required="true" className="w-full rounded border bg-white p-2" rows={2} value={v.note} {...fieldA11y(id('note'), errs.errors)} onChange={(e) => { setV((x) => ({ ...x, note: e.target.value })); errs.clear(id('note')); }} />
+      <FieldError field={id('note')} errors={errs.errors} />
+      <label className="flex items-center gap-2" htmlFor={id('territory')}>
+        <input id={id('territory')} type="checkbox" checked={v.territory} {...fieldA11y(id('territory'), errs.errors)} onChange={(e) => { setV((x) => ({ ...x, territory: e.target.checked })); errs.clear(id('territory')); }} />
+        {t('admin:organizations.pro_registration.territory_label', 'Je confirme le territoire de la structure')}
+      </label>
+      <FieldError field={id('territory')} errors={errs.errors} />
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" disabled={busy || !v.version} data-testid="admin-org-pro-registration-activate" onClick={activate}>{t('admin:organizations.pro_registration.activate', 'Vérifier et activer')}</Button>
+        <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-pro-registration-refuse" onClick={refuse}>{t('admin:organizations.pro_registration.refuse', 'Refuser')}</Button>
+      </div>
+    </div>
+  );
+}
 
 /**
  * G8 (pilot onboarding) — the organization's ADA Pro accounts, and ADA's own two actions on ONE account (api/_services/pro-account-admin.js): disable an active
  * account (incident, lost device while the structure administrator is away — refused while the member still holds work to hand over) and erase a disabled
  * one (a former member's erasure request). Same reason field and MFA rule as the activity actions.
  */
-function MembersPanel({ orgId, busy, reasonOk, reason, run }) {
+function MembersPanel({ orgId, activeMembers = 0, busy, reasonOk, reason, run }) {
   const { t } = useT('admin');
   const [state, setState] = useState({ loading: true, error: '', members: [] });
   const load = useCallback(async () => {
@@ -51,10 +101,11 @@ function MembersPanel({ orgId, busy, reasonOk, reason, run }) {
             {state.members.map((m) => (
               <li key={m.id} className="flex flex-wrap items-center gap-2" data-testid="admin-org-member">
                 <span>{m.erased ? t('admin:organizations.members.erased', 'Compte effacé') : m.email}</span>
-                <span className="text-slate-700">— {ROLE_LABEL()[m.role] || m.role} · {m.status === 'active' ? t('admin:organizations.members.active', 'actif') : t('admin:organizations.members.disabled', 'désactivé')}</span>
+                <span className="text-slate-700">— {ROLE_LABEL()[m.role] || m.role} · {m.status === 'active' ? t('admin:organizations.members.active', 'actif') : m.status === 'pending_verification' ? t('admin:organizations.members.pending_verification', 'inscription à vérifier') : t('admin:organizations.members.disabled', 'désactivé')}</span>
                 {m.status === 'active' ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-member-disable"
                   onClick={() => act('DISABLE_PRO_ACCOUNT', m.id, t('admin:organizations.members.done_disabled', 'Compte désactivé : ses sessions sont terminées.'))}>{t('admin:organizations.members.disable', 'Désactiver ce compte')}</Button> : null}
-                {m.status !== 'active' && !m.erased ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-member-erase"
+                {m.status === 'pending_verification' ? <div className="w-full"><PendingRegistration orgId={orgId} member={m} activeMembers={activeMembers} busy={busy} reasonOk={reasonOk} reason={reason} run={run} onChanged={load} /></div> : null}
+                {m.status !== 'active' && m.status !== 'pending_verification' && !m.erased ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-member-erase"
                   onClick={() => act('ERASE_PRO_ACCOUNT', m.id, t('admin:organizations.members.done_erased', 'Compte effacé : adresse, mot de passe et double authentification supprimés.'))}>{t('admin:organizations.members.erase', 'Effacer ce compte (demande de la personne)')}</Button> : null}
               </li>
             ))}
@@ -102,6 +153,7 @@ export default function AdminOrganizations() {
           <option value="hold">{t('admin:organizations.decision.hold', 'En attente (décision d’une personne)')}</option>
           <option value="rejected">{t('admin:organizations.decision.rejected', 'Refusées')}</option>
           <option value="verified">{t('admin:organizations.decision.verified', 'Vérifiées')}</option>
+          <option value="pro_pending">{t('admin:organizations.decision.pro_pending', 'Inscriptions ADA Pro à vérifier')}</option>
         </select>
         {!state.loading && !state.error ? <span className="text-slate-700" data-testid="admin-org-count">{t('admin:organizations.count', '{{shown}} affichée(s) sur {{total}}', { shown: state.items.length, total: state.total })}</span> : null}
       </div>
@@ -115,6 +167,8 @@ export default function AdminOrganizations() {
           {state.items.map((o) => (
             <li key={o.id} className="space-y-2 rounded border p-3 text-sm" data-testid="admin-org">
               <p className="font-semibold"><span {...fr}>{o.nom}</span> <span className="font-normal text-slate-700">— <span {...fr}>{o.ville || '—'}</span></span></p>
+              {o.pendingRegistrations > 0 ? <p><span className="rounded border border-amber-400 bg-amber-50 px-2 py-0.5 font-semibold text-amber-950" data-testid="admin-org-pro-pending">{t('admin:organizations.pro_registration.badge', '{{n}} inscription(s) ADA Pro à vérifier (Agir)', { n: o.pendingRegistrations })}</span></p> : null}
+              {o.siret ? <p className="text-slate-800" data-testid="admin-org-siret">{t('admin:organizations.siret', 'SIRET')} : <code>{o.siret}</code></p> : null}
               <dl className="grid grid-cols-2 gap-1 sm:grid-cols-4">
                 {/* owner LAB audit (2026-10-25): a record a reviewer put on hold says so (it showed « Non vérifiée »); the public reasons are in French, not codes */}
                 <div><dt className="text-slate-700">{t('admin:organizations.identity', 'Identité')}</dt><dd data-testid="admin-org-identity">{o.publicationHold && o.identity !== 'REJECTED' ? t('admin:organizations.identity.on_hold', 'En attente (décision d’une personne)') : (ID_LABEL()[o.identity] || o.identity)}</dd></div>
@@ -147,7 +201,7 @@ export default function AdminOrganizations() {
                       ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-suspend" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'SUSPEND', f(o.id).reason || ''), t('admin:organizations.done.suspended', 'Organisation suspendue.'))}>{t('admin:organizations.suspend', 'Suspendre')}</Button>
                       : <Button size="sm" variant="outline" disabled={busy} data-testid="admin-org-reactivate" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'REACTIVATE', f(o.id).reason || ''), t('admin:organizations.done.reactivated', 'Organisation réactivée.'))}>{t('admin:organizations.reactivate', 'Réactiver')}</Button>}
                   </div>
-                  {f(o.id).open ? <MembersPanel orgId={o.id} busy={busy} reason={f(o.id).reason || ''} reasonOk={() => reasonOk(o.id)} run={run} /> : null}
+                  {f(o.id).open ? <MembersPanel orgId={o.id} activeMembers={o.activeMembers} busy={busy} reason={f(o.id).reason || ''} reasonOk={() => reasonOk(o.id)} run={run} /> : null}
                 </div>
               </details>
             </li>

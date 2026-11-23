@@ -22,6 +22,9 @@ export const publicInvitation = ({ token, ...rest }) => rest;
  * that person has left, been suspended, moved or is no longer an administrator of the organization, their pending invitations stop being redeemable — the other
  * administrators' invitations are untouched, and a current administrator's « Relancer » makes the invitation theirs again. An invitation with no recorded sender
  * (written before R20) keeps working until it expires (7 days), like the clear-token rows above.
+ * G14: an MFA enrolment invitation sent from the administration (« Vérifier et activer », api/_services/pro-self-registration.js) carries
+ * details.senderRealm = 'ADMIN' and the administrator's e-mail as actor: it stays valid while that AdminUser exists, is not disabled and holds an
+ * administration role (an unknown e-mail — the env identity, a fixture — is never an authorised sender).
  * @param {any} dbh drizzle database @param {string[]} ids invitation ids @returns {Promise<Set<string>>} the ids whose sender is no longer authorized
  */
 export async function invitationsWithRevokedSender(dbh, ids) {
@@ -29,14 +32,20 @@ export async function invitationsWithRevokedSender(dbh, ids) {
   if (!list.length) return new Set();
   const rows = (await dbh.execute(sql`
     SELECT DISTINCT ON (a.details->>'invitationId') a.details->>'invitationId' AS "invitationId", i."structureId" AS "invitationStructure",
-           u.id AS "senderId", u.status, u.role, u."structureId" AS "senderStructure"
+           u.id AS "senderId", u.status, u.role, u."structureId" AS "senderStructure",
+           a.details->>'senderRealm' AS realm, au.id AS "adminId", au.role AS "adminRole", au."disabledAt" AS "adminDisabledAt"
       FROM "AuditLog" a
       JOIN "Invitation" i ON i.id = a.details->>'invitationId'
-      LEFT JOIN "ProUser" u ON u.id = a.actor_id
+      LEFT JOIN "ProUser" u ON u.id = a.actor_id AND a.details->>'senderRealm' IS DISTINCT FROM 'ADMIN'
+      LEFT JOIN "AdminUser" au ON lower(au.email) = lower(a.actor_id) AND a.details->>'senderRealm' = 'ADMIN'
      WHERE a.action IN ('INVITATION_SENT', 'INVITATION_RESENT') AND a.details->>'invitationId' IN (${sql.join(list.map((x) => sql`${x}`), sql`, `)})
      ORDER BY a.details->>'invitationId', a.timestamp DESC`)).rows;
   const out = new Set();
   for (const r of rows) {
+    if (r.realm === 'ADMIN') {
+      if (!(r.adminId && !r.adminDisabledAt && ['admin', 'superadmin'].includes(String(r.adminRole || '').toLowerCase()))) out.add(String(r.invitationId));
+      continue;
+    }
     // R42-A08: the platform role SUPERADMIN may issue an MFA enrolment invitation for a member of ANY structure (the first administrator of a self-registered
     // structure has nobody else to invite them); a structure administrator only for their own structure
     const senderRole = String(r.role || '').toUpperCase();

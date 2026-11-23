@@ -4,6 +4,7 @@ import logger from '../../_utils/logger.js';
 import { resolveAuthContext, isAdminRole } from '../../_utils/auth.js';
 import { listOrganizations, setActivity } from '../../_services/org-lifecycle.js';
 import { administerProAccount, listMembers } from '../../_services/pro-account-admin.js';
+import { activateSelfRegistration, refuseSelfRegistration } from '../../_services/pro-self-registration.js';
 import { bumpContentEpoch } from '../../lib/search-cache.js';
 
 /**
@@ -12,6 +13,9 @@ import { bumpContentEpoch } from '../../lib/search-cache.js';
  *   POST /api/admin/organizations { id, action: SUSPEND|REACTIVATE, reason }   named administrator session WITH MFA
  *   GET  /api/admin/organizations?members=<structureId>                         G8: the organization's ADA Pro accounts (no secret, no hash; any administrator session)
  *   POST /api/admin/organizations { userId, action: DISABLE_PRO_ACCOUNT|ERASE_PRO_ACCOUNT, reason }   G8: one professional account (api/_services/pro-account-admin.js), MFA
+ *   POST /api/admin/organizations { userId, action: VERIFY_AND_ACTIVATE_PRO_REGISTRATION, sourceUrl, evidenceNote, territoryConfirmed, expectedVersion }
+ *   POST /api/admin/organizations { userId, action: REFUSE_PRO_REGISTRATION, reason }   G14: a structure's own ADA Pro sign-up request (api/_services/pro-self-registration.js), MFA
+ *   GET  /api/admin/organizations?decision=pro_pending                          G14: the organisations with a sign-up request awaiting a decision
  * Identity verification itself is the existing MFA content-verification flow (/api/admin/content-verification, entityType structure).
  */
 export default async function handler(req, res) {
@@ -30,6 +34,17 @@ export default async function handler(req, res) {
       const acc = await administerProAccount(action, req.body || {}, String(auth.email));
       if (!acc.ok) return res.status(acc.status).json({ error: acc.code, message: acc.message, ...(acc.holds ? { holds: acc.holds } : {}) });
       return res.status(200).json(acc);
+    }
+    if (action === 'VERIFY_AND_ACTIVATE_PRO_REGISTRATION' || action === 'REFUSE_PRO_REGISTRATION') {
+      const b = req.body || {};
+      const reviewer = { email: String(auth.email), role: String(auth.role) };
+      const reg = action === 'REFUSE_PRO_REGISTRATION'
+        ? await refuseSelfRegistration({ userId: b.userId, reason: b.reason }, reviewer)
+        : await activateSelfRegistration({ userId: b.userId, sourceUrl: typeof b.sourceUrl === 'string' ? b.sourceUrl : '', evidenceNote: typeof b.evidenceNote === 'string' ? b.evidenceNote : '',
+          territoryConfirmed: b.territoryConfirmed === true, expectedVersion: typeof b.expectedVersion === 'string' ? b.expectedVersion : '' }, reviewer);
+      if (!reg.ok) return res.status(reg.status).json({ error: reg.code, message: reg.message });
+      if (action === 'VERIFY_AND_ACTIVATE_PRO_REGISTRATION') await bumpContentEpoch().catch(() => {});
+      return res.status(200).json(reg);
     }
     const out = await setActivity(req.body?.id, req.body || {}, String(auth.email));
     if (!out.ok) return res.status(out.status).json({ error: out.code, message: out.message });

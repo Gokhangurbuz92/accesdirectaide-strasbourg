@@ -63,6 +63,7 @@ export default function ProLogin() {
                 // the French message, never the API's English code
                 // R31: only the server's « Account disabled » means a disabled account; any other 403 (security check of the request) used to read « compte désactivé »
                 throw new Error(res.status === 401 ? t('pro:login.bad_credentials', 'Adresse ou mot de passe incorrect.') : res.status === 403 && data.error === 'Account disabled' ? t('pro:login.disabled', 'Ce compte est désactivé : contactez l’administrateur de votre structure.')
+                    : res.status === 403 && data.error === 'PRO_REGISTRATION_PENDING' ? t('pro:login.registration_pending', 'Votre demande a bien été reçue : votre structure doit d’abord être vérifiée sur une source officielle. Vous recevrez un e-mail dès l’ouverture de votre espace.')
                     : res.status === 403 ? t('pro:login.security_refused', 'La connexion a été refusée par une vérification de sécurité. Rechargez la page, puis réessayez.')
                     : res.status === 503 && data.error === 'PUBLIC_BETA_RESTRICTED' ? data.message
                     : res.status === 429 ? t('pro:login.too_many', 'Trop de tentatives : patientez quelques minutes.') : t('pro:login.failed', 'La connexion a échoué. Réessayez.'));

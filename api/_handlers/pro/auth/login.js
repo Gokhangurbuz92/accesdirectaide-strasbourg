@@ -2,7 +2,7 @@
 import crypto from 'node:crypto';
 import logger from '../../../_utils/logger.js';
 import { verifyPassword } from '../../../_utils/user-auth.js';
-import { signProToken, signProMfaPendingToken, logProAudit } from '../../../_utils/auth.js';
+import { signProToken, signProMfaPendingToken, logProAudit, PRO_PENDING_VERIFICATION_STATUS } from '../../../_utils/auth.js';
 import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../../_utils/rateLimit.js';
 import { db } from '../../../../src/db/index.js';
 import { sql } from 'drizzle-orm';
@@ -77,6 +77,11 @@ export default async function handler(req, res) {
                 organizations: matching.map((u) => ({ structureId: u.structureId, name: names.find((n) => n.id === u.structureId)?.nom || 'Organisation' })) });
         }
 
+        if (targetUser.status === PRO_PENDING_VERIFICATION_STATUS) {
+            // G14: a structure's own sign-up request not yet verified by ADA — said only after the password matched (the person who made the request)
+            await logProAudit('LOGIN_FAILED', targetUser.id, targetUser.structureId, { reason: 'Registration pending verification' }, ip);
+            return res.status(403).json({ error: 'PRO_REGISTRATION_PENDING', message: 'Votre demande a bien été reçue : votre structure doit d’abord être vérifiée sur une source officielle. Vous recevrez un e-mail dès l’ouverture de votre espace.' });
+        }
         if (targetUser.status !== 'active' && targetUser.status !== 'pending') {
             // If disabled — said only after the password matched (it used to be said for any password: an account-existence oracle)
             await logProAudit('LOGIN_FAILED', targetUser.id, targetUser.structureId, { reason: 'Account disabled' }, ip);

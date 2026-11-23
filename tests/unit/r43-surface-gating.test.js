@@ -165,11 +165,12 @@ describe('a self-registered citizen never obtains a professional, structure, ter
   it('every code path that writes a professional, administration or institution account, or an invitation, is one of the reviewed paths', () => {
     // a new writer must be reviewed here: each entry says why a citizen cannot reach it
     const REVIEWED = {
-      'api/_handlers/pro/auth/register.js': 'public structure sign-up — closed in Production and the beta by default (E1)',
+      'api/_handlers/pro/auth/register.js': 'public structure sign-up — closed in Production and the beta by default (E1); G14: a REQUEST, the account is pending_verification (no session) until ADA verifies the structure',
       'api/_handlers/pro/auth/register-invite.js': 'needs an administrator’s hashed invitation; never a platform role (PRO / STRUCTURE_ADMIN only)',
       'api/_handlers/pro/auth/reset-password.js': 'password of an EXISTING professional account (no role written)',
       'api/_handlers/pro/invite.js': 'STRUCTURE_ADMIN / SUPERADMIN only; structure roles only',
-      'api/_handlers/pro/mfa-invitation.js': 'STRUCTURE_ADMIN / SUPERADMIN only; the role equals the member’s',
+      'api/_services/pro-mfa-invitation.js': 'G14: the MFA enrolment invitation of an EXISTING member (pro/mfa-invitation: STRUCTURE_ADMIN / SUPERADMIN, the role equals the member’s; another structure only when verified and active)',
+      'api/_services/pro-self-registration.js': 'G14: administration (MFA) decision on a structure’s own sign-up request — pending_verification → active after a VERIFY on an official source, never a role',
       'api/_handlers/pro/mfa-setup.js': 'second factor of the signed-in professional (enrolment grant required in Production)',
       'api/_handlers/pro/team.js': 'STRUCTURE_ADMIN / SUPERADMIN only; VALID_ROLES = PRO, STRUCTURE_ADMIN',
       'api/_services/pro-notifications.js': 'notification preferences of the signed-in professional',

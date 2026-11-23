@@ -305,6 +305,11 @@ export const apiClient = {
         getOrganizationMembers: function (id) { return apiRequest('/api/admin/organizations?members=' + encodeURIComponent(id || '')); },
         /** G8 — ADA's action on one professional account (MFA, reason). @param {string} userId @param {'DISABLE_PRO_ACCOUNT' | 'ERASE_PRO_ACCOUNT'} action @param {string} reason */
         administerProAccount: function (userId, action, reason) { return apiRequest('/api/admin/organizations', { method: 'POST', body: { userId: userId, action: action, reason: reason } }); },
+        /** G14 — a structure's own ADA Pro sign-up request: verify on an official source, activate, send the MFA invitation (MFA, one transaction)
+         * @param {string} userId @param {{ sourceUrl: string, evidenceNote: string, territoryConfirmed: boolean, expectedVersion: string }} input */
+        verifyAndActivateProRegistration: function (userId, input) { return apiRequest('/api/admin/organizations', { method: 'POST', body: Object.assign({ userId: userId, action: 'VERIFY_AND_ACTIVATE_PRO_REGISTRATION' }, input) }); },
+        /** G14 — refuse a structure's own ADA Pro sign-up request (the pending account is disabled; MFA, reason) @param {string} userId @param {string} reason */
+        refuseProRegistration: function (userId, reason) { return apiRequest('/api/admin/organizations', { method: 'POST', body: { userId: userId, action: 'REFUSE_PRO_REGISTRATION', reason: reason } }); },
         /** identity verification = the existing MFA content-verification flow @param {{ entityId: string, action: string, sourceUrl?: string, evidenceNote?: string, territoryConfirmed?: boolean, holdReason?: string }} input */
         verifyContent: function (input) { return apiRequest('/api/admin/content-verification', { method: 'POST', body: Object.assign({ entityType: 'structure' }, input) }); },
         /** owner LAB audit: the public content of a record, in full, and the `version` a VERIFY / RELEASE_HOLD is bound to (+ the decision history) */

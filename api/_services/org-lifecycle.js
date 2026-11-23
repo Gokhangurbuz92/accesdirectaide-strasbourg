@@ -22,6 +22,8 @@ const DECISION = {
   hold: sql`s.publication_hold IS NOT NULL AND s.verification_status IS DISTINCT FROM 'REJECTED' AND s.statut IS DISTINCT FROM 'archive'`,
   rejected: sql`s.verification_status = 'REJECTED' AND s.statut IS DISTINCT FROM 'archive'`,
   verified: sql`s.verification_status = 'VERIFIED' AND s.publication_hold IS NULL AND s.statut IS DISTINCT FROM 'archive'`,
+  // G14: a structure's own ADA Pro sign-up request awaits the administrator's « Vérifier et activer » or « Refuser » (api/_services/pro-self-registration.js)
+  pro_pending: sql`EXISTS (SELECT 1 FROM "ProUser" pu WHERE pu."structureId" = s.id AND pu.status = 'pending_verification')`,
 };
 export const ORG_LIST_LIMIT = 200;
 
@@ -31,7 +33,8 @@ export async function listOrganizations({ q = '', decision = '' } = {}, db = def
   // and says how many match (it stops at 200)
   const d = DECISION[String(decision)] || sql`TRUE`;
   const where = sql`(${String(q).trim() === ''} OR s.nom ILIKE ${like} OR s.ville ILIKE ${like}) AND ${d}`;
-  const rows = (await db.execute(sql`SELECT s.*, (SELECT count(*)::int FROM "ProUser" u WHERE u."structureId" = s.id AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN')) AS "activeMembers"
+  const rows = (await db.execute(sql`SELECT s.*, (SELECT count(*)::int FROM "ProUser" u WHERE u."structureId" = s.id AND u.status = 'active' AND upper(u.role) IN ('PRO', 'STRUCTURE_ADMIN')) AS "activeMembers",
+    (SELECT count(*)::int FROM "ProUser" pu WHERE pu."structureId" = s.id AND pu.status = 'pending_verification') AS "pendingRegistrations"
     FROM "Structure" s WHERE ${where} ORDER BY s.nom LIMIT ${ORG_LIST_LIMIT}`)).rows;
   const [{ total }] = (await db.execute(sql`SELECT count(*)::int AS total FROM "Structure" s WHERE ${where}`)).rows;
   return { ok: true, total: Number(total), limit: ORG_LIST_LIMIT, organizations: rows.map((s) => {
@@ -40,7 +43,9 @@ export async function listOrganizations({ q = '', decision = '' } = {}, db = def
     return { id: s.id, slug: s.slug || null, nom: s.nom, ville: s.ville, statut: s.statut,
       identity: s.verification_status, identityVerifiedBy: s.verified_by ? 'ADA' : null, identityVerifiedAt: s.date_verification,
       canReceiveNew: s.statut === 'actif' && s.verification_status === 'VERIFIED' && s.activeMembers > 0,
-      public: { visible: pub.visible, reasons: pub.reasons }, activeMembers: s.activeMembers, publicationHold: s.publication_hold || null };
+      public: { visible: pub.visible, reasons: pub.reasons }, activeMembers: s.activeMembers, publicationHold: s.publication_hold || null,
+      // G14: the SIRET the administrator checks on an official source, and the structure's own ADA Pro sign-up requests awaiting a decision
+      siret: s.siret || null, pendingRegistrations: Number(s.pendingRegistrations || 0) };
   }) };
 }
 

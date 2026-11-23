@@ -23,6 +23,7 @@ import { pipeline, PassThrough } from 'node:stream';
 import { officialJson, officialDownload, SourceError } from './fetcher.js';
 import { arrayElements, readableName } from './finess.js';
 import TERMS from './datainclusion-terms.js';
+import { validSiret } from '../../_utils/siret.js';
 
 export const DATASET = 'referentiel-de-loffre-dinsertion-sociale-et-professionnelle-data-inclusion';
 export const DATASET_PAGE = `https://www.data.gouv.fr/datasets/${DATASET}`;
@@ -73,16 +74,8 @@ export const termsVersion = () => ({ schema: TERMS.schema, commit: TERMS.commit 
 const label = (list, v) => TERMS.lists[list]?.[String(v)] ?? null;
 
 // --------------------------------------------------------------------------------------------------------------- identity helpers
-const digitsOnly = (s) => String(s || '').replace(/\D/g, '');
 /** a well-formed SIRET (14 digits, Luhn key; La Poste's establishments have their own rule) — data·inclusion's SIRET is the producer's, a registry confirms it */
-export function validSiret(s) {
-  const d = digitsOnly(s);
-  if (d.length !== 14) return null;
-  if (d.startsWith('356000000')) return [...d].reduce((a, c) => a + Number(c), 0) % 5 === 0 ? d : null;
-  let sum = 0;
-  for (let i = 0; i < 14; i += 1) { let n = Number(d[13 - i]); if (i % 2 === 1) { n *= 2; if (n > 9) n -= 9; } sum += n; }
-  return sum % 10 === 0 ? d : null;
-}
+export { validSiret };
 const isoDay = (v) => { if (v === null || v === undefined || v === '') return null; const t = typeof v === 'number' ? new Date(v) : new Date(String(v)); return Number.isNaN(t.getTime()) ? null : t.toISOString().slice(0, 10); };
 const httpsUrl = (u) => { try { const x = new URL(String(u || '')); return x.protocol === 'https:' ? x.toString() : null; } catch { return null; } };
 const inDept = (s, dept) => String(s.code_insee || '').startsWith(dept) || (!s.code_insee && String(s.code_postal || '').startsWith(dept));
