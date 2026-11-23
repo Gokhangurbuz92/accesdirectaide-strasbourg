@@ -83,6 +83,7 @@ export function shareableResults(results) {
 export function errorMessageFor(status, code) {
   if (code === 'invalid_json' || code === 'invalid_body' || code === 'validation_error') return 'Vérifiez les informations saisies (date de naissance, montants) puis réessayez.';
   if (status === 429 || code === 'rate_limit_exceeded') return 'Trop de demandes en peu de temps. Patientez un instant avant de réessayer.';
+  if (code === 'OPENFISCA_QUOTA_REACHED') return 'Le calcul indicatif est suspendu jusqu’au début du mois prochain : la limite mensuelle d’utilisation du service de calcul est atteinte. Aucun résultat de remplacement n’est affiché. Vous pouvez demander conseil à un professionnel.';
   if (status === 503 || code === 'OPENFISCA_UNAVAILABLE') return 'Le service est momentanément indisponible. Aucun résultat de remplacement n\'est affiché. Réessayez plus tard.';
   return 'Le service de diagnostic est temporairement indisponible. Réessayez plus tard.';
 }

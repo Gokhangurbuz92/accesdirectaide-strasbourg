@@ -15,6 +15,9 @@ const openfisca = async () => (openfiscaModule ??= await import('../lib/openfisc
 import { buildTestCase, parseResults, getCurrentPeriod } from '../lib/openfiscaMapping.js';
 import { qualifyEstimates, traceQualification } from '../lib/openfiscaEstimate.js';
 import { IDENTITY_FAILURES, cachedEngineHealth } from '../lib/openfiscaEngine.js';
+import { reserveOpenfiscaCall, peekOpenfiscaQuota, QUOTA_MESSAGE_FR } from '../lib/openfiscaQuota.js';
+import { citizenEstimate, estimateConfigProblem } from '../lib/openfiscaLegislation.js';
+import { isEmsCommune } from '../lib/geography/emsCommunes.js';
 import { runLocalSimulation } from '../lib/LocalRulesEngine.js';
 import { ageFromBand } from '../lib/ageBands.js';
 import { checkRateLimit } from '../_utils/rateLimit.js';
@@ -39,6 +42,23 @@ const readings = (answers, referenceDate) => {
 import { ERROR_CODES, SAFE_MESSAGES, captureSafe, classifyError, parseJsonBody } from '../lib/diagnosticErrors.js';
 import { clientIp } from '../_utils/client-ip.js';
 
+/**
+ * G14 — the monthly free-tier guard of the self-hosted OpenFisca engine (api/lib/openfiscaQuota.js). null = the call may go; otherwise the 503 body of the
+ * existing « simulation unavailable » path (no fallback result). Quota reached → OPENFISCA_QUOTA_REACHED (not retryable this month); guard store down →
+ * OPENFISCA_UNAVAILABLE (fail closed: without the counter, 0 € cannot be guaranteed).
+ * @param {string} requestId
+ */
+async function openfiscaQuotaRefusal(requestId) {
+    const q = await reserveOpenfiscaCall();
+    if (q.allowed) return null;
+    logger.warn('[Diagnostic] OpenFisca call refused by the monthly guard', { requestId, code: q.code });
+    if (q.code === 'OPENFISCA_QUOTA_REACHED') {
+        return { code: 'OPENFISCA_QUOTA_REACHED', error: 'OPENFISCA_QUOTA_REACHED', message: QUOTA_MESSAGE_FR, assessment: engineUnavailableAssessment({ retryable: false }), requestId };
+    }
+    return { code: 'OPENFISCA_UNAVAILABLE', error: 'OPENFISCA_UNAVAILABLE', message: 'Service de calcul temporairement indisponible. Veuillez réessayer dans quelques instants.',
+        assessment: engineUnavailableAssessment({ retryable: true }), requestId };
+}
+
 // Simple input validation — we use manual checks to avoid adding a Zod dependency
 /**
  * @param {{ birthDate: string; income: { salary: number | null; unemployment: number | null; }; housing: { rent: number | null; charges: number | null; }; }} answers
@@ -52,6 +72,10 @@ function validateAnswers(answers) {
     const hasBand = !answers.birthDate && ageFromBand(answers.ageBand) !== null;
     if (!hasBand && (!answers.birthDate || !/^\d{4}-\d{2}-\d{2}$/.test(answers.birthDate))) {
         errors.push('birthDate is required (YYYY-MM-DD format)');
+    }
+    // G14: the commune of the indicative calculation (housing aid zone) — only an INSEE code of the Eurométropole (closed list of the questionnaire)
+    if (answers.depcom !== undefined && !isEmsCommune(answers.depcom)) {
+        errors.push('depcom must be the INSEE code of a commune of the Eurométropole de Strasbourg');
     }
     if (answers.income) {
         if (answers.income.salary != null && (isNaN(answers.income.salary) || answers.income.salary < 0)) {
@@ -86,6 +110,17 @@ export default async function handler(req, /** @type {string | number | boolean 
     // Route: /api/diagnostic/trace
     if (pathSuffix === 'trace') {
         return handleTrace(req, res);
+    }
+
+    // G14: GET /api/diagnostic/estimate-availability — may the interface offer the indicative calculation? Configuration + this month's free-tier guard,
+    // READ ONLY: no engine contact (the container is not woken), nothing charged, nothing of a person received. Gated like every diagnostic route.
+    if (pathSuffix === 'estimate-availability') {
+        if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed', allowed: ['GET'] });
+        res.setHeader?.('Cache-Control', 'no-store');
+        const problem = estimateConfigProblem(process.env);
+        if (problem) return res.status(200).json({ available: false, reason: problem });
+        const q = await peekOpenfiscaQuota();
+        return res.status(200).json({ available: q.allowed, reason: q.allowed ? null : q.code, engine: { name: 'openfisca-france', version: process.env.OPENFISCA_FRANCE_VERSION || null } });
     }
 
     // Route: /api/diagnostic (main)
@@ -204,6 +239,9 @@ async function handleDiagnosticInner(req, res, track) {
         }
 
         // AUTHORITATIVE_MODE remains fail-closed. Never fall back to LocalRulesEngine.
+        // G14 (owner 23/11/2026, 0 €): the self-hosted engine runs on a free tier with no spending cap — every call is charged first against the monthly guard
+        const quotaRefusal = await openfiscaQuotaRefusal(requestId);
+        if (quotaRefusal) return res.status(503).json(quotaRefusal);
         let engineUp = false;
         let health = null;
         try {
@@ -271,6 +309,9 @@ async function handleDiagnosticInner(req, res, track) {
             period,
             authoritative: false,
             estimates,
+            // G14: what the citizen page shows — an amount only under the pinned legislation in force for the period (api/lib/openfiscaLegislation.js);
+            // the version is the one the ENGINE stated, never the configured one
+            citizen: citizenEstimate(estimates, { period, engineVersion: health?.ok ? health.version : null }),
             meta: {
                 source: 'openfisca',
                 engineVersion,
@@ -388,6 +429,10 @@ async function handleTrace(/** @type {{ body: string | number | boolean | null |
 
         const period = getCurrentPeriod();
         const situation = buildTestCase(answers, period);
+
+        // G14: the trace wakes the same free-tier container — charged like a calculation (only when the trace is enabled: otherwise the client refuses it unsent)
+        const quotaRefusal = process.env.OPENFISCA_ENABLE_TRACE === 'true' ? await openfiscaQuotaRefusal(requestId) : null;
+        if (quotaRefusal) return res.status(503).json(quotaRefusal);
 
         const result = await (await openfisca()).trace(situation);
 

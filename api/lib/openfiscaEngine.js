@@ -6,7 +6,7 @@
  * OPENFISCA_FRANCE_VERSION pins a version (the one the request protocol was verified against — scripts/openfisca-local.sh, infrastructure/openfisca/Dockerfile,
  * tests/fixtures/openfisca-france-176-variables.json), an engine of ANOTHER version, one that does not state its version, or another country package is
  * treated as unavailable: the qualified estimate says « les règles de la version du moteur indiquée », so the version shown must be the engine's real one.
- * GET /spec only: nothing of the person is sent. Never throws; the codes are a closed vocabulary. The public prototype endpoint is never contacted here.
+ * GET /spec only: nothing of the person is sent (G14: with OPENFISCA_AUTH_TOKEN, the same auth headers as api/lib/openfiscaClient.js). Never throws; the codes are a closed vocabulary. The public prototype endpoint is never contacted here.
  */
 const HEALTH_CACHE_TTL_MS = 60_000;
 let cache = { at: 0, health: /** @type {EngineHealth | null} */ (null) };
@@ -29,7 +29,10 @@ export async function engineHealth() {
   if (!url) return { ...base, ok: false, code: 'OPENFISCA_NOT_CONFIGURED' };
   if (/api\.fr\.openfisca\.org/i.test(url)) return { ...base, ok: false, code: 'OPENFISCA_PUBLIC_PROTOTYPE_NOT_CHECKED' };
   try {
-    const res = await fetch(`${url}/spec`, { signal: AbortSignal.timeout(2000) });
+    // G14: the self-hosted engine needs its token on /spec too (same headers as the client); the probe timeout follows OPENFISCA_HEALTH_TIMEOUT_MS
+    const token = (process.env.OPENFISCA_AUTH_TOKEN || '').trim();
+    const ms = Math.min(Math.max(Number.parseInt(process.env.OPENFISCA_HEALTH_TIMEOUT_MS || '', 10) || 2000, 1000), 60_000);
+    const res = await fetch(`${url}/spec`, { headers: token ? { 'X-Auth-Token': token, 'X-ADA-OpenFisca-Token': token } : {}, signal: AbortSignal.timeout(ms) });
     if (!res.ok) return { ...base, ok: false, code: 'OPENFISCA_HEALTH_HTTP_ERROR' };
     const header = (/** @type {string} */ n) => (typeof res.headers?.get === 'function' ? res.headers.get(n) : null);
     const pkg = header('country-package'); const version = header('country-package-version');

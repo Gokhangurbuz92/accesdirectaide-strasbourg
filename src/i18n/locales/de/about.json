@@ -170,6 +170,8 @@
  "sourcespage.refused.social": "Soziale Netzwerke (außer zertifizierte offizielle Konten).",
  "sourcespage.refused.blogs": "Blogs ohne erkennbaren fachkundigen Autor.",
  "sourcespage.refused.rumours": "Gerüchte und Hörensagen.",
+ "sourcespage.engine.title": "Rechenkern der Richtwert-Berechnung",
+ "sourcespage.engine.text": "Wenn die Richtwert-Berechnung verfügbar ist, nutzt sie OpenFisca-France, eine freie Software unter der Lizenz AGPL-3.0, die wir unverändert auf unserem eigenen Server betreiben. Ihr Quellcode:",
  "sourcespage.important": "Wichtig:",
  "sourcespage.notice": "Wir sind nicht die Verwaltung. Wir bemühen uns sehr, keine Fehler zu machen, aber prüfen Sie Ihre persönliche Akte immer bei der zuständigen offiziellen Stelle. Jeder geprüfte Eintrag nennt seine offizielle Quelle (« Consulter la source ») und das Datum der letzten Prüfung.",
  "impact.not_measured.text_accounts": "Während der öffentlichen Beta messen wir die Reichweite nicht: Wir kennen weder die Zahl der Besuche noch die Zahl der unterstützten Personen. Persönliche Konten sind geöffnet, aber ein angelegtes Konto ist keine unterstützte Person. Ein Besuch oder eine Suche ist keine unterstützte Person, und wir werden das eine nie als das andere darstellen. Ob eine Person eine Hilfe erhalten hat, wird nirgends auf der Plattform erfasst: Diese Zahl wird erst veröffentlicht, wenn eine Quelle sie belegt.",

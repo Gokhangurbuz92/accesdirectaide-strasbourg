@@ -1457,6 +1457,39 @@
       "class": "optional",
       "nature": "config"
     },
+    "OPENFISCA_AUTH_TOKEN": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "openfisca",
+      "account": true
+    },
+    "OPENFISCA_TIMEOUT_MS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OPENFISCA_HEALTH_TIMEOUT_MS": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OPENFISCA_QUOTA_GUARD": {
+      "class": "lab",
+      "nature": "config"
+    },
+    "OPENFISCA_QUOTA_RATIO": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OPENFISCA_CONTAINER_MEMORY_MB": {
+      "class": "optional",
+      "nature": "config"
+    },
+    "OPENFISCA_CONTAINER_MVCPU": {
+      "class": "optional",
+      "nature": "config"
+    },
     "ALLOW_OPENFISCA_PUBLIC_PROTOTYPE": {
       "class": "lab",
       "nature": "config"
@@ -3020,7 +3053,9 @@
       "code": [
         "api/lib/openfiscaClient.js",
         "api/lib/openfiscaEngine.js",
-        "api/_handlers/diagnostic.js"
+        "api/_handlers/diagnostic.js",
+        "api/lib/openfiscaQuota.js",
+        "api/lib/openfiscaLegislation.js"
       ],
       "routes": [
         "diagnostic"
@@ -3030,13 +3065,22 @@
       ],
       "optional": [
         "OPENFISCA_FRANCE_VERSION",
-        "OPENFISCA_ENABLE_TRACE"
+        "OPENFISCA_ENABLE_TRACE",
+        "OPENFISCA_AUTH_TOKEN",
+        "OPENFISCA_TIMEOUT_MS",
+        "OPENFISCA_HEALTH_TIMEOUT_MS",
+        "OPENFISCA_QUOTA_RATIO",
+        "OPENFISCA_CONTAINER_MEMORY_MB",
+        "OPENFISCA_CONTAINER_MVCPU"
       ],
       "tests": [
         "pkg1-openfisca-protocol-conformance.test.js",
         "dta-openfisca-client-privacy.test.js",
         "r15-openfisca-estimate-honesty.test.js",
-        "r46-d10-openfisca-engine.test.js"
+        "r46-d10-openfisca-engine.test.js",
+        "g14-openfisca-selfhost.test.js",
+        "g14-indicative-estimate.test.js",
+        "g14-indicative-estimate-ui.test.jsx"
       ],
       "gates": [
         {

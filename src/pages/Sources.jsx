@@ -3,6 +3,9 @@ import PageHeader from '@/components/layout/PageHeader';
 import { ShieldCheck, ExternalLink } from 'lucide-react';
 import { useT } from '@/i18n';
 
+/** G14: the upstream source of the calculation engine (AGPL-3.0, run unmodified) */
+const ENGINE_SOURCE = 'https://github.com/openfisca/openfisca-france';
+
 // R35: the page was French-only (owner decision update §7: the six-language interface); the names of the official sites stay as they are written
 export default function Sources() {
     const { t } = useT('about');
@@ -54,6 +57,15 @@ export default function Sources() {
                     <li>{t('about:sourcespage.refused.blogs', 'Les blogs sans auteur expert identifié.')}</li>
                     <li>{t('about:sourcespage.refused.rumours', 'Les rumeurs ou les « on-dit ».')}</li>
                 </ul>
+            </div>
+
+            {/* G14: the engine of the indicative calculation is free software (AGPL-3.0), run unmodified on our own server — its source is linked here */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-8 text-sm text-gray-700">
+                <h2 className="font-bold text-lg mb-2 text-gray-900">{t('about:sourcespage.engine.title', 'Moteur du calcul indicatif')}</h2>
+                <p>
+                    {t('about:sourcespage.engine.text', 'Lorsque le calcul indicatif est disponible, il utilise OpenFisca-France, un logiciel libre publié sous licence AGPL-3.0, que nous faisons fonctionner sans modification sur notre propre serveur. Son code source :')}{' '}
+                    <a href={ENGINE_SOURCE} target="_blank" rel="noreferrer noopener" className="text-blue-700 hover:underline">{ENGINE_SOURCE.replace(/^https:\/\//, '')}</a>
+                </p>
             </div>
 
             <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-600 text-sm">

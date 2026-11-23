@@ -48,6 +48,8 @@ export function useAssessmentLabels() {
     const errorMessageFor = (/** @type {number} */ status, /** @type {string | null | undefined} */ code) => {
       if (code === 'invalid_json' || code === 'invalid_body' || code === 'validation_error') return t('shared:assessment.error.invalid_input', 'Vérifiez les informations saisies (date de naissance, montants) puis réessayez.');
       if (status === 429 || code === 'rate_limit_exceeded') return t('shared:assessment.error.rate_limited', 'Trop de demandes en peu de temps. Patientez un instant avant de réessayer.');
+      // G14: the self-hosted engine's monthly free-tier guard (api/lib/openfiscaQuota.js) — checked before the generic 503
+      if (code === 'OPENFISCA_QUOTA_REACHED') return t('diagnostic:error.quota_reached', 'Le calcul indicatif est suspendu jusqu’au début du mois prochain : la limite mensuelle d’utilisation du service de calcul est atteinte. Aucun résultat de remplacement n’est affiché. Vous pouvez demander conseil à un professionnel.');
       if (status === 503 || code === 'OPENFISCA_UNAVAILABLE') return t('shared:assessment.error.engine_unavailable', 'Le service est momentanément indisponible. Aucun résultat de remplacement n\'est affiché. Réessayez plus tard.');
       return t('shared:assessment.error.unavailable', 'Le service de diagnostic est temporairement indisponible. Réessayez plus tard.');
     };
