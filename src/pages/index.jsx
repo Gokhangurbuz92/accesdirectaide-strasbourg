@@ -103,6 +103,7 @@ const Guides = lazy(() => import("./Guides.jsx"));
 const GuideDetail = lazy(() => import("./GuideDetail.jsx"));
 const Tools = lazy(() => import("./Tools.jsx"));
 const Droits = lazy(() => import("./Droits.jsx"));   // G3: public Rights Graph view (no input, static data)
+const Situation = lazy(() => import("./Situation.jsx"));   // G14-RG: « Ma situation », one-door flow (browser-only matching, static data)
 const ToolDetail = lazy(() => import("./ToolDetail.jsx"));
 const MentionsLegales = lazy(() => import("./MentionsLegales.jsx"));
 const LegalDraftDocument = lazy(() => import("./LegalDraftDocument.jsx"));   // R45 (ENG-LR-5): draft legal documents, shown only when approved or in LAB preview
@@ -651,6 +652,8 @@ function PagesContent() {
                                 <Route path="/outils" element={<Tools />} />
                                 <Route path="/droits" element={<Droits />} />
                                 <Route path="/droits/:need" element={<Droits />} />
+                                <Route path="/situation" element={<Situation />} />
+                                <Route path="/situation/:id" element={<Situation />} />
                                 <Route path="/outils/:slug" element={<ToolDetail />} />
                                 <Route path="/dispositifs" element={<Dispositifs />} />
                                 <Route path="/dispositifs/:slug" element={<DispositifDetail />} />

@@ -83,5 +83,6 @@
   "territory.postal.qpv-list": "الأحياء ذات الأولوية في سياسة المدينة (quartiers prioritaires) المدرجة لهذه البلدية (القائمة الرسمية لعام 2024):",
   "territory.postal.qpv-address": "لا يعرف هذا الموقع إن كان عنوانك يقع في أحد هذه الأحياء. للتحقق، استخدم البحث بالعنوان في الموقع الرسمي:",
   "territory.postal.qpv-none": "لا يوجد حي ذو أولوية في سياسة المدينة (quartier prioritaire) مدرج لهذه البلدية (القائمة الرسمية لعام 2024).",
-  "territory.postal.source": "المصادر: La Poste، « Base officielle des codes postaux »؛ Agence nationale de la cohésion des territoires، قائمة الأحياء ذات الأولوية لعام 2024 (Licence Ouverte). تاريخ قراءة البيانات: {{date}}."
+  "territory.postal.source": "المصادر: La Poste، « Base officielle des codes postaux »؛ Agence nationale de la cohésion des territoires، قائمة الأحياء ذات الأولوية لعام 2024 (Licence Ouverte). تاريخ قراءة البيانات: {{date}}.",
+  "hero.situation": "أو أخبرنا بما يحدث لك: الإيجار، العمل، الوصول إلى ستراسبورغ…"
 }

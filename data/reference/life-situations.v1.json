@@ -1,0 +1,359 @@
+{
+  "schema": "ada.life-situations",
+  "version": "1.0.0",
+  "status": "Engineering reference (G14-RG, owner approval 23/11/2026 « tek kapı / guichet unique »). Each situation only POINTS to ids that already carry their official source and date: the needs and fiches of the public Rights Graph view (data/reference/rights-public-view.v1.json, DILA archive read 2026-11-18), the reviewed Mon Parcours step types (data/reference/parcours-step-types.v1.json, DILA archive read 2026-11-22), the structure types of the catalogue (data/reference/social-domains.v1.json, data/reference/guide-offices.v1.json) and the emergency numbers of the catalogue (cited by fiche F33954). No right, amount, condition or deadline is written here: an id that does not resolve to a sourced record is not shown (tests/unit/g14-rg-situation.test.jsx).",
+  "readMe": [
+    "needs: ids of data/reference/rights-public-view.v1.json needs (= catalogue subdomain ids) — bodies, « Où s'adresser », link to /droits/<need>.",
+    "subdomains: « domain/subdomain » ids of data/reference/social-domains.v1.json (20 domains × 86 subdomains).",
+    "rights: Service-Public fiche ids of an aide or prestation, resolved in the public view (dates) or in the Mon Parcours sources (dates); shown as « vous pouvez vérifier si… », never as an entitlement.",
+    "steps: { stepType } = a code of the closed Mon Parcours list (its label and sources come from that list; « Ajouter à Mon Parcours » is offered only for these), or { fiche } = an official fiche that describes what to do.",
+    "structures: type_structure values of the directory (the /structures?type= filter, an exact match).",
+    "emergency: numbers of social-domains.v1.json « emergency »; danger = the emergency block is shown first.",
+    "keywords: deterministic synonyms per interface language, matched IN THE BROWSER only (src/lib/lifeSituations.js); the typed text is never sent, stored or logged."
+  ],
+  "emergencySource": "F33954",
+  "situations": [
+    {
+      "id": "loyer-impaye",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["logement/expulsion-impayes", "logement/aides-logement"],
+      "needs": ["expulsion-impayes", "aides-logement"],
+      "rights": ["F1334", "F12006", "F1280", "F13132", "F32037"],
+      "steps": [{ "stepType": "FSL_DEMANDE" }, { "stepType": "AIDE_LOGEMENT_DEMANDE" }, { "fiche": "F31272" }, { "fiche": "F34736" }],
+      "structures": ["Caf (Caisse d'allocations familiales)", "Maison des solidarités (Espace Solidarités)", "CCAS (centre communal d'action sociale)", "Espace France Services"],
+      "keywords": {
+        "fr": ["loyer", "loyers", "payer mon loyer", "impaye", "retard de loyer", "dette de loyer", "proprietaire", "bailleur", "apl", "aide au logement", "fsl"],
+        "en": ["rent", "pay my rent", "rent arrears", "unpaid rent", "landlord", "housing benefit", "apl"],
+        "de": ["miete", "mietschulden", "miete nicht", "miete zahlen", "vermieter", "wohngeld", "apl"],
+        "tr": ["kira", "kirami", "kira borcu", "kirayi odeyemiyorum", "ev sahibi", "konut yardimi", "apl"],
+        "ar": ["ايجار", "الايجار", "اجرة السكن", "المالك", "دفع الايجار", "مساعدة السكن"],
+        "uk": ["оренд", "квартплат", "борг за оренду", "орендодав", "житлова допомога", "apl"]
+      }
+    },
+    {
+      "id": "expulsion",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["logement/expulsion-impayes", "justice/acces-au-droit"],
+      "needs": ["expulsion-impayes", "hebergement-urgence"],
+      "rights": ["F1334", "F32037"],
+      "steps": [{ "fiche": "F31272" }, { "fiche": "F34736" }, { "stepType": "FSL_DEMANDE" }, { "stepType": "LOGEMENT_SOCIAL_DEMANDE" }],
+      "structures": ["Maison des solidarités (Espace Solidarités)", "CCAS (centre communal d'action sociale)", "Point-justice (accès au droit)", "Maison de justice et du droit"],
+      "keywords": {
+        "fr": ["expulsion", "expulse", "expulser", "commandement de quitter", "quitter les lieux", "huissier", "commissaire de justice", "treve hivernale", "perdre mon logement", "mis dehors"],
+        "en": ["eviction", "evicted", "evict", "bailiff", "lose my home", "lose my flat", "thrown out", "winter truce"],
+        "de": ["räumung", "zwangsräumung", "kündigung der wohnung", "gerichtsvollzieher", "wohnung verlieren", "rausgeworfen"],
+        "tr": ["tahliye", "evden cikarma", "evden atilma", "icra", "evimi kaybediyorum"],
+        "ar": ["طرد", "الطرد", "اخلاء", "الاخلاء", "المحضر", "افقد سكني"],
+        "uk": ["висел", "виселення", "виселяют", "судовий виконавець", "втратити житло"]
+      }
+    },
+    {
+      "id": "sans-logement",
+      "danger": true,
+      "emergency": ["115", "112"],
+      "subdomains": ["logement/hebergement-urgence", "precarite/urgence-sociale", "precarite/accueil-de-jour"],
+      "needs": ["hebergement-urgence"],
+      "rights": [],
+      "steps": [{ "fiche": "F2003" }, { "fiche": "F17317" }],
+      "structures": ["CCAS (centre communal d'action sociale)", "Centre d’accueil", "Mairie"],
+      "keywords": {
+        "fr": ["dormir dehors", "dors dehors", "a la rue", "sans abri", "sans domicile", "sdf", "pas de logement", "nulle part ou dormir", "hebergement d'urgence", "115", "dormir ce soir"],
+        "en": ["homeless", "sleep outside", "sleeping rough", "on the street", "nowhere to sleep", "no home", "shelter", "115"],
+        "de": ["obdachlos", "draußen schlafen", "auf der straße", "keine wohnung", "notunterkunft", "schlafplatz", "115"],
+        "tr": ["evsiz", "sokakta", "disarida yatiyorum", "kalacak yer", "barinak", "acil konaklama", "115"],
+        "ar": ["بلا مأوى", "مشرد", "انام في الشارع", "في الشارع", "لا مكان للنوم", "مأوى", "115"],
+        "uk": ["бездомн", "ночувати на вулиці", "на вулиці", "немає житла", "притулок", "115"]
+      }
+    },
+    {
+      "id": "factures-impayees",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["precarite/energie", "budget/conseil-budget"],
+      "needs": ["energie", "surendettement"],
+      "rights": ["F38589", "F33667", "F1334", "F21375"],
+      "steps": [{ "fiche": "F20055" }, { "stepType": "CHEQUE_ENERGIE_UTILISER" }, { "stepType": "FSL_DEMANDE" }],
+      "structures": ["CCAS (centre communal d'action sociale)", "Maison des solidarités (Espace Solidarités)", "Espace France Services"],
+      "keywords": {
+        "fr": ["facture", "factures", "electricite", "gaz", "eau", "energie", "coupure", "cheque energie", "chauffage", "edf"],
+        "en": ["bill", "bills", "electricity", "gas bill", "water bill", "energy", "cut off", "heating"],
+        "de": ["rechnung", "stromrechnung", "strom", "gasrechnung", "wasserrechnung", "energie", "sperre", "heizung"],
+        "tr": ["fatura", "elektrik", "dogalgaz", "su faturasi", "enerji", "kesinti", "isinma"],
+        "ar": ["فاتورة", "فواتير", "الكهرباء", "الغاز", "الماء", "الطاقة", "قطع", "التدفئة"],
+        "uk": ["рахун", "електроенерг", "світло", "газ", "вода", "енергі", "відключ", "опален"]
+      }
+    },
+    {
+      "id": "dettes",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["budget/surendettement", "budget/conseil-budget"],
+      "needs": ["surendettement"],
+      "rights": ["F38589", "F21375"],
+      "steps": [{ "stepType": "SURENDETTEMENT_DOSSIER" }, { "stepType": "MICROCREDIT_DEMANDE" }],
+      "structures": ["Espace France Services", "Maison des solidarités (Espace Solidarités)", "CCAS (centre communal d'action sociale)"],
+      "keywords": {
+        "fr": ["dette", "dettes", "surendettement", "endette", "credit", "credits", "rembourser", "huissier", "banque de france", "fin de mois"],
+        "en": ["debt", "debts", "over-indebted", "overindebted", "loan", "loans", "repay", "credit"],
+        "de": ["schulden", "verschuldet", "überschuldung", "kredit", "kredite", "zurückzahlen"],
+        "tr": ["borc", "borclar", "borcum", "kredi", "geri odeme", "asiri borc"],
+        "ar": ["ديون", "دين علي", "مديون", "قرض", "قروض", "سداد"],
+        "uk": ["борг", "борги", "боргів", "заборгован", "кредит", "позик", "повернути гроші"]
+      }
+    },
+    {
+      "id": "perte-emploi",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["emploi/recherche-emploi", "precarite/minima-sociaux"],
+      "needs": ["recherche-emploi", "minima-sociaux", "aides-logement"],
+      "rights": ["F19778", "F12006"],
+      "steps": [{ "stepType": "FRANCE_TRAVAIL_INSCRIPTION" }, { "stepType": "ATTESTATION_EMPLOYEUR" }, { "stepType": "FRANCE_TRAVAIL_ACTUALISATION" }, { "fiche": "F827" }],
+      "structures": ["France Travail", "Espace France Services", "Mission locale (jeunes de 16 à 25 ans)", "Caf (Caisse d'allocations familiales)"],
+      "keywords": {
+        "fr": ["perdu mon emploi", "perdu mon travail", "perte d'emploi", "perte d emploi", "chomage", "licencie", "licenciement", "fin de contrat", "france travail", "pole emploi", "sans emploi", "rupture conventionnelle"],
+        "en": ["lost my job", "job loss", "unemployed", "unemployment", "laid off", "fired", "dismissed", "end of contract", "redundancy"],
+        "de": ["arbeit verloren", "job verloren", "arbeitslos", "arbeitslosigkeit", "gekündigt", "kündigung", "vertragsende", "entlassen"],
+        "tr": ["isimi kaybettim", "issiz", "issizlik", "isten cikarildim", "kovuldum", "sozlesme bitti", "is kaybi"],
+        "ar": ["فقدت عملي", "فقدت وظيفتي", "عاطل", "البطالة", "بطالة", "طردت من العمل", "نهاية العقد"],
+        "uk": ["втратив роботу", "втратила роботу", "безробіт", "звільн", "кінець контракту", "без роботи"]
+      }
+    },
+    {
+      "id": "sans-ressources",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["precarite/minima-sociaux", "precarite/acces-aux-droits", "precarite/aide-alimentaire"],
+      "needs": ["minima-sociaux", "acces-aux-droits"],
+      "rights": ["F19778", "F2882"],
+      "steps": [{ "stepType": "RSA_DEMANDE" }, { "stepType": "PRIME_ACTIVITE_DEMANDE" }, { "stepType": "DECLARATION_TRIMESTRIELLE_RESSOURCES" }],
+      "structures": ["Caf (Caisse d'allocations familiales)", "Maison des solidarités (Espace Solidarités)", "CCAS (centre communal d'action sociale)", "Espace France Services"],
+      "keywords": {
+        "fr": ["pas d'argent", "plus d'argent", "pas de revenu", "sans revenu", "aucun revenu", "rsa", "prime d'activite", "manger", "fin de mois", "ressources", "pauvre"],
+        "en": ["no money", "no income", "low income", "can't afford", "cannot afford", "rsa", "food", "poor"],
+        "de": ["kein geld", "kein einkommen", "wenig geld", "geringes einkommen", "rsa", "essen", "arm"],
+        "tr": ["param yok", "gelirim yok", "dusuk gelir", "geçinemiyorum", "geciniyorum", "rsa", "yemek", "yoksul"],
+        "ar": ["لا مال", "ليس لدي مال", "بدون دخل", "لا دخل", "دخل منخفض", "الطعام", "فقير"],
+        "uk": ["немає грошей", "без доходу", "немає доходу", "низький дохід", "rsa", "їжа", "бідний", "бідна"]
+      }
+    },
+    {
+      "id": "arrivee-strasbourg",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["precarite/acces-aux-droits", "transversal/institutions-locales", "logement/logement-social"],
+      "needs": ["acces-aux-droits", "aides-logement"],
+      "rights": ["F12006", "F1280", "F33453"],
+      "steps": [{ "fiche": "F827" }, { "stepType": "LOGEMENT_SOCIAL_DEMANDE" }, { "stepType": "AIDE_LOGEMENT_DEMANDE" }, { "stepType": "VISALE_DEMANDE" }],
+      "structures": ["Mairie", "Espace France Services", "Maison des solidarités (Espace Solidarités)", "CCAS (centre communal d'action sociale)"],
+      "keywords": {
+        "fr": ["arrivee", "suis arrive", "suis arrivee", "viens d'arriver", "nouveau a", "nouvelle a", "demenage", "demenagement", "emmenage", "installer a", "strasbourg", "eurometropole", "nouvelle ville"],
+        "en": ["just arrived", "arrived in", "new in", "moved to", "moving to", "relocated", "strasbourg", "new city"],
+        "de": ["neu in", "angekommen", "umgezogen", "umzug", "zugezogen", "straßburg", "strasbourg"],
+        "tr": ["yeni geldim", "yeni tasindim", "tasindim", "tasinma", "strazburg", "strasbourg", "yeni sehir"],
+        "ar": ["وصلت", "وصلت للتو", "انتقلت", "جديد في", "ستراسبورغ", "مدينة جديدة"],
+        "uk": ["щойно приїхав", "щойно приїхала", "приїхав", "переїхав", "переїхала", "переїзд", "страсбург"]
+      }
+    },
+    {
+      "id": "violences",
+      "danger": true,
+      "emergency": ["3919", "17", "112", "119", "116006"],
+      "subdomains": ["violences/violences-conjugales", "violences/victimes", "justice/acces-au-droit"],
+      "needs": ["violences-conjugales"],
+      "rights": [],
+      "steps": [{ "fiche": "F12544" }, { "fiche": "F33954" }],
+      "structures": ["CIDFF (droits des femmes et des familles)", "Bureau d'aide aux victimes", "Point-justice (accès au droit)"],
+      "keywords": {
+        "fr": ["violence", "violences", "violent", "frappe", "me bat", "battue", "battu", "coups", "menace", "peur de mon", "conjoint", "harcelement", "agression", "3919"],
+        "en": ["violence", "violent", "abuse", "abused", "hits me", "beaten", "beats me", "threatens", "afraid of my", "domestic", "assault", "harassment"],
+        "de": ["gewalt", "gewalttätig", "schlägt mich", "geschlagen", "bedroht", "angst vor meinem", "häusliche", "missbrauch", "belästigung"],
+        "tr": ["siddet", "dovuyor", "dayak", "tehdit", "korkuyorum", "esim", "taciz", "istismar"],
+        "ar": ["عنف", "العنف", "يضربني", "ضرب", "تهديد", "اخاف من", "تحرش", "اعتداء"],
+        "uk": ["насильств", "насилля", "б'є мене", "бʼє мене", "погрож", "боюся", "кривдн", "домашнє"]
+      }
+    },
+    {
+      "id": "enfant-danger",
+      "danger": true,
+      "emergency": ["119", "112"],
+      "subdomains": ["protection-enfance/signalement", "protection-enfance/prevention-enfance"],
+      "needs": [],
+      "rights": [],
+      "steps": [{ "fiche": "F33954" }],
+      "structures": [],
+      "keywords": {
+        "fr": ["enfant en danger", "enfance en danger", "maltraite", "maltraitance", "enfant battu", "mineur en danger", "119"],
+        "en": ["child in danger", "child abuse", "abused child", "child at risk", "neglected child", "119"],
+        "de": ["kind in gefahr", "kindesmisshandlung", "misshandelt", "kindeswohl", "119"],
+        "tr": ["cocuk tehlikede", "cocuk istismari", "cocuga siddet", "ihmal", "119"],
+        "ar": ["طفل في خطر", "اساءة للطفل", "طفل معنف", "اهمال طفل", "119"],
+        "uk": ["дитина в небезпеці", "жорстоке поводження з дитиною", "дитину б'ють", "119"]
+      }
+    },
+    {
+      "id": "detresse",
+      "danger": true,
+      "emergency": ["3114", "15", "112"],
+      "subdomains": ["sante-mentale/crise-suicide", "sante-mentale/psy"],
+      "needs": ["crise-suicide", "psy"],
+      "rights": ["F34917"],
+      "steps": [{ "fiche": "F33954" }],
+      "structures": [],
+      "keywords": {
+        "fr": ["suicide", "me suicider", "en finir", "envie de mourir", "plus envie de vivre", "idees noires", "desespoir", "detresse", "deprime", "depression", "vais tres mal", "3114"],
+        "en": ["suicide", "kill myself", "end it all", "want to die", "no reason to live", "despair", "depressed", "depression", "distress"],
+        "de": ["suizid", "selbstmord", "umbringen", "sterben will", "keinen sinn", "verzweifelt", "depression", "deprimiert"],
+        "tr": ["intihar", "olmek istiyorum", "kendimi oldurmek", "umutsuz", "depresyon", "cok kotuyum"],
+        "ar": ["انتحار", "الانتحار", "اريد ان اموت", "انهاء حياتي", "يأس", "اكتئاب"],
+        "uk": ["суїцид", "самогубств", "хочу померти", "покінчити", "відчай", "депрес"]
+      }
+    },
+    {
+      "id": "parent-seul",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["famille/famille-monoparentale", "famille/separation", "famille/garde-enfants", "famille/prestations-familiales"],
+      "needs": ["prestations-familiales", "garde-enfants", "aides-logement"],
+      "rights": ["F38245", "F38243", "F12006", "F13213"],
+      "steps": [{ "fiche": "F827" }, { "stepType": "ALLOCATIONS_FAMILIALES_DEMANDE" }, { "fiche": "F601" }],
+      "structures": ["Caf (Caisse d'allocations familiales)", "Mairie", "Maison des solidarités (Espace Solidarités)"],
+      "keywords": {
+        "fr": ["separation", "separe", "separee", "divorce", "rupture", "seul avec mon enfant", "seule avec mon enfant", "seule avec mes enfants", "seul avec mes enfants", "parent isole", "mere seule", "pere seul", "garde d'enfant", "pension alimentaire"],
+        "en": ["separation", "separated", "divorce", "single parent", "single mother", "single father", "alone with my child", "childcare", "child support"],
+        "de": ["trennung", "getrennt", "scheidung", "alleinerziehend", "allein mit meinem kind", "kinderbetreuung", "unterhalt"],
+        "tr": ["ayrildim", "ayrilik", "bosanma", "tek ebeveyn", "yalniz anne", "yalniz baba", "cocugumla yalniz", "cocuk bakimi", "nafaka"],
+        "ar": ["انفصال", "منفصل", "طلاق", "والد وحيد", "ام وحيدة", "اب وحيد", "وحدي مع طفلي", "رعاية الاطفال", "نفقة"],
+        "uk": ["розлуч", "розійшлися", "одна з дитиною", "один з дитиною", "мати-одиначка", "батько-одинак", "догляд за дитиною", "аліменти"]
+      }
+    },
+    {
+      "id": "proche-age",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["autonomie/aide-domicile", "autonomie/apa-aspa", "lien-social/aidants", "logement/adaptation-logement"],
+      "needs": ["aide-domicile", "aidants", "adaptation-logement"],
+      "rights": ["F10009", "F245", "F16920", "F37501", "F2444"],
+      "steps": [{ "fiche": "F246" }, { "fiche": "F255" }],
+      "structures": ["Mairie", "CCAS (centre communal d'action sociale)", "Maison des solidarités (Espace Solidarités)", "Point d’information pour les personnes âgées"],
+      "keywords": {
+        "fr": ["personne agee", "mes parents", "ma mere", "mon pere", "grand-mere", "grand-pere", "vieux", "vieillesse", "rester a domicile", "aide a domicile", "ehpad", "maison de retraite", "aidant", "apa", "perte d'autonomie"],
+        "en": ["elderly", "old parent", "my mother", "my father", "grandmother", "grandfather", "stay at home", "home help", "care home", "nursing home", "carer", "caregiver"],
+        "de": ["älter", "ältere", "meine mutter", "mein vater", "großmutter", "großvater", "zu hause bleiben", "haushaltshilfe", "pflegeheim", "pflegende angehörige"],
+        "tr": ["yasli", "annem", "babam", "buyukannem", "buyukbabam", "evde bakim", "huzurevi", "bakici", "bakim veren"],
+        "ar": ["مسن", "كبير السن", "امي", "ابي", "جدتي", "جدي", "البقاء في المنزل", "مساعدة منزلية", "دار المسنين", "مقدم الرعاية"],
+        "uk": ["літня", "літні", "літній", "похил", "моя мама", "мій тато", "бабус", "дідус", "допомога вдома", "будинок для літніх", "доглядач"]
+      }
+    },
+    {
+      "id": "handicap",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["handicap/mdph-droits", "handicap/accessibilite-mobilite", "enfance-jeunesse/scolarite-inclusive", "logement/adaptation-logement"],
+      "needs": ["mdph-droits", "accessibilite-mobilite", "adaptation-logement", "scolarite-inclusive"],
+      "rights": ["F14202", "F34049", "F37501"],
+      "steps": [{ "fiche": "F31029" }, { "fiche": "F24610" }, { "fiche": "F33865" }],
+      "structures": ["MDPH (maison des personnes handicapées)", "Maison des solidarités (Espace Solidarités)"],
+      "keywords": {
+        "fr": ["handicap", "handicape", "handicapee", "mdph", "invalidite", "fauteuil roulant", "carte mobilite", "pch", "aah", "aesh"],
+        "en": ["disability", "disabled", "handicap", "wheelchair", "mdph", "impairment"],
+        "de": ["behinderung", "behindert", "rollstuhl", "mdph", "schwerbehindert"],
+        "tr": ["engelli", "engellilik", "tekerlekli sandalye", "mdph", "ozurlu"],
+        "ar": ["اعاقة", "الاعاقة", "معاق", "كرسي متحرك", "ذوي الاحتياجات"],
+        "uk": ["інвалідн", "інвалідність", "особа з інвалідністю", "візок", "mdph"]
+      }
+    },
+    {
+      "id": "sans-titre-sejour",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["migration/droits-sans-titre", "precarite/acces-aux-droits"],
+      "needs": ["droits-sans-titre", "hebergement-urgence"],
+      "rights": ["F3079"],
+      "steps": [{ "fiche": "F17317" }, { "fiche": "F2003" }],
+      "structures": ["Espace France Services", "CPAM (caisse primaire d'assurance maladie)", "CCAS (centre communal d'action sociale)"],
+      "keywords": {
+        "fr": ["sans papiers", "sans-papiers", "titre de sejour", "pas de papiers", "sejour irregulier", "ame", "aide medicale de l'etat", "etranger"],
+        "en": ["undocumented", "no papers", "residence permit", "no residence permit", "irregular status", "foreigner"],
+        "de": ["ohne papiere", "aufenthaltstitel", "keine papiere", "aufenthaltserlaubnis", "ausländer"],
+        "tr": ["kagitsiz", "oturum izni", "ikamet izni", "belgesiz", "yabanci"],
+        "ar": ["بدون اوراق", "بلا اوراق", "تصريح الاقامة", "بطاقة الاقامة", "اجنبي"],
+        "uk": ["без документів", "посвідка на проживання", "дозвіл на проживання", "іноземн", "іноземець"]
+      }
+    },
+    {
+      "id": "sortie-ase",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["protection-enfance/sortie-ase", "enfance-jeunesse/jeunes-insertion", "logement/logement-jeunes"],
+      "needs": ["sortie-ase"],
+      "rights": [],
+      "steps": [{ "fiche": "F2018" }, { "stepType": "CONTRAT_ENGAGEMENT_JEUNE" }, { "stepType": "LOGEMENT_SOCIAL_DEMANDE" }],
+      "structures": ["Mission locale (jeunes de 16 à 25 ans)", "Maison des solidarités (Espace Solidarités)"],
+      "keywords": {
+        "fr": ["ase", "aide sociale a l'enfance", "foyer", "majeur", "18 ans", "sortie de l'ase", "jeune majeur", "famille d'accueil", "fjt", "foyer de jeunes travailleurs"],
+        "en": ["leaving care", "care leaver", "foster care", "turning 18", "child welfare", "ase"],
+        "de": ["jugendhilfe", "careleaver", "pflegefamilie", "18 jahre", "volljährig", "heim verlassen"],
+        "tr": ["koruma altinda", "koruyucu aile", "18 yasina", "yurttan cikis", "ase"],
+        "ar": ["رعاية الطفولة", "دار الرعاية", "عائلة حاضنة", "بلغت 18", "18 سنة"],
+        "uk": ["служба у справах дітей", "прийомна сім'я", "18 років", "повноліт", "виходжу з притулку"]
+      }
+    },
+    {
+      "id": "demarches-papiers",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["numerique/demarches-en-ligne", "precarite/acces-aux-droits", "justice/recours"],
+      "needs": ["acces-aux-droits"],
+      "rights": [],
+      "steps": [{ "stepType": "CARTE_IDENTITE_DEMANDE" }, { "stepType": "ACTE_NAISSANCE_DEMANDE" }, { "stepType": "RECOURS_ADMINISTRATIF" }],
+      "structures": ["Espace France Services", "Mairie", "CCAS (centre communal d'action sociale)"],
+      "keywords": {
+        "fr": ["demarche", "demarches", "papiers", "dossier", "formulaire", "internet", "en ligne", "ordinateur", "carte d'identite", "acte de naissance", "contester", "recours", "lettre", "courrier"],
+        "en": ["paperwork", "forms", "form", "online", "internet", "computer", "identity card", "birth certificate", "appeal", "letter"],
+        "de": ["formular", "formulare", "behörde", "papierkram", "online", "internet", "computer", "personalausweis", "geburtsurkunde", "widerspruch", "brief"],
+        "tr": ["evrak", "basvuru", "form", "internet", "cevrimici", "bilgisayar", "kimlik karti", "dogum belgesi", "itiraz", "mektup"],
+        "ar": ["اوراق", "معاملات", "استمارة", "الانترنت", "اونلاين", "حاسوب", "بطاقة الهوية", "شهادة الميلاد", "طعن", "رسالة"],
+        "uk": ["документ", "форма", "заява", "заяви", "онлайн", "інтернет", "комп'ютер", "посвідчення особи", "свідоцтво про народження", "оскарж", "лист"]
+      }
+    },
+    {
+      "id": "scolarite",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["enfance-jeunesse/scolarite-inclusive", "famille/prestations-familiales"],
+      "needs": ["scolarite-inclusive", "garde-enfants"],
+      "rights": ["F38244", "F1878", "F19294"],
+      "steps": [{ "stepType": "ALLOCATION_RENTREE_SCOLAIRE" }, { "stepType": "BOURSE_COLLEGE_DEMANDE" }, { "stepType": "BOURSE_LYCEE_DEMANDE" }, { "stepType": "CANTINE_AIDE_DEMANDE" }],
+      "structures": ["Mairie", "Caf (Caisse d'allocations familiales)", "CIO (centre d'information et d'orientation)"],
+      "keywords": {
+        "fr": ["ecole", "rentree", "rentree scolaire", "college", "lycee", "cantine", "bourse", "fournitures", "scolarite"],
+        "en": ["school", "back to school", "school year", "secondary school", "high school", "canteen", "school meals", "grant", "school supplies"],
+        "de": ["schule", "schulanfang", "schuljahr", "gymnasium", "kantine", "schulessen", "stipendium", "schulsachen"],
+        "tr": ["okul", "okul donemi", "ortaokul", "lise", "yemekhane", "burs", "kirtasiye"],
+        "ar": ["مدرسة", "المدرسة", "الدخول المدرسي", "اعدادية", "ثانوية", "المقصف", "منحة", "ادوات مدرسية"],
+        "uk": ["школа", "школи", "школу", "навчальний рік", "коледж", "ліцей", "їдальн", "стипенді", "шкільне приладдя"]
+      }
+    },
+    {
+      "id": "retraite",
+      "danger": false,
+      "emergency": [],
+      "subdomains": ["autonomie/apa-aspa", "autonomie/information-seniors"],
+      "needs": [],
+      "rights": ["F16871"],
+      "steps": [{ "stepType": "RETRAITE_DEMANDE" }, { "stepType": "ASPA_DEMANDE" }],
+      "structures": ["Espace France Services", "Point d’information pour les personnes âgées"],
+      "keywords": {
+        "fr": ["retraite", "partir a la retraite", "pension de retraite", "retraite trop petite", "aspa", "minimum vieillesse", "65 ans"],
+        "en": ["retirement", "retire", "retiring", "pension", "old age pension", "aspa"],
+        "de": ["rente", "ruhestand", "in rente gehen", "pension", "altersrente", "aspa"],
+        "tr": ["emeklilik", "emekli", "emekli olmak", "emekli maasi", "aspa"],
+        "ar": ["تقاعد", "التقاعد", "معاش", "المعاش", "راتب التقاعد"],
+        "uk": ["пенсі", "вихід на пенсію", "пенсіонер"]
+      }
+    }
+  ]
+}
