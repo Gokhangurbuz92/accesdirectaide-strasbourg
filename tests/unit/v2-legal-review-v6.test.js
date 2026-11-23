@@ -12,7 +12,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 // v7 (18/11/2026) coexists with v6: this file pins the v6 texts themselves (unchanged, still approvable by name)
-import { LEGAL_DRAFT_DOCUMENTS_V6 as LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS, LEGAL_DRAFTS_V6 as LEGAL_DRAFTS_VERSION, LEGAL_NOTICE_VARIANT_DOCUMENT_V6 as LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_DRAFT_DOCUMENTS_V8, LEGAL_DRAFT_DOCUMENTS_V9, draftTextKeys, draftVisibility, LEGAL_DRAFT_DOCUMENTS_V10, LEGAL_DRAFT_DOCUMENTS_V11 } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFT_DOCUMENTS_V6 as LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFT_STATUS, LEGAL_DRAFTS_V6 as LEGAL_DRAFTS_VERSION, LEGAL_NOTICE_VARIANT_DOCUMENT_V6 as LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_DRAFT_DOCUMENTS_V8, LEGAL_DRAFT_DOCUMENTS_V9, draftTextKeys, draftVisibility, LEGAL_DRAFT_DOCUMENTS_V10, LEGAL_DRAFT_DOCUMENTS_V11, LEGAL_DRAFT_DOCUMENTS_V12, LEGAL_DRAFT_DOCUMENTS_V13 } from '../../src/config/legal-drafts.js';
 import { citizenTermsInForce } from '../../api/_utils/terms-in-force.js';
 import { MAIL_CONTACT_DEADLINE_MARGIN_DAYS, MAIL_CONTACT_RETRY_WINDOW_DAYS } from '../../api/_services/privacy.js';
 import { RETENTION_POLICY } from '../../api/_services/retention-policy.js';
@@ -122,7 +122,9 @@ describe('legal drafts v6-2026-11-17', () => {
         const v9doc = LEGAL_DRAFT_DOCUMENTS_V9.find((d) => d.id === doc.id);
         // and keys of v10 (« …_v10 », G14 Mon Parcours 22/11/2026) have theirs in v10 (tests/unit/g14-legal-v10.test.js)
         const v10doc = LEGAL_DRAFT_DOCUMENTS_V10.find((d) => d.id === doc.id); const v11doc = LEGAL_DRAFT_DOCUMENTS_V11.find((d) => d.id === doc.id);
-        const v8 = new Set([...(v8doc ? draftTextKeys(v8doc) : []), ...(v9doc ? draftTextKeys(v9doc) : []), ...(v10doc ? draftTextKeys(v10doc) : []), ...(v11doc ? draftTextKeys(v11doc) : [])].map(([k]) => `${doc.key}.${k}`));
+        // and keys of v12 / v13 (« …_v12 », « …_v13 », G14 expansion 23/11/2026) have theirs there (tests/unit/g14-legal-v12.test.js)
+        const v12doc = LEGAL_DRAFT_DOCUMENTS_V12.find((d) => d.id === doc.id); const v13doc = LEGAL_DRAFT_DOCUMENTS_V13.find((d) => d.id === doc.id);
+        const v8 = new Set([...(v8doc ? draftTextKeys(v8doc) : []), ...(v9doc ? draftTextKeys(v9doc) : []), ...(v10doc ? draftTextKeys(v10doc) : []), ...(v11doc ? draftTextKeys(v11doc) : []), ...(v12doc ? draftTextKeys(v12doc) : []), ...(v13doc ? draftTextKeys(v13doc) : [])].map(([k]) => `${doc.key}.${k}`));
         const extra = Object.keys(tr).filter((k) => k.startsWith(`${doc.key}.`) && !(k in fr) && !(k in v7) && !v8.has(k) && !/\.(badge|label)\b/.test(k));
         expect(extra, `${lang} keys with no French master`).toEqual([]);
       }

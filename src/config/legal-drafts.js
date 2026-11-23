@@ -722,20 +722,157 @@ export const LEGAL_DRAFT_DOCUMENTS_V10 = [
 /** @type {DraftDocument[]} the privacy notice (from v9) — to be put in force at the ADA Pro (K8) opening only */
 export const LEGAL_DRAFT_DOCUMENTS_V11 = [withChanges(LEGAL_DRAFTS_V11_CHANGES, LEGAL_DRAFTS_V11)(docOf(LEGAL_DRAFT_DOCUMENTS_V9, 'notice-confidentialite'))];
 
+/*
+ * v12-2026-11-23 / v13-2026-11-23 — G14 (23/11/2026): the expansion capabilities X04 (Académie, events), X02 (testimonials) and X01 (community stories),
+ * with the « signalements et décisions » block (DSA notice and action, statement of reasons, internal complaint, repeated misuse), to open right after
+ * Mon Parcours. Master: CONTROL/master/completion/G14_LEGAL_V12_V13_FR.md, from G14_EXPANSION_NOTICE_CGU_FR.md (written as a diff on notice v9; here
+ * carried on the v10 / v11 bases) and the code of the expansion (api/_services/academy-events.js, testimonials.js, community-stories.js,
+ * moderation-dsa.js, gdpr-purge-expansion-steps.js, retention-policy.js G14 durations). NOT X05 (job listings: needs the `pro` surface) and NOT X03
+ * (entraide: closed until its dedicated AIPD). The owner is the sole named moderator (owner, 23/11/2026): the texts say « le responsable du traitement /
+ * l'exploitant, qui assure lui-même la modération », without his name. PROPOSED: not approved by the owner yet.
+ *  v12  cgu-citoyen            = v10 + § « 7 bis. Contenus que vous publiez » (new section `publishing`, ten items) + one paragraph in § 8.
+ *       notice-confidentialite = v10 (Mon Parcours, from v8: no ADA Pro text) + § 2 one paragraph, new § « 3 ter » (`participation`), § 4 five items,
+ *                                § 5 one paragraph, § 6 Mailjet item (moderation e-mails), § 8 one paragraph, new § « 13 » (`moderation`).
+ *       → put in force at the X04 / X01 / X02 opening (with cgu-professionnel@v8 and conditions-structures@v8 unchanged).
+ *  v13  notice-confidentialite = v11 (ADA Pro, from v9) + the SAME expansion texts (Mailjet item from the v9 wording) + the 8x8 JaaS video texts (§ 6
+ *       item and paragraph, § 7 paragraph). Proposed for activation at the ADA Pro (K8) opening only (LEGAL_DRAFTS_V13_ACTIVATION).
+ * Facts by text (code wins over the master; differences listed in the master file):
+ *  participation  X04 adult account only (isAdultAccount), one need from a closed list with a separate never-pre-ticked agreement, proof in ConsentLog
+ *                 (EVENT_ACCESSIBILITY_NEED, true / false), organizer counts only (registrationCounts), reminder in the notification centre from 48 h
+ *                 before (REMINDER_WINDOW_HOURS). X02 / X01: consent per text (TESTIMONIAL_PUBLICATION / COMMUNITY_STORY_PUBLICATION), withdrawal erases
+ *                 text and name, pseudonym member row with its own id, LEAVE deletes it with the stories.
+ *  retention      EVENT_NEED_AFTER_END_DAYS 1, EVENT_REGISTRATION_AFTER_END_DAYS 30, ACADEMY_EVENT_ENDED_DAYS 365, *_PENDING_DAYS 60, *_REVIEW_DAYS 1095
+ *                 (report only), *_SKELETON_DAYS 365, UGC_REPORT_DAYS 90, COMMUNITY_MEMBER_INACTIVE_DAYS 730, CONTENT_NOTICE_AFTER_DECISION_DAYS 365 (kept
+ *                 while an appeal is open: contentNoticesDeleted). None of these steps is in approvedSteps: « retiré » (not « automatiquement »); § 4 p0
+ *                 already says the automatic deletion is not fully active. Decisions / appeals / sanctions: no duration decided, no purge step — said so.
+ *  moderation     moderation-dsa.js: public form (four elements of art. 16(2), identity optional for CHILD_SAFETY), acknowledgement + appeal code by
+ *                 e-mail, statementText (art. 17(3) a–f, e-mail + /compte/moderation), six-month free appeal, sole moderator = same person after 24 h
+ *                 (SOLE_REVIEW_DELAY_MS) and the answer says so, warnings then 1–180 days (WARNING_WINDOW_DAYS 365), notifier keyed by HMAC (notifierKey).
+ *  video (v13)    api/lib/video-provider.js issueJaasJoin: room = HMAC (no name, date, structure), user id = HMAC per appointment, generic display name,
+ *                 moderator flag, nbf / exp = 15 min before / after; recording, live streaming, transcription, calls, file upload off. 8x8 Global DPA
+ *                 2025-02 (owner accepted 23/11/2026): processor, SCC 2021/914 module 2. Video stays closed (capability `video`, appointments closed).
+ * Every earlier version unchanged byte for byte. Translations: the « …_v12 » / « …_v13 » keys of src/i18n/locales/<lang>/legaldraft.json.
+ */
+export const LEGAL_DRAFTS_V12 = 'v12-2026-11-23';
+export const LEGAL_DRAFTS_V12_DOCUMENT_IDS = Object.freeze(['cgu-citoyen', 'notice-confidentialite']);
+export const LEGAL_DRAFTS_V13 = 'v13-2026-11-23';
+export const LEGAL_DRAFTS_V13_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
+/** v12 and v13 are proposed (23/11/2026), not approved by the owner; v13 carries the v9 / v11 texts on professional accounts and the video provider */
+export const LEGAL_DRAFTS_V12_STATUS = 'PROPOSED — proposée le 23/11/2026, à approuver par le responsable avant l’ouverture de X04, X01 et X02';
+export const LEGAL_DRAFTS_V13_ACTIVATION = 'APPROVED_FOR_ACTIVATION_AT_K8 — proposée le 23/11/2026 (pas encore approuvée par le responsable), à mettre en vigueur seulement à l’ouverture d’ADA Pro (K8)';
+
+export const LEGAL_DRAFTS_V12_STATUS_PARAGRAPH = "Elle décrit aussi, lorsqu'elles sont ouvertes, les fonctions de participation (section 3 ter) et la manière dont les contenus publiés sont signalés et modérés (section 13).";
+export const LEGAL_DRAFTS_V12_EVENTS = "Événements de l'Académie : vous inscrire à un événement, annuler votre inscription et recevoir un rappel dans les notifications de Mon Espace à partir de 48 heures avant le début : exécution des conditions d'utilisation (art. 6, 1, b). Si vous le choisissez, un seul besoin d'accessibilité dans une liste (par exemple une interprétation en langue des signes) : votre consentement explicite (art. 9, 2, a), donné par une case distincte jamais cochée d'avance. Chaque accord et chaque retrait est enregistré comme preuve. Vous pouvez retirer ce besoin à tout moment depuis « Mes événements » ; l'annulation de l'inscription l'efface aussi. L'organisateur ne reçoit que des nombres (combien de personnes inscrites, combien de besoins de chaque sorte), jamais votre nom ni votre adresse.";
+export const LEGAL_DRAFTS_V12_TESTIMONIALS = "Témoignages : publier votre témoignage après relecture, sous le prénom ou le pseudonyme que vous choisissez : votre consentement (art. 6, 1, a), donné pour chaque texte par une case jamais cochée d'avance, que vous pouvez retirer à tout moment ; le texte et le nom sont alors effacés. N'écrivez rien sur votre santé, un handicap ou une autre personne : un texte qui en parle n'est pas publié. Signalements et relecture : intérêt légitime (art. 6, 1, f).";
+export const LEGAL_DRAFTS_V12_STORIES = "Histoires de la communauté : même règle, sous un pseudonyme que vous choisissez et qui n'est jamais relié publiquement à votre compte. Quitter la communauté supprime votre pseudonyme et vos histoires.";
+export const LEGAL_DRAFTS_V12_PARTICIPATION_NOTE = "Ces fonctions sont réservées aux comptes de personnes qui ont déclaré avoir 18 ans ou plus. Leurs durées de conservation sont indiquées en section 4, leurs destinataires en section 5, les signalements et décisions de modération en section 13.";
+export const LEGAL_DRAFTS_V12_EVENTS_RETENTION = "Événements : le besoin d'accessibilité est effacé dès que vous annulez, et au plus tard le lendemain de la fin de l'événement ; l'inscription est supprimée 30 jours après la fin de l'événement (ou après votre annulation si elle vient avant) ; la page d'un événement terminé est supprimée après 12 mois.";
+export const LEGAL_DRAFTS_V12_CONTENT_RETENTION = "Témoignages et histoires : un texte qui n'a pas été relu dans les 60 jours est retiré (texte effacé, retrait de votre accord enregistré) ; un texte publié reste en ligne tant que vous ne le retirez pas, et nous vous demanderons de le confirmer après 3 ans (rien n'est retiré sans votre réponse ou une décision) ; après un retrait ou un refus, le texte est effacé aussitôt et la ligne qui garde l'état et les dates, sans texte, est supprimée après 12 mois ; un signalement est supprimé à la décision, et au plus tard après 90 jours ; un pseudonyme sans histoire publiée ni en attente est supprimé après 24 mois sans activité.";
+export const LEGAL_DRAFTS_V12_NOTICES_RETENTION = "Signalements envoyés sans compte (formulaire « Signaler un contenu ») : supprimés 12 mois après la décision, et gardés tant qu'une contestation est en cours.";
+export const LEGAL_DRAFTS_V12_PROOFS_RETENTION = "Preuves d'accord (témoignages, histoires, besoin d'accessibilité) : selon la règle des décisions de consentement ci-dessus.";
+export const LEGAL_DRAFTS_V12_DECISIONS_RETENTION = "Décisions de modération, contestations et mesures contre les abus : leur durée de conservation n'est pas encore fixée par le responsable du traitement ; elles ne sont pas supprimées automatiquement, et cette notice indiquera leur durée dès qu'elle sera fixée.";
+export const LEGAL_DRAFTS_V12_RECIPIENTS = "Ce que vous choisissez de publier (témoignage, histoire, avec le nom ou le pseudonyme choisi) est visible de tous. La modération est assurée par le responsable du traitement lui-même, personne physique, seul modérateur nommé à la date de cette version, avec un compte d'administration à son nom protégé par une double authentification. Dans l'outil de modération, il voit le texte et le nom ou le pseudonyme choisi, jamais votre adresse électronique ni votre compte, ni qui a signalé un contenu ; l'auteur n'apprend pas non plus qui l'a signalé.";
+export const LEGAL_DRAFTS_V12_RIGHTS = "Retirer un témoignage ou une histoire, retirer un besoin d'accessibilité, quitter la communauté : depuis votre espace, en un geste. Les décisions de modération qui vous concernent et vos contestations sont dans « Décisions de modération ». L'export de vos données comprend ces éléments.";
+export const LEGAL_DRAFTS_V12_MAILJET = "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte et, pour les contenus publiés, accusés de réception des signalements, décisions de modération et réponses aux contestations) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).";
+export const LEGAL_DRAFTS_V13_MAILJET = "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte, invitations et avis des comptes professionnels et, pour les contenus publiés, accusés de réception des signalements, décisions de modération et réponses aux contestations) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).";
+/** § 13 — the DSA block (notice and action, statement of reasons, internal complaint, repeated misuse) */
+export const LEGAL_DRAFTS_V12_MODERATION = Object.freeze([
+  "AccesDirectAide stocke et publie, à votre demande, les contenus que vous écrivez (témoignages, histoires). Pour ces contenus, il fournit un service d'hébergement au sens du règlement (UE) 2022/2065 sur les services numériques.",
+  "Signaler. Toute personne, avec ou sans compte, peut signaler un contenu qu'elle estime illicite ou contraire aux règles de publication (section 7 bis des conditions d'utilisation des particuliers), depuis la page « Signaler un contenu » ou en écrivant au point de contact indiqué dans les mentions légales. Le signalement indique pourquoi le contenu pose problème, où il se trouve (l'adresse de la page), votre nom et votre adresse électronique — sauf pour un contenu mettant en danger un enfant — et vous déclarez de bonne foi que ces informations sont exactes et complètes. Les titulaires d'un compte peuvent aussi signaler depuis la page du contenu. Si vous avez donné une adresse, vous recevez un accusé de réception, puis la décision et les recours possibles. Nom et adresse servent seulement à cela ; l'auteur du contenu ne les voit jamais. Base : intérêt légitime (art. 6, 1, f).",
+  "Décider. Le responsable du traitement, qui assure lui-même la modération, examine chaque signalement ; aucun contenu n'est retiré automatiquement et aucune décision n'est automatisée. Un signalement qui laisse craindre une menace pour la vie ou la sécurité d'une personne est traité en priorité ; s'il fait soupçonner une infraction de ce type, les autorités sont informées. En cas de danger immédiat, appelez le 112 (ou le 15, le 17) : AccesDirectAide n'est pas un service d'urgence.",
+  "Motiver. Si votre contenu n'est pas publié ou est retiré, ou si votre participation est suspendue, vous recevez un exposé des motifs : la mesure et sa durée, les faits, si la décision fait suite à un signalement, la règle appliquée ou, pour un contenu jugé illicite, le texte de loi en cause, l'absence de moyen automatisé, et vos recours. Il vous est envoyé par e-mail et reste dans votre espace (« Décisions de modération »).",
+  "Contester. Vous pouvez contester gratuitement une décision pendant six mois — que vous soyez l'auteur du contenu ou la personne qui l'a signalé — depuis votre espace, ou, sans compte, avec la référence et le code de votre accusé de réception. Lorsqu'une autre personne assure aussi la modération, c'est elle qui réexamine la décision. À la date de cette version, une seule personne assure la modération : elle réexamine elle-même la décision, au plus tôt 24 heures après votre contestation, et la réponse vous le dit. La réponse est motivée. Vous pouvez aussi saisir le juge.",
+  "Abus répétés. Une personne qui publie à plusieurs reprises des contenus manifestement illicites, ou qui envoie à plusieurs reprises des signalements ou contestations manifestement infondés, reçoit d'abord un avertissement ; si cela se reproduit dans les 12 mois, la publication, ou le traitement de ses signalements, peut être suspendu pour une durée de 1 à 180 jours, fixée au cas par cas (nombre, proportion, gravité, intention). La personne en reçoit les motifs et peut contester. Pour une personne sans compte, la mesure est enregistrée avec une empreinte de son adresse calculée avec une clé secrète, jamais avec l'adresse elle-même.",
+  "Règles appliquées. Les contenus refusés, les délais indicatifs et les recours sont décrits à la section 7 bis des conditions d'utilisation des particuliers.",
+]);
+/** cgu-citoyen § 7 bis (ten items) and § 8 (one paragraph) */
+export const LEGAL_DRAFTS_V12_CGU_PUBLISHING = Object.freeze([
+  "Certaines fonctions vous permettent de publier un texte (témoignage, histoire). Vous en êtes l'auteur et vous en répondez ; vous ne publiez que ce que vous êtes libre de publier.",
+  "Avant toute publication, l'exploitant, qui assure lui-même la modération, relit le texte. Il refuse un texte contraire à ces règles : information sur la santé ou un handicap, coordonnées ou détails qui permettent de reconnaître une personne, propos injurieux, menaçants ou discriminatoires, publicité, information trompeuse ou promesse de droit, texte hors sujet, et tout contenu illicite. En cas de doute sur la santé ou la reconnaissance d'un tiers, le texte est refusé et vous pouvez le réécrire.",
+  "Vous pouvez retirer votre texte à tout moment ; il est alors effacé. Un texte qui n'a pas été relu dans les 60 jours est retiré.",
+  "En publiant, vous autorisez AccesDirectAide à afficher gratuitement votre texte sur le site, sous le nom ou le pseudonyme choisi, tant que vous ne le retirez pas. Cette autorisation n'est pas cédée à des tiers.",
+  "Signaler. Toute personne, avec ou sans compte, peut signaler un contenu qu'elle estime illicite ou contraire à ces règles (notice de confidentialité, section 13). Un signalement ne retire jamais un texte à lui seul : une personne décide.",
+  "Délais indicatifs : accusé de réception d'un signalement envoyé par e-mail sous 2 jours ouvrés ; relecture d'un texte en attente et décision sur un signalement sous 5 jours ouvrés ; signalement de sécurité sous 24 heures, avec mesure conservatoire possible ; réponse à une contestation sous 15 jours ouvrés.",
+  "Motifs et recours. Si votre texte est refusé ou retiré, ou si votre participation est suspendue, vous recevez un exposé des motifs. Vous pouvez contester pendant six mois, gratuitement, depuis votre espace ; la décision est réexaminée et la réponse est motivée. Vous pouvez aussi saisir le juge.",
+  "Abus répétés. Après un avertissement, la publication — ou le traitement de vos signalements — peut être suspendu de 1 à 180 jours en cas de contenus manifestement illicites, ou de signalements ou contestations manifestement infondés, répétés dans les 12 mois (notice de confidentialité, section 13).",
+  "Danger pour une personne. Si un contenu laisse penser qu'une infraction menaçant la vie ou la sécurité d'une personne a été commise ou risque de l'être, AccesDirectAide en informe les autorités. En cas d'urgence, appelez le 112 (ou le 15, le 17).",
+  "Âge. Ces fonctions sont réservées aux personnes qui déclarent avoir 18 ans ou plus.",
+]);
+export const LEGAL_DRAFTS_V12_CGU_SUSPENSION = "La participation à une fonction (communauté, témoignages) peut aussi être suspendue seule, sans toucher au reste du compte, avec les mêmes garanties (motifs et recours de la section 7 bis).";
+/** v13 only — 8x8 JaaS (video stays closed, like the appointments) */
+export const LEGAL_DRAFTS_V13_VIDEO_PROCESSOR = "8x8, Inc. (États-Unis) : visioconférence des rendez-vous (service « Jitsi as a Service »), qui n'est pas encore ouverte, comme les rendez-vous eux-mêmes. 8x8 agit comme sous-traitant selon son accord de traitement des données (« Global Data Processing Addendum », version de février 2025), intégré à ses conditions de service.";
+export const LEGAL_DRAFTS_V13_VIDEO_DATA = "Visioconférence (pas encore ouverte) : elle ne sera proposée que pour un rendez-vous dont la structure a validé la visioconférence et pour lequel vous avez donné votre accord. AccesDirectAide transmettra alors à 8x8 seulement un jeton d'accès valable de 15 minutes avant le début à 15 minutes après la fin du rendez-vous, qui contient un nom de salle calculé (une suite de caractères qui ne contient ni votre nom, ni la date, ni la structure), un identifiant technique propre au rendez-vous, un nom affiché générique (« Personne accompagnée » ou « Conseiller·e ») et le rôle dans la salle ; ni votre nom, ni votre adresse électronique, ni l'objet du rendez-vous. Pendant l'appel, votre navigateur se connectera directement aux serveurs de 8x8 : le son, l'image et les messages écrits dans la salle passeront par eux, et 8x8 recevra les données techniques de la connexion (notamment votre adresse IP). L'enregistrement, la diffusion en direct, la transcription, les appels téléphoniques et l'envoi de fichiers sont désactivés.";
+export const LEGAL_DRAFTS_V13_VIDEO_TRANSFER = "Visioconférence (pas encore ouverte) : 8x8, Inc. est établie aux États-Unis ; les données de la visioconférence pourront y être transférées. La garantie prévue est celle des clauses contractuelles types de la Commission européenne (décision d'exécution (UE) 2021/914, module 2 : de responsable du traitement à sous-traitant), prévues par l'accord de traitement des données de 8x8.";
+
+/** @type {DraftSection} the new § 3 ter of the notice (v12 and v13) */
+const PARTICIPATION_SECTION = Object.freeze({ id: 'participation', title: '3 ter. Fonctions de participation', titleKey: 'title_v12',
+  items: [LEGAL_DRAFTS_V12_EVENTS, LEGAL_DRAFTS_V12_TESTIMONIALS, LEGAL_DRAFTS_V12_STORIES], itemKeys: { 0: 'events_v12', 1: 'testimonials_v12', 2: 'stories_v12' },
+  paras: [LEGAL_DRAFTS_V12_PARTICIPATION_NOTE], paraKeys: { 0: 'p1_v12' } });
+/** @type {DraftSection} the new § 13 of the notice (v12 and v13) */
+const MODERATION_SECTION = Object.freeze({ id: 'moderation', title: '13. Contenus publiés, signalements et décisions de modération', titleKey: 'title_v12',
+  paras: [...LEGAL_DRAFTS_V12_MODERATION], paraKeys: Object.fromEntries(LEGAL_DRAFTS_V12_MODERATION.map((_, i) => [i, `p${i + 1}_v12`])) });
+/** @type {DraftSection} the new § 7 bis of the citizen terms (v12) */
+const PUBLISHING_SECTION = Object.freeze({ id: 'publishing', title: '7 bis. Contenus que vous publiez', titleKey: 'title_v12',
+  items: [...LEGAL_DRAFTS_V12_CGU_PUBLISHING], itemKeys: Object.fromEntries(LEGAL_DRAFTS_V12_CGU_PUBLISHING.map((_, i) => [i, `i${i + 1}_v12`])) });
+const RETENTION_V12 = [[LEGAL_DRAFTS_V12_EVENTS_RETENTION, 'events_v12'], [LEGAL_DRAFTS_V12_CONTENT_RETENTION, 'content_v12'], [LEGAL_DRAFTS_V12_NOTICES_RETENTION, 'notices_v12'],
+  [LEGAL_DRAFTS_V12_PROOFS_RETENTION, 'proofs_v12'], [LEGAL_DRAFTS_V12_DECISIONS_RETENTION, 'decisions_v12']];
+/**
+ * changes in the v9 change format, plus `addSections: { <id of the section they follow>: [section, …] }` (new sections, v12+); indexes = those of the base
+ * document (cgu-citoyen v10, notice v10 for v12, notice v11 for v13)
+ */
+export const LEGAL_DRAFTS_V12_CHANGES = Object.freeze({
+  'notice-confidentialite': { addSections: { 'purposes-later': [PARTICIPATION_SECTION], language: [MODERATION_SECTION] }, sections: {
+    status: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_STATUS_PARAGRAPH, 'expansion_v12']] } } },
+    retention: { items: { insertAfter: { 13: RETENTION_V12 } } },
+    recipients: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RECIPIENTS, 'expansion_v12']] } } },
+    processors: { items: { replace: { 3: [LEGAL_DRAFTS_V12_MAILJET, 'i4_v12'] } } },
+    rights: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RIGHTS, 'expansion_v12']] } } },
+  } },
+  'cgu-citoyen': { addSections: { use: [PUBLISHING_SECTION] }, sections: {
+    deletion: { paras: { insertAfter: { 2: [[LEGAL_DRAFTS_V12_CGU_SUSPENSION, 'participation_v12']] } } },
+  } },
+});
+export const LEGAL_DRAFTS_V13_CHANGES = Object.freeze({
+  'notice-confidentialite': { addSections: { 'purposes-later': [PARTICIPATION_SECTION], language: [MODERATION_SECTION] }, sections: {
+    status: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_STATUS_PARAGRAPH, 'expansion_v12']] } } },
+    retention: { items: { insertAfter: { 16: RETENTION_V12 } } },
+    recipients: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RECIPIENTS, 'expansion_v12']] } } },
+    processors: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V13_VIDEO_DATA, 'video_v13']] } },
+      items: { replace: { 3: [LEGAL_DRAFTS_V13_MAILJET, 'i4_v13'] }, insertAfter: { 5: [[LEGAL_DRAFTS_V13_VIDEO_PROCESSOR, 'provider_v13']] } } },
+    transfers: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V13_VIDEO_TRANSFER, 'video_v13']] } } },
+    rights: { paras: { insertAfter: { 0: [[LEGAL_DRAFTS_V12_RIGHTS, 'expansion_v12']] } } },
+  } },
+});
+/** withChanges + new sections inserted after the section they follow @param {any} changes @param {string} version @returns {(d: DraftDocument) => DraftDocument} */
+const withSections = (changes, version) => (d) => {
+  const doc = withChanges(changes, version)(d);
+  const add = changes[d.id].addSections || {};
+  return { ...doc, sections: doc.sections.flatMap((s) => [s, ...(add[s.id] || []).map((x) => ({ ...x, ...(x.items ? { items: [...x.items], itemKeys: { ...x.itemKeys } } : {}),
+    ...(x.paras ? { paras: [...x.paras], paraKeys: { ...x.paraKeys } } : {}) }))]) };
+};
+/** @type {DraftDocument[]} the citizen terms (from v10) and the privacy notice (from v10: no ADA Pro text) — X04 / X01 / X02 opening */
+export const LEGAL_DRAFT_DOCUMENTS_V12 = [
+  withSections(LEGAL_DRAFTS_V12_CHANGES, LEGAL_DRAFTS_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_V10, 'cgu-citoyen')),
+  withSections(LEGAL_DRAFTS_V12_CHANGES, LEGAL_DRAFTS_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_V10, 'notice-confidentialite')),
+];
+/** @type {DraftDocument[]} the privacy notice (from v11) — proposed for the ADA Pro (K8) opening only */
+export const LEGAL_DRAFT_DOCUMENTS_V13 = [withSections(LEGAL_DRAFTS_V13_CHANGES, LEGAL_DRAFTS_V13)(docOf(LEGAL_DRAFT_DOCUMENTS_V11, 'notice-confidentialite'))];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
- * (draft; v8 stays approvable); G14: the citizen terms and the notice at LEGAL_DRAFTS_V10 (Mon Parcours opening), the notice also at LEGAL_DRAFTS_V11 (K8). LEGAL_DRAFT_DOCUMENTS = the newest draft
+ * (draft; v8 stays approvable); G14: the citizen terms and the notice at LEGAL_DRAFTS_V10 (Mon Parcours opening), the notice also at LEGAL_DRAFTS_V11 (K8); G14 expansion: the citizen terms and the notice at LEGAL_DRAFTS_V12 (X04 / X01 / X02 opening), the notice also at LEGAL_DRAFTS_V13 (K8, with video). LEGAL_DRAFT_DOCUMENTS = the newest draft
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13]);
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
   [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO],
-  [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10], [LEGAL_DRAFTS_V11]: [...LEGAL_DRAFT_DOCUMENTS_V11] });
+  [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10], [LEGAL_DRAFTS_V11]: [...LEGAL_DRAFT_DOCUMENTS_V11],
+  [LEGAL_DRAFTS_V12]: [...LEGAL_DRAFT_DOCUMENTS_V12], [LEGAL_DRAFTS_V13]: [...LEGAL_DRAFT_DOCUMENTS_V13] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {
