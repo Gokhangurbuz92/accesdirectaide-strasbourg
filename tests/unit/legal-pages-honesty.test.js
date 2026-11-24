@@ -17,12 +17,14 @@ const PUBLIC_SURFACES = [
   'src/config/legal-drafts.js', 'src/pages/LegalDraftDocument.jsx', 'src/components/legal/LegalDraftBanner.jsx',
 ];
 
+// R3 (24/11/2026): Mon Coffre at the HDS service IS end-to-end encrypted in the browser (services/hds, branch g14-r3f): the notice P28 sentence « ni AccesDirectAide ni
+// l'hébergeur ne peuvent les lire (chiffrement de bout en bout) » is allowed; every other « chiffrement de bout en bout » claim stays refused
 const FALSE_CLAIMS = [
   /Zero-Knowledge/i, /zéro connaissance/i, /instantan/i, /Nous lisons 0 donnée/i, /exploitons 0 donnée/i, /bug bounty/i,
   /Aucun cookie de traçage/i, /aucun traceur/i, /Aucun cookie .{0,30}d'analyse/i, /plateforme publique/i, /Pôle Emploi/i,
   /Privacy-First/i, /certifiée/i, /zéro bandeau/i, /pas de bandeau/i, /dpo@/i, /Délégué à la Protection des Données \(DPO\)\.?<?/,
   /agit en tant que/i, /contrôle absolu/i, /garantie par charte/i, /souveraineté/i, /Isolation 100/i,
-  /(?<!pas un )(?<!pas de )chiffr\w*\s+de\s+bout\s+en\s+bout/i, /garantit l'anonymat/i, /blobs\s+opaques/i, /technologie sécurisée Microsoft Outlook/i,
+  /(?<!pas un )(?<!pas de )(?<!ne peuvent les lire \()chiffr\w*\s+de\s+bout\s+en\s+bout/i, /garantit l'anonymat/i, /blobs\s+opaques/i, /technologie sécurisée Microsoft Outlook/i,
   /\bada_session\b/, /\bcsrf_token\b/, /ada\.falc/, /gmail/i, /(?<!moteur de calcul )(?<!our own )OpenFisca/, /générés dynamiquement/i,   // G14 (g14-of): « notre moteur de calcul OpenFisca » at Scaleway is a real processing (notice P18); any other OpenFisca claim stays refused
 ];
 

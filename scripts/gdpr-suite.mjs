@@ -22,7 +22,7 @@ const ROOT_DIR = path.join(__dirname, '..');
  */
 
 // Date de révision du contenu (fixe). À changer uniquement quand le contenu du registre est révisé — jamais la date d'exécution.
-export const REGISTRE_VERSION = '0.7';   // G14-R3 (24/11/2026, PROPOSED): T29 household, T30 guardian link (restricted form), T31 trusted persons, T32 events (X04); G14-R3G (same package): T33 representative of a protected adult. 0.6 = G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
+export const REGISTRE_VERSION = '0.7';   // G14-R3 (24/11/2026, PROPOSED): release-3 follow-up (same 0.7): T04 appointment messaging (capability, HDS waiver, E9, in-thread report), T05 Mon Coffre at Scalingo HDS (E2E, art. 9.2.a), T10 content reports, T11 / T15 institution space and conventions (durations proposed), T34 partner referral bridge (FA-D7), Scalingo SAS (HDS) as a planned processor; T29 household, T30 guardian link (restricted form), T31 trusted persons, T32 events (X04); G14-R3G (same package): T33 representative of a protected adult. 0.6 = G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
 export const REGISTRE_DATE_REVISION = '2026-11-24';
 
 export const CONTACT_PROTECTION_DONNEES = '[À COMPLÉTER : contact protection des données]';
@@ -278,11 +278,16 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 categories_personnes: ['Citoyens', 'Professionnels'],
                 destinataires: ['La personne et les membres actifs de la structure concernée'],
                 sous_traitants: [vercel, neon, 'Stockage objet S3/R2 (prévu)'],
+                // R3 (24/11/2026, PROPOSED with notice v14): capability messaging.conversations (outside the HDS unless the structure is NOT_ESSMS and the
+                // service reviewed « ordinary »), messaging.attachments (HDS in every case), purge step E9 rdvConversationsDeleted, in-thread « Signaler »
+                statut_r3: 'messagerie de rendez-vous : capacité messaging.conversations fermée par défaut ; ouverture proposée à la release 3 pour les structures non ESSMS (sans FINESS, vérifiées) et les services relus « ordinaires » ; pièces jointes (messaging.attachments) fermées tant qu\'aucun hébergement HDS n\'est attesté — notice v14, ligne AIPD R6 (à signer)',
                 conservation: [
                     { ...sharedRule, donnee: 'Messages du dossier partagé (cascade avec le dossier)' },
-                    texte('Messagerie de rendez-vous', 'non appliqué', 'aucune purge ; supprimée seulement à l\'effacement du compte'),
+                    texte('Messagerie de rendez-vous', 'non appliqué', '730 jours après le dernier message, ou avec l\'anonymisation du rendez-vous (RDV_CONVERSATION_DAYS, étape E9 rdvConversationsDeleted — exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée) ; avec le compte'),
+                    texte('Signalement d\'un message (« Signaler » dans la conversation)', 'non appliqué', 'une ligne ContentReport sans le texte du message ; 365 jours après son traitement — durée PROPOSÉE (CONTENT_REPORT_CLOSED_DAYS, à approuver ; étape contentReportsClosedDeleted non exécutable)'),
                 ],
-                mesures_securite: 'Chiffrement par enveloppe (le serveur peut déchiffrer : pas de chiffrement de bout en bout), contrôle d\'accès par structure, pas d\'antivirus',
+                destinataires_r3: ['La personne', 'Les membres actifs de la structure du rendez-vous (comptes ADA Pro)', 'L\'exploitant pour un signalement : catégorie et références seulement, jamais le texte'],
+                mesures_securite: 'Chiffrement à l\'enregistrement avec une clé du serveur (le serveur peut déchiffrer : pas de chiffrement de bout en bout), contrôle d\'accès par structure et par rendez-vous, 2 000 caractères, HTML retiré, limitation de débit, aucun contenu dans les e-mails d\'avis, consigne « pas d\'information de santé » sous le champ, pas de pièce jointe sans HDS, pas d\'antivirus',
             },
             {
                 id: 'T05',
@@ -293,8 +298,15 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 categories_personnes: ['Citoyens', 'Tiers figurant sur les documents'],
                 destinataires: ['La personne ; une structure seulement si le document est joint à un dossier partagé'],
                 sous_traitants: ['Stockage objet S3/R2 (prévu)', neon, vercel],
-                conservation: [texte('Documents du coffre', 'appliqué', 'jusqu\'à suppression par la personne ou effacement du compte ; expiresAt non purgé par le cron (non appliqué)')],
-                mesures_securite: 'Chiffrement par enveloppe du contenu et du nom ; pas d\'antivirus (NOT_SCANNED)',
+                // G14-R3F (24/11/2026, PROPOSED): Mon Coffre moves to a separate service at Scalingo (osc-fr1, HDS option), end-to-end encrypted in the browser;
+                // AIPD line R9 = CONTROL/master/completion/R3_HDS_AIPD_CONSENTEMENT_PROJET_FR.md § 1 (to sign); notice v14 P28 (draft)
+                evolution_r3: 'Service HDS distinct (branche g14-r3f) : Scalingo SAS, région osc-fr1 (France), option HDS, certificat HDS n° 38436 (valable jusqu\'au 11/09/2028) ; documents et métadonnées chiffrés de bout en bout dans le navigateur (AES-256-GCM, clé dérivée d\'une phrase secrète par PBKDF2-SHA256, jamais transmise) puis chiffrés une seconde fois côté serveur ; tickets d\'accès signés à usage unique (60 s) ; aucune donnée de ce traitement chez Vercel, Neon, Upstash ou Sentry. Documents de santé : consentement explicite (art. 9.2.a), case jamais pré-cochée, retirable. Fermé tant que l\'annexe HDS n\'est pas souscrite, l\'AIPD (ligne R9) signée et HDS_PRODUCTION_APPROVED absent',
+                base_legale_r3: 'Art. 6.1.b ; documents de santé : consentement explicite art. 9.2.a — notice v14, P28 — à valider par le responsable',
+                conservation: [
+                    texte('Documents du coffre', 'appliqué', 'jusqu\'à suppression par la personne ou effacement du compte ; expiresAt non purgé par le cron (non appliqué)'),
+                    texte('Mon Coffre au service HDS (release 3)', NON_VERIFIE, 'jusqu\'à suppression par la personne ou du compte (effacement HDS en premier) ; sauvegardes : durée de rotation de Scalingo, à confirmer par écrit, puis liste anti-résurrection'),
+                ],
+                mesures_securite: 'Chiffrement par enveloppe du contenu et du nom ; pas d\'antivirus (NOT_SCANNED) ; release 3 : chiffrement de bout en bout dans le navigateur, phrase secrète perdue = documents perdus (dit à l\'écran)',
             },
             {
                 id: 'T06',
@@ -369,7 +381,10 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 categories_personnes: ['Usagers', 'Visiteurs', 'Professionnels'],
                 destinataires: ['Administrateurs AccesDirectAide'],
                 sous_traitants: [vercel, neon],
-                conservation: [texte('SupportRequest', 'non appliqué', 'aucune purge')],
+                conservation: [
+                    texte('SupportRequest', 'non appliqué', 'aucune purge'),
+                    texte('Signalements de contenu (ContentReport : « Signaler une erreur », « Signaler » un message)', 'non appliqué', '365 jours après leur traitement (FIXED ou REJECTED) — durée PROPOSÉE (CONTENT_REPORT_CLOSED_DAYS, à approuver ; étape contentReportsClosedDeleted non exécutable)'),
+                ],
                 mesures_securite: 'Chiffrement par enveloppe ; interrupteur de fermeture',
             },
             {
@@ -381,6 +396,8 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 categories_personnes: ['Indirectement : usagers et professionnels'],
                 destinataires: ['Comptes institutionnels actifs sous convention signée (aucune aujourd\'hui)'],
                 sous_traitants: [vercel, neon],
+                // R3 (24/11/2026, PROPOSED): institution users are informed by the notice v14 § 14 (draft); AIPD line R7 (to sign)
+                statut_r3: 'portail institution (capacité institution.portal) fermé ; ouverture proposée à la release 3 après une convention signée avec une institution nommée — notice v14 § 14, ligne AIPD R7 (à signer) ; seuls les trimestres gelés sont lus (tâche observatory-freeze)',
                 conservation: [texte('Agrégats', 'sans objet', 'les données sources suivent leur propre durée')],
                 mesures_securite: 'Export territorial fermé tant que la licence n\'est pas décidée',
             },
@@ -444,7 +461,13 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 categories_personnes: ['Représentants des partenaires', 'Demandeurs'],
                 destinataires: ['Administrateurs AccesDirectAide'],
                 sous_traitants: [vercel, neon],
-                conservation: [texte('InstitutionAccount, PartnerAgreement, PartnershipRequest', 'non appliqué', 'aucune purge')],
+                categories_donnees_r3: ['Compte institution : e-mail, organisation, territoire, statut, convention, empreinte du mot de passe, échecs de connexion et verrouillage, lien de réinitialisation (empreinte), date de dernière connexion', 'Journal des connexions et des lectures de statistiques (AuditLog A18)'],
+                conservation: [
+                    texte('InstitutionAccount suspendu', 'non appliqué', 'RAPPORT seulement, 365 jours après la dernière connexion (aucune date de suspension enregistrée) — durée PROPOSÉE (INSTITUTION_ACCOUNT_SUSPENDED_DAYS, à approuver ; étape suspendedInstitutionAccountsReport) ; la suppression reste une décision de l\'administrateur avec l\'institution'),
+                    texte('PartnerAgreement terminée', 'non appliqué', 'RAPPORT seulement, 5 ans après sa fin (preuve de ce qui a été convenu) — durée PROPOSÉE (PARTNER_AGREEMENT_ENDED_DAYS, à approuver ; étape endedPartnerAgreementsReport) ; jamais supprimée par la tâche (un compte la référence)'),
+                    texte('PartnershipRequest', 'non appliqué', '365 jours après la réponse (statut autre que « pending ») — durée PROPOSÉE (PARTNERSHIP_REQUEST_CLOSED_DAYS, à approuver ; étape partnershipRequestsClosedDeleted non exécutable)'),
+                    texte('Journal des connexions et lectures (AuditLog)', 'appliqué', 'règle du journal d\'audit (T12)'),
+                ],
                 mesures_securite: 'Compte actif seulement sous convention signée (aucune aujourd\'hui)',
             },
             {
@@ -587,7 +610,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 // G14-R3G (24/11/2026, release-3 package, PROPOSED): notice v14 P27, cgu v13 § 5; durations = retention-policy.js LEGAL_PROTECTION_* (pendingApproval)
                 id: 'T33',
                 nom: 'Représentant légal d\'un majeur protégé — tutelle, curatelle, habilitation familiale, mandat spécial (proche ou MJPM)',
-                statut: 'capacité citizen.legal_protection fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=legal_protection + ADA_CAPABILITIES_OPEN) ; table de la migration 0064 (en attente, hors journal)',
+                statut: 'capacité citizen.legal_protection fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=legal_protection + ADA_CAPABILITIES_OPEN) ; table de la migration 0064 (dans le journal, idx 64, depuis l\'intégration de la release 3)',
                 finalite: 'Permettre à la personne désignée par le juge d\'exercer sa mission dans le service (consulter, demander ou faire une action dans les parties couvertes par la décision vérifiée), en informant la personne protégée de tout ce qui est fait ; vérification humaine de la décision',
                 base_legale_proposee: 'Intérêt légitime (art. 6.1.f) — notice v14, P27 — à valider par le responsable ; question ouverte : l\'existence d\'une mesure révèle-t-elle une donnée de santé (art. 9) ? Si oui, condition art. 9 à décider (R3_KORUMA_TEMSIL_FR.md)',
                 categories_donnees: ['Identifiants des deux comptes', 'Qualité du représentant (proche / MJPM, forme d\'exercice L471-2, SIRET et structure facultatifs)', 'Faits tirés de la décision : mesure, représentation ou assistance, personne / biens, tribunal, date, date de fin', 'HMAC du numéro de dossier (facultatif, illisible)', 'État et enregistrement de la vérification (date, administrateur, méthode, note ≤ 500 caractères)', 'Journal des consultations, demandes et actions (AuditLog)', 'Rendez-vous à venir et étapes non sensibles de Mon Parcours consultés'],
@@ -601,6 +624,21 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                     texte('Journal (AuditLog)', 'appliqué', '365 jours (règle du journal)'),
                 ],
                 mesures_securite: 'La décision n\'est jamais reçue ni stockée (examen hors plateforme), aucune IA, aucun certificat médical ; aucun effet avant vérification ; pouvoirs bornés par mesure (ACT / CONFIRM), par parties (RDV, PARCOURS) et par la date de fin ; jamais Mon Coffre, la sécurité du compte, l\'export ou la suppression ; étapes sensibles masquées (G8) ; signalement de la personne = suspension immédiate ; limitation (art. 18) = tout suspendu ; mot de passe à la déclaration ; réponse neutre (pas d\'oracle d\'existence de compte)',
+            },
+            {
+                // R3 / FA-D7 (24/11/2026, PROPOSED): the partner referral bridge (branch g14-r3e) — closed (capability partner.referral_adapter, HDS, a named
+                // partner with a signed convention and ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED); notice v14 § 5 (list of connected partners: none); AIPD line R8
+                id: 'T34',
+                nom: 'Pont d\'orientation vers l\'outil d\'un partenaire (FA-D7, ada.partner-referral/1)',
+                statut: 'capacité partner.referral_adapter fermée (exige l\'hébergement HDS et pro.referrals) ; aucun partenaire connecté ; ouverture seulement après une convention signée avec un partenaire nommé et son membre délégué',
+                finalite: 'Tenir informé l\'outil d\'une structure partenaire de l\'état d\'une orientation qu\'elle reçoit, et recevoir ses réponses, sans ressaisie',
+                base_legale_proposee: 'Celle de l\'orientation (P8 : consentement à chaque partage, art. 6.1.a ; art. 9.2.a si nécessaire) — extension de la ligne P8 de l\'AIPD (R8) — à valider',
+                categories_donnees: ['Identifiant opaque de l\'orientation', 'État, code de motif, échéance', 'Horodatages et signatures (HMAC)', 'Aucune identité, aucun dossier, aucun document'],
+                categories_personnes: ['Personnes orientées (indirectement, par un identifiant opaque)', 'Membre délégué du partenaire'],
+                destinataires: ['Le partenaire connecté (liste publiée dans la notice ; aucun aujourd\'hui)', 'Administrateurs AccesDirectAide (journal sans contenu)'],
+                sous_traitants: [vercel, neon],
+                conservation: [texte('Événements du pont (journal)', 'appliqué', 'règle du journal d\'audit (T12) ; identifiants seulement'), texte('Orientation', 'appliqué', 'suit l\'orientation (T07)')],
+                mesures_securite: 'Signature HMAC (fenêtre 300 s), rotation des clés, 16 Kio au plus, 120 appels par minute et par partenaire, idempotence, aucune donnée d\'identité ni de document, interrupteur de production distinct, contrôle de pré-déploiement partner.bridge',
             },
             {
                 id: 'T32',
@@ -652,6 +690,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
             { nom: 'Autres expéditeurs codés (Microsoft Graph sendMail, Resend)', role: 'E-mails transactionnels', statut: 'non retenus, non configurés', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Mailjet (Sinch)', role: 'E-mails de service des comptes (vérification de l\'adresse, mot de passe, avis du compte)', statut: 'retenu (notice de confidentialité v6, non approuvée) ; envoi réel seulement si MAILER_PROVIDER=mailjet — état de la Production non vérifié ici ; offre (gratuite ou payante) non enregistrée', localisation: 'Google Cloud, Francfort (Allemagne) et Saint-Ghislain (Belgique)', entite_contractante: 'Groupe Sinch AB (Suède) ; Mailjet SAS est une société française — entité signataire exacte non vérifiée', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, module 2 (DPA Sinch § 12 c–d) ; pas de Data Privacy Framework pour Mailjet (la société inscrite est Mailgun Technologies, Inc.)', dpa: DPA_INTEGRE, role_propre: 'Sinch est aussi responsable de traitement indépendant pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau (DPA § 3 a iv)', journaux: 'statistiques : 90 jours (offre gratuite) ou 13 mois (offre payante) ; adresse du destinataire enregistrée comme contact pour la durée du compte, suppression demandée avant l\'effacement du compte (api/_services/mail-contact-erasure.js) ; en cas d\'échec, nouvel essai 3 jours au plus dans le délai d\'un mois, puis effacement du compte et signalement sans adresse « intervention humaine requise » (api/_services/mail-contact-failures.js) ; effacement dans les 90 jours après la fin du contrat ; aucune durée publiée pour le contenu des messages' },
             { nom: 'Cloudflare, Inc. (Workers AI)', role: 'Assistant citoyen (branche g14-ai fusionnée dans la version a628f7b)', statut: 'prévu', localisation: 'États-Unis (réseau mondial)', mecanisme_transfert: 'CCT 2021/914 module 2 (DPA Cloudflare v6.4, 3 avril 2026, clause 6.2) ; cadre UE–États-Unis (clause 6.4) — page lue le 23/11/2026', dpa: DPA_CLOUDFLARE_V64 },
+            { nom: 'Scalingo SAS (HDS)', role: 'Mon Coffre : service séparé qui ne conserve que des documents chiffrés de bout en bout dans le navigateur (branche g14-r3f)', statut: 'prévu (rien de créé ni de souscrit ; annexe HDS à souscrire par le responsable)', localisation: 'France — région osc-fr1', entite_contractante: 'Scalingo SAS (France) — certificat HDS n° 38436 (valable jusqu\'au 11/09/2028)', mecanisme_transfert: 'aucun transfert hors UE', dpa: DPA_INCONNU },
             { nom: 'Scaleway SAS (OpenFisca)', role: 'Hébergement de notre moteur de calcul OpenFisca (branche g14-of fusionnée dans la version a628f7b)', statut: 'prévu', localisation: 'France (Paris, fr-par)', mecanisme_transfert: 'aucun transfert hors UE', dpa: DPA_SCALEWAY },
             { nom: 'Twilio', role: 'SMS', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Microsoft (Outlook / Graph)', role: 'Agenda des professionnels (disponibilités libre/occupé quand une structure l\'a configuré, R42-A03)', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },

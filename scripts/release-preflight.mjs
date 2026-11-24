@@ -9,7 +9,8 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
-import { approvedAtLeast, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE } from '../src/config/legal-drafts.js';
+import { approvedAtLeast, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE } from '../src/config/legal-drafts.js';
+import { externalBookingMode } from '../api/lib/external-booking.js';
 import { partnerAdapterConfig } from '../api/lib/partner-adapter/config.js';
 import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation, hdsAttestationProvider } from '../api/_utils/capabilities.js';
 import { HDS_MODULES, HDS_SERVICE_CAPABILITIES, hdsGatewayState } from '../api/_utils/hds-gateway.js';
@@ -283,6 +284,29 @@ export function evaluateReleasePreflight(env, opts = {}) {
     const ok = approvedAtLeast('notice-confidentialite', LEGAL_DRAFTS_R3_NOTICE, approved) && approvedAtLeast('cgu-citoyen', LEGAL_DRAFTS_R3_CGU, approved);
     add('legal.r3_legal_protection', ok ? 'PASS' : 'FAIL', ok ? `${R3G_LEGAL_CAPABILITY} open with notice ≥ ${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen ≥ ${LEGAL_DRAFTS_R3_CGU} in force (migration 0064 must be applied: not read here)`
       : `${R3G_LEGAL_CAPABILITY} open but VITE_LEGAL_DOCS_APPROVED_VERSION does not name notice-confidentialite@${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen@${LEGAL_DRAFTS_R3_CGU} (or later)`);
+  }
+  // R3 follow-up (24/11/2026): appointment messaging (P29), the places' own booking pages, the partner bridge, the institution space (§ 14) and Mon Coffre
+  // at the HDS host (P28) are described only from notice v14-2026-11-24 (+ cgu-citoyen v13-2026-11-24 for what a person uses, + cgu-professionnel
+  // v11-2026-11-24 for the professional obligations) — opening one of them under older approved texts is a FAIL
+  {
+    const prodEnv = { ...env, VERCEL_ENV: 'production' };
+    const N = ['notice-confidentialite', LEGAL_DRAFTS_R3_NOTICE]; const C = ['cgu-citoyen', LEGAL_DRAFTS_R3_CGU]; const P = ['cgu-professionnel', LEGAL_DRAFTS_PRO_V11];
+    /** @type {Array<[string, boolean, string[][]]>} */
+    const features = [
+      ['messaging.conversations', capabilityState('messaging.conversations', prodEnv, { structureCategory: 'NOT_ESSMS' }).open && (!betaOn || opened.has('communications')), [N, C, P]],
+      ['ADA_EXTERNAL_BOOKING', externalBookingMode(env) !== 'closed', [N, C, P]],
+      ['partner.referral_adapter', capabilityState('partner.referral_adapter', prodEnv).open, [N, P]],
+      ['institution.portal', capabilityState('institution.portal', prodEnv).open && (!betaOn || opened.has('institution')), [N]],
+      ['citizen.vault', capabilityState('citizen.vault', prodEnv).open, [N, C]],
+    ];
+    const open = features.filter(([, isOpen]) => isOpen);
+    if (open.length) {
+      const approved = get('VITE_LEGAL_DOCS_APPROVED_VERSION');
+      const missing = [...new Set(open.flatMap(([, , docs]) => docs.filter(([id, v]) => !approvedAtLeast(id, v, approved)).map(([id, v]) => `${id}@${v}`)))];
+      add('legal.r3_followup', missing.length ? 'FAIL' : 'PASS', missing.length
+        ? `${open.map(([n]) => n).join(', ')} open but VITE_LEGAL_DOCS_APPROVED_VERSION does not name ${missing.join(', ')} (or later)`
+        : `${open.map(([n]) => n).join(', ')} open with the release-3 texts in force`);
+    }
   }
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'
