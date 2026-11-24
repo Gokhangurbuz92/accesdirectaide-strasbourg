@@ -970,5 +970,6 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "طلب مساعدة لمطعم المدرسة",
   "parcours.type.PASS_CULTURE": "تفعيل pass Culture",
   "parcours.type.RETRAITE_DEMANDE": "طلب التقاعد",
-  "parcours.type.RECOURS_ADMINISTRATIF": "الطعن في قرار عبر تظلّم إداري"
+  "parcours.type.RECOURS_ADMINISTRATIF": "الطعن في قرار عبر تظلّم إداري",
+  "settings.gdpr_before_email": "وفقًا للائحة العامة لحماية البيانات (RGPD)، لديك حق الاطلاع على بياناتك وتصحيحها وحذفها. لأي طلب، اكتب إلى"
 }

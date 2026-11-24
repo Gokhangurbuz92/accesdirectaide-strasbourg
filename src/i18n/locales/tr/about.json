@@ -250,5 +250,7 @@
  "indicators.themes.text": "Tema, resmî kaynağın (Service-Public…) sayfaya verdiği temadır; Fransızca kalır.",
  "indicators.themes.none": "Tema kaynak tarafından belirtilmemiş",
  "impact.observatoire": "Sitede aranan haklar ve yayımlanan yardım yerleri, çeyrek çeyrek:",
- "impact.observatoire_link": "Gözlemevi'ni görün"
+ "impact.observatoire_link": "Gözlemevi'ni görün",
+ "method.report.text_email": "Herkes hata yapabilir. Bir hata görürseniz <0>e-postayla bildirin</0>: her bildirim okunur ve sayfa kaynağına göre yeniden doğrulanır.",
+ "sources.loop.text_email": "Kurumlar ve vatandaşlar, yazım hatası içerebilecek bir yardım sayfasını her zaman şu adrese yazarak bildirebilir: <0/>. Ekip her bildirimi okur ve gerekirse sayfayı düzeltir; şimdilik herhangi bir süre garanti edilmez."
 }

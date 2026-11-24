@@ -13,6 +13,7 @@ import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { ensureCsrfHeaders, getCsrfHeaders } from '@/lib/csrf';
 import { useT } from '@/i18n';
 import ProConnectSignIn from '@/components/pro/ProConnectSignIn';
+import ContactLink from '@/components/ContactLink';
 /**
  * ProLogin — Page de connexion Espace Professionnel
  * Design avancé avec support MFA.
@@ -290,9 +291,9 @@ export default function ProLogin() {
 
             <p className="mt-8 text-slate-600 text-sm font-medium">
                 {t('pro:login.besoin_aide', 'Besoin d\'aide ?')}{' '}
-                <a href="/contact" className="text-indigo-700 underline underline-offset-2 hover:text-indigo-900">
+                <ContactLink className="text-indigo-700 underline underline-offset-2 hover:text-indigo-900">
                     {t('pro:login.contacter_support', 'Contacter le support')}
-                </a>
+                </ContactLink>
             </p>
         </main>
         </>

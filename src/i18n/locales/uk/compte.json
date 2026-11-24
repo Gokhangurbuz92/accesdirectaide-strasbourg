@@ -970,5 +970,6 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "Попросити допомогу на шкільну їдальню",
   "parcours.type.PASS_CULTURE": "Активувати pass Culture",
   "parcours.type.RETRAITE_DEMANDE": "Подати заяву на пенсію",
-  "parcours.type.RECOURS_ADMINISTRATIF": "Оскаржити рішення адміністративною скаргою"
+  "parcours.type.RECOURS_ADMINISTRATIF": "Оскаржити рішення адміністративною скаргою",
+  "settings.gdpr_before_email": "Відповідно до GDPR (RGPD) ви маєте право на доступ до своїх даних, їх виправлення та видалення. З будь-яким запитом пишіть на"
 }

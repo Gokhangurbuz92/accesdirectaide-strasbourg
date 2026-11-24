@@ -970,5 +970,6 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "Apply for help with school canteen costs",
   "parcours.type.PASS_CULTURE": "Activate the pass Culture",
   "parcours.type.RETRAITE_DEMANDE": "Apply for your retirement pension",
-  "parcours.type.RECOURS_ADMINISTRATIF": "Challenge a decision with an administrative appeal"
+  "parcours.type.RECOURS_ADMINISTRATIF": "Challenge a decision with an administrative appeal",
+  "settings.gdpr_before_email": "Under the GDPR, you have a right of access, rectification and erasure of your data. For any request, write to"
 }

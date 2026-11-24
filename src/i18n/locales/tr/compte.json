@@ -970,5 +970,6 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "Okul yemekhanesi için yardım istemek",
   "parcours.type.PASS_CULTURE": "pass Culture'ü etkinleştirmek",
   "parcours.type.RETRAITE_DEMANDE": "Emeklilik başvurusu yapmak",
-  "parcours.type.RECOURS_ADMINISTRATIF": "Bir karara idari başvuru ile itiraz etmek"
+  "parcours.type.RECOURS_ADMINISTRATIF": "Bir karara idari başvuru ile itiraz etmek",
+  "settings.gdpr_before_email": "GDPR (RGPD) uyarınca verilerinize erişme, bunları düzeltme ve silme haklarına sahipsiniz. Her türlü talep için şu adrese yazın:"
 }

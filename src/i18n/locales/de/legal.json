@@ -358,5 +358,6 @@
  "beta.closed_accounts_rdv": "<strong>Nicht</strong> geöffnet sind: Akten, Nachrichten, Dokumente, Assistent, Reichweitenmessung und Fehlerverfolgung (Sentry). Die Abschnitte dieser Seite, die sie beschreiben, gelten ab ihrer Öffnung.",
  "beta.closed_accounts_assistant": "<strong>Nicht</strong> geöffnet sind: Akten, Nachrichten, Dokumente, Termine, Reichweitenmessung und Fehlerverfolgung (Sentry). Die Abschnitte dieser Seite, die sie beschreiben, gelten ab ihrer Öffnung.",
  "beta.open_rdv": "Terminanfragen sind geöffnet (mit einem persönlichen Konto): Was an die Einrichtung übermittelt wird und wie lange es aufbewahrt wird, ist in der <0>Datenschutzerklärung für Konten</0> beschrieben.",
- "beta.open_assistant": "Der Bürgerassistent ist geöffnet: Es wird kein Gespräch gespeichert; der Anbieter, der die Antworten erzeugt, ist in der <0>Datenschutzerklärung für Konten</0> genannt."
+ "beta.open_assistant": "Der Bürgerassistent ist geöffnet: Es wird kein Gespräch gespeichert; der Anbieter, der die Antworten erzeugt, ist in der <0>Datenschutzerklärung für Konten</0> genannt.",
+ "security.rights.text_email": "Gemäß der DSGVO können Sie verlangen, Ihre Daten einzusehen, zu ändern oder zu löschen. Schreiben Sie dafür an <0/>."
 }

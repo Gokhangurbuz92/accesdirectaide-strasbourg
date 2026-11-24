@@ -16,6 +16,7 @@ import { passwordRuleText, passwordMessageText } from '@/lib/passwordPolicyText'
 import i18n, { useT } from '@/i18n';
 import { emailMessage, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
 import socialReference from '../../data/reference/social-domains.v1.json';
+import ContactLink from '@/components/ContactLink';
 
 /** R42-A07: official numbers shown to a minor (verified reference labels, as in the footer) */
 const MINOR_HELP = [
@@ -401,9 +402,9 @@ export default function AuthRdvAccess({ mode = 'login' }) {
                 {resendLoading ? t('booking:auth.envoi', 'Envoi...') : t('booking:auth.renvoyer_un_email_de_verification', "Renvoyer un email de vérification")}
               </button>
               {/* A-16: a person who lost the mailbox of the account cannot use « forgot password » — the way to assisted recovery (a person checks the account is theirs) */}
-              <Link className="text-blue-900 hover:underline" to="/demande-aide?cat=ACCOUNT" data-testid="login-lost-email">
+              <ContactLink className="text-blue-900 hover:underline" to="/demande-aide?cat=ACCOUNT" data-testid="login-lost-email">
                 {t('account:nav.lost_email', 'Je n’ai plus accès à mon adresse e-mail')}
-              </Link>
+              </ContactLink>
             </div>
           )}
 

@@ -250,5 +250,7 @@
  "indicators.themes.text": "Das Thema ist das, das die offizielle Quelle (Service-Public…) der Seite gibt; es bleibt auf Französisch.",
  "indicators.themes.none": "Thema von der Quelle nicht angegeben",
  "impact.observatoire": "Die auf der Website gesuchten Rechte und die veröffentlichten Anlaufstellen, Quartal für Quartal:",
- "impact.observatoire_link": "zur Beobachtungsstelle"
+ "impact.observatoire_link": "zur Beobachtungsstelle",
+ "method.report.text_email": "Jeder kann sich irren. Wenn Sie einen Fehler sehen, <0>melden Sie ihn per E-Mail</0>: Jede Meldung wird gelesen, und die Seite wird erneut anhand ihrer Quelle geprüft.",
+ "sources.loop.text_email": "Institutionen sowie Bürgerinnen und Bürger können jederzeit eine Hilfe-Seite mit einem möglichen Tippfehler melden, indem sie an <0/> schreiben. Das Team liest jede Meldung und korrigiert die Seite bei Bedarf; eine Frist ist derzeit nicht garantiert."
 }

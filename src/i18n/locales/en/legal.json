@@ -358,5 +358,6 @@
  "beta.closed_accounts_rdv": "The following are <strong>not</strong> open: case files, messages, documents, assistant, audience measurement and error tracking (Sentry). The parts of this page that describe them will apply when they open.",
  "beta.closed_accounts_assistant": "The following are <strong>not</strong> open: case files, messages, documents, appointments, audience measurement and error tracking (Sentry). The parts of this page that describe them will apply when they open.",
  "beta.open_rdv": "Appointment requests are open (with a personal account): what is passed on to the organisation and how long it is kept is described in the <0>accounts notice</0>.",
- "beta.open_assistant": "The citizen assistant is open: no conversation is stored; the provider that produces the answers is named in the <0>accounts notice</0>."
+ "beta.open_assistant": "The citizen assistant is open: no conversation is stored; the provider that produces the answers is named in the <0>accounts notice</0>.",
+ "security.rights.text_email": "In accordance with the GDPR, you can ask to see, change or delete your data. To do so, write to <0/>."
 }

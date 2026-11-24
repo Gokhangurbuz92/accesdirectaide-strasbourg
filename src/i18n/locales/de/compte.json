@@ -970,5 +970,6 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "Hilfe für die Schulkantine beantragen",
   "parcours.type.PASS_CULTURE": "Den pass Culture aktivieren",
   "parcours.type.RETRAITE_DEMANDE": "Die Rente beantragen",
-  "parcours.type.RECOURS_ADMINISTRATIF": "Eine Entscheidung mit einem Verwaltungsrechtsbehelf anfechten"
+  "parcours.type.RECOURS_ADMINISTRATIF": "Eine Entscheidung mit einem Verwaltungsrechtsbehelf anfechten",
+  "settings.gdpr_before_email": "Gemäß DSGVO haben Sie ein Recht auf Auskunft, Berichtigung und Löschung Ihrer Daten. Für jede Anfrage schreiben Sie an"
 }

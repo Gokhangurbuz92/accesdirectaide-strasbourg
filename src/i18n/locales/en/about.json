@@ -250,5 +250,7 @@
  "indicators.themes.text": "The theme is the one the official source (Service-Public…) gives the page; it stays in French.",
  "indicators.themes.none": "Theme not given by the source",
  "impact.observatoire": "The rights searched for on the site and the published help places, quarter by quarter:",
- "impact.observatoire_link": "see the Observatory"
+ "impact.observatoire_link": "see the Observatory",
+ "method.report.text_email": "Anyone can make a mistake. If you see an error, <0>report it by e-mail</0>: every report is read, and the page is checked again against its source.",
+ "sources.loop.text_email": "Institutions and citizens can at any time report a benefit page that may contain a typo by writing to <0/>. The team reads every report and corrects the page if necessary; no time frame is guaranteed for now."
 }
