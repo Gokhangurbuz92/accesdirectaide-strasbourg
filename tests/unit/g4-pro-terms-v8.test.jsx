@@ -46,14 +46,14 @@ afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.resetModules(); vi.stubEnv('
 
 describe('legal drafts v8-2026-11-19 — the professional documents only', () => {
   it('three approvable versions; v8 has exactly the two professional documents, still drafts; the others stay at v7', () => {
-    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v9-2026-11-22', 'v10-2026-11-22', 'v11-2026-11-22', 'v12-2026-11-23', 'v13-2026-11-23', 'v9-2026-11-23', 'v10-2026-11-23', 'v13-2026-11-24', 'v14-2026-11-24', 'v11-2026-11-24']);   // G14-R3 (proposed 24/11/2026): cgu-citoyen v13-2026-11-24, notice v14-2026-11-24;   // G8: v9 = the privacy notice only; G14: v9-2026-11-22 = the professional terms only; v10 / v11 = Mon Parcours
+    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v9-2026-11-22', 'v10-2026-11-22', 'v11-2026-11-22', 'v12-2026-11-23', 'v13-2026-11-23', 'v9-2026-11-23', 'v10-2026-11-23', 'v13-2026-11-24', 'v14-2026-11-24', 'v11-2026-11-24', 'v15-2026-11-24']);   // G14-R4: notice v15   // G14-R3 (proposed 24/11/2026): cgu-citoyen v13-2026-11-24, notice v14-2026-11-24;   // G8: v9 = the privacy notice only; G14: v9-2026-11-22 = the professional terms only; v10 / v11 = Mon Parcours
     expect(LEGAL_DRAFT_DOCUMENTS_V8.map((d) => d.id)).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     expect([...LEGAL_DRAFTS_V8_DOCUMENT_IDS]).toEqual(['cgu-professionnel', 'conditions-structures', 'notice-confidentialite']);
     for (const d of LEGAL_DRAFT_DOCUMENTS_V8) { expect(d.version).toBe(LEGAL_DRAFTS_V8); expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); }
-    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v13-2026-11-24', 'cgu-professionnel@v11-2026-11-24', 'conditions-structures@v9-2026-11-23', 'notice-confidentialite@v14-2026-11-24']);   // G14: the newest draft of each document (expansion v12 / v13)
+    expect(LEGAL_DRAFT_DOCUMENTS.map((d) => `${d.id}@${d.version}`)).toEqual(['cgu-citoyen@v14-2026-11-24', 'cgu-professionnel@v11-2026-11-24', 'conditions-structures@v9-2026-11-23', 'notice-confidentialite@v15-2026-11-24']);   // G14-R4   // G14: the newest draft of each document (expansion v12 / v13)
     expect(LEGAL_NOTICE_VARIANT_DOCUMENT.version).toBe(LEGAL_DRAFTS_V7);
     expect(latestDraftVersionOf(LEGAL_NOTICE_VARIANT_DOCUMENT.id)).toBe(LEGAL_DRAFTS_V7);
-    expect(latestDraftVersionOf('cgu-citoyen')).toBe('v13-2026-11-24');   // G14-R3: cgu-citoyen v13-2026-11-24 proposed (G14: v12, expansion X04 / X01 / X02)
+    expect(latestDraftVersionOf('cgu-citoyen')).toBe('v14-2026-11-24');   // G14-R4   // G14-R3: cgu-citoyen v13-2026-11-24 proposed (G14: v12, expansion X04 / X01 / X02)
   });
 
   it('v6 and v7 are unchanged byte for byte (hashes taken from the commit before v8)', () => {
@@ -148,7 +148,7 @@ describe('v8 approval: Production, LAB, professional sign-up', () => {
   it('LAB preview shows the v8 professional drafts and the v7 citizen drafts', () => {
     const lab = { preview: '1', production: false };
     expect(draftFor('conditions-structures', lab)?.version).toBe('v9-2026-11-23');   // G14 ADA Pro opening   // G14: cgu-professionnel's newest draft is v9-2026-11-22
-    expect(draftFor('cgu-citoyen', lab)?.version).toBe('v13-2026-11-24');   // G14-R3: the newest citizen draft (proposed 24/11/2026)
+    expect(draftFor('cgu-citoyen', lab)?.version).toBe('v14-2026-11-24');   // G14-R4   // G14-R3: the newest citizen draft (proposed 24/11/2026)
     expect(draftVisibility(/** @type {any} */ (draftFor('conditions-structures', lab)), lab)).toBe('PREVIEW');
   });
 

@@ -126,5 +126,7 @@
   "admin.transparency": "Figures for the annual report (counts only)",
   "admin.title": "Moderation and notices",
   "admin.intro": "Functions that need a named person stay closed as long as nobody is named. No decision is automatic.",
-  "admin.not_staff": "The notice and appeal queues are reserved for named persons."
+  "admin.not_staff": "The notice and appeal queues are reserved for named persons.",
+  "admin.overdue": "Late: to be handled before {{d}} ({{h}} hours under the charter).",
+  "admin.due": "To be handled before {{d}} ({{h}} hours under the charter)."
 }
