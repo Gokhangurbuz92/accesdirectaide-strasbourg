@@ -16,6 +16,7 @@ import { db } from '../../src/db/index.js';
 import { getMailerStatus } from '../_utils/mailer.js';
 import { AIProviderPolicy, LOCALITY } from '../lib/ai-policy.js';
 import { isPublicBetaRestricted, openSurfaces } from '../_utils/public-beta.js';
+import { capabilityOpen } from '../_utils/capabilities.js';
 
 const TTL_MS = 30000;
 let cache = null;
@@ -57,10 +58,18 @@ async function betaStatus() {
   // 19/11/2026: after the 6B opening (ADA_BETA_OPEN_SURFACES contains « accounts », narrow scope) the page still said that accounts were closed and that no
   // e-mail was sent — both false. With accounts open: personal accounts follow the database check, appointments and dossier sharing stay announced as closed
   // (their surfaces are separate), and the e-mails follow the real mail configuration but only for what is sent (account e-mails, no reminders).
-  const accounts = openSurfaces().has('accounts');
+  const surfaces = openSurfaces();
+  const accounts = surfaces.has('accounts');
+  // R3H (live audit 24/11/2026): with appointments and the citizen assistant opened (surface AND capability), the page still said both were closed
+  const booking = accounts && surfaces.has('appointments') && capabilityOpen('citizen.booking');
+  const sharing = surfaces.has('documents');
+  const closedRest = !booking && !sharing ? ' Les rendez-vous et le partage de dossier ne sont pas encore ouverts.'
+    : !booking ? ' Les rendez-vous ne sont pas encore ouverts.' : !sharing ? ' Le partage de dossier n\'est pas encore ouvert.' : '';
+  const bookingText = booking ? ' Les demandes de rendez-vous en ligne sont ouvertes auprès des lieux qui les proposent.' : '';
   const comptes = !accounts ? { state: 'info', text: 'Pendant la bêta publique, les comptes, les rendez-vous et le partage de dossier ne sont pas encore ouverts.' }
-    : c.state === 'operational' ? { state: 'operational', text: 'Les comptes personnels fonctionnent (création, connexion, Mon Espace, suppression du compte). Les rendez-vous et le partage de dossier ne sont pas encore ouverts.' }
-      : { state: 'unavailable', text: 'Les comptes personnels sont indisponibles pour le moment. Les rendez-vous et le partage de dossier ne sont pas encore ouverts.' };
+    : c.state === 'operational' ? { state: 'operational', text: `Les comptes personnels fonctionnent (création, connexion, Mon Espace, suppression du compte).${bookingText}${closedRest}` }
+      : { state: 'unavailable', text: `Les comptes personnels${booking ? ' et les rendez-vous' : ''} sont indisponibles pour le moment.${closedRest}` };
+  const assistantOpen = surfaces.has('assistant') && capabilityOpen('ai.citizen_assistant');
   const m = accounts ? emails() : null;
   const mail = !accounts ? { state: 'info', text: 'Pendant la bêta publique, aucun e-mail n\'est envoyé.' }
     : m.state === 'operational' ? { state: 'operational', text: 'Les e-mails du compte (confirmation de l\'adresse, mot de passe oublié, suppression) sont envoyés.' } : m;
@@ -70,7 +79,9 @@ async function betaStatus() {
       { id: 'site', label: 'Site', ...(c.state === 'operational' ? { state: 'operational', text: 'Le site répond et les fiches publiées peuvent être consultées.' } : { state: 'unavailable', text: 'Les fiches ne peuvent pas être consultées pour le moment.' }) },
       { id: 'comptes', label: 'Comptes et rendez-vous', ...comptes },
       { id: 'emails', label: 'E-mails', ...mail },
-      { id: 'assistant', label: 'Assistant', state: 'info', text: 'Pendant la bêta publique, l\'assistant n\'est pas ouvert.' },
+      { id: 'assistant', label: 'Assistant', state: 'info', text: assistantOpen
+        ? 'L\'assistant citoyen est ouvert : il oriente vers des fiches publiées et des lieux d\'accueil, sans enregistrer la conversation. Il peut se tromper ; seul l\'organisme concerné décide de vos droits.'
+        : 'Pendant la bêta publique, l\'assistant n\'est pas ouvert.' },
       { id: 'donnees', label: 'Informations sur les aides', state: 'info', text: 'Chaque fiche publiée a été vérifiée automatiquement sur sa source officielle, à la date indiquée sur la fiche. Seul l\'organisme concerné décide de vos droits.' },
     ],
   };
