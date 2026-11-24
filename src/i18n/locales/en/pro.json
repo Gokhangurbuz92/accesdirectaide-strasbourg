@@ -1532,5 +1532,7 @@
  "external.url_hint": "A public https address, with no user name, no password and no personal data. A link of RDV Solidarités or RDV Service Public (a « /org/… » or « /motif/… » link) is recognised as a public platform.",
  "external.save": "Send for checking",
  "external.remove": "Remove the page",
- "external.new_window": " (new window)"
+ "external.new_window": " (new window)",
+ "thread.attachments_closed": "Attachments: not open on this service yet (a file can contain health information, which needs certified hosting). Write your message without a document.",
+ "thread.privacy_hint": "Write only what is useful for the appointment. No health information or diagnosis: this messaging is not a case file. Messages are encrypted on our servers, but not end-to-end."
 }

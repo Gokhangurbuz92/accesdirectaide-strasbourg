@@ -1532,5 +1532,7 @@
  "external.url_hint": "Kullanıcı adı, parola ve kişisel veri içermeyen, herkese açık bir https adresi. RDV Solidarités veya RDV Service Public bağlantısı (« /org/… » ya da « /motif/… ») kamuya açık platform olarak tanınır.",
  "external.save": "Kontrole gönder",
  "external.remove": "Sayfayı kaldır",
- "external.new_window": " (yeni pencere)"
+ "external.new_window": " (yeni pencere)",
+ "thread.attachments_closed": "Ekler: bu hizmette henüz açık değil (bir dosya sağlık bilgisi içerebilir; bu, sertifikalı barındırma gerektirir). Mesajınızı belge eklemeden yazın.",
+ "thread.privacy_hint": "Yalnızca randevu için gerekli olanı yazın. Sağlık bilgisi veya teşhis yazmayın: bu mesajlaşma bir takip dosyası değildir. Mesajlar sunucularımızda şifrelenir ancak uçtan uca şifreli değildir."
 }

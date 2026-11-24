@@ -2233,5 +2233,6 @@
  "k5.extbooking.withdraw": "Genehmigung zurückziehen",
  "k5.extbooking.reject": "Ablehnen",
  "k5.extbooking.none": "Keine Seite in diesem Status.",
- "layout.nav.external_booking": "Terminseiten der Einrichtungen"
+ "layout.nav.external_booking": "Terminseiten der Einrichtungen",
+ "k5.providers.p.partner_bridge": "Partner-Vermittlungsbrücke (ada.partner-referral/1)"
 }

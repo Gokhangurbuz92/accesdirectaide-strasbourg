@@ -2233,5 +2233,6 @@
  "k5.extbooking.withdraw": "Onayı geri çek",
  "k5.extbooking.reject": "Reddet",
  "k5.extbooking.none": "Bu durumda sayfa yok.",
- "layout.nav.external_booking": "Kuruluşların randevu sayfaları"
+ "layout.nav.external_booking": "Kuruluşların randevu sayfaları",
+ "k5.providers.p.partner_bridge": "Ortak yönlendirme köprüsü (ada.partner-referral/1)"
 }

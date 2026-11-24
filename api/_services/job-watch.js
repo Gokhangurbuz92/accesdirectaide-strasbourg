@@ -34,6 +34,8 @@ export const WATCHED_JOBS = Object.freeze({
   'link-check': Object.freeze({ group: 'jobs', maxAgeHours: 337, good: Object.freeze(['success', 'partial', 'skipped']), aliases: Object.freeze([]) }),
   // C8: daily freezing of closed observatory quarters — « skipped » = database without 0052 (a deliberate state until the migration is authorised)
   'observatory-freeze': Object.freeze({ group: 'jobs', maxAgeHours: 49, good: Object.freeze(['success', 'skipped']), aliases: Object.freeze([]) }),
+  // R3 / FA-D7: hourly partner outbox — « skipped » = no partner configured (graceful no-integration), « partial » = some events will be retried next run
+  'partner-outbox': Object.freeze({ group: 'jobs', maxAgeHours: 3, good: Object.freeze(['success', 'partial', 'skipped']), aliases: Object.freeze([]) }),
 });
 
 /** key of the « first check that expected this job » timestamp (KV, timestamp only) @param {string} job */

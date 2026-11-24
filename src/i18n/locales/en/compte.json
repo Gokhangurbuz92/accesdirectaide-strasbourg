@@ -577,6 +577,8 @@
   "thread.nouveau_message": "New message",
   "thread.retour_aux_conversations": "Back to conversations",
   "thread.send": "Send",
+  "thread.attachments_closed": "Attachments: not open on this service yet (a file can contain health information, which needs certified hosting). Write your message without a document.",
+  "thread.privacy_hint": "Write only what is useful for your appointment. Do not give information about your health or an identity document number: the organisation reads this message; it is encrypted on our servers, but not end-to-end.",
   "thread.send_failed": "Your message could not be sent.",
   "thread.sending": "Sending...",
   "thread.sent": "Message sent.",

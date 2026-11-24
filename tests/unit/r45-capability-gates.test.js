@@ -132,7 +132,8 @@ describe('opening rule (fail-closed)', () => {
   it('HDS follows the matrix (R45_HDS_FEATURE_MATRIX_FR.md § 3): vault, dossiers, referrals required; ProCase depends on the structure and fails closed when unknown', () => {
     expect(CAPABILITIES['citizen.saved_diagnostic'].requiresHds).toBe(false);   // row 11: uncertain, leaning no (still closed: outside the AIPD)
     expect(CAPABILITIES['pro.case_management'].hdsDependsOnStructure).toBe(true);
-    expect(Object.entries(CAPABILITIES).filter(([, c]) => c.hdsDependsOnStructure).map(([n]) => n)).toEqual(['pro.case_management']);
+    // R3: the appointment messaging too (its handlers decide each conversation: NOT_ESSMS structure + ordinary service, tests/unit/r3-*.test.js)
+    expect(Object.entries(CAPABILITIES).filter(([, c]) => c.hdsDependsOnStructure).map(([n]) => n)).toEqual(['pro.case_management', 'messaging.conversations']);
     const env = { ...PROD, ADA_CAPABILITIES_OPEN: 'pro.case_management' };
     for (const cat of [undefined, 'UNKNOWN', 'ESSMS', 'HEALTH', 'not_essms', 'anything'])
       expect(capabilityState('pro.case_management', env, { structureCategory: /** @type {any} */ (cat) }).reason, String(cat)).toBe('HDS_HOSTING_NOT_ATTESTED');
@@ -226,6 +227,8 @@ const LEAK_ROUTES = [
   ['GET', 'share/get'], ['POST', 'share/create'], ['GET', 'public/passport'], ['GET', 'public/dossier-grants'], ['GET', 'download'],
   ['POST', 'diagnostic'], ['POST', 'assistant/chat'], ['POST', 'public/assistant/orient'], ['POST', 'public/falc/summarize'],
   ['POST', 'institution/login'], ['GET', 'admin/institutions'],
+  // R3: the appointment messaging (messaging.conversations)
+  ['GET', 'messages/conversations'], ['POST', 'messages/from-appointment/a1'], ['GET', 'pro/messages/conversations'], ['GET', 'pro/messages'], ['GET', 'secure-messages'],
 ];
 
 describe('router gate: refused for every role, before the handler, without data', () => {
@@ -379,7 +382,8 @@ describe('release gate and readiness doctor name the capability state (never a v
 
 describe('closed is not removed: every out-of-AIPD handler stays routed', () => {
   it('each out-of-AIPD capability has at least one routed path, or is a registry-only switch', () => {
-    const REGISTRY_ONLY = ['citizen.minor_accounts'];
+    // R3: messaging.attachments is checked by the messaging handlers on the file itself (upload / download), not by a route of its own
+    const REGISTRY_ONLY = ['citizen.minor_accounts', 'messaging.attachments'];
     for (const n of OUT_OF_AIPD) {
       if (REGISTRY_ONLY.includes(n)) continue;
       const routed = routes.some((r) => capabilitiesOfRoute(r.path.replace(/\/$/, '')).includes(n) || (n === 'video' && r.path === 'rdv'));

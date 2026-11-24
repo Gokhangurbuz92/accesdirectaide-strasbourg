@@ -271,7 +271,7 @@ export const SCHEDULED_JOBS = Object.freeze({
   // C8: freezes the published cells of closed observatory quarters (drizzle/0052) — aggregates only, no personal data, nothing sent
   'observatory-freeze': 'A',
   'parcours-reminder': 'C', 'referral-timeouts': 'C', 'rdv-reminder': 'C', 'gdpr-purge': 'C',
-  // FA-D7: signed referral events to connected partner organizations (personal-data adjacent: referral ids and states) — not scheduled in vercel.json
+  // FA-D7: signed referral events to connected partner organizations (personal-data adjacent: referral ids and states) — scheduled hourly since R3 (closed until named AND approved)
   'partner-outbox': 'C',
   'ingest-demarches': 'D', 'ingest-annuaire': 'D', 'review-queue/scan': 'D',
 });

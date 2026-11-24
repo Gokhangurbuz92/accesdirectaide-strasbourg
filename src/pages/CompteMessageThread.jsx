@@ -13,6 +13,7 @@ import { AttachmentList, AttachmentPicker } from '@/components/Messaging/Message
 import { readAttachment, saveDownload } from '@/lib/messageAttachments';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { formatDate as formatInLanguage, useT } from '@/i18n';
+import { isNotOpenRefusal } from '@/lib/proModules';
 
 function formatDate(/** @type {number} */ value) {
   const date = new Date(String(value || ''));
@@ -142,7 +143,8 @@ const sendMutation = useMutation({
               </div>
             ) : null}
 
-            <form
+            {/* R3: a conversation this service does not serve (503 CAPABILITY_NOT_OPEN) offers no form */}
+            {isNotOpenRefusal(conversationQuery.error) ? null : (<form
               className="space-y-3"
               onSubmit={(event) => {
                 event.preventDefault();
@@ -154,8 +156,10 @@ const sendMutation = useMutation({
               <label htmlFor="message-body" className="block text-sm font-medium text-slate-700">
                 {t('compte:thread.nouveau_message', 'Nouveau message')}
               </label>
+              <p id="message-privacy-hint" className="text-xs text-slate-700">{t('compte:thread.privacy_hint', 'Écrivez seulement ce qui est utile à votre rendez-vous. N’indiquez pas d’information sur votre santé ni de numéro de document d’identité : la structure lit ce message ; il est chiffré sur nos serveurs, mais pas de bout en bout.')}</p>
               <textarea
                 id="message-body"
+                aria-describedby="message-privacy-hint"
                 value={body}
                 onChange={(event) => setBody(event.target.value)}
                 rows={4}
@@ -163,14 +167,16 @@ const sendMutation = useMutation({
                 className="w-full rounded-md border border-slate-300 bg-white p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 placeholder={t('compte:thread.ecrivez_votre_message', 'Ecrivez votre message...')}
               />
-              <AttachmentPicker key={fileKey} id="citizen-attach" file={file} onChange={setFile} disabled={sendMutation.isPending} />
+              {item?.attachmentsAllowed === false
+                ? <p className="text-xs text-slate-700" data-testid="citizen-attach-closed">{t('compte:thread.attachments_closed', 'Pièces jointes : pas encore ouvertes sur ce service (un fichier peut contenir des informations de santé, qui demandent un hébergement certifié). Écrivez votre message sans document.')}</p>
+                : <AttachmentPicker key={fileKey} id="citizen-attach" file={file} onChange={setFile} disabled={sendMutation.isPending} />}
               <div className="flex items-center gap-3">
                 <Button type="submit" disabled={sendMutation.isPending || (!String(body || '').trim() && !file)}>
                   {sendMutation.isPending ? t('compte:thread.sending', 'Envoi...') : t('compte:thread.send', 'Envoyer')}
                 </Button>
                 <span className="text-xs text-slate-700">{String(body || '').length}/2000</span>
               </div>
-            </form>
+            </form>)}
 
             <p className="text-sm text-slate-600" aria-live="polite">
               {statusText}

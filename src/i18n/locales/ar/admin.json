@@ -2252,5 +2252,6 @@
  "k5.extbooking.withdraw": "سحب الموافقة",
  "k5.extbooking.reject": "رفض",
  "k5.extbooking.none": "لا توجد صفحة بهذه الحالة.",
- "layout.nav.external_booking": "صفحات مواعيد الجهات"
+ "layout.nav.external_booking": "صفحات مواعيد الجهات",
+ "k5.providers.p.partner_bridge": "جسر التوجيه مع الشركاء (ada.partner-referral/1)"
 }

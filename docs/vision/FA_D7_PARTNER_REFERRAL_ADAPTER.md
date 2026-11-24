@@ -47,7 +47,10 @@ Not in v1: redirect suggestion (needs ADA identifiers of other organizations), a
 1. Capability `partner.referral_adapter` (outside the AIPD, `requiresHds: true`) listed in `ADA_CAPABILITIES_OPEN`, its surface `pro` open, a valid HDS
    attestation, and `pro.referrals` open.
 2. `ADA_PARTNER_ADAPTERS` (+ the partner's secret); in production / preview also `ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED=true`.
-3. Job `partner-outbox` (category C) named in `ADA_BETA_OPEN_JOBS` AND `ADA_JOBS_APPROVED`, and a schedule added to `vercel.json` (none today).
+3. Job `partner-outbox` (category C) named in `ADA_BETA_OPEN_JOBS` AND `ADA_JOBS_APPROVED` (R3: scheduled hourly at minute 41 in `vercel.json`; refused while not named).
+   Release preflight check `partner.bridge` (scripts/release-preflight.mjs) FAILS on a half-open bridge; the admin page « Fournisseurs » shows the row
+   `partner-bridge`. Onboarding kit: `docs/partner-bridge/ONBOARDING_FR.md`; operator runbook: `docs/partner-bridge/RUNBOOK_OPERATEUR_FR.md`;
+   conformance tool: `scripts/partner-bridge-kit.mjs`. Key rotation: `ADA_PARTNER_SECRET_<ID>_PREVIOUS` (inbound only). Inbound rate limit 120/min per partner.
 4. Outside the code: a written agreement with the organization (processing roles, RGPD art. 28 or joint controllership, security annex), the AIPD
    extension (P8), a certified HDS host if the referral concerns an ESSMS / health data, and the person's information.
 

@@ -5,7 +5,7 @@ import { resolveInstitution } from '../_utils/institution-auth.js';
 import { institutionLogin, changeInstitutionPassword, institutionLogout, requestInstitutionReset, completeInstitutionReset, INSTITUTION_RESET_MINUTES, recordObservatoireRead, recordExportDownload } from '../_services/institutions.js';
 import { sendMail, getMailerStatus } from '../_utils/mailer.js';
 import { templates } from '../lib/email-service.js';
-import { env } from '../_utils/env.js';
+import { buildAppUrl } from '../_utils/user-auth.js';
 import { scopedObservatoire, scopedTerritoryCsv } from '../_services/territorial-stats.js';
 import { territoryScope } from '../lib/geography/territoryScope.js';
 import { isFeatureOn } from '../_services/feature-flags.js';
@@ -61,7 +61,8 @@ export default async function handler(req, res) {
       const perAddress = await checkRateLimit('RESET_PASSWORD', `institution-forgot-to:${email}`);
       const link = perAddress.allowed ? await requestInstitutionReset(email) : null;   // the answer below never says whether the address is known
       if (link) {
-        const url = `${env.runtime.appBaseUrl || 'http://localhost:3000'}/institution/reinitialiser#token=${link.token}`;   // in the fragment: never sent to a server log
+        // R3: buildAppUrl refuses a localhost link in production (APP_BASE_URL required), like every other e-mailed link; the token stays in the fragment
+        const url = `${buildAppUrl('/institution/reinitialiser')}#token=${link.token}`;   // in the fragment: never sent to a server log
         const tpl = templates.resetPassword(link.organisationName, url, `${INSTITUTION_RESET_MINUTES} minutes`);
         await sendMail({ to: link.email, subject: `${tpl.subject} — espace institutionnel`, text: `Lien de réinitialisation de votre espace institutionnel (valable ${INSTITUTION_RESET_MINUTES} minutes, une seule fois) : ${url}`, html: tpl.html, category: 'password_reset' });
       }

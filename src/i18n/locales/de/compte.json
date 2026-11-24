@@ -577,6 +577,8 @@
   "thread.nouveau_message": "Neue Nachricht",
   "thread.retour_aux_conversations": "Zurück zu den Unterhaltungen",
   "thread.send": "Senden",
+  "thread.attachments_closed": "Anhänge: auf diesem Dienst noch nicht geöffnet (eine Datei kann Gesundheitsangaben enthalten, die ein zertifiziertes Hosting erfordern). Schreiben Sie Ihre Nachricht ohne Dokument.",
+  "thread.privacy_hint": "Schreiben Sie nur, was für Ihren Termin nützlich ist. Geben Sie keine Angaben zu Ihrer Gesundheit und keine Ausweisnummer an: Die Einrichtung liest diese Nachricht; sie ist auf unseren Servern verschlüsselt, aber nicht Ende-zu-Ende.",
   "thread.send_failed": "Ihre Nachricht konnte nicht gesendet werden.",
   "thread.sending": "Wird gesendet...",
   "thread.sent": "Nachricht gesendet.",

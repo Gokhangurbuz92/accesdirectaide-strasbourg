@@ -32,6 +32,7 @@ function labels(t) {
       'aides-territoires': t('admin:k5.providers.p.aides_territoires', 'Aides-territoires (API)'),
       franceconnect: t('admin:k5.providers.p.franceconnect', 'FranceConnect (identité des personnes)'),
       proconnect: t('admin:k5.providers.p.proconnect', 'ProConnect (identité des professionnels)'),
+      'partner-bridge': t('admin:k5.providers.p.partner_bridge', 'Pont d’orientation partenaires (ada.partner-referral/1)'),
       maps: t('admin:k5.providers.p.maps', 'Cartes (OpenStreetMap) et géocodage (Base Adresse Nationale)'),
       sentry: t('admin:k5.providers.p.sentry', 'Suivi des erreurs (Sentry)'),
       upstash: t('admin:k5.providers.p.upstash', 'Limites de débit et verrous (Upstash Redis)'),

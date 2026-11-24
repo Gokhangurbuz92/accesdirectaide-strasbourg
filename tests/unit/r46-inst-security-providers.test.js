@@ -39,7 +39,7 @@ describe('Q07 security signals', () => {
 });
 
 describe('N10 provider status', () => {
-  const ids = ['mail', 'graph-mail', 'sms', 'push', 'outlook', 'video', 'openfisca', 'aides-territoires', 'franceconnect', 'proconnect', 'maps', 'sentry', 'upstash', 'hosting', 'database'];
+  const ids = ['mail', 'graph-mail', 'sms', 'push', 'outlook', 'video', 'openfisca', 'aides-territoires', 'franceconnect', 'proconnect', 'partner-bridge', 'maps', 'sentry', 'upstash', 'hosting', 'database'];
   it('an empty environment: every adapter listed, nothing claimed connected except the keyless public map services', () => {
     const rows = providerStatuses({});
     expect(rows.map((r) => r.id)).toEqual(ids);
@@ -47,7 +47,7 @@ describe('N10 provider status', () => {
     expect(rows.filter((r) => r.state === 'CONNECTED').map((r) => r.id)).toEqual(['maps']);
     expect(Object.fromEntries(rows.map((r) => [r.id, r.state]))).toMatchObject({ mail: 'NOT_CONFIGURED', openfisca: 'SIMULATED', upstash: 'SIMULATED', hosting: 'SIMULATED', franceconnect: 'NOT_CONFIGURED' });
     expect(rows.find((r) => r.id === 'proconnect')).toMatchObject({ adapter: 'PRESENT', state: 'NOT_CONFIGURED' });   // R46 integ: the N09 adapter exists
-    expect(summarizeProviders(rows)).toEqual({ CONNECTED: 1, SIMULATED: 3, NOT_CONFIGURED: 11 });
+    expect(summarizeProviders(rows)).toEqual({ CONNECTED: 1, SIMULATED: 3, NOT_CONFIGURED: 12 });   // R3: + partner-bridge
   });
   it('sandbox / test / prototype configurations are SIMULATED, complete ones CONNECTED — and no value is ever returned', () => {
     const secret = 'Zz-synthetic-value-9876543210-abcdefghijklmnop';

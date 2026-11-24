@@ -2243,5 +2243,6 @@
  "k5.extbooking.withdraw": "Відкликати схвалення",
  "k5.extbooking.reject": "Відхилити",
  "k5.extbooking.none": "Немає сторінок у цьому стані.",
- "layout.nav.external_booking": "Сторінки запису організацій"
+ "layout.nav.external_booking": "Сторінки запису організацій",
+ "k5.providers.p.partner_bridge": "Міст скерувань партнерів (ada.partner-referral/1)"
 }

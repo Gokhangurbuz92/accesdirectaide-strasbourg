@@ -31,7 +31,7 @@ export const CAPABILITY_NOT_OPEN_MESSAGE = 'Cette fonction n’est pas encore ou
 const M = 'R45_HDS_FEATURE_MATRIX_FR.md § 3';
 
 /**
- * @typedef {{ description: string, aipd: 'in' | 'out', requiresHds: boolean, hdsDependsOnStructure?: boolean, hdsNote?: string, surface: string, accountsFull?: boolean,
+ * @typedef {{ description: string, aipd: 'in' | 'out', requiresHds: boolean, hdsDependsOnStructure?: boolean, hdsCheckedPerRecord?: boolean, hdsNote?: string, surface: string, accountsFull?: boolean,
  *   openable?: boolean, aipdRef: string }} Capability
  */
 /** @type {Readonly<Record<string, Capability>>} */
@@ -84,6 +84,20 @@ export const CAPABILITIES = Object.freeze({
   // nor the diagnostic. Needs ADA_BETA_OPEN_SURFACES=assistant (during the beta) AND this name in ADA_CAPABILITIES_OPEN (AIPD line « assistant » signed).
   'ai.citizen_assistant': { description: 'citizen assistant (assistant/chat): grounded answers from verified public fiches by the approved AI provider (AI_PROVIDER, api/lib/ai-policy.js); no account, no conversation stored',
     aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (no dossier, no follow-up; medical questions are refused, art. 9 data are not asked)', surface: 'assistant', aipdRef: 'AIPD § 2.1 « assistant » (Workers AI line to sign)' },
+  // R3 (24/11/2026, owner « messaging complete and ready in Production »): the two-way conversation between a person and the structure of ONE of their
+  // appointments (RdvConversation*: citizen « Mes messages », ADA Pro « Messages », the appointment's message tab). Outside the AIPD (P6 covers only the
+  // optional booking message). HDS: R44 AIPD § 11.5 and R45 matrix row 5 — free text is « probable » HDS in scenario O (ESSMS or health structure) or
+  // when the service itself reveals health (art. 9). So the HDS need depends on the conversation: waived ONLY when the structure is positively
+  // classified NOT_ESSMS by the reviewed rule of the social referral (api/lib/social-referral-policy.js) AND the appointment's service is reviewed
+  // « ordinary » (api/lib/service-sensitivity.js); anything else (ESSMS, health, unknown kind, sensitive or unreviewed service) needs the HDS attestation.
+  // The route gate assumes the best case (`hdsCheckedPerRecord`); the handlers re-check every conversation (api/_services/messaging-policy.js).
+  'messaging.conversations': { description: 'appointment conversations between a person and the structure of their appointment (text, notifications, read state)',
+    aipd: 'out', requiresHds: true, hdsDependsOnStructure: true, hdsCheckedPerRecord: true,
+    hdsNote: `${M} row 5 / R44 § 11.5: free text — HDS waived only for a NOT_ESSMS structure and an ordinary service; otherwise closed until HDS`, surface: 'communications', aipdRef: 'AIPD § 2.1 « messagerie » (line to sign)' },
+  // R3: a file attached to a conversation message (PDF / image) can be a medical document whatever the structure: it stays closed until certified HDS
+  // hosting exists, even when messaging.conversations is open for a NOT_ESSMS structure.
+  'messaging.attachments': { description: 'one PDF / PNG / JPEG file attached to a conversation message (encrypted object storage)',
+    aipd: 'out', requiresHds: true, hdsNote: `${M} rows 5 and 8: a file can be a medical document — closed until HDS, whatever the structure`, surface: 'communications', aipdRef: 'AIPD § 2.1 « messagerie » (line to sign)' },
   'institution.portal': { description: 'territory / institution space and the creation of institution accounts', aipd: 'out', requiresHds: false, surface: 'institution', aipdRef: 'AIPD § 2.1 « institution »' },
   video: { description: 'video appointments: offering the VIDEO modality, consent, approval, joining (its own VIDEO_* switches still apply)', aipd: 'out', requiresHds: false, hdsNote: `not a matrix row: no (transient stream, no recording)`, surface: 'video', aipdRef: 'AIPD § 2.1 « visio »' },
   // X04 (EXPANSION, founder 19/11/2026 — not one of the 173): academy pages and events, the registration of a signed-in adult citizen (optional closed-list
@@ -128,7 +142,7 @@ export const CAPABILITIES = Object.freeze({
 
 /**
  * Route → capabilities (ALL must be open). Longest prefix wins, like the surfaces of public-beta.js. A route of no entry is not gated by this layer (public
- * information, administration, jobs, communications): the surface gate and its own checks still apply. tests/unit/r45-capability-gates.test.js requires
+ * information, administration, jobs, the public forms of communications): the surface gate and its own checks still apply. tests/unit/r45-capability-gates.test.js requires
  * every route of the accounts, appointments, pro, documents, diagnostic, institution and video surfaces to be listed here.
  * @type {Readonly<Record<string, readonly string[]>>}
  */
@@ -181,6 +195,11 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   // institution, video
   'admin/guardianships': ['citizen.guardians'],   // R46 / C05 verifier side
   institution: ['institution.portal'], 'admin/institutions': ['institution.portal'],
+  // R3 messaging: every conversation route (citizen, professional, the appointment's message tab, the legacy secure-messages thread of an appointment);
+  // the handlers re-check each conversation (structure NOT_ESSMS + ordinary service, or HDS) and the attachments (messaging.attachments)
+  messages: ['messaging.conversations'], 'pro/messages': ['messaging.conversations'], 'secure-messages': ['messaging.conversations'],
+  // the file of a message (download), keyed without its ids like the visio route below: refused at the route while attachments are closed
+  'messages/attachments': ['messaging.conversations', 'messaging.attachments'], 'pro/messages/attachments': ['messaging.conversations', 'messaging.attachments'],
   'pro/appointments/visio': ['video'], 'rdv/appointments/visio': ['video'],
   // X04 (expansion): every route of the « events » surface — public reading included — is refused 503 before its handler while the capability is closed
   events: ['community.events'], 'citizen/events': ['community.events'], 'admin/events': ['community.events'],
@@ -202,6 +221,9 @@ export function capabilitiesOfRoute(path) {
   let p = String(path || '').replace(/\/+$/, '');
   // rdv/appointments/<id>/visio: the citizen side of a video appointment (the id segment is not part of the key)
   if (/^rdv\/appointments\/[^/]+\/visio$/.test(p)) p = 'rdv/appointments/visio';
+  // R3: messages/conversations/<id>/attachments/<id> (citizen) and pro/messages/conversations/<id>/attachments/<id> (professional)
+  if (/^messages\/conversations\/[^/]+\/attachments(\/|$)/.test(p)) p = 'messages/attachments';
+  if (/^pro\/messages\/conversations\/[^/]+\/attachments(\/|$)/.test(p)) p = 'pro/messages/attachments';
   const key = ROUTE_PREFIXES.find((x) => p === x || p.startsWith(`${x}/`));
   return key ? ROUTE_CAPABILITIES[key] : [];
 }
@@ -282,7 +304,9 @@ export function capabilityStates(envVars = process.env) {
 
 /** the first closed capability of a route, or null @param {string} path @param {Record<string, string | undefined>} [envVars] */
 export function closedCapabilityOfRoute(path, envVars = process.env) {
-  return capabilitiesOfRoute(path).find((c) => !capabilityOpen(c, envVars)) || null;
+  // R3: a capability whose HDS need depends on the record (hdsCheckedPerRecord) passes the ROUTE gate in its best case (a NOT_ESSMS structure); its
+  // handler decides each record with the real classification and refuses the others (fail closed)
+  return capabilitiesOfRoute(path).find((c) => !capabilityState(c, envVars, CAPABILITIES[c]?.hdsCheckedPerRecord ? { structureCategory: 'NOT_ESSMS' } : {}).open) || null;
 }
 
 /** the refusal body (no data) @param {string} capability */

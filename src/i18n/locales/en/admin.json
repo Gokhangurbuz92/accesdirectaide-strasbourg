@@ -2233,5 +2233,6 @@
  "k5.extbooking.withdraw": "Withdraw the approval",
  "k5.extbooking.reject": "Reject",
  "k5.extbooking.none": "No page in this status.",
- "layout.nav.external_booking": "Organisations' appointment pages"
+ "layout.nav.external_booking": "Organisations' appointment pages",
+ "k5.providers.p.partner_bridge": "Partner referral bridge (ada.partner-referral/1)"
 }

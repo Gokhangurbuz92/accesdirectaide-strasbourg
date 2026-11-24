@@ -10,6 +10,7 @@ import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-clie
 import { AttachmentList, AttachmentPicker } from '@/components/Messaging/MessageAttachments';
 import { readAttachment, saveDownload } from '@/lib/messageAttachments';
 import { formatDate as formatInLanguage, useT } from '@/i18n';
+import { isNotOpenRefusal } from '@/lib/proModules';
 
 function formatDate(value) {
   const date = new Date(String(value || ''));
@@ -104,7 +105,8 @@ export default function ProMessageThread() {
             </div>
           ) : null}
 
-          <form
+          {/* R3: a conversation this service does not serve (503 CAPABILITY_NOT_OPEN) offers no form */}
+            {isNotOpenRefusal(conversationQuery.error) ? null : (<form
             className="space-y-3"
             onSubmit={(event) => {
               event.preventDefault();
@@ -116,8 +118,10 @@ export default function ProMessageThread() {
             <label htmlFor="pro-message-body" className="block text-sm font-medium text-slate-700">
               {t('pro:thread.nouveau_message', 'Nouveau message')}
             </label>
+            <p id="pro-message-privacy-hint" className="text-xs text-slate-700">{t('pro:thread.privacy_hint', 'Écrivez seulement ce qui est utile au rendez-vous. Pas d’information de santé ni de diagnostic : cette messagerie n’est pas un dossier de suivi. Les messages sont chiffrés sur nos serveurs, mais pas de bout en bout.')}</p>
             <textarea
               id="pro-message-body"
+              aria-describedby="pro-message-privacy-hint"
               value={body}
               onChange={(event) => setBody(event.target.value)}
               rows={4}
@@ -125,14 +129,16 @@ export default function ProMessageThread() {
               className="w-full rounded-md border border-slate-300 bg-white p-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
               placeholder={t('pro:thread.ecrivez_votre_message', 'Ecrivez votre message...')}
             />
-            <AttachmentPicker key={fileKey} id="pro-attach" file={file} onChange={setFile} disabled={sendMutation.isPending} />
+            {item?.attachmentsAllowed === false
+                ? <p className="text-xs text-slate-700" data-testid="pro-attach-closed">{t('pro:thread.attachments_closed', 'Pièces jointes : pas encore ouvertes sur ce service (un fichier peut contenir des informations de santé, qui demandent un hébergement certifié). Écrivez votre message sans document.')}</p>
+                : <AttachmentPicker key={fileKey} id="pro-attach" file={file} onChange={setFile} disabled={sendMutation.isPending} />}
             <div className="flex items-center gap-3">
               <Button type="submit" disabled={sendMutation.isPending || (!String(body || '').trim() && !file)}>
                 {sendMutation.isPending ? t('pro:thread.sending', 'Envoi...') : t('pro:thread.send', 'Envoyer')}
               </Button>
               <span className="text-xs text-slate-700">{String(body || '').length}/2000</span>
             </div>
-          </form>
+          </form>)}
 
           <p className="text-sm text-slate-600" aria-live="polite">
             {statusText}

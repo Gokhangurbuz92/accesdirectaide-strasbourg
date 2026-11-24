@@ -3,6 +3,7 @@
 // current tables (RdvConversation*, ProAppointment) and utilities; the citizen messaging UI (/compte/messages) depends on it.
 import { insertMessageWithAttachment, prepareAttachment, readAttachment, sendAttachment, withAttachments } from '../_services/message-attachments.js';
 import crypto from 'node:crypto';
+import { attachmentsOpen, conversationAllowed, conversationDecisions, refuseClosed, ATTACHMENTS } from '../_services/messaging-policy.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
@@ -126,9 +127,11 @@ async function getConversations(req, res, user) {
     },
   });
 
+  // R3: only the conversations this deployment serves (messaging.conversations: NOT_ESSMS structure + ordinary service, or HDS) are listed
+  const decisions = await conversationDecisions(conversations.map((c) => c.appointmentId));
   return res.status(200).json({
     ok: true,
-    items: conversations.map((conversation) => serializeConversationListItem(conversation)),
+    items: conversations.filter((c) => decisions.get(String(c.appointmentId))?.open).map((conversation) => serializeConversationListItem(conversation)),
   });
 }
 
@@ -151,10 +154,11 @@ async function getConversation(req, res, user, conversationId) {
   if (!conversation || conversation.citizenUserId !== user.id) {
     return res.status(404).json({ error: 'Conversation introuvable.' });
   }
+  if (!(await conversationAllowed(conversation.appointmentId)).open) return refuseClosed(res);   // R3: closed for this structure / service
 
   return res.status(200).json({
     ok: true,
-    item: await withAttachments(serializeConversationDetail(conversation)),   // PKG-4 / R14
+    item: { ...(await withAttachments(serializeConversationDetail(conversation))), attachmentsAllowed: attachmentsOpen() },   // PKG-4 / R14; R3: files only with HDS
   });
 }
 
@@ -167,6 +171,13 @@ async function sendMessage(req, res, user, conversationId) {
   if (!writeLimit.allowed) {
     return res.status(writeLimit.status).json(writeLimit.error);
   }
+
+  // R3: the conversation must be the person's AND served here (structure NOT_ESSMS + ordinary service, or HDS) before anything is read or written
+  const owned = await db.query.RdvConversation.findFirst({ where: (conv, { eq }) => eq(conv.id, conversationId), columns: { id: true, citizenUserId: true, appointmentId: true } });
+  if (!owned || owned.citizenUserId !== user.id) return res.status(404).json({ error: 'Conversation introuvable.' });
+  if (!(await conversationAllowed(owned.appointmentId)).open) return refuseClosed(res);
+  // R3: a file can be a medical document — attachments stay closed until certified hosting (messaging.attachments), whatever the structure
+  if (req.body?.attachment !== undefined && req.body?.attachment !== null && !attachmentsOpen()) return refuseClosed(res, ATTACHMENTS);
 
   // PKG-4 / R14: a message may carry ONE file (validated before anything is written); text is then optional
   const prepared = prepareAttachment(req.body?.attachment);
@@ -240,6 +251,7 @@ async function getOrCreateFromAppointment(req, res, user, appointmentId) {
   if (appointment.citizenUserId !== user.id) {
     return res.status(403).json({ error: 'Forbidden' });
   }
+  if (!(await conversationAllowed(appointment.id)).open) return refuseClosed(res);   // R3
 
   const existing = await db.query.RdvConversation.findFirst({
     where: (conv, { eq }) => eq(conv.appointmentId, appointment.id),
@@ -307,6 +319,7 @@ export default async function handler(req, res) {
     // PKG-4 / R14: the file of a message, only through the person's OWN conversation
     const conversation = await db.query.RdvConversation.findFirst({ where: (conv, { eq }) => eq(conv.id, String(segments[1])), columns: { id: true, citizenUserId: true } });
     if (!conversation || conversation.citizenUserId !== auth.user.id) return res.status(404).json({ error: 'Introuvable.' });
+    if (!attachmentsOpen()) return refuseClosed(res, ATTACHMENTS);   // R3: files only with certified hosting
     const out = await readAttachment(conversation.id, String(segments[3]));
     return out.ok ? sendAttachment(res, out) : res.status(404).json({ error: 'Introuvable.' });
   }

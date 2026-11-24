@@ -577,6 +577,8 @@
   "thread.nouveau_message": "Yeni mesaj",
   "thread.retour_aux_conversations": "Yazışmalara dön",
   "thread.send": "Gönder",
+  "thread.attachments_closed": "Ekler: bu hizmette henüz açık değil (bir dosya sağlık bilgisi içerebilir; bu, sertifikalı barındırma gerektirir). Mesajınızı belge eklemeden yazın.",
+  "thread.privacy_hint": "Yalnızca randevunuz için gerekli olanı yazın. Sağlığınızla ilgili bilgi veya kimlik belgesi numarası vermeyin: bu mesajı kurum okur; sunucularımızda şifrelenir ancak uçtan uca şifreli değildir.",
   "thread.send_failed": "Mesajınız gönderilemedi.",
   "thread.sending": "Gönderiliyor...",
   "thread.sent": "Mesaj gönderildi.",

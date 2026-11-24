@@ -1532,5 +1532,7 @@
  "external.url_hint": "Eine öffentliche https-Adresse ohne Benutzernamen, ohne Passwort und ohne personenbezogene Daten. Ein Link von RDV Solidarités oder RDV Service Public (« /org/… » oder « /motif/… ») wird als öffentliche Plattform erkannt.",
  "external.save": "Zur Prüfung senden",
  "external.remove": "Seite entfernen",
- "external.new_window": " (neues Fenster)"
+ "external.new_window": " (neues Fenster)",
+ "thread.attachments_closed": "Anhänge: auf diesem Dienst noch nicht geöffnet (eine Datei kann Gesundheitsangaben enthalten, die ein zertifiziertes Hosting erfordern). Schreiben Sie Ihre Nachricht ohne Dokument.",
+ "thread.privacy_hint": "Schreiben Sie nur, was für den Termin nützlich ist. Keine Gesundheitsangaben und keine Diagnose: Diese Nachrichtenfunktion ist keine Fallakte. Die Nachrichten sind auf unseren Servern verschlüsselt, aber nicht Ende-zu-Ende."
 }

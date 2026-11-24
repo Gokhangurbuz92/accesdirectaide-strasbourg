@@ -11,6 +11,7 @@ import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
 import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
 import { approvedAtLeast, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE } from '../src/config/legal-drafts.js';
+import { partnerAdapterConfig } from '../api/lib/partner-adapter/config.js';
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
 import { RETENTION_POLICY, executionGate, stepApprovalProblem } from '../api/_services/retention-policy.js';
@@ -99,6 +100,45 @@ export function outlookCheck(env, { get, betaOn, opened }) {
   return missing.length ? ['FAIL', `OUTLOOK_ENABLED=true needs: ${missing.join('; ')}`] : ['PASS', 'Outlook free/busy (Calendars.ReadBasic) approved and configured; a real Microsoft sign-in is checked in the release acceptance'];
 }
 
+/**
+ * R3 / FA-D7 — the partner referral bridge as Production would run it (names only, never a value, an endpoint or a secret). Off (nothing configured,
+ * capability closed, job closed) = PASS. A half-open bridge is a FAIL: configured but not approved for production, an invalid configuration, the
+ * capability open without a configured partner (callbacks would answer 404), or a configured and open bridge whose outbox job is not open (nothing
+ * would ever be sent). Configured while the capability is closed = WARN (inert).
+ * @param {Record<string, string | undefined>} env @param {{ get: (k: string) => string, betaOn: boolean }} ctx @returns {['PASS' | 'WARN' | 'FAIL', string]}
+ */
+export function partnerBridgeCheck(env, { get, betaOn }) {
+  const prodEnv = { ...env, VERCEL_ENV: 'production' };
+  const cfg = partnerAdapterConfig(prodEnv);
+  const cap = capabilityState('partner.referral_adapter', prodEnv);
+  const jobOpen = !betaOn || openJobs(env).has('partner-outbox');
+  if (cfg.state === 'NOT_CONFIGURED' && !cap.open) return ['PASS', 'partner bridge off (no ADA_PARTNER_ADAPTERS, capability partner.referral_adapter closed): referrals follow the native ADA Pro path only'];
+  if (cfg.state === 'INVALID') return ['FAIL', `ADA_PARTNER_ADAPTERS is invalid (${cfg.problems.join(', ')}): fix the entry or the partner secret ADA_PARTNER_SECRET_<ID> (>= 32 characters, https endpoint)`];
+  if (cfg.state === 'PRODUCTION_NOT_APPROVED') return ['FAIL', 'ADA_PARTNER_ADAPTERS is set but ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED is not "true" (owner: signed partner agreement, AIPD line, HDS)'];
+  if (cfg.state !== 'CONFIGURED') return ['FAIL', `capability partner.referral_adapter is open but no partner is configured (ADA_PARTNER_ADAPTERS): every callback would answer 404`];
+  const ids = cfg.partners.map((p) => p.id).join(', ');
+  const rotating = cfg.partners.filter((p) => p.previousSecret).map((p) => p.id);
+  if (!cap.open) return ['WARN', `partner(s) configured (${ids}) but capability partner.referral_adapter is closed (${cap.reason}): the bridge is inert`];
+  if (!jobOpen) return ['FAIL', `partner bridge open (${ids}) but the job partner-outbox is not open (ADA_BETA_OPEN_JOBS + ADA_JOBS_APPROVED): no event would ever reach the partner`];
+  return [rotating.length ? 'WARN' : 'PASS', `partner bridge open: ${ids}${rotating.length ? `; key rotation in progress for ${rotating.join(', ')} (remove ADA_PARTNER_SECRET_<ID>_PREVIOUS once the partner signs with the new secret)` : ''}`];
+}
+
+/**
+ * R3 — the appointment messaging (capability messaging.conversations) and its attachments (messaging.attachments), as Production would run them.
+ * @param {Record<string, string | undefined>} env @param {{ betaOn: boolean, opened: Set<string> }} ctx @returns {['PASS' | 'WARN' | 'FAIL', string]}
+ */
+export function messagingCheck(env, { betaOn, opened }) {
+  const prodEnv = { ...env, VERCEL_ENV: 'production' };
+  const surface = !betaOn || opened.has('communications');
+  const best = capabilityState('messaging.conversations', prodEnv, { structureCategory: 'NOT_ESSMS' });
+  const all = capabilityState('messaging.conversations', prodEnv);
+  const files = capabilityState('messaging.attachments', prodEnv);
+  if (!surface || !best.open) return ['PASS', `appointment messaging closed (${!surface ? 'communications surface closed' : best.reason})`];
+  if (betaOn && !opened.has('appointments')) return ['FAIL', 'messaging.conversations is open but the appointments surface is not: a conversation only exists for an appointment'];
+  if (!all.open) return ['WARN', `appointment messaging open for NOT_ESSMS structures and services reviewed « ordinary » only (no HDS attestation); attachments ${files.open ? 'open' : 'closed (HDS)'}`];
+  return ['WARN', `appointment messaging open for every structure (HDS attested: check the certificate); attachments ${files.open ? 'open' : 'closed (not listed)'}`];
+}
+
 /** @param {Record<string, string | undefined>} env @param {{ legalText?: string, policy?: any }} [opts] legalText: the legal-pages source (tests pass their own); policy: a test copy of the retention policy */
 export function evaluateReleasePreflight(env, opts = {}) {
   const get = (/** @type {string} */ k) => String(env[k] ?? '').trim();
@@ -144,7 +184,9 @@ export function evaluateReleasePreflight(env, opts = {}) {
   const vault = get('ADA_VAULT_KEY') || get('OUTLOOK_TOKEN_ENCRYPTION_KEY');
   add('crypto.vault_key', (/^[0-9a-fA-F]{64}$/.test(vault) || vault.length >= 32) && vault !== get('ADA_ENCRYPTION_KEY') ? 'PASS' : 'FAIL', 'ADA_VAULT_KEY (MFA secrets): 64 hex chars or >= 32 chars, distinct from ADA_ENCRYPTION_KEY');
   add('kv.configured', (get('KV_REST_API_URL') || get('UPSTASH_KV_REST_API_URL')) && (get('KV_REST_API_TOKEN') || get('UPSTASH_KV_REST_API_TOKEN')) ? 'PASS' : 'FAIL', 'Upstash KV: sign-in, sign-up, booking, contact and administration fail closed without it');
-  if (!needs(['documents', 'communications'])) add('storage.configured', 'PASS', notUsed('the Coffre and attachments'));
+  // R3: messages carry no file unless messaging.attachments (HDS) is open — the bucket is needed for the documents surface or message attachments only
+  const attachmentsOpen = needs(['communications']) && capabilityState('messaging.attachments', { ...env, VERCEL_ENV: 'production' }).open;
+  if (!needs(['documents']) && !attachmentsOpen) add('storage.configured', 'PASS', notUsed('the Coffre and attachments') + '; message attachments closed (messaging.attachments)');
   else add('storage.configured', ['STORAGE_ENDPOINT', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY_ID', 'STORAGE_SECRET_ACCESS_KEY'].every((k) => get(k)) ? 'PASS' : 'FAIL', 'object storage (Coffre, attachments): an EU bucket under a DPA');
   // R34 (G11): the LAB's local file store must not reach production (the runtime ignores it there; the variable signals a copied LAB environment)
   add('storage.no_local_dir', !get('ADA_LOCAL_STORAGE_DIR') ? 'PASS' : beta ? 'WARN' : 'FAIL', 'ADA_LOCAL_STORAGE_DIR is LAB only: delete it from the production environment');
@@ -231,6 +273,14 @@ export function evaluateReleasePreflight(env, opts = {}) {
       add('capabilities.hds_attestation', h.valid ? 'WARN' : 'FAIL', h.valid ? 'ADA_HDS_CERTIFIED_HOSTING holds a well-formed, unexpired token: check the certificate itself (a token is a statement, not a verification)'
         : `ADA_HDS_CERTIFIED_HOSTING is set but invalid (${h.reason}): no HDS capability opens`);
     }
+  }
+  add('partner.bridge', ...partnerBridgeCheck(env, { get, betaOn }));
+  add('messaging.conversations', ...messagingCheck(env, { betaOn, opened }));
+  // R3: the institution portal shows only FROZEN quarters (api/_services/territorial-stats.js): without the observatory-freeze job every cell is withheld
+  if (capabilityState('institution.portal', { ...env, VERCEL_ENV: 'production' }).open && (!betaOn || opened.has('institution'))) {
+    const frozen = !betaOn || openJobs(env).has('observatory-freeze');
+    add('institution.statistics', frozen ? 'PASS' : 'WARN', frozen ? 'institution portal open; quarters are frozen by the observatory-freeze job'
+      : 'institution portal open but the observatory-freeze job is not open (ADA_BETA_OPEN_JOBS): every statistic stays withheld until a quarter is frozen');
   }
   if (beta) add('beta.open_surfaces', opened.size ? 'WARN' : 'PASS', opened.size ? `surfaces opened during the beta: ${[...opened].sort().join(', ')} (their services are required above)` : 'no surface opened: only public read-only routes');
   return out;
