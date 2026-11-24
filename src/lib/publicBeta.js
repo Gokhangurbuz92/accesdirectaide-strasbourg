@@ -27,7 +27,10 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
 /** @type {Record<string, string[]>} */
 export const SCREEN_SURFACES = {
   accounts: ['/login', '/auth', '/compte'], pro: ['/pro'], institution: ['/institution'], appointments: ['/appointments', '/rdv', '/r'],
-  communications: ['/contact', '/demande-aide', '/proposer-une-structure'], documents: ['/share', '/passport', '/compte/dossiers-chiffres', '/pro/partages-chiffres'],
+  // R4 fix (owner report 24/11): the citizen screens of these surfaces sit under /compte, which the narrow accounts scope does not open — they follow their
+  // own surface like the server does (api/_utils/public-beta.js: « messages » in communications; « citizen/coffre », « citizen/dossier » in documents).
+  communications: ['/contact', '/demande-aide', '/proposer-une-structure', '/compte/messages'],
+  documents: ['/share', '/passport', '/compte/dossiers-chiffres', '/pro/partages-chiffres', '/compte/coffre', '/compte/partages'],
   diagnostic: ['/diagnostic', '/assistant', '/mon-assistant', '/orientation'], admin: ['/admin', '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches'],
   events: ['/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements'],
   testimonials: ['/temoignages', '/compte/temoignages', '/admin/temoignages'],
