@@ -28,7 +28,7 @@ describe('R3H /partenaires follows the build', () => {
     expect(box).toHaveTextContent('Votre structure peut demander l’ouverture de son Espace Pro');
     expect(box).toHaveTextContent('peut proposer des rendez-vous en ligne');
     expect(screen.getByTestId('partners-pro-register')).toHaveAttribute('href', '/pro/register');
-    expect(document.body).not.toHaveTextContent('Ce que l’espace partenaires permettra');
+    expect(globalThis.document.body).not.toHaveTextContent('Ce que l’espace partenaires permettra');
   });
   it('nothing open: the former text, no sign-up link', async () => {
     await show('', '');

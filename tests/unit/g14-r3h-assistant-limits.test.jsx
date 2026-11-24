@@ -13,7 +13,7 @@ import ChatAssistant from '../../src/components/chat/ChatAssistant.jsx';
 import { setLanguage } from '../../src/i18n/index.js';
 import { claimsEntitlement } from '../../api/lib/entitlementWording.js';
 
-beforeEach(() => { window.HTMLElement.prototype.scrollIntoView = () => {}; });
+beforeEach(() => { globalThis.HTMLElement.prototype.scrollIntoView = () => {}; });
 afterEach(async () => { cleanup(); await act(async () => { await setLanguage('fr', { persist: false }); }); });
 const show = () => render(h(HelmetProvider, null, h(MemoryRouter, null, h(ChatAssistant, { embedded: true }))));
 
