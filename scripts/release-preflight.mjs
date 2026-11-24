@@ -9,7 +9,9 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
-import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
+import { CAPABILITIES, capabilityStates, hdsAttestation, hdsAttestationProvider } from '../api/_utils/capabilities.js';
+import { HDS_MODULES, HDS_SERVICE_CAPABILITIES, hdsGatewayState } from '../api/_utils/hds-gateway.js';
+import fs from 'node:fs';
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
 import { RETENTION_POLICY, executionGate, stepApprovalProblem } from '../api/_services/retention-policy.js';
@@ -72,6 +74,35 @@ export function openfiscaCheck(get) {
 }
 
 /**
+ * G14-R3 — the HDS gateway (api/_utils/hds-gateway.js). Off (no HDS_* variable, no HDS-served capability named) = PASS. Otherwise every condition of a
+ * Production opening, by name (never a value): HDS_PRODUCTION_APPROVED=true, HDS_SERVICE_URL an https origin on the certified-host ALLOW-LIST, a valid
+ * P-256 signing key and kid, the attestation token of the SAME provider, and the site's CSP connect-src allowing that origin (vercel.json), otherwise the
+ * browser could not reach it. A named capability whose module is not ported is reported (it stays closed).
+ * @param {(k: string) => string} get @param {Record<string, string | undefined>} env @param {{ cspText?: string }} [opts]
+ * @returns {['PASS' | 'WARN' | 'FAIL', string]}
+ */
+export function hdsGatewayCheck(get, env, opts = {}) {
+  const named = get('ADA_CAPABILITIES_OPEN').split(',').map((x) => x.trim().toLowerCase()).filter((x) => HDS_SERVICE_CAPABILITIES.includes(x));
+  const touched = ['HDS_SERVICE_URL', 'HDS_TICKET_PRIVATE_KEY', 'HDS_TICKET_KID', 'HDS_PRODUCTION_APPROVED'].filter((k) => get(k));
+  if (!named.length && !touched.length) return ['PASS', 'HDS gateway off: Mon Coffre and shared dossiers stay closed (no HDS_* variable, none named in ADA_CAPABILITIES_OPEN)'];
+  const problems = [];
+  const gw = hdsGatewayState(env, { deployed: true });
+  if (!gw.ready) problems.push(`gateway: ${gw.reason}`);
+  if (gw.ready && hdsAttestationProvider(env) !== gw.provider) problems.push(`ADA_HDS_CERTIFIED_HOSTING must be a valid token of provider « ${gw.provider} » (the certified host of HDS_SERVICE_URL)`);
+  const origin = gw.origin;
+  if (origin) {
+    let csp = opts.cspText;
+    if (csp === undefined) { try { csp = fs.readFileSync(new URL('../vercel.json', import.meta.url), 'utf8'); } catch { csp = ''; } }
+    const values = [...String(csp).matchAll(/connect-src ([^;"]*)/g)].map((m) => m[1].split(/\s+/));
+    if (!values.length || values.some((v) => !v.includes(origin))) problems.push(`the site CSP connect-src (vercel.json) must allow ${origin}, or the browser cannot reach the HDS service`);
+  }
+  if (problems.length) return ['FAIL', `HDS gateway incomplete: ${problems.join('; ')}`];
+  const notPorted = named.filter((c) => HDS_MODULES[c] !== 'ported');
+  return notPorted.length ? ['WARN', `HDS gateway ready (${gw.origin}); still closed because not ported to the HDS service: ${notPorted.join(', ')}`]
+    : ['PASS', `HDS gateway ready: ${gw.origin} (certified host allow-list, approval recorded, signing key valid, CSP allows it)`];
+}
+
+/**
  * R43 (E4) — Outlook free/busy readiness for a production release. Off = PASS. On = every production prerequisite, each named in the detail (never a value).
  * @param {Record<string, string | undefined>} env
  * @param {{ get: (k: string) => string, betaOn: boolean, opened: Set<string> }} ctx
@@ -93,7 +124,7 @@ export function outlookCheck(env, { get, betaOn, opened }) {
   return missing.length ? ['FAIL', `OUTLOOK_ENABLED=true needs: ${missing.join('; ')}`] : ['PASS', 'Outlook free/busy (Calendars.ReadBasic) approved and configured; a real Microsoft sign-in is checked in the release acceptance'];
 }
 
-/** @param {Record<string, string | undefined>} env @param {{ legalText?: string, policy?: any }} [opts] legalText: the legal-pages source (tests pass their own); policy: a test copy of the retention policy */
+/** @param {Record<string, string | undefined>} env @param {{ legalText?: string, policy?: any, cspText?: string }} [opts] legalText: the legal-pages source (tests pass their own); policy: a test copy of the retention policy */
 export function evaluateReleasePreflight(env, opts = {}) {
   const get = (/** @type {string} */ k) => String(env[k] ?? '').trim();
   /** @type {{ id: string, status: 'PASS' | 'WARN' | 'FAIL', detail: string }[]} */
@@ -207,6 +238,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
         : `ADA_HDS_CERTIFIED_HOSTING is set but invalid (${h.reason}): no HDS capability opens`);
     }
   }
+  add('hds.gateway', ...hdsGatewayCheck(get, env, { cspText: opts.cspText }));
   if (beta) add('beta.open_surfaces', opened.size ? 'WARN' : 'PASS', opened.size ? `surfaces opened during the beta: ${[...opened].sort().join(', ')} (their services are required above)` : 'no surface opened: only public read-only routes');
   return out;
 }

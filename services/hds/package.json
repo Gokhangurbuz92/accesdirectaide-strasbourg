@@ -1,0 +1,17 @@
+{
+  "name": "ada-hds-service",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AccesDirectAide HDS service: Mon Coffre and shared-dossier data inside a certified health-data host (Scalingo, HDS option).",
+  "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "migrate": "node migrate.js"
+  },
+  "dependencies": {
+    "pg": "8.18.0"
+  }
+}

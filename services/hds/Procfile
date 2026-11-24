@@ -1,0 +1,2 @@
+web: node server.js
+postdeploy: node migrate.js

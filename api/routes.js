@@ -249,6 +249,7 @@ const routeTable = [
     { path: 'citizen/favorites', match: 'exact', handler: () => import('./_handlers/citizen/favorites.js') },
     { path: 'citizen/history', match: 'exact', handler: () => import('./_handlers/citizen/history.js') },
     { path: 'citizen/coffre', match: 'exact', handler: () => import('./_handlers/citizen/coffre.js') },
+    { path: 'citizen/hds-ticket', match: 'exact', handler: () => import('./_handlers/citizen/hds-ticket.js') },   // G14-R3: single-use ticket for the HDS service
     { path: 'citizen/notifications', match: 'exact', handler: () => import('./_handlers/citizen/notifications.js') },   // R46 / N03: in-app notifications (derived, no content)
     { path: 'citizen/events', match: 'exact', handler: () => import('./_handlers/citizen/events.js') },   // X04 (expansion): my event registrations (adult, closed: community.events)
     { path: 'citizen/testimonials', match: 'exact', handler: () => import('./_handlers/citizen/testimonials.js') },   // X02 (expansion): my testimonials, withdrawal, reports (closed: community.testimonials)

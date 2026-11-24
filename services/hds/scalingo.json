@@ -1,0 +1,22 @@
+{
+  "name": "ada-hds-strasbourg",
+  "description": "AccesDirectAide HDS service (Mon Coffre, shared-dossier data). Region osc-fr1, HDS option. Prepared in LAB, NOT deployed.",
+  "env": {
+    "NODE_ENV": { "value": "production" },
+    "ALLOWED_ORIGIN": { "description": "exact https origin of the main site (comma list), e.g. https://<APP_BASE_URL host>", "required": true },
+    "HDS_TICKET_PUBLIC_KEYS": { "description": "<kid>:<base64 SPKI DER> of the main API ticket signer (scripts/hds-keygen.mjs prints it)", "required": true },
+    "HDS_DATA_KEYS": { "description": "<kid>:<64 hex> key-encryption keys, first = active; generated in the HDS environment only, never copied elsewhere", "required": true },
+    "HDS_TICKET_ISSUER": { "value": "ada-main" },
+    "HDS_TICKET_AUDIENCE": { "value": "ada-hds" },
+    "HDS_HEALTH_CATEGORY_ENABLED": { "value": "false" }
+  },
+  "addons": [
+    { "plan": "postgresql:postgresql-business-512", "description": "PostgreSQL Business 512M (HDS-eligible plan; verify the exact plan id with `scalingo addons-plans postgresql`)" }
+  ],
+  "formation": {
+    "web": { "amount": 2, "size": "S" }
+  },
+  "scripts": {
+    "postdeploy": "node migrate.js"
+  }
+}

@@ -5,6 +5,7 @@ import { appointmentTable, flagsOf, parcoursItemTable, parcoursPlanStepSchema, r
 import { nextDecisionAt } from '../lib/consent-ledger.js';
 import { purgeDossierFiles, storageKeysOf } from './dossier-files.js';
 import { createErasureTombstones } from './erasure-tombstones.js';
+import { eraseHdsSubject } from '../lib/hds-erasure.js';
 import { mailContactEraser } from './mail-contact-erasure.js';
 import { recordMailContactFailure } from './mail-contact-failures.js';
 import { dsrDeadline } from './dsr-deadline.js';
@@ -412,7 +413,7 @@ export function mailContactRetryWindow(request, now) {
 }
 
 // @ts-ignore
-export function createPrivacyRightsService({ db, cryptoLib, tombstones = createErasureTombstones(), mailContacts = mailContactEraser, now = () => new Date() }) {
+export function createPrivacyRightsService({ db, cryptoLib, tombstones = createErasureTombstones(), mailContacts = mailContactEraser, hdsEraser = eraseHdsSubject, now = () => new Date() }) {
     return {
         /**
        * @param {string | import("drizzle-orm").SQLWrapper} userId
@@ -1026,6 +1027,10 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 }
             }
 
+            // G14-R3: the HDS service (Mon Coffre, dossier data) is erased FIRST; a failure stops here — nothing erased, the request stays approved and is
+            // retried — so no health document outlives its account. Skipped when no HDS service was ever configured (api/lib/hds-erasure.js).
+            const hdsErasure = await hdsEraser(subjectId);
+
             // V2 (owner review 09/11/2026): the tombstone is written BEFORE anything is erased, outside the database, so a restore of a backup taken
             // before this moment can replay it (api/_services/erasure-tombstones.js). If it cannot be written, nothing is erased (request stays open).
             const tomb = { requestId, subjectId, domains: ERASABLE_DOMAINS };
@@ -1038,6 +1043,7 @@ export function createPrivacyRightsService({ db, cryptoLib, tombstones = createE
                 // after the commit: mark the tombstone done (only « done » erasures are replayed after a restore); a failure here is reported, never
                 // undone — the restore will list this erasure as unconfirmed instead of silently skipping or wrongly replaying it
                 summary.tombstoneDone = await tombstones.complete(tomb);
+                summary.hdsErasure = hdsErasure.skipped ? 'skipped' : 'done';
                 await this.updateDsrRequestStatus(requestId, 'COMPLETED');
                 summary.mailContact = contact ? contact.outcome : 'skipped';
                 if (contact?.outcome === 'failed') {

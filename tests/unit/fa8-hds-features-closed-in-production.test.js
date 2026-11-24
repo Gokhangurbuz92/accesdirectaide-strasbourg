@@ -7,6 +7,8 @@
 import { describe, expect, it } from 'vitest';
 import { CAPABILITIES, capabilityState, ROUTE_CAPABILITIES } from '../../api/_utils/capabilities.js';
 import { SURFACES } from '../../api/_utils/public-beta.js';
+import { HDS_SERVICE_CAPABILITIES } from '../../api/_utils/hds-gateway.js';
+import { generateTicketKeyPair } from '../../api/lib/hds-ticket.js';
 
 const HDS_BOUND = ['citizen.orientation_records', 'citizen.vault', 'citizen.shared_dossier', 'pro.case_management', 'pro.referrals', 'pro.siao_interop', 'partner.referral_adapter'];
 const ALL = Object.keys(CAPABILITIES).join(',');
@@ -36,7 +38,21 @@ describe('FA-D8 HDS-bound features stay closed in production', () => {
   });
   it('the gate is the attestation, not the code path: with a (synthetic) valid token they open — so the token is the only lock to guard', () => {
     const env = { VERCEL_ENV: 'production', ...everythingOpen, ADA_HDS_CERTIFIED_HOSTING: VALID };
-    for (const name of HDS_BOUND) expect(capabilityState(name, env).open, name).toBe(true);
+    // G14-R3: the two capabilities served by the HDS service need MORE than the token (the approved, allow-listed gateway; a ported module)
+    for (const name of HDS_BOUND.filter((n) => !HDS_SERVICE_CAPABILITIES.includes(n))) expect(capabilityState(name, env).open, name).toBe(true);
+    for (const name of HDS_SERVICE_CAPABILITIES) expect(capabilityState(name, env).open, name).toBe(false);
+  });
+  it('G14-R3: the vault opens only with the gateway, a token of the SAME certified provider, and a ported module; shared dossiers stay closed (not ported)', () => {
+    const gateway = { HDS_SERVICE_URL: 'https://ada-hds-strasbourg.osc-fr1.scalingo.io', HDS_PRODUCTION_APPROVED: 'true', HDS_TICKET_KID: 'k1', HDS_TICKET_PRIVATE_KEY: generateTicketKeyPair().privateKeyB64 };
+    const env = { VERCEL_ENV: 'production', ...everythingOpen, ...gateway, ADA_HDS_CERTIFIED_HOSTING: VALID.replace('lab-synthetic', 'scalingo') };
+    expect(capabilityState('citizen.vault', env).open).toBe(true);
+    expect(capabilityState('citizen.shared_dossier', env).reason).toBe('HDS_MODULE_NOT_PORTED');
+    expect(capabilityState('citizen.vault', { ...env, ADA_HDS_CERTIFIED_HOSTING: VALID }).reason).toBe('HDS_ATTESTATION_PROVIDER_MISMATCH');
+    for (const [k, reason] of [['HDS_PRODUCTION_APPROVED', 'HDS_PRODUCTION_NOT_APPROVED'], ['HDS_SERVICE_URL', 'HDS_SERVICE_URL_ABSENT'], ['HDS_TICKET_PRIVATE_KEY', 'HDS_TICKET_KEY_INVALID'], ['HDS_TICKET_KID', 'HDS_TICKET_KID_INVALID']]) {
+      expect(capabilityState('citizen.vault', { ...env, [k]: '' }).reason, k).toBe(reason);
+    }
+    expect(capabilityState('citizen.vault', { ...env, HDS_SERVICE_URL: 'https://hds.example.com' }).reason).toBe('HDS_HOST_NOT_ON_CERTIFIED_ALLOWLIST');
+    expect(capabilityState('citizen.vault', { ...env, HDS_SERVICE_URL: 'http://ada-hds-strasbourg.osc-fr1.scalingo.io' }).reason).toBe('HDS_SERVICE_URL_NOT_HTTPS');
   });
   it('every HDS-bound capability guards at least one route (no unguarded health-data route)', () => {
     const guarded = new Set(Object.values(ROUTE_CAPABILITIES).flat());

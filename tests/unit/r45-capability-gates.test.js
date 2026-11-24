@@ -11,6 +11,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
+import { generateTicketKeyPair } from '../../api/lib/hds-ticket.js';
 
 const touched = vi.hoisted(() => ({ n: 0 }));
 vi.mock('../../src/db/index.js', () => ({ db: new Proxy({}, { get() { touched.n += 1; throw new Error('database touched'); } }) }));
@@ -57,8 +58,9 @@ describe('capability registry', () => {
   it('the route map names only known capabilities', () => {
     for (const [route, list] of Object.entries(ROUTE_CAPABILITIES)) for (const c of list) expect(CAPABILITIES[c], `${route} -> ${c}`).toBeTruthy();
   });
-  it('every route of the accounts, appointments, pro, documents, diagnostic, institution and video surfaces carries a capability (four reviewed exceptions)', () => {
+  it('every route of the accounts, appointments, pro, documents, diagnostic, institution and video surfaces carries a capability (five reviewed exceptions)', () => {
     const EXCEPTIONS = {
+      'citizen/hds-ticket': 'G14-R3: the single-use HDS ticket — the handler checks the capability it is asked for (citizen.vault | citizen.shared_dossier) and the gateway',
       pdf: 'only pdf/aides and pdf/demarches answer (published public records, open in the beta); every other pdf path is a 404',
       tts: 'retired: answers 410 (R12, P26)',
       drees: 'public reference data (DREES programme list), no personal data',
@@ -124,7 +126,11 @@ describe('opening rule (fail-closed)', () => {
   it('a requiresHds capability ALSO needs a valid, unexpired HDS attestation token', () => {
     const env = { ...PROD, ADA_CAPABILITIES_OPEN: 'citizen.vault,pro.case_management' };
     expect(capabilityState('citizen.vault', env)).toEqual({ open: false, reason: 'HDS_HOSTING_NOT_ATTESTED' });
-    expect(capabilityState('citizen.vault', { ...env, ADA_HDS_CERTIFIED_HOSTING: TOKEN }).open).toBe(true);
+    // G14-R3: deployed, the vault is served by the HDS service only — the token is no longer enough (approved gateway on the allow-list, same provider)
+    expect(capabilityState('citizen.vault', { ...env, ADA_HDS_CERTIFIED_HOSTING: TOKEN })).toEqual({ open: false, reason: 'HDS_SERVICE_URL_ABSENT' });
+    const gateway = { HDS_SERVICE_URL: 'https://ada-hds-strasbourg.osc-fr1.scalingo.io', HDS_PRODUCTION_APPROVED: 'true', HDS_TICKET_KID: 'k1', HDS_TICKET_PRIVATE_KEY: generateTicketKeyPair().privateKeyB64 };
+    expect(capabilityState('citizen.vault', { ...env, ...gateway, ADA_HDS_CERTIFIED_HOSTING: TOKEN }).reason).toBe('HDS_ATTESTATION_PROVIDER_MISMATCH');
+    expect(capabilityState('citizen.vault', { ...env, ...gateway, ADA_HDS_CERTIFIED_HOSTING: TOKEN.replace('example-host', 'scalingo') }).open).toBe(true);
     expect(capabilityState('pro.case_management', { ...env, ADA_HDS_CERTIFIED_HOSTING: TOKEN }).open).toBe(true);
     // the token alone opens nothing
     expect(capabilityState('citizen.vault', { ...PROD, ADA_HDS_CERTIFIED_HOSTING: TOKEN }).open).toBe(false);
