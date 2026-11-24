@@ -12,6 +12,7 @@ import { sectionTone } from '@/design/categoryTone';
 import { ToneBar, ToneChip, ToneIcon } from '@/components/ui/Tone';
 import { PAGE } from '@/design/layout';
 import { MAX_NEEDS } from '@/lib/socialNeeds';
+import { isBetaRestrictedPath } from '@/lib/publicBeta';
 import { cn } from '@/lib/utils';
 
 /**
@@ -330,7 +331,9 @@ export default function ProGuide({ publicView = false }) {
     // a link to a section (« /pro/guide#demarrer » from the dashboard) opens the page at that section
     useEffect(() => {
         if (!hash) return;
-        const el = globalThis.document?.getElementById(decodeURIComponent(hash.slice(1)));
+        let id = hash.slice(1);
+        try { id = decodeURIComponent(id); } catch { /* a malformed address: look the raw text up */ }
+        const el = globalThis.document?.getElementById(id);
         if (el && typeof el.scrollIntoView === 'function') el.scrollIntoView();
     }, [hash]);
     const sections = buildSections(t);
@@ -365,9 +368,9 @@ export default function ProGuide({ publicView = false }) {
                     <div className="rounded-xl border border-ada-line bg-ada-sunken p-4 text-sm text-ada-ink-2" data-testid="pro-guide-public-note">
                         <p>{t('proguide:public.note', 'Ce guide se lit sans compte. Les étapes marquées « après activation » se font une fois l’espace de votre structure vérifié et ouvert.')}</p>
                         <div className="mt-3 flex flex-wrap gap-2">
-                            <Link to="/pro/register" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-ada-action px-4 py-2 font-semibold text-white hover:bg-ada-action-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600">
+                            {!isBetaRestrictedPath('/pro/register') && <Link to="/pro/register" className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-ada-action px-4 py-2 font-semibold text-white hover:bg-ada-action-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600">
                                 <UserPlus className="h-4 w-4" aria-hidden="true" />{t('proguide:public.register', 'Demander l’ouverture de l’espace')}
-                            </Link>
+                            </Link>}
                             <Link to="/pro/login" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-ada-line bg-ada-surface px-4 py-2 font-semibold text-ada-ink hover:bg-ada-sunken focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
                                 <LogIn className="h-4 w-4" aria-hidden="true" />{t('proguide:public.login', 'Se connecter')}
                             </Link>

@@ -89,7 +89,7 @@
  "faq.account.parcours.q": "What is My Journey for?",
  "faq.account.parcours.a": "To follow your procedures step by step: add a page with “Add to my pathway”, say where you stand and, if needed, a deadline. Sensitive steps (health, disability, residence, justice…) need your explicit consent. AccesDirectAide makes no decision about your rights.",
  "faq.account.coffre.q": "What is My Vault?",
- "faq.account.coffre.a": "A space to keep your documents (PDF, PNG or JPEG, 3 MB at most), encrypted: only you have access. Do not upload medical documents until the page offers it. Files are not yet scanned by an antivirus.",
+ "faq.account.coffre.a": "A space to keep your documents (PDF, PNG or JPEG, 3 MB at most), encrypted on our servers. You choose who can see them (an organisation or a trusted person). Do not upload medical documents until the page offers it. Files are not yet scanned by an antivirus.",
  "faq.account.trusted.q": "What is a trusted person?",
  "faq.account.trusted.a": "A relative or a representative you invite by e-mail. You choose what they can see (My Journey without your notes, the list of My Vault without opening the documents, your next appointments) and for how long, from 30 days to 1 year. You can end the access at any time.",
  "faq.account.helper.q": "What is assisted mode?",

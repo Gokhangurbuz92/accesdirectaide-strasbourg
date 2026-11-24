@@ -365,5 +365,5 @@
  "privacy.data.appointments.text_open": "Randevu talepleri kişisel bir hesaptan açıktır. Neyin işlendiği, kuruluşa neyin iletildiği ve ne kadar süre saklandığı, esas alınan <0>hesaplar bildiriminde</0> (bölüm 3, 4 ve 9) açıklanır.",
  "security.stored.bookings_open": "<strong>Kişilerin randevuları</strong>: seçilen hizmet, zaman aralığı ve şekil; kuruluş ne adınızı, ne e-posta adresinizi ne de telefonunuzu alır (hesaplar bildirimi, bölüm 9).",
  "cookies.store.install.purpose": "Uygulamayı bu cihaza yükleme önerisini bir daha göstermemek",
- "cookies.store.install.duration": "60 gün"
+ "cookies.store.install.duration": "Silinene kadar (60 günden sonra dikkate alınmaz)"
 }

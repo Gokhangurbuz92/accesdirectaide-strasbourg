@@ -40,7 +40,6 @@
     "minimal-ui"
   ],
   "categories": [
-    "government",
     "social",
     "utilities"
   ],
@@ -69,26 +68,6 @@
       "name": "Lieux d’accueil",
       "short_name": "Annuaire",
       "url": "/structures",
-      "icons": [
-        {
-          "src": "/icons/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Mon Espace",
-      "url": "/compte",
-      "icons": [
-        {
-          "src": "/icons/icon-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "ADA Pro",
-      "url": "/pro/dashboard",
       "icons": [
         {
           "src": "/icons/icon-192.png",

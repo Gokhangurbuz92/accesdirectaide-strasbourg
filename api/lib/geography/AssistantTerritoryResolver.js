@@ -268,13 +268,14 @@ export async function resolveAssistantTerritory(input = {}, database = db) {
     // 24/11/2026 (owner test in Production): asked for their commune, people answer with a sentence (« J'habite à Strasbourg et je n'arrive plus à payer
     // mon loyer »), which the browser sends as the territory. When that text is not itself a territory name, it is read like a message: a commune
     // named after « à ». Same strict rules as a message (no first match: two candidates stay AMBIGUOUS); a single word is never read this way.
-    if (candidates.length === 0 && rawTerritory && /\s/.test(rawTerritory) && !(await hasHistoricalMatch(database, rawTerritory))) {
+    const historical = candidates.length === 0 && rawTerritory ? await hasHistoricalMatch(database, rawTerritory) : false;
+    if (candidates.length === 0 && rawTerritory && /\s/.test(rawTerritory) && !historical) {
       candidates = await messageCandidates(database, rawTerritory);
       matchedBy = candidates.length > 0 ? 'SUPPLIED_SENTENCE' : null;
     }
 
     if (candidates.length === 0) {
-      if (rawTerritory && await hasHistoricalMatch(database, rawTerritory)) {
+      if (rawTerritory && historical) {
         return { status: 'HISTORICAL_ONLY' };
       }
       return { status: 'UNRESOLVED' };

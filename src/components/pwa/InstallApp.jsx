@@ -31,7 +31,7 @@ export default function InstallApp({ variant = 'card', audience = 'citizen' }) {
   if (variant === 'floating' && (hidden || kind === 'other' || kind === 'firefox')) return null;
 
   const title = audience === 'pro' ? t('shared:install.title_pro', 'Installer ADA Pro sur cet appareil') : t('shared:install.title', 'Installer l’application AccesDirectAide');
-  const why = t('shared:install.why', 'Une icône sur votre écran d’accueil ou votre bureau, l’ouverture en plein écran, et les notifications sur iPhone et iPad. Gratuit, sans magasin d’applications.');
+  const why = t('shared:install.why', 'Une icône sur votre écran d’accueil ou votre bureau et l’ouverture en plein écran. Gratuit, sans magasin d’applications.');
 
   /** @type {Array<[import('react').ElementType, string]>} */
   const steps = (() => {

@@ -365,5 +365,5 @@
  "privacy.data.appointments.text_open": "Terminanfragen sind geöffnet, über ein persönliches Konto. Was verarbeitet wird, was an die Einrichtung übermittelt wird und wie lange es aufbewahrt wird, ist in der <0>Datenschutzerklärung für Konten</0> (Abschnitte 3, 4 und 9) beschrieben, die maßgeblich ist.",
  "security.stored.bookings_open": "<strong>Termine von Personen</strong>: der gewählte Dienst, Zeitraum und die gewählte Form; die Einrichtung erhält weder Ihren Namen noch Ihre E-Mail-Adresse noch Ihre Telefonnummer (Datenschutzerklärung für Konten, Abschnitt 9).",
  "cookies.store.install.purpose": "Die Installation der App auf diesem Gerät nicht mehr vorschlagen",
- "cookies.store.install.duration": "60 Tage"
+ "cookies.store.install.duration": "Bis zur Löschung (nach 60 Tagen nicht mehr berücksichtigt)"
 }

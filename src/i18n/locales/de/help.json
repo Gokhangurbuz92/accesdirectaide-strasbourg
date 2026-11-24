@@ -89,7 +89,7 @@
  "faq.account.parcours.q": "Wozu dient Mein Weg?",
  "faq.account.parcours.a": "Um Ihre Behördengänge Schritt für Schritt zu verfolgen: Fügen Sie eine Seite mit „Zu meinem Weg hinzufügen“ hinzu, geben Sie Ihren Stand und bei Bedarf eine Frist an. Sensible Schritte (Gesundheit, Behinderung, Aufenthalt, Justiz …) erfordern Ihre ausdrückliche Zustimmung. AccesDirectAide trifft keine Entscheidung über Ihre Rechte.",
  "faq.account.coffre.q": "Was ist Mein Tresor?",
- "faq.account.coffre.a": "Ein Bereich, um Ihre Dokumente (PDF, PNG oder JPEG, höchstens 3 MB) verschlüsselt aufzubewahren: Nur Sie haben Zugriff. Laden Sie keine medizinischen Dokumente hoch, solange die Seite dies nicht anbietet. Die Dateien werden noch nicht von einem Virenscanner geprüft.",
+ "faq.account.coffre.a": "Ein Bereich, um Ihre Dokumente (PDF, PNG oder JPEG, höchstens 3 MB) verschlüsselt auf unseren Servern aufzubewahren. Sie wählen, wer sie sehen darf (eine Einrichtung oder eine Vertrauensperson). Laden Sie keine medizinischen Dokumente hoch, solange die Seite dies nicht anbietet. Die Dateien werden noch nicht von einem Virenscanner geprüft.",
  "faq.account.trusted.q": "Was ist eine Vertrauensperson?",
  "faq.account.trusted.a": "Ein Angehöriger oder eine vertretende Person, die Sie per E-Mail einladen. Sie wählen, was sie sehen darf (Mein Weg ohne Ihre Notizen, die Liste von Mein Tresor ohne Öffnen der Dokumente, Ihre nächsten Termine) und wie lange, von 30 Tagen bis 1 Jahr. Sie können den Zugang jederzeit beenden.",
  "faq.account.helper.q": "Was ist der Begleitmodus?",

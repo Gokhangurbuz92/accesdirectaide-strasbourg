@@ -89,7 +89,7 @@
  "faq.account.parcours.q": "Sürecim ne işe yarar?",
  "faq.account.parcours.a": "İşlemlerinizi adım adım takip etmeye: bir sayfayı “Yol haritama ekle” ile ekleyin, nerede olduğunuzu ve gerekirse bir son tarihi belirtin. Hassas adımlar (sağlık, engellilik, oturum, adalet…) açık onayınızı gerektirir. AccesDirectAide haklarınız hakkında hiçbir karar vermez.",
  "faq.account.coffre.q": "Kasam nedir?",
- "faq.account.coffre.a": "Belgelerinizi (PDF, PNG veya JPEG, en fazla 3 MB) şifreli olarak saklamak için bir alandır: yalnızca siz erişebilirsiniz. Sayfa bunu sunmadıkça tıbbi belge yüklemeyin. Dosyalar henüz bir antivirüs tarafından taranmıyor.",
+ "faq.account.coffre.a": "Belgelerinizi (PDF, PNG veya JPEG, en fazla 3 MB) sunucularımızda şifreli olarak saklamak için bir alandır. Kimin görebileceğini siz seçersiniz (bir kurum veya güvendiğiniz bir kişi). Sayfa bunu sunmadıkça tıbbi belge yüklemeyin. Dosyalar henüz bir antivirüs tarafından taranmıyor.",
  "faq.account.trusted.q": "Güvenilir kişi nedir?",
  "faq.account.trusted.a": "E-postayla davet ettiğiniz bir yakın veya temsilci. Neyi görebileceğini (notlarınız olmadan Sürecim, belgeleri açmadan Kasam listesi, yaklaşan randevularınız) ve ne kadar süreyle, 30 günden 1 yıla kadar, siz seçersiniz. Erişimi istediğiniz zaman sonlandırabilirsiniz.",
  "faq.account.helper.q": "Refakat modu nedir?",

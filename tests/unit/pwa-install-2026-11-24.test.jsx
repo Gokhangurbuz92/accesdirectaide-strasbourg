@@ -79,7 +79,8 @@ describe('manifest and meta tags', () => {
     const m = JSON.parse(fs.readFileSync('public/manifest.json', 'utf8'));
     expect(m.display).toBe('standalone');
     expect(m.icons.some((i) => i.purpose === 'maskable')).toBe(true);
-    expect(m.shortcuts.map((s) => s.url)).toEqual(['/aides', '/demarches', '/structures', '/compte', '/pro/dashboard']);
+    expect(m.shortcuts.map((s) => s.url)).toEqual(['/aides', '/demarches', '/structures']);   // public screens only: a closed space must not be a shortcut
+    expect(m.categories).not.toContain('government');
     const html = fs.readFileSync('index.html', 'utf8');
     for (const tag of ['apple-mobile-web-app-capable', 'apple-mobile-web-app-title', 'mobile-web-app-capable', 'rel="manifest"', 'apple-touch-icon']) expect(html).toContain(tag);
   });

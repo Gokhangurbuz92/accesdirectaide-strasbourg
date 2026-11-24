@@ -40,12 +40,21 @@ export default function AccessibilityPanel() {
       if (saved) {
         const parsed = JSON.parse(saved);
         // the former separate « dark-mode » of this panel becomes the site theme
-        if (parsed?.contrast === 'dark') { parsed.contrast = 'normal'; setLegacyDark(true); }
+        if (parsed?.contrast === 'dark') {
+          // migrated ONCE: the stored settings lose the old value, so turning dark mode off later is not undone at the next page load
+          parsed.contrast = 'normal'; setLegacyDark(true);
+          try { localStorage.setItem('accessibilitySettings', JSON.stringify(parsed)); } catch { /* private browsing */ }
+        }
         setSettings(parsed);
       }
     } catch { /* unreadable or blocked storage: keep the defaults */ }
     // K0 / C04: the signed-in account's saved preferences arrive through this event (src/lib/accountAccessibility.js)
-    const onAccount = (/** @type {any} */ e) => { if (e?.detail?.device) setSettings(e.detail.device); };
+    const onAccount = (/** @type {any} */ e) => {
+      const device = e?.detail?.device;
+      if (!device) return;
+      // an account saved before the single dark mode: « dark » contrast becomes the site theme
+      if (device.contrast === 'dark') { setLegacyDark(true); setSettings({ ...device, contrast: 'normal' }); } else setSettings(device);
+    };
     window.addEventListener(ACCESSIBILITY_EVENT, onAccount);
     return () => window.removeEventListener(ACCESSIBILITY_EVENT, onAccount);
   }, []);

@@ -38,6 +38,8 @@ Implementation ≠ activation ≠ DB publication ≠ browser visibility ≠ lega
 - Completion needs fresh evidence (command output, test, browser run). Never skip or weaken a failing test.
 - Selective tests while developing; one integrated, SHA-pinned gate at milestones. Prefer large coherent packages; do not stop for routine permission inside delegated reversible scope; batch real owner decisions into one final package.
 - Accessibility is a requirement: keyboard, screen reader, RTL, 200 % zoom, FALC.
+- Four coding principles (owner 24/11/2026, adapted from andrej-karpathy-skills): (1) think before coding — state assumptions; a genuinely unclear scope or product point is parked in a visible « à confirmer » list while other ready work continues (never idle); (2) simplicity first — nothing that was not asked for; (3) surgical changes — touch only what the task needs, no drive-by refactors in a release diff; (4) goal-driven — for a bug, a failing test first, then the fix, then the gate.
+- One visual system: topic / section colours only through src/design/categoryTone.js and src/components/ui/Tone.jsx; page widths through src/design/layout.js; no local colour maps.
 - Do not commit, push or open PRs unless asked.
 
 ## 8. What to load
