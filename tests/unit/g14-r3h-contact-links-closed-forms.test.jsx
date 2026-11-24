@@ -66,3 +66,20 @@ describe('R3H pages with the Production build: no link to a closed form', () => 
     expect(settings).toMatch(/: <>\{t\('compte:settings\.gdpr_before_email'[^\n]*<ContactLink /);
   });
 });
+
+describe('R3 /mentions-legales contact sentence follows the contact form switch', () => {
+  it('form closed: the address only, no « formulaire de contact »; form open: the address or the form', async () => {
+    const c = await page('MentionsLegales.jsx', '/mentions-legales');
+    expect(c.getByTestId('legal-contact-legal')).toHaveTextContent(/conditions d'utilisation : contact@accesdirectaide\.fr\.$/);
+    expect(c.container).not.toHaveTextContent(/formulaire de contact/);
+    cleanup(); vi.resetModules(); stub(`${PRODUCTION_SURFACES},communications`);
+    const o = await page('MentionsLegales.jsx', '/mentions-legales');
+    expect(o.getByTestId('legal-contact-legal')).toHaveTextContent(/contact@accesdirectaide\.fr ou le formulaire de contact\./);
+  });
+  it('translated in the five other languages', () => {
+    for (const lang of ['en', 'de', 'tr', 'ar', 'uk']) {
+      const loc = JSON.parse(readFileSync(`src/i18n/locales/${lang}/legal.json`, 'utf8'));
+      expect(loc['mentions.contact.legal_email'], lang).toMatch(/contact@accesdirectaide\.fr\.$/);
+    }
+  });
+});

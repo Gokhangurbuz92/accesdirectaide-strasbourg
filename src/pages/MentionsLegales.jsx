@@ -201,8 +201,11 @@ export default function MentionsLegales() {
                 <h2 className="text-xl md:text-2xl font-bold text-slate-900">{t('legal:mentions.contact.title', '5. Nous contacter')}</h2>
               </div>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2">
-                <p>
-                  {t('legal:mentions.contact.legal', "Pour une question d'ordre légal, un droit d'auteur, signaler un contenu illicite ou une erreur, ou nos conditions d'utilisation : contact@accesdirectaide.fr ou le formulaire de contact.")}
+                {/* R3 (live audit 24/11/2026): while the contact form is closed, the address only (like ContactLink and /securite-et-rgpd), never « ou le formulaire de contact » */}
+                <p data-testid="legal-contact-legal">
+                  {contactFormOpen()
+                    ? t('legal:mentions.contact.legal', "Pour une question d'ordre légal, un droit d'auteur, signaler un contenu illicite ou une erreur, ou nos conditions d'utilisation : contact@accesdirectaide.fr ou le formulaire de contact.")
+                    : t('legal:mentions.contact.legal_email', "Pour une question d'ordre légal, un droit d'auteur, signaler un contenu illicite ou une erreur, ou nos conditions d'utilisation : contact@accesdirectaide.fr.")}
                 </p>
                 {/* G14 (owner decision 23/11/2026; text approved by the owner 23/11/2026, OWNER_VALIDATED): the single point of contact of Regulation (EU) 2022/2065 (art. 11 and 12), the site's existing address */}
                 <p data-testid="legal-dsa-contact">
