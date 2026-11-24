@@ -143,9 +143,9 @@ const find = (/** @type {any[]} */ set, /** @type {string} */ id) => /** @type {
 const keys = (/** @type {any} */ doc) => Object.fromEntries(L.draftTextKeys(doc));
 const n13 = find(L.LEGAL_DRAFT_DOCUMENTS_V13, N); const n14 = find(L.LEGAL_DRAFT_DOCUMENTS_R3_NOTICE, N);
 const c12 = find(L.LEGAL_DRAFT_DOCUMENTS_V12, C); const c13 = find(L.LEGAL_DRAFT_DOCUMENTS_R3_CGU, C);
-const NOTICE_ADDED = ['processors.i4_v14', 'purposes.p24_v14', 'purposes.p25_v14', 'purposes.p26_v14', 'recipients.trusted_v14', 'retention.delegations_v14',
-  'retention.guardians_v14', 'retention.household_v14', 'retention.i14_v14', 'rights.r3_v14'];
-const CGU_ADDED = ['account.household_v13', 'account.i1_v13', 'account.trusted_v13', 'appointments.p1_v13', 'appointments.p2_v13', 'appointments.p3_v13', 'appointments.p5_v13',
+const NOTICE_ADDED = ['processors.i4_v14', 'purposes.p24_v14', 'purposes.p25_v14', 'purposes.p26_v14', 'purposes.p27_v14', 'recipients.legal_protection_v14', 'recipients.trusted_v14',
+  'retention.delegations_v14', 'retention.guardians_v14', 'retention.household_v14', 'retention.i14_v14', 'retention.legal_protection_v14', 'rights.legal_protection_v14', 'rights.r3_v14'];   // + G14-R3G (P27)
+const CGU_ADDED = ['account.household_v13', 'account.i1_v13', 'account.legal_protection_v13', 'account.trusted_v13', 'appointments.p1_v13', 'appointments.p2_v13', 'appointments.p3_v13', 'appointments.p5_v13',
   'appointments.title_v13', 'use.i3_v13'];
 const LANGS = ['en', 'de', 'tr', 'ar', 'uk'];
 const OPEN_R2 = 'cgu-citoyen@v12-2026-11-23,notice-confidentialite@v13-2026-11-23,cgu-professionnel@v10-2026-11-23,conditions-structures@v9-2026-11-23';
@@ -171,9 +171,9 @@ describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026
     expect(b['retention.i14_v14']).toBe(a['retention.i14_v13'].replace(', membres du foyer', ''));
     expect(b['processors.i4_v14']).toBe(a['processors.i4_v13'].replace('avis du compte, invitations et avis', 'avis du compte, invitations des personnes de confiance, invitations et avis'));
     const ks = Object.values(n14.sections.find((/** @type {any} */ s) => s.id === 'purposes').itemKeys);
-    expect(ks.slice(-4)).toEqual(['p23_g14c', 'p24_v14', 'p25_v14', 'p26_v14']);
+    expect(ks.slice(-5)).toEqual(['p23_g14c', 'p24_v14', 'p25_v14', 'p26_v14', 'p27_v14']);
     const rk = Object.values(n14.sections.find((/** @type {any} */ s) => s.id === 'retention').itemKeys);
-    expect(rk.slice(-4)).toEqual(['household_v14', 'delegations_v14', 'guardians_v14', 'i14_v14']);
+    expect(rk.slice(-5)).toEqual(['household_v14', 'delegations_v14', 'guardians_v14', 'legal_protection_v14', 'i14_v14']);
     expect(n14.sections.map((/** @type {any} */ s) => s.id)).toEqual(n13.sections.map((/** @type {any} */ s) => s.id));
   });
 

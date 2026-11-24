@@ -20,6 +20,8 @@ import { OPENFISCA_FRANCE_PIN, SCALEWAY_TIERS } from '../api/lib/openfiscaPins.j
 
 /** G14-R3: the capabilities whose texts exist only from notice v14-2026-11-24 / cgu-citoyen v13-2026-11-24 (community.events is in v12 / v13 already) */
 export const R3_LEGAL_CAPABILITIES = Object.freeze(['citizen.household', 'citizen.guardians', 'citizen.delegations']);
+/** G14-R3G: the representative of a protected adult — described only from notice v14-2026-11-24 (P27) and cgu-citoyen v13-2026-11-24 (§ 5 item « protection juridique ») */
+export const R3G_LEGAL_CAPABILITY = 'citizen.legal_protection';
 
 /**
  * G14-AI — the citizen assistant on Cloudflare Workers AI (owner decision 23/11/2026, 0 €). Off (AI_PROVIDER unset, no CF_WORKERS_AI_*) = PASS.
@@ -200,6 +202,14 @@ export function evaluateReleasePreflight(env, opts = {}) {
       add('legal.r3_household_trusted_guardians', ok ? 'PASS' : 'FAIL', ok ? `${r3.join(', ')} open with notice ≥ ${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen ≥ ${LEGAL_DRAFTS_R3_CGU} in force`
         : `${r3.join(', ')} open but VITE_LEGAL_DOCS_APPROVED_VERSION does not name notice-confidentialite@${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen@${LEGAL_DRAFTS_R3_CGU} (or later)`);
     }
+  }
+  // G14-R3G: the representative of a protected adult — the texts that describe it (P27, retention, cgu § 5) exist only from notice v14 / cgu v13. The
+  // table comes with migration 0064 (pending): on a database without it the feature answers « not installed » (this gate reads no database).
+  if (capabilityState(R3G_LEGAL_CAPABILITY, { ...env, VERCEL_ENV: 'production' }).open) {
+    const approved = get('VITE_LEGAL_DOCS_APPROVED_VERSION');
+    const ok = approvedAtLeast('notice-confidentialite', LEGAL_DRAFTS_R3_NOTICE, approved) && approvedAtLeast('cgu-citoyen', LEGAL_DRAFTS_R3_CGU, approved);
+    add('legal.r3_legal_protection', ok ? 'PASS' : 'FAIL', ok ? `${R3G_LEGAL_CAPABILITY} open with notice ≥ ${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen ≥ ${LEGAL_DRAFTS_R3_CGU} in force (migration 0064 must be applied: not read here)`
+      : `${R3G_LEGAL_CAPABILITY} open but VITE_LEGAL_DOCS_APPROVED_VERSION does not name notice-confidentialite@${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen@${LEGAL_DRAFTS_R3_CGU} (or later)`);
   }
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'

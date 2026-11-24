@@ -8,7 +8,7 @@ import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
 
 const AREAS = ['RDV', 'PARCOURS', 'PROFIL', 'COFFRE'];
-const ROLES = ['PROCHE', 'TRAVAILLEUR_SOCIAL', 'CONSEILLER_FRANCE_SERVICES', 'BENEVOLE', 'AUTRE'];
+const ROLES = ['PROCHE', 'TRAVAILLEUR_SOCIAL', 'CONSEILLER_FRANCE_SERVICES', 'BENEVOLE', 'AUTRE', 'REPRESENTANT_LEGAL'];   // G14-R3G: the verified representative (code of the link)
 const MINUTES = [30, 60, 120];
 const PRO_FORBIDDEN = ['COFFRE'];
 
@@ -21,6 +21,7 @@ function assistLabels(t) {
       CONSEILLER_FRANCE_SERVICES: t('compte:assist.role.france_services', 'Un conseiller France Services'),
       BENEVOLE: t('compte:assist.role.benevole', 'Un bénévole d’association'),
       AUTRE: t('compte:assist.role.autre', 'Une autre personne'),
+      REPRESENTANT_LEGAL: t('legalprotection:assist.role', 'Mon tuteur, curateur ou représentant désigné par le juge'),
     },
     area: {
       RDV: t('compte:assist.area.rdv', 'Mes rendez-vous : les voir, en prendre, les déplacer ou les annuler, et les messages'),
@@ -62,7 +63,7 @@ export default function CompteAccompagnement() {
   const { t } = useT('compte');
   const L = assistLabels(t);
   const [state, setState] = useState({ loading: true, error: '', unauth: false, current: null, sessions: [] });
-  const [form, setForm] = useState({ helperName: '', helperRole: 'PROCHE', structureName: '', isPro: false, proEmail: '', proCode: '', areas: ['RDV'], minutes: 60, consent: false, password: '' });
+  const [form, setForm] = useState({ helperName: '', helperRole: 'PROCHE', structureName: '', isPro: false, proEmail: '', proCode: '', representativeCode: '', areas: ['RDV'], minutes: 60, consent: false, password: '' });
   const [endPw, setEndPw] = useState('');
   const [problem, setProblem] = useState(''); const [message, setMessage] = useState(''); const [busy, setBusy] = useState(false);
   const load = useCallback(async () => {
@@ -79,7 +80,7 @@ export default function CompteAccompagnement() {
     e.preventDefault(); setProblem(''); setMessage(''); setBusy(true);
     try {
       const body = { helperName: form.helperName, helperRole: form.helperRole, structureName: form.structureName || undefined, areas: form.areas.filter((a) => areasAllowed.includes(a)),
-        minutes: form.minutes, consent: form.consent, password: form.password, ...(form.isPro ? { proEmail: form.proEmail, proCode: form.proCode } : {}) };
+        minutes: form.minutes, consent: form.consent, password: form.password, ...(form.helperRole === 'REPRESENTANT_LEGAL' ? { representativeCode: form.representativeCode } : form.isPro ? { proEmail: form.proEmail, proCode: form.proCode } : {}) };
       await citizenApi.startAssist(body);
       window.location.assign('/compte');   // a fresh page: the header and the banner read the new (assisted) session
     } catch (err) { setProblem(err.message); setForm((f) => ({ ...f, password: '' })); } finally { setBusy(false); }
@@ -150,11 +151,15 @@ export default function CompteAccompagnement() {
                 <select id="assist-role" className={field} value={form.helperRole} onChange={(e) => setForm({ ...form, helperRole: e.target.value })} data-testid="assist-helper-role">
                   {ROLES.map((r) => <option key={r} value={r}>{L.role[r]}</option>)}
                 </select></div>
-              {form.helperRole !== 'PROCHE' && !form.isPro ? (
+              {form.helperRole === 'REPRESENTANT_LEGAL' ? (
+                <div><label htmlFor="assist-rep-code" className="block text-sm text-slate-800">{t('legalprotection:assist.code', 'Le code à 8 chiffres qu’il ou elle vous montre (page « Protection juridique » de son compte)')}</label>
+                  <input id="assist-rep-code" required inputMode="numeric" autoComplete="one-time-code" dir="ltr" className={field} value={form.representativeCode} onChange={(e) => setForm({ ...form, representativeCode: e.target.value })} data-testid="assist-rep-code" /></div>
+              ) : null}
+              {form.helperRole !== 'PROCHE' && form.helperRole !== 'REPRESENTANT_LEGAL' && !form.isPro ? (
                 <div><label htmlFor="assist-structure" className="block text-sm text-slate-800">{t('compte:assist.structure', 'Sa structure (facultatif)')}</label>
                   <input id="assist-structure" maxLength={120} autoComplete="off" className={field} value={form.structureName} onChange={(e) => setForm({ ...form, structureName: e.target.value })} data-testid="assist-structure" /></div>
               ) : null}
-              <div className="rounded-md border border-slate-200 p-3">
+              {form.helperRole === 'REPRESENTANT_LEGAL' ? null : <div className="rounded-md border border-slate-200 p-3">
                 <label className="flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={form.isPro} onChange={(e) => setForm({ ...form, isPro: e.target.checked })} data-testid="assist-is-pro" />
                   <span>{t('compte:assist.is_pro', 'Cette personne travaille avec ADA Pro : elle me donne un code')}</span></label>
                 {form.isPro ? (
@@ -166,7 +171,7 @@ export default function CompteAccompagnement() {
                     <p className="text-sm text-slate-700">{t('compte:assist.pro_no_coffre', 'Un professionnel ne peut jamais ouvrir Mon Coffre dans ce mode.')}</p>
                   </div>
                 ) : null}
-              </div>
+              </div>}
               <fieldset><legend className="text-sm font-medium text-slate-800">{t('compte:assist.areas', 'Ce qu’elle pourra faire avec vous')}</legend>
                 {areasAllowed.map((a) => (
                   <label key={a} className="mt-2 flex items-start gap-2 text-sm"><input type="checkbox" className="mt-1" checked={form.areas.includes(a)} onChange={() => toggleArea(a)} data-testid={`assist-area-${a}`} /><span>{L.area[a]}</span></label>

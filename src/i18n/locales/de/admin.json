@@ -2196,5 +2196,6 @@
  "organizations.pro_registration.activate": "Prüfen und aktivieren",
  "organizations.pro_registration.refuse": "Ablehnen",
  "organizations.pro_registration.done_activated": "Einrichtung geprüft und aktiviert: Die E-Mail zur Aktivierung der Zwei-Faktor-Authentifizierung wurde an den Mailversand übergeben.",
- "organizations.pro_registration.done_refused": "Anfrage abgelehnt: Das Konto ist deaktiviert, der Grund wird im Protokoll aufbewahrt."
+ "organizations.pro_registration.done_refused": "Anfrage abgelehnt: Das Konto ist deaktiviert, der Grund wird im Protokoll aufbewahrt.",
+ "layout.nav.legal_protection": "Rechtlicher Schutz (Erwachsene)"
 }

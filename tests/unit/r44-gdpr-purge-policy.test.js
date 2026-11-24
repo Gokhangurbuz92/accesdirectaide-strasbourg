@@ -24,6 +24,8 @@ const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog',
   'CitizenDelegation', 'DelegationAccessEvent', 'GuardianRelationship'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016); G14-R3: delegations and guardian links (on 0042)
 // G14: the expansion steps need the 0053–0059 tables, absent from this 0042-like mock: they are skipped (skipped_steps) and tested on a real DB
 const EXPANSION_IDS = new Set(Object.keys(RETENTION_POLICY.decidedSteps || {}));
+// G14-R3G: the representative-of-a-protected-adult steps need "LegalProtectionMandate" (migration 0064, pending): absent from this mock, skipped
+const LP_IDS = new Set(['legalProtectionStaleDeclarationsDeleted', 'legalProtectionRejectedDeleted', 'legalProtectionEndedDeleted']);
 const dialect = new PgDialect();
 const render = (w) => dialect.sqlToQuery(w).sql;
 const log = { info: () => {}, warn: () => {}, error: () => {}, debug: () => {} };
@@ -154,7 +156,8 @@ describe('R44 runGdprPurge — dry run by default, execution only of approved st
     expect(body.steps.find((l) => l.id === 'unverifiedAccountsDeleted')).toMatchObject({ decision: 'executed', table: 'CitizenUser', days: 7 });
     // every other executable step is refused for lack of its own approval record (the guest step is skipped first: a 0042 database has no guest columns)
     expect(body.steps.filter((l) => l.decision === 'not_approved_in_policy').map((l) => l.id).sort())
-      .toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount' && id !== 'unverifiedAccountsDeleted' && !EXPANSION_IDS.has(id)).sort());
+      .toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount' && id !== 'unverifiedAccountsDeleted' && !EXPANSION_IDS.has(id) && !LP_IDS.has(id)).sort());
+    expect(body.steps.filter((l) => LP_IDS.has(l.id)).every((l) => l.decision === 'skipped_schema')).toBe(true);
     // G14: on this 0042-like database the expansion tables do not exist — skipped, never executed
     expect(body.steps.filter((l) => EXPANSION_IDS.has(l.id)).every((l) => l.decision === 'skipped_schema')).toBe(true);
     expect(body.steps.find((l) => l.id === 'clearedGuestHoldsCount').decision).toBe('skipped_schema');
@@ -216,7 +219,7 @@ describe('R44 runGdprPurge — dry run by default, execution only of approved st
     const db = recDb({ tables: ALL_TABLES.filter((t) => t !== 'PushSubscription' && t !== 'ProNotification') });
     const { status, body } = await runGdprPurge({ database: db, policy: approvedTestPolicy(), env: approvalEnv(executableStepIds(PURGE_STEPS)), now: NOW, logger: log });
     expect(status).toBe(200);
-    expect(body.skipped_steps).toEqual(['clearedGuestHoldsCount', 'proNotificationsDeleted', 'pushSubscriptionsFailingDeleted', ...PURGE_STEPS.filter((x) => EXPANSION_IDS.has(x.id)).map((x) => x.id)]);
+    expect(body.skipped_steps).toEqual(PURGE_STEPS.filter((x) => ['clearedGuestHoldsCount', 'proNotificationsDeleted', 'pushSubscriptionsFailingDeleted'].includes(x.id) || EXPANSION_IDS.has(x.id) || LP_IDS.has(x.id)).map((x) => x.id));
     expect(writes(db).some((c) => c.table === 'PushSubscription' || c.table === 'ProNotification')).toBe(false);
   });
   it('schema detection failure is fail-closed: every step skipped, the run reported as partial', async () => {

@@ -123,6 +123,11 @@ export const citizenApi = {
   resolveDelegateRequest: (/** @type {string} */ requestId, /** @type {boolean} */ accept) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'resolve-request', requestId, accept } }),
   setActForMe: (/** @type {Record<string, unknown>} */ input) => call('/api/citizen/delegations', { method: 'POST', body: { action: 'act-for-me', ...input } }),
   delegateRequests: (/** @type {string} */ id) => call(`/api/citizen/delegations?requests=${encodeURIComponent(id)}`),
+  // G14-R3G — protection juridique (/compte/protection-juridique): the protected person and the court-appointed representative, each from their own account
+  legalProtection: () => call('/api/citizen/legal-protection'),
+  legalProtectionLog: (/** @type {string} */ id) => call(`/api/citizen/legal-protection?log=${encodeURIComponent(id)}`),
+  legalProtectionView: (/** @type {string} */ id, /** @type {string} */ view) => call(`/api/citizen/legal-protection?id=${encodeURIComponent(id)}&view=${encodeURIComponent(view)}`),
+  legalProtectionAction: (/** @type {Record<string, unknown>} */ body) => call('/api/citizen/legal-protection', { method: 'POST', body }),
   // G14-AID — mode accompagnant next to the person (/compte/accompagnement)
   assistOverview: () => call('/api/citizen/assist'),
   startAssist: (/** @type {Record<string, unknown>} */ input) => call('/api/citizen/assist', { method: 'POST', body: { action: 'start', ...input } }),

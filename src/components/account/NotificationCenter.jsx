@@ -33,6 +33,9 @@ const kindLabels = (t) => ({
   EVENT_CANCELLED: t('compte:notifications.kind.event_cancelled', 'Un événement auquel vous êtes inscrit ou inscrite a été annulé par l’organisateur.'),
   // G14-AID: a trusted person asks to do something for you — nothing is done before you confirm
   DELEGATION_ACTION_REQUEST: t('compte:notifications.kind.delegation_action_request', 'Une personne de confiance vous demande de confirmer une action. Rien n’est fait sans votre accord.'),
+  // G14-R3G: protection juridique — a declaration that names you (not verified yet), a request of your curator / representative to confirm
+  LEGAL_PROTECTION_DECLARED: t('legalprotection:notif.declared', 'Une personne dit être votre tuteur, curateur ou représentant désigné par un juge. Ce n’est pas encore vérifié. Regardez et dites-nous si vous ne la reconnaissez pas.'),
+  LEGAL_PROTECTION_ACTION_REQUEST: t('legalprotection:notif.request', 'Votre curateur ou représentant vous demande de confirmer une action. Rien n’est fait sans votre accord.'),
 });
 
 /**

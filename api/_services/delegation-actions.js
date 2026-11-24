@@ -268,3 +268,9 @@ export async function delegateRequests(delegateId, delegationId, db = defaultDb)
   }
   return { ok: true, status: 200, requests: [...byReq.values()].reverse().slice(0, 50) };
 }
+
+/**
+ * G14-R3G — the same closed list of actions, its target checks (G8 sensitive steps unknown, someone else's appointment unknown) and its execution path
+ * (the appointment's own cancellation, setStatus) for the verified representative of a protected adult (api/_services/legal-protection.js).
+ */
+export { checkTarget as checkActionTarget, execute as executeAction };

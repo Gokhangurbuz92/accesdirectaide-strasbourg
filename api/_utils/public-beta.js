@@ -222,6 +222,10 @@ export const ACCOUNTS_EXTRAS = Object.freeze({
   household: Object.freeze({ routes: Object.freeze(['citizen/household']), capabilities: Object.freeze(['citizen.household']) }),
   guardians: Object.freeze({ routes: Object.freeze(['citizen/guardians']), capabilities: Object.freeze(['citizen.guardians']) }),
   delegations: Object.freeze({ routes: Object.freeze(['citizen/delegations']), capabilities: Object.freeze(['citizen.delegations']) }),
+  // G14-R3G (24/11/2026): the representative of a protected adult (« Protection juridique »): GET / POST citizen/legal-protection — capability
+  // citizen.legal_protection (the administrator's verification route admin/legal-protection follows the admin surface). Opens nothing before an
+  // administrator verified a court decision; needs notice v14 / cgu v13 in force (preflight) and migration 0064 applied.
+  legal_protection: Object.freeze({ routes: Object.freeze(['citizen/legal-protection']), capabilities: Object.freeze(['citizen.legal_protection']) }),
 });
 /** the additions to the narrow accounts scope named in this environment (empty in the full scope) @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
 export function accountsExtras(envVars = process.env) {

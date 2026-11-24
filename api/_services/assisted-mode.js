@@ -6,6 +6,10 @@
  * Fail-closed, consent-first:
  *   - started only by the person, from a normal session of a verified ADULT account (C05: minors are out of scope), not under a processing restriction (art. 18),
  *     not for an account that declared a legal mandate (C23: tutelle / curatelle / représentant are out of scope — a mandate is not an assisted session);
+ *     G14-R3G: under a court measure VERIFIED by the administrator (api/_services/legal-protection.js assistRuleFor) the verified representative may be
+ *     the helper (role REPRESENTANT_LEGAL + the code of their link, areas the decision covers), which also lifts the C23 refusal for them; a third
+ *     party stays refused while the verified measure gives the representative the power to ACT (tutelle, habilitation générale en représentation) and
+ *     is allowed under an assistance measure or a mandat spécial (the person keeps the exercise of their rights);
  *   - the person re-enters their password and accepts a consent screen that says who helps (name + role, + structure for a professional), which areas the
  *     helper may use, what the helper can never do, and for how long (30, 60 or 120 minutes — never more than 2 h);
  *   - the session cookie is REPLACED by an assisted session token (claim « assist », api/_utils/user-auth.js) that lives at most until the end; its id is an
@@ -32,6 +36,7 @@ import { isUnsetPassword, normalizeEmail, verifyPassword } from '../_utils/user-
 import { isAdultAccount } from '../_utils/age-policy.js';
 import { isRestricted } from './processing-restriction.js';
 import { env } from '../_utils/env.js';
+import { assistRuleFor } from './legal-protection.js';
 
 export const ASSIST_TOKEN_TYPE = 'ASSIST_SESSION';
 export const ASSIST_MINUTES = Object.freeze([30, 60, 120]);
@@ -40,7 +45,8 @@ export const ASSIST_MAX_MINUTES = 120;
 export const ASSIST_AREAS = Object.freeze(['RDV', 'PARCOURS', 'PROFIL', 'COFFRE']);
 /** areas a professional helper never gets (HDS-gated data) */
 export const PRO_FORBIDDEN_AREAS = Object.freeze(['COFFRE']);
-export const HELPER_ROLES = Object.freeze(['PROCHE', 'TRAVAILLEUR_SOCIAL', 'CONSEILLER_FRANCE_SERVICES', 'BENEVOLE', 'AUTRE']);
+/** G14-R3G: REPRESENTANT_LEGAL = the verified representative of a protected adult (tuteur, curateur…), only with the code of a VERIFIED link (legal-protection.js) */
+export const HELPER_ROLES = Object.freeze(['PROCHE', 'TRAVAILLEUR_SOCIAL', 'CONSEILLER_FRANCE_SERVICES', 'BENEVOLE', 'AUTRE', 'REPRESENTANT_LEGAL']);
 export const ASSIST_CONSENT_PURPOSE = 'ASSISTED_MODE';
 /** the consent text version (DRAFT until the legal review of the notice; the wording is in the G14-AID report) */
 export const ASSIST_CONSENT_VERSION = 'assist-2026-11-23-draft';
@@ -181,7 +187,7 @@ async function verifyProHelper(email, code, db, now) {
 
 // ───────────── the person's side
 const publicView = (claim, helper) => ({ sid: claim.sid, areas: claim.areas, until: new Date(claim.until).toISOString(),
-  helper: { name: helper.name, role: helper.role, structureName: helper.structureName || null, verifiedPro: Boolean(helper.verifiedPro) } });
+  helper: { name: helper.name, role: helper.role, structureName: helper.structureName || null, verifiedPro: Boolean(helper.verifiedPro), verifiedRepresentative: Boolean(helper.verifiedRepresentative) } });
 
 /** the claim's view for the banner and the page (from the token alone) */
 export const assistClaimView = (assist) => (assist ? { sid: assist.sid, areas: assist.areas, until: new Date(assist.until).toISOString(), helper: { name: assist.name, role: assist.role, verifiedPro: assist.pro } } : null);
@@ -214,22 +220,28 @@ export async function startAssist(citizen, input, deps = {}) {
   // C05: minors are out of scope (no assisted session for an account that is not a verified adult one)
   if (!(await isAdultAccount(citizen.id, db))) return bad('ASSIST_ADULT_ONLY', 'Le mode accompagnant est réservé aux comptes de personnes majeures.', 409);
   if (await isRestricted(citizen.id, db)) return bad('PROCESSING_RESTRICTED', 'Vous avez demandé la limitation du traitement de vos données : levez-la avant d’utiliser le mode accompagnant.', 409);
-  // C23: a legal mandate (tutelle, curatelle, représentant légal) is out of scope — the mode is not a representation
-  const [legal] = await db.select({ id: CitizenDelegation.id }).from(CitizenDelegation)
+  // G14-R3G: a court measure verified by the administrator decides who may help (legal-protection.js assistRuleFor)
+  const lp = await assistRuleFor(citizen.id, input, { db, now });
+  if (!lp.ok) return lp;
+  const rep = lp.representative;
+  // C23: a legal mandate (tutelle, curatelle, représentant légal) declared in the trusted persons is out of scope — the mode is not a representation —
+  // except for the representative whose court decision the administrator verified (rep)
+  const [legal] = rep ? [] : await db.select({ id: CitizenDelegation.id }).from(CitizenDelegation)
     .where(and(eq(CitizenDelegation.principalUserId, citizen.id), inArray(CitizenDelegation.role, LEGAL_ROLES), inArray(CitizenDelegation.status, LIVE_DELEGATION))).limit(1);
   if (legal) return bad('ASSIST_LEGAL_PROTECTION_OUT_OF_SCOPE', 'Le mode accompagnant ne remplace pas une mesure de protection (tutelle, curatelle) ni un mandat légal : il n’est pas disponible pour un compte qui en a déclaré un.', 409);
   const pw = await passwordOk(citizen.id, input?.password, db);
   if (pw === 'UNSET') return bad('PASSWORD_NOT_SET', 'Choisissez d’abord un mot de passe pour votre compte : il sert à confirmer que c’est bien vous.', 409);
   if (pw !== 'OK') return bad('INVALID_PASSWORD', 'Mot de passe incorrect.', 403);
   let pro = null;
-  if (input?.proEmail || input?.proCode) {
+  if (!rep && (input?.proEmail || input?.proCode)) {
     pro = await verifyProHelper(input.proEmail, input.proCode, db, now);
     if (!pro) return bad('PRO_HELPER_NOT_VERIFIED', 'Le code de l’intervenant ADA Pro n’est pas valable, ou son compte n’est pas actif avec la double authentification. Demandez-lui un nouveau code.', 403);
     if (areas.some((a) => PRO_FORBIDDEN_AREAS.includes(a))) return bad('AREA_NOT_ALLOWED_FOR_PRO', 'Mon Coffre ne peut pas être ouvert à un professionnel dans ce mode.', 409);
   }
   const sid = crypto.randomUUID();
   const expiresAt = new Date(now + minutes * MINUTE);
-  const helper = { name, role, structureName: pro ? pro.structureName : (clean(input?.structureName, 120) || null), verifiedPro: Boolean(pro), structureId: pro ? pro.structureId : null };
+  const helper = { name, role, structureName: rep ? rep.structureName : pro ? pro.structureName : (clean(input?.structureName, 120) || null), verifiedPro: Boolean(pro), structureId: pro ? pro.structureId : null,
+    ...(rep ? { verifiedRepresentative: true, mandateId: rep.mandateId } : {}) };
   await db.insert(AuthToken).values({ id: sid, userId: citizen.id, type: ASSIST_TOKEN_TYPE, tokenHash: assistTokenHash(sid), expiresAt });
   await db.insert(ConsentLog).values({ subject_type: 'CITIZEN_USER', subject_id: citizen.id, purpose: ASSIST_CONSENT_PURPOSE, decision: true, policy_version: ASSIST_CONSENT_VERSION,
     policy_hash: `${ASSIST_CONSENT_VERSION}:${ASSIST_CONSENT_PURPOSE}`, collection_channel: 'account', guardian_involved: false, proof_level: 'PASSWORD_REAUTH' });
@@ -290,7 +302,7 @@ export async function assistOverview(citizen, db = defaultDb, now = Date.now()) 
     if (!sid || (citizen.assist && sid !== citizen.assist.sid)) continue;
     if (!sessions.has(sid)) sessions.set(sid, { sid, helper: null, areas: [], startedAt: null, until: null, endedAt: null, endedBy: null, events: [] });
     const s = sessions.get(sid);
-    if (r.action === 'ASSIST_STARTED') Object.assign(s, { helper: { name: d.helper?.name || '', role: d.helper?.role || '', structureName: d.helper?.structureName || null, verifiedPro: Boolean(d.helper?.verifiedPro) }, areas: d.areas || [], startedAt: r.at, until: d.until || null });
+    if (r.action === 'ASSIST_STARTED') Object.assign(s, { helper: { name: d.helper?.name || '', role: d.helper?.role || '', structureName: d.helper?.structureName || null, verifiedPro: Boolean(d.helper?.verifiedPro), verifiedRepresentative: Boolean(d.helper?.verifiedRepresentative) }, areas: d.areas || [], startedAt: r.at, until: d.until || null });
     else if (r.action === 'ASSIST_ENDED') Object.assign(s, { endedAt: r.at, endedBy: d.by || null });
     else s.events.push({ at: r.at, kind: r.action.replace('ASSIST_', ''), area: d.area || null, label: d.label || null, outcome: typeof d.outcome === 'number' ? d.outcome : null });
   }

@@ -58,6 +58,16 @@ const byCode = () => ({
   CSRF_BOOTSTRAP: i18n.t('common:api_error.csrf_bootstrap', 'Impossible de préparer la requête sécurisée. Rechargez la page puis réessayez.'),
   GROUND_REQUIRED: i18n.t('common:api_error.ground_required', 'Choisissez la raison de votre demande (une des quatre raisons prévues par l’article 18 du RGPD).'),
   NETWORK: i18n.t('common:api_error.network', 'Le service est momentanément injoignable. Réessayez dans un instant.'),
+  // G14-R3G — protection juridique (api/_services/legal-protection.js)
+  LEGAL_PROTECTION_NOT_INSTALLED: i18n.t('legalprotection:err.not_installed', 'La protection juridique n’est pas encore disponible sur ce service. Rien n’a été enregistré.'),
+  STATEMENT_REQUIRED: i18n.t('legalprotection:err.statement', 'Cochez la case qui certifie que la décision du juge existe et vous désigne.'),
+  KIND_NOT_ALLOWED: i18n.t('legalprotection:err.kind_not_allowed', 'L’habilitation familiale ne peut être confiée qu’à un proche de la personne.'),
+  END_DATE_BEYOND_LAW: i18n.t('legalprotection:err.end_date_beyond_law', 'Cette date de fin dépasse la durée que la loi permet pour cette mesure : vérifiez-la dans la décision.'),
+  MEASURE_ALREADY_ENDED: i18n.t('legalprotection:err.measure_ended', 'D’après sa date de fin, cette mesure est terminée : elle ne peut pas être enregistrée.'),
+  MANDATE_NOT_ACTIVE: i18n.t('legalprotection:err.not_active', 'Ce lien n’est pas actif (pas encore vérifié, suspendu, terminé ou expiré) : rien n’a été fait.'),
+  AREA_NOT_COVERED: i18n.t('legalprotection:err.area', 'La décision vérifiée ne couvre pas cette partie.'),
+  REPRESENTATIVE_NOT_VERIFIED: i18n.t('legalprotection:err.rep_code', 'Le code du représentant n’est pas valable, ou son lien n’est pas vérifié. Demandez-lui un nouveau code.'),
+  ASSIST_REPRESENTATIVE_REQUIRED: i18n.t('legalprotection:err.rep_required', 'Une décision de justice vérifiée confie à votre représentant le soin d’agir pour vous ici : le mode accompagnant n’est possible qu’avec lui. Vous pouvez toujours utiliser votre compte vous-même.'),
 });
 
 /** @param {number} status @returns {string} the sentence of an HTTP status, for a code that has none of its own */

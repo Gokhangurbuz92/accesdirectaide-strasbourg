@@ -31,7 +31,7 @@ const capOpen = (env) => Object.keys(CAPABILITIES).filter((c) => capabilityState
 
 describe('G4 server — ADA_BETA_ACCOUNTS_EXTRA', () => {
   it('reads exact names only: unknown, wildcard and look-alikes add nothing; the full scope makes it moot', () => {
-    expect(Object.keys(ACCOUNTS_EXTRAS)).toEqual(['parcours', 'push', 'assist', 'household', 'guardians', 'delegations']);   // G14-CHAN: push; G14-AID: assist; G14-R3: household, guardians, delegations
+    expect(Object.keys(ACCOUNTS_EXTRAS)).toEqual(['parcours', 'push', 'assist', 'household', 'guardians', 'delegations', 'legal_protection']);   // G14-CHAN: push; G14-AID: assist; G14-R3: household, guardians, delegations; G14-R3G: legal_protection
     expect([...accountsExtras({ ADA_BETA_ACCOUNTS_EXTRA: ' Parcours , foyer,*' })]).toEqual(['parcours']);
     for (const v of ['', '*', 'all', 'full', 'parcour', 'parcours-reminder', 'citizen/parcours', 'citizen.parcours', 'favorites,history', 'household-members']) {
       expect([...accountsExtras({ ADA_BETA_ACCOUNTS_EXTRA: v })], v).toEqual([]);
@@ -97,7 +97,7 @@ describe('G4 screens — VITE_PUBLIC_BETA_ACCOUNTS_EXTRA', () => {
     '/compte/orientations', '/compte/partages/abc', '/share/abc', '/passport'];
 
   it('shows /compte/parcours and keeps every other closed account screen behind the beta notice', () => {
-    expect(ACCOUNTS_EXTRA_SCREENS).toEqual({ parcours: ['/compte/parcours'], assist: ['/compte/accompagnement'], household: [], guardians: [], delegations: ['/compte/delegations'] });
+    expect(ACCOUNTS_EXTRA_SCREENS).toEqual({ parcours: ['/compte/parcours'], assist: ['/compte/accompagnement'], household: [], guardians: [], delegations: ['/compte/delegations'], legal_protection: ['/compte/protection-juridique'] });
     expect(isBetaRestrictedPath('/compte/parcours', ['accounts'], narrow)).toBe(true);
     expect(isBetaRestrictedPath('/compte/parcours', ['accounts'], sub)).toBe(false);
     expect(isBetaRestrictedPath('/compte/parcours/', ['accounts'], sub)).toBe(false);
