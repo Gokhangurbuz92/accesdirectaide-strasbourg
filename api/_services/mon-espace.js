@@ -17,6 +17,7 @@ import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js'
 import { isRestricted } from './processing-restriction.js';
 import { ageGate, ageRefusal } from './citizen-account.js';
 import { CAPABILITY_NOT_OPEN, CAPABILITY_NOT_OPEN_MESSAGE, capabilityOpen } from '../_utils/capabilities.js';
+import { hdsServiceRoute } from '../_utils/hds-gateway.js';
 import { parcoursItemTable, parcoursPlanStepSchema } from '../_utils/schema-features.js';
 import { mergePlanStep, planNeeds, planStepFits, planStepFromPlan, readPlanStep, validatePlanStepInput } from '../lib/parcours-plan-step.js';
 import { PLAN_CLOSURES, PLAN_DONE_STATUSES, closureOf, dependencyCycle } from '../../src/lib/parcoursPlan.js';
@@ -683,7 +684,8 @@ export async function espaceSummary(userId, db = defaultDb, opts = {}) {
     const nextDue = open.filter((i) => i.dueDate && new Date(i.dueDate).getTime() > Date.now()).sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))[0] || null;
     summary.parcours = { total: parcours.length, open: open.length, nextDue: nextDue ? { id: nextDue.id, title: nextDue.title, dueDate: nextDue.dueDate } : null };
   }
-  if (isOpen('citizen.vault')) summary.documents = (await listCoffre(userId, db)).quota.files;
+  // G14-R3: deployed, Mon Coffre lives in the HDS service (end-to-end encrypted): this database holds none of it, so no count is invented here
+  if (isOpen('citizen.vault') && !hdsServiceRoute(['citizen.vault'])) summary.documents = (await listCoffre(userId, db)).quota.files;
   if (isOpen('citizen.favorites')) {
     const [{ f }] = (await db.execute(sql`SELECT count(*)::int AS f FROM "CitizenFavorite" WHERE "userId" = ${userId}`)).rows;
     summary.favorites = f;

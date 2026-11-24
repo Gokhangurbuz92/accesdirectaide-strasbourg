@@ -2,6 +2,7 @@
 // A-13: `message` is the sentence to SHOW, in the interface language (src/lib/citizenErrors.js); the server's French sentence stays in `serverMessage`.
 import { csrfFetch, CsrfBootstrapError } from '@/lib/csrf';
 import { citizenErrorText } from '@/lib/citizenErrors';
+import { hdsRequest, hdsVaultMode } from '@/lib/hdsClient';
 
 export class CitizenApiError extends Error {
   /** @param {string} message @param {number} status @param {string} [code] @param {string} [serverMessage] */
@@ -36,6 +37,19 @@ async function call(path, opts = {}) {
     throw new CitizenApiError(citizenErrorText({ code: data.error, status: res.status, serverMessage }), res.status, typeof data.error === 'string' ? data.error : '', serverMessage);
   }
   return data;
+}
+
+/**
+ * G14-R3: Mon Coffre goes to the HDS service when the main API hands out a ticket; otherwise (LAB without an HDS service) the legacy route.
+ * @param {string} path @param {{ method?: string, body?: unknown }} opts @param {() => Promise<any>} legacy
+ */
+async function vaultCall(path, opts, legacy) {
+  let out;
+  try { out = await hdsRequest('citizen.vault', path, opts); } catch (e) {
+    const f = /** @type {{ status?: number, code?: string, serverMessage?: string }} */ (e);
+    throw new CitizenApiError(citizenErrorText({ code: f.code, status: f.status, serverMessage: f.serverMessage }), f.status || 0, f.code, f.serverMessage);
+  }
+  return out === null ? legacy() : out;
 }
 
 export const citizenApi = {
@@ -96,11 +110,21 @@ export const citizenApi = {
   setHistoryEnabled: (/** @type {boolean} */ enabled) => call('/api/citizen/history', { method: 'PUT', body: { enabled } }),
   addHistory: (/** @type {Record<string, unknown>} */ entry) => call('/api/citizen/history', { method: 'POST', body: entry }),
   clearHistory: (/** @type {string | undefined} */ id) => call('/api/citizen/history', { method: 'DELETE', body: id ? { id } : {} }),
-  listCoffre: () => call('/api/citizen/coffre'),
-  uploadCoffre: (/** @type {Record<string, unknown>} */ doc) => call('/api/citizen/coffre', { method: 'POST', body: doc }),
-  deleteCoffre: (/** @type {string} */ id) => call('/api/citizen/coffre', { method: 'DELETE', body: { id } }),
+  // G14-R3: with the HDS service the list is END-TO-END encrypted ({ e2e: true, keyring, documents: [{ id, meta, dek, … }] }); the page opens it with the vault key
+  listCoffre: async () => { const out = await vaultCall('/v1/vault/documents', {}, () => call('/api/citizen/coffre')); return hdsVaultMode() === 'hds' ? { ...out, e2e: true } : out; },
+  /** with the HDS service `doc` is the encrypted { content, meta, dek, expiresAt? } of src/lib/vaultCrypto.js; otherwise the LAB form */
+  uploadCoffre: (/** @type {Record<string, unknown>} */ doc) => vaultCall('/v1/vault/documents', { method: 'POST', body: doc }, () => call('/api/citizen/coffre', { method: 'POST', body: doc })),
+  setCoffreKeyring: (/** @type {unknown} */ keyring) => vaultCall('/v1/vault/keyring', { method: 'PUT', body: { keyring } }, async () => { throw new CitizenApiError(citizenErrorText({ code: 'HDS_GATEWAY_NOT_CONFIGURED', status: 503 }), 503, 'HDS_GATEWAY_NOT_CONFIGURED'); }),
+  deleteCoffre: (/** @type {string} */ id) => vaultCall(`/v1/vault/documents/${encodeURIComponent(id)}`, { method: 'DELETE' }, () => call('/api/citizen/coffre', { method: 'DELETE', body: { id } })),
   coffreDownloadUrl: (/** @type {string} */ id) => `/api/citizen/coffre?download=${encodeURIComponent(id)}`,
-  shareFromCoffre: (/** @type {string} */ documentId, /** @type {string} */ shareId, /** @type {string} */ structureId) => call('/api/citizen/coffre', { method: 'POST', body: { action: 'share', documentId, shareId, structureId } }),
+  // G14-R3: with the HDS service the encrypted document is fetched with a ticket, opened in the page and saved from memory (a plain link cannot carry the ticket)
+  coffreViaHds: () => hdsVaultMode() === 'hds',
+  downloadCoffre: (/** @type {string} */ id) => vaultCall(`/v1/vault/documents/${encodeURIComponent(id)}/content`, {}, async () => null),
+  shareFromCoffre: async (/** @type {string} */ documentId, /** @type {string} */ shareId, /** @type {string} */ structureId) => {
+    // shared dossiers are not ported to the HDS service yet: no copy of an HDS document to a Vercel-side dossier
+    if (hdsVaultMode() === 'hds') throw new CitizenApiError(citizenErrorText({ code: 'HDS_MODULE_NOT_PORTED', status: 503 }), 503, 'HDS_MODULE_NOT_PORTED');
+    return call('/api/citizen/coffre', { method: 'POST', body: { action: 'share', documentId, shareId, structureId } });
+  },
   // PKG-2 / R16 + C17 — a dossier attached to the account
   dossierAccess: (/** @type {string} */ shareId) => call(`/api/citizen/dossier?view=access&shareId=${encodeURIComponent(shareId)}`),
   dossierDocuments: (/** @type {string} */ shareId) => call(`/api/citizen/dossier?view=documents&shareId=${encodeURIComponent(shareId)}`),

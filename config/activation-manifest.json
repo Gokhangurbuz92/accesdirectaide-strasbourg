@@ -2221,6 +2221,47 @@
       "class": "lab",
       "nature": "config",
       "note": "G14-CHAN: owner's Mac only — path of the fr_FR-siwis-medium voice for the OFFLINE FALC audio build (scripts/build-falc-audio.mjs); never read at runtime"
+    },
+    "HDS_SERVICE_URL": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true,
+      "format": "^(https://[a-z0-9-]+\\.(osc-fr1|osc-secnum-fr1)\\.scalingo\\.io)?$",
+      "note": "G14-R3: origin of the HDS service (services/hds) on the certified-host allow-list of api/_utils/hds-gateway.js; unset = Mon Coffre / shared dossiers stay closed in Production"
+    },
+    "HDS_TICKET_PRIVATE_KEY": {
+      "class": "conditional",
+      "nature": "secret",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true,
+      "note": "G14-R3: base64 PKCS#8 P-256 key signing the single-use HDS tickets (scripts/hds-keygen.mjs); the HDS app holds only the public key"
+    },
+    "HDS_TICKET_KID": {
+      "class": "conditional",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "provider": "hds-host",
+      "account": true,
+      "format": "^([A-Za-z0-9._-]{1,64})?$",
+      "note": "G14-R3: key id of HDS_TICKET_PRIVATE_KEY (listed with its public key in the HDS app's HDS_TICKET_PUBLIC_KEYS)"
+    },
+    "HDS_PRODUCTION_APPROVED": {
+      "class": "decision",
+      "nature": "config",
+      "scope": [
+        "production"
+      ],
+      "format": "^(true)?$",
+      "note": "G14-R3: owner approval (Scalingo HDS appendix, HDS contact person, AIPD addendum, art. 9 consent text); without it the HDS-served capabilities stay closed"
     }
   },
   "platform": [

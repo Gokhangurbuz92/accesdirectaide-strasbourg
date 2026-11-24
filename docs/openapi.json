@@ -118,6 +118,29 @@
             }
         }
     },
+    "/citizen/hds-ticket": {
+        "get": {
+            "tags": [
+                "Auth"
+            ],
+            "summary": "Ticket à usage unique pour le service HDS (G14-R3)",
+            "description": "Session citoyenne vérifiée. ?cap=citizen.vault | citizen.shared_dossier. Rend un ticket ES256 (60 s, usage unique) et l'origine du service HDS ; aucun document, nom de fichier ni contenu n'est reçu ni lu ici. Le navigateur appelle ensuite le service HDS directement (contenu chiffré de bout en bout).",
+            "responses": {
+                "200": {
+                    "description": "{ ticket, expiresAt, origin }"
+                },
+                "400": {
+                    "description": "INVALID_CAPABILITY"
+                },
+                "401": {
+                    "description": "Session requise"
+                },
+                "503": {
+                    "description": "CAPABILITY_NOT_OPEN, HDS_MODULE_NOT_PORTED ou HDS_GATEWAY_NOT_CONFIGURED (pas de service HDS : le chemin LAB reste utilisé)"
+                }
+            }
+        }
+    },
     "/citizen/social-referrals": {
         "get": {
             "tags": [

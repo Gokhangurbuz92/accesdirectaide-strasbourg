@@ -99,7 +99,7 @@ export const SURFACES = {
   // AIPD) left this list: it follows « pro ». Kept here it needed « communications » — and so an EU object storage (release-preflight storage.configured) —
   // for a professional to see a notice, and failed silently (the console badge stayed at 0). Messaging itself (« pro/messages ») stays here.
   communications: ['messages', 'secure-messages', 'contact', 'support', 'feedback', 'reports', 'public/suggest-structure', 'public/sms-notify', 'assistant/feedback', 'pro/messages'],
-  documents: ['citizen/coffre', 'citizen/dossier', 'pro/dossier', 'share', 'public/dossier-revoke', 'public/dossier-grants', 'public/passport', 'download', 'pdf'],
+  documents: ['citizen/coffre', 'citizen/hds-ticket', 'citizen/dossier', 'pro/dossier', 'share', 'public/dossier-revoke', 'public/dossier-grants', 'public/passport', 'download', 'pdf'],
   diagnostic: ['diagnostic', 'drees', 'assistant', 'public/falc', 'public/assistant', 'tts'],
   // G14-AI (owner 23/11/2026): the citizen assistant's question route alone (capability ai.citizen_assistant). A longer prefix than « assistant »: opening
   // « diagnostic » does not open it, and opening « assistant » opens nothing else (recommendations, FALC, orientation, feedback stay where they are).

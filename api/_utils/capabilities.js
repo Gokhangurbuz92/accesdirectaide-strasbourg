@@ -23,6 +23,7 @@
  * statement recorded by the controller that a certificate exists, not a verification of it.
  */
 import { accountsExtraCapabilities, accountsScope, isPublicBetaRestricted, openSurfaces } from './public-beta.js';
+import { HDS_SERVICE_CAPABILITIES, hdsGatewayState, hdsModuleReady, hdsServiceRoute, isDeployed, sendHdsServiceRefusal } from './hds-gateway.js';
 
 export const CAPABILITY_NOT_OPEN = 'CAPABILITY_NOT_OPEN';
 export const CAPABILITY_NOT_OPEN_MESSAGE = 'Cette fonction n’est pas encore ouverte : elle sera disponible lorsque son analyse d’impact sur la protection des données '
@@ -186,6 +187,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'pro/dossier-synthesis': ['ai.processing', 'citizen.shared_dossier'],
   'pro/agent-discovery': ['ai.processing'], 'pro/agent-scheduler': ['ai.processing'],
   // documents
+  // G14-R3: the single-use ticket for the HDS service — the handler checks the capability it is asked for (citizen.vault | citizen.shared_dossier)
+  'citizen/hds-ticket': [],
   'citizen/coffre': ['citizen.vault'], 'citizen/dossier': ['citizen.shared_dossier'], 'pro/dossier': ['citizen.shared_dossier'],
   share: ['citizen.shared_dossier'], 'share/create': ['citizen.saved_diagnostic', 'citizen.shared_dossier'],
   'public/dossier-revoke': ['citizen.shared_dossier'], 'public/dossier-grants': ['citizen.shared_dossier'], 'public/passport': ['citizen.shared_dossier'],
@@ -264,6 +267,12 @@ export function hdsAttestation(envVars = process.env, now = new Date()) {
   return { valid: true, reason: null };
 }
 
+/** the provider slug of a valid attestation token, or null (G14-R3: it must match the HDS service's certified host) @param {Record<string, string | undefined>} [envVars] @param {Date} [now] */
+export function hdsAttestationProvider(envVars = process.env, now = new Date()) {
+  if (!hdsAttestation(envVars, now).valid) return null;
+  return HDS_TOKEN_FORMAT.exec(flag(envVars.ADA_HDS_CERTIFIED_HOSTING))?.[1] || null;
+}
+
 /** is the capability's surface open @param {string} key @param {Capability} cap @param {Record<string, string | undefined>} envVars */
 function surfaceOpen(key, cap, envVars) {
   if (!isPublicBetaRestricted(envVars)) return true;   // outside the beta every surface is served (the capability rule still applies)
@@ -289,6 +298,13 @@ export function capabilityState(name, envVars = process.env, opts = {}) {
   // a structure-dependent HDS need (ESSMS or not) is waived only for a structure positively classified NOT_ESSMS; unknown = HDS needed (fail-closed)
   const hdsNeeded = cap.requiresHds && !(cap.hdsDependsOnStructure && opts.structureCategory === 'NOT_ESSMS');
   if (hdsNeeded && !hdsAttestation(envVars, opts.now).valid) return { open: false, reason: 'HDS_HOSTING_NOT_ATTESTED' };
+  // G14-R3: deployed, a capability served by the HDS service also needs the approved, allow-listed gateway, a matching attestation and a ported module
+  if (HDS_SERVICE_CAPABILITIES.includes(key) && isDeployed(envVars)) {
+    const gw = hdsGatewayState(envVars, { deployed: true });
+    if (!gw.ready) return { open: false, reason: /** @type {string} */ (gw.reason) };
+    if (hdsAttestationProvider(envVars, opts.now) !== gw.provider) return { open: false, reason: 'HDS_ATTESTATION_PROVIDER_MISMATCH' };
+    if (!hdsModuleReady(key)) return { open: false, reason: 'HDS_MODULE_NOT_PORTED' };
+  }
   return { open: true, reason: null };
 }
 
@@ -325,8 +341,13 @@ export function sendCapabilityRefusal(res, capability) {
  * @param {any} res @param {string | readonly string[]} names @param {Record<string, string | undefined>} [envVars] @returns {boolean} true = may continue
  */
 export function requireCapability(res, names, envVars = process.env) {
-  const closed = (Array.isArray(names) ? names : [names]).find((n) => !capabilityOpen(n, envVars));
-  if (!closed) return true;
+  const list = Array.isArray(names) ? names : [names];
+  const closed = list.find((n) => !capabilityOpen(n, envVars));
+  if (!closed) {
+    // G14-R3: deployed, the data of an HDS-served capability are never handled here (the browser calls the HDS service)
+    if (hdsServiceRoute(list, envVars)) { sendHdsServiceRefusal(res, envVars); return false; }
+    return true;
+  }
   sendCapabilityRefusal(res, closed);
   return false;
 }
@@ -367,6 +388,8 @@ export function gateRoute(route) {
         const key = p === route.path.replace(/\/$/, '') || p.startsWith(route.path.endsWith('/') ? route.path : `${route.path}/`) ? p : route.path;
         const closed = closedCapabilityOfRoute(key);
         if (closed) return sendCapabilityRefusal(res, closed);
+        // G14-R3: deployed, an open HDS-served capability is still never served by this application (no handler run, no database access)
+        if (hdsServiceRoute(capabilitiesOfRoute(key))) return sendHdsServiceRefusal(res);
         return inner(req, res);
       };
       return { ...mod, default: gated };

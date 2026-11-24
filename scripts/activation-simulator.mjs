@@ -25,6 +25,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { SURFACES, NOT_OPENABLE, SCHEDULED_JOBS, isAllowedInPublicBeta, isSmsInboundRequest, openSurfaces, surfaceOf } from '../api/_utils/public-beta.js';
 import { CAPABILITIES, capabilityState, hdsAttestation } from '../api/_utils/capabilities.js';
+import { HDS_SERVICE_CAPABILITIES, hdsModuleReady } from '../api/_utils/hds-gateway.js';
+import { generateTicketKeyPair } from '../api/lib/hds-ticket.js';
 import { bookingDecision, SENSITIVE_BOOKING_APPROVAL_VALUE, SENSITIVE_BOOKING_CONSENT_VERSION } from '../api/lib/service-sensitivity.js';
 import { protectedStoreState } from '../api/lib/protected-store/index.js';
 import { RETENTION_POLICY, executionGate, POLICY_STATUS_APPROVED, stepApprovalProblem } from '../api/_services/retention-policy.js';
@@ -47,7 +49,10 @@ if (!process.env.DATABASE_URL) process.env.DATABASE_URL = 'postgres://synthetic@
 const { providerStatuses } = await import('../api/_services/provider-status.js');
 
 /** a well-formed, unexpired, unmistakably synthetic HDS attestation token (HDS_TOKEN_FORMAT of api/_utils/capabilities.js) */
-export const syntheticHdsToken = () => `HDS1:synthetic-test-only:${SYNTHETIC}-0001:2099-12-31:${sha(SYNTHETIC)}`;
+export const syntheticHdsToken = (provider = 'synthetic-test-only') => `HDS1:${provider}:${SYNTHETIC}-0001:2099-12-31:${sha(SYNTHETIC)}`;
+/** G14-R3: the HDS gateway of the final configuration — a synthetic app name on the allow-listed Scalingo domain, a fresh signing key (never stored) */
+const syntheticHdsGateway = () => ({ HDS_SERVICE_URL: 'https://synthetic-test-only.osc-fr1.scalingo.io', HDS_PRODUCTION_APPROVED: 'true', HDS_TICKET_KID: 'synthetic-k1',
+  HDS_TICKET_PRIVATE_KEY: generateTicketKeyPair().privateKeyB64 });
 
 /** a fresh VAPID key pair (valid P-256 keys generated now, never stored) */
 function syntheticVapid() {
@@ -96,7 +101,8 @@ export function finalConfig(opts = {}) {
     ADA_BETA_OPEN_SURFACES: FINAL_SURFACES.join(','), VITE_PUBLIC_BETA_OPEN_SURFACES: FINAL_SURFACES.join(','),
     ADA_BETA_ACCOUNTS_SCOPE: 'full', VITE_PUBLIC_BETA_ACCOUNTS_SCOPE: 'full',
     // capabilities outside the AIPD, HDS
-    ADA_CAPABILITIES_OPEN: OUT_OF_AIPD.join(','), ADA_HDS_CERTIFIED_HOSTING: syntheticHdsToken(),
+    ADA_CAPABILITIES_OPEN: OUT_OF_AIPD.join(','), ADA_HDS_CERTIFIED_HOSTING: syntheticHdsToken(profile === 'production' ? 'scalingo' : undefined),
+    ...(profile === 'production' ? syntheticHdsGateway() : {}),
     ADA_PROTECTED_STORE: 'certified', ADA_PROTECTED_STORE_ENDPOINT: m.hds, ADA_PROTECTED_STORE_TOKEN: `${SYNTHETIC}-${rnd(20)}`,
     // art. 9 booking
     ADA_SENSITIVE_BOOKING_APPROVED: SENSITIVE_BOOKING_APPROVAL_VALUE, ADA_HDS_BOOKING_ASSESSED: '1',
@@ -246,6 +252,11 @@ export function buildItems() {
     if (cap.accountsFull) env.push(eqv('ADA_BETA_ACCOUNTS_SCOPE', 'full'));
     if (cap.aipd === 'out') env.push(tok('ADA_CAPABILITIES_OPEN', name));
     if (cap.requiresHds) env.push(eqv('ADA_HDS_CERTIFIED_HOSTING', 'jeton HDS1 valide et non expiré'));
+    // G14-R3: served by the HDS service — the approved, allow-listed gateway and its signing key (api/_utils/hds-gateway.js)
+    const hdsService = HDS_SERVICE_CAPABILITIES.includes(name);
+    if (hdsService) env.push(eqv('HDS_PRODUCTION_APPROVED', 'true (approbation du propriétaire)'), eqv('HDS_SERVICE_URL', 'origine https sur la liste des hébergeurs certifiés'),
+      eqv('HDS_TICKET_PRIVATE_KEY', 'clé P-256 de signature des tickets'), eqv('HDS_TICKET_KID', 'identifiant de la clé'));
+    const notPorted = hdsService && !hdsModuleReady(name);
     /** @type {Other[]} */
     const other = [];
     if (cap.aipd === 'out') other.push({ type: 'owner_decision', what: `extension de l’AIPD (${cap.aipdRef})`, ref: 'api/_utils/capabilities.js' });
@@ -257,8 +268,9 @@ export function buildItems() {
     if (name === 'partner.referral_adapter') other.push({ type: 'partner', what: 'convention avec une structure partenaire réelle, secret partagé, membre délégué désigné ; ADA_PARTNER_ADAPTERS + ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED', ref: 'api/_services/partner-adapter.js' });
     if (name === 'citizen.franceconnect') other.push({ type: 'provider_account', what: 'habilitation DataPass FranceConnect', ref: 'api/lib/franceconnect/oidc-client.js' });
     items.push({ id: `capability.${name}`, kind: 'capability', label: cap.description, features: CAP_FEATURES[name] || [], env, requires: CAP_REQUIRES[name] || [], other,
-      finalExpected: cap.openable === false || EXPANSION_SURFACES.includes(cap.surface) ? 'closed' : 'open',
-      note: cap.openable === false ? 'NOT_OPENABLE : aucun interrupteur (politique d’âge)' : EXPANSION_SURFACES.includes(cap.surface) ? EXPANSION_NOTE : undefined,
+      finalExpected: cap.openable === false || EXPANSION_SURFACES.includes(cap.surface) || notPorted ? 'closed' : 'open',
+      note: cap.openable === false ? 'NOT_OPENABLE : aucun interrupteur (politique d’âge)' : EXPANSION_SURFACES.includes(cap.surface) ? EXPANSION_NOTE
+        : notPorted ? 'HDS_MODULE_NOT_PORTED : le module n’est pas encore porté sur le service HDS (api/_utils/hds-gateway.js HDS_MODULES)' : undefined,
       rollback: cap.aipd === 'out' ? `retirer « ${name} » de ADA_CAPABILITIES_OPEN` : `fermer la surface « ${cap.surface} »`,
       probe: (e) => { const s = capabilityState(name, e); return s.open ? ok : no(s.reason); } });
   }
