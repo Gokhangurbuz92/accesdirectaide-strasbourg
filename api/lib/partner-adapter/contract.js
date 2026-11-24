@@ -11,7 +11,9 @@
  * their own account and the person's grant, exactly as on the native path. Nothing is sent before the person authorized the referral (state SENT).
  *
  * Outbound (ADA → partner), POST <partner endpoint>, JSON:
- *   { contract: 'ada.partner-referral/1', eventId, type, occurredAt, referral: { id, status, reasonCode, dueAt, proUrl } }
+ *   { contract: 'ada.partner-referral/1', eventId, type, occurredAt, referral: { id, status, reasonCode, dueAt, proUrl, dossierRef? } }
+ *   dossierRef (G14-R4, optional): { service: 'ada-hds', id } when the dossier lives in the HDS service — an identifier, never content; in a deployed
+ *   environment the inbound `message` / `citizenSummary` are refused (FREE_TEXT_IN_HDS): free text travels end-to-end encrypted in the HDS thread.
  *   headers: Content-Type: application/json; Idempotency-Key: <eventId> (the same for every retry of one event); ADA-Contract: ada.partner-referral/1;
  *            ADA-Signature: t=<unix seconds>,v1=<hex HMAC-SHA256(secret, `${t}.${canonical JSON body}`)>
  *   the partner answers 2xx once stored (a 2xx for an already-seen eventId is expected: the partner deduplicates on Idempotency-Key).
@@ -92,14 +94,17 @@ export function buildOutboundEvent(ev, referral, proUrl) {
   const type = /** @type {Record<string, string>} */ (EVENT_TYPES)[ev.toStatus];
   if (!type) return null;
   const iso = (/** @type {any} */ d) => (d ? new Date(d).toISOString() : null);
+  // G14-R4: a referral of a dossier held by the HDS service names it by identifier only (dossierRef); the partner's delegate opens it there, end-to-end
+  // encrypted, with an ADA Pro session and the organisation key — the content never travels in this event
+  const dossierRef = /** @type {any} */ (referral).hdsDossierId ? { service: 'ada-hds', id: String(/** @type {any} */ (referral).hdsDossierId) } : undefined;
   return {
     contract: PARTNER_CONTRACT, eventId: ev.id, type, occurredAt: iso(ev.createdAt),
-    referral: { id: referral.id, status: ev.toStatus, reasonCode: referral.reasonCode || null, dueAt: iso(referral.dueAt), proUrl },
+    referral: { id: referral.id, status: ev.toStatus, reasonCode: referral.reasonCode || null, dueAt: iso(referral.dueAt), proUrl, ...(dossierRef ? { dossierRef } : {}) },
   };
 }
 
 /** the exact keys an outbound event may hold (contract test: nothing personal can be added silently) */
-export const OUTBOUND_KEYS = Object.freeze({ top: ['contract', 'eventId', 'type', 'occurredAt', 'referral'], referral: ['id', 'status', 'reasonCode', 'dueAt', 'proUrl'] });
+export const OUTBOUND_KEYS = Object.freeze({ top: ['contract', 'eventId', 'type', 'occurredAt', 'referral'], referral: ['id', 'status', 'reasonCode', 'dueAt', 'proUrl'], referralOptional: ['dossierRef'] });
 
 /**
  * Validate an inbound body. Returns the normalized command or the list of problems (machine codes, no value echoed).

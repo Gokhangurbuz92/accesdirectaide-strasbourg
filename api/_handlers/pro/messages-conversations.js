@@ -286,6 +286,7 @@ async function handler(req, res) {
     if (!conversation || conversation.structureId !== proCtx.structureId) return res.status(404).json({ error: 'Introuvable.' });
     if (!attachmentsOpen()) return refuseClosed(res, ATTACHMENTS);   // R3: files only with certified hosting
     const out = await readAttachment(conversation.id, String(segments[2]));
+    if (!out.ok && out.code === 'HDS_SERVICE_REQUIRED') return res.status(409).json({ error: out.code, code: out.code, message: out.message });   // G14-R4: opened in the browser from the HDS service
     return out.ok ? sendAttachment(res, out) : res.status(404).json({ error: 'Introuvable.' });
   }
 

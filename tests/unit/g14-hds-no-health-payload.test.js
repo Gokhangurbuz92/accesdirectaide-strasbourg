@@ -101,7 +101,7 @@ describe('HDS service code', () => {
     for (const f of files(dir)) {
       const src = fs.readFileSync(f, 'utf8');
       expect(/console\./.test(src), path.relative(dir, f)).toBe(false);
-      if (!/src\/log\.js$|migrate\.js$|server\.js$|scripts\/tombstones\.js$/.test(f)) expect(/process\.(stdout|stderr)\.write/.test(src), path.relative(dir, f)).toBe(false);
+      if (!/src\/log\.js$|migrate\.js$|server\.js$|scripts\/tombstones\.js$|scripts\/maintenance\.js$/.test(f)) expect(/process\.(stdout|stderr)\.write/.test(src), path.relative(dir, f)).toBe(false);
     }
   });
   it('refuses to boot in production with an http origin, a Sentry DSN, port 3000 or missing keys — naming them, never printing a value', async () => {

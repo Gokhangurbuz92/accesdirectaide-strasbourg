@@ -23,7 +23,7 @@
  * statement recorded by the controller that a certificate exists, not a verification of it.
  */
 import { accountsExtraCapabilities, accountsScope, isPublicBetaRestricted, openSurfaces } from './public-beta.js';
-import { HDS_SERVICE_CAPABILITIES, hdsGatewayState, hdsModuleReady, hdsServiceRoute, isDeployed, sendHdsServiceRefusal } from './hds-gateway.js';
+import { hdsGatedCapability, hdsGatewayState, hdsModuleReady, hdsServiceRoute, isDeployed, sendHdsServiceRefusal } from './hds-gateway.js';
 
 export const CAPABILITY_NOT_OPEN = 'CAPABILITY_NOT_OPEN';
 export const CAPABILITY_NOT_OPEN_MESSAGE = 'Cette fonction n’est pas encore ouverte : elle sera disponible lorsque son analyse d’impact sur la protection des données '
@@ -189,6 +189,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   // documents
   // G14-R3: the single-use ticket for the HDS service — the handler checks the capability it is asked for (citizen.vault | citizen.shared_dossier)
   'citizen/hds-ticket': [],
+  // G14-R4: the professional ticket — the handler checks the capability it is asked for (citizen.shared_dossier | pro.referrals | messaging.attachments)
+  'pro/hds-ticket': [],
   'citizen/coffre': ['citizen.vault'], 'citizen/dossier': ['citizen.shared_dossier'], 'pro/dossier': ['citizen.shared_dossier'],
   share: ['citizen.shared_dossier'], 'share/create': ['citizen.saved_diagnostic', 'citizen.shared_dossier'],
   'public/dossier-revoke': ['citizen.shared_dossier'], 'public/dossier-grants': ['citizen.shared_dossier'], 'public/passport': ['citizen.shared_dossier'],
@@ -298,8 +300,9 @@ export function capabilityState(name, envVars = process.env, opts = {}) {
   // a structure-dependent HDS need (ESSMS or not) is waived only for a structure positively classified NOT_ESSMS; unknown = HDS needed (fail-closed)
   const hdsNeeded = cap.requiresHds && !(cap.hdsDependsOnStructure && opts.structureCategory === 'NOT_ESSMS');
   if (hdsNeeded && !hdsAttestation(envVars, opts.now).valid) return { open: false, reason: 'HDS_HOSTING_NOT_ATTESTED' };
-  // G14-R3: deployed, a capability served by the HDS service also needs the approved, allow-listed gateway, a matching attestation and a ported module
-  if (HDS_SERVICE_CAPABILITIES.includes(key) && isDeployed(envVars)) {
+  // G14-R3 / R4: deployed, a capability served by the HDS service (or whose payload lives there) also needs the approved, allow-listed gateway, a matching
+  // attestation and a ported module
+  if (hdsGatedCapability(key) && isDeployed(envVars)) {
     const gw = hdsGatewayState(envVars, { deployed: true });
     if (!gw.ready) return { open: false, reason: /** @type {string} */ (gw.reason) };
     if (hdsAttestationProvider(envVars, opts.now) !== gw.provider) return { open: false, reason: 'HDS_ATTESTATION_PROVIDER_MISMATCH' };

@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-client';
 import { AttachmentList, AttachmentPicker } from '@/components/Messaging/MessageAttachments';
 import MessageReportButton from '@/components/Messaging/MessageReportButton';
-import { readAttachment, saveDownload } from '@/lib/messageAttachments';
+import { openIncomingAttachment, prepareOutgoingAttachment } from '@/lib/messageAttachments';
 import { appendNext, normalizeNextPath } from '@/lib/rdvRouting';
 import { formatDate as formatInLanguage, useT } from '@/i18n';
 import { isNotOpenRefusal } from '@/lib/proModules';
@@ -32,8 +32,9 @@ export default function CompteMessageThread() {
   const [file, setFile] = useState(/** @type {File | null} */ (null));   // PKG-4 / R14
   const [fileKey, setFileKey] = useState(0);
   const download = async (/** @type {{ id: string, name: string }} */ a) => {
-    try { const r = await rdvMessagingClient.user.downloadAttachment(String(conversationId || ''), a.id); if (!r.ok) throw new Error(String(r.status)); await saveDownload(r, a.name); }
-    catch { setStatusText(t('compte:thread.download_failed', 'Téléchargement impossible.')); }
+    // G14-R4: an attachment held by the HDS service is decrypted here (Mon Coffre key); otherwise the legacy download
+    try { await openIncomingAttachment('citizen', String(conversationId || ''), a, () => rdvMessagingClient.user.downloadAttachment(String(conversationId || ''), a.id)); }
+    catch (e) { setStatusText(e instanceof Error && e.message && !/^\d+$/.test(e.message) ? e.message : t('compte:thread.download_failed', 'Téléchargement impossible.')); }
   };
 
   const safeNext = useMemo(
@@ -57,7 +58,7 @@ export default function CompteMessageThread() {
 
   /** @type {import('@tanstack/react-query').UseMutationResult<unknown, Error, { text: string, file: File | null }, unknown>} */
 const sendMutation = useMutation({
-    mutationFn: async (value) => rdvMessagingClient.user.sendMessage(String(conversationId || ''), value.text, await readAttachment(value.file)),
+    mutationFn: async (value) => rdvMessagingClient.user.sendMessage(String(conversationId || ''), value.text, await prepareOutgoingAttachment('citizen', String(conversationId || ''), value.file)),
     onSuccess: async () => {
       setBody(''); setFile(null); setFileKey((k) => k + 1);
       setStatusText(t('compte:thread.sent', 'Message envoye.'));

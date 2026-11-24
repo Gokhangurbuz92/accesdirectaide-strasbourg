@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-client';
 import { AttachmentList, AttachmentPicker } from '@/components/Messaging/MessageAttachments';
 import MessageReportButton from '@/components/Messaging/MessageReportButton';
-import { readAttachment, saveDownload } from '@/lib/messageAttachments';
+import { openIncomingAttachment, prepareOutgoingAttachment } from '@/lib/messageAttachments';
 import { formatDate as formatInLanguage, useT } from '@/i18n';
 import { isNotOpenRefusal } from '@/lib/proModules';
 
@@ -28,8 +28,9 @@ export default function ProMessageThread() {
   const [file, setFile] = useState(null);   // PKG-4 / R14
   const [fileKey, setFileKey] = useState(0);
   const download = async (a) => {
-    try { const r = await rdvMessagingClient.pro.downloadAttachment(String(conversationId || ''), a.id); if (!r.ok) throw new Error(String(r.status)); await saveDownload(r, a.name); }
-    catch { setStatusText(t('pro:thread.download_failed', 'Téléchargement impossible.')); }
+    // G14-R4: an attachment held by the HDS service is decrypted here (organisation key); otherwise the legacy download
+    try { await openIncomingAttachment('pro', String(conversationId || ''), a, () => rdvMessagingClient.pro.downloadAttachment(String(conversationId || ''), a.id)); }
+    catch (e) { setStatusText(e instanceof Error && e.message && !/^\d+$/.test(e.message) ? e.message : t('pro:thread.download_failed', 'Téléchargement impossible.')); }
   };
 
   const conversationQuery = useQuery({
@@ -39,7 +40,7 @@ export default function ProMessageThread() {
   });
 
   const sendMutation = useMutation({
-    mutationFn: async (value) => rdvMessagingClient.pro.sendMessage(String(conversationId || ''), value.text, await readAttachment(value.file)),
+    mutationFn: async (value) => rdvMessagingClient.pro.sendMessage(String(conversationId || ''), value.text, await prepareOutgoingAttachment('pro', String(conversationId || ''), value.file)),
     onSuccess: async () => {
       setBody(''); setFile(null); setFileKey((k) => k + 1);
       setStatusText(t('pro:thread.sent', 'Message envoye.'));

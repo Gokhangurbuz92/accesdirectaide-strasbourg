@@ -34,6 +34,7 @@ const audit = (db, action, entity, entityId, details) => db.insert(AuditLog).val
 async function pendingEvents(db, partner, now) {
   const since = new Date(now.getTime() - OUTBOX_WINDOW_DAYS * 86400000);
   return (await db.execute(sql`SELECT e.id, e."toStatus", e."createdAt", r.id AS "referralId", r."reasonCode", r."dueAt",
+      (SELECT d.id FROM "SharedDiagnostic" d WHERE d.id = r."sharedDiagnosticId" AND d."subjectType" = 'HDS_DOSSIER') AS "hdsDossierId",
       (SELECT COUNT(*)::int FROM "AuditLog" f WHERE f.action = 'PARTNER_EVENT_FAILED' AND f.entity = 'ReferralEvent' AND f.entity_id = e.id AND f.details->>'partner' = ${partner.id}) AS "failedRuns"
     FROM "ReferralEvent" e JOIN "Referral" r ON r.id = e."referralId"
     WHERE r."toStructureId" = ${partner.structureId} AND r."sentAt" IS NOT NULL AND e."toStatus" IN (${inList(OUTBOUND_STATES)})
@@ -56,7 +57,7 @@ export async function runPartnerOutbox(opts = {}, db = defaultDb) {
   for (const partner of cfg.partners) {
     summary.partners += 1;
     for (const ev of await pendingEvents(db, partner, now)) {
-      const event = buildOutboundEvent({ id: ev.id, toStatus: ev.toStatus, createdAt: ev.createdAt }, { id: ev.referralId, reasonCode: ev.reasonCode, dueAt: ev.dueAt },
+      const event = buildOutboundEvent({ id: ev.id, toStatus: ev.toStatus, createdAt: ev.createdAt }, { id: ev.referralId, reasonCode: ev.reasonCode, dueAt: ev.dueAt, hdsDossierId: ev.hdsDossierId || null },
         buildAppUrl(`/pro/orientations/${encodeURIComponent(ev.referralId)}`));
       if (!event) continue;
       const out = await deliverEvent(partner, event, { fetchImpl: opts.fetchImpl, sleep: opts.sleep, nowSeconds: () => Math.floor(now.getTime() / 1000) });

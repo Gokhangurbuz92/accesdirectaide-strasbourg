@@ -92,6 +92,7 @@ const routeTable = [
     { path: 'pro/invite', match: 'exact', handler: () => import('./_handlers/pro/invite.js') },
     { path: 'pro/resend-invite', match: 'exact', handler: () => import('./_handlers/pro/resend-invite.js') },
     { path: 'pro/dossier', match: 'exact', handler: () => import('./_handlers/pro/dossier.js') },
+    { path: 'pro/hds-ticket', match: 'exact', handler: () => import('./_handlers/pro/hds-ticket.js') },   // G14-R4: single-use professional ticket for the HDS service
     { path: 'pro/notifications/unread-count', match: 'exact', handler: () => import('./_handlers/pro/notifications/unread-count.js') },
     { path: 'pro/notifications', match: 'exact', handler: () => import('./_handlers/pro/notifications.js') },
     { path: 'pro/audit', match: 'exact', handler: () => import('./_handlers/pro/audit.js') },   // A26: the ONE organisation audit trail (AuditLog); pro/audit/list read ProAuditLog, which no code writes

@@ -60,7 +60,8 @@ describe('capability registry', () => {
   });
   it('every route of the accounts, appointments, pro, documents, diagnostic, institution and video surfaces carries a capability (five reviewed exceptions)', () => {
     const EXCEPTIONS = {
-      'citizen/hds-ticket': 'G14-R3: the single-use HDS ticket — the handler checks the capability it is asked for (citizen.vault | citizen.shared_dossier) and the gateway',
+      'citizen/hds-ticket': 'G14-R3: the single-use HDS ticket — the handler checks the capability it is asked for (citizen.vault | citizen.shared_dossier | messaging.attachments) and the gateway',
+      'pro/hds-ticket': 'G14-R4: the single-use professional HDS ticket — the handler checks the capability it is asked for (citizen.shared_dossier | pro.referrals | messaging.attachments), the membership and the gateway',
       pdf: 'only pdf/aides and pdf/demarches answer (published public records, open in the beta); every other pdf path is a 404',
       tts: 'retired: answers 410 (R12, P26)',
       drees: 'public reference data (DREES programme list), no personal data',

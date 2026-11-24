@@ -161,5 +161,9 @@
   "report.sending": "Sending…",
   "report.cancel": "Cancel",
   "report.done": "Thank you: the message has been reported to the AccesDirectAide team. The text of the message is not passed on to it; it may contact you again through this conversation.",
-  "report.failed": "The report could not be sent. Try again later."
+  "report.failed": "The report could not be sent. Try again later.",
+  "attachments.hds_citizen_key": "This person has not activated Mon Coffre yet: the encrypted attachment cannot be sent to them.",
+  "attachments.hds_org_key": "The organisation has not created its encryption key yet: send your message without an attachment.",
+  "attachments.hds_unlock_citizen": "First open Mon Coffre with your passphrase to read this encrypted attachment.",
+  "attachments.hds_unlock_pro": "First open your keys in « Encrypted files » to read this encrypted attachment."
 }

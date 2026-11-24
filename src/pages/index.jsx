@@ -150,6 +150,7 @@ const CompteProfil = lazy(() => import("./CompteProfil.jsx"));
 const MonEspace = lazy(() => import("./MonEspace.jsx"));
 const CompteParcours = lazy(() => import("./CompteParcours.jsx"));
 const CompteCoffre = lazy(() => import("./CompteCoffre.jsx"));
+const CompteDossiersChiffres = lazy(() => import("./CompteDossiersChiffres.jsx"));   // G14-R4: shared dossiers at the HDS service
 const CompteFavoris = lazy(() => import("./CompteFavoris.jsx"));
 const CompteHistorique = lazy(() => import("./CompteHistorique.jsx"));
 const CompteDelegations = lazy(() => import("./CompteDelegations.jsx"));
@@ -251,6 +252,7 @@ const CompteOrientations = lazy(() => import("./CompteOrientations.jsx"));
 // G14-PS: social referrals (non-HDS) and the local-first Passeport Social
 const CompteOrientationsSociales = lazy(() => import("./CompteOrientationsSociales.jsx"));
 const ProSocialReferrals = lazy(() => import("./pro/SocialReferrals.jsx"));
+const ProPartagesChiffres = lazy(() => import("./pro/PartagesChiffres.jsx"));   // G14-R4: encrypted dossiers of the organisation (HDS service)
 const PasseportSocial = lazy(() => import("./PasseportSocial.jsx"));
 
 // Sentry
@@ -519,6 +521,7 @@ function PagesContent() {
                                     <Route path="orientations" element={<ProGuard><ProReferrals /></ProGuard>} />
                                     <Route path="orientations/:id" element={<ProGuard><ProReferrals /></ProGuard>} />
                                     <Route path="orientations-sociales" element={<ProGuard><ProSocialReferrals /></ProGuard>} />
+                                    <Route path="partages-chiffres" element={<ProGuard><ProPartagesChiffres /></ProGuard>} />
                                     <Route path="selections" element={<ProGuard><ProSelections /></ProGuard>} />
                                     <Route path="selections/:id" element={<ProGuard><ProSelections /></ProGuard>} />
                                     <Route path="audit" element={<ProGuard><ProAuditLog /></ProGuard>} />
@@ -573,6 +576,7 @@ function PagesContent() {
                                 <Route path="/compte" element={<MonEspace />} />
                                 <Route path="/compte/parcours" element={<CompteParcours />} />
                                 <Route path="/compte/coffre" element={<CompteCoffre />} />
+                                <Route path="/compte/dossiers-chiffres" element={<CompteDossiersChiffres />} />
                                 <Route path="/compte/favoris" element={<CompteFavoris />} />
                                 <Route path="/compte/evenements" element={<CompteEvenements />} />
                                 <Route path="/compte/temoignages" element={<CompteTemoignages />} />

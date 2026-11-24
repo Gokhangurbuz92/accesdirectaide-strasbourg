@@ -9,6 +9,8 @@ import { COFFRE_UPLOAD_CATEGORIES, fileToBase64 } from '@/lib/monEspace';
 import { saveBlob } from '@/lib/hdsClient';
 import { VAULT_PASSPHRASE_MIN, createKeyring, encryptDocument, openContent, openMeta, sniffType, unlockKeyring } from '@/lib/vaultCrypto';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
+import { getVaultKey, setVaultKey } from '@/lib/hdsKeys';
+import { ensureBoxKey } from '@/lib/hdsSharing';
 import { MAX_SIZE } from '@/lib/fileVaultLimits';
 import { formatDate, useT } from '@/i18n';
 
@@ -28,7 +30,7 @@ export default function CompteCoffre() {
   const [busy, setBusy] = useState(false);
   const fileRef = useRef(null);
   // G14-R3 end-to-end mode (HDS service): the vault key lives only in this page (non-extractable CryptoKey), never in storage, never sent
-  const vaultKeyRef = useRef(null);
+  const vaultKeyRef = useRef(getVaultKey());   // G14-R4: the key unlocked on another screen of this page life (memory only)
   const [e2e, setE2e] = useState({ on: false, keyring: null, unlocked: false });
   const [pass, setPass] = useState({ a: '', b: '' });
 
@@ -84,7 +86,7 @@ export default function CompteCoffre() {
     if (pass.a.length < VAULT_PASSPHRASE_MIN) { setProblem(t('compte:coffre.e2e_too_short', 'La phrase secrète doit contenir au moins {{min}} caractères.', { min: VAULT_PASSPHRASE_MIN })); return; }
     if (pass.a !== pass.b) { setProblem(t('compte:coffre.e2e_mismatch', 'Les deux phrases secrètes ne sont pas identiques.')); return; }
     setBusy(true);
-    try { const k = await createKeyring(pass.a); await citizenApi.setCoffreKeyring(k.keyring); vaultKeyRef.current = k.vaultKey; setPass({ a: '', b: '' }); await load(); }
+    try { const k = await createKeyring(pass.a); await citizenApi.setCoffreKeyring(k.keyring); vaultKeyRef.current = k.vaultKey; setVaultKey(k.vaultKey); await ensureBoxKey(k.vaultKey).catch(() => null); setPass({ a: '', b: '' }); await load(); }
     catch (err) { setProblem(err.message); } finally { setBusy(false); }
   };
   const unlock = async (e) => {
@@ -93,7 +95,7 @@ export default function CompteCoffre() {
     try {
       const key = await unlockKeyring(e2e.keyring, pass.a);
       if (!key) { setProblem(t('compte:coffre.e2e_phrase_incorrect', 'Phrase secrète incorrecte.')); return; }
-      vaultKeyRef.current = key; setPass({ a: '', b: '' }); await load();
+      vaultKeyRef.current = key; setVaultKey(key); await ensureBoxKey(key).catch(() => null); setPass({ a: '', b: '' }); await load();
     } catch (err) { setProblem(err.message); } finally { setBusy(false); }
   };
 
@@ -151,6 +153,7 @@ export default function CompteCoffre() {
         </CardContent>
       </Card>
 
+      {e2e.on ? <p className="text-sm" data-testid="coffre-dossiers-link"><Link className="text-blue-800 underline" to="/compte/dossiers-chiffres">{t('compte:coffre.e2e_dossiers_link', 'Mes dossiers partagés avec des structures (chiffrés)')}</Link></p> : null}
       <Card>
         <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:coffre.mes_documents', 'Mes documents')}</CardTitle></CardHeader>
         <CardContent>

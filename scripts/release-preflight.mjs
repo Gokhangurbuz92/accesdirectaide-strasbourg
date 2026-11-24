@@ -13,7 +13,7 @@ import { approvedAtLeast, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFT
 import { externalBookingMode } from '../api/lib/external-booking.js';
 import { partnerAdapterConfig } from '../api/lib/partner-adapter/config.js';
 import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation, hdsAttestationProvider } from '../api/_utils/capabilities.js';
-import { HDS_MODULES, HDS_SERVICE_CAPABILITIES, hdsGatewayState } from '../api/_utils/hds-gateway.js';
+import { HDS_MODULES, HDS_PAYLOAD_CAPABILITIES, HDS_SERVICE_CAPABILITIES, hdsGatewayState, hdsModuleReady } from '../api/_utils/hds-gateway.js';
 import fs from 'node:fs';
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
@@ -90,9 +90,10 @@ export function openfiscaCheck(get) {
  * @returns {['PASS' | 'WARN' | 'FAIL', string]}
  */
 export function hdsGatewayCheck(get, env, opts = {}) {
-  const named = get('ADA_CAPABILITIES_OPEN').split(',').map((x) => x.trim().toLowerCase()).filter((x) => HDS_SERVICE_CAPABILITIES.includes(x));
+  // G14-R4: the capabilities whose PAYLOAD lives in the HDS service (referrals, partner bridge, orientation records) count too
+  const named = get('ADA_CAPABILITIES_OPEN').split(',').map((x) => x.trim().toLowerCase()).filter((x) => HDS_SERVICE_CAPABILITIES.includes(x) || HDS_PAYLOAD_CAPABILITIES.includes(x));
   const touched = ['HDS_SERVICE_URL', 'HDS_TICKET_PRIVATE_KEY', 'HDS_TICKET_KID', 'HDS_PRODUCTION_APPROVED'].filter((k) => get(k));
-  if (!named.length && !touched.length) return ['PASS', 'HDS gateway off: Mon Coffre and shared dossiers stay closed (no HDS_* variable, none named in ADA_CAPABILITIES_OPEN)'];
+  if (!named.length && !touched.length) return ['PASS', 'HDS gateway off: Mon Coffre, shared dossiers, attachments and referral payloads stay closed (no HDS_* variable, none named in ADA_CAPABILITIES_OPEN)'];
   const problems = [];
   const gw = hdsGatewayState(env, { deployed: true });
   if (!gw.ready) problems.push(`gateway: ${gw.reason}`);
@@ -105,7 +106,7 @@ export function hdsGatewayCheck(get, env, opts = {}) {
     if (!values.length || values.some((v) => !v.includes(origin))) problems.push(`the site CSP connect-src (vercel.json) must allow ${origin}, or the browser cannot reach the HDS service`);
   }
   if (problems.length) return ['FAIL', `HDS gateway incomplete: ${problems.join('; ')}`];
-  const notPorted = named.filter((c) => HDS_MODULES[c] !== 'ported');
+  const notPorted = named.filter((c) => HDS_MODULES[c] !== 'ported' || !hdsModuleReady(c));
   return notPorted.length ? ['WARN', `HDS gateway ready (${gw.origin}); still closed because not ported to the HDS service: ${notPorted.join(', ')}`]
     : ['PASS', `HDS gateway ready: ${gw.origin} (certified host allow-list, approval recorded, signing key valid, CSP allows it)`];
 }
@@ -216,9 +217,10 @@ export function evaluateReleasePreflight(env, opts = {}) {
   const vault = get('ADA_VAULT_KEY') || get('OUTLOOK_TOKEN_ENCRYPTION_KEY');
   add('crypto.vault_key', (/^[0-9a-fA-F]{64}$/.test(vault) || vault.length >= 32) && vault !== get('ADA_ENCRYPTION_KEY') ? 'PASS' : 'FAIL', 'ADA_VAULT_KEY (MFA secrets): 64 hex chars or >= 32 chars, distinct from ADA_ENCRYPTION_KEY');
   add('kv.configured', (get('KV_REST_API_URL') || get('UPSTASH_KV_REST_API_URL')) && (get('KV_REST_API_TOKEN') || get('UPSTASH_KV_REST_API_TOKEN')) ? 'PASS' : 'FAIL', 'Upstash KV: sign-in, sign-up, booking, contact and administration fail closed without it');
-  // R3: messages carry no file unless messaging.attachments (HDS) is open — the bucket is needed for the documents surface or message attachments only
+  // R3: messages carry no file unless messaging.attachments (HDS) is open — the bucket is needed for the documents surface only. G14-R4: open in production,
+  // attachments ALWAYS go to the HDS service (capabilityState needs the ready gateway; Vercel refuses the bytes, api/_services/message-attachments.js): no bucket
   const attachmentsOpen = needs(['communications']) && capabilityState('messaging.attachments', { ...env, VERCEL_ENV: 'production' }).open;
-  if (!needs(['documents']) && !attachmentsOpen) add('storage.configured', 'PASS', notUsed('the Coffre and attachments') + '; message attachments closed (messaging.attachments)');
+  if (!needs(['documents'])) add('storage.configured', 'PASS', notUsed('the Coffre') + (attachmentsOpen ? '; message attachments open: stored end-to-end encrypted at the HDS service (no bucket)' : '; message attachments closed (messaging.attachments)'));
   else add('storage.configured', ['STORAGE_ENDPOINT', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY_ID', 'STORAGE_SECRET_ACCESS_KEY'].every((k) => get(k)) ? 'PASS' : 'FAIL', 'object storage (Coffre, attachments): an EU bucket under a DPA');
   // R34 (G11): the LAB's local file store must not reach production (the runtime ignores it there; the variable signals a copied LAB environment)
   add('storage.no_local_dir', !get('ADA_LOCAL_STORAGE_DIR') ? 'PASS' : beta ? 'WARN' : 'FAIL', 'ADA_LOCAL_STORAGE_DIR is LAB only: delete it from the production environment');
