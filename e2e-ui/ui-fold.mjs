@@ -4,12 +4,13 @@
  *   UI_BASE=http://127.0.0.1:5191 UI_SHOTS=<dir> node e2e-ui/ui-fold.mjs
  */
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
 const BASE = process.env.UI_BASE || 'http://127.0.0.1:5191';
 if (/:3000\b/.test(BASE)) throw new Error('ui-fold: port 3000 is the owner LAB');
-const OUT = process.env.UI_SHOTS || 'ui-shots';
+const OUT = process.env.UI_SHOTS || path.join(os.tmpdir(), 'ada-ui-shots');   // never inside the repository
 fs.mkdirSync(OUT, { recursive: true });
 const W = 1114; const H = 705; const HINGE = 28; const LEFT = (W - HINGE) / 2;   // two 543 px screens around a 28 px hinge
 const browser = await chromium.launch({ channel: process.env.UI_CHANNEL || 'chrome' });

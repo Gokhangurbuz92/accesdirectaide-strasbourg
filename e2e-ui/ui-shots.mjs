@@ -5,12 +5,13 @@
  * Uses the installed Chrome (channel chrome). Synthetic account only (citoyen.fixture@example.test).
  */
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { chromium } from 'playwright';
 
 const BASE = process.env.UI_BASE || 'http://127.0.0.1:5191';
 if (/:3000\b/.test(BASE)) throw new Error('ui-shots: port 3000 is the owner LAB');
-const OUT = process.env.UI_SHOTS || 'ui-shots';
+const OUT = process.env.UI_SHOTS || path.join(os.tmpdir(), 'ada-ui-shots');   // never inside the repository
 fs.mkdirSync(OUT, { recursive: true });
 
 const WIDTHS = { phone: [375, 812], fold: [717, 512], tablet: [768, 1024], desktop: [1280, 800], wide: [1700, 950] };
