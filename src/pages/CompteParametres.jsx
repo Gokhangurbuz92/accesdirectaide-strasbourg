@@ -7,7 +7,7 @@ import {
     User, Bell, Shield, Accessibility, Database,
     Mail, Phone, CheckCircle, XCircle, ExternalLink,
     Download, Trash2, AlertTriangle, Eye,
-    Sun, Type, Minus
+    Sun, Type, Minus, ArrowLeft
 } from 'lucide-react';
 
 import SEO from '@/components/SEO';
@@ -67,8 +67,8 @@ export function ContactChange({ user }) {   // exported for the Release B interf
     };
     return (
         <div className="space-y-4" data-testid="contact-change">
-            <form onSubmit={submitEmail} className="space-y-2 rounded-lg border bg-white p-4">
-                <p className="text-sm font-medium text-slate-900">{t('compte:settings.changer_adresse_mail', 'Changer d’adresse e-mail')}</p>
+            <form onSubmit={submitEmail} className="space-y-3 rounded-xl border border-ada-line p-4 sm:p-5">
+                <p className="text-base font-semibold text-ada-ink">{t('compte:settings.changer_adresse_mail', 'Changer d’adresse e-mail')}</p>
                 <Label htmlFor="cc-new-email">{t('compte:settings.nouvelle_adresse', 'Nouvelle adresse')}</Label>
                 <Input id="cc-new-email" type="email" autoComplete="email" required value={newEmail} onChange={(e) => setNewEmail(e.target.value)} />
                 <Label htmlFor="cc-password">{t('compte:settings.mot_passe_actuel', 'Mot de passe actuel')}</Label>
@@ -79,15 +79,15 @@ export function ContactChange({ user }) {   // exported for the Release B interf
             </form>
             {/* Release B / D2 V2: while phone collection is closed (auth/me phoneCollection false) no number is asked; a number stored earlier can still be removed */}
             {user?.phoneCollection === false ? (user?.phone ? (
-                <div className="space-y-2 rounded-lg border bg-white p-4" data-testid="cc-phone-closed">
-                    <p className="text-sm font-medium text-slate-900">{t('compte:settings.mon_numero_telephone', 'Mon numéro de téléphone')}</p>
+                <div className="space-y-3 rounded-xl border border-ada-line p-4 sm:p-5" data-testid="cc-phone-closed">
+                    <p className="text-base font-semibold text-ada-ink">{t('compte:settings.mon_numero_telephone', 'Mon numéro de téléphone')}</p>
                     <p className="text-sm text-slate-800">{t('compte:settings.phone_not_collected', 'Le service ne demande plus de numéro de téléphone. Vous pouvez supprimer celui qui est enregistré.')}</p>
                     <Button type="button" variant="outline" disabled={busy} onClick={(e) => submitPhone(e, true)} data-testid="cc-phone-remove">{t('compte:settings.supprimer_numero', 'Supprimer le numéro')}</Button>
                     {phoneMsg.text ? <p role="status" data-testid="cc-phone-status" className={phoneMsg.ok ? 'text-sm text-slate-900' : 'text-sm text-red-800'}>{phoneMsg.text}</p> : null}
                 </div>
             ) : null) : (
-            <form onSubmit={(e) => submitPhone(e)} className="space-y-2 rounded-lg border bg-white p-4">
-                <p className="text-sm font-medium text-slate-900">{t('compte:settings.mon_numero_telephone', 'Mon numéro de téléphone')}</p>
+            <form onSubmit={(e) => submitPhone(e)} className="space-y-3 rounded-xl border border-ada-line p-4 sm:p-5">
+                <p className="text-base font-semibold text-ada-ink">{t('compte:settings.mon_numero_telephone', 'Mon numéro de téléphone')}</p>
                 <Label htmlFor="cc-phone">{t('compte:settings.numero_facultatif', 'Numéro (facultatif)')}</Label>
                 <Input id="cc-phone" type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="06 12 34 56 78" />
                 <div className="flex flex-wrap gap-2">
@@ -106,13 +106,13 @@ function ProfilTab({ user }) {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.informations_compte', 'Informations du compte')}</h2>
+                <h2 className="text-xl font-bold text-ada-ink mb-5">{t('compte:settings.informations_compte', 'Informations du compte')}</h2>
                 <div className="space-y-4">
                     {/* Email */}
-                    <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
-                        <Mail className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div className="flex items-start gap-4 rounded-xl border border-ada-line p-4 sm:p-5">
+                        <Mail className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                         <div className="flex-1 min-w-0">
-                            <span className="text-sm font-medium text-slate-500">{t('compte:settings.adresse_email', 'Adresse email')}</span>
+                            <span className="text-sm font-medium text-ada-ink-3">{t('compte:settings.adresse_email', 'Adresse email')}</span>
                             <p className="text-sm font-semibold text-slate-900 break-all">{user?.email || '-'}</p>
                             <div className="flex items-center gap-1.5 mt-1">
                                 {user?.emailVerifiedAt ? (
@@ -131,10 +131,10 @@ function ProfilTab({ user }) {
                     </div>
 
                     {/* Phone */}
-                    <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
-                        <Phone className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div className="flex items-start gap-4 rounded-xl border border-ada-line p-4 sm:p-5">
+                        <Phone className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
-                            <span className="text-sm font-medium text-slate-500">{t('compte:settings.telephone', 'Téléphone')}</span>
+                            <span className="text-sm font-medium text-ada-ink-3">{t('compte:settings.telephone', 'Téléphone')}</span>
                             <p className="text-sm font-semibold text-slate-900">
                                 {user?.phone || <span className="text-slate-600 font-normal italic">{t('compte:settings.non_renseigne', 'Non renseigné')}</span>}
                             </p>
@@ -142,7 +142,7 @@ function ProfilTab({ user }) {
                     </div>
 
                     {/* Account dates */}
-                    <div className="p-4 rounded-lg border bg-slate-50 text-sm text-slate-600 space-y-1">
+                    <div className="rounded-xl bg-ada-sunken px-4 py-3 text-sm text-ada-ink-2 space-y-1">
                         <p>{t('compte:settings.compte_cree', 'Compte créé le :')} <span className="font-medium">{user?.createdAt ? formatDate(user.createdAt, { dateStyle: 'short' }) : '-'}</span></p>
                     </div>
                 </div>
@@ -163,7 +163,7 @@ function NotificationsTab() {
     // consent). The real, server-side preferences — with the consent they need — are on the profile page.
     return (
         <div className="space-y-4" data-testid="compte-notifications-pointer">
-            <h2 className="text-lg font-semibold">{t('compte:settings.preferences_notification', 'Préférences de notification')}</h2>
+            <h2 className="text-xl font-bold text-ada-ink">{t('compte:settings.preferences_notification', 'Préférences de notification')}</h2>
             <p className="text-sm text-slate-700">
                 {t('compte:settings.vos_choix_notification_mail', 'Vos choix de notification (e-mail, SMS, rappels) sont enregistrés sur votre compte, avec votre consentement quand il est nécessaire. Ils se règlent sur la page de votre profil.')}
             </p>
@@ -179,13 +179,13 @@ function SecurityTab({ user }) {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.securite_compte', 'Sécurité du compte')}</h2>
+                <h2 className="text-xl font-bold text-ada-ink mb-5">{t('compte:settings.securite_compte', 'Sécurité du compte')}</h2>
                 <div className="space-y-4">
                     {/* Email verification */}
-                    <div className="flex items-start gap-4 p-4 rounded-lg border bg-white">
-                        <Mail className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                    <div className="flex items-start gap-4 rounded-xl border border-ada-line p-4 sm:p-5">
+                        <Mail className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
-                            <span className="text-sm font-medium">{t('compte:settings.email_verifie', 'Email vérifié')}</span>
+                            <span className="text-base font-semibold text-ada-ink">{t('compte:settings.email_verifie', 'Email vérifié')}</span>
                             <div className="mt-1">
                                 {user?.emailVerifiedAt ? (
                                     <span className="inline-flex items-center gap-1.5 text-sm text-green-700">
@@ -198,7 +198,7 @@ function SecurityTab({ user }) {
                                             <AlertTriangle className="h-4 w-4" />
                                             {t('compte:settings.non_verifie', 'Non vérifié')}
                                         </span>
-                                        <p className="text-xs text-slate-500">
+                                        <p className="text-xs text-ada-ink-3">
                                             {t('compte:settings.verifiez_votre_boite_mail', 'Vérifiez votre boîte mail pour le lien de confirmation.')}
                                         </p>
                                     </div>
@@ -208,12 +208,12 @@ function SecurityTab({ user }) {
                     </div>
 
                     {/* Password */}
-                    <div className="flex items-center justify-between p-4 rounded-lg border bg-white">
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ada-line p-4 sm:p-5">
                         <div className="flex items-start gap-4">
-                            <Shield className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                            <Shield className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                             <div>
-                                <span className="text-sm font-medium">{t('compte:settings.mot_passe', 'Mot de passe')}</span>
-                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.modifiez_votre_mot_passe', 'Modifiez votre mot de passe régulièrement')}</p>
+                                <span className="text-base font-semibold text-ada-ink">{t('compte:settings.mot_passe', 'Mot de passe')}</span>
+                                <p className="text-sm text-ada-ink-3 mt-0.5">{t('compte:settings.modifiez_votre_mot_passe', 'Modifiez votre mot de passe régulièrement')}</p>
                             </div>
                         </div>
                         <Button variant="outline" size="sm" asChild>
@@ -225,13 +225,13 @@ function SecurityTab({ user }) {
                     </div>
 
                     {/* Sessions */}
-                    <div className="p-4 rounded-lg border bg-white">
+                    <div className="rounded-xl border border-ada-line p-4 sm:p-5">
                         <div className="flex items-start gap-4 mb-3">
-                            <Eye className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                            <Eye className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
-                                <span className="text-sm font-medium">{t('compte:settings.sessions', 'Sessions')}</span>
+                                <span className="text-base font-semibold text-ada-ink">{t('compte:settings.sessions', 'Sessions')}</span>
                                 {/* R18: the panel claimed to list the connected devices but only showed this browser; what the server really does is said instead */}
-                                <p className="text-xs text-slate-700 mt-0.5">{t('compte:settings.logout_all_before', 'Se déconnecter met fin à votre session sur')} <strong>{t('compte:settings.logout_all_strong', 'tous')}</strong> {t('compte:settings.logout_all_after', 'les appareils où vous êtes connecté·e (téléphone, ordinateur partagé…).')}</p>
+                                <p className="text-sm text-ada-ink-3 mt-0.5">{t('compte:settings.logout_all_before', 'Se déconnecter met fin à votre session sur')} <strong>{t('compte:settings.logout_all_strong', 'tous')}</strong> {t('compte:settings.logout_all_after', 'les appareils où vous êtes connecté·e (téléphone, ordinateur partagé…).')}</p>
                             </div>
                         </div>
                         <div className="ms-9 flex flex-wrap items-center gap-3 p-3 bg-slate-50 rounded text-sm text-slate-700">
@@ -265,15 +265,15 @@ function AccessibilityTab() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.preferences_accessibilite', 'Préférences d\'accessibilité')}</h2>
+                <h2 className="text-xl font-bold text-ada-ink mb-5">{t('compte:settings.preferences_accessibilite', 'Préférences d\'accessibilité')}</h2>
                 <div className="space-y-4">
                     {/* Font Size */}
-                    <div className="p-4 rounded-lg border bg-white">
+                    <div className="rounded-xl border border-ada-line p-4 sm:p-5">
                         <div className="flex items-center gap-4 mb-3">
-                            <Type className="h-5 w-5 text-blue-500 flex-shrink-0" />
+                            <Type className="h-5 w-5 text-ada-link flex-shrink-0" />
                             <div>
-                                <span className="text-sm font-medium">{t('compte:settings.taille_texte', 'Taille du texte')}</span>
-                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.font_size_hint', 'Ajuster la taille de l’interface ({{size}} %)', { size: prefs.fontSize })}</p>
+                                <span className="text-base font-semibold text-ada-ink">{t('compte:settings.taille_texte', 'Taille du texte')}</span>
+                                <p className="text-sm text-ada-ink-3 mt-0.5">{t('compte:settings.font_size_hint', 'Ajuster la taille de l’interface ({{size}} %)', { size: prefs.fontSize })}</p>
                             </div>
                         </div>
                         <div className="ms-9 flex items-center gap-3">
@@ -282,8 +282,9 @@ function AccessibilityTab() {
                                 size="sm"
                                 onClick={() => handleChange('fontSize', Math.max(80, prefs.fontSize - 10))}
                                 disabled={prefs.fontSize <= 80}
+                                aria-label={t('compte:settings.font_smaller', 'Réduire la taille du texte')}
                             >
-                                <Minus className="h-4 w-4" />
+                                <Minus className="h-4 w-4" aria-hidden="true" />
                             </Button>
                             <div className="flex-1 bg-slate-100 rounded-full h-2">
                                 <div
@@ -296,19 +297,20 @@ function AccessibilityTab() {
                                 size="sm"
                                 onClick={() => handleChange('fontSize', Math.min(140, prefs.fontSize + 10))}
                                 disabled={prefs.fontSize >= 140}
+                                aria-label={t('compte:settings.font_larger', 'Agrandir la taille du texte')}
                             >
-                                <Type className="h-4 w-4" />
+                                <Type className="h-4 w-4" aria-hidden="true" />
                             </Button>
                         </div>
                     </div>
 
                     {/* Reduce Motion */}
-                    <div className="flex items-center justify-between p-4 rounded-lg border bg-white">
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ada-line p-4 sm:p-5">
                         <div className="flex items-start gap-4">
-                            <Minus className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                            <Minus className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                             <div>
                                 <Label htmlFor="sw-reduce-motion" className="text-sm font-medium">{t('compte:settings.reduire_les_animations', 'Réduire les animations')}</Label>
-                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.desactiver_les_transitions_effets', 'Désactiver les transitions et effets visuels')}</p>
+                                <p className="text-sm text-ada-ink-3 mt-0.5">{t('compte:settings.desactiver_les_transitions_effets', 'Désactiver les transitions et effets visuels')}</p>
                             </div>
                         </div>
                         <Switch
@@ -319,12 +321,12 @@ function AccessibilityTab() {
                     </div>
 
                     {/* High Contrast */}
-                    <div className="flex items-center justify-between p-4 rounded-lg border bg-white">
+                    <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ada-line p-4 sm:p-5">
                         <div className="flex items-start gap-4">
-                            <Sun className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                            <Sun className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                             <div>
                                 <Label htmlFor="sw-high-contrast" className="text-sm font-medium">{t('compte:settings.contraste_eleve', 'Contraste élevé')}</Label>
-                                <p className="text-xs text-slate-500 mt-0.5">{t('compte:settings.augmenter_contraste_des_couleurs', 'Augmenter le contraste des couleurs')}</p>
+                                <p className="text-sm text-ada-ink-3 mt-0.5">{t('compte:settings.augmenter_contraste_des_couleurs', 'Augmenter le contraste des couleurs')}</p>
                             </div>
                         </div>
                         <Switch
@@ -369,9 +371,9 @@ export function ObjectionPanel() {   // exported for tests/unit/a20-objection-pa
     };
     const open = state.objection && state.objection.status === 'OPEN';
     return (
-        <div className="p-4 rounded-lg border border-slate-300" data-testid="compte-objection">
-            <span className="text-sm font-medium text-slate-900">{t('compte:settings.objection_title', 'M’opposer à un traitement de mes données (RGPD, article 21)')}</span>
-            <p className="text-xs text-slate-700 mt-1">{t('compte:settings.objection_intro', 'Vous pouvez vous opposer à un traitement de vos données pour des raisons tenant à votre situation. Votre demande est examinée par une personne : elle n’est pas appliquée automatiquement. En attendant la réponse, vous pouvez demander la limitation ci-dessus.')}</p>
+        <div className="rounded-xl border border-ada-line p-4 sm:p-5" data-testid="compte-objection">
+            <span className="text-base font-semibold text-ada-ink">{t('compte:settings.objection_title', 'M’opposer à un traitement de mes données (RGPD, article 21)')}</span>
+            <p className="text-sm text-ada-ink-3 mt-1">{t('compte:settings.objection_intro', 'Vous pouvez vous opposer à un traitement de vos données pour des raisons tenant à votre situation. Votre demande est examinée par une personne : elle n’est pas appliquée automatiquement. En attendant la réponse, vous pouvez demander la limitation ci-dessus.')}</p>
             <p role="status" aria-live="polite" data-testid="compte-objection-status" className="text-xs text-slate-900 mt-2">{msg}</p>
             {problem ? <p role="alert" data-testid="compte-objection-problem" className="text-xs text-red-800 mt-1">{problem}</p> : null}
             {state.loading ? null : state.failed ? (
@@ -386,7 +388,7 @@ export function ObjectionPanel() {   // exported for tests/unit/a20-objection-pa
                     {state.objection ? <p className="text-xs text-slate-700" data-testid="compte-objection-answered">{t('compte:settings.objection_answered', 'Votre précédente demande d’opposition (du {{date}}) a reçu une réponse.', { date: formatDate(state.objection.since, { dateStyle: 'short' }) })}</p> : null}
                     <label htmlFor="objection-reason" className="block text-sm text-slate-900">{t('compte:settings.objection_reason_label', 'Ce que vous souhaitez nous dire (facultatif)')}</label>
                     <textarea id="objection-reason" data-testid="compte-objection-reason" rows={3} maxLength={1000} value={reason} onChange={(e) => setReason(e.target.value)} dir="auto" aria-describedby="objection-reason-help"
-                        className="w-full rounded-md border border-slate-300 p-2 text-base" />
+                        className="w-full rounded-lg border border-ada-line-strong bg-ada-surface p-3 text-base text-ada-ink" />
                     <p id="objection-reason-help" className="text-xs text-slate-700">{t('compte:settings.objection_reason_help', 'Par exemple le traitement concerné et la raison. N’écrivez pas d’informations médicales.')}</p>
                     <Button type="button" size="sm" className="min-h-11" data-testid="compte-objection-send" disabled={busy} onClick={send}>{t('compte:settings.objection_send', 'Envoyer ma demande d’opposition')}</Button>
                 </div>
@@ -423,9 +425,9 @@ export function RestrictionPanel() {   // exported for tests/unit/a13-restrictio
     };
     const active = state?.restriction;
     return (
-        <div className="p-4 rounded-lg border border-slate-300" data-testid="compte-restriction">
-            <span className="text-sm font-medium text-slate-900">{t('compte:settings.limiter_utilisation_mes_donnees', 'Limiter l’utilisation de mes données (RGPD, article 18)')}</span>
-            <p className="text-xs text-slate-700 mt-1">{t('compte:settings.vos_donnees_sont_alors', 'Vos données sont alors seulement conservées : aucune structure ne peut ouvrir vos dossiers, rien n’est partagé, vous ne recevez plus de notification et rien n’est effacé automatiquement. Vous gardez vos droits (consulter, exporter, demander l’effacement).')}</p>
+        <div className="rounded-xl border border-ada-line p-4 sm:p-5" data-testid="compte-restriction">
+            <span className="text-base font-semibold text-ada-ink">{t('compte:settings.limiter_utilisation_mes_donnees', 'Limiter l’utilisation de mes données (RGPD, article 18)')}</span>
+            <p className="text-sm text-ada-ink-3 mt-1">{t('compte:settings.vos_donnees_sont_alors', 'Vos données sont alors seulement conservées : aucune structure ne peut ouvrir vos dossiers, rien n’est partagé, vous ne recevez plus de notification et rien n’est effacé automatiquement. Vous gardez vos droits (consulter, exporter, demander l’effacement).')}</p>
             <p role="status" aria-live="polite" data-testid="compte-restriction-status" className="text-xs text-slate-900 mt-2">{msg}</p>
             {problem ? <p role="alert" data-testid="compte-restriction-problem" className="text-xs text-red-800 mt-1">{problem}</p> : null}
             {loadFailed ? (
@@ -497,17 +499,17 @@ function DataTab() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-lg font-semibold mb-4">{t('compte:settings.mes_donnees_personnelles', 'Mes données personnelles')}</h2>
+                <h2 className="text-xl font-bold text-ada-ink mb-5">{t('compte:settings.mes_donnees_personnelles', 'Mes données personnelles')}</h2>
                 {/* FA-D4: simplified provisional draft, when « Facile à lire » is on */}
                 <FalcPageDraft id="accountData" />
                 <div className="space-y-4">
                     {/* Export */}
-                    <div className="p-4 rounded-lg border bg-white">
+                    <div className="rounded-xl border border-ada-line p-4 sm:p-5">
                         <div className="flex items-start gap-4">
-                            <Download className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                            <Download className="h-5 w-5 text-ada-link mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
-                                <span className="text-sm font-medium">{t('compte:settings.exporter_mes_donnees', 'Exporter mes données')}</span>
-                                <p className="text-xs text-slate-500 mt-1">
+                                <span className="text-base font-semibold text-ada-ink">{t('compte:settings.exporter_mes_donnees', 'Exporter mes données')}</span>
+                                <p className="text-sm text-ada-ink-3 mt-1">
                                     {t('compte:settings.telechargez_une_copie_des', 'Téléchargez une copie des données personnelles de votre compte (droit d’accès et portabilité, RGPD art. 15 et 20).')}
                                 </p>
                                 <Button
@@ -530,11 +532,11 @@ function DataTab() {
                     <ObjectionPanel />
 
                     {/* Delete Account */}
-                    <div className="p-4 rounded-lg border border-red-200 bg-red-50/50">
+                    <div className="rounded-xl border border-red-200 bg-red-50/60 p-4 sm:p-5">
                         <div className="flex items-start gap-4">
                             <Trash2 className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
                             <div className="flex-1">
-                                <span className="text-sm font-medium text-red-800">{t('compte:settings.supprimer_mon_compte', 'Supprimer mon compte')}</span>
+                                <span className="text-base font-semibold text-red-800">{t('compte:settings.supprimer_mon_compte', 'Supprimer mon compte')}</span>
                                 <p className="text-xs text-red-700 mt-1">
                                     {t('compte:settings.votre_demande_est_enregistree', 'Votre demande est enregistrée puis traitée par notre équipe : vos données personnelles, rendez-vous et messages sont alors supprimés, sauf ce que la loi oblige à conserver.')}
                                 </p>
@@ -603,7 +605,7 @@ function DataTab() {
                 </div>
             </div>
 
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
+            <div className="rounded-xl bg-ada-sunken px-4 py-3 text-sm text-ada-ink-2">
                 <p>
                     {contactFormOpen()
                         ? <>{t('compte:settings.gdpr_before', 'Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données. Pour toute demande, contactez-nous via la')} <Link to="/contact" className="underline">{t('compte:settings.gdpr_contact', 'page contact')}</Link></>
@@ -645,7 +647,7 @@ export default function CompteParametres() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 py-8">
+        <div className="min-h-screen py-8 sm:py-10">
             <SEO
                 title={t('compte:settings.parametres_compte', 'Paramètres du compte')}
                 description={t('compte:settings.gerez_vos_parametres_notifications', 'Gérez vos paramètres, notifications et données personnelles.')}
@@ -653,66 +655,76 @@ export default function CompteParametres() {
                 noindex={true}
             />
 
-            <div className="mx-auto w-full max-w-3xl px-4 sm:px-6">
-                {/* Header */}
-                <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-slate-900">{t('compte:settings.parametres', 'Paramètres')}</h1>
-                    <p className="text-sm text-slate-500 mt-1">{t('compte:settings.gerez_votre_compte_vos', 'Gérez votre compte et vos préférences')}</p>
-                </div>
-
-                {/* Tabs */}
-                <Tabs defaultValue="profil" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-5 h-auto p-1">
-                        <TabsTrigger value="profil" className="text-xs sm:text-sm gap-1.5 py-2.5">
-                            <User className="h-4 w-4 hidden sm:block" />
-                            {t('compte:settings.profil', 'Profil')}
-                        </TabsTrigger>
-                        <TabsTrigger value="notifications" className="text-xs sm:text-sm gap-1.5 py-2.5">
-                            <Bell className="h-4 w-4 hidden sm:block" />
-                            {t('compte:settings.notifs', 'Notifs')}
-                        </TabsTrigger>
-                        <TabsTrigger value="security" className="text-xs sm:text-sm gap-1.5 py-2.5">
-                            <Shield className="h-4 w-4 hidden sm:block" />
-                            {t('compte:settings.securite', 'Sécurité')}
-                        </TabsTrigger>
-                        <TabsTrigger value="accessibility" className="text-xs sm:text-sm gap-1.5 py-2.5">
-                            <Accessibility className="h-4 w-4 hidden sm:block" />
-                            {t('compte:settings.acces', 'Accès')}
-                        </TabsTrigger>
-                        <TabsTrigger value="data" className="text-xs sm:text-sm gap-1.5 py-2.5">
-                            <Database className="h-4 w-4 hidden sm:block" />
-                            {t('compte:settings.donnees', 'Données')}
-                        </TabsTrigger>
-                    </TabsList>
-
-                    <Card>
-                        <CardContent className="pt-6">
-                            <TabsContent value="profil" className="mt-0">
-                                <ProfilTab user={user} />
-                            </TabsContent>
-                            <TabsContent value="notifications" className="mt-0">
-                                <NotificationsTab />
-                            </TabsContent>
-                            <TabsContent value="security" className="mt-0">
-                                <SecurityTab user={user} />
-                            </TabsContent>
-                            <TabsContent value="accessibility" className="mt-0">
-                                <AccessibilityTab />
-                            </TabsContent>
-                            <TabsContent value="data" className="mt-0">
-                                <DataTab user={user} />
-                            </TabsContent>
-                        </CardContent>
-                    </Card>
-                </Tabs>
-
-                {/* Back to messages */}
-                <div className="mt-6 text-center">
-                    <Link to="/compte/messages" className="text-sm text-blue-600 hover:underline">
-                        {t('compte:settings.retour_mes_messages', '← Retour à mes messages')}
+            {/* UI modernisation (24/11/2026): from 1024 px the sections are a side menu beside the open section (vertical tabs, arrow keys up / down);
+                below, a row of tabs that scrolls sideways instead of five squeezed columns. Full names (« Notifications », « Accessibilité »). */}
+            <div className="mx-auto w-full max-w-6xl px-[var(--ada-gutter)]">
+                <p className="mb-3 text-sm">
+                    <Link to="/compte" className="inline-flex min-h-6 items-center gap-1 font-medium text-ada-link underline-offset-2 hover:underline" data-testid="compte-settings-back">
+                        <ArrowLeft className="rtl-flip h-4 w-4" aria-hidden="true" />
+                        {t('compte:settings.back_to_space', 'Retour à Mon Espace')}
                     </Link>
+                </p>
+                <div className="mb-6 sm:mb-8">
+                    <h1 className="text-3xl font-bold tracking-tight text-ada-ink sm:text-4xl">{t('compte:settings.parametres', 'Paramètres')}</h1>
+                    <p className="mt-2 text-base text-ada-ink-3">{t('compte:settings.gerez_votre_compte_vos', 'Gérez votre compte et vos préférences')}</p>
                 </div>
+
+                <SettingsTabs user={user} />
             </div>
         </div>
+    );
+}
+
+/** the five sections; a vertical menu from 1024 px (Radix Tabs orientation follows the layout so the arrow keys match what is seen) */
+/** @param {{ user: any }} props */
+function SettingsTabs({ user }) {
+    const { t } = useT('compte');
+    const [wide, setWide] = useState(() => typeof window !== 'undefined' && !!window.matchMedia && window.matchMedia('(min-width: 1024px)').matches);
+    useEffect(() => {
+        if (typeof window === 'undefined' || !window.matchMedia) return undefined;
+        const mq = window.matchMedia('(min-width: 1024px)');
+        const on = () => setWide(mq.matches);
+        mq.addEventListener?.('change', on);
+        return () => mq.removeEventListener?.('change', on);
+    }, []);
+    const tabs = [
+        { value: 'profil', icon: User, label: t('compte:settings.profil', 'Profil') },
+        { value: 'notifications', icon: Bell, label: t('compte:settings.tab.notifications', 'Notifications') },
+        { value: 'security', icon: Shield, label: t('compte:settings.securite', 'Sécurité') },
+        { value: 'accessibility', icon: Accessibility, label: t('compte:settings.tab.accessibility', 'Accessibilité') },
+        { value: 'data', icon: Database, label: t('compte:settings.donnees', 'Données') },
+    ];
+    return (
+        <Tabs defaultValue="profil" orientation={wide ? 'vertical' : 'horizontal'} className="ada-fold-split grid gap-6 lg:grid-cols-[15rem_minmax(0,1fr)] lg:items-start">
+            <TabsList className="flex h-auto w-full flex-wrap justify-start gap-1 rounded-2xl border border-ada-line bg-ada-surface p-1.5 shadow-sm lg:sticky lg:top-28 lg:flex-col lg:flex-nowrap lg:items-stretch">
+                {tabs.map(({ value, icon: Icon, label }) => (
+                    <TabsTrigger key={value} value={value}
+                        className="min-h-11 flex-auto justify-start gap-2.5 sm:flex-none rounded-xl px-3.5 py-2.5 text-sm font-medium text-ada-ink-2 hover:bg-ada-sunken hover:text-ada-ink data-[state=active]:bg-ada-action-soft data-[state=active]:text-ada-ink data-[state=active]:shadow-none data-[state=active]:font-semibold lg:w-full">
+                        <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                        {label}
+                    </TabsTrigger>
+                ))}
+            </TabsList>
+
+            <Card className="min-w-0">
+                <CardContent className="p-4 sm:p-6 lg:p-8">
+                    <TabsContent value="profil" className="mt-0">
+                        <ProfilTab user={user} />
+                    </TabsContent>
+                    <TabsContent value="notifications" className="mt-0">
+                        <NotificationsTab />
+                    </TabsContent>
+                    <TabsContent value="security" className="mt-0">
+                        <SecurityTab user={user} />
+                    </TabsContent>
+                    <TabsContent value="accessibility" className="mt-0">
+                        <AccessibilityTab />
+                    </TabsContent>
+                    <TabsContent value="data" className="mt-0">
+                        <DataTab user={user} />
+                    </TabsContent>
+                </CardContent>
+            </Card>
+        </Tabs>
     );
 }

@@ -117,26 +117,30 @@
     /* Slate-50 #F8FAFC */
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+  /* UI modernisation: the dark theme follows the surfaces of src/styles/tokens.css (#0B1220 page, #131C2E surface) — html.dark and the
+     accessibility panel's html.dark-mode share it */
+  :root:is(.dark, .dark-mode) {
+    /* brand text (links, active menu entry) in light indigo on the dark theme — #4F46E5 gave 2.7:1 on the dark surface */
+    --color-brand-primary: 165 180 252;
+    --background: 221 49% 8%;
+    --foreground: 210 33% 94%;
+    --card: 220 42% 13%;
+    --card-foreground: 210 33% 94%;
+    --popover: 220 42% 13%;
+    --popover-foreground: 210 33% 94%;
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 218 37% 18%;
+    --secondary-foreground: 210 33% 94%;
+    --muted: 218 37% 18%;
+    --muted-foreground: 215 20% 68%;
+    --accent: 218 37% 18%;
+    --accent-foreground: 210 33% 94%;
+    --destructive: 0 73.7% 41.8%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 218 31% 24%;
+    --input: 218 31% 30%;
+    --ring: 229 93% 82%;
   }
 
   * {
@@ -144,8 +148,15 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-ada-canvas text-ada-ink;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
   }
+
+  /* UI modernisation: a calmer heading rhythm (GOV.UK-like: bold, tight, no decoration) */
+  h1, h2, h3 { letter-spacing: -0.011em; text-wrap: balance; }
+  p { text-wrap: pretty; }
 }
 
 /* Reduced Motion Support */
@@ -302,60 +313,32 @@ input:is([type='date'], [type='time'], [type='datetime-local'], [type='month'], 
    ============================================================ */
 
 /* High Contrast Mode */
-.high-contrast {
+.high-contrast:not(.dark):not(.dark-mode) {
   --background: 0 0% 100%;
   --foreground: 0 0% 0%;
   --muted-foreground: 0 0% 20%;
   --border: 0 0% 0%;
 }
 
-.high-contrast body,
-.high-contrast #root {
+.high-contrast:not(.dark):not(.dark-mode) body,
+.high-contrast:not(.dark):not(.dark-mode) #root {
   background: #fff !important;
   color: #000 !important;
 }
 
-.high-contrast a {
+/* a link drawn as a button (any background class) keeps its own text colour — the dark-blue link colour was put on dark-blue buttons */
+.high-contrast:not(.dark):not(.dark-mode) a:not([class*="bg-"]) {
   color: #00008b !important;
   text-decoration: underline !important;
 }
 
-.high-contrast button,
-.high-contrast [role="button"] {
+.high-contrast:not(.dark):not(.dark-mode) button,
+.high-contrast:not(.dark):not(.dark-mode) [role="button"] {
   border: 2px solid #000 !important;
 }
 
-/* Dark Mode */
-.dark-mode {
-  --background: 222.2 84% 4.9%;
-  --foreground: 210 40% 98%;
-}
-
-.dark-mode body,
-.dark-mode #root {
-  background: #0f172a !important;
-  color: #e2e8f0 !important;
-}
-
-.dark-mode .bg-white {
-  background-color: #1e293b !important;
-}
-
-.dark-mode .bg-slate-50 {
-  background-color: #0f172a !important;
-}
-
-.dark-mode .text-slate-900 {
-  color: #e2e8f0 !important;
-}
-
-.dark-mode .text-slate-600 {
-  color: #94a3b8 !important;
-}
-
-.dark-mode .border-slate-200 {
-  border-color: #334155 !important;
-}
+/* Dark Mode: the accessibility panel's « dark » choice (html.dark-mode) uses the same token-based theme as html.dark (src/styles/theme-palette.css,
+   src/styles/tokens.css) — the former fixed overrides of five utility classes are no longer needed */
 
 /* Large Line Height */
 .large-line-height body,
@@ -432,3 +415,52 @@ body.reduce-motion *::after {
     color: inherit !important;
   }
 }
+
+/* ============================================================
+   UI modernisation (24/11/2026) — shared components of the citizen screens
+   ============================================================ */
+@layer components {
+  /* a rubric / quick-access card: equal height in its grid row, a whole-card link, a soft lift on hover (no colour-only cue: the title underlines) */
+  .ada-tile {
+    @apply flex w-full items-start gap-3 rounded-2xl border border-ada-line bg-ada-surface p-4 text-start shadow-sm sm:p-5;
+    transition: box-shadow var(--duration-micro) var(--ease-apple), border-color var(--duration-micro) var(--ease-apple), transform var(--duration-micro) var(--ease-apple);
+  }
+  .ada-tile:hover { @apply border-ada-action shadow-md; }
+  @media (prefers-reduced-motion: no-preference) { .ada-tile:hover { transform: translateY(-1px); } }
+  .ada-tile:focus-visible { outline: 3px solid rgb(var(--ada-focus)); outline-offset: 2px; }
+
+  /* the site name in the header: navy → indigo on a light header, light indigo on the dark theme (it was an inline gradient invisible in dark) */
+  .ada-wordmark {
+    background-image: linear-gradient(135deg, #002D5A 0%, #1e40af 50%, #4F46E5 100%);
+    -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #002D5A;
+  }
+  :root:is(.dark, .dark-mode) .ada-wordmark { background-image: linear-gradient(135deg, #E0E7FF 0%, #A5B4FC 100%); color: #E0E7FF; }
+  @media (forced-colors: active) { .ada-wordmark { background-image: none; -webkit-text-fill-color: CanvasText; } }
+
+  /* a settings / form section: a titled block with breathing room instead of dense stacked boxes */
+  .ada-section { @apply rounded-2xl border border-ada-line bg-ada-surface p-4 sm:p-6; }
+  .ada-section-title { @apply text-base font-semibold text-ada-ink; }
+  .ada-section-text { @apply mt-1 text-sm text-ada-ink-3; }
+}
+
+/* Foldables (Viewport Segments API — progressive: browsers without it ignore the rule). A device held open with the hinge vertical shows two segments:
+   a two-column block keeps each column inside one segment and leaves the hinge as the gap. */
+@media (horizontal-viewport-segments: 2) {
+  /* html … : Tailwind writes its responsive variants (lg:grid-cols-3) after this file's rules, so the fold rule needs one more level of specificity */
+  html .ada-fold-split {
+    display: grid;
+    /* the block sits inside the page gutter (--ada-gutter): each column keeps a gutter on both sides of its own screen, the hinge is in the gap */
+    grid-template-columns: calc(env(viewport-segment-width 0 0, 50vw) - 2 * var(--ada-gutter)) calc(env(viewport-segment-width 1 0, 50vw) - 2 * var(--ada-gutter));
+    column-gap: calc(env(viewport-segment-left 1 0, 0px) - env(viewport-segment-right 0 0, 0px) + 2 * var(--ada-gutter));
+  }
+  html .ada-fold-split > * { grid-column: auto / span 1 !important; min-width: 0; }
+}
+
+/* UI modernisation: the logo (navy squares) sits on a light chip in the dark theme, where it was invisible on the dark header */
+:root:is(.dark, .dark-mode) header img[src="/favicon.svg"] { background: #fff; border-radius: 0.5rem; padding: 2px; }
+/* a Radix menu panel takes the focus when it opens; the focused ITEM shows the focus, not the whole panel (it drew a thick frame around the menu) */
+[role="menu"]:focus-visible { outline: none !important; }
+
+/* UI modernisation — ADA Pro: one title size on every console screen (they ranged from 18 to 24 px, « Tableau de Bord » vs « Rendez-vous ») */
+.ada-pro-page h1:not(.sr-only):not(.uppercase) { font-size: 1.75rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -0.015em; color: rgb(var(--ada-ink)); }
+@media (max-width: 639px) { .ada-pro-page h1:not(.sr-only):not(.uppercase) { font-size: 1.5rem; line-height: 2rem; } }

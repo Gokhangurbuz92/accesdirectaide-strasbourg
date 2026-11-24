@@ -63,9 +63,9 @@ export default function FindAndBook({ showGuide = false }) {
   const whereHintId = `${ids}-where-hint`;
   return (
     <section aria-labelledby={`${ids}-title`} className="space-y-4" data-testid="find-and-book">
-      <div className="rounded-xl border border-blue-200 bg-white p-4 shadow-sm sm:p-5">
+      <div className="rounded-2xl border border-ada-line bg-ada-surface p-4 shadow-sm sm:p-6">
         <h2 id={`${ids}-title`} className="mb-3 text-xl font-bold text-slate-900">{t('compte:find.title', 'Que cherchez-vous ?')}</h2>
-        <form role="search" aria-labelledby={`${ids}-title`} onSubmit={onSubmit} noValidate className="grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto] sm:items-start">
+        <form role="search" aria-labelledby={`${ids}-title`} onSubmit={onSubmit} noValidate className="grid gap-3 md:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)_auto] md:items-start">
           <div>
             <label htmlFor={`${ids}-q`} className="mb-1 block text-sm font-semibold text-slate-900">{t('compte:find.what_label', 'Une aide, une démarche ou une structure')}</label>
             <input id={`${ids}-q`} ref={qRef} type="search" className={TEXT_INPUT} value={q} onChange={(e) => { setQ(e.target.value); if (error === 'empty') setError(''); }}
@@ -84,12 +84,12 @@ export default function FindAndBook({ showGuide = false }) {
               {COMMUNES.map(([code, name]) => <option key={code} value={name} />)}
             </datalist>
           </div>
-          <Button type="submit" className="min-h-11 w-full sm:mt-6 sm:w-auto" data-testid="find-submit" aria-busy={busy || undefined}>
+          <Button type="submit" className="min-h-11 w-full md:col-span-2 md:w-auto md:justify-self-start xl:col-span-1 xl:mt-7" data-testid="find-submit" aria-busy={busy || undefined}>
             <Search className="me-2 h-4 w-4" aria-hidden="true" />
             {t('compte:find.submit', 'Rechercher')}
           </Button>
           {error ? (
-            <p id={errorId} role="alert" className="rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-900 sm:col-span-3" data-testid="find-error">
+            <p id={errorId} role="alert" className="rounded-md border border-red-200 bg-red-50 p-2 text-sm text-red-900 md:col-span-2 xl:col-span-3" data-testid="find-error">
               {error === 'place'
                 ? t('compte:find.error_place', 'Nous ne reconnaissons pas ce lieu. Choisissez une commune de l’Eurométropole de Strasbourg dans la liste, ou un code postal du Bas-Rhin (67…).')
                 : t('compte:find.error_empty', 'Écrivez ce que vous cherchez, ou un lieu.')}
@@ -100,14 +100,14 @@ export default function FindAndBook({ showGuide = false }) {
 
       {links.length > 0 && (
         <nav aria-label={t('compte:find.links_label', 'Accès rapides')}>
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="grid auto-rows-fr gap-3 sm:grid-cols-2 2xl:grid-cols-3">
             {links.map((l) => (
               <li key={l.to}>
                 <Link to={l.to} data-testid={l.testid}
-                  className="flex min-h-11 items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 hover:border-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
+                  className="ada-tile h-full min-h-11 items-center justify-between !p-4">
                   <span>
-                    <span className="block font-semibold text-slate-900">{l.label}</span>
-                    <span className="block text-sm text-slate-700">{l.hint}</span>
+                    <span className="block font-semibold text-ada-ink">{l.label}</span>
+                    <span className="block text-sm text-ada-ink-3">{l.hint}</span>
                   </span>
                   <ArrowRight className="rtl-flip h-4 w-4 shrink-0 text-blue-700" aria-hidden="true" />
                 </Link>

@@ -64,42 +64,42 @@ export function AuthHeaderActions() {
             <div className="flex items-center gap-2">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="gap-1.5">
-                            <div className="h-7 w-7 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 text-xs font-bold flex-shrink-0">
+                        <Button variant="ghost" size="sm" className="gap-2 rounded-full border border-ada-line ps-1 pe-3 text-ada-ink hover:bg-ada-sunken">
+                            <div className="h-8 w-8 rounded-full bg-ada-action-soft flex items-center justify-center text-ada-link text-sm font-bold flex-shrink-0" aria-hidden="true">
                                 {userEmail ? userEmail[0].toUpperCase() : 'U'}
                             </div>
-                            <span className="hidden sm:inline text-sm max-w-[120px] truncate">
+                            <span className="hidden sm:inline text-sm font-medium max-w-[160px] truncate">
                                 {userEmail || t('layout:account.mine', 'Mon compte')}
                             </span>
                             <ChevronDown className="h-3 w-3 opacity-50" aria-hidden="true" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                        <div className="px-3 py-2 border-b mb-1">
-                            <p className="text-xs text-slate-500">{t('layout:account.signedInAs', 'Connecté en tant que')}</p>
-                            <p className="text-sm font-medium truncate">{userEmail}</p>
+                    <DropdownMenuContent align="end" className="w-72 rounded-xl p-1.5 shadow-lg">
+                        <div className="px-3 py-2.5 border-b border-ada-line mb-1.5">
+                            <p className="text-xs text-ada-ink-3">{t('layout:account.signedInAs', 'Connecté en tant que')}</p>
+                            <p className="text-sm font-semibold text-ada-ink truncate">{userEmail}</p>
                         </div>
                         <DropdownMenuItem asChild>
-                            <Link to="/compte" className="flex items-center gap-2.5 cursor-pointer">
-                                <User className="h-4 w-4 text-blue-500" />
+                            <Link to="/compte" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
+                                <User className="h-4 w-4 text-ada-link" aria-hidden="true" />
                                 <span>{t('layout:account.space', 'Mon Espace')}</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link to="/compte/messages" className="flex items-center gap-2.5 cursor-pointer">
-                                <MessageCircle className="h-4 w-4 text-blue-500" />
+                            <Link to="/compte/messages" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
+                                <MessageCircle className="h-4 w-4 text-ada-link" aria-hidden="true" />
                                 <span>{t('layout:account.messages', 'Mes messages')}</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link to="/compte/parametres" className="flex items-center gap-2.5 cursor-pointer">
-                                <Settings className="h-4 w-4 text-slate-500" />
+                            <Link to="/compte/parametres" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
+                                <Settings className="h-4 w-4 text-ada-link" aria-hidden="true" />
                                 <span>{t('layout:account.settings', 'Paramètres')}</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
-                            className="flex items-center gap-2.5 cursor-pointer text-red-600 focus:text-red-600"
+                            className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer text-red-700 focus:text-red-700"
                             onClick={handleLogout}
                         >
                             <LogOut className="h-4 w-4" />
@@ -125,7 +125,7 @@ export function AuthHeaderActions() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem asChild>
-                        <Link to="/auth/login" className="flex items-center gap-2.5 cursor-pointer">
+                        <Link to="/auth/login" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
                             <User className="h-4 w-4 text-indigo-500" />
                             <div>
                                 <p className="font-medium">{t('layout:account.personal', 'Espace Particulier')}</p>
@@ -134,7 +134,7 @@ export function AuthHeaderActions() {
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link to="/pro/login" className="flex items-center gap-2.5 cursor-pointer">
+                        <Link to="/pro/login" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
                             <Briefcase className="h-4 w-4 text-emerald-500" />
                             <div>
                                 <p className="font-medium">{t('layout:account.pro', 'Espace Professionnel')}</p>
@@ -156,7 +156,7 @@ export function AuthHeaderActions() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem asChild>
-                        <Link to="/auth/signup" className="flex items-center gap-2.5 cursor-pointer">
+                        <Link to="/auth/signup" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
                             <User className="h-4 w-4 text-indigo-500" />
                             <div>
                                 <p className="font-medium">{t('layout:account.personalAccount', 'Compte Particulier')}</p>
@@ -165,7 +165,7 @@ export function AuthHeaderActions() {
                         </Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                        <Link to="/pro/register" className="flex items-center gap-2.5 cursor-pointer">
+                        <Link to="/pro/register" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
                             <Briefcase className="h-4 w-4 text-emerald-500" />
                             <div>
                                 <p className="font-medium">{t('layout:account.proAccount', 'Compte Structure / Pro')}</p>
@@ -216,15 +216,15 @@ export function AuthMobileActions({ onNavigate }) {
                     {t('layout:account.mine', 'Mon compte')}
                 </p>
                 <Link to="/compte" className={linkClass} onClick={onNavigate}>
-                    <User className="h-4 w-4 text-blue-500" />
+                    <User className="h-4 w-4 text-ada-link" aria-hidden="true" />
                     {t('layout:account.space', 'Mon Espace')}
                 </Link>
                 <Link to="/compte/messages" className={linkClass} onClick={onNavigate}>
-                    <MessageCircle className="h-4 w-4 text-blue-500" />
+                    <MessageCircle className="h-4 w-4 text-ada-link" aria-hidden="true" />
                     {t('layout:account.messages', 'Mes messages')}
                 </Link>
                 <Link to="/compte/parametres" className={linkClass} onClick={onNavigate}>
-                    <Settings className="h-4 w-4 text-slate-500" />
+                    <Settings className="h-4 w-4 text-ada-link" aria-hidden="true" />
                     {t('layout:account.settings', 'Paramètres')}
                 </Link>
                 <button onClick={handleLogout} className={`${linkClass} w-full text-red-600 hover:bg-red-50`}>

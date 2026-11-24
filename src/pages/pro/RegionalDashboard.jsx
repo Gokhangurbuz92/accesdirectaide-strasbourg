@@ -87,7 +87,7 @@ export default function RegionalDashboard() {
             <div className="min-h-screen bg-slate-50 py-8 px-4">
                 <SEO title={t('pro:regional.seo_title', 'Observatoire Régional — ADA')} noindex />
                 <div className="max-w-6xl mx-auto space-y-4">
-                    <h1 className="text-xl font-bold text-slate-900">{t('pro:regional.title', 'Observatoire Régional ADA')}</h1>
+                    <h1 className="text-xl font-bold text-slate-900">{t('pro:regional.title', 'Observatoire régional ADA')}</h1>
                     <p role="note" className="p-3 rounded-xl border border-slate-200 bg-white text-sm text-slate-700" data-testid="regional-refused">
                         {t('pro:regional.refused', 'L’observatoire est réservé aux structures actives vérifiées par ADA. Il s’ouvrira quand ADA aura activé votre structure.')}
                     </p>
@@ -102,7 +102,7 @@ export default function RegionalDashboard() {
             <div className="min-h-screen bg-slate-50 py-8 px-4">
                 <SEO title={t('pro:regional.seo_title', 'Observatoire Régional — ADA')} noindex />
                 <div className="max-w-6xl mx-auto space-y-4">
-                    <h1 className="text-xl font-bold text-slate-900">{t('pro:regional.title', 'Observatoire Régional ADA')}</h1>
+                    <h1 className="text-xl font-bold text-slate-900">{t('pro:regional.title', 'Observatoire régional ADA')}</h1>
                     <div role="alert" className="p-3 rounded-xl border border-red-200 bg-red-50 text-sm text-red-800" data-testid="regional-error">
                         <p>{t('pro:regional.load_failed', 'Les statistiques n’ont pas pu être chargées : aucun chiffre n’est affiché.')}</p>
                         <button type="button" className="mt-2 rounded border border-red-300 px-3 py-1 text-sm underline" data-testid="regional-retry" onClick={fetchStats}>{t('pro:regional.retry', 'Réessayer')}</button>
@@ -130,7 +130,7 @@ export default function RegionalDashboard() {
                         </div>
                         <div>
                             <h1 className="text-xl font-bold text-slate-900">
-                                {t('pro:regional.title', 'Observatoire Régional ADA')}
+                                {t('pro:regional.title', 'Observatoire régional ADA')}
                             </h1>
                             <p className="text-xs text-slate-700">
                                 {t('pro:regional.subtitle', 'Agrégats mesurés des structures vérifiées · commune affichée à partir de 3 structures · valeurs inférieures à 5 masquées')}

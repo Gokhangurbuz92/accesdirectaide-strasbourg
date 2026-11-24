@@ -34,6 +34,13 @@ export default function ProLayout() {
     const [menuOpen, setMenuOpen] = useState(false);   // PKG-9 / M04: phone navigation (before: no navigation at all below md)
     const unreadMessages = useProUnreadMessages(Boolean(user), location.pathname);   // B02
     useEffect(() => { setMenuOpen(false); }, [location.pathname]);
+    // UI modernisation: Escape closes the drawer and gives the focus back to the menu button
+    useEffect(() => {
+        if (!menuOpen) return undefined;
+        const onKey = (/** @type {KeyboardEvent} */ e) => { if (e.key === 'Escape') { setMenuOpen(false); document.querySelector('[data-testid="pro-mobile-menu"]')?.focus(); } };
+        document.addEventListener('keydown', onKey);
+        return () => document.removeEventListener('keydown', onKey);
+    }, [menuOpen]);
     const proLoginEntry = '/pro/login';
 
     useEffect(() => {
@@ -128,7 +135,7 @@ export default function ProLayout() {
     if (unavailable) return <ServiceUnavailable area={t('pro:layout.area', 'L’espace professionnel')} />;
 
     return (
-        <div className="min-h-screen bg-slate-100 flex">
+        <div className="min-h-screen bg-ada-canvas flex">
             <a
                 href="#main-content"
                 className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-50 focus:bg-white focus:text-blue-700 focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
@@ -145,18 +152,20 @@ export default function ProLayout() {
                 <OnboardingTour onComplete={() => setShowOnboarding(false)} />
             )}
             {/* Sidebar */}
-            <aside className="w-64 bg-white border-e border-slate-200 hidden md:flex flex-col">
-                <div className="p-6 border-b border-slate-200 flex items-center justify-between">
-                    <p className="font-bold text-xl text-blue-800">{t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}</p>{/* Q10: the brand is not the page heading — each page has its own h1 */}
+            {/* UI modernisation: a wider sidebar (labels on one line) that stays in view while the page scrolls; drawer below 1024 px */}
+            <div className="w-72 shrink-0 bg-ada-surface border-e border-ada-line hidden lg:block">
+            <aside className="flex flex-col sticky top-0 h-screen">
+                <div className="px-5 py-5 border-b border-ada-line flex items-center justify-between gap-2">
+                    <p className="font-bold text-lg text-ada-ink"><span className="ada-wordmark">{t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}</span></p>{/* Q10: the brand is not the page heading — each page has its own h1 */}
                     {user && <NotificationCenter proId={user.id} />}
                 </div>
-                <nav className="flex-1 p-4 space-y-1" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')}>
+                <nav className="flex-1 overflow-y-auto p-3 space-y-0.5" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')}>
                     <ProNavItems role={user?.role} unreadMessages={unreadMessages} modules={modules} />
                 </nav>
-                <div className="p-4 border-t border-slate-200">
-                    <div className="mb-4">
-                        <p className="font-medium text-sm text-slate-900">{user?.email}</p>
-                        <p className="text-xs text-slate-700">{proRole(user?.role)}</p>
+                <div className="p-4 border-t border-ada-line">
+                    <div className="mb-3">
+                        <p className="font-medium text-sm text-ada-ink truncate">{user?.email}</p>
+                        <p className="text-xs text-ada-ink-3">{proRole(user?.role)}</p>
                     </div>
                     <Button variant="outline" className="w-full justify-start" onClick={handleLogout}>
                         <LogOut className="me-2 h-4 w-4" />
@@ -164,23 +173,24 @@ export default function ProLayout() {
                     </Button>
                 </div>
             </aside>
+            </div>
 
             {/* Main Content */}
-            <main id="main-content" tabIndex={-1} className="flex-1 overflow-auto outline-none">
+            <main id="main-content" tabIndex={-1} className="flex-1 min-w-0 outline-none">
                 <ProSessionExpiry onExpired={() => { localStorage.removeItem('pro_token'); navigate(`${proLoginEntry}?next=${encodeURIComponent(location.pathname + location.search)}`, { replace: true }); }} />
-                <header className="bg-white border-b border-slate-200 p-2 sticky top-0 z-30 md:hidden flex justify-between items-center gap-2">
+                <header className="bg-ada-surface border-b border-ada-line p-2 sticky top-0 z-50 lg:hidden flex justify-between items-center gap-2">
                     <button
                         type="button"
                         onClick={() => setMenuOpen((o) => !o)}
                         aria-expanded={menuOpen}
                         aria-controls="pro-mobile-nav"
                         data-testid="pro-mobile-menu"
-                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-slate-800 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-ada-line text-ada-ink hover:bg-ada-sunken focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
                     >
                         {menuOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
                         <span className="sr-only">{menuOpen ? t('pro:layout.close_menu', 'Fermer le menu') : t('pro:layout.open_menu', 'Ouvrir le menu')}</span>
                     </button>
-                    <p className="font-bold text-lg text-blue-800">{t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}</p>
+                    <p className="font-bold text-lg"><span className="ada-wordmark">{t('pro:layout.accesdirect_pro', 'AccesDirect Pro')}</span></p>
                     <div className="flex items-center gap-1">
                         {user && <NotificationCenter />}
                         <button type="button" onClick={handleLogout} aria-label={t('pro:layout.deconnecter', 'Se déconnecter')} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-slate-800 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
@@ -188,12 +198,16 @@ export default function ProLayout() {
                         </button>
                     </div>
                 </header>
+                {/* UI modernisation: on a phone or a tablet the menu is a drawer over the page (backdrop, Escape and a tap outside close it) */}
                 {menuOpen && (
-                    <nav id="pro-mobile-nav" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')} className="md:hidden border-b border-slate-200 bg-white p-3 space-y-1" data-testid="pro-mobile-nav">
-                        <ProNavItems role={user?.role} unreadMessages={unreadMessages} modules={modules} />
-                    </nav>
+                    <div className="lg:hidden fixed inset-0 z-40" data-testid="pro-mobile-drawer">
+                        <button type="button" tabIndex={-1} aria-hidden="true" className="absolute inset-0 h-full w-full cursor-default bg-slate-950/40" onClick={() => setMenuOpen(false)} />
+                        <nav id="pro-mobile-nav" aria-label={t('pro:layout.navigation_espace_pro', 'Navigation de l\'espace pro')} className="absolute inset-y-0 start-0 w-[min(20rem,86vw)] overflow-y-auto border-e border-ada-line bg-ada-surface p-3 pt-16 space-y-0.5 shadow-xl" data-testid="pro-mobile-nav">
+                            <ProNavItems role={user?.role} unreadMessages={unreadMessages} modules={modules} />
+                        </nav>
+                    </div>
                 )}
-                <div className="p-4 md:p-8">
+                <div className="ada-pro-page mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
                     <ProBreadcrumb />
                     {/* G3: a screen of a module the server does not serve says « pas encore ouvert » (not an outage) and is not loaded */}
                     {moduleOpen(modules, moduleOfScreen(location.pathname)) ? <Outlet context={{ user, modules }} /> : <NotYetOpenNotice />}
@@ -203,66 +217,96 @@ export default function ProLayout() {
     );
 }
 
-/** The navigation entries, shared by the desktop sidebar and the phone menu. */
+/**
+ * The navigation entries, shared by the desktop sidebar and the phone drawer.
+ * UI modernisation (24/11/2026): the ~20 entries are grouped in titled sections (Accueil, Accompagnement, Rendez-vous et échanges, Structure et équipe, Pilotage) — same order as before;
+ * the entries of modules the server does not serve yet are gathered at the end under « Pas encore ouvert » (same order, still not links), so the
+ * open work comes first and no label wraps over four lines next to its badge.
+ */
 function ProNavItems({ role, unreadMessages = null, modules = null }) {
     const { t } = useT('pro');
     // G3: an entry of a module the server does not serve is shown as text marked « pas encore ouvert » (no link); the agenda's sub-entries are left out
     const open = (/** @type {string} */ m) => moduleOpen(modules, m);
+    const admin = role === 'STRUCTURE_ADMIN' || role === 'SUPERADMIN';
+    /** @typedef {{ to: string, icon: any, label: string, module?: string, badge?: any, badgeLabel?: string }} Entry */
+    /** @type {{ id: string, title: string, items: (Entry | false | null)[] }[]} */
+    const sections = [
+        { id: 'home', title: t('pro:nav.section.home', 'Accueil'), items: [
+            { to: '/pro/dashboard', icon: LayoutDashboard, label: t('pro:layout.tableau_bord', 'Tableau de bord') },
+        ] },
+        { id: 'support', title: t('pro:nav.section.support', 'Accompagnement'), items: [
+            { module: 'cases', to: '/pro/dossiers', icon: FileText, label: t('pro:layout.dossiers_suivis', 'Dossiers suivis') },
+            // R18 (R31): working baskets of verified aides, démarches and lieux
+            { module: 'selections', to: '/pro/selections', icon: ListChecks, label: t('pro:layout.selections_orientation', 'Sélections d’orientation') },
+            { module: 'referrals', to: '/pro/orientations', icon: Users, label: t('pro:layout.orientations', 'Orientations') },
+            // G14-PS: the non-HDS social referral
+            { module: 'socialReferrals', to: '/pro/orientations-sociales', icon: Users, label: t('socialref:pro.title', 'Orientations sociales') },
+        ] },
+        { id: 'rdv', title: t('pro:nav.section.rdv_messages', 'Rendez-vous et échanges'), items: [
+            { module: 'agenda', to: '/pro/rdv/agenda', icon: CalendarDays, label: t('pro:layout.agenda_rdv', 'Agenda RDV') },
+            open('agenda') && { to: '/pro/rdv/new', icon: FileText, label: t('pro:layout.nouveau_rdv', 'Nouveau RDV') },
+            open('agenda') && { to: '/pro/rdv/services', icon: FileText, label: t('pro:layout.services_rdv', 'Services RDV') },
+            open('agenda') && { to: '/pro/rdv/disponibilites', icon: Clock3, label: t('pro:layout.disponibilites', 'Disponibilités') },
+            open('agenda') && { to: '/pro/rdv/absences', icon: Clock3, label: t('pro:layout.absences', 'Absences') },
+            // B02: the member's unread conversations (a number only when the database keeps read markers)
+            { module: 'messages', to: '/pro/messages', icon: MessageCircle, label: t('pro:layout.messages', 'Messages'), badge: unreadMessages, badgeLabel: unreadMessages ? t('pro:layout.messages_unread', 'Messages, non lus : {{count}}', { count: unreadMessages }) : undefined },
+            // G14-AID: the helper code of the « mode accompagnant » — shown only when the server serves it (out of the AIPD until extended)
+            modules?.assist === true && { to: '/pro/accompagnement', icon: HeartHandshake, label: t('pro:layout.accompagnement', 'Accompagner une personne') },
+        ] },
+        // owner usefulness pass (2026-10-25): the video room opens from each video appointment (its page); /pro/visio was a « bientôt disponible » page
+        { id: 'org', title: t('pro:nav.section.org', 'Structure et équipe'), items: admin ? [
+            { to: '/pro/structure', icon: Building2, label: t('pro:layout.structure', 'Ma structure') },
+            { to: '/pro/team', icon: Users, label: t('pro:layout.mon_equipe', 'Mon équipe') },
+            // X05 (expansion): shown only when the server says the job board is served (never a « pas encore ouvert » entry for an expansion)
+            modules?.employment === true && { to: '/pro/offres-emploi', icon: FileText, label: t('pro:layout.job_listings', 'Offres d’emploi') },
+        ] : [] },
+        { id: 'steer', title: t('pro:nav.section.steer', 'Pilotage'), items: [
+            admin && { to: '/pro/reports', icon: BarChart3, label: t('pro:layout.impact', 'Impact') },
+            admin && { to: '/pro/audit', icon: Shield, label: t('pro:layout.journal_audit', 'Journal d\'audit') },
+            // R20: the territorial observatory (k-anonymous aggregates over verified organizations, ANONYMITY_REVIEW) was reachable only by its address
+            { module: 'regional', to: '/pro/regional', icon: Globe, label: t('pro:layout.observatoire_territorial', 'Observatoire territorial') },
+            // Paramètres (notifications, MFA) was only in the phone menu: unreachable on a computer
+            { to: '/pro/parametres', icon: Settings, label: t('pro:layout.parametres', 'Paramètres') },
+        ] },
+    ];
+    /** @type {Entry[]} */
+    const closed = [];
+    const rendered = sections.map((sec) => {
+        const items = /** @type {Entry[]} */ (sec.items.filter(Boolean)).filter((it) => {
+            if (it.module && !open(it.module)) { closed.push(it); return false; }
+            return true;
+        });
+        if (!items.length) return null;
+        return (
+            <div key={sec.id} className="pt-3 first:pt-0" role="group" aria-labelledby={`pro-nav-${sec.id}`}>
+                <p id={`pro-nav-${sec.id}`} className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-ada-ink-3">{sec.title}</p>
+                {items.map((it) => <NavLink key={it.to} to={it.to} icon={it.icon} badge={it.badge} badgeLabel={it.badgeLabel}>{it.label}</NavLink>)}
+            </div>
+        );
+    });
     return (
         <>
-            <NavLink to="/pro/dashboard" icon={LayoutDashboard}>{t('pro:layout.tableau_bord', 'Tableau de bord')}</NavLink>
-            <ModuleNavLink modules={modules} module="cases" to="/pro/dossiers" icon={FileText}>{t('pro:layout.dossiers_suivis', 'Dossiers suivis')}</ModuleNavLink>
-            {/* R18 (R31): working baskets of verified aides, démarches and lieux */}
-            <ModuleNavLink modules={modules} module="selections" to="/pro/selections" icon={ListChecks}>{t('pro:layout.selections_orientation', 'Sélections d’orientation')}</ModuleNavLink>
-            <ModuleNavLink modules={modules} module="referrals" to="/pro/orientations" icon={Users}>{t('pro:layout.orientations', 'Orientations')}</ModuleNavLink>
-            {/* G14-PS: the non-HDS social referral */}
-            <ModuleNavLink modules={modules} module="socialReferrals" to="/pro/orientations-sociales" icon={Users}>{t('socialref:pro.title', 'Orientations sociales')}</ModuleNavLink>
-            <ModuleNavLink modules={modules} module="agenda" to="/pro/rdv/agenda" icon={CalendarDays}>{t('pro:layout.agenda_rdv', 'Agenda RDV')}</ModuleNavLink>
-            {open('agenda') ? (
-                <>
-                    <NavLink to="/pro/rdv/new" icon={FileText}>{t('pro:layout.nouveau_rdv', 'Nouveau RDV')}</NavLink>
-                    <NavLink to="/pro/rdv/services" icon={FileText}>{t('pro:layout.services_rdv', 'Services RDV')}</NavLink>
-                    <NavLink to="/pro/rdv/disponibilites" icon={Clock3}>{t('pro:layout.disponibilites', 'Disponibilités')}</NavLink>
-                    <NavLink to="/pro/rdv/absences" icon={Clock3}>{t('pro:layout.absences', 'Absences')}</NavLink>
-                </>
+            {rendered}
+            {closed.length ? (
+                <div className="mt-3 border-t border-ada-line pt-3" role="group" aria-labelledby="pro-nav-closed-title">
+                    <p id="pro-nav-closed-title" className="px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-ada-ink-3">{t('pro:nav.section.closed', 'Pas encore ouvert')}</p>
+                    {closed.map((it) => <ClosedNavItem key={it.to} icon={it.icon}>{it.label}</ClosedNavItem>)}
+                </div>
             ) : null}
-            {/* B02: the member's unread conversations (a number only when the database keeps read markers) */}
-            <ModuleNavLink modules={modules} module="messages" to="/pro/messages" icon={MessageCircle} badge={unreadMessages} badgeLabel={unreadMessages ? t('pro:layout.messages_unread', 'Messages, non lus : {{count}}', { count: unreadMessages }) : undefined}>{t('pro:layout.messages', 'Messages')}</ModuleNavLink>
-            {/* R20: the territorial observatory (k-anonymous aggregates over verified organizations, ANONYMITY_REVIEW) was reachable only by its address */}
-            <ModuleNavLink modules={modules} module="regional" to="/pro/regional" icon={Globe}>{t('pro:layout.observatoire_territorial', 'Observatoire territorial')}</ModuleNavLink>
-            {/* owner usefulness pass (2026-10-25): the video room opens from each video appointment (its page); /pro/visio was a « bientôt disponible » page */}
-            {role === 'STRUCTURE_ADMIN' || role === 'SUPERADMIN' ? (
-                <>
-                    <NavLink to="/pro/team" icon={Users}>{t('pro:layout.mon_equipe', 'Mon équipe')}</NavLink>
-                    <NavLink to="/pro/audit" icon={Shield}>{t('pro:layout.journal_audit', 'Journal d\'audit')}</NavLink>
-                    <NavLink to="/pro/reports" icon={BarChart3}>{t('pro:layout.impact', 'Impact')}</NavLink>
-                    <NavLink to="/pro/structure" icon={Building2}>{t('pro:layout.structure', 'Ma structure')}</NavLink>
-                    {/* X05 (expansion): shown only when the server says the job board is served (never a « pas encore ouvert » entry for an expansion) */}
-                    {modules?.employment === true ? <NavLink to="/pro/offres-emploi" icon={FileText}>{t('pro:layout.job_listings', 'Offres d’emploi')}</NavLink> : null}
-                </>
-            ) : null}
-            {/* G14-AID: the helper code of the « mode accompagnant » — shown only when the server serves it (out of the AIPD until extended) */}
-            {modules?.assist === true ? <NavLink to="/pro/accompagnement" icon={HeartHandshake}>{t('pro:layout.accompagnement', 'Accompagner une personne')}</NavLink> : null}
-            {/* Paramètres (notifications, MFA) was only in the phone menu: unreachable on a computer */}
-            <NavLink to="/pro/parametres" icon={Settings}>{t('pro:layout.parametres', 'Paramètres')}</NavLink>
         </>
     );
-}
-
-/** G3: the entry of a module — a link when the server serves it, else a closed entry */
-// @ts-ignore
-function ModuleNavLink({ modules, module, ...props }) {
-    return moduleOpen(modules, module) ? <NavLink {...props} /> : <ClosedNavItem icon={props.icon}>{props.children}</ClosedNavItem>;
 }
 
 /** G3: a closed module's entry — not a link, marked « pas encore ouvert » */
 // @ts-ignore
 function ClosedNavItem({ icon: Icon, children }) {
     return (
-        <p className="flex min-h-11 items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-slate-600" data-testid="pro-nav-closed">
-            <Icon className="h-5 w-5" aria-hidden="true" />
-            {children}
-            <NotYetOpenBadge />
+        <p className="flex min-h-11 items-start gap-3 px-3 py-2 rounded-lg text-sm font-medium text-ada-ink-3" data-testid="pro-nav-closed">
+            <Icon className="mt-0.5 h-5 w-5 shrink-0" aria-hidden="true" />
+            <span className="min-w-0">
+                <span className="block">{children}</span>
+                <NotYetOpenBadge />
+            </span>
         </p>
     );
 }
@@ -276,11 +320,11 @@ function NavLink({ to, icon: Icon, children, badge = null, badgeLabel = undefine
             to={to}
             aria-current={isActive ? 'page' : undefined}
             aria-label={badge ? badgeLabel : undefined}
-            className={`flex min-h-11 items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive ? 'bg-blue-50 text-blue-800' : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+            className={`flex min-h-11 items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-ada-action-soft text-ada-ink font-semibold' : 'text-ada-ink-2 hover:bg-ada-sunken hover:text-ada-ink'
                 }`}
         >
-            <Icon className="h-5 w-5" aria-hidden="true" />
-            {children}
+            <Icon className={`h-5 w-5 shrink-0 ${isActive ? 'text-ada-link' : ''}`} aria-hidden="true" />
+            <span className="min-w-0">{children}</span>
             {badge ? <span data-testid="pro-nav-unread" aria-hidden="true" className="ms-auto inline-flex min-w-6 items-center justify-center rounded-full bg-blue-800 px-1.5 py-0.5 text-xs font-bold text-white">{badge > 99 ? '99+' : badge}</span> : null}
         </Link>
     );

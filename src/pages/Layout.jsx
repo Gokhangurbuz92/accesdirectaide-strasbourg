@@ -196,7 +196,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
   const filteredNavItems = navItemsFor(isAdmin);
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
+    <div className="min-h-screen flex flex-col bg-ada-canvas">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:start-4 focus:z-50 focus:bg-white focus:text-brand-primary focus:px-4 focus:py-2 focus:rounded focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-primary"
@@ -244,7 +244,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
                 aria-label={t('layout:header.home', "Aller à l'accueil")}
               >
                 <img src="/favicon.svg" alt={t('layout:header.logo', 'Logo AccesDirectAide')} className="h-9 w-9" width="36" height="36" />
-                <span className="text-sm font-bold" style={{ background: 'linear-gradient(135deg, #002D5A 0%, #1e40af 50%, #4F46E5 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>AccesDirectAide</span>
+                <span className="ada-wordmark text-base font-bold">AccesDirectAide</span>
               </Link>
             </div>
 

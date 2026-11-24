@@ -1,4 +1,9 @@
 
+// UI modernisation (24/11/2026): the palette reads CSS variables (src/design/palette.cjs, src/styles/theme-palette.css) — same values in light,
+// a complete dark theme and a stronger high-contrast mode without changing the colour classes of the components.
+const { paletteFor } = require('./src/design/palette.cjs');
+const surfaceBg = { white: 'rgb(var(--cg-white) / <alpha-value>)' };
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
 	darkMode: ["class"],
@@ -11,6 +16,20 @@ module.exports = {
 				mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
 				sans: ['Inter', 'ui-sans-serif', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
 			},
+			// UI modernisation: one step larger small text (12 → 13 px, 14 → 15 px) — most secondary text of the account screens was 12–14 px
+			fontSize: {
+				xs: ['0.8125rem', { lineHeight: '1.25rem' }],
+				sm: ['0.9375rem', { lineHeight: '1.4rem' }],
+			},
+			maxWidth: {
+				// readable measure for running text (GOV.UK « two-thirds », ~70 characters)
+				prose: '42rem',
+			},
+			backgroundColor: { ...paletteFor('g'), ...surfaceBg },
+			gradientColorStops: { ...paletteFor('g'), ...surfaceBg },
+			ringOffsetColor: { ...paletteFor('g'), ...surfaceBg },
+			borderColor: paletteFor('b'),
+			divideColor: paletteFor('b'),
 			transitionTimingFunction: {
 				apple: 'cubic-bezier(.2,.8,.2,1)',
 			},
@@ -37,6 +56,31 @@ module.exports = {
 				xl: 'var(--shadow-xl)',
 			},
 			colors: {
+				...paletteFor('t'),
+				// UI modernisation — semantic surfaces and text (src/styles/tokens.css: light, dark, high contrast)
+				ada: {
+					canvas: 'rgb(var(--ada-canvas) / <alpha-value>)',
+					surface: 'rgb(var(--ada-surface) / <alpha-value>)',
+					sunken: 'rgb(var(--ada-sunken) / <alpha-value>)',
+					line: 'rgb(var(--ada-line) / <alpha-value>)',
+					'line-strong': 'rgb(var(--ada-line-strong) / <alpha-value>)',
+					ink: 'rgb(var(--ada-ink) / <alpha-value>)',
+					'ink-2': 'rgb(var(--ada-ink-2) / <alpha-value>)',
+					'ink-3': 'rgb(var(--ada-ink-3) / <alpha-value>)',
+					action: 'rgb(var(--ada-action) / <alpha-value>)',
+					'action-hover': 'rgb(var(--ada-action-hover) / <alpha-value>)',
+					'action-soft': 'rgb(var(--ada-action-soft) / <alpha-value>)',
+					link: 'rgb(var(--ada-link) / <alpha-value>)',
+					accent: 'rgb(var(--ada-accent) / <alpha-value>)',
+					danger: 'rgb(var(--ada-danger) / <alpha-value>)',
+					'danger-soft': 'rgb(var(--ada-danger-soft) / <alpha-value>)',
+				},
+				// the classes text-text-body / text-text-muted / bg-surface were used by the header without any definition (no style at all)
+				text: {
+					body: 'rgb(var(--ada-ink) / <alpha-value>)',
+					muted: 'rgb(var(--ada-ink-3) / <alpha-value>)',
+				},
+				surface: 'rgb(var(--ada-surface) / <alpha-value>)',
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				card: {
@@ -98,14 +142,14 @@ module.exports = {
 
 				// ✅ Blueprint Trust tokens (namespaced to avoid collisions)
 				bt: {
-					ink: '#0F172A',      // Slate-900
-					background: '#F8FAFC', // Slate-50
-					surface: '#FFFFFF',
-					border: '#E2E8F0',   // Slate-200
-					primary: '#4F46E5',  // Indigo-600
-					primaryHover: '#4338CA', // Indigo-700
-					accent: '#6366F1',   // Indigo-500
-					muted: '#64748B',    // Slate-500
+					ink: 'rgb(var(--ada-ink) / <alpha-value>)',
+					background: 'rgb(var(--ada-sunken) / <alpha-value>)',
+					surface: 'rgb(var(--ada-surface) / <alpha-value>)',
+					border: 'rgb(var(--ada-line) / <alpha-value>)',
+					primary: 'rgb(var(--ada-action) / <alpha-value>)',
+					primaryHover: 'rgb(var(--ada-action-hover) / <alpha-value>)',
+					accent: 'rgb(var(--ada-focus) / <alpha-value>)',
+					muted: 'rgb(var(--ada-ink-3) / <alpha-value>)',
 					success: '#10B981',  // Emerald-500
 					warning: '#F59E0B',  // Amber-500
 					danger: '#EF4444',   // Red-500

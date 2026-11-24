@@ -139,7 +139,7 @@ export default function ProDashboard() {
             <section aria-labelledby="pro-queue-title" data-testid="pro-dashboard-queue" className="order-first">
                 <h2 id="pro-queue-title" className="sr-only">{t('pro:dashboard.file_travail', 'File de travail')}</h2>
                 {queue.notOpen ? (
-                    <p className="text-sm text-slate-800" data-testid="pro-queue-not-open">{t('pro:dashboard.queue_not_open', 'Dossiers suivis et orientations : pas encore ouverts. Ils le seront lorsque leur cadre de protection des données (et un hébergement certifié des données de santé) sera en place.')}</p>
+                    <p className="rounded-xl border border-ada-line bg-ada-sunken px-4 py-3 text-sm text-ada-ink-2" data-testid="pro-queue-not-open">{t('pro:dashboard.queue_not_open', 'Dossiers suivis et orientations : pas encore ouverts. Ils le seront lorsque leur cadre de protection des données (et un hébergement certifié des données de santé) sera en place.')}</p>
                 ) : queue.error ? <p role="alert" className="text-sm text-red-800">{queue.error}</p> : (
                     <ul className="grid grid-cols-2 gap-3 md:grid-cols-4">
                         {[['mine', t('pro:dashboard.q_mine', 'Mes dossiers'), '/pro/dossiers', casesOpen], ['unassigned', t('pro:dashboard.q_unassigned', 'Dossiers à attribuer'), '/pro/dossiers', casesOpen], ['toHandle', t('pro:dashboard.q_to_handle', 'Orientations à traiter'), '/pro/orientations', referralsOpen], ['overdue', t('pro:dashboard.q_overdue', 'Orientations en retard'), '/pro/orientations', referralsOpen]].filter((x) => x[3]).map(([k, label, to]) => (
@@ -155,7 +155,7 @@ export default function ProDashboard() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
-                        {t('pro:dashboard.tableau_bord', 'Tableau de Bord')}
+                        {t('pro:dashboard.tableau_bord', 'Tableau de bord')}
                     </h1>
                     <p className="text-sm text-slate-700">
                         {t('pro:dashboard.welcome', 'Bienvenue, {{email}}', { email: user?.email })}
@@ -183,6 +183,33 @@ export default function ProDashboard() {
                 </div>
                 ) : null}
             </div>
+
+            {/* UI modernisation (24/11/2026): a new structure sees its first steps (links to the screens that exist), while it has no appointment yet.
+                Nothing is ticked: the page does not know whether a step is complete, so it does not claim it. */}
+            {agendaOpen && appointments.length === 0 && ['STRUCTURE_ADMIN', 'SUPERADMIN'].includes(user?.role) ? (
+                <section aria-labelledby="pro-start-title" className="rounded-2xl border border-ada-line bg-ada-surface p-5 shadow-sm sm:p-6" data-testid="pro-start-checklist">
+                    <h2 id="pro-start-title" className="text-lg font-bold text-ada-ink">{t('pro:dashboard.start.title', 'Pour bien démarrer')}</h2>
+                    <p className="mt-1 text-sm text-ada-ink-3">{t('pro:dashboard.start.intro', 'Quatre étapes pour recevoir vos premiers rendez-vous en ligne.')}</p>
+                    <ol className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                        {[
+                            ['/pro/structure', t('pro:dashboard.start.structure', 'Compléter la fiche de la structure'), t('pro:dashboard.start.structure_hint', 'Adresse, horaires, contact')],
+                            ['/pro/rdv/services', t('pro:dashboard.start.services', 'Créer un service'), t('pro:dashboard.start.services_hint', 'Le motif et la durée d’un rendez-vous')],
+                            ['/pro/rdv/disponibilites', t('pro:dashboard.start.hours', 'Définir les disponibilités'), t('pro:dashboard.start.hours_hint', 'Les créneaux proposés aux personnes')],
+                            ['/pro/team', t('pro:dashboard.start.team', 'Inviter l’équipe'), t('pro:dashboard.start.team_hint', 'Les collègues qui reçoivent les personnes')],
+                        ].map(([to, label, hint], i) => (
+                            <li key={to} className="flex">
+                                <Link to={to} className="ada-tile h-full !p-4">
+                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ada-action text-sm font-bold text-white" aria-hidden="true">{i + 1}</span>
+                                    <span className="min-w-0">
+                                        <span className="block text-sm font-semibold text-ada-ink">{label}</span>
+                                        <span className="mt-0.5 block text-sm text-ada-ink-3">{hint}</span>
+                                    </span>
+                                </Link>
+                            </li>
+                        ))}
+                    </ol>
+                </section>
+            ) : null}
 
             {/* Outlook success banner */}
             {outlookConnected && searchParams.get('outlook') === 'connected' && (
@@ -261,7 +288,7 @@ export default function ProDashboard() {
                     <div className="flex items-center justify-between">
                         <h2 className="font-bold text-slate-800 flex items-center gap-2 text-sm">
                             <Clock className="text-indigo-500" size={16} />
-                            {t('pro:dashboard.prochaines_consultations', 'Prochaines Consultations')}
+                            {t('pro:dashboard.prochaines_consultations', 'Prochaines consultations')}
                         </h2>
                         <Link
                             to="/pro/rdv/agenda"
