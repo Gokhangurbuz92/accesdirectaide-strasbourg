@@ -9,7 +9,7 @@
  *   ALLOWED_ORIGIN                           exact browser origin(s) of the main site, comma list (https in production)
  *   HDS_TICKET_ISSUER / HDS_TICKET_AUDIENCE  default ada-main / ada-hds
  *   HDS_HEALTH_CATEGORY_ENABLED              "true" lets Mon Coffre accept the « sante » category, ONLY with an explicit consent of the version below
- *   HDS_HEALTH_CONSENT_VERSION               the approved art. 9 consent text version (e.g. consentement-sante@v1-2026-12-01)
+ *   HDS_HEALTH_CONSENT_VERSION               the approved art. 9 consent text version (proposed: coffre-sante@v1-2026-11-24, src/config/legal-drafts.js HEALTH_CONSENT_VERSION_PROPOSED — the browser shows only the text of that version)
  *   HDS_SHARE_CONSENT_VERSION                G14-R4: the approved text version of the consent to share a dossier with an organisation (e.g.
  *                                            partage-dossier@v1-2026-12-01). ABSENT = every new grant is refused (422 SHARE_CONSENT_NOT_CONFIGURED): sharing stays
  *                                            closed until the owner approves the text. Outside production only, « partage-dossier@lab » is the default.

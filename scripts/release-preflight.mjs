@@ -9,7 +9,7 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
-import { approvedAtLeast, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R4_CGU, LEGAL_DRAFTS_R4_NOTICE, LEGAL_DRAFTS_V12 } from '../src/config/legal-drafts.js';
+import { approvedAtLeast, HEALTH_CONSENT_VERSION_PROPOSED, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R4_CGU, LEGAL_DRAFTS_R4_NOTICE, LEGAL_DRAFTS_V12 } from '../src/config/legal-drafts.js';
 import { externalBookingMode } from '../api/lib/external-booking.js';
 import { partnerAdapterConfig } from '../api/lib/partner-adapter/config.js';
 import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation, hdsAttestationProvider } from '../api/_utils/capabilities.js';
@@ -64,6 +64,8 @@ export function r4LegalChecks(env, { get }) {
   const ugc = ['community.stories', 'community.testimonials', 'community.employment'].filter(open);
   if (ugc.length) out.push(['moderation.named_moderator', 'WARN', `${ugc.join(', ')} open: a NAMED moderator (administrator with MFA, charter acknowledged) must be assigned in Administration > Modération, otherwise every publication answers 503 MODERATION_NOT_STAFFED; deadlines 24 h (urgent) / 7 days`]);
   if (open('community.entraide')) out.push(['moderation.entraide_closed', 'FAIL', 'community.entraide (X03) must stay closed until its dedicated AIPD, a safety officer and two moderators']);
+  // G14-R4b: health documents in Mon Coffre (art. 9.2.a) — only with the approved consent text; the browser shows the box only for that exact version
+  if (open('citizen.vault')) out.push(['hds.health_consent_version', 'WARN', `citizen.vault open: health documents stay refused unless the HDS service carries HDS_HEALTH_CATEGORY_ENABLED=true AND HDS_HEALTH_CONSENT_VERSION=${HEALTH_CONSENT_VERSION_PROPOSED} once the owner approved that text (Scalingo env; not visible here)`]);
   if (open('citizen.shared_dossier')) out.push(['hds.share_consent_version', 'WARN', 'citizen.shared_dossier open: the HDS service must carry HDS_SHARE_CONSENT_VERSION = the approved consent text version (Scalingo env; not visible here) — absent, every share is refused']);
   return out;
 }

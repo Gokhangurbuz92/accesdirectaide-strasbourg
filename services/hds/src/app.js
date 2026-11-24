@@ -6,7 +6,7 @@
  *   GET    /health                                   liveness (no database)
  *   GET    /health/ready                             readiness (SELECT 1)
  * Bodies are END-TO-END encrypted « boxes » { iv, ct } produced in the browser (src/lib/vaultCrypto.js); this service never holds a key that opens them.
- *   GET    /v1/vault/documents                       citizen, cap citizen.vault   → { keyring, healthConsent, documents: [{ id, meta, dek, … }], quota }
+ *   GET    /v1/vault/documents                       citizen, cap citizen.vault   → { keyring, healthConsent, healthCategory: { enabled, version }, documents: [{ id, meta, dek, … }], quota }
  *   PUT    /v1/vault/keyring                         citizen, cap citizen.vault   { keyring, replace? } (vault key wrapped by the passphrase key)
  *   POST   /v1/vault/documents                       citizen, cap citizen.vault + vault.write   { content, meta, dek, expiresAt? }
  *   GET    /v1/vault/documents/:id/content           citizen, cap citizen.vault   → { content }

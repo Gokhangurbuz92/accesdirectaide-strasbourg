@@ -173,7 +173,11 @@ export async function vaultList(ctx, p) {
   const rows = (await ctx.pool.query('SELECT * FROM hds.vault_document WHERE owner_id = $1 ORDER BY created_at DESC', [p.sub])).rows;
   const used = rows.reduce((s, r) => s + r.byte_length, 0);
   const consent = (await ctx.pool.query("SELECT text_version FROM hds.consent_record WHERE owner_id = $1 AND purpose = 'vault_health_documents' AND withdrawn_at IS NULL ORDER BY given_at DESC LIMIT 1", [p.sub])).rows[0];
-  return { status: 200, body: { keyring: await readKeyring(ctx, ctx.pool, p.sub), healthConsent: consent ? consent.text_version : null,
+  // G14-R4b: the browser shows the art. 9.2.a consent box only for the approved text version this service carries (HDS_HEALTH_CATEGORY_ENABLED +
+  // HDS_HEALTH_CONSENT_VERSION); a consent given to an older version does not count (the person is asked again)
+  const healthCategory = { enabled: ctx.cfg.healthEnabled, version: ctx.cfg.healthEnabled ? ctx.cfg.healthConsentVersion : null };
+  const current = consent && ctx.cfg.healthEnabled && consent.text_version === ctx.cfg.healthConsentVersion ? consent.text_version : null;
+  return { status: 200, body: { keyring: await readKeyring(ctx, ctx.pool, p.sub), healthConsent: current, healthCategory,
     documents: rows.map((r) => vaultView(ctx, r)), quota: { files: rows.length, maxFiles: COFFRE_MAX_FILES, bytes: used, maxBytes: COFFRE_MAX_TOTAL } } };
 }
 

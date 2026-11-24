@@ -145,6 +145,12 @@ describe.skipIf(!reachable)('G14-R3 HDS service on the LAB test cluster', () => 
     expect((await call(on.base, 'POST', '/v1/vault/health-consent', { t: ticket(A, ['citizen.vault']), body: { explicit: true, version: 'consentement-sante@v0' } })).status).toBe(400);
     expect((await call(on.base, 'POST', '/v1/vault/health-consent', { t: ticket(A, ['citizen.vault']), body: { explicit: true, version: 'consentement-sante@v1-2026-12-01' } })).status).toBe(201);
     expect((await call(on.base, 'GET', '/v1/vault/documents', { t: ticket(A, ['citizen.vault']) })).body.healthConsent).toBe('consentement-sante@v1-2026-12-01');
+    // G14-R4b: the list announces the category and its version (the browser shows the box only for the text it knows); off = { enabled: false, version: null }
+    expect((await call(on.base, 'GET', '/v1/vault/documents', { t: ticket(A, ['citizen.vault']) })).body.healthCategory).toEqual({ enabled: true, version: 'consentement-sante@v1-2026-12-01' });
+    expect((await call(svc.base, 'GET', '/v1/vault/documents', { t: ticket(A, ['citizen.vault']) })).body).toMatchObject({ healthCategory: { enabled: false, version: null }, healthConsent: null });
+    // a consent to an older text version does not count once the service carries a new one (the person is asked again)
+    const v2 = await startService(DB, { HDS_HEALTH_CATEGORY_ENABLED: 'true', HDS_HEALTH_CONSENT_VERSION: 'coffre-sante@v2-2027-01-01' });
+    expect((await call(v2.base, 'GET', '/v1/vault/documents', { t: ticket(A, ['citizen.vault']) })).body.healthConsent).toBeNull();
     expect((await call(on.base, 'DELETE', '/v1/vault/health-consent', { t: ticket(A, ['citizen.vault']) })).body.healthConsent).toBeNull();
     await stop(on); running.splice(running.indexOf(on), 1);
   }, 30000);

@@ -9,6 +9,8 @@ import { COFFRE_UPLOAD_CATEGORIES, fileToBase64 } from '@/lib/monEspace';
 import { saveBlob } from '@/lib/hdsClient';
 import { VAULT_PASSPHRASE_MIN, changePassphrase, createKeyring, encryptDocument, openContent, openMeta, recoverWithCode, renewRecoveryCode, sniffType, unlockKeyring } from '@/lib/vaultCrypto';
 import { RecoveryCodePanel, VaultRecoveryForm, VaultSecurityCard } from '@/components/hds/VaultRecovery';
+import VaultHealthConsent from '@/components/hds/VaultHealthConsent';
+import { healthCategoryOffered } from '@/lib/vaultHealth';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { getVaultKey, setVaultKey } from '@/lib/hdsKeys';
 import { ensureBoxKey } from '@/lib/hdsSharing';
@@ -37,6 +39,8 @@ export default function CompteCoffre() {
   // G14-R4: the recovery code is shown ONCE (memory only), then forgotten by the page; « recover » = the forgotten-passphrase form
   const [recoveryCode, setRecoveryCode] = useState('');
   const [recovering, setRecovering] = useState(false);
+  // G14-R4b: health documents (art. 9.2.a) — what the HDS service announces ({ enabled, version }) and the person's current consent (version or null)
+  const [health, setHealth] = useState({ category: null, consent: null });
 
   const load = useCallback(async () => {
     try {
@@ -44,6 +48,7 @@ export default function CompteCoffre() {
       let documents = out.documents || [];
       if (out.e2e) {
         setE2e({ on: true, keyring: out.keyring || null, unlocked: Boolean(vaultKeyRef.current) });
+        setHealth({ category: out.healthCategory || null, consent: out.healthConsent || null });
         documents = vaultKeyRef.current ? await Promise.all(documents.map(async (d) => {
           const m = await openMeta(vaultKeyRef.current, d);
           return { ...d, name: m.name, category: m.category, mimeType: m.type };
@@ -55,8 +60,25 @@ export default function CompteCoffre() {
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once; a message follows the language at load time
   useEffect(() => { load(); }, [load]);
 
+  // G14-R4b: « Santé » is offered only with the consent of the version this build shows (never the legacy route, never without the box)
+  const healthOk = e2e.on && healthCategoryOffered(health.category) && health.consent === health.category?.version;
+  const categories = Object.keys(COFFRE_CATEGORY_LABELS).filter((c) => (c === 'sante' ? healthOk : COFFRE_UPLOAD_CATEGORIES.includes(c)));
+  const giveHealth = async (version) => {
+    setMessage(''); setProblem(''); setBusy(true);
+    try { await citizenApi.giveCoffreHealthConsent(version); setMessage(t('compte:coffre_sante.given_saved', 'Votre accord est enregistré.')); await load(); } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+  };
+  const withdrawHealth = async () => {
+    setMessage(''); setProblem(''); setBusy(true);
+    try {
+      await citizenApi.withdrawCoffreHealthConsent();
+      if (form.category === 'sante') setForm((f) => ({ ...f, category: 'identite' }));
+      setMessage(t('compte:coffre_sante.withdrawn_saved', 'Votre accord est retiré. Les documents de santé déjà conservés restent jusqu’à ce que vous les supprimiez.')); await load();
+    } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+  };
+
   const upload = async (e) => {
     e.preventDefault(); setMessage(''); setProblem('');
+    if (form.category === 'sante' && !healthOk) { setProblem(t('compte:coffre_sante.consent_needed', 'Pour ajouter un document de santé, donnez d’abord votre accord ci-dessous.')); return; }
     const file = fileRef.current?.files?.[0];
     if (!file) { setProblem(t('compte:coffre.choose_file', 'Choisissez un fichier.')); return; }
     if (file.size > MAX) { setProblem(t('compte:coffre.too_big', 'Fichier trop volumineux (3 Mo au plus).')); return; }
@@ -153,7 +175,9 @@ export default function CompteCoffre() {
       <h1 className="text-2xl font-bold text-slate-900">{t('compte:coffre.mon_coffre', 'Mon Coffre')}</h1>
       {e2e.on ? <p className="text-sm text-slate-700" data-testid="coffre-e2e-intro">{t('compte:coffre.e2e_intro_r4', 'Vos documents sont chiffrés dans votre navigateur avant d’être envoyés à un hébergeur certifié pour les données de santé : ni AccèsDirectAide ni l’hébergeur ne peuvent les lire. Si vous oubliez votre phrase secrète, votre code de secours ouvre Mon Coffre. Si vous perdez les deux, vos documents sont perdus.')}</p> : null}
       {e2e.on ? null : <p className="text-sm text-slate-700">{t('compte:coffre.gardez_ici_vos_papiers', 'Gardez ici vos papiers importants. Chaque fichier est chiffré sur le serveur avant d’être conservé ; vous seul y avez accès depuis votre compte.')}</p>}
-      <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950" data-testid="coffre-health-notice">{t('compte:coffre.ajoutez_pas_documents_medicaux', 'N’ajoutez pas de documents médicaux (certificat, compte rendu, ordonnance, dossier MDPH avec éléments médicaux) : leur hébergement demande un hébergeur agréé pour les données de santé, qui n’est pas encore en place.')}</p>
+      {/* G14-R4b: at the HDS service the host IS certified — the notice then says whether health documents are accepted (consent box below) or not yet */}
+      {!e2e.on ? <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950" data-testid="coffre-health-notice">{t('compte:coffre.ajoutez_pas_documents_medicaux', 'N’ajoutez pas de documents médicaux (certificat, compte rendu, ordonnance, dossier MDPH avec éléments médicaux) : leur hébergement demande un hébergeur agréé pour les données de santé, qui n’est pas encore en place.')}</p>
+        : !healthCategoryOffered(health.category) ? <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950" data-testid="coffre-health-notice">{t('compte:coffre_sante.not_yet', 'Les documents de santé (certificat médical, compte rendu, ordonnance, dossier MDPH avec éléments médicaux) ne sont pas encore acceptés dans Mon Coffre : n’en ajoutez pas pour le moment.')}</p> : null}
       <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950" data-testid="coffre-scan-notice">{t('compte:coffre.les_fichiers_sont_pas', 'Les fichiers ne sont pas encore analysés par un antivirus : n’ajoutez que des documents dont vous connaissez l’origine.')}</p>
       <div aria-live="polite" role="status" data-testid="coffre-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {problem ? <p role="alert" data-testid="coffre-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
@@ -191,7 +215,7 @@ export default function CompteCoffre() {
           <form className="grid gap-3 sm:grid-cols-2" onSubmit={upload}>
             <div className="sm:col-span-2"><label htmlFor="cf-file" className="block text-sm font-medium text-slate-800">{t('compte:coffre.fichier_pdf_png_jpeg', 'Fichier (PDF, PNG ou JPEG, 3 Mo au plus)')}</label><input id="cf-file" data-testid="coffre-file" ref={fileRef} type="file" accept={ACCEPT} className="mt-1 block w-full text-sm" /></div>
             <div><label htmlFor="cf-cat" className="block text-sm text-slate-800">{t('compte:coffre.categorie', 'Catégorie')}</label>
-              <select id="cf-cat" data-testid="coffre-category" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>{COFFRE_UPLOAD_CATEGORIES.map((v) => <option key={v} value={v}>{COFFRE_CATEGORY_LABELS[v]}</option>)}</select></div>
+              <select id="cf-cat" data-testid="coffre-category" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>{categories.map((v) => <option key={v} value={v}>{COFFRE_CATEGORY_LABELS[v]}</option>)}</select></div>
             <div><label htmlFor="cf-exp" className="block text-sm text-slate-800">{t('compte:coffre.date_fin_validite_facultatif', 'Date de fin de validité (facultatif)')}</label><input id="cf-exp" data-testid="coffre-expires" type="date" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={form.expiresAt} onChange={(e) => setForm({ ...form, expiresAt: e.target.value })} /></div>
             <div className="sm:col-span-2"><Button type="submit" data-testid="coffre-upload" disabled={busy}>{busy ? t('compte:coffre.sending', 'Envoi…') : t('compte:coffre.save_document', 'Enregistrer le document')}</Button></div>
           </form>
@@ -199,6 +223,8 @@ export default function CompteCoffre() {
         </CardContent>
       </Card>
 
+      {e2e.on && healthCategoryOffered(health.category) ? <VaultHealthConsent consent={health.consent === health.category.version ? health.consent : null} busy={busy}
+        hasHealthDocuments={state.documents.some((d) => d.category === 'sante')} onGive={giveHealth} onWithdraw={withdrawHealth} /> : null}
       {e2e.on ? <VaultSecurityCard busy={busy} hasRecovery={Boolean(e2e.keyring?.recovery)} onChange={changePass} onRenew={renewCode} onProblem={setProblem} /> : null}
       {e2e.on ? <p className="text-sm" data-testid="coffre-dossiers-link"><Link className="text-blue-800 underline" to="/compte/dossiers-chiffres">{t('compte:coffre.e2e_dossiers_link', 'Mes dossiers partagés avec des structures (chiffrés)')}</Link></p> : null}
       <Card>
