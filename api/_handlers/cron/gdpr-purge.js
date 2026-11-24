@@ -6,7 +6,8 @@ import {
     AuthToken, AiMetric, ConsentLog, UserConsent, Invitation, EmailChangeRequest,
     ProOutlookToken, ProAuditLog, ProAppointment,
     AppointmentNotice, ProNotification, PushSubscription, RdvConversation, RdvMessageAttachment,
-    LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser, ParcoursItem, CitizenDelegation, GuardianRelationship
+    LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser, ParcoursItem, CitizenDelegation, GuardianRelationship,
+    ContentReport, PartnershipRequest, InstitutionAccount, PartnerAgreement
 } from '../../../src/db/schema.js';
 import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-orm';
 import { LegalProtectionMandate } from '../../_services/legal-protection-table.js';
@@ -289,8 +290,8 @@ export const guardianLinksRevokedWhere = (before) => and(eq(GuardianRelationship
 
 /**
  * G14-R3G — the representative of a protected adult (C23 family). PROPOSED « à approuver » (not executable). A legal hold on the row or on either person, a
- * processing restriction or an open access request of either person keeps the row. The table comes with migration 0064 (pending): on a database without
- * it, these steps count and delete nothing.
+ * processing restriction or an open access request of either person keeps the row. The table comes with migration 0064 (journal idx 64): on a database
+ * without it, these steps count and delete nothing.
  *   legalProtectionStaleDeclarationsDeleted  DECLARED (never verified), LEGAL_PROTECTION_DECLARED_STALE_DAYS after createdAt
  *   legalProtectionRejectedDeleted           REJECTED, LEGAL_PROTECTION_REJECTED_DAYS after endedAt
  *   legalProtectionEndedDeleted              ENDED, or VERIFIED / SUSPENDED past validUntil, LEGAL_PROTECTION_ENDED_DAYS after COALESCE(endedAt, validUntil)
@@ -310,6 +311,24 @@ const lpDeleteStep = (where) => ({
     count: async (db, ctx) => ((await legalProtectionInstalled(db)) ? countWhere(db, LPM, where(ctx)) : 0),
     run: async (db, ctx) => ((await legalProtectionInstalled(db)) ? affected(await db.delete(LPM).where(where(ctx))) : 0),
 });
+
+/**
+ * G14-R3 follow-up — communications forms, institution accounts, partner conventions. Durations PROPOSED « à approuver » (retention-policy.js
+ * pendingApproval): the two delete steps cannot execute until a reviewed commit removes that mark AND each step gets its own approval record; the two
+ * others only count (report).
+ *   contentReportsClosedDeleted         a ContentReport FIXED or REJECTED, CONTENT_REPORT_CLOSED_DAYS after its last change
+ *   partnershipRequestsClosedDeleted    a PartnershipRequest no longer « pending », PARTNERSHIP_REQUEST_CLOSED_DAYS after its last change
+ *   suspendedInstitutionAccountsReport  REPORT: an InstitutionAccount SUSPENDED whose last sign-in (else creation) is older than INSTITUTION_ACCOUNT_SUSPENDED_DAYS
+ *   endedPartnerAgreementsReport        REPORT: a PartnerAgreement ENDED more than PARTNER_AGREEMENT_ENDED_DAYS ago
+ * @param {Date} before
+ */
+export const contentReportsClosedWhere = (before) => and(inArray(ContentReport.status, ['FIXED', 'REJECTED']), lt(ContentReport.updatedAt, before));
+/** @param {Date} before */
+export const partnershipRequestsClosedWhere = (before) => and(ne(PartnershipRequest.status, 'pending'), lt(PartnershipRequest.updatedAt, before));
+/** @param {Date} before */
+export const suspendedInstitutionAccountsWhere = (before) => and(eq(InstitutionAccount.status, 'SUSPENDED'), sql`COALESCE(${InstitutionAccount.lastLogin}, ${InstitutionAccount.createdAt}) < ${before}`);
+/** @param {Date} before */
+export const endedPartnerAgreementsWhere = (before) => and(eq(PartnerAgreement.status, 'ENDED'), isNotNull(PartnerAgreement.endedAt), lt(PartnerAgreement.endedAt, before));
 
 const deleteStep = (table, where) => ({
     count: (db, ctx) => countWhere(db, table, where(ctx)),
@@ -560,6 +579,17 @@ export const PURGE_STEPS = [
     { id: 'disabledProUsersReport', summaryKey: 'disabled_pro_users_eligible', ecode: 'E9b', kind: 'report', table: 'ProUser', durationKey: 'PRO_USER_DISABLED_DAYS', tables: ['ProUser'],
         sharedController: 'professional accounts are referenced by structure records',
         count: (db, ctx) => countWhere(db, ProUser, and(eq(ProUser.status, 'disabled'), lt(ProUser.updatedAt, ctx.cutoff('PRO_USER_DISABLED_DAYS')))) },
+
+    // 22b. G14-R3 follow-up — PROPOSED « à approuver » (never executable while pendingApproval): content reports and partnership requests once handled;
+    //      suspended institution accounts and ended conventions are only COUNTED (no suspension date recorded; an account references its convention).
+    { id: 'contentReportsClosedDeleted', summaryKey: 'content_reports_closed_deleted', ecode: 'R3-COM', kind: 'delete', table: 'ContentReport', durationKey: 'CONTENT_REPORT_CLOSED_DAYS', tables: ['ContentReport'],
+        ...deleteStep(ContentReport, (ctx) => contentReportsClosedWhere(ctx.cutoff('CONTENT_REPORT_CLOSED_DAYS'))) },
+    { id: 'partnershipRequestsClosedDeleted', summaryKey: 'partnership_requests_closed_deleted', ecode: 'R3-COM', kind: 'delete', table: 'PartnershipRequest', durationKey: 'PARTNERSHIP_REQUEST_CLOSED_DAYS', tables: ['PartnershipRequest'],
+        ...deleteStep(PartnershipRequest, (ctx) => partnershipRequestsClosedWhere(ctx.cutoff('PARTNERSHIP_REQUEST_CLOSED_DAYS'))) },
+    { id: 'suspendedInstitutionAccountsReport', summaryKey: 'suspended_institution_accounts_eligible', ecode: 'R3-INST', kind: 'report', table: 'InstitutionAccount', durationKey: 'INSTITUTION_ACCOUNT_SUSPENDED_DAYS', tables: ['InstitutionAccount'],
+        count: (db, ctx) => countWhere(db, InstitutionAccount, suspendedInstitutionAccountsWhere(ctx.cutoff('INSTITUTION_ACCOUNT_SUSPENDED_DAYS'))) },
+    { id: 'endedPartnerAgreementsReport', summaryKey: 'ended_partner_agreements_eligible', ecode: 'R3-INST', kind: 'report', table: 'PartnerAgreement', durationKey: 'PARTNER_AGREEMENT_ENDED_DAYS', tables: ['PartnerAgreement'],
+        count: (db, ctx) => countWhere(db, PartnerAgreement, endedPartnerAgreementsWhere(ctx.cutoff('PARTNER_AGREEMENT_ENDED_DAYS'))) },
 
     // 23–47. G14 — the expansion content (X04, X02, X01, X05, X03) and the account-free DSA notices: durations decided by the controller 22/11/2026
     //     (formulaire G14); each step still needs its own approval record (dry run read, backup verified). See api/_services/gdpr-purge-expansion-steps.js.

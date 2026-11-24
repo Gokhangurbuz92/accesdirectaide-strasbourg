@@ -200,7 +200,7 @@ export const RETENTION_POLICY = deepFreeze({
     DELEGATION_INVITATION_EXPIRED_DAYS: { days: 30, anchor: 'CitizenDelegation.inviteExpiresAt of an invitation never answered (status INVITED): the invited e-mail address goes with the row', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
     DELEGATION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, expiresAt) of a delegation ended (REVOKED, DECLINED) or expired; its view log (DelegationAccessEvent) goes with it (ON DELETE CASCADE)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
     GUARDIAN_LINK_REVOKED_DAYS: { days: 30, anchor: 'GuardianRelationship.updatedAt of a REVOKED link (the proof of each step stays in the consent ledger under its own rule)', basis: OPS, ecode: 'C05', pendingApproval: R3_PROPOSAL },
-    // G14-R3G (24/11/2026) — the representative of a protected adult (LegalProtectionMandate, migration 0064 pending). PROPOSED « à approuver »: the row
+    // G14-R3G (24/11/2026) — the representative of a protected adult (LegalProtectionMandate, migration 0064). PROPOSED « à approuver »: the row
     // holds only facts extracted from the court decision (never the decision); the history of views and actions stays in AuditLog under its own rule.
     //   DECLARED_STALE  a declaration the administrator never verified (the representative never showed the decision): 90 days after it was made
     //   REJECTED        a refused declaration (shown to the person, who may need it to report a false declaration): 90 days after the refusal
@@ -209,6 +209,19 @@ export const RETENTION_POLICY = deepFreeze({
     LEGAL_PROTECTION_DECLARED_STALE_DAYS: { days: 90, anchor: 'LegalProtectionMandate.createdAt of a declaration still DECLARED (never verified)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
     LEGAL_PROTECTION_REJECTED_DAYS: { days: 90, anchor: 'LegalProtectionMandate.endedAt of a REJECTED declaration', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
     LEGAL_PROTECTION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, validUntil) of a link ENDED, or VERIFIED / SUSPENDED past validUntil (expired)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
+    // G14-R3 follow-up (24/11/2026, same release-3 package) — PROPOSED « à approuver » (pendingApproval, never executable): the records of the communications
+    // forms, of the institution space and of the partner conventions had no duration (agents' audit, CONTROL/master/completion/R3_KURUM_MESAJ_KOPRU.md § 3.6).
+    //   CONTENT_REPORT_CLOSED  a content report (« Signaler une erreur » on a public page, and the in-thread « Signaler » of a message: R3) once handled
+    //                          (FIXED or REJECTED): 12 months after its last change — the reporter's optional e-mail goes with it
+    //   PARTNERSHIP_REQUEST    a « Proposer une structure » / partnership request once answered (status other than « pending »): 12 months after its last change
+    //   INSTITUTION_SUSPENDED  REPORT ONLY: an institution account SUSPENDED (convention ended, or suspended by an administrator) — no suspension date is
+    //                          recorded (anchor: last sign-in, else creation); deleting it is an administrator's decision with the institution
+    //   PARTNER_AGREEMENT_ENDED REPORT ONLY: an ENDED convention, 5 years after endedAt (proof of what was agreed — a proposal, no legal text read); an
+    //                          account still references it (InstitutionAccount.agreementId, ON DELETE RESTRICT): never deleted by this job
+    CONTENT_REPORT_CLOSED_DAYS: { days: 365, anchor: 'ContentReport.updatedAt of a report FIXED or REJECTED', basis: OPS, ecode: 'R3-COM', pendingApproval: R3_PROPOSAL },
+    PARTNERSHIP_REQUEST_CLOSED_DAYS: { days: 365, anchor: 'PartnershipRequest.updatedAt of a request whose status is not « pending »', basis: OPS, ecode: 'R3-COM', pendingApproval: R3_PROPOSAL },
+    INSTITUTION_ACCOUNT_SUSPENDED_DAYS: { days: 365, anchor: 'COALESCE(lastLogin, createdAt) of an InstitutionAccount SUSPENDED (no suspension date recorded) — report only', basis: OPS, ecode: 'R3-INST', pendingApproval: R3_PROPOSAL },
+    PARTNER_AGREEMENT_ENDED_DAYS: { days: 1825, anchor: 'PartnerAgreement.endedAt of an ENDED convention — report only', basis: PROOF, ecode: 'R3-INST', pendingApproval: R3_PROPOSAL },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });

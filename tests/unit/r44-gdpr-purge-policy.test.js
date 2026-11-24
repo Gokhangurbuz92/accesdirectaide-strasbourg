@@ -21,7 +21,8 @@ import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION
 const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog', 'SharedDiagnostic', 'AuthToken', 'EmailChangeRequest', 'AiMetric', 'ConsentLog', 'UserConsent',
   'Invitation', 'ProOutlookToken', 'ProAuditLog', 'ProAppointment', 'AppointmentNotice', 'RdvConversation', 'RdvMessageAttachment', 'ProNotification', 'PushSubscription',
   'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral', 'SharedDossierThread', 'ParcoursItem', 'ParcoursEvent',
-  'CitizenDelegation', 'DelegationAccessEvent', 'GuardianRelationship'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016); G14-R3: delegations and guardian links (on 0042)
+  'CitizenDelegation', 'DelegationAccessEvent', 'GuardianRelationship', 'ContentReport', 'PartnershipRequest', 'InstitutionAccount', 'PartnerAgreement'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016); G14-R3: delegations and guardian links (on 0042)
+// G14-R3 follow-up: the communications forms (0000) and the institution tables (0026) exist on 0042
 // G14: the expansion steps need the 0053–0059 tables, absent from this 0042-like mock: they are skipped (skipped_steps) and tested on a real DB
 const EXPANSION_IDS = new Set(Object.keys(RETENTION_POLICY.decidedSteps || {}));
 // G14-R3G: the representative-of-a-protected-adult steps need "LegalProtectionMandate" (migration 0064): absent from this 0042-like mock, skipped
@@ -138,6 +139,7 @@ describe('R44 / E16 execution gate', () => {
     const ids = PURGE_STEPS.map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
     expect(PURGE_STEPS.filter((s) => s.kind === 'report').map((s) => [s.id, s.ecode])).toEqual([['inactiveAccountsReport', 'E7'], ['mailSuppressionsReview', 'D4-V2'], ['disabledProUsersReport', 'E9b'],
+      ['suspendedInstitutionAccountsReport', 'R3-INST'], ['endedPartnerAgreementsReport', 'R3-INST'],   // G14-R3 follow-up: proposals « à approuver », counted only
       ['testimonialsReconfirmationReport', 'X02'], ['storiesReconfirmationReport', 'X01'], ['entraideSuspensionsReview', 'X03']]);   // G14 (q18, q27): reports, never deletions
     // G14: every expansion step is a decided step, and every decided step exists
     expect(PURGE_STEPS.filter((s) => EXPANSION_IDS.has(s.id)).length).toBe(EXPANSION_IDS.size);
