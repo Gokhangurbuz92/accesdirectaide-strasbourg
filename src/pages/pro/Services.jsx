@@ -42,7 +42,11 @@ export default function ProServices() {
   const fr = useFrAttrs();   // R47: the structure's own service names stay French (lang="fr" outside French)
   const { user, rdvReadiness } = useOutletContext();
   const canEdit = user?.role === 'STRUCTURE_ADMIN' || user?.role === 'SUPERADMIN';
-  const readinessOk = rdvReadiness?.status === 200 && rdvReadiness?.payload?.ok === true;
+  // R4.2 fix (owner test 24/11): the readiness check is a « monitor » route that the public beta keeps closed (503 PUBLIC_BETA_RESTRICTED) even when
+  // appointments are open — RdvLayout already ignores that refusal, but this card read it as « not installed » and locked publication for every structure.
+  // A beta refusal of the CHECK is not a failure of appointments: the server's settings route still validates the publication itself.
+  const readinessClosedByBeta = rdvReadiness?.status === 503 && rdvReadiness?.payload?.error === 'PUBLIC_BETA_RESTRICTED';
+  const readinessOk = (rdvReadiness?.status === 200 && rdvReadiness?.payload?.ok === true) || readinessClosedByBeta;
   const readinessMissingTables = Array.isArray(rdvReadiness?.payload?.missingTables)
     ? rdvReadiness.payload.missingTables
     : [];

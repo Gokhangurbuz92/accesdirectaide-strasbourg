@@ -93,6 +93,8 @@ export default function AdminDashboard() {
     const ws2 = tasks.ws2;
     const orgs = tasks.organizations;
     const cards = [
+        // R4.2: ADA Pro sign-up requests come first — a structure waits for this decision before it can sign in
+        { key: 'proreg', title: t('admin:dashboard.card.proreg.title', 'Inscriptions ADA Pro'), to: '/admin/organizations?decision=pro_pending', count: n(tasks.proRegistrations), unit: t('admin:dashboard.card.proreg.unit', 'à vérifier'), todo: t('admin:dashboard.card.proreg.todo', 'Vérifier la structure et son SIRET sur une source officielle (Annuaire des entreprises), puis « Vérifier et activer » ou « Refuser ».') },
         {
             key: 'ws2', title: t('admin:dashboard.card.ws2.title', 'Fiches du lancement (WS2)'), to: '/admin/ws2', count: ws2 ? n(ws2.pending) : null, unit: t('admin:dashboard.card.ws2.unit', 'jamais examinée(s)'),
             detail: ws2 ? t('admin:dashboard.card.ws2.detail', '{{onHold}} en attente · {{rejected}} refusée(s) · {{verified}} vérifiée(s) sur {{total}}', { onHold: ws2.onHold, rejected: ws2.rejected, verified: ws2.humanVerified, total: ws2.records }) : null,

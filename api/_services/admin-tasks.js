@@ -22,7 +22,7 @@ const firstRow = async (db, query) => (await db.execute(query)).rows?.[0] ?? {};
 /** @param {{ db?: any, root?: string }} [opts] */
 export async function adminTasks({ db = defaultDb, root } = {}) {
   const safe = async (fn) => { try { return await fn(); } catch { return null; } };
-  const [ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support, mailContactFailures] = await Promise.all([
+  const [ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support, mailContactFailures, proRegistrations] = await Promise.all([
     safe(async () => (await ws2Queue({ db, root })).totals),
     // the identity / record decision of each organization (Structure.verification_status + the ledger's hold), as the Organizations screen shows it
     safe(async () => {
@@ -48,6 +48,9 @@ export async function adminTasks({ db = defaultDb, root } = {}) {
     safe(async () => (await firstRow(db, sql`SELECT count(*)::int AS n FROM "SupportRequest" WHERE upper(status) IN ('OPEN', 'IN_PROGRESS')`)).n),
     // legal v6 / C6: Mailjet contact deletions that failed for good — « intervention humaine requise » (api/_services/mail-contact-failures.js)
     safe(async () => (await listMailContactFailures(db)).failures.length),
+    // R4.2 (owner test 24/11): ADA Pro sign-up requests waiting for « Vérifier et activer » (/admin/organizations?decision=pro_pending) — they were only
+    // reachable through the optional « Contrôles manuels » menu, so the owner could not find the request he had just sent
+    safe(async () => (await firstRow(db, sql`SELECT count(*)::int AS n FROM "ProUser" WHERE status = 'pending_verification'`)).n),
   ]);
-  return { ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support, mailContactFailures };
+  return { ws2, organizations, duplicates, proposals, falc, accessRequests, erasures, closures, breakGlass, aiSuggestions, reports, quality, support, mailContactFailures, proRegistrations };
 }

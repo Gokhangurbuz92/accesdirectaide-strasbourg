@@ -2253,5 +2253,14 @@
  "k5.extbooking.reject": "رفض",
  "k5.extbooking.none": "لا توجد صفحة بهذه الحالة.",
  "layout.nav.external_booking": "صفحات مواعيد الجهات",
- "k5.providers.p.partner_bridge": "جسر التوجيه مع الشركاء (ada.partner-referral/1)"
+ "k5.providers.p.partner_bridge": "جسر التوجيه مع الشركاء (ada.partner-referral/1)",
+ "dashboard.card.proreg.title": "تسجيلات ADA Pro",
+ "dashboard.card.proreg.unit": "للتحقق",
+ "dashboard.card.proreg.todo": "تحقق من الهيكل ورقم SIRET الخاص به من مصدر رسمي (Annuaire des entreprises)، ثم « Vérifier et activer » أو « Refuser ».",
+ "organizations.err.evidence_url": "يجب أن يكون المصدر عنوان https لموقع رسمي مقبول (مثل annuaire-entreprises.data.gouv.fr أو *.gouv.fr أو service-public.fr).",
+ "organizations.err.territory": "ضع علامة في المربع الذي يؤكد المنطقة (Strasbourg / Bas-Rhin).",
+ "organizations.err.note": "صف ما تحققت منه في المصدر (20 حرفًا على الأقل).",
+ "organizations.err.stale": "تغيّر السجل منذ قراءتك له: أعد تحميل الصفحة واقرأه مجددًا قبل اتخاذ القرار.",
+ "organizations.pro_registration.annuaire_open": "افتح رقم SIRET هذا في Annuaire des entreprises",
+ "organizations.pro_registration.annuaire_use": "استخدم هذا العنوان كمصدر"
 }

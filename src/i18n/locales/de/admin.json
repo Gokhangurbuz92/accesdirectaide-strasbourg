@@ -2234,5 +2234,14 @@
  "k5.extbooking.reject": "Ablehnen",
  "k5.extbooking.none": "Keine Seite in diesem Status.",
  "layout.nav.external_booking": "Terminseiten der Einrichtungen",
- "k5.providers.p.partner_bridge": "Partner-Vermittlungsbrücke (ada.partner-referral/1)"
+ "k5.providers.p.partner_bridge": "Partner-Vermittlungsbrücke (ada.partner-referral/1)",
+ "dashboard.card.proreg.title": "ADA-Pro-Anmeldungen",
+ "dashboard.card.proreg.unit": "zu prüfen",
+ "dashboard.card.proreg.todo": "Prüfen Sie die Struktur und ihre SIRET in einer offiziellen Quelle (Annuaire des entreprises), dann « Vérifier et activer » oder « Refuser ».",
+ "organizations.err.evidence_url": "Die Quelle muss eine https-Adresse einer akzeptierten offiziellen Website sein (zum Beispiel annuaire-entreprises.data.gouv.fr, *.gouv.fr, service-public.fr).",
+ "organizations.err.territory": "Kreuzen Sie das Feld an, das das Gebiet bestätigt (Strasbourg / Bas-Rhin).",
+ "organizations.err.note": "Beschreiben Sie, was Sie in der Quelle geprüft haben (mindestens 20 Zeichen).",
+ "organizations.err.stale": "Der Eintrag hat sich seit Ihrem Lesen geändert: Laden Sie die Seite neu und lesen Sie ihn vor der Entscheidung erneut.",
+ "organizations.pro_registration.annuaire_open": "Diese SIRET im Annuaire des entreprises öffnen",
+ "organizations.pro_registration.annuaire_use": "Diese Adresse als Quelle verwenden"
 }

@@ -2244,5 +2244,14 @@
  "k5.extbooking.reject": "Відхилити",
  "k5.extbooking.none": "Немає сторінок у цьому стані.",
  "layout.nav.external_booking": "Сторінки запису організацій",
- "k5.providers.p.partner_bridge": "Міст скерувань партнерів (ada.partner-referral/1)"
+ "k5.providers.p.partner_bridge": "Міст скерувань партнерів (ada.partner-referral/1)",
+ "dashboard.card.proreg.title": "Реєстрації ADA Pro",
+ "dashboard.card.proreg.unit": "на перевірку",
+ "dashboard.card.proreg.todo": "Перевірте структуру та її SIRET в офіційному джерелі (Annuaire des entreprises), потім « Vérifier et activer » або « Refuser ».",
+ "organizations.err.evidence_url": "Джерело має бути https-адресою прийнятого офіційного сайту (наприклад annuaire-entreprises.data.gouv.fr, *.gouv.fr, service-public.fr).",
+ "organizations.err.territory": "Позначте поле, що підтверджує територію (Strasbourg / Bas-Rhin).",
+ "organizations.err.note": "Опишіть, що ви перевірили в джерелі (щонайменше 20 символів).",
+ "organizations.err.stale": "Запис змінився після вашого читання: перезавантажте сторінку й прочитайте його знову перед рішенням.",
+ "organizations.pro_registration.annuaire_open": "Відкрити цей SIRET в Annuaire des entreprises",
+ "organizations.pro_registration.annuaire_use": "Використати цю адресу як джерело"
 }

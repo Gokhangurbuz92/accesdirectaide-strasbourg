@@ -2234,5 +2234,14 @@
  "k5.extbooking.reject": "Reddet",
  "k5.extbooking.none": "Bu durumda sayfa yok.",
  "layout.nav.external_booking": "Kuruluşların randevu sayfaları",
- "k5.providers.p.partner_bridge": "Ortak yönlendirme köprüsü (ada.partner-referral/1)"
+ "k5.providers.p.partner_bridge": "Ortak yönlendirme köprüsü (ada.partner-referral/1)",
+ "dashboard.card.proreg.title": "ADA Pro kayıtları",
+ "dashboard.card.proreg.unit": "kontrol edilecek",
+ "dashboard.card.proreg.todo": "Yapıyı ve SIRET numarasını resmî bir kaynakta (Annuaire des entreprises) kontrol edin, ardından « Vérifier et activer » veya « Refuser ».",
+ "organizations.err.evidence_url": "Kaynak, kabul edilen resmî bir sitenin https adresi olmalıdır (örneğin annuaire-entreprises.data.gouv.fr, *.gouv.fr, service-public.fr).",
+ "organizations.err.territory": "Bölgeyi (Strasbourg / Bas-Rhin) onaylayan kutuyu işaretleyin.",
+ "organizations.err.note": "Kaynakta neyi kontrol ettiğinizi yazın (en az 20 karakter).",
+ "organizations.err.stale": "Kayıt siz okuduktan sonra değişti: sayfayı yenileyin ve karar vermeden önce yeniden okuyun.",
+ "organizations.pro_registration.annuaire_open": "Bu SIRET numarasını Annuaire des entreprises'te açın",
+ "organizations.pro_registration.annuaire_use": "Bu adresi kaynak olarak kullan"
 }

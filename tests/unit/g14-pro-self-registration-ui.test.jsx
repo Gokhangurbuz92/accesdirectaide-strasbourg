@@ -90,4 +90,25 @@ describe('G14 — /admin/organizations: pending ADA Pro sign-up requests', () =>
     fireEvent.click(within(panel).getByTestId('admin-org-pro-registration-refuse'));
     await waitFor(() => expect(api.apiClient.admin.refuseProRegistration).toHaveBeenCalledWith('u-new', 'Aucun lien avec la structure.'));
   });
+
+  it('R4.2: the SIRET opens the Annuaire des entreprises and fills the source in one click', async () => {
+    api.apiClient.admin.verifyAndActivateProRegistration.mockResolvedValue({ ok: true });
+    const { panel } = await open();
+    const box = within(panel).getByTestId('admin-org-pro-registration-annuaire');
+    expect(within(box).getByRole('link')).toHaveAttribute('href', 'https://annuaire-entreprises.data.gouv.fr/etablissement/73282932000074');
+    fireEvent.click(within(box).getByRole('button', { name: 'Utiliser cette adresse comme source' }));
+    expect(within(panel).getByLabelText('Source officielle consultée (adresse https)')).toHaveValue('https://annuaire-entreprises.data.gouv.fr/etablissement/73282932000074');
+  });
+
+  it('R4.2: a refusal of the verification service is said in French, not in its English developer message', async () => {
+    const err = Object.assign(new Error('x'), { status: 400, payload: { code: 'EVIDENCE_URL_NOT_ALLOWED', message: 'sourceUrl must be an https URL of an allowed official domain (or of ADA_VERIFICATION_EXTRA_DOMAINS).' } });
+    api.apiClient.admin.verifyAndActivateProRegistration.mockRejectedValue(err);
+    const { panel } = await open();
+    fireEvent.change(within(panel).getByLabelText('Source officielle consultée (adresse https)'), { target: { value: 'https://example.org/x' } });
+    fireEvent.change(within(panel).getByLabelText('Ce que la source montre (au moins 20 caractères)'), { target: { value: 'SIRET et dénomination vérifiés sur la source.' } });
+    fireEvent.click(within(panel).getByLabelText('Je confirme le territoire de la structure'));
+    fireEvent.click(within(panel).getByTestId('admin-org-pro-registration-activate'));
+    expect(await screen.findByText(/adresse https d’un site officiel accepté/)).toBeInTheDocument();
+    expect(screen.queryByText(/must be an https URL/)).toBeNull();
+  });
 });

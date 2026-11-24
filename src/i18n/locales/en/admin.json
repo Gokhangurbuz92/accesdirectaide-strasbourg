@@ -2234,5 +2234,14 @@
  "k5.extbooking.reject": "Reject",
  "k5.extbooking.none": "No page in this status.",
  "layout.nav.external_booking": "Organisations' appointment pages",
- "k5.providers.p.partner_bridge": "Partner referral bridge (ada.partner-referral/1)"
+ "k5.providers.p.partner_bridge": "Partner referral bridge (ada.partner-referral/1)",
+ "dashboard.card.proreg.title": "ADA Pro sign-ups",
+ "dashboard.card.proreg.unit": "to check",
+ "dashboard.card.proreg.todo": "Check the structure and its SIRET on an official source (Annuaire des entreprises), then « Vérifier et activer » or « Refuser ».",
+ "organizations.err.evidence_url": "The source must be an https address of an accepted official site (for example annuaire-entreprises.data.gouv.fr, *.gouv.fr, service-public.fr).",
+ "organizations.err.territory": "Tick the box confirming the territory (Strasbourg / Bas-Rhin).",
+ "organizations.err.note": "Describe what you checked on the source (at least 20 characters).",
+ "organizations.err.stale": "The record changed since you read it: reload the page and read it again before deciding.",
+ "organizations.pro_registration.annuaire_open": "Open this SIRET in the Annuaire des entreprises",
+ "organizations.pro_registration.annuaire_use": "Use this address as the source"
 }

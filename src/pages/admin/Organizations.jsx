@@ -15,7 +15,19 @@ const ID_LABEL = () => ({ VERIFIED: i18n.t('admin:organizations.identity.verifie
 const ACT_LABEL = () => ({ actif: i18n.t('admin:organizations.activity.active', 'Active'), suspendu: i18n.t('admin:organizations.activity.suspended', 'Suspendue'), brouillon: i18n.t('admin:organizations.activity.not_activated', 'Non activée (inscription)') });
 const explain = (e) => {
   if (e?.status === 401 || e?.status === 403) return i18n.t('admin:organizations.refused_mfa', 'Refusé : cette action demande une session administrateur nominative avec MFA.');
-  const p = e?.payload || {}; return p.message || p.error || e?.message || i18n.t('admin:organizations.action_impossible', 'Action impossible.');
+  const p = e?.payload || {};
+  // R4.2 (owner test 24/11): the verification service answers with English developer messages — say them in the interface language
+  const CODE = {
+    EVIDENCE_URL_NOT_ALLOWED: i18n.t('admin:organizations.err.evidence_url', 'La source doit être une adresse https d’un site officiel accepté (par exemple annuaire-entreprises.data.gouv.fr, *.gouv.fr, service-public.fr).'),
+    TERRITORY_CONFIRMATION_REQUIRED: i18n.t('admin:organizations.err.territory', 'Cochez la case qui confirme le territoire (Strasbourg / Bas-Rhin).'),
+    EVIDENCE_NOTE_REQUIRED: i18n.t('admin:organizations.err.note', 'Décrivez ce que vous avez contrôlé sur la source (au moins 20 caractères).'),
+    STALE_REVIEW: i18n.t('admin:organizations.err.stale', 'La fiche a changé depuis votre lecture : rechargez la page et relisez-la avant de décider.'),
+  };
+  const code = p.code || p.error;
+  if (code && CODE[code]) return CODE[code];
+  if (/territoryConfirmed/.test(String(p.message || ''))) return CODE.TERRITORY_CONFIRMATION_REQUIRED;
+  if (/sourceUrl/.test(String(p.message || ''))) return CODE.EVIDENCE_URL_NOT_ALLOWED;
+  return p.message || p.error || e?.message || i18n.t('admin:organizations.action_impossible', 'Action impossible.');
 };
 
 /**
@@ -32,7 +44,7 @@ const ROLE_LABEL = () => ({ STRUCTURE_ADMIN: i18n.t('admin:organizations.members
  * version of the record read above), activated, and its administrator receives the e-mail that opens the second factor — in one step. « Refuser »: the
  * pending account is disabled with the reason of the card (kept in the journal).
  */
-function PendingRegistration({ orgId, member, activeMembers, busy, reasonOk, reason, run, onChanged }) {
+function PendingRegistration({ orgId, siret, member, activeMembers, busy, reasonOk, reason, run, onChanged }) {
   const { t } = useT('admin');
   const [v, setV] = useState({ sourceUrl: '', note: '', territory: false, version: '' });
   const errs = useFormErrors();
@@ -58,6 +70,13 @@ function PendingRegistration({ orgId, member, activeMembers, busy, reasonOk, rea
       {activeMembers > 0 ? <p className="font-semibold" data-testid="admin-org-pro-registration-existing">{t('admin:organizations.pro_registration.existing_members', 'Attention : cette organisation a déjà {{n}} membre(s) actif(s). Cette personne en deviendrait administratrice.', { n: activeMembers })}</p> : null}
       <ErrorSummary ref={errs.summaryRef} errors={errs.errors} order={[id('source'), id('note'), id('territory')]} testid={`admin-org-pro-registration-errors-${member.id}`} />
       <label className="block" htmlFor={id('source')}>{t('admin:organizations.pro_registration.source_label', 'Source officielle consultée (adresse https)')}</label>
+      {/^\d{14}$/.test(String(siret || '')) ? (
+        <p className="text-sm" data-testid="admin-org-pro-registration-annuaire">
+          <a className="underline" href={`https://annuaire-entreprises.data.gouv.fr/etablissement/${siret}`} target="_blank" rel="noreferrer noopener">{t('admin:organizations.pro_registration.annuaire_open', 'Ouvrir ce SIRET dans l’Annuaire des entreprises')}</a>
+          {' · '}
+          <button type="button" className="underline" onClick={() => { setV((x) => ({ ...x, sourceUrl: `https://annuaire-entreprises.data.gouv.fr/etablissement/${siret}` })); errs.clear(id('source')); }}>{t('admin:organizations.pro_registration.annuaire_use', 'Utiliser cette adresse comme source')}</button>
+        </p>
+      ) : null}
       <input id={id('source')} type="url" aria-required="true" className="w-full rounded border bg-white p-2" value={v.sourceUrl} {...fieldA11y(id('source'), errs.errors)} onChange={(e) => { setV((x) => ({ ...x, sourceUrl: e.target.value })); errs.clear(id('source')); }} />
       <FieldError field={id('source')} errors={errs.errors} />
       <label className="block" htmlFor={id('note')}>{t('admin:organizations.pro_registration.note_label', 'Ce que la source montre (au moins 20 caractères)')}</label>
@@ -81,7 +100,7 @@ function PendingRegistration({ orgId, member, activeMembers, busy, reasonOk, rea
  * account (incident, lost device while the structure administrator is away — refused while the member still holds work to hand over) and erase a disabled
  * one (a former member's erasure request). Same reason field and MFA rule as the activity actions.
  */
-function MembersPanel({ orgId, activeMembers = 0, busy, reasonOk, reason, run }) {
+function MembersPanel({ orgId, siret, activeMembers = 0, busy, reasonOk, reason, run }) {
   const { t } = useT('admin');
   const [state, setState] = useState({ loading: true, error: '', members: [] });
   const load = useCallback(async () => {
@@ -104,7 +123,7 @@ function MembersPanel({ orgId, activeMembers = 0, busy, reasonOk, reason, run })
                 <span className="text-slate-700">— {ROLE_LABEL()[m.role] || m.role} · {m.status === 'active' ? t('admin:organizations.members.active', 'actif') : m.status === 'pending_verification' ? t('admin:organizations.members.pending_verification', 'inscription à vérifier') : t('admin:organizations.members.disabled', 'désactivé')}</span>
                 {m.status === 'active' ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-member-disable"
                   onClick={() => act('DISABLE_PRO_ACCOUNT', m.id, t('admin:organizations.members.done_disabled', 'Compte désactivé : ses sessions sont terminées.'))}>{t('admin:organizations.members.disable', 'Désactiver ce compte')}</Button> : null}
-                {m.status === 'pending_verification' ? <div className="w-full"><PendingRegistration orgId={orgId} member={m} activeMembers={activeMembers} busy={busy} reasonOk={reasonOk} reason={reason} run={run} onChanged={load} /></div> : null}
+                {m.status === 'pending_verification' ? <div className="w-full"><PendingRegistration orgId={orgId} siret={siret} member={m} activeMembers={activeMembers} busy={busy} reasonOk={reasonOk} reason={reason} run={run} onChanged={load} /></div> : null}
                 {m.status !== 'active' && m.status !== 'pending_verification' && !m.erased ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-member-erase"
                   onClick={() => act('ERASE_PRO_ACCOUNT', m.id, t('admin:organizations.members.done_erased', 'Compte effacé : adresse, mot de passe et double authentification supprimés.'))}>{t('admin:organizations.members.erase', 'Effacer ce compte (demande de la personne)')}</Button> : null}
               </li>
@@ -201,7 +220,7 @@ export default function AdminOrganizations() {
                       ? <Button size="sm" variant="outline" className="border-red-300 text-red-800" disabled={busy} data-testid="admin-org-suspend" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'SUSPEND', f(o.id).reason || ''), t('admin:organizations.done.suspended', 'Organisation suspendue.'))}>{t('admin:organizations.suspend', 'Suspendre')}</Button>
                       : <Button size="sm" variant="outline" disabled={busy} data-testid="admin-org-reactivate" onClick={() => reasonOk(o.id) && run(() => apiClient.admin.setOrganizationActivity(o.id, 'REACTIVATE', f(o.id).reason || ''), t('admin:organizations.done.reactivated', 'Organisation réactivée.'))}>{t('admin:organizations.reactivate', 'Réactiver')}</Button>}
                   </div>
-                  {f(o.id).open ? <MembersPanel orgId={o.id} activeMembers={o.activeMembers} busy={busy} reason={f(o.id).reason || ''} reasonOk={() => reasonOk(o.id)} run={run} /> : null}
+                  {f(o.id).open ? <MembersPanel orgId={o.id} siret={o.siret} activeMembers={o.activeMembers} busy={busy} reason={f(o.id).reason || ''} reasonOk={() => reasonOk(o.id)} run={run} /> : null}
                 </div>
               </details>
             </li>
