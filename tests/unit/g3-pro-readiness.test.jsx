@@ -126,7 +126,7 @@ describe('G3 professional terms', () => {
     expect(proTermsReference('cgu-professionnel', { VERCEL_ENV: 'production', VITE_LEGAL_DOCS_APPROVED_VERSION: `cgu-professionnel@${LEGAL_DRAFTS_V6}` })).toBe(`cgu-professionnel@${LEGAL_DRAFTS_V6}`);
     // G4 (19/11/2026): the newest draft of THAT document (v8), not the shared citizen / notice version (v7)
     // G14 (22/11/2026): cgu-professionnel's newest draft is v9-2026-11-22; conditions-structures stays v8
-    expect(proTermsReference('cgu-professionnel', { VERCEL_ENV: 'development' })).toBe('cgu-professionnel@v11-2026-11-24');   // the newest draft: v11-2026-11-24 (release-3 follow-up) after v10-2026-11-23
+    expect(proTermsReference('cgu-professionnel', { VERCEL_ENV: 'development' })).toBe('cgu-professionnel@v12-2026-11-25');   // the newest draft: v12-2026-11-25 (R5, proposed) after v11-2026-11-24 (release-3 follow-up) after v10-2026-11-23
     expect(proTermsReference('conditions-structures', { VERCEL_ENV: 'development' })).toBe('conditions-structures@v9-2026-11-23');
     expect(proTermsDocumentsFor('STRUCTURE_ADMIN')).toEqual(['cgu-professionnel', 'conditions-structures']);
     expect(proTermsDocumentsFor('PRO')).toEqual(['cgu-professionnel']);

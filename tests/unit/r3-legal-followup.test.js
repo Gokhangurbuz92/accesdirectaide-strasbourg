@@ -87,7 +87,7 @@ describe('cgu-professionnel v11-2026-11-24 — a NEW draft (professional obligat
     expect(L.LEGAL_DRAFTS_PRO_V11).toBe('v11-2026-11-24');
     expect(Object.keys(p11).filter((k) => p10[k] !== p11[k]).sort()).toEqual(['appointments.external_v11', 'use.delegate_v11', 'use.messaging_v11']);
     expect(Object.keys(p10).filter((k) => !(k in p11))).toEqual([]);
-    expect(L.latestDraftVersionOf('cgu-professionnel')).toBe('v11-2026-11-24');
+    expect(L.latestDraftVersionOf('cgu-professionnel')).toBe('v12-2026-11-25');   // R5 (proposed 25/11/2026): v12 follows (tests/unit/r5-cgu-pro-v12.test.js)
     expect(L.knownApprovalToken('cgu-professionnel@v11-2026-11-24')).toBe(true);
     expect(L.approvedVersionOf('cgu-professionnel', 'cgu-professionnel@v10-2026-11-23')).toBe('v10-2026-11-23');   // v10 stays the approved one until named
     expect(p11['use.messaging_v11']).toMatch(/pas de donnée de santé, de diagnostic ni d'évaluation sociale/);
