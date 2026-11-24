@@ -2,6 +2,7 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import { frontendEnv } from '@/config/env';
 import { publicContactEmail, mailtoWithSubject } from '@/lib/contactEmail';
+import { PRO_SELF_REGISTRATION_SCREEN, bookingOpened, isBetaRestrictedPath } from '@/lib/publicBeta';
 import { Link } from 'react-router-dom';
 import { Handshake, MapPin, Users, HeartHandshake, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from "@/components/ui/card";
@@ -13,6 +14,10 @@ export default function Partners() {
     const { t } = useT('about');
     const beta = frontendEnv.flags.publicBeta;
     const email = publicContactEmail();
+    // R3H (live audit 24/11/2026): the Production build opens ADA Pro with the structure sign-up (/pro/register) and appointments, while this page said
+    // « L’espace professionnel, les comptes de structure et la prise de rendez-vous ne sont pas encore ouverts »
+    const proOpen = beta && !isBetaRestrictedPath(PRO_SELF_REGISTRATION_SCREEN);
+    const rdvOpen = proOpen && bookingOpened(beta);
     return (
         <div className="min-h-screen bg-slate-50 pb-20">
             <SEO
@@ -28,9 +33,16 @@ export default function Partners() {
                     <section className="rounded-2xl border border-blue-200 bg-white p-6 shadow-sm sm:p-8" aria-labelledby="partners-now" data-testid="partners-beta-now">
                         <h2 id="partners-now" className="text-xl font-bold text-slate-900">{t('about:partners.beta.title', 'Pendant la bêta publique')}</h2>
                         <p className="mt-2 text-slate-700">
-                            {t('about:partners.beta.text', 'L’espace professionnel, les comptes de structure et la prise de rendez-vous ne sont pas encore ouverts. Votre structure figure peut-être déjà dans l’annuaire : les lieux d’accueil sont repris des registres officiels (FINESS, Annuaire de l’administration, SIRENE) et vérifiés avant publication.')}
+                            {proOpen
+                                ? <>{t('about:partners.beta.text_pro_open', 'Votre structure peut demander l’ouverture de son Espace Pro : il ne s’ouvre qu’après la vérification de la structure sur une source officielle. Votre structure figure peut-être déjà dans l’annuaire : les lieux d’accueil sont repris des registres officiels (FINESS, Annuaire de l’administration, SIRENE) et vérifiés avant publication.')}{rdvOpen ? ` ${t('about:partners.beta.rdv_open', 'Une structure dont l’Espace Pro est ouvert peut proposer des rendez-vous en ligne.')}` : ''}</>
+                                : t('about:partners.beta.text', 'L’espace professionnel, les comptes de structure et la prise de rendez-vous ne sont pas encore ouverts. Votre structure figure peut-être déjà dans l’annuaire : les lieux d’accueil sont repris des registres officiels (FINESS, Annuaire de l’administration, SIRENE) et vérifiés avant publication.')}
                         </p>
                         <div className="mt-5 flex flex-wrap gap-3">
+                            {proOpen && (
+                                <Link to={PRO_SELF_REGISTRATION_SCREEN} data-testid="partners-pro-register" className="inline-flex min-h-11 items-center rounded-lg bg-blue-700 px-5 font-semibold text-white hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+                                    {t('about:partners.join.create', 'Créer mon Espace Pro')}
+                                </Link>
+                            )}
                             <Link to="/structures" className="inline-flex min-h-11 items-center rounded-lg bg-blue-700 px-5 font-semibold text-white hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
                                 {t('about:partners.beta.search', 'Chercher ma structure dans l’annuaire')}
                             </Link>
@@ -51,10 +63,10 @@ export default function Partners() {
 
                         <div className="max-w-2xl mx-auto">
                             <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
-                                {beta ? t('about:partners.offer.title_beta', 'Ce que l’espace partenaires permettra') : t('about:partners.offer.title_open', 'Associations, CCAS, structures solidaires : rejoignez l’initiative')}
+                                {beta && !rdvOpen ? t('about:partners.offer.title_beta', 'Ce que l’espace partenaires permettra') : t('about:partners.offer.title_open', 'Associations, CCAS, structures solidaires : rejoignez l’initiative')}
                             </h2>
                             <p className="text-lg text-slate-600 leading-relaxed">
-                                {t('about:partners.offer.text', "Accès Direct Aide est déployé pour simplifier la vie des demandeurs et soulager l'accueil des professionnels.")} {beta
+                                {t('about:partners.offer.text', "Accès Direct Aide est déployé pour simplifier la vie des demandeurs et soulager l'accueil des professionnels.")} {beta && !rdvOpen
                                     ? <Trans i18n={i18n} i18nKey="about:partners.offer.beta" defaults="À son ouverture, l’espace partenaires permettra de <0>tenir à jour la fiche de votre structure</0> et de recevoir des orientations." components={[<strong key="update" />]} />
                                     : <Trans i18n={i18n} i18nKey="about:partners.offer.open" defaults="<0>Référencez votre structure</0> dans notre annuaire pour bénéficier de la prise de RDV intégrée et d'une visibilité civique." components={[<strong key="list" />]} />}
                             </p>

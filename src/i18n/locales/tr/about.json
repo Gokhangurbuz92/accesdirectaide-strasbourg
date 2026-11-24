@@ -252,5 +252,7 @@
  "impact.observatoire": "Sitede aranan haklar ve yayımlanan yardım yerleri, çeyrek çeyrek:",
  "impact.observatoire_link": "Gözlemevi'ni görün",
  "method.report.text_email": "Herkes hata yapabilir. Bir hata görürseniz <0>e-postayla bildirin</0>: her bildirim okunur ve sayfa kaynağına göre yeniden doğrulanır.",
- "sources.loop.text_email": "Kurumlar ve vatandaşlar, yazım hatası içerebilecek bir yardım sayfasını her zaman şu adrese yazarak bildirebilir: <0/>. Ekip her bildirimi okur ve gerekirse sayfayı düzeltir; şimdilik herhangi bir süre garanti edilmez."
+ "sources.loop.text_email": "Kurumlar ve vatandaşlar, yazım hatası içerebilecek bir yardım sayfasını her zaman şu adrese yazarak bildirebilir: <0/>. Ekip her bildirimi okur ve gerekirse sayfayı düzeltir; şimdilik herhangi bir süre garanti edilmez.",
+ "partners.beta.text_pro_open": "Kuruluşunuz Profesyonel Alanının açılmasını talep edebilir: alan, kuruluş resmî bir kaynaktan doğrulandıktan sonra açılır. Kuruluşunuz rehberde zaten yer alıyor olabilir: destek noktaları resmi kayıtlardan (FINESS, Annuaire de l’administration, SIRENE) alınır ve yayımlanmadan önce doğrulanır.",
+ "partners.beta.rdv_open": "Profesyonel Alanı açık olan bir kuruluş çevrim içi randevu sunabilir."
 }
