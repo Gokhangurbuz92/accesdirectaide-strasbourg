@@ -117,8 +117,9 @@ export default function Security() {
                             <div className="space-y-3 text-slate-700 leading-relaxed px-2">
                                 <ul className="list-disc ps-5 space-y-2 text-sm">
                                     {/* PKG-11 audit: the former list (messages 60 days, attachments 30 days, appointments 1 year, inactive accounts 2 years) was not what the
-                                        purge job does; these are the rules it applies (api/_handlers/cron/gdpr-purge.js), the same as the privacy policy */}
-                                    <li><Trans i18n={i18n} i18nKey="legal:security.purge.appointments" defaults="<strong>Rendez-vous passés</strong> : anonymisés après 2 ans (730 jours)." /></li>
+                                        purge job does; these are the rules it applies (api/_handlers/cron/gdpr-purge.js), the same as the privacy policy.
+                                        R3 (24/11/2026): appointments as the in-force notice § 4 and retention-policy.js (A7 = 365; 90 / 90 days), not « 2 ans » */}
+                                    <li><Trans i18n={i18n} i18nKey="legal:security.purge.appointmentsRule" defaults="<strong>Rendez-vous</strong> : un rendez-vous confirmé, tenu ou manqué est anonymisé 1 an après sa date ; une demande refusée, expirée ou sans réponse, 90 jours après la date prévue ; un rendez-vous annulé, 90 jours après son annulation." /></li>
                                     <li><Trans i18n={i18n} i18nKey="legal:security.purge.sharedCopy" defaults="<strong>Copie partagée du questionnaire</strong> : effacée à l’expiration du lien, au plus 90 jours." /></li>
                                     <li><Trans i18n={i18n} i18nKey="legal:security.purge.conversations" defaults="<strong>Conversations avec l’assistant</strong> : 90 jours." /></li>
                                     <li><Trans i18n={i18n} i18nKey="legal:security.purge.logs" defaults="<strong>Journaux de sécurité</strong> : 365 jours ; preuves de consentement : 3 ans." /></li>

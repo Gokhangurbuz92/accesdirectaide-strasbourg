@@ -39,3 +39,18 @@ describe('R3H legacy privacy pages and open appointments', () => {
     expect(container).toHaveTextContent('4. Les rendez-vous (pas encore ouverts)');
   });
 });
+
+describe('R3 — appointment retention on the two pages = the notice in force (§ 4) and the code (A7 = 365, 90 / 90 days)', () => {
+  it('no « 730 jours » / « 2 ans » for appointments; 1 year after the date, 90 days for refused / expired / unanswered and cancelled', async () => {
+    const { RETENTION_POLICY } = await import('../../api/_services/retention-policy.js');
+    expect(RETENTION_POLICY.approvedChoices.A7).toBe(365);
+    expect([RETENTION_POLICY.durations.APPOINTMENT_UNCONFIRMED_DAYS.days, RETENTION_POLICY.durations.APPOINTMENT_CANCELLED_DAYS.days]).toEqual([90, 90]);
+    for (const file of ['Confidentialite.jsx', 'Security.jsx']) {
+      const { container } = await page(file, PROD);
+      expect(container, file).not.toHaveTextContent(/730 jours|2 ans \(730/);
+      expect(container, file).toHaveTextContent(/anonymisés? 1 an après (leur|sa) date/);
+      expect(container, file).toHaveTextContent(/90 jours après (son annulation|l'annulation)/);
+      cleanup(); vi.resetModules();
+    }
+  });
+});

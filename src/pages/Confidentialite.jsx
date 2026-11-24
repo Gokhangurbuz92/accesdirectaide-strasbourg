@@ -52,7 +52,8 @@ const retentionApplied = (t) => [
   [t('legal:privacy.retention.sharedCopy', 'Copie partagée du questionnaire'), t('legal:privacy.retention.sharedCopyDuration', 'à l\'expiration du lien (7 jours) ou au plus 90 jours, sauf conservation légale en cas de litige')],
   [t('legal:privacy.retention.tokens', 'Jetons de connexion et consentements'), t('legal:privacy.retention.atExpiry', 'à leur expiration')],
   [t('legal:privacy.retention.invitations', 'Invitations, jetons d\'agenda'), t('legal:privacy.retention.afterExpiry30', '30 jours après expiration')],
-  [t('legal:privacy.retention.appointments', 'Rendez-vous'), t('legal:privacy.retention.d730', 'anonymisés après 730 jours (2 ans)')],
+  // R3 (24/11/2026): the in-force notice (v13 / v14 § 4) and the code (retention-policy.js approvedChoices.A7 = 365; 90 / 90 days) — no longer « 730 jours »
+  [t('legal:privacy.retention.appointments', 'Rendez-vous'), t('legal:privacy.retention.appointmentsRule', 'confirmés, tenus ou manqués : anonymisés 1 an après leur date ; demandes refusées, expirées ou sans réponse : 90 jours après la date prévue ; annulés : 90 jours après l\'annulation')],
 ];
 
 export default function Confidentialite() {
