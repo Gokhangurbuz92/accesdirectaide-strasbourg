@@ -921,6 +921,7 @@
   "terms_change.link_cgu": "قراءة شروط الاستخدام",
   "terms_change.link_notice": "قراءة إشعار الخصوصية",
   "terms_change.dismiss": "فهمت",
+  "settings.gdpr_before_email": "وفقًا للائحة العامة لحماية البيانات (RGPD)، لديك حق الاطلاع على بياناتك وتصحيحها وحذفها. لأي طلب، اكتب إلى",
   "parcours.limited.already": "هذه الخطوة موجودة بالفعل في Mon Parcours.",
   "parcours.limited.place": "المكان:",
   "parcours.limited.place_gone": "المكان المختار لم يعد منشورًا.",

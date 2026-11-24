@@ -40,10 +40,69 @@ async function catalogue(db) {
   return { kinds: out, guides: int(g?.n), actualites: int(a?.n) };
 }
 
-async function aidesByDomain(db) {
-  const rows = await rowsOf(db, sql`SELECT category_code::text AS code, count(*)::int AS n FROM "Aide" WHERE ${visibleSql('aide', STRICT)} GROUP BY 1`);
-  const by = new Map(rows.map((r) => [String(r.code), int(r.n)]));
+/**
+ * R3H (live audit 24/11/2026: every published aide counted « AUTRE » and « UNSPECIFIED »): the catalogue import never writes "Aide".category_code (schema
+ * default AUTRE) nor "Aide".territory_scope (null); it writes the platform category `categorie` (api/_services/verification/classify.js, the vocabulary the
+ * search and the aide pages already use) and the declared territory fields. The domain is therefore the explicit category_code when one was set, else
+ * this fixed table of the catalogue's own categories (no text is read, nothing is guessed); a category absent from it stays « AUTRE ».
+ */
+export const DOMAIN_OF_CATEGORIE = Object.freeze({
+  logement: 'LOGEMENT', sante: 'SANTE', handicap: 'HANDICAP', emploi: 'EMPLOI', 'travail-formation': 'EMPLOI', famille: 'FAMILLE', etudes: 'ETUDES',
+  mobilite: 'MOBILITE', transports: 'MOBILITE', energie: 'ENERGIE', alimentation: 'ALIMENTATION', justice: 'JUSTICE', numerique: 'NUMERIQUE',
+});
+const fold = (v) => String(v ?? '').normalize('NFD').replace(/\p{M}/gu, '').trim().toLowerCase();
+
+/** @param {{ category_code?: unknown, categorie?: unknown }} r @returns {string} one of AidCategoryCode */
+export function aideDomain(r) {
+  const codes = AidCategoryCode.enumValues;
+  const code = String(r?.category_code ?? '').trim().toUpperCase();
+  if (code && code !== 'AUTRE' && codes.includes(/** @type {any} */ (code))) return code;
+  const c = fold(r?.categorie);
+  return DOMAIN_OF_CATEGORIE[c] || (codes.includes(/** @type {any} */ (c.toUpperCase())) ? c.toUpperCase() : 'AUTRE');
+}
+
+/** the hosts of Service-Public (DILA): the source registry's level for them is NATIONAL (api/_services/verification/sources.js, « dila-service-public ») */
+const SERVICE_PUBLIC = /(^|\.)service-public\.(gouv\.)?fr$/i;
+const hostOf = (u) => { try { return new URL(String(u)).hostname; } catch { return ''; } };
+const nonEmpty = (a) => Array.isArray(a) && a.some((x) => String(x ?? '').trim() !== '');
+
+/**
+ * The échelon of one aide, from what its record declares, in this order: an explicit territory_scope (a value outside the four échelons stays
+ * UNSPECIFIED: the record says something this indicator cannot read); else INSEE commune codes → COMMUNAL; « France entière » / « national » in its
+ * territories → NATIONAL; department codes → DEPARTMENTAL; region codes → REGIONAL; else, with no territory at all, a Service-Public fiche (national
+ * regulations published by the DILA) → NATIONAL. Anything else (a town name alone, another site) stays UNSPECIFIED.
+ * @param {{ territory_scope?: unknown, territoires?: unknown, departements?: unknown, department_codes?: unknown, region_codes?: unknown, insee_codes?: unknown, source_url?: unknown }} r
+ */
+export function aideScope(r) {
+  const explicit = String(r?.territory_scope ?? '').trim().toUpperCase();
+  if (explicit) return SCOPES.includes(explicit) ? explicit : 'UNSPECIFIED';
+  if (nonEmpty(r?.insee_codes)) return 'COMMUNAL';
+  const territories = (Array.isArray(r?.territoires) ? r.territoires : []).map(fold).filter(Boolean);
+  if (territories.some((t) => t === 'france' || t === 'france entiere' || /\bnational/.test(t))) return 'NATIONAL';
+  if (nonEmpty(r?.department_codes) || nonEmpty(r?.departements)) return 'DEPARTMENTAL';
+  if (nonEmpty(r?.region_codes)) return 'REGIONAL';
+  if (!territories.length && SERVICE_PUBLIC.test(hostOf(r?.source_url))) return 'NATIONAL';
+  return 'UNSPECIFIED';
+}
+
+/** the classification fields of the visible aides (public catalogue fields only; reduced to counts below, never returned) */
+async function aideClassRows(db) {
+  return rowsOf(db, sql`SELECT category_code::text AS category_code, categorie, territory_scope, territoires, departements, department_codes, region_codes, insee_codes, source_url
+    FROM "Aide" WHERE ${visibleSql('aide', STRICT)}`);
+}
+
+/** @param {any[]} rows */
+export function domainCounts(rows) {
+  const by = new Map();
+  for (const r of rows) { const d = aideDomain(r); by.set(d, (by.get(d) ?? 0) + 1); }
   return AidCategoryCode.enumValues.map((domain) => ({ domain, count: by.get(domain) ?? 0 }));
+}
+
+/** @param {any[]} rows */
+export function scopeCounts(rows) {
+  const by = Object.fromEntries(SCOPES.map((s) => [s, 0]));
+  for (const r of rows) by[aideScope(r)] += 1;
+  return SCOPES.map((scope) => ({ scope, count: by[scope] }));
 }
 
 /** G12: the source's OWN theme (Service-Public « Famille - Scolarité », « Logement »…), as published on the record; no inference. Cells below K_MIN are kept: a
@@ -59,13 +118,6 @@ async function aidesBySourceTheme(db) {
     .sort((a, b) => (a.theme === null) - (b.theme === null) || b.count - a.count || String(a.theme).localeCompare(String(b.theme), 'fr'));
 }
 const aidesBySourceThemeSafe = async (db) => safeSourceThemes(await aidesBySourceTheme(db));
-
-async function aidesByScope(db) {
-  const rows = await rowsOf(db, sql`SELECT upper(btrim(COALESCE(territory_scope, ''))) AS scope, count(*)::int AS n FROM "Aide" WHERE ${visibleSql('aide', STRICT)} GROUP BY 1`);
-  const by = Object.fromEntries(SCOPES.map((s) => [s, 0]));
-  for (const r of rows) { const s = SCOPES.includes(String(r.scope)) ? String(r.scope) : 'UNSPECIFIED'; by[s] += int(r.n); }
-  return SCOPES.map((scope) => ({ scope, count: by[scope] }));
-}
 
 /**
  * Structures by commune, with the observatory's suppression: a commune cell below K_MIN is masked (primaryCell), and when exactly one cell of the column is
@@ -159,7 +211,9 @@ export function rightsNeeds(root = process.cwd()) {
 
 /** @param {{ db?: any, now?: Date }} [opts] */
 export async function computePublicIndicators({ db = defaultDb, now = new Date() } = {}) {
-  const [cat, domains, scopes, struct, links, tr, themes] = await Promise.all([catalogue(db), aidesByDomain(db), aidesByScope(db), structures(db), linkHealth(db), translations(db), aidesBySourceThemeSafe(db)]);
+  const [cat, classRows, struct, links, tr, themes] = await Promise.all([catalogue(db), aideClassRows(db), structures(db), linkHealth(db), translations(db), aidesBySourceThemeSafe(db)]);
+  const domains = domainCounts(classRows);
+  const scopes = scopeCounts(classRows);
   const share = (n, d) => (d > 0 ? Math.round((1000 * n) / d) / 10 : null);
   return {
     schema: SCHEMA,

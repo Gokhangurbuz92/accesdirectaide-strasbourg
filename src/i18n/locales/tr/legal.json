@@ -353,5 +353,14 @@
  "charter.title": "Moderasyon şartı",
  "charter.version": "{{date}} tarihli sürüm",
  "mentions.contact.dsa": "Dijital hizmetlere ilişkin (AB) 2022/2065 sayılı tüzük (madde 11 ve 12) anlamında, üye devletlerin makamları, Avrupa Komisyonu ve kullanıcılar için tek iletişim noktası: contact@accesdirectaide.fr. Mesajlar bir kişi tarafından okunur. Kullanılabilecek dil: Fransızca.",
- "mentions.contact.charter": "Yayımlanan içeriklerin moderasyon şartı"
+ "mentions.contact.charter": "Yayımlanan içeriklerin moderasyon şartı",
+ "beta.closed_accounts_rdv_assistant": "Şunlar açık <strong>değildir</strong>: dosyalar, mesajlar, belgeler, ziyaretçi ölçümü ve hata izleme (Sentry). Bu sayfanın bunları anlatan bölümleri, açıldıklarında geçerli olacaktır.",
+ "beta.closed_accounts_rdv": "Şunlar açık <strong>değildir</strong>: dosyalar, mesajlar, belgeler, asistan, ziyaretçi ölçümü ve hata izleme (Sentry). Bu sayfanın bunları anlatan bölümleri, açıldıklarında geçerli olacaktır.",
+ "beta.closed_accounts_assistant": "Şunlar açık <strong>değildir</strong>: dosyalar, mesajlar, belgeler, randevular, ziyaretçi ölçümü ve hata izleme (Sentry). Bu sayfanın bunları anlatan bölümleri, açıldıklarında geçerli olacaktır.",
+ "beta.open_rdv": "Randevu talepleri açıktır (kişisel bir hesapla): kuruluşa neyin iletildiği ve ne kadar süre saklandığı <0>hesaplar bildiriminde</0> açıklanır.",
+ "beta.open_assistant": "Vatandaş asistanı açıktır: hiçbir konuşma kaydedilmez; yanıtları üreten hizmet sağlayıcı <0>hesaplar bildiriminde</0> belirtilir.",
+ "security.rights.text_email": "GDPR uyarınca verilerinizi görmeyi, değiştirmeyi veya silmeyi talep edebilirsiniz. Bunun için şu adrese yazın: <0/>.",
+ "privacy.data.appointments.title_open": "4. Randevular",
+ "privacy.data.appointments.text_open": "Randevu talepleri kişisel bir hesaptan açıktır. Neyin işlendiği, kuruluşa neyin iletildiği ve ne kadar süre saklandığı, esas alınan <0>hesaplar bildiriminde</0> (bölüm 3, 4 ve 9) açıklanır.",
+ "security.stored.bookings_open": "<strong>Kişilerin randevuları</strong>: seçilen hizmet, zaman aralığı ve şekil; kuruluş ne adınızı, ne e-posta adresinizi ne de telefonunuzu alır (hesaplar bildirimi, bölüm 9)."
 }

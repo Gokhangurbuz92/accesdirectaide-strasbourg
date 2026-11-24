@@ -14,7 +14,7 @@ describe('WS7 read-only journey preservation', () => {
     expect(diagnostic).toMatch(/csrfFetch\('\/api\/diagnostic'/);   // DTA S1D (normative, explained): same endpoint, now through csrfFetch
     expect(diagnostic).toMatch(/csrfFetch\('\/api\/share\/create'/);
     expect(diagnostic).toContain('QRCode');
-    expect(diagnostic).toContain('Simulation locale');
+    expect(diagnostic).toContain('Estimation indicative — non opposable, ce n’est pas une décision');   // R3H (24/11/2026): the answers go to the server and OpenFisca — « Simulation locale » was untrue
   });
 
   it('preserves emergency/accessibility resource lookup', () => {

@@ -34,8 +34,8 @@ export const PUBLIC_INDICATORS = Object.freeze([
   },
   {
     id: 'aidesByDomain', label: 'Aides publiées par domaine',
-    definition: 'Les aides visibles réparties selon leur domaine (logement, santé, handicap, emploi, famille…), tel qu’il est enregistré sur la fiche.',
-    source: '"Aide".category_code (énumération AidCategoryCode), aides visibles',
+    definition: 'Les aides visibles réparties selon leur domaine (logement, santé, handicap, emploi, famille…), tel qu’il est enregistré sur la fiche : le code de domaine s’il a été saisi, sinon la catégorie de la fiche dans le catalogue, par une table fixe ; une catégorie hors de cette table est comptée « autre ou non classé ».',
+    source: '"Aide".category_code (énumération AidCategoryCode) s’il est autre que AUTRE, sinon "Aide".categorie par la table DOMAIN_OF_CATEGORIE (api/_services/public-indicators.js), aides visibles',
     refresh: 'Comme les fiches publiées.',
     notPersonal: 'Classement de fiches publiques.',
     isNot: 'Ce n’est pas l’importance des besoins dans un domaine : cela dit seulement combien de fiches le catalogue contient.',
@@ -51,7 +51,7 @@ export const PUBLIC_INDICATORS = Object.freeze([
   {
     id: 'aidesByScope', label: 'Aides publiées par échelon',
     definition: 'Les aides visibles réparties selon l’échelon qui les porte : nationales, régionales, départementales, communales, ou non précisé.',
-    source: '"Aide".territory_scope (NATIONAL, REGIONAL, DEPARTMENTAL, COMMUNAL ; toute autre valeur = non précisé)',
+    source: '"Aide".territory_scope (NATIONAL, REGIONAL, DEPARTMENTAL, COMMUNAL ; toute autre valeur = non précisé) ; s’il est vide, les champs territoriaux de la fiche (codes de communes, « France entière », codes de départements, de régions), puis, sans aucun territoire, une fiche Service-Public (réglementation nationale publiée par la DILA) = nationale ; sinon non précisé',
     refresh: 'Comme les fiches publiées.',
     notPersonal: 'Classement de fiches publiques.',
     isNot: 'Ce n’est pas une couverture du territoire : une aide nationale s’applique partout.',

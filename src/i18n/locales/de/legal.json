@@ -353,5 +353,14 @@
  "charter.title": "Moderationscharta",
  "charter.version": "Fassung vom {{date}}",
  "mentions.contact.dsa": "Zentrale Kontaktstelle im Sinne der Verordnung (EU) 2022/2065 über digitale Dienste (Artikel 11 und 12) für die Behörden der Mitgliedstaaten, die Europäische Kommission und die Nutzerinnen und Nutzer: contact@accesdirectaide.fr. Die Nachrichten werden von einem Menschen gelesen. Verwendbare Sprache: Französisch.",
- "mentions.contact.charter": "Moderationscharta für veröffentlichte Inhalte"
+ "mentions.contact.charter": "Moderationscharta für veröffentlichte Inhalte",
+ "beta.closed_accounts_rdv_assistant": "<strong>Nicht</strong> geöffnet sind: Akten, Nachrichten, Dokumente, Reichweitenmessung und Fehlerverfolgung (Sentry). Die Abschnitte dieser Seite, die sie beschreiben, gelten ab ihrer Öffnung.",
+ "beta.closed_accounts_rdv": "<strong>Nicht</strong> geöffnet sind: Akten, Nachrichten, Dokumente, Assistent, Reichweitenmessung und Fehlerverfolgung (Sentry). Die Abschnitte dieser Seite, die sie beschreiben, gelten ab ihrer Öffnung.",
+ "beta.closed_accounts_assistant": "<strong>Nicht</strong> geöffnet sind: Akten, Nachrichten, Dokumente, Termine, Reichweitenmessung und Fehlerverfolgung (Sentry). Die Abschnitte dieser Seite, die sie beschreiben, gelten ab ihrer Öffnung.",
+ "beta.open_rdv": "Terminanfragen sind geöffnet (mit einem persönlichen Konto): Was an die Einrichtung übermittelt wird und wie lange es aufbewahrt wird, ist in der <0>Datenschutzerklärung für Konten</0> beschrieben.",
+ "beta.open_assistant": "Der Bürgerassistent ist geöffnet: Es wird kein Gespräch gespeichert; der Anbieter, der die Antworten erzeugt, ist in der <0>Datenschutzerklärung für Konten</0> genannt.",
+ "security.rights.text_email": "Gemäß der DSGVO können Sie verlangen, Ihre Daten einzusehen, zu ändern oder zu löschen. Schreiben Sie dafür an <0/>.",
+ "privacy.data.appointments.title_open": "4. Termine",
+ "privacy.data.appointments.text_open": "Terminanfragen sind geöffnet, über ein persönliches Konto. Was verarbeitet wird, was an die Einrichtung übermittelt wird und wie lange es aufbewahrt wird, ist in der <0>Datenschutzerklärung für Konten</0> (Abschnitte 3, 4 und 9) beschrieben, die maßgeblich ist.",
+ "security.stored.bookings_open": "<strong>Termine von Personen</strong>: der gewählte Dienst, Zeitraum und die gewählte Form; die Einrichtung erhält weder Ihren Namen noch Ihre E-Mail-Adresse noch Ihre Telefonnummer (Datenschutzerklärung für Konten, Abschnitt 9)."
 }

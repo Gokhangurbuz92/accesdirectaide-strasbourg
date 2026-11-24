@@ -44,6 +44,17 @@ describe('Mon Espace home', () => {
     api.espace.mockRejectedValue(Object.assign(new Error('x'), { status: 401 }));
     mount(MonEspace);
     expect(await screen.findByTestId('mon-espace-error')).toHaveTextContent('Connectez-vous');
+    // R3H (live audit 24/11/2026): no red alert and no « Réessayer » that can never succeed without a session — « Se connecter » only
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.queryByTestId('mon-espace-retry')).toBeNull();
+    expect(screen.getByTestId('mon-espace-sign-in')).toHaveAttribute('href', '/auth/login?next=/compte');
+  });
+  it('R3H: any other failure offers « Réessayer » (and says so as an alert)', async () => {
+    api.espace.mockRejectedValue(Object.assign(new Error('Service indisponible'), { status: 503 }));
+    mount(MonEspace);
+    expect(await screen.findByRole('alert')).toHaveTextContent('Service indisponible');
+    expect(screen.getByTestId('mon-espace-retry')).toBeInTheDocument();
+    expect(screen.queryByTestId('mon-espace-sign-in')).toBeNull();
   });
 });
 

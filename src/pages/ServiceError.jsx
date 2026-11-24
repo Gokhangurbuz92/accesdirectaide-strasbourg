@@ -12,6 +12,7 @@ import {
     Search,
     Wrench,
 } from 'lucide-react';
+import ContactLink from '@/components/ContactLink';
 
 /**
  * ServiceError — Institutional error page (404 / 500)
@@ -89,13 +90,13 @@ export default function ServiceError({ code = 404 }) {
 
                 {/* Security + Help */}
                 <div className="mt-14 flex flex-wrap justify-center items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 text-xs">
-                    <Link
+                    <ContactLink
                         to="/contact"
                         className="flex items-center gap-1.5 text-indigo-600 font-bold uppercase hover:underline"
                     >
                         <LifeBuoy size={12} />
                         {t('layout:error.help', "Centre d'aide")}
-                    </Link>
+                    </ContactLink>
                 </div>
                 {/* VIS: an unknown address also shows a person to ask */}
                 {is404 && <HumanHelpBlock headingLevel={3} className="w-full" />}

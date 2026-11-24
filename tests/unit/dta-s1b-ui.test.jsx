@@ -67,7 +67,7 @@ describe('U1 — the false claims are gone from every surface (source level)', (
   });
   it('the pinned strings of the earlier UI contract are still present (badge, disclaimer, roles)', () => {
     const p = read('src/pages/DiagnosticPage.jsx');
-    expect(p).toContain('Simulation locale — indicative et non-opposable');
+    expect(p).toContain('Estimation indicative — non opposable, ce n’est pas une décision');   // R3H (24/11/2026): the answers go to the server and OpenFisca — « Simulation locale » was untrue
     expect(p).toContain('data-testid="simulation-mode-badge"');
   });
 });

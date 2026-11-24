@@ -4,6 +4,8 @@ import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import { ClipboardCheck, Edit, Eye, Check } from 'lucide-react';
 import i18n, { useT } from '@/i18n';
+import ContactLink from '@/components/ContactLink';
+import { contactFormOpen } from '@/lib/contactEmail';
 
 export default function Method() {
     const { t } = useT('about');
@@ -70,9 +72,13 @@ export default function Method() {
 
                 <h2 className="text-2xl font-bold mt-8 mb-4">{t('about:method.report.title', 'Signaler une erreur')}</h2>
                 <p>
-                    <Trans i18n={i18n} i18nKey="about:method.report.text"
-                        defaults="Tout le monde peut se tromper. Si vous voyez une faute, <0>signalez-la avec le formulaire de contact</0> : chaque signalement est lu, et la fiche est vérifiée à nouveau sur sa source."
-                        components={[<a key="contact" href="/contact?sujet=signalement_erreur" className="underline font-medium" data-testid="method-report-error">signalez-la avec le formulaire de contact</a>]} />
+                    {contactFormOpen()
+                        ? <Trans i18n={i18n} i18nKey="about:method.report.text"
+                            defaults="Tout le monde peut se tromper. Si vous voyez une faute, <0>signalez-la avec le formulaire de contact</0> : chaque signalement est lu, et la fiche est vérifiée à nouveau sur sa source."
+                            components={[<a key="contact" href="/contact?sujet=signalement_erreur" className="underline font-medium" data-testid="method-report-error">signalez-la avec le formulaire de contact</a>]} />
+                        : <Trans i18n={i18n} i18nKey="about:method.report.text_email"
+                            defaults="Tout le monde peut se tromper. Si vous voyez une faute, <0>signalez-la par e-mail</0> : chaque signalement est lu, et la fiche est vérifiée à nouveau sur sa source."
+                            components={[<ContactLink key="contact" to="/contact?sujet=signalement_erreur" className="underline font-medium" data-testid="method-report-error" />]} />}
                 </p>
 
             </div>

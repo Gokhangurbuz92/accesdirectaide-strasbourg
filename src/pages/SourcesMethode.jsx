@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trans } from 'react-i18next';
 import i18n, { useT } from '@/i18n';
+import ContactLink from '@/components/ContactLink';
+import { contactFormOpen, publicContactEmail } from '@/lib/contactEmail';
 
 export default function SourcesMethode() {
   const { t } = useT('about');
@@ -184,11 +186,13 @@ export default function SourcesMethode() {
               </div>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2">
                 <p>
-                  <Trans i18n={i18n} i18nKey="about:sources.loop.text" defaults="Les institutions et les citoyens peuvent à tout moment corriger une aide qui comporterait une coquille via le bouton de <0>Signalement</0>. L'équipe lit chaque signalement et corrige la fiche si nécessaire ; aucun délai n'est garanti pour l'instant." components={[<strong key="report" />]} />
+                  {contactFormOpen('/contact?sujet=signalement_erreur')
+                    ? <Trans i18n={i18n} i18nKey="about:sources.loop.text" defaults="Les institutions et les citoyens peuvent à tout moment corriger une aide qui comporterait une coquille via le bouton de <0>Signalement</0>. L'équipe lit chaque signalement et corrige la fiche si nécessaire ; aucun délai n'est garanti pour l'instant." components={[<strong key="report" />]} />
+                    : <Trans i18n={i18n} i18nKey="about:sources.loop.text_email" defaults="Les institutions et les citoyens peuvent à tout moment signaler une aide qui comporterait une coquille en écrivant à <0/>. L'équipe lit chaque signalement et corrige la fiche si nécessaire ; aucun délai n'est garanti pour l'instant." components={[<span key="email" lang="fr" dir="ltr">{publicContactEmail()}</span>]} />}
                 </p>
-                <a href="/contact?sujet=signalement_erreur" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium hover:underline mt-2">
+                <ContactLink to="/contact?sujet=signalement_erreur" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium hover:underline mt-2">
                   {t('about:sources.loop.report', 'Signaler une erreur sur la base de données')}
-                </a>
+                </ContactLink>
               </div>
             </section>
 

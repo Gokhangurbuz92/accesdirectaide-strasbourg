@@ -921,6 +921,7 @@
   "terms_change.link_cgu": "Прочитати умови використання",
   "terms_change.link_notice": "Прочитати повідомлення про конфіденційність",
   "terms_change.dismiss": "Зрозуміло",
+  "settings.gdpr_before_email": "Відповідно до GDPR (RGPD) ви маєте право на доступ до своїх даних, їх виправлення та видалення. З будь-яким запитом пишіть на",
   "parcours.limited.already": "Цей крок уже є в Mon Parcours.",
   "parcours.limited.place": "Місце:",
   "parcours.limited.place_gone": "Вибране місце більше не опубліковано.",

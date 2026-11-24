@@ -14,6 +14,7 @@ import i18n, { useT } from '@/i18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors.jsx';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
+import ContactLink from '@/components/ContactLink';
 export default function AuthForgotPassword() {
   const { t } = useT('account');
   /** R44: the message helpers of src/lib/fieldErrors.js take (key, fallback, options) @type {import('@/lib/fieldErrors').TFn} */
@@ -117,9 +118,9 @@ export default function AuthForgotPassword() {
               {t('account:nav.back_journey', 'Retour au parcours')}
             </Link>
             {/* A-16: the reset link goes to the account's mailbox; without that mailbox the person asks for assisted recovery */}
-            <Link className="text-blue-700 hover:underline" to="/demande-aide?cat=ACCOUNT" data-testid="forgot-lost-email">
+            <ContactLink className="text-blue-700 hover:underline" to="/demande-aide?cat=ACCOUNT" data-testid="forgot-lost-email">
               {t('account:nav.lost_email', 'Je n’ai plus accès à mon adresse e-mail')}
-            </Link>
+            </ContactLink>
           </div>
         </CardContent>
       </Card>

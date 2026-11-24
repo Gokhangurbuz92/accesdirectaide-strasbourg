@@ -110,10 +110,17 @@ export const PAGE_CSP = "default-src 'self'; script-src 'self' 'sha256-Ji1RDZFcX
 
 /** the headers of the answer: a shared cache of at most MAX_AGE seconds (a withdrawal by the veille is seen within minutes), never for an error page */
 export function pageHeaders(h) {
-  const base = { 'Content-Type': 'text/html; charset=utf-8', ETag: h.etag, 'X-Robots-Tag': h.robots, 'Content-Security-Policy': PAGE_CSP };
+  const base = { 'Content-Type': 'text/html; charset=utf-8', ETag: h.etag, 'X-Robots-Tag': h.robots, 'Content-Security-Policy': PAGE_CSP, 'Permissions-Policy': PAGE_PERMISSIONS_POLICY };
   if (h.status === 200) return { ...base, 'Cache-Control': `public, max-age=0, s-maxage=${MAX_AGE}, stale-while-revalidate=60` };
   return { ...base, 'Cache-Control': 'public, max-age=0, s-maxage=60' };
 }
+
+/**
+ * R3H (live audit 24/11/2026): a record page carried the API's own policy « camera=(), microphone=(), geolocation=() » (api/_utils/security.js). The SPA
+ * keeps the policy of the FIRST document for every later in-app navigation, so a visitor who entered on /structures/<slug> and then joined a video
+ * appointment had camera and microphone refused for the 8x8 frame. Same value as the vercel.json page header (tested).
+ */
+export const PAGE_PERMISSIONS_POLICY = 'camera=(self "https://8x8.vc"), microphone=(self "https://8x8.vc"), fullscreen=(self "https://8x8.vc"), geolocation=(), browsing-topics=(), interest-cohort=()';
 
 let cachedTemplate = null;
 /** the built index.html (dist/ on the hosting, the LAB's build directory) — read once */

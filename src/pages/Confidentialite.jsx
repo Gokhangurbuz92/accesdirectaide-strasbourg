@@ -10,7 +10,7 @@ import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL, LEGAL_PLACEHOLDERS, PRIVACY_NOTIC
 import ClearDeviceAnswers from '@/components/privacy/ClearDeviceAnswers';
 import { frontendEnv } from "@/config/env";
 import { Link } from 'react-router-dom';
-import { accountsOpened } from '@/lib/publicBeta';
+import { accountsOpened, bookingOpened } from '@/lib/publicBeta';
 import { orientationBrowserOnly } from '@/lib/orientationBrowserOnly';
 import { approvedVersionOf, currentDraftContext } from '@/config/legal-drafts';
 import i18n, { useLanguage, useT } from '@/i18n';
@@ -146,10 +146,20 @@ export default function Confidentialite() {
                 <Item title={t('legal:privacy.data.account.title', '3. Votre compte')}>
                   {t('legal:privacy.data.account.text', "Les contenus sensibles (messages, notes, documents, réponses partagées) sont chiffrés à l'enregistrement (pas de chiffrement de bout en bout). Votre compte est conservé tant que vous l'utilisez. La suppression automatique des comptes inactifs n'est pas encore en place.")}
                 </Item>
-                {/* R42-LEGAL: decided product rules (DEC-R42-01, R42-A06, R42-A07), stated as planned — the appointments surface is closed */}
+                {/* R42-LEGAL: decided product rules (DEC-R42-01, R42-A06, R42-A07), stated as planned while the appointments surface is closed.
+                    R3H (live audit 24/11/2026): with appointments open in the build, the section said « pas encore ouverts »; it now points to the notice in force */}
+                {bookingOpened(frontendEnv.flags.publicBeta) && frontendEnv.flags.publicBeta ? (
+                <Item title={t('legal:privacy.data.appointments.title_open', '4. Les rendez-vous')}>
+                  <span data-testid="privacy-appointments-open">
+                    <Trans i18n={i18n} i18nKey="legal:privacy.data.appointments.text_open" defaults="La demande de rendez-vous est ouverte, depuis un compte personnel. Ce qui est traité, ce qui est transmis à la structure et combien de temps c’est gardé sont décrits dans la <0>notice des comptes</0> (sections 3, 4 et 9), qui fait foi."
+                      components={[<Link key="notice" to="/confidentialite/notice" className="underline underline-offset-2" />]} />
+                  </span>
+                </Item>
+                ) : (
                 <Item title={t('legal:privacy.data.appointments.title', '4. Les rendez-vous (pas encore ouverts)')}>
                   {t('legal:privacy.data.appointments.text', "La prise de rendez-vous n'est pas encore ouverte. Quand elle le sera, il faudra être connecté(e) à son compte : la réservation sans compte, un temps envisagée, n'est plus prévue. Seules les personnes majeures pourront créer un compte. Un court motif facultatif pourra être demandé : n'y indiquez ni diagnostic ni document médical. Les informations demandées, leurs destinataires, la base légale et la durée de conservation seront indiquées ici avant l'ouverture.")}
                 </Item>
+                )}
               </div>
             </section>
 

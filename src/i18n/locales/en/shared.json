@@ -282,5 +282,6 @@
  "parcours_add.consent_body": "This step seems to reveal sensitive information (health, disability, addiction, right of residence, justice…). Nothing has been recorded. It will be recorded only with your consent: visible to you only, never shown to a trusted person, can be deleted at any time.",
  "parcours_add.consent_check": "I accept that this step is recorded in Mon Parcours.",
  "parcours_add.consent_confirm": "Record with my consent",
- "parcours_add.consent_cancel": "Do not record"
+ "parcours_add.consent_cancel": "Do not record",
+ "chat.limits": "I am an automatic assistant: I can be wrong. Check the official page; only the organisation concerned decides on your rights. In an emergency, call 112."
 }

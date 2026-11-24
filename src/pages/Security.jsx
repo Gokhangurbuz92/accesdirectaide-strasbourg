@@ -8,6 +8,9 @@ import { Lock, Trash2, EyeOff, Database, UserCheck, ExternalLink } from 'lucide-
 import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_PLACEHOLDERS } from '@/config/legal-documents';
 import i18n, { formatDate, useLanguage, useT } from '@/i18n';
+import { contactFormOpen } from '@/lib/contactEmail';
+import { frontendEnv } from '@/config/env';
+import { bookingOpened } from '@/lib/publicBeta';
 
 // R32: translated (namespace « legal »); the French text stays the reference (the contact address of the configuration is shown as written).
 export default function Security() {
@@ -78,7 +81,11 @@ export default function Security() {
                                     <li><Trans i18n={i18n} i18nKey="legal:security.stored.log" defaults="<strong>Journal de sécurité</strong> : connexions et accès aux dossiers, avec une empreinte de l'adresse IP (pas l'adresse elle-même)." /></li>
                                     <li><Trans i18n={i18n} i18nKey="legal:security.stored.appointments" defaults="<strong>Rendez-vous</strong> : Date, heure, lieu." /></li>
                                     <li><Trans i18n={i18n} i18nKey="legal:security.stored.messages" defaults="<strong>Messages</strong> : Contenu chiffré, pièces jointes." /></li>
-                                    <li><Trans i18n={i18n} i18nKey="legal:security.stored.bookings" defaults="<strong>Rendez-vous des personnes</strong> : nom (chiffré) et téléphone (non chiffré) indiqués lors de la prise de rendez-vous, consultables par la structure concernée." /></li>
+                                    {/* R3H (live audit 24/11/2026): with appointments open the notice in force (section 9) says the structure receives neither name nor
+                                        e-mail nor telephone; the former row described the retired booking without account */}
+                                    {frontendEnv.flags.publicBeta && bookingOpened(true)
+                                        ? <li data-testid="security-bookings-open"><Trans i18n={i18n} i18nKey="legal:security.stored.bookings_open" defaults="<strong>Rendez-vous des personnes</strong> : le service, le créneau et la modalité choisis ; la structure ne reçoit ni votre nom, ni votre adresse électronique, ni votre téléphone (notice des comptes, section 9)." /></li>
+                                        : <li><Trans i18n={i18n} i18nKey="legal:security.stored.bookings" defaults="<strong>Rendez-vous des personnes</strong> : nom (chiffré) et téléphone (non chiffré) indiqués lors de la prise de rendez-vous, consultables par la structure concernée." /></li>}
                                 </ul>
                             </div>
                         </section>
@@ -129,14 +136,19 @@ export default function Security() {
                             </div>
                             <div className="space-y-3 text-slate-700 leading-relaxed px-2">
                                 <p className="text-sm">
-                                    <Trans i18n={i18n} i18nKey="legal:security.rights.text" defaults="Conformément au RGPD, vous pouvez demander à voir, modifier ou supprimer vos données. Pour cela, utilisez le formulaire de contact ou écrivez à <0/>."
-                                        components={[<span key="contact" {...fr}>{LEGAL_PLACEHOLDERS.dataProtectionContact}</span>]} />
+                                    {contactFormOpen()
+                                        ? <Trans i18n={i18n} i18nKey="legal:security.rights.text" defaults="Conformément au RGPD, vous pouvez demander à voir, modifier ou supprimer vos données. Pour cela, utilisez le formulaire de contact ou écrivez à <0/>."
+                                            components={[<span key="contact" {...fr}>{LEGAL_PLACEHOLDERS.dataProtectionContact}</span>]} />
+                                        : <Trans i18n={i18n} i18nKey="legal:security.rights.text_email" defaults="Conformément au RGPD, vous pouvez demander à voir, modifier ou supprimer vos données. Pour cela, écrivez à <0/>."
+                                            components={[<span key="contact" {...fr}>{LEGAL_PLACEHOLDERS.dataProtectionContact}</span>]} />}
                                 </p>
+                                {contactFormOpen() && (
                                 <p className="mt-4">
                                     <a href="/contact" className="text-blue-600 font-medium hover:text-blue-700 hover:underline inline-flex items-center gap-1">
                                         {t('legal:security.rights.form', 'Formulaire de contact')} <ExternalLink className="w-4 h-4 rtl-flip" />
                                     </a>
                                 </p>
+                                )}
                             </div>
                         </section>
 

@@ -30,13 +30,13 @@ function messagesText(m, t) {
 
 export default function MonEspace() {
   const { t } = useT('compte');
-  const [state, setState] = useState({ loading: true, error: '', summary: null });
+  const [state, setState] = useState({ loading: true, error: '', summary: null, auth: false });
   const headingRef = useRef(null);
   // R42: `t` is a dependency (it changes with the language), so the error message is never left in the previous language
   const load = useCallback(async () => {
     setState((s) => ({ ...s, loading: !s.summary, error: '' }));
-    try { setState({ loading: false, error: '', summary: await citizenApi.espace() }); }
-    catch (err) { setState({ loading: false, error: err.status === 401 ? t('compte:space.login_required', 'Connectez-vous pour accéder à Mon Espace.') : err.message, summary: null }); }
+    try { setState({ loading: false, error: '', summary: await citizenApi.espace(), auth: false }); }
+    catch (err) { setState({ loading: false, error: err.status === 401 ? t('compte:space.login_required', 'Connectez-vous pour accéder à Mon Espace.') : err.message, summary: null, auth: err.status === 401 }); }
   }, [t]);
   useEffect(() => { load(); }, [load]);
 
@@ -47,8 +47,14 @@ export default function MonEspace() {
       <div className="container mx-auto max-w-4xl px-4 py-8" data-testid="mon-espace-error">
         <SEO title={t('compte:space.title', 'Mon Espace')} noindex />
         <h1 className="mb-3 text-2xl font-bold text-slate-900">{t('compte:space.title', 'Mon Espace')}</h1>   {/* Q10 sweep: a heading in the failure state too */}
-        <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{state.error || t('compte:space.unavailable', 'Mon Espace est indisponible.')}</p>
-        <div className="mt-4 flex gap-3"><Button onClick={load}>{t('compte:common.retry', 'Réessayer')}</Button><Button asChild variant="outline"><Link to="/auth/login?next=/compte">{t('compte:common.sign_in', 'Se connecter')}</Link></Button></div>
+        {state.auth
+          ? <p className="rounded-md border border-slate-200 bg-slate-50 p-3 text-slate-900" data-testid="mon-espace-login-required">{state.error}</p>
+          : <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{state.error || t('compte:space.unavailable', 'Mon Espace est indisponible.')}</p>}
+        {/* R3H (live audit 24/11/2026): a visitor without a session saw a red error and « Réessayer », which can never succeed; like Mes rendez-vous (R18) and
+            Mon Parcours, a missing session (401) offers « Se connecter » only, any other failure « Réessayer » */}
+        <div className="mt-4 flex gap-3">{state.auth
+          ? <Button asChild><Link to="/auth/login?next=/compte" data-testid="mon-espace-sign-in">{t('compte:common.sign_in', 'Se connecter')}</Link></Button>
+          : <Button onClick={load} data-testid="mon-espace-retry">{t('compte:common.retry', 'Réessayer')}</Button>}</div>
       </div>
     );
   }

@@ -921,6 +921,7 @@
   "terms_change.link_cgu": "Nutzungsbedingungen lesen",
   "terms_change.link_notice": "Datenschutzhinweis lesen",
   "terms_change.dismiss": "Verstanden",
+  "settings.gdpr_before_email": "Gemäß DSGVO haben Sie ein Recht auf Auskunft, Berichtigung und Löschung Ihrer Daten. Für jede Anfrage schreiben Sie an",
   "parcours.limited.already": "Dieser Schritt ist bereits in Mon Parcours.",
   "parcours.limited.place": "Ort:",
   "parcours.limited.place_gone": "Der gewählte Ort ist nicht mehr veröffentlicht.",

@@ -11,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Search, BookOpen, ExternalLink } from 'lucide-react';
 import LoadError from '@/components/LoadError';
 import i18n, { useLanguage, useT } from '@/i18n';
+import ContactLink from '@/components/ContactLink';
 
 const CATEGORIES = [
   { value: '', label: 'Toutes les catégories' },
@@ -197,7 +198,7 @@ export default function Glossaire() {
             i18n={i18n}
             i18nKey="glossary:help"
             defaults="Vous ne trouvez pas un terme ? <0>Contactez-nous</0>"
-            components={[<Link key="contact" to="/contact" className="text-blue-800 hover:text-blue-900 underline" />]}
+            components={[<ContactLink key="contact" className="text-blue-800 hover:text-blue-900 underline" />]}
           />
         </p>
       </div>

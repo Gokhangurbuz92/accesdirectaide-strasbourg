@@ -111,6 +111,16 @@ describe('record pages served by the API', () => {
     expect(pageHeaders({ status: 200, etag: 'x', robots: 'index' })['Content-Security-Policy']).toBe(pageCsp);
     expect(pageCsp).toContain("'sha256-Ji1RDZFcXHYwXORx2Mz2R71m8j2Y73X371QJqvYvIHQ='");
   });
+
+  it('R3H: a record page keeps the page Permissions-Policy of vercel.json (video appointments reached by in-app navigation), not the API one', async () => {
+    const { readFileSync } = await import('node:fs');
+    const vercel = JSON.parse(readFileSync('vercel.json', 'utf8'));
+    const pagePolicy = vercel.headers.flatMap((h) => h.headers).find((x) => x.key === 'Permissions-Policy').value;
+    const { PAGE_PERMISSIONS_POLICY, pageHeaders } = await import('../../api/_services/page-head.js');
+    expect(PAGE_PERMISSIONS_POLICY).toBe(pagePolicy);
+    for (const status of [200, 404, 410]) expect(pageHeaders({ status, etag: 'x', robots: 'index' })['Permissions-Policy']).toBe(pagePolicy);
+    expect(pagePolicy).toMatch(/camera=\(self "https:\/\/8x8\.vc"\)/);
+  });
 });
 
 describe('release gate in the beta', () => {

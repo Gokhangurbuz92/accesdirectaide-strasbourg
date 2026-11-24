@@ -12,6 +12,7 @@ import { currentPublisherConfig, HOST } from '@/config/legal-publisher';
 import { LEGAL_NOTICE_VARIANT_DOCUMENT as LATEST_VARIANT, currentDraftContext, draftFor, draftVisibility } from '@/config/legal-drafts';
 import LegalDraftBanner from '@/components/legal/LegalDraftBanner';
 import i18n, { useLanguage, useT } from '@/i18n';
+import { contactFormOpen } from '@/lib/contactEmail';
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/01_MENTIONS_LEGALES.md — status: LEGAL_DOCS_VERSION.status.
 // The "[À COMPLÉTER : …]" placeholders are intentional and must be filled by the owner before any public launch.
@@ -220,11 +221,13 @@ export default function MentionsLegales() {
                   <Trans i18n={i18n} i18nKey="legal:mentions.contact.data" defaults="Pour vos données personnelles : <0/>."
                     components={[<em key="data" {...fr}>{LEGAL_PLACEHOLDERS.dataProtectionContact}</em>]} />
                 </p>
+                {contactFormOpen() && (
                 <p className="mt-4">
                   <a href="/contact" className="text-blue-600 font-medium hover:text-blue-700 hover:underline inline-flex items-center gap-1">
                     {t('legal:mentions.contact.form', 'Remplir notre formulaire de contact')} <ExternalLink className="w-4 h-4 rtl-flip" />
                   </a>
                 </p>
+                )}
                 <p className="text-sm mt-8 text-slate-500 border-t border-slate-100 pt-4" data-legal-version={LEGAL_DOCS_VERSION.version} {...fr}>
                   {LEGAL_DOCS_LABEL}
                 </p>

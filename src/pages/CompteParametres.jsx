@@ -37,6 +37,8 @@ import { ACCESSIBILITY_EVENT, applyDisplayPreferences, readDisplayPreferences } 
 import DeviceDisplayPreferences from '@/components/account/DeviceDisplayPreferences';
 import { formatDate, useT } from '@/i18n';
 import FalcPageDraft from '@/components/FalcPageDraft';
+import ContactLink from '@/components/ContactLink';
+import { contactFormOpen, publicContactEmail } from '@/lib/contactEmail';
 
 // (P2b, 08/11/2026: the display preferences moved to the device store of src/lib/accountAccessibility.js; « ada_citizen_prefs » is only read once there)
 
@@ -603,7 +605,10 @@ function DataTab() {
 
             <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 text-xs text-slate-500">
                 <p>
-                    {t('compte:settings.gdpr_before', 'Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données. Pour toute demande, contactez-nous via la')} <Link to="/contact" className="underline">{t('compte:settings.gdpr_contact', 'page contact')}</Link> {t('compte:settings.gdpr_or', 'ou consultez notre')} <Link to="/securite-et-rgpd" className="underline">{t('compte:settings.politique_confidentialite', 'politique de confidentialité')}</Link>.
+                    {contactFormOpen()
+                        ? <>{t('compte:settings.gdpr_before', 'Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données. Pour toute demande, contactez-nous via la')} <Link to="/contact" className="underline">{t('compte:settings.gdpr_contact', 'page contact')}</Link></>
+                        : <>{t('compte:settings.gdpr_before_email', 'Conformément au RGPD, vous disposez d\'un droit d\'accès, de rectification et de suppression de vos données. Pour toute demande, écrivez à')} <ContactLink className="underline" closedLabel={publicContactEmail()} /></>}{' '}
+                    {t('compte:settings.gdpr_or', 'ou consultez notre')} <Link to="/securite-et-rgpd" className="underline">{t('compte:settings.politique_confidentialite', 'politique de confidentialité')}</Link>.
                 </p>
             </div>
         </div>

@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL } from '@/config/legal-documents';
 import i18n, { useLanguage, useT } from '@/i18n';
 import { accountsOpened } from '@/lib/publicBeta';
+import { contactFormOpen } from '@/lib/contactEmail';
 
 // R32: translated (namespace « legal »); the French text stays the legal reference (the version label of the configuration is shown as written).
 export default function CGU() {
@@ -161,11 +162,13 @@ export default function CGU() {
                 <p>
                   {t('legal:terms.contact.intro', 'Pour toute question relative aux présentes CGU, vous pouvez nous contacter :')}
                 </p>
+                {contactFormOpen() && (
                 <p className="mt-2">
                   <a href="/contact" className="text-blue-600 font-medium hover:text-blue-700 hover:underline inline-flex items-center gap-1">
                     {t('legal:terms.contact.form', 'Via notre formulaire de contact')}
                   </a>
                 </p>
+                )}
                 <p>
                   {t('legal:terms.contact.email', 'Ou par email :')} <code>contact@accesdirectaide.fr</code>
                 </p>

@@ -3,7 +3,7 @@ import { frontendEnv } from '@/config/env';
 import i18n, { useT } from '@/i18n';
 import { publicContactEmail } from '@/lib/contactEmail';
 import { Link } from 'react-router-dom';
-import { accountsOpened } from '@/lib/publicBeta';
+import { accountsOpened, assistantOpened, bookingOpened } from '@/lib/publicBeta';
 
 /**
  * R26: on the privacy, security, cookie and terms pages, what is actually processed TODAY during the restricted public beta — the rest of each page also
@@ -15,6 +15,10 @@ export default function BetaProcessingNotice() {
   if (!frontendEnv.flags.publicBeta) return null;
   const email = publicContactEmail();
   const accounts = accountsOpened();   // V2: personal accounts open in this build
+  // R3H (live audit 24/11/2026): with appointments and the citizen assistant opened, this notice still listed both as « not open »
+  const rdv = accounts && bookingOpened(true);
+  const assistant = assistantOpened(true);
+  const notice = <Link key="notice" to="/confidentialite/notice" className="underline underline-offset-2" />;
   return (
     <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-950 shadow-sm" aria-labelledby="beta-processing-title" data-testid="beta-processing-notice">
       <h2 id="beta-processing-title" className="text-lg font-semibold">{t('legal:beta.title', 'Ce qui est traité aujourd’hui, pendant la bêta publique')}</h2>
@@ -33,10 +37,28 @@ export default function BetaProcessingNotice() {
           <Trans i18n={i18n} i18nKey="legal:beta.browser" defaults="Votre navigateur garde un cookie de sécurité (<0>__csrf</0>) et, si vous les changez, vos réglages d’affichage."
             components={[<code key="csrf" />]} />
         </li>
+        {rdv && (
+          <li data-testid="beta-rdv-open">
+            <Trans i18n={i18n} i18nKey="legal:beta.open_rdv" defaults="Les demandes de rendez-vous sont ouvertes (avec un compte personnel) : ce qui est transmis à la structure et combien de temps c’est gardé est décrit dans la <0>notice des comptes</0>."
+              components={[notice]} />
+          </li>
+        )}
+        {assistant && (
+          <li data-testid="beta-assistant-open">
+            <Trans i18n={i18n} i18nKey="legal:beta.open_assistant" defaults="L’assistant citoyen est ouvert : aucune conversation n’est enregistrée ; le prestataire qui produit les réponses est indiqué dans la <0>notice des comptes</0>."
+              components={[notice]} />
+          </li>
+        )}
         {email && <li>{t('legal:beta.email', 'Si vous nous écrivez à {{email}}, votre message est reçu dans notre messagerie (Microsoft Outlook) et sert seulement à vous répondre.', { email })}</li>}
       </ul>
       <p className="mt-3 text-sm leading-relaxed">
-        {accounts
+        {accounts && rdv && assistant
+          ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv_assistant" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+          : accounts && rdv
+          ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+          : accounts && assistant
+          ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_assistant" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+          : accounts
           ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
           : <Trans i18n={i18n} i18nKey="legal:beta.closed" defaults="Ne sont <strong>pas</strong> ouverts : comptes, dossiers, messages, documents, rendez-vous, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />}
       </p>
