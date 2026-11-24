@@ -95,10 +95,76 @@
        SHADOWS
        ======================================== */
     
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    /* UI modernisation (24/11/2026): softer, navy-tinted elevation — a card reads as a surface without a heavy outline */
+    --shadow-sm: 0 1px 2px 0 rgba(15, 27, 45, 0.06), 0 1px 3px 0 rgba(15, 27, 45, 0.05);
+    --shadow-md: 0 4px 12px -2px rgba(15, 27, 45, 0.10), 0 2px 4px -2px rgba(15, 27, 45, 0.06);
+    --shadow-lg: 0 12px 24px -6px rgba(15, 27, 45, 0.14), 0 4px 8px -4px rgba(15, 27, 45, 0.06);
+    --shadow-xl: 0 24px 40px -12px rgba(15, 27, 45, 0.18), 0 8px 12px -6px rgba(15, 27, 45, 0.06);
+
+    /* ========================================
+       UI MODERNISATION — SEMANTIC SURFACES (RGB triplets; Tailwind: bg-ada-*, text-ada-*, border-ada-*)
+       Principles borrowed (not the visual identity) from GOV.UK Design System, Material 3 adaptive layouts and Radix/shadcn:
+       one page canvas, white surfaces with a soft elevation, three text levels all ≥ 4.5:1 (ink-3 ≥ 7:1 on a surface), one action colour.
+       ======================================== */
+    --ada-canvas: 241 244 248;      /* #F1F4F8 page */
+    --ada-surface: 255 255 255;     /* cards, panels */
+    --ada-sunken: 246 248 251;      /* inset blocks inside a card */
+    --ada-line: 221 227 235;        /* #DDE3EB */
+    --ada-line-strong: 180 191 205; /* #B4BFCD: form fields (≥ 3:1 not required for decoration; fields also carry a label) */
+    --ada-ink: 15 27 45;            /* #0F1B2D 17:1 */
+    --ada-ink-2: 51 65 85;          /* #334155 10:1 */
+    --ada-ink-3: 74 85 104;         /* #4A5568 7.5:1 on white, 6.9:1 on the canvas */
+    --ada-action: 79 70 229;        /* #4F46E5 — white text 6.3:1 */
+    --ada-action-hover: 67 56 202;  /* #4338CA — white text 7.9:1 */
+    --ada-action-soft: 238 240 255; /* #EEF0FF */
+    --ada-link: 55 48 163;          /* #3730A3 9.3:1 */
+    --ada-accent: 15 118 110;       /* #0F766E teal, 5.5:1 */
+    --ada-focus: 79 70 229;
+    --ada-danger: 185 28 28;        /* #B91C1C 6.5:1 */
+    --ada-danger-soft: 254 242 242;
+    --ada-radius-card: 1rem;
+    --ada-gutter: clamp(1rem, 3.2vw, 2rem);   /* page side margin: 16 px on a phone, 32 px on a desktop */
+}
+
+/* Dark theme: html.dark (theme toggle, or « system » on a dark device) and html.dark-mode (accessibility panel) */
+:root:is(.dark, .dark-mode) {
+    --ada-canvas: 11 18 32;         /* #0B1220 */
+    --ada-surface: 19 28 46;        /* #131C2E */
+    --ada-sunken: 14 22 38;
+    --ada-line: 42 55 80;
+    --ada-line-strong: 70 84 110;
+    --ada-ink: 236 241 246;         /* 15:1 on the surface */
+    --ada-ink-2: 198 207 220;
+    --ada-ink-3: 157 170 189;       /* 7:1 on the surface */
+    --ada-action: 79 70 229;        /* same solid action (white text 6.3:1) */
+    --ada-action-hover: 67 56 202;
+    --ada-action-soft: 30 35 80;
+    --ada-link: 165 180 252;        /* #A5B4FC 9:1 */
+    --ada-accent: 45 212 191;
+    --ada-focus: 165 180 252;
+    --ada-danger: 248 113 113;
+    --ada-danger-soft: 45 27 36;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 12px 24px -6px rgba(0, 0, 0, 0.55);
+    --shadow-xl: 0 24px 40px -12px rgba(0, 0, 0, 0.6);
+}
+
+/* High contrast (accessibility panel / settings): black on white, full-strength lines */
+:root.high-contrast:not(.dark):not(.dark-mode) {
+    --ada-canvas: 255 255 255;
+    --ada-sunken: 255 255 255;
+    --ada-line: 0 0 0;
+    --ada-line-strong: 0 0 0;
+    --ada-ink: 0 0 0;
+    --ada-ink-2: 0 0 0;
+    --ada-ink-3: 17 17 17;
+    --ada-action: 30 27 143;
+    --ada-action-hover: 0 0 0;
+    --ada-link: 0 0 139;
+    --ada-focus: 0 0 0;
+    --shadow-sm: none;
+    --shadow-md: none;
 }
 
 /* ========================================

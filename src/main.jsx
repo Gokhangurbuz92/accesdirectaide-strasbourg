@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import ErrorBoundary from '@/components/ErrorBoundary.jsx'
 import '@/styles/tokens.css'
+import '@/styles/theme-palette.css'
 import '@/index.css'
 import { initSentry } from '@/observability/initSentry'
 

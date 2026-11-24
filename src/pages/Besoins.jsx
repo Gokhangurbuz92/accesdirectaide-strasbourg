@@ -36,7 +36,7 @@ export default function Besoins() {
         <div className="mt-3 flex flex-col gap-2 sm:flex-row">
           <textarea id="needs-situation" aria-describedby="needs-situation-hint" rows={2} value={situation} onChange={(e) => setSituation(e.target.value)} maxLength={300}
             className="min-h-11 flex-1 rounded-md border border-slate-300 p-2 text-base focus:outline-none focus:ring-2 focus:ring-brand-primary" />
-          <button type="submit" className="ada-target min-h-11 rounded-md bg-brand-primary px-5 font-semibold text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2">{t('reference:situation.submit', 'Voir les pistes')}</button>
+          <button type="submit" className="ada-target min-h-11 rounded-md bg-ada-action px-5 font-semibold text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2">{t('reference:situation.submit', 'Voir les pistes')}</button>
         </div>
       </form>
 

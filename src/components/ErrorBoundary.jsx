@@ -45,7 +45,7 @@ function ErrorFallback({ error, resetError }) {
                 <p className="text-xs font-mono text-slate-700 mb-2">
                   <strong>Erreur (dev only):</strong>
                 </p>
-                <p className="text-xs font-mono text-red-600 break-all">
+                <p className="text-xs font-mono text-red-700 break-all">
                   {error.message}
                 </p>
                 {error.stack && (

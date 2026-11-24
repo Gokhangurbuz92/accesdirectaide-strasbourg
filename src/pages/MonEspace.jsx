@@ -1,6 +1,10 @@
 // @ts-nocheck
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import {
+  ArrowRight, Archive, Bell, CalendarClock, CalendarDays, Compass, FolderOpen, Gavel, HandHelping, History, Lock, MessageSquare, Route, Scale, Share2,
+  Star, UserRound, Users,
+} from 'lucide-react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -28,6 +32,15 @@ function messagesText(m, t) {
     : t('compte:space.messages.from_you', '{{n}} conversation(s) — votre dernier message date du {{when}}.', { n, when });
 }
 
+/** UI modernisation: one icon per rubric (decorative, aria-hidden) — the title stays the accessible name */
+const TILE_ICONS = {
+  'tile-parcours': Route, 'tile-coffre': Lock, 'tile-favoris': Star, 'tile-profil': UserRound, 'tile-dossiers': FolderOpen, 'tile-orientations': Share2,
+  'tile-rdv': CalendarDays, 'tile-messages': MessageSquare, 'tile-historique': History, 'tile-delegations': Users, 'tile-accompagnement': HandHelping,
+  'tile-protection-juridique': Scale, 'tile-moderation': Gavel, 'tile-situation': Compass, 'tile-orientations-sociales': Share2, 'tile-passeport': Archive,
+};
+/** the page frame shared by every state of the page (loading, error, content): wide enough to use a desktop, a readable gutter on a phone */
+const FRAME = 'mx-auto w-full max-w-6xl px-[var(--ada-gutter)] py-8 sm:py-10';
+
 export default function MonEspace() {
   const { t } = useT('compte');
   const [state, setState] = useState({ loading: true, error: '', summary: null, auth: false });
@@ -41,12 +54,12 @@ export default function MonEspace() {
   useEffect(() => { load(); }, [load]);
 
   // G14-LITE: the loading state is a screen tall (like Mon Parcours), so the footer does not jump when the page arrives (CLS)
-  if (state.loading) return <div className="container mx-auto min-h-screen max-w-4xl px-4 py-8" role="status">{t('compte:space.loading', 'Chargement de Mon Espace…')}</div>;
+  if (state.loading) return <div className="mx-auto min-h-screen w-full max-w-6xl px-[var(--ada-gutter)] py-8 text-ada-ink-2 sm:py-10" role="status">{t('compte:space.loading', 'Chargement de Mon Espace…')}</div>;
   if (!state.summary) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8" data-testid="mon-espace-error">
+      <div className={FRAME} data-testid="mon-espace-error">
         <SEO title={t('compte:space.title', 'Mon Espace')} noindex />
-        <h1 className="mb-3 text-2xl font-bold text-slate-900">{t('compte:space.title', 'Mon Espace')}</h1>   {/* Q10 sweep: a heading in the failure state too */}
+        <h1 className="mb-3 text-3xl font-bold text-ada-ink">{t('compte:space.title', 'Mon Espace')}</h1>   {/* Q10 sweep: a heading in the failure state too */}
         {state.auth
           ? <p className="rounded-md border border-slate-200 bg-slate-50 p-3 text-slate-900" data-testid="mon-espace-login-required">{state.error}</p>
           : <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{state.error || t('compte:space.unavailable', 'Mon Espace est indisponible.')}</p>}
@@ -86,41 +99,71 @@ export default function MonEspace() {
   // R43 (E2): during the beta, a tile of a screen this build keeps closed (narrow accounts scope) is not offered
   // R45 (ENG-LR-6): a part the server did not return (its capability is closed) has no tile
   const visibleTiles = openLinks(tiles.filter((tile) => !tile.part || Object.prototype.hasOwnProperty.call(s, tile.part)), frontendEnv.flags.publicBeta, (tile) => tile.to);
+  const statusCards = (
+    <>
+      {s.parcours ? (<Card data-testid="espace-next-due">
+        <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ada-action-soft text-ada-link" aria-hidden="true"><CalendarClock className="h-5 w-5" /></span>
+          <CardTitle className="text-base">{t('compte:space.next_due', 'Prochaine échéance')}</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-ada-ink-2">
+          {s.parcours?.nextDue ? <p><strong className="text-ada-ink">{formatDate(s.parcours.nextDue.dueDate)}</strong> — {s.parcours.nextDue.title}</p> : <p>{t('compte:space.next_due_empty', 'Aucune échéance enregistrée. Une échéance n’est ajoutée qu’avec sa source officielle.')}</p>}
+        </CardContent>
+      </Card>) : null}
+      {'nextAppointment' in s ? (<Card data-testid="espace-next-appointment">
+        <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ada-action-soft text-ada-link" aria-hidden="true"><CalendarDays className="h-5 w-5" /></span>
+          <CardTitle className="text-base">{t('compte:space.next_appointment', 'Prochain rendez-vous')}</CardTitle>
+        </CardHeader>
+        <CardContent className="text-sm text-ada-ink-2">
+          {s.nextAppointment ? <p><strong className="text-ada-ink">{formatDate(s.nextAppointment.startAt, { dateStyle: 'full', timeStyle: 'short' })}</strong></p> : <p>{t('compte:space.no_appointment', 'Aucun rendez-vous à venir.')}</p>}
+        </CardContent>
+      </Card>) : null}
+    </>
+  );
+  // UI modernisation (24/11/2026): a two-column dashboard from 1024 px (search and quick links | where I stand: deadlines, appointment, notifications),
+  // then the rubrics as equal cards (1 → 2 → 3 → 4 columns). On a foldable held open, the two columns sit on either side of the hinge (.ada-fold-split).
   return (
-    <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8" data-testid="mon-espace">
+    <div className={FRAME} data-testid="mon-espace">
       <SEO title={t('compte:space.title', 'Mon Espace')} noindex />
-      <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-bold text-slate-900 focus:outline-none">{t('compte:space.title', 'Mon Espace')}</h1>
-      {/* Release 3 (owner 24/11/2026): the account holders are told here that the citizen terms changed — once, only when the build puts them in force */}
-      <TermsChangeNotice focusAfterDismiss={() => headingRef.current?.focus()} />
-      {/* G14-FIND: « find and book » first — the page was empty in the restricted beta (every tile closed): now a real search and open screens */}
-      <FindAndBook showGuide={visibleTiles.every((tile) => tile.public)} />   {/* the guide while no account screen is open (a public tile such as « Ma situation » does not count) */}
-      <NotificationCenter />
-      <div className="grid gap-4 sm:grid-cols-2">
-        {s.parcours ? (<Card data-testid="espace-next-due">
-          <CardHeader><CardTitle className="text-base">{t('compte:space.next_due', 'Prochaine échéance')}</CardTitle></CardHeader>
-          <CardContent className="text-sm text-slate-800">
-            {s.parcours?.nextDue ? <p><strong>{formatDate(s.parcours.nextDue.dueDate)}</strong> — {s.parcours.nextDue.title}</p> : <p>{t('compte:space.next_due_empty', 'Aucune échéance enregistrée. Une échéance n’est ajoutée qu’avec sa source officielle.')}</p>}
-          </CardContent>
-        </Card>) : null}
-        {'nextAppointment' in s ? (<Card data-testid="espace-next-appointment">
-          <CardHeader><CardTitle className="text-base">{t('compte:space.next_appointment', 'Prochain rendez-vous')}</CardTitle></CardHeader>
-          <CardContent className="text-sm text-slate-800">
-            {s.nextAppointment ? <p><strong>{formatDate(s.nextAppointment.startAt, { dateStyle: 'full', timeStyle: 'short' })}</strong></p> : <p>{t('compte:space.no_appointment', 'Aucun rendez-vous à venir.')}</p>}
-          </CardContent>
-        </Card>) : null}
+      <header className="mb-6 sm:mb-8">
+        <h1 ref={headingRef} tabIndex={-1} className="text-3xl font-bold tracking-tight text-ada-ink focus:outline-none sm:text-4xl">{t('compte:space.title', 'Mon Espace')}</h1>
+        <p className="mt-2 max-w-prose text-base text-ada-ink-3">{t('compte:space.subtitle', 'Vos démarches, vos rendez-vous et vos documents, au même endroit.')}</p>
+      </header>
+      <div className="space-y-6">
+        {/* Release 3 (owner 24/11/2026): the account holders are told here that the citizen terms changed — once, only when the build puts them in force */}
+        <TermsChangeNotice focusAfterDismiss={() => headingRef.current?.focus()} />
+        <div className="ada-fold-split grid gap-6 lg:grid-cols-3 lg:items-start">
+          {/* G14-FIND: « find and book » first — the page was empty in the restricted beta (every tile closed): now a real search and open screens */}
+          <div className="lg:col-span-2">
+            <FindAndBook showGuide={visibleTiles.every((tile) => tile.public)} />   {/* the guide while no account screen is open (a public tile such as « Ma situation » does not count) */}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            {statusCards}
+            <div className="sm:col-span-2 lg:col-span-1"><NotificationCenter /></div>
+          </div>
+        </div>
+        {visibleTiles.length > 0 && <nav aria-labelledby="mon-espace-rubriques">
+          <h2 id="mon-espace-rubriques" className="mb-4 mt-4 text-xl font-bold text-ada-ink">{t('compte:space.nav_label', 'Rubriques de Mon Espace')}</h2>
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+            {visibleTiles.map((tile) => {
+              const Icon = TILE_ICONS[tile.testid] || Bell;
+              return (
+                <li key={tile.to} className="flex">
+                  <Link to={tile.to} data-testid={tile.testid} className="ada-tile group">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ada-action-soft text-ada-link" aria-hidden="true"><Icon className="h-5 w-5" /></span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block text-base font-semibold text-ada-ink group-hover:underline group-hover:underline-offset-2">{tile.title}</span>
+                      <span className="mt-1 block text-sm text-ada-ink-3">{tile.body}</span>
+                    </span>
+                    <ArrowRight className="rtl-flip mt-1 h-4 w-4 shrink-0 text-ada-link" aria-hidden="true" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>}
       </div>
-      {visibleTiles.length > 0 && <nav aria-label={t('compte:space.nav_label', 'Rubriques de Mon Espace')}>
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {visibleTiles.map((tile) => (
-            <li key={tile.to}>
-              <Link to={tile.to} data-testid={tile.testid} className="block rounded-lg border border-slate-200 bg-white p-4 hover:border-blue-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">
-                <span className="block text-base font-semibold text-slate-900">{tile.title}</span>
-                <span className="mt-1 block text-sm text-slate-700">{tile.body}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>}
     </div>
   );
 }

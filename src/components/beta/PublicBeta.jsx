@@ -2,7 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { Trans } from 'react-i18next';
 import { publicContactEmail } from '@/lib/contactEmail';
 import i18n, { useT } from '@/i18n';
+import { Clock } from 'lucide-react';
 import { accountsOpened, personalSurfacesOpened } from '@/lib/publicBeta';
+
+const BETA_ACTION = 'inline-flex min-h-11 items-center rounded-xl border border-ada-line-strong bg-ada-surface px-4 py-2 text-sm font-semibold text-ada-ink hover:bg-ada-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bt-accent focus-visible:ring-offset-2';
+const BETA_ACTION_PRIMARY = 'inline-flex min-h-11 items-center rounded-xl bg-ada-action px-4 py-2 text-sm font-semibold text-white hover:bg-ada-action-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bt-accent focus-visible:ring-offset-2';
 
 /** Discreet, always-visible notice of the restricted public beta (owner directive 29/10/2026). */
 export function PublicBetaBanner() {
@@ -31,8 +35,11 @@ export function PublicBetaUnavailable() {
   const email = publicContactEmail();
   const contact = /^\/contact(\/|$)/.test(pathname || '');
   return (
-    <section data-testid="public-beta-unavailable" aria-labelledby="beta-unavailable-title" className="max-w-2xl mx-auto px-4 py-16">
-      <h1 id="beta-unavailable-title" className="text-2xl font-semibold mb-4">{t('layout:beta.closed.title', 'Cette fonction n’est pas encore ouverte')}</h1>
+    <section data-testid="public-beta-unavailable" aria-labelledby="beta-unavailable-title" className="mx-auto w-full max-w-3xl px-[var(--ada-gutter)] py-12 sm:py-16">
+      {/* UI modernisation: one calm card (icon, title, explanation, three ways forward) instead of bare text on the page background */}
+      <div className="rounded-2xl border border-ada-line bg-ada-surface p-6 text-ada-ink-2 shadow-sm sm:p-10">
+      <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-800" aria-hidden="true"><Clock className="h-6 w-6" /></span>
+      <h1 id="beta-unavailable-title" className="text-2xl font-bold tracking-tight text-ada-ink sm:text-3xl mb-4">{t('layout:beta.closed.title', 'Cette fonction n’est pas encore ouverte')}</h1>
       <p className="mb-3">
         <Trans i18n={i18n} i18nKey="layout:beta.closed.intro" defaults="Accès Direct Aide est en <strong>bêta publique</strong>. Pendant cette phase, vous pouvez consulter les aides, les démarches et les structures vérifiées, avec leurs sources officielles." />
       </p>
@@ -65,11 +72,12 @@ export function PublicBetaUnavailable() {
           />
         </p>
       )}
-      <p className="flex flex-wrap gap-4">
-        <Link to="/aides" className="underline font-medium">{t('layout:beta.closed.aides', 'Rechercher une aide')}</Link>
-        <Link to="/demarches" className="underline font-medium">{t('layout:beta.closed.demarches', 'Voir les démarches')}</Link>
-        <Link to="/structures" className="underline font-medium">{t('layout:beta.closed.structures', 'Trouver une structure')}</Link>
+      <p className="flex flex-wrap gap-3 border-t border-ada-line pt-6">
+        <Link to="/aides" className={BETA_ACTION_PRIMARY}>{t('layout:beta.closed.aides', 'Rechercher une aide')}</Link>
+        <Link to="/demarches" className={BETA_ACTION}>{t('layout:beta.closed.demarches', 'Voir les démarches')}</Link>
+        <Link to="/structures" className={BETA_ACTION}>{t('layout:beta.closed.structures', 'Trouver une structure')}</Link>
       </p>
+      </div>
     </section>
   );
 }

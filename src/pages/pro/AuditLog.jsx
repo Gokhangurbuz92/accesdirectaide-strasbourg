@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import i18n, { formatDate, useT } from '@/i18n';
 import { formatDateTime } from '@/i18n';
+import { proAuditActionName, proAuditOtherAction } from '@/lib/proAuditLabels';
 
 const actionLabels = (t) => ({
     DOSSIER_VIEWED: { label: t('pro:audit_log.action.dossier_viewed', 'Dossier consulté'), icon: Eye, color: 'text-amber-800 bg-amber-50' },
@@ -118,7 +119,7 @@ export default function ProAuditLog() {
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
                         <Shield size={22} className="text-indigo-600" />
-                        {t('pro:audit_log.title', 'Journal d\'Audit')}
+                        {t('pro:audit_log.title', 'Journal d\'audit')}
                     </h1>
                     <p className="text-sm text-slate-700">
                         {t('pro:audit_log.subtitle', 'Traçabilité des accès — Conformité RGPD')}
@@ -174,10 +175,14 @@ export default function ProAuditLog() {
             ) : (
                 <div className="space-y-2">
                     {entries.map((entry) => {
+                        // UI modernisation: every code logProAudit writes has a readable name (src/lib/proAuditLabels.js); an unknown one says « Autre action »
+                        // and keeps the code visible below. Display only — the stored code, the filter and the CSV are unchanged.
+                        const named = proAuditActionName(t, entry.action);
                         const meta = ACTION_LABELS[entry.action] || {
-                            label: entry.action,
-                            icon: Shield,
-                            color: 'text-slate-600 bg-slate-100',
+                            label: named || proAuditOtherAction(t),
+                            icon: /^(LOGIN|MFA|PROCONNECT|RESET|TOKEN|PRO_LOGOUT)/.test(entry.action || '') ? LogIn : /^(USER|INVITATION|REGISTER|PRO_SELF)/.test(entry.action || '') ? UserPlus : /^(DOSSIER|FILE|CONSENT|ATTESTATION)/.test(entry.action || '') ? FileText : Shield,
+                            color: /FAILED|REFUSED|LOCKED|REVOKED|DISABLED/.test(entry.action || '') ? 'text-red-800 bg-red-50' : 'text-slate-700 bg-slate-100',
+                            raw: !named,
                         };
                         const IconComp = meta.icon;
 
@@ -190,6 +195,7 @@ export default function ProAuditLog() {
                                     <div className="flex-1 min-w-0">
                                         <p className="text-sm font-semibold text-slate-900">
                                             {meta.label}
+                                            {meta.raw ? <code className="ms-2 text-xs font-normal text-slate-700">{entry.action}</code> : null}
                                         </p>
                                         <p className="text-xs text-slate-700 truncate">
                                             {entry.actorEmail || entry.actorId?.slice(0, 8) || t('pro:audit_log.system', 'Système')}
@@ -202,7 +208,7 @@ export default function ProAuditLog() {
                                         </p>
                                     </div>
                                     <div className="text-end shrink-0">
-                                        <p className="text-[10px] text-slate-600 flex items-center gap-1">
+                                        <p className="text-xs text-slate-700 flex items-center gap-1">
                                             <Clock size={10} />
                                             {formatDate(new Date(entry.timestamp), {
                                                 day: '2-digit',
@@ -213,7 +219,7 @@ export default function ProAuditLog() {
                                             })}
                                         </p>
                                         {entry.ipHash && (
-                                            <p className="text-[9px] text-slate-600 mt-0.5">
+                                            <p className="text-xs text-slate-600 mt-0.5">
                                                 {t('pro:audit_log.ip', 'IP: {{hash}}...', { hash: entry.ipHash.slice(0, 8) })}
                                             </p>
                                         )}

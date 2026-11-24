@@ -38,7 +38,7 @@ export default function LanguageSuggestion() {
       <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2 text-sm text-sky-950">
         <p id={textId}>{t('common:suggestion.text', 'Ce site existe aussi en {{language}}.', { language: l?.name })}</p>
         <div className="flex flex-wrap gap-2">
-          <button type="button" className="min-h-11 rounded-md bg-brand-primary px-3 py-1 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
+          <button type="button" className="min-h-11 rounded-md bg-ada-action px-3 py-1 font-medium text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-primary"
             onClick={() => { void setLanguage(offer); }}>
             {t('common:suggestion.switch', 'Passer en {{language}}', { language: l?.name })}
           </button>

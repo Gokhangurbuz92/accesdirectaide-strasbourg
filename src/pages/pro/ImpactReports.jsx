@@ -124,7 +124,7 @@ export default function ImpactReports() {
                         {t('pro:impact.subtitle', 'Indicateurs mesurés de votre structure (aucune estimation, petits effectifs masqués)')}
                     </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     <div className="bg-white border border-slate-200 rounded-lg flex">
                         {['month', 'quarter', 'year'].map((p) => (
                             <button

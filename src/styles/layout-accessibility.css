@@ -16,7 +16,7 @@ body.high-contrast {
   --bg-color: #fff;
 }
 
-body.high-contrast * {
+:root:not(.dark):not(.dark-mode) body.high-contrast * {
   border-color: #000 !important;
 }
 
@@ -25,30 +25,7 @@ body.high-contrast .bg-blue-500 {
   background-color: #000 !important;
 }
 
-body.dark-mode {
-  --text-color: #f1f5f9;
-  --bg-color: #0f172a;
-}
-
-body.dark-mode {
-  background-color: #0f172a;
-  color: #f1f5f9;
-}
-
-body.dark-mode .bg-white,
-body.dark-mode .bg-slate-50 {
-  background-color: #1e293b !important;
-}
-
-body.dark-mode .text-slate-900,
-body.dark-mode .text-slate-800,
-body.dark-mode .text-slate-700 {
-  color: #f1f5f9 !important;
-}
-
-body.dark-mode .border-slate-200 {
-  border-color: #334155 !important;
-}
+/* body.dark-mode: see src/styles/tokens.css and src/styles/theme-palette.css (UI modernisation — one dark theme for html.dark and html.dark-mode) */
 
 body.large-line-height p,
 body.large-line-height li,
@@ -66,7 +43,7 @@ body.simplified-mode {
 
 /* Focus visible pour accessibilité clavier */
 *:focus-visible {
-  outline: 3px solid #2563eb !important;
+  outline: 3px solid rgb(var(--ada-focus, 37 99 235)) !important;
   outline-offset: 2px !important;
 }
 
