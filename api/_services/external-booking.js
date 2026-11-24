@@ -53,7 +53,7 @@ export async function submitExternalBooking(input, database = defaultDb) {
   if (!ID.test(structureId) || !SOURCES.includes(input.source)) return { ok: false, status: 400, code: 'INVALID_REQUEST' };
   const v = validateExternalBookingUrl(input.url);
   if (!v.ok) return { ok: false, status: 400, code: v.code };
-  const needs = input.subdomains === undefined ? { ok: true, value: [] } : parseServiceSubdomains(input.subdomains);
+  const needs = input.subdomains === undefined ? { ok: /** @type {const} */ (true), value: /** @type {any[]} */ ([]) } : parseServiceSubdomains(input.subdomains);
   if (!needs.ok) return { ok: false, status: 400, code: needs.code };
   const subdomains = needs.value.map((x) => x.subdomain);
   const exists = rowsOf(await database.execute(sql`SELECT 1 FROM "Structure" WHERE id = ${structureId}`)).length > 0;

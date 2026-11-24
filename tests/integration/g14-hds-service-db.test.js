@@ -16,7 +16,7 @@ import http from 'node:http';
 import os from 'node:os';
 import path from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import pg from 'pg';
+/** @typedef {import('pg').Pool} PgPool */
 import { generateTicketKeyPair, parseTicketPrivateKey, signHdsTicket } from '../../api/lib/hds-ticket.js';
 import { loadConfig } from '../../services/hds/src/config.js';
 import { createPool, migrate } from '../../services/hds/src/db.js';
@@ -38,7 +38,7 @@ let reachable = false;
 try { execFileSync('psql', [url('postgres'), '-Atc', 'SELECT 1'], { stdio: 'pipe', timeout: 5000 }); reachable = true; } catch { reachable = false; }
 
 /** @type {string[]} */ const logLines = [];
-/** @type {{ pool: pg.Pool, server: http.Server, base: string }[]} */ const running = [];
+/** @type {{ pool: PgPool, server: http.Server, base: string }[]} */ const running = [];
 
 async function startService(/** @type {string} */ db, /** @type {Record<string, string>} */ extra = {}) {
   const cfg = loadConfig({ DATABASE_URL: url(db), ALLOWED_ORIGIN: ORIGIN, HDS_DATA_KEYS: DATA_KEY, HDS_TICKET_PUBLIC_KEYS: `k1:${pair.publicKeyB64}`, PORT: '4519', ...extra });
@@ -50,7 +50,7 @@ async function startService(/** @type {string} */ db, /** @type {Record<string, 
   running.push(s);
   return s;
 }
-async function stop(/** @type {{ pool: pg.Pool, server: http.Server }} */ s) { await new Promise((r) => { s.server.close(() => r(undefined)); }); await s.pool.end(); }
+async function stop(/** @type {{ pool: PgPool, server: http.Server }} */ s) { await new Promise((r) => { s.server.close(() => r(undefined)); }); await s.pool.end(); }
 
 const ticket = (/** @type {string} */ sub, /** @type {string[]} */ caps, /** @type {any} */ extra = {}) => signHdsTicket({ sub, typ: 'citizen', caps, ...extra }, { privateKey: key, kid: 'k1' }).ticket;
 /** @param {string} base @param {string} method @param {string} p @param {{ t?: string, body?: any, origin?: string | null }} [o] */

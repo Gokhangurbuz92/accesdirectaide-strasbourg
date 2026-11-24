@@ -33,7 +33,8 @@ export default async function handler(req, res) {
             : body.action === 'end' ? await adminEnd(who, body)
               : { ok: false, status: 400, code: 'invalid_action', message: 'action : « list », « verify », « reject », « reinstate » ou « end ».' };
     if (out.ok === false) return res.status(out.status || 400).json({ error: out.code, message: out.message });
-    const { ok: _ok, status, ...rest } = out;
+    const { status, ...rest } = out;
+    delete rest.ok;
     return res.status(status || 200).json(rest);
   } catch (error) {
     logger.error({ err: { name: error?.name, code: error?.code || error?.cause?.code } }, '[admin/legal-protection] failed');

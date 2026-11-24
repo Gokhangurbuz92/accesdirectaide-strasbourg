@@ -6,7 +6,7 @@
  * drain and no error tracker on the HDS app (G14_HDS_MIGRATION_PLAN.md § 8).
  */
 const ALLOWED = new Set(['evt', 'rid', 'm', 'route', 's', 'ms', 'code', 'n', 'reason']);
-const SAFE_VALUE = /^[A-Za-z0-9_.:/\-]{0,80}$/;
+const SAFE_VALUE = /^[A-Za-z0-9_.:/-]{0,80}$/;
 
 /** @type {(line: string) => void} */
 let sink = (line) => { process.stdout.write(`${line}\n`); };

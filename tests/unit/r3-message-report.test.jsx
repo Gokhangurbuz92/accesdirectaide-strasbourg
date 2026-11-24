@@ -16,7 +16,7 @@ vi.mock('@/api/rdv-messaging-client', () => ({ rdvMessagingClient: { pro }, mess
 
 import ProMessageThread from '../../src/pages/pro/MessageThread.jsx';
 import { MESSAGE_REPORT_CATEGORIES, fileMessageReport, messageReportText } from '../../api/_services/message-report.js';
-import { REPORT_CATEGORIES } from '../../src/components/Messaging/MessageReportButton.jsx';
+import { REPORT_CATEGORIES } from '../../src/lib/messageReport.js';
 
 afterEach(() => { cleanup(); pro.getConversation.mockReset(); pro.reportMessage.mockReset(); });
 const page = () => render(createElement(QueryClientProvider, { client: new QueryClient({ defaultOptions: { queries: { retry: false } } }) },

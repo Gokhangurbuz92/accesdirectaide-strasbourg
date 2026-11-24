@@ -8,8 +8,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useT } from '@/i18n';
 import { messagingErrorText } from '@/api/rdv-messaging-client';
-
-export const REPORT_CATEGORIES = ['ABUSIVE', 'SPAM', 'HEALTH_DATA', 'NOT_RELATED', 'OTHER'];
+import { REPORT_CATEGORIES } from '@/lib/messageReport';
 
 /** @param {{ messageId: string, when: string, onReport: (category: string) => Promise<unknown>, testid?: string }} props */
 export default function MessageReportButton({ messageId, when, onReport, testid = 'message-report' }) {

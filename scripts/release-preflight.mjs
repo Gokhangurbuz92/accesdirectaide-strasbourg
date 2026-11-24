@@ -137,9 +137,9 @@ export function outlookCheck(env, { get, betaOn, opened }) {
  * capability closed, job closed) = PASS. A half-open bridge is a FAIL: configured but not approved for production, an invalid configuration, the
  * capability open without a configured partner (callbacks would answer 404), or a configured and open bridge whose outbox job is not open (nothing
  * would ever be sent). Configured while the capability is closed = WARN (inert).
- * @param {Record<string, string | undefined>} env @param {{ get: (k: string) => string, betaOn: boolean }} ctx @returns {['PASS' | 'WARN' | 'FAIL', string]}
+ * @param {Record<string, string | undefined>} env @param {{ get?: (k: string) => string, betaOn: boolean }} ctx @returns {['PASS' | 'WARN' | 'FAIL', string]}
  */
-export function partnerBridgeCheck(env, { get, betaOn }) {
+export function partnerBridgeCheck(env, { betaOn }) {
   const prodEnv = { ...env, VERCEL_ENV: 'production' };
   const cfg = partnerAdapterConfig(prodEnv);
   const cap = capabilityState('partner.referral_adapter', prodEnv);
