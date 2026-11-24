@@ -56,6 +56,11 @@ export const CAPABILITIES = Object.freeze({
   'citizen.franceconnect': { description: 'FranceConnect sign-in and account link (N08 / C26: OIDC adapter; needs the DataPass habilitation and FRANCECONNECT_PRODUCTION_APPROVED)',
     aipd: 'out', requiresHds: false, surface: 'accounts', aipdRef: 'C-PER' },
   'citizen.delegations': { description: 'trusted persons with read-only access', aipd: 'out', requiresHds: false, hdsNote: `${M} row 2 (ordinary account): no`, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
+  // G14-R3G (owner 24/11/2026, release-3 package): the representative of a protected adult (tutelle, curatelle, habilitation familiale, mandat spécial;
+  // a relative or an MJPM). Effective only after an administrator examined the court decision outside the platform; never Mon Coffre (HDS), never the
+  // account's security. Needs notice v14 / cgu v13 in force (preflight legal.r3_legal_protection) and migration 0064 (pending: answers « not installed »).
+  'citizen.legal_protection': { description: 'representative of a protected adult under a verified court measure (tutelle, curatelle, habilitation familiale, mandat spécial)',
+    aipd: 'out', requiresHds: false, hdsNote: `${M} row 2 (ordinary account): no — the decision is never stored; sensitive steps stay hidden; the vault is never reachable`, surface: 'accounts', accountsFull: true, aipdRef: 'C-PER' },
   // G14-AID (owner 23/11/2026): « mode accompagnant » — a helper acts WITH the person: next to them on their own signed-in device (password + consent, ≤ 2 h,
   // the areas they chose, never the account's security) and, together with citizen.delegations, a trusted person's action requests confirmed one by one by
   // the person (or « agir pour moi » for one part). HDS-gated parts stay unreachable to a professional helper (api/_services/assisted-mode.js).
@@ -146,6 +151,8 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'citizen/delegations': ['citizen.delegations'], 'citizen/referrals': ['citizen.orientation_records'], 'citizen/shares': ['citizen.shared_dossier'],
   // G14-AID: the assisted session of the person (start with password + consent, end, history) — and the professional's one-time helper code
   'citizen/assist': ['citizen.assisted_mode'],
+  // G14-R3G: both sides of the legal-protection link, and the administrator's verification queue
+  'citizen/legal-protection': ['citizen.legal_protection'], 'admin/legal-protection': ['citizen.legal_protection'],
   // appointments
   rdv: ['citizen.booking'], 'auth/callback/outlook': ['calendar.outlook'],
   'pro/slots': ['pro.agenda'], 'pro/availability': ['pro.agenda'], 'pro/timeoff': ['pro.agenda'], 'pro/rdv': ['pro.agenda'], 'pro/appointments': ['pro.agenda'],

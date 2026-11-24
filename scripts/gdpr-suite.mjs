@@ -22,7 +22,7 @@ const ROOT_DIR = path.join(__dirname, '..');
  */
 
 // Date de révision du contenu (fixe). À changer uniquement quand le contenu du registre est révisé — jamais la date d'exécution.
-export const REGISTRE_VERSION = '0.7';   // G14-R3 (24/11/2026, PROPOSED): T29 household, T30 guardian link (restricted form), T31 trusted persons, T32 events (X04). 0.6 = G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
+export const REGISTRE_VERSION = '0.7';   // G14-R3 (24/11/2026, PROPOSED): T29 household, T30 guardian link (restricted form), T31 trusted persons, T32 events (X04); G14-R3G (same package): T33 representative of a protected adult. 0.6 = G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
 export const REGISTRE_DATE_REVISION = '2026-11-24';
 
 export const CONTACT_PROTECTION_DONNEES = '[À COMPLÉTER : contact protection des données]';
@@ -582,6 +582,25 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                     texte('Délégation en cours', 'appliqué', 'jusqu\'à son terme (30 à 365 jours) ou sa fin par l\'une des deux personnes ; effacée avec l\'un des deux comptes'),
                 ],
                 mesures_securite: 'Lecture seule, jamais la session de la personne ; acceptation seulement par le compte dont l\'adresse vérifiée est l\'adresse invitée ; jeton d\'invitation en empreinte SHA-256, 7 jours, usage unique ; chaque partie suit sa propre capacité (Mon Coffre fermé : HDS ; Mon Parcours : ADA_PARCOURS_DELEGATE_READ) ; rôles tuteur / curateur / représentant sans effet (PROOF_REQUIRED) ; consultation suspendue pendant une limitation (art. 18) ; 10 délégations en cours au plus',
+            },
+            {
+                // G14-R3G (24/11/2026, release-3 package, PROPOSED): notice v14 P27, cgu v13 § 5; durations = retention-policy.js LEGAL_PROTECTION_* (pendingApproval)
+                id: 'T33',
+                nom: 'Représentant légal d\'un majeur protégé — tutelle, curatelle, habilitation familiale, mandat spécial (proche ou MJPM)',
+                statut: 'capacité citizen.legal_protection fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=legal_protection + ADA_CAPABILITIES_OPEN) ; table de la migration 0064 (en attente, hors journal)',
+                finalite: 'Permettre à la personne désignée par le juge d\'exercer sa mission dans le service (consulter, demander ou faire une action dans les parties couvertes par la décision vérifiée), en informant la personne protégée de tout ce qui est fait ; vérification humaine de la décision',
+                base_legale_proposee: 'Intérêt légitime (art. 6.1.f) — notice v14, P27 — à valider par le responsable ; question ouverte : l\'existence d\'une mesure révèle-t-elle une donnée de santé (art. 9) ? Si oui, condition art. 9 à décider (R3_KORUMA_TEMSIL_FR.md)',
+                categories_donnees: ['Identifiants des deux comptes', 'Qualité du représentant (proche / MJPM, forme d\'exercice L471-2, SIRET et structure facultatifs)', 'Faits tirés de la décision : mesure, représentation ou assistance, personne / biens, tribunal, date, date de fin', 'HMAC du numéro de dossier (facultatif, illisible)', 'État et enregistrement de la vérification (date, administrateur, méthode, note ≤ 500 caractères)', 'Journal des consultations, demandes et actions (AuditLog)', 'Rendez-vous à venir et étapes non sensibles de Mon Parcours consultés'],
+                categories_personnes: ['Majeurs protégés titulaires d\'un compte', 'Représentants : proches, mandataires judiciaires à la protection des majeurs'],
+                destinataires: ['La personne protégée (tout)', 'Le représentant (parties couvertes, après vérification, jusqu\'à la date de fin)', 'Un administrateur nommé avec MFA (vérification, signalements)'],
+                sous_traitants: [vercel, neon],
+                conservation: [
+                    texte('Déclaration jamais vérifiée', 'non appliqué', '90 jours après la déclaration — durée PROPOSÉE (LEGAL_PROTECTION_DECLARED_STALE_DAYS, à approuver ; étape legalProtectionStaleDeclarationsDeleted non exécutable)'),
+                    texte('Déclaration refusée', 'non appliqué', '90 jours après le refus — durée PROPOSÉE (LEGAL_PROTECTION_REJECTED_DAYS, à approuver ; étape legalProtectionRejectedDeleted non exécutable)'),
+                    texte('Lien terminé ou expiré', 'non appliqué', '365 jours après sa fin — durée PROPOSÉE (LEGAL_PROTECTION_ENDED_DAYS, à approuver ; étape legalProtectionEndedDeleted non exécutable)'),
+                    texte('Journal (AuditLog)', 'appliqué', '365 jours (règle du journal)'),
+                ],
+                mesures_securite: 'La décision n\'est jamais reçue ni stockée (examen hors plateforme), aucune IA, aucun certificat médical ; aucun effet avant vérification ; pouvoirs bornés par mesure (ACT / CONFIRM), par parties (RDV, PARCOURS) et par la date de fin ; jamais Mon Coffre, la sécurité du compte, l\'export ou la suppression ; étapes sensibles masquées (G8) ; signalement de la personne = suspension immédiate ; limitation (art. 18) = tout suspendu ; mot de passe à la déclaration ; réponse neutre (pas d\'oracle d\'existence de compte)',
             },
             {
                 id: 'T32',

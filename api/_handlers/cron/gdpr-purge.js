@@ -9,6 +9,8 @@ import {
     LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser, ParcoursItem, CitizenDelegation, GuardianRelationship
 } from '../../../src/db/schema.js';
 import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-orm';
+import { LegalProtectionMandate } from '../../_services/legal-protection-table.js';
+import { legalProtectionInstalled } from '../../_services/legal-protection.js';
 import { getCronAuth } from '../../_utils/cronAuth.js';
 import { startCronRun, finishCronRun } from '../../_utils/cron-run.js';
 import { purgeDossierFiles, storageKeysOf } from '../../_services/dossier-files.js';
@@ -285,6 +287,30 @@ export const guardianLinksRevokedWhere = (before) => and(eq(GuardianRelationship
     sql`NOT ${heldSql(GuardianRelationship.id, GuardianRelationship.minorId, GuardianRelationship.guardianId)}`,
     sql`NOT ${personProtectedSql(GuardianRelationship.minorId)}`, sql`NOT ${personProtectedSql(GuardianRelationship.guardianId)}`);
 
+/**
+ * G14-R3G — the representative of a protected adult (C23 family). PROPOSED « à approuver » (not executable). A legal hold on the row or on either person, a
+ * processing restriction or an open access request of either person keeps the row. The table comes with migration 0064 (pending): on a database without
+ * it, these steps count and delete nothing.
+ *   legalProtectionStaleDeclarationsDeleted  DECLARED (never verified), LEGAL_PROTECTION_DECLARED_STALE_DAYS after createdAt
+ *   legalProtectionRejectedDeleted           REJECTED, LEGAL_PROTECTION_REJECTED_DAYS after endedAt
+ *   legalProtectionEndedDeleted              ENDED, or VERIFIED / SUSPENDED past validUntil, LEGAL_PROTECTION_ENDED_DAYS after COALESCE(endedAt, validUntil)
+ * @param {Date} before
+ */
+const LPM = LegalProtectionMandate;
+const lpKeep = () => and(sql`NOT ${heldSql(LPM.id, LPM.protectedUserId, LPM.representativeUserId)}`, sql`NOT ${personProtectedSql(LPM.protectedUserId)}`, sql`NOT ${personProtectedSql(LPM.representativeUserId)}`);
+/** @param {Date} before */
+export const legalProtectionStaleWhere = (before) => and(eq(LPM.status, 'DECLARED'), lt(LPM.createdAt, before), lpKeep());
+/** @param {Date} before */
+export const legalProtectionRejectedWhere = (before) => and(eq(LPM.status, 'REJECTED'), lt(LPM.endedAt, before), lpKeep());
+/** @param {Date} before */
+export const legalProtectionEndedWhere = (before) => and(or(
+        and(eq(LPM.status, 'ENDED'), lt(LPM.endedAt, before)),
+        and(inArray(LPM.status, ['VERIFIED', 'SUSPENDED']), sql`${LPM.validUntil}::timestamp < ${before}`)), lpKeep());
+const lpDeleteStep = (where) => ({
+    count: async (db, ctx) => ((await legalProtectionInstalled(db)) ? countWhere(db, LPM, where(ctx)) : 0),
+    run: async (db, ctx) => ((await legalProtectionInstalled(db)) ? affected(await db.delete(LPM).where(where(ctx))) : 0),
+});
+
 const deleteStep = (table, where) => ({
     count: (db, ctx) => countWhere(db, table, where(ctx)),
     run: async (db, ctx) => affected(await db.delete(table).where(where(ctx))),
@@ -507,6 +533,17 @@ export const PURGE_STEPS = [
     { id: 'guardianLinksRevokedDeleted', summaryKey: 'guardian_links_revoked_deleted', ecode: 'C05', kind: 'delete', table: 'GuardianRelationship', durationKey: 'GUARDIAN_LINK_REVOKED_DAYS',
         tables: ['GuardianRelationship', 'LegalHold', 'DSRRequest'],
         ...deleteStep(GuardianRelationship, (ctx) => guardianLinksRevokedWhere(ctx.cutoff('GUARDIAN_LINK_REVOKED_DAYS'))) },
+
+    // 20f–20h. G14-R3G — representative of a protected adult (PROPOSED « à approuver »: not executable while pendingApproval is set; table of migration 0064)
+    { id: 'legalProtectionStaleDeclarationsDeleted', summaryKey: 'legal_protection_stale_declarations_deleted', ecode: 'C23', kind: 'delete', table: 'LegalProtectionMandate',
+        durationKey: 'LEGAL_PROTECTION_DECLARED_STALE_DAYS', tables: ['LegalProtectionMandate', 'LegalHold', 'DSRRequest'],
+        ...lpDeleteStep((ctx) => legalProtectionStaleWhere(ctx.cutoff('LEGAL_PROTECTION_DECLARED_STALE_DAYS'))) },
+    { id: 'legalProtectionRejectedDeleted', summaryKey: 'legal_protection_rejected_deleted', ecode: 'C23', kind: 'delete', table: 'LegalProtectionMandate',
+        durationKey: 'LEGAL_PROTECTION_REJECTED_DAYS', tables: ['LegalProtectionMandate', 'LegalHold', 'DSRRequest'],
+        ...lpDeleteStep((ctx) => legalProtectionRejectedWhere(ctx.cutoff('LEGAL_PROTECTION_REJECTED_DAYS'))) },
+    { id: 'legalProtectionEndedDeleted', summaryKey: 'legal_protection_ended_deleted', ecode: 'C23', kind: 'delete', table: 'LegalProtectionMandate',
+        durationKey: 'LEGAL_PROTECTION_ENDED_DAYS', tables: ['LegalProtectionMandate', 'LegalHold', 'DSRRequest'],
+        ...lpDeleteStep((ctx) => legalProtectionEndedWhere(ctx.cutoff('LEGAL_PROTECTION_ENDED_DAYS'))) },
 
     // 21. R44 / E7 — REPORT ONLY: accounts without citizen activity for 24 months (last sign-in; an account never signed into counts from its creation —
     //     D4 V2, 08/11/2026: it used to be left out). Deleting is a later, separate decision (D4 V2 procedure: notice first, erasure engine — never this job).

@@ -2196,5 +2196,6 @@
  "organizations.pro_registration.activate": "Verify and activate",
  "organizations.pro_registration.refuse": "Refuse",
  "organizations.pro_registration.done_activated": "Organisation verified and activated: the e-mail to turn on two-factor authentication was handed to the mail service.",
- "organizations.pro_registration.done_refused": "Request refused: the account is disabled, the reason is kept in the log."
+ "organizations.pro_registration.done_refused": "Request refused: the account is disabled, the reason is kept in the log.",
+ "layout.nav.legal_protection": "Legal protection (adults)"
 }

@@ -155,6 +155,7 @@ const CompteHistorique = lazy(() => import("./CompteHistorique.jsx"));
 const CompteDelegations = lazy(() => import("./CompteDelegations.jsx"));
 const CompteDelegationVue = lazy(() => import("./CompteDelegationVue.jsx"));
 const CompteAccompagnement = lazy(() => import("./CompteAccompagnement.jsx"));   // G14-AID: mode accompagnant
+const CompteProtectionJuridique = lazy(() => import("./CompteProtectionJuridique.jsx"));   // G14-R3G: représentant légal d’un majeur protégé
 const CompteRendezVous = lazy(() => import("./CompteRendezVous.jsx"));
 const ComptePartageDetail = lazy(() => import("./ComptePartageDetail.jsx"));
 const Layout = lazy(() => import("./Layout.jsx"));
@@ -192,6 +193,7 @@ const AdminAiOversight = lazy(() => import("./admin/k5/AiOversight.jsx"));
 const AdminProviders = lazy(() => import("./admin/k5/Providers.jsx"));   // R46 / N10
 const AdminSecurity = lazy(() => import("./admin/k5/Security.jsx"));   // R46 / Q07
 const AdminGuardianships = lazy(() => import("./admin/k5/Guardianships.jsx"));   // R46 / C05
+const AdminLegalProtection = lazy(() => import("./admin/k5/LegalProtection.jsx"));   // G14-R3G
 const DemandeAide = lazy(() => import("./DemandeAide.jsx"));
 const InstitutionEspace = lazy(() => import("./institution/Espace.jsx"));
 const InstitutionForgot = lazy(() => import("./institution/Recuperation.jsx").then((m) => ({ default: m.InstitutionForgot })));
@@ -424,6 +426,7 @@ function PagesContent() {
                                     <Route path="fournisseurs" element={<AdminProviders />} />
                                     <Route path="securite" element={<AdminSecurity />} />
                                     <Route path="representants-legaux" element={<AdminGuardianships />} />
+                                    <Route path="protection-juridique" element={<AdminLegalProtection />} />
                                     <Route path="privacy" element={<AdminPrivacy />} />
                                     <Route path="support" element={<AdminSupport />} />
                                     <Route path="data-quality" element={<AdminDataQuality />} />
@@ -578,6 +581,7 @@ function PagesContent() {
                                 <Route path="/compte/delegations" element={<CompteDelegations />} />
                                 <Route path="/compte/delegations/:id" element={<CompteDelegationVue />} />
                                 <Route path="/compte/accompagnement" element={<CompteAccompagnement />} />
+                                <Route path="/compte/protection-juridique" element={<CompteProtectionJuridique />} />
                                 <Route path="/compte/rendez-vous" element={<CompteRendezVous />} />
                                 <Route path="/compte/orientations" element={<CompteOrientations />} />
                                 <Route path="/compte/orientations-sociales" element={<CompteOrientationsSociales />} />

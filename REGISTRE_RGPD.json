@@ -1023,6 +1023,66 @@
       "mesures_securite": "Lecture seule, jamais la session de la personne ; acceptation seulement par le compte dont l'adresse vérifiée est l'adresse invitée ; jeton d'invitation en empreinte SHA-256, 7 jours, usage unique ; chaque partie suit sa propre capacité (Mon Coffre fermé : HDS ; Mon Parcours : ADA_PARCOURS_DELEGATE_READ) ; rôles tuteur / curateur / représentant sans effet (PROOF_REQUIRED) ; consultation suspendue pendant une limitation (art. 18) ; 10 délégations en cours au plus"
     },
     {
+      "id": "T33",
+      "nom": "Représentant légal d'un majeur protégé — tutelle, curatelle, habilitation familiale, mandat spécial (proche ou MJPM)",
+      "statut": "capacité citizen.legal_protection fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=legal_protection + ADA_CAPABILITIES_OPEN) ; table de la migration 0064 (en attente, hors journal)",
+      "finalite": "Permettre à la personne désignée par le juge d'exercer sa mission dans le service (consulter, demander ou faire une action dans les parties couvertes par la décision vérifiée), en informant la personne protégée de tout ce qui est fait ; vérification humaine de la décision",
+      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v14, P27 — à valider par le responsable ; question ouverte : l'existence d'une mesure révèle-t-elle une donnée de santé (art. 9) ? Si oui, condition art. 9 à décider (R3_KORUMA_TEMSIL_FR.md)",
+      "categories_donnees": [
+        "Identifiants des deux comptes",
+        "Qualité du représentant (proche / MJPM, forme d'exercice L471-2, SIRET et structure facultatifs)",
+        "Faits tirés de la décision : mesure, représentation ou assistance, personne / biens, tribunal, date, date de fin",
+        "HMAC du numéro de dossier (facultatif, illisible)",
+        "État et enregistrement de la vérification (date, administrateur, méthode, note ≤ 500 caractères)",
+        "Journal des consultations, demandes et actions (AuditLog)",
+        "Rendez-vous à venir et étapes non sensibles de Mon Parcours consultés"
+      ],
+      "categories_personnes": [
+        "Majeurs protégés titulaires d'un compte",
+        "Représentants : proches, mandataires judiciaires à la protection des majeurs"
+      ],
+      "destinataires": [
+        "La personne protégée (tout)",
+        "Le représentant (parties couvertes, après vérification, jusqu'à la date de fin)",
+        "Un administrateur nommé avec MFA (vérification, signalements)"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Déclaration jamais vérifiée",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "90 jours après la déclaration — durée PROPOSÉE (LEGAL_PROTECTION_DECLARED_STALE_DAYS, à approuver ; étape legalProtectionStaleDeclarationsDeleted non exécutable)"
+        },
+        {
+          "donnee": "Déclaration refusée",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "90 jours après le refus — durée PROPOSÉE (LEGAL_PROTECTION_REJECTED_DAYS, à approuver ; étape legalProtectionRejectedDeleted non exécutable)"
+        },
+        {
+          "donnee": "Lien terminé ou expiré",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "365 jours après sa fin — durée PROPOSÉE (LEGAL_PROTECTION_ENDED_DAYS, à approuver ; étape legalProtectionEndedDeleted non exécutable)"
+        },
+        {
+          "donnee": "Journal (AuditLog)",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "365 jours (règle du journal)"
+        }
+      ],
+      "mesures_securite": "La décision n'est jamais reçue ni stockée (examen hors plateforme), aucune IA, aucun certificat médical ; aucun effet avant vérification ; pouvoirs bornés par mesure (ACT / CONFIRM), par parties (RDV, PARCOURS) et par la date de fin ; jamais Mon Coffre, la sécurité du compte, l'export ou la suppression ; étapes sensibles masquées (G8) ; signalement de la personne = suspension immédiate ; limitation (art. 18) = tout suspendu ; mot de passe à la déclaration ; réponse neutre (pas d'oracle d'existence de compte)"
+    },
+    {
       "id": "T32",
       "nom": "Académie et événements — inscription d'une personne majeure (X04)",
       "statut": "capacité community.events fermée (surface « events ») ; textes approuvés le 23/11/2026 (notice v12 / v13 § 3 ter et § 4) ; ligne AIPD X04 non signée ; ouverture proposée à la release 3",

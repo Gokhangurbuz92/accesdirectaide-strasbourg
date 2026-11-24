@@ -200,6 +200,15 @@ export const RETENTION_POLICY = deepFreeze({
     DELEGATION_INVITATION_EXPIRED_DAYS: { days: 30, anchor: 'CitizenDelegation.inviteExpiresAt of an invitation never answered (status INVITED): the invited e-mail address goes with the row', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
     DELEGATION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, expiresAt) of a delegation ended (REVOKED, DECLINED) or expired; its view log (DelegationAccessEvent) goes with it (ON DELETE CASCADE)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
     GUARDIAN_LINK_REVOKED_DAYS: { days: 30, anchor: 'GuardianRelationship.updatedAt of a REVOKED link (the proof of each step stays in the consent ledger under its own rule)', basis: OPS, ecode: 'C05', pendingApproval: R3_PROPOSAL },
+    // G14-R3G (24/11/2026) — the representative of a protected adult (LegalProtectionMandate, migration 0064 pending). PROPOSED « à approuver »: the row
+    // holds only facts extracted from the court decision (never the decision); the history of views and actions stays in AuditLog under its own rule.
+    //   DECLARED_STALE  a declaration the administrator never verified (the representative never showed the decision): 90 days after it was made
+    //   REJECTED        a refused declaration (shown to the person, who may need it to report a false declaration): 90 days after the refusal
+    //   ENDED           a link renounced, ended by the administrator or expired (validUntil passed): 365 days after its end — what was done under it
+    //                   stays provable for the person for a year, as for the trusted persons
+    LEGAL_PROTECTION_DECLARED_STALE_DAYS: { days: 90, anchor: 'LegalProtectionMandate.createdAt of a declaration still DECLARED (never verified)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
+    LEGAL_PROTECTION_REJECTED_DAYS: { days: 90, anchor: 'LegalProtectionMandate.endedAt of a REJECTED declaration', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
+    LEGAL_PROTECTION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, validUntil) of a link ENDED, or VERIFIED / SUSPENDED past validUntil (expired)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });

@@ -2196,5 +2196,6 @@
  "organizations.pro_registration.activate": "Doğrula ve etkinleştir",
  "organizations.pro_registration.refuse": "Reddet",
  "organizations.pro_registration.done_activated": "Kurum doğrulandı ve etkinleştirildi: iki aşamalı doğrulamayı etkinleştirme e-postası e-posta hizmetine teslim edildi.",
- "organizations.pro_registration.done_refused": "Talep reddedildi: hesap devre dışı bırakıldı, gerekçe kayıtta saklanıyor."
+ "organizations.pro_registration.done_refused": "Talep reddedildi: hesap devre dışı bırakıldı, gerekçe kayıtta saklanıyor.",
+ "layout.nav.legal_protection": "Hukuki koruma (yetişkinler)"
 }

@@ -774,6 +774,62 @@
         "responses": { "201": { "description": "Signalement enregistré { id, priority } / contestation enregistrée" }, "400": { "description": "NAME_REQUIRED, EMAIL_REQUIRED, EXPLANATION_REQUIRED, GOOD_FAITH_REQUIRED, CATEGORY_INVALID, APPEAL_TEXT_REQUIRED, UNKNOWN_ACTION" }, "403": { "description": "NOTICES_SUSPENDED (art. 23)" }, "404": { "description": "NOTICE_NOT_FOUND" }, "409": { "description": "NOT_DECIDED, APPEAL_PERIOD_OVER, ALREADY_APPEALED" }, "429": { "description": "Trop de requêtes" }, "503": { "description": "CAPABILITY_NOT_OPEN, MODERATION_NOT_STAFFED, MODERATION_NOT_AVAILABLE" } }
       }
     },
+    "/citizen/legal-protection": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Protection juridique : liens de représentation d'un majeur protégé (G14-R3G — fermé par défaut)",
+        "description": "Session citoyenne vérifiée ; capacité citizen.legal_protection. Sans paramètre : { installed, asPerson, asRepresentative, requests, limits } — les liens où le compte est la personne protégée ou le représentant (jamais le HMAC du numéro de dossier). ?log=<id> : historique d'un lien (l'une ou l'autre partie). ?id=<id>&view=rdv|parcours : vue en lecture d'un représentant VÉRIFIÉ, journalisée pour la personne (étapes sensibles jamais montrées).",
+        "responses": {
+          "200": {
+            "description": "liste, historique ou vue"
+          },
+          "401": {
+            "description": "Session requise"
+          },
+          "404": {
+            "description": "NOT_FOUND ; CAPABILITY_NOT_OPEN (partie fermée)"
+          },
+          "409": {
+            "description": "MANDATE_NOT_ACTIVE ; PROCESSING_RESTRICTED"
+          },
+          "503": {
+            "description": "CAPABILITY_NOT_OPEN ; LEGAL_PROTECTION_NOT_INSTALLED (migration 0064 absente)"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Protection juridique : déclarer, signaler, renoncer, agir ou demander, confirmer, code d'accompagnement",
+        "description": "{ action: declare, personEmail, measure, mode?, representativeKind, mjpmForm?, siret?, scopePerson, scopeAssets, courtName, decisionDate, measureEndsOn?, decisionRef?, truthful: true, password } → 202 réponse neutre (aucun effet avant la vérification par un administrateur ; la décision n'est jamais envoyée) | { action: contest, id } (la personne : un lien vérifié est suspendu) | { action: renounce, id } | { action: act, id, type: RDV_CANCEL|PARCOURS_STATUS, appointmentId?|itemId?, status? } (tutelle / habilitation générale en représentation : fait ; sinon demande à confirmer par la personne, 48 h) | { action: resolve-request, requestId, accept } (la personne) | { action: helper-code, id } (le représentant, pour le mode accompagnant).",
+        "responses": {
+          "200": {
+            "description": "fait"
+          },
+          "202": {
+            "description": "déclaration enregistrée (réponse neutre) ou demande créée"
+          },
+          "400": {
+            "description": "données invalides (INVALID_MEASURE, END_DATE_BEYOND_LAW, KIND_NOT_ALLOWED…)"
+          },
+          "403": {
+            "description": "INVALID_PASSWORD ; AREA_NOT_COVERED ; ASSIST_NOT_ALLOWED"
+          },
+          "404": {
+            "description": "NOT_FOUND ; REQUEST_NOT_FOUND"
+          },
+          "409": {
+            "description": "MANDATE_NOT_ACTIVE ; MEASURE_ALREADY_ENDED ; PROCESSING_RESTRICTED"
+          },
+          "503": {
+            "description": "CAPABILITY_NOT_OPEN ; LEGAL_PROTECTION_NOT_INSTALLED"
+          }
+        }
+      }
+    },
     "/citizen/assist": {
       "get": {
         "tags": ["Auth"],
@@ -814,6 +870,37 @@
         "summary": "Contester une décision (DSA art. 20, six mois, gratuit)",
         "description": "{ action: appeal, decisionId, body } — une contestation par personne et par décision ; réexamen par une autre personne nommée lorsque c'est possible.",
         "responses": { "201": { "description": "Contestation enregistrée" }, "400": { "description": "ID_REQUIRED, APPEAL_TEXT_REQUIRED" }, "401": { "description": "Session requise" }, "403": { "description": "ACCOUNT_RESTRICTED" }, "404": { "description": "DECISION_NOT_FOUND" }, "409": { "description": "APPEAL_PERIOD_OVER, ALREADY_APPEALED" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+      }
+    },
+    "/admin/legal-protection": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Protection juridique : vérification humaine des décisions déclarées (G14-R3G)",
+        "description": "{ action: list } | { action: verify, id, method: ORIGINAL_SHOWN|CERTIFIED_COPY_EXAMINED|COURT_CONFIRMATION, note (10–500), measure, mode?, scopePerson, scopeAssets, areas: [RDV|PARCOURS], courtName, decisionDate, measureEndsOn? } | { action: reject, id, note } | { action: reinstate, id, note } | { action: end, id, reason, note }. La décision est examinée hors de la plateforme : aucun fichier reçu. Session administrateur nominative avec MFA ; capacité citizen.legal_protection.",
+        "security": [
+          {
+            "AdminToken": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "file d'attente ou lien mis à jour"
+          },
+          "400": {
+            "description": "données invalides ; NOTE_REQUIRED"
+          },
+          "401": {
+            "description": "session administrateur requise"
+          },
+          "409": {
+            "description": "NOT_DECLARED ; NOT_SUSPENDED ; ALREADY_ENDED"
+          },
+          "503": {
+            "description": "CAPABILITY_NOT_OPEN ; LEGAL_PROTECTION_NOT_INSTALLED"
+          }
+        }
       }
     },
     "/admin/moderation": {

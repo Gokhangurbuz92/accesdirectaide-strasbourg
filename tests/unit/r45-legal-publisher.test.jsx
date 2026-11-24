@@ -146,7 +146,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     // G8 notice v9 (19/11/2026): P4p (professional accounts) moved from 3 bis to § 3 — ADA Pro opens to a pilot structure (tests/unit/g8-notice-v9.test.jsx)
     // G14 ADA Pro opening (notice v13, 23/11/2026): P4, P5, P7, P11 move from 3 bis to § 3 (appointments and Outlook open)
     // G14 consolidation (23/11/2026): P10c (browser notifications), P18 (indicative calculation), P19 (assistant), P20 (Observatoire), P21 (assisted mode), P23 (social referral)
-    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P4', 'P5', 'P7', 'P11', 'P10c', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', 'P23', 'P24', 'P25', 'P26']);   // G14-R3 (proposed 24/11/2026): household, trusted persons, guardian link
+    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P4', 'P5', 'P7', 'P11', 'P10c', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', 'P23', 'P24', 'P25', 'P26', 'P27']);   // G14-R3 (proposed 24/11/2026): household, trusted persons, guardian link; G14-R3G: legal protection of an adult
     expect(t).toContain('ne sont pas des consentements au sens du RGPD');
     expect(t).toContain('Aucun numéro de téléphone n\'est demandé');
     expect(t).toContain('aucune information de ce type n\'est demandée');
@@ -156,7 +156,8 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     for (const w of ['Vercel Inc.', 'Neon', 'Upstash', "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse", 'États-Unis', 'à tout moment', 'CNIL', 'responsable de son propre traitement', 'La réservation de ces services est fermée', 'FINESS', 'data·inclusion', 'Annuaire de l\'administration']) expect(t, w).toContain(w);
     expect(t).toMatch(/Aucun délégué à la protection des données n'est désigné/);
     // G14 (notice v13): the SIRET appears only as the number a STRUCTURE gives with its own sign-up request — never the operator's (a natural person)
-    expect(t.replace(/avec son numéro SIRET|numéro SIRET, votre adresse/g, '')).not.toMatch(/SIRET|SIREN|association inscrite|DPO\b|partenaire signé/i);
+    // G14-R3G (notice v14 P27): also the SIRET an MJPM may give for their own service — never the operator's
+    expect(t.replace(/avec son numéro SIRET|numéro SIRET, votre adresse|s'il les indique, le SIRET et la structure/g, '')).not.toMatch(/SIRET|SIREN|association inscrite|DPO\b|partenaire signé/i);
   });
   it('the terms say free service, no entitlement decision, AI limits, structure confirms, deletion, lawful liability, French law and mediation « à vérifier »', () => {
     const c = text(LEGAL_DRAFT_DOCUMENTS[0]);

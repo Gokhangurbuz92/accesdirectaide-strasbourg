@@ -64,6 +64,8 @@ export default function MonEspace() {
     { to: '/compte/historique', testid: 'tile-historique', title: t('compte:space.tile.historique', 'Mon historique'), body: t('compte:space.tile.historique_body', 'Facultatif : à activer si vous le souhaitez.') },
     { to: '/compte/delegations', testid: 'tile-delegations', title: t('compte:space.tile.delegations', 'Personnes de confiance'), body: t('compte:space.tile.delegations_body', 'Donner ou consulter un accès en lecture seule, limité et révocable.') },
     { to: '/compte/accompagnement', testid: 'tile-accompagnement', title: t('compte:space.tile.accompagnement', 'Mode accompagnant'), body: t('compte:space.tile.accompagnement_body', 'Se faire aider, à côté de vous, pendant 2 heures au plus.') },   // G14-AID
+    // G14-R3G: tutelle, curatelle, habilitation familiale, mandat spécial — the protected person and the representative (accounts extra « legal_protection »)
+    { to: '/compte/protection-juridique', testid: 'tile-protection-juridique', title: t('legalprotection:tile.title', 'Protection juridique'), body: t('legalprotection:tile.body', 'Tutelle, curatelle, habilitation familiale : voir qui vous représente, ou déclarer la personne que vous protégez.') },
     // G14 / DSA art. 17, 20: statements of reasons and appeals (surface « notices »: hidden by openLinks while it is closed)
     { to: '/compte/moderation', testid: 'tile-moderation', title: t('compte:space.tile.moderation', 'Décisions de modération'), body: t('compte:space.tile.moderation_body', 'Décisions sur vos contenus ou vos signalements, et contestations.') },
     // G14-RG: « Ma situation » (public, no account needed) — offered here too
