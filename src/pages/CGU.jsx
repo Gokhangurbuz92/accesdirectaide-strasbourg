@@ -1,4 +1,5 @@
 import { Trans } from 'react-i18next';
+import { Navigate } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import BetaProcessingNotice from '@/components/beta/BetaProcessingNotice';
@@ -10,12 +11,17 @@ import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL } from '@/config/legal-documents';
 import i18n, { useLanguage, useT } from '@/i18n';
 import { accountsOpened } from '@/lib/publicBeta';
 import { contactFormOpen } from '@/lib/contactEmail';
+import { approvedVersionOf, currentDraftContext } from '@/config/legal-drafts';
 
 // R32: translated (namespace « legal »); the French text stays the legal reference (the version label of the configuration is shown as written).
 export default function CGU() {
   const { t } = useT('legal');
   const { isSource } = useLanguage();
   const fr = isSource ? {} : { lang: 'fr', dir: 'ltr' };
+  // R3 (live audit 24/11/2026): this legacy text (0.3, « version projet ») stood beside the citizen terms in force at /cgu/citoyen and contradicted
+  // them (« la poursuite de l'utilisation vaut acceptation » vs. account holders informed). Once a version of cgu-citoyen is in force in this build,
+  // /cgu (and /conditions-generales) go to it; a build where none is in force (LAB without approval) keeps this page, never a « document en préparation ».
+  if (approvedVersionOf('cgu-citoyen', currentDraftContext().approved)) return <Navigate to="/cgu/citoyen" replace />;
   return (
     <div className="min-h-screen bg-slate-50 pb-20">
       <SEO
