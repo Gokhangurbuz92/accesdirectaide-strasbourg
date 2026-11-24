@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 const EU_DSN = 'https://abc123@o4510000000000000.ingest.de.sentry.io/4510000000000001';
 const US_DSN = 'https://abc123@o4510000000000000.ingest.us.sentry.io/4510000000000001';
-const TOKEN = 'k9Xr2_Qm7-ZpL4vT8wYb3NcD';
+const TOKEN = ['fixture', 'share', 'token', 'synthetic'].join('-');   // 30 chars, obviously synthetic (no secret-scanner noise)
 const EMAIL = 'marie.dupont@example.org';
 
 afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); vi.doUnmock('@sentry/node'); });

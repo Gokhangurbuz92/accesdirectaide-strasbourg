@@ -17,9 +17,9 @@ Statut : **projet d'ingénierie du 24/11/2026**, à relire et signer par le resp
 
 **Durées proposées par la Release 4 (à approuver)** : dossier partagé effacé 30 jours après sa date de fin (`services/hds/scripts/maintenance.js purge-expired`, exécution à planifier chez Scalingo après approbation). Les durées X01 / X02 / X05 ont été décidées le 22–23/11/2026 ; leurs étapes de purge restent à approuver après lecture du dry-run.
 
-## R5-S1 — Suivi des erreurs du navigateur (Sentry, région UE) — PROJET « à signer »
+## R5-S1 — Suivi des erreurs du site et du serveur (Sentry, région UE) — SIGNÉE par le responsable le 25/11/2026
 
-Statut : **projet d'ingénierie du 24/11/2026, à signer par le responsable du traitement** (branche `sentry-eu`). Aucune relecture par un avocat ou un expert. Le DSN est déjà dans l’environnement Production (`SENTRY_DSN`, ajouté le 24/11/2026) ; il sert au navigateur (repris dans `VITE_SENTRY_DSN` à la compilation, `vite.config.js`) et au serveur. Le code de la branche ne doit être déployé qu’après la signature de cette ligne. Sans DSN de région UE dans un déploiement Vercel Production, rien n’est envoyé (navigateur : `errorTrackingActive()`, `src/config/env.js` ; serveur : `serverSentryActive()`, `api/_utils/sentryServer.js`) et les pages disent « non activé ».
+Statut : **signée par le responsable du traitement le 25/11/2026** (approbation R5, CONTROL/master/completion/R5_OWNER_APPROVAL_2026-11-25.md ; DPA Sentry accepté en ligne par le responsable) — projet d'ingénierie du 24/11/2026 (branche `sentry-eu`). Aucune relecture par un avocat ou un expert. Le DSN est déjà dans l’environnement Production (`SENTRY_DSN`, ajouté le 24/11/2026) ; il sert au navigateur (repris dans `VITE_SENTRY_DSN` à la compilation, `vite.config.js`) et au serveur. Le code de la branche ne doit être déployé qu’après la signature de cette ligne. Sans DSN de région UE dans un déploiement Vercel Production, rien n’est envoyé (navigateur : `errorTrackingActive()`, `src/config/env.js` ; serveur : `serverSentryActive()`, `api/_utils/sentryServer.js`) et les pages disent « non activé ».
 
 | Ligne | Capacité | Données | Risques principaux | Mesures (code) | Risque résiduel proposé |
 |---|---|---|---|---|---|

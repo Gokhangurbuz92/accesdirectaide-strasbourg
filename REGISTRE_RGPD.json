@@ -1519,12 +1519,12 @@
     {
       "nom": "Sentry (Functional Software Inc.)",
       "role": "R5-S1 : erreurs du site (navigateur) et du serveur seulement — ni traces de performance (serveur : seulement si SENTRY_SERVER_TRACING=on et SENTRY_TRACES_SAMPLE_RATE > 0, non configurés), ni Session Replay, ni session de santé de version ; identité, e-mail, IP, paramètres d'adresse, cookies, en-têtes (sauf User-Agent), corps de requête, jetons de chemin, saisies de formulaire et fils console retirés avant envoi (src/observability/sentryScrub.js, api/_utils/sentryServer.js)",
-      "statut": "actif seulement depuis un déploiement Vercel Production avec SENTRY_DSN (ajouté le 24/11/2026) en région UE — à l'approbation de R5-S1, après acceptation électronique du DPA Sentry par le responsable (opt-in, non automatique)",
+      "statut": "actif seulement depuis un déploiement Vercel Production avec SENTRY_DSN (ajouté le 24/11/2026) en région UE — R5-S1 approuvé par le responsable le 25/11/2026 (R5_OWNER_APPROVAL_2026-11-25)",
       "localisation": "UE — région « EU » de Sentry, Francfort (Allemagne) pour les événements (docs.sentry.io/organization/data-storage-location, lu le 24/11/2026) ; métadonnées du compte et de l'organisation aux États-Unis",
       "entite_contractante": "Functional Software, Inc. d/b/a Sentry, 45 Fremont Street, 8th Floor, San Francisco, CA 94105 (USA)",
       "mecanisme_transfert": "Clauses contractuelles types (UE), modules 2 et 3, réputées signées par l'acceptation du DPA (sentry.io/legal/dpa, annexe 3) ; Sentry déclare adhérer au Data Privacy Framework (sentry.io/privacy) — inscription sur la liste officielle non vérifiée ; lus le 24/11/2026",
-      "dpa": "inconnu / non signé",
-      "statut_contrat": "non vérifié"
+      "dpa": "DPA Sentry (Data Processing Amendment v5.1.0) accepté en ligne dans la console (Organization Settings → Legal & Compliance) le 24/11/2026 par le responsable, déclaration du 25/11/2026 — non signé séparément",
+      "statut_contrat": "accepté en ligne (décision du fondateur du 25/11/2026)"
     },
     {
       "nom": "Microsoft (Outlook, boîte contact@accesdirectaide.fr)",

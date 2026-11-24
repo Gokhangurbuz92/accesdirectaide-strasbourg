@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { SENTRY_DENY_URLS, keptDefaultIntegrations, scrubBreadcrumb, scrubEvent, scrubText, scrubUrl } from '../../src/observability/sentryScrub.js';
 import { errorTrackingActive } from '../../src/config/env.js';
 
-const TOKEN = 'k9Xr2_Qm7-ZpL4vT8wYb3NcD';            // 24 chars: a share / reset token
+const TOKEN = ['fixture', 'share', 'token', 'synthetic'].join('-');   // 30 chars, obviously synthetic (no secret-scanner noise)            // 24 chars: a share / reset token
 const EMAIL = 'marie.dupont@example.org';
 const IP = '203.0.113.42';
 const SECRET_INPUT = 'Mon numéro 1 85 05 75 123 456 78';
