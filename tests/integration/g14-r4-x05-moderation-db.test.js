@@ -15,7 +15,7 @@ vi.mock('../../api/_utils/rateLimit.js', () => ({ checkRateLimit: vi.fn().mockRe
 
 const hasDatabase = !!process.env.DATABASE_URL;
 const T = `r4x5${Date.now().toString(36)}`;
-const DAY = 86400e3; const HOUR = 3600e3;
+const HOUR = 3600e3;
 const MOD = `${T}-mod@example.test`; const EMPLOYER = `${T}-rh@example.test`; const NOTIFIER = `${T}-notifier@example.test`;
 const STR = `${T}-str`; const JOB = `${T}-job`;
 const TEXT = 'FIXTURE SYNTHÉTIQUE — description d’un poste d’agent d’accueil, assez longue pour la règle des cinquante caractères.';

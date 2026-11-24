@@ -91,7 +91,7 @@ describe('register T35–T37 and the moderation deadlines', () => {
     const t = (/** @type {string} */ id) => reg.traitements.find((/** @type {any} */ x) => x.id === id);
     for (const id of ['T35', 'T36', 'T37']) { expect(t(id).statut).toMatch(/fermée/); expect(t(id).statut).toMatch(/ligne AIPD X0[125] non signée/); expect(t(id).statut).toMatch(/modérateur nommé requis/); }
     expect(t('T37').mesures_securite).toMatch(/Aucun formulaire de candidature, aucun compteur de clics/);
-    expect(t('T03').statut).toMatch(/G14-R4/);
+    expect(t('T03').statut_r4).toMatch(/G14-R4/);
     expect(new Set(reg.traitements.map((/** @type {any} */ x) => x.id)).size).toBe(reg.traitements.length);
   });
   it('urgent notices are due in 24 hours, the others in 7 days (charter § 5, notice § 13)', () => {

@@ -148,6 +148,7 @@
       "id": "T03",
       "nom": "Partage de dossier avec des structures",
       "finalite": "À l'initiative de la personne, permettre à une structure vérifiée de consulter son dossier",
+      "statut_r4": "G14-R4 (24/11/2026, LAB) : portage chez l'hébergeur HDS (Scalingo, osc-fr1) prêt — chiffrement de bout en bout (clé du dossier, clés des structures), consentement explicite par structure (texte à approuver, HDS_SHARE_CONSENT_VERSION), date de fin, retrait = re-chiffrement, journal sans contenu ; capacité citizen.shared_dossier fermée ; notice v15 / cgu v14 proposées",
       "base_legale_proposee": "Consentement spécifique par structure et par finalité (art. 6.1.a), révocable ; art. 9.2.a si données de santé — à valider",
       "categories_donnees": [
         "Copie du questionnaire (situation, chiffrée au repos) et résultats (non chiffrés)",
@@ -177,13 +178,13 @@
           "description": "à l'expiration du lien (expiresAt) ou au plus tard 90 jours après la création, sauf conservation légale (LegalHold) active (cron gdpr-purge)"
         }
       ],
-      "mesures_securite": "Invitation liée à une structure, à usage unique, stockée en empreinte ; révocation ; aucun accès administrateur au contenu ; chiffrement par enveloppe des fichiers",
-      "statut": " ; G14-R4 (24/11/2026) : portage chez l'hébergeur HDS (Scalingo, osc-fr1) prêt en LAB — chiffrement de bout en bout (clé du dossier, clés des structures), consentement explicite par structure (texte à approuver, HDS_SHARE_CONSENT_VERSION), date de fin, retrait = re-chiffrement, journal sans contenu ; capacité citizen.shared_dossier fermée ; notice v15 / cgu v14 proposées"
+      "mesures_securite": "Invitation liée à une structure, à usage unique, stockée en empreinte ; révocation ; aucun accès administrateur au contenu ; chiffrement par enveloppe des fichiers"
     },
     {
       "id": "T04",
       "nom": "Messagerie et pièces jointes",
       "finalite": "Échanges entre la personne et une structure (dossier partagé ou rendez-vous)",
+      "statut_r4": "G14-R4 : pièces jointes chiffrées de bout en bout chez l'hébergeur HDS (messaging.attachments fermée ; Vercel refuse les octets en production)",
       "base_legale_proposee": "Service demandé (art. 6.1.b) ; art. 9.2.a si données de santé confiées — à valider",
       "categories_donnees": [
         "Messages du dossier (chiffrés par enveloppe)",
@@ -233,13 +234,13 @@
         "Les membres actifs de la structure du rendez-vous (comptes ADA Pro)",
         "L'exploitant pour un signalement : catégorie et références seulement, jamais le texte"
       ],
-      "mesures_securite": "Chiffrement à l'enregistrement avec une clé du serveur (le serveur peut déchiffrer : pas de chiffrement de bout en bout), contrôle d'accès par structure et par rendez-vous, 2 000 caractères, HTML retiré, limitation de débit, aucun contenu dans les e-mails d'avis, consigne « pas d'information de santé » sous le champ, pas de pièce jointe sans HDS, pas d'antivirus",
-      "statut": " ; G14-R4 : pièces jointes chiffrées de bout en bout chez l'hébergeur HDS (messaging.attachments fermée ; Vercel refuse les octets en production)"
+      "mesures_securite": "Chiffrement à l'enregistrement avec une clé du serveur (le serveur peut déchiffrer : pas de chiffrement de bout en bout), contrôle d'accès par structure et par rendez-vous, 2 000 caractères, HTML retiré, limitation de débit, aucun contenu dans les e-mails d'avis, consigne « pas d'information de santé » sous le champ, pas de pièce jointe sans HDS, pas d'antivirus"
     },
     {
       "id": "T05",
       "nom": "Coffre (documents personnels)",
       "finalite": "Conserver et retrouver ses justificatifs",
+      "statut_r4": "G14-R4 : code de secours à usage unique créé dans le navigateur (jamais envoyé), changement de phrase secrète ; l'hébergeur garde une empreinte à sens unique (authHash)",
       "base_legale_proposee": "Art. 6.1.b ; art. 9.2.a pour les documents médicaux déposés volontairement — à valider",
       "categories_donnees": [
         "Fichiers (art. 9 possible)",
@@ -276,8 +277,7 @@
           "description": "jusqu'à suppression par la personne ou du compte (effacement HDS en premier) ; sauvegardes : durée de rotation de Scalingo, à confirmer par écrit, puis liste anti-résurrection"
         }
       ],
-      "mesures_securite": "Chiffrement par enveloppe du contenu et du nom ; pas d'antivirus (NOT_SCANNED) ; release 3 : chiffrement de bout en bout dans le navigateur, phrase secrète perdue = documents perdus (dit à l'écran)",
-      "statut": " ; G14-R4 : code de secours à usage unique créé dans le navigateur (jamais envoyé), changement de phrase secrète ; l'hébergeur garde une empreinte à sens unique (authHash)"
+      "mesures_securite": "Chiffrement par enveloppe du contenu et du nom ; pas d'antivirus (NOT_SCANNED) ; release 3 : chiffrement de bout en bout dans le navigateur, phrase secrète perdue = documents perdus (dit à l'écran)"
     },
     {
       "id": "T06",
@@ -1230,61 +1230,6 @@
       "mesures_securite": "Compte majeur exigé (isAdultAccount) ; aucun texte libre ; le besoin n'est gardé qu'avec l'accord vrai ; verrou de capacité ; rappel sans titre, lieu ni besoin ; administration éditoriale par un administrateur nommé avec MFA"
     },
     {
-      "id": "T22",
-      "nom": "Sauvegardes chiffrées, restauration et traces d'effacement",
-      "statut": "sauvegardes en service (2 par jour) ; traces d'effacement chez Upstash dès qu'un effacement a lieu ; seconde copie des traces chez Cloudflare éteinte tant que sa clé n'est pas posée et que la notice v7 n'est pas en vigueur",
-      "finalite": "Rétablir la base après un incident (RPO 24 h, RTO 1 jour ouvré : objectifs) sans faire revenir une personne effacée (rejeu des effacements après toute restauration)",
-      "base_legale_proposee": "Intérêt légitime à la disponibilité et à l'intégrité (art. 6.1.f, mesure de l'art. 32.1 b-c) ; traces : obligation d'effacement (art. 6.1.c, art. 17) — à valider",
-      "categories_donnees": [
-        "Copie intégrale de la base, chiffrée avant envoi et signée",
-        "Traces d'effacement : identifiant de la demande, identifiant pseudonyme du compte, domaines effacés, date, phase — ni adresse ni nom"
-      ],
-      "categories_personnes": [
-        "Toutes les personnes présentes dans la base",
-        "Personnes effacées (traces)"
-      ],
-      "destinataires": [
-        "Responsable de traitement (clé privée de restauration, hors du producteur)"
-      ],
-      "sous_traitants": [
-        "Scaleway SAS (exécution de la sauvegarde, Paris)",
-        "Cloudflare R2 (stockage chiffré, juridiction UE ; ne détient pas les clés)",
-        "Upstash (traces d'effacement, Francfort)",
-        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
-      ],
-      "conservation": [
-        {
-          "donnee": "Sauvegardes chiffrées (seau R2 ada-db-backups)",
-          "duree_jours": 35,
-          "source": "retention-policy.BACKUP_KEEP_DAYS",
-          "statut": "appliqué",
-          "description": "35 jours au plus (règle de cycle de vie du seau, verrou 30 jours)"
-        },
-        {
-          "donnee": "Traces d'effacement chez Upstash",
-          "duree_jours": 40,
-          "source": "erasure-tombstones.TOMBSTONE_TTL_SECONDS",
-          "statut": "appliqué",
-          "description": "40 jours par entrée (élagage à chaque écriture et contrôle horaire)"
-        },
-        {
-          "donnee": "Seconde copie chiffrée des traces (Cloudflare R2)",
-          "duree_jours": 40,
-          "source": "erasure-tombstone-copy.COPY_RETENTION_DAYS",
-          "statut": "non appliqué",
-          "description": "40 jours par objet (suppression horaire ; règle de cycle de vie à 39 jours en filet) — copie éteinte tant qu'elle n'est pas activée"
-        },
-        {
-          "donnee": "Historique de la base chez Neon",
-          "duree_jours": null,
-          "source": null,
-          "statut": "appliqué",
-          "description": "6 heures (offre gratuite, fait du prestataire)"
-        }
-      ],
-      "mesures_securite": "Chiffrement avant envoi (clé privée hors du producteur), sauvegardes et registre signés, vérification mensuelle de restauration dans une base jetable effacée ensuite, rejeu des effacements refusé si les traces sont incomplètes ou en désaccord ; copie des traces chiffrée et authentifiée (AES-256-GCM), noms HMAC"
-    },
-    {
       "id": "T35",
       "nom": "Témoignages (X02)",
       "statut": "capacité community.testimonials fermée (surface « testimonials ») ; textes approuvés le 23/11/2026 (notice v12 / v13 § 3 ter, § 4, § 13 ; cgu-citoyen v12 § 7 bis) ; ligne AIPD X02 non signée ; modérateur nommé requis (le responsable, seul) ; préparé à la Release 4",
@@ -1437,6 +1382,61 @@
         }
       ],
       "mesures_securite": "Aucun formulaire de candidature, aucun compteur de clics, aucun journal de consultation ; champs discriminatoires refusés par construction ; vérification de l'employeur recontrôlée à chaque lecture publique ; modération MFA"
+    },
+    {
+      "id": "T22",
+      "nom": "Sauvegardes chiffrées, restauration et traces d'effacement",
+      "statut": "sauvegardes en service (2 par jour) ; traces d'effacement chez Upstash dès qu'un effacement a lieu ; seconde copie des traces chez Cloudflare éteinte tant que sa clé n'est pas posée et que la notice v7 n'est pas en vigueur",
+      "finalite": "Rétablir la base après un incident (RPO 24 h, RTO 1 jour ouvré : objectifs) sans faire revenir une personne effacée (rejeu des effacements après toute restauration)",
+      "base_legale_proposee": "Intérêt légitime à la disponibilité et à l'intégrité (art. 6.1.f, mesure de l'art. 32.1 b-c) ; traces : obligation d'effacement (art. 6.1.c, art. 17) — à valider",
+      "categories_donnees": [
+        "Copie intégrale de la base, chiffrée avant envoi et signée",
+        "Traces d'effacement : identifiant de la demande, identifiant pseudonyme du compte, domaines effacés, date, phase — ni adresse ni nom"
+      ],
+      "categories_personnes": [
+        "Toutes les personnes présentes dans la base",
+        "Personnes effacées (traces)"
+      ],
+      "destinataires": [
+        "Responsable de traitement (clé privée de restauration, hors du producteur)"
+      ],
+      "sous_traitants": [
+        "Scaleway SAS (exécution de la sauvegarde, Paris)",
+        "Cloudflare R2 (stockage chiffré, juridiction UE ; ne détient pas les clés)",
+        "Upstash (traces d'effacement, Francfort)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Sauvegardes chiffrées (seau R2 ada-db-backups)",
+          "duree_jours": 35,
+          "source": "retention-policy.BACKUP_KEEP_DAYS",
+          "statut": "appliqué",
+          "description": "35 jours au plus (règle de cycle de vie du seau, verrou 30 jours)"
+        },
+        {
+          "donnee": "Traces d'effacement chez Upstash",
+          "duree_jours": 40,
+          "source": "erasure-tombstones.TOMBSTONE_TTL_SECONDS",
+          "statut": "appliqué",
+          "description": "40 jours par entrée (élagage à chaque écriture et contrôle horaire)"
+        },
+        {
+          "donnee": "Seconde copie chiffrée des traces (Cloudflare R2)",
+          "duree_jours": 40,
+          "source": "erasure-tombstone-copy.COPY_RETENTION_DAYS",
+          "statut": "non appliqué",
+          "description": "40 jours par objet (suppression horaire ; règle de cycle de vie à 39 jours en filet) — copie éteinte tant qu'elle n'est pas activée"
+        },
+        {
+          "donnee": "Historique de la base chez Neon",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "6 heures (offre gratuite, fait du prestataire)"
+        }
+      ],
+      "mesures_securite": "Chiffrement avant envoi (clé privée hors du producteur), sauvegardes et registre signés, vérification mensuelle de restauration dans une base jetable effacée ensuite, rejeu des effacements refusé si les traces sont incomplètes ou en désaccord ; copie des traces chiffrée et authentifiée (AES-256-GCM), noms HMAC"
     }
   ],
   "sous_traitants": [
