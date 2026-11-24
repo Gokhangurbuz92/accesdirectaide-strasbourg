@@ -33,7 +33,9 @@ const DPA_INTEGRE = 'intégré aux conditions de service (non signé) — pages 
 // FA-D5: Cloudflare — DPA v6.4 incorporated by the Self-Serve Subscription Agreement § 6.1, read 09/11/2026 (CONTROL/v2/PRESTATAIRES_CONTRATS_PREUVES_FR.md)
 const DPA_INTEGRE_0911 = 'intégré aux conditions de service (non signé) — pages publiques lues le 09/11/2026';
 // FA-D5: Scaleway — the owner's statement « Scaleway DPA : kabul » (13/11/2026, AIPD V2 annex § 8); the PDF is not archived yet
-const DPA_CLOUDFLARE_V64 = 'intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du responsable du 23/11/2026)';
+const DPA_CLOUDFLARE_V64 = 'intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du fondateur du 23/11/2026)';
+// Cloudflare (R2) shares the same Cloudflare account and DPA: v6.4 accepted online by the same 23/11 decision (first read 09/11/2026)
+const DPA_CLOUDFLARE_R2 = 'intégré aux conditions de service (non signé) — DPA Cloudflare lu le 09/11/2026 ; version 6.4 (3 avril 2026) accepté en ligne (décision du fondateur du 23/11/2026)';
 // 24/11 fact-check: 8x8 (JaaS) — Global DPA 2025-02 accepted by the owner's decision of 23/11/2026, neither signed nor confirmed by the vendor
 const DPA_8X8 = '8x8 Global DPA (version 2025-02) approuvé en principe par le fondateur (décision du 23/11/2026) — acceptation contractuelle non confirmée par le fournisseur, non signé';
 // Microsoft Products and Services DPA: incorporated by Microsoft's terms; no evidence archived — never « signé »
@@ -43,16 +45,18 @@ const DPA_SCALEWAY = 'accepté dans la console par le responsable de traitement 
 /**
  * Founder clarification (24/11/2026): the register distinguishes how far each provider contract went —
  *   « accepté »                              the contract (or its DPA) was actually accepted (console / online acceptance recorded);
+ *   « accepté en ligne (décision du fondateur du 23/11/2026) » Cloudflare DPA v6.4: the owner's 23/11 approval states it is deemed accepted online (both Cloudflare entries);
  *   « examiné »                              its public terms and DPA were read, no recorded acceptance is archived;
  *   « approuvé en principe par le fondateur » the founder decided to use it, the contractual acceptance is not confirmed;
  *   « non vérifié »                          nothing read or recorded; « sans objet » not chosen / not in use.
  */
-export const CONTRACT_STATUSES = Object.freeze(['accepté', 'examiné', 'approuvé en principe par le fondateur', 'non vérifié', 'sans objet']);
+export const CLOUDFLARE_CONTRACT_STATUS = 'accepté en ligne (décision du fondateur du 23/11/2026)';
+export const CONTRACT_STATUSES = Object.freeze(['accepté', CLOUDFLARE_CONTRACT_STATUS, 'examiné', 'approuvé en principe par le fondateur', 'non vérifié', 'sans objet']);
 const CONTRACT_STATUS_BY_NAME = Object.freeze({
     'Vercel': 'examiné', 'Vercel Analytics + Speed Insights': 'sans objet', 'Neon': 'examiné', 'Upstash': 'examiné', 'Scaleway SAS': 'accepté',
-    'Cloudflare (R2)': 'examiné', 'Stockage objet S3/R2 (fournisseur à confirmer)': 'sans objet', 'Sentry (Functional Software Inc.)': 'non vérifié',
+    'Cloudflare (R2)': CLOUDFLARE_CONTRACT_STATUS, 'Stockage objet S3/R2 (fournisseur à confirmer)': 'sans objet', 'Sentry (Functional Software Inc.)': 'non vérifié',
     'Microsoft (Outlook, boîte contact@accesdirectaide.fr)': 'non vérifié', 'Autres expéditeurs codés (Microsoft Graph sendMail, Resend)': 'sans objet',
-    'Mailjet (Sinch)': 'examiné', 'Cloudflare, Inc. (Workers AI)': 'accepté', 'Scalingo SAS (HDS)': 'examiné', 'Scaleway SAS (OpenFisca)': 'accepté',
+    'Mailjet (Sinch)': 'examiné', 'Cloudflare, Inc. (Workers AI)': CLOUDFLARE_CONTRACT_STATUS, 'Scalingo SAS (HDS)': 'examiné', 'Scaleway SAS (OpenFisca)': 'accepté',
     'Twilio': 'sans objet', 'Microsoft (Outlook / Graph)': 'non vérifié', '8x8, Inc. (Jitsi as a Service)': 'approuvé en principe par le fondateur',
 });
 /** @param {Array<Record<string, any>>} list */
@@ -711,7 +715,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
             { nom: 'Neon', role: 'Base de données PostgreSQL', statut: 'en service (bêta publique restreinte)', localisation: 'Francfort selon /mentions-legales — preuve console à archiver', entite_contractante: 'Databricks, Inc., société mère de Neon, LLC (neon.com/dpa) — offre gratuite', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, modules 2 et 3, réputées intégrées (DPA Databricks § 8.1, annexe B) ; Databricks, Inc. active sur la liste officielle du Data Privacy Framework (lue le 15/11/2026)', dpa: DPA_INTEGRE, journaux: 'historique de la base : 6 heures sur l\'offre gratuite (plus long sur une offre payante)' },
             { nom: 'Upstash', role: 'Limitation de débit (KV/Redis) ; traces d\'effacement (40 jours) ; plus aucun identifiant de contact Mailjet depuis la v6 (décision C6 : ancienne liste seulement vidée) ; ne contient plus l\'état des leurres de réservation (R41-B)', statut: 'en service (bêta publique restreinte)', localisation: 'Francfort (fra1) — preuve UPSTASH_REGION_EVIDENCE_2026-11-15', entite_contractante: 'Upstash, Inc. — offre gratuite', mecanisme_transfert: 'Data Privacy Framework d\'abord (Upstash, Inc. active sur la liste officielle, lue le 17/11/2026) ; clauses contractuelles types (UE) 2021/914, module 2, s\'il ne s\'applique plus (DPA § 3.2 B, annexe 2)', dpa: DPA_INTEGRE, role_propre: 'Le DPA d\'Upstash ne couvre pas ses traitements pour sa propre sécurité et l\'analyse de son service : Upstash en est responsable (DPA, « How and when this DPA applies »)' },
             { nom: 'Scaleway SAS', role: 'Exécution des sauvegardes de la base (tâche planifiée qui chiffre la copie avant tout envoi) et de la vérification de restauration', statut: 'en service (2 sauvegardes par jour)', localisation: 'Paris (UE)', entite_contractante: 'Scaleway SAS (France)', mecanisme_transfert: 'aucun transfert hors UE', dpa: DPA_SCALEWAY },
-            { nom: 'Cloudflare (R2)', role: 'Stockage des sauvegardes chiffrées de la base ; seconde copie chiffrée des traces d\'effacement (éteinte jusqu\'à son activation) ; Cloudflare ne détient pas les clés', statut: 'en service pour les sauvegardes', localisation: 'seaux en juridiction UE', entite_contractante: 'Cloudflare, Inc. (USA)', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, modules 2 et 3, et Data Privacy Framework (DPA Cloudflare, lu le 09/11/2026) ; contenu illisible sans les clés', dpa: DPA_INTEGRE_0911 },
+            { nom: 'Cloudflare (R2)', role: 'Stockage des sauvegardes chiffrées de la base ; seconde copie chiffrée des traces d\'effacement (éteinte jusqu\'à son activation) ; Cloudflare ne détient pas les clés', statut: 'en service pour les sauvegardes', localisation: 'seaux en juridiction UE', entite_contractante: 'Cloudflare, Inc. (USA)', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, modules 2 et 3, et Data Privacy Framework (DPA Cloudflare, lu le 09/11/2026) ; contenu illisible sans les clés', dpa: DPA_CLOUDFLARE_R2 },
             { nom: 'Stockage objet S3/R2 (fournisseur à confirmer)', role: 'Coffre, pièces jointes (fichiers chiffrés par enveloppe)', statut: 'prévu', localisation: 'non choisie', entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Sentry (Functional Software Inc.)', role: 'Erreurs serveur et navigateur, Session Replay (1 % / 10 % en erreur), traces 10 %', statut: 'activé si un DSN est configuré', localisation: NON_VERIFIE, entite_contractante: 'Functional Software Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Microsoft (Outlook, boîte contact@accesdirectaide.fr)', role: 'Réception des messages envoyés à l\'adresse de contact publiée', statut: 'en service (boîte existante, R42-A05)', localisation: NON_VERIFIE, entite_contractante: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },

@@ -1344,8 +1344,8 @@
       "localisation": "seaux en juridiction UE",
       "entite_contractante": "Cloudflare, Inc. (USA)",
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, modules 2 et 3, et Data Privacy Framework (DPA Cloudflare, lu le 09/11/2026) ; contenu illisible sans les clés",
-      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 09/11/2026",
-      "statut_contrat": "examiné"
+      "dpa": "intégré aux conditions de service (non signé) — DPA Cloudflare lu le 09/11/2026 ; version 6.4 (3 avril 2026) accepté en ligne (décision du fondateur du 23/11/2026)",
+      "statut_contrat": "accepté en ligne (décision du fondateur du 23/11/2026)"
     },
     {
       "nom": "Stockage objet S3/R2 (fournisseur à confirmer)",
@@ -1404,8 +1404,8 @@
       "statut": "prévu",
       "localisation": "États-Unis (réseau mondial)",
       "mecanisme_transfert": "CCT 2021/914 module 2 (DPA Cloudflare v6.4, 3 avril 2026, clause 6.2) ; cadre UE–États-Unis (clause 6.4) — page lue le 23/11/2026",
-      "dpa": "intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du responsable du 23/11/2026)",
-      "statut_contrat": "accepté"
+      "dpa": "intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du fondateur du 23/11/2026)",
+      "statut_contrat": "accepté en ligne (décision du fondateur du 23/11/2026)"
     },
     {
       "nom": "Scalingo SAS (HDS)",

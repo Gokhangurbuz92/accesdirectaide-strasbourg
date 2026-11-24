@@ -83,7 +83,7 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(registre.organisme.responsable_traitement).toMatch(/Personne physique porteuse du projet/);
     expect(registre.organisme.responsable_traitement).toMatch(/n'est pas présentée comme responsable/);
     // legal v5: an agreement incorporated by a provider's terms is recorded as such — never as a signed one
-    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le (15|09)\/11\/2026|intégré aux conditions de service \(non signé\) — DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du responsable du 23\/11\/2026\)|accepté dans la console par le responsable de traitement \(déclaration du 13\/11\/2026\) — PDF non archivé, non signé séparément|8x8 Global DPA \(version 2025-02\) approuvé en principe par le fondateur \(décision du 23\/11\/2026\) — acceptation contractuelle non confirmée par le fournisseur, non signé|DPA Microsoft \(Products and Services Data Protection Addendum\) — NON VÉRIFIÉ \(aucune preuve archivée\), non signé)$/);
+    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le (15|09)\/11\/2026|intégré aux conditions de service \(non signé\) — DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du fondateur du 23\/11\/2026\)|intégré aux conditions de service \(non signé\) — DPA Cloudflare lu le 09\/11\/2026 ; version 6\.4 \(3 avril 2026\) accepté en ligne \(décision du fondateur du 23\/11\/2026\)|accepté dans la console par le responsable de traitement \(déclaration du 13\/11\/2026\) — PDF non archivé, non signé séparément|8x8 Global DPA \(version 2025-02\) approuvé en principe par le fondateur \(décision du 23\/11\/2026\) — acceptation contractuelle non confirmée par le fournisseur, non signé|DPA Microsoft \(Products and Services Data Protection Addendum\) — NON VÉRIFIÉ \(aucune preuve archivée\), non signé)$/);
     for (const s of registre.sous_traitants) expect(s.dpa, s.nom).not.toMatch(/(?<!non )signé(?! séparément)/);
     expect(registre.transferts_hors_ue).toMatch(/aucun signé/);
   });
@@ -95,9 +95,13 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     const graph = find(/Outlook \/ Graph/);
     expect(graph.statut).toMatch(/release 2 \(OUTLOOK_ENABLED=true\)/); expect(graph.dpa).toMatch(/NON VÉRIFIÉ/);
     // founder 24/11: « accepté » only where an acceptance is recorded; « examiné » = read; the founder's decision alone = « approuvé en principe »
-    for (const s of registre.sous_traitants) expect(['accepté', 'examiné', 'approuvé en principe par le fondateur', 'non vérifié', 'sans objet'], s.nom).toContain(s.statut_contrat);
-    for (const s of registre.sous_traitants) if (s.statut_contrat === 'accepté') expect(s.dpa, s.nom).toMatch(/^accepté|accepté en ligne/);
+    for (const s of registre.sous_traitants) expect(['accepté', 'accepté en ligne (décision du fondateur du 23/11/2026)', 'examiné', 'approuvé en principe par le fondateur', 'non vérifié', 'sans objet'], s.nom).toContain(s.statut_contrat);
+    for (const s of registre.sous_traitants) if (s.statut_contrat.startsWith('accepté')) expect(s.dpa, s.nom).toMatch(/^accepté|accepté en ligne/);
     expect(graph.statut_contrat).toBe('non vérifié');
+    // owner 23/11: « Cloudflare DPA (v6.4) çevrim içi kabul edilmiş sayılır » — both Cloudflare entries carry the same status and DPA version
+    const cloudflare = registre.sous_traitants.filter((/** @type {any} */ s) => /^Cloudflare/.test(s.nom));
+    expect(cloudflare.map((/** @type {any} */ s) => s.nom)).toEqual(['Cloudflare (R2)', 'Cloudflare, Inc. (Workers AI)']);
+    for (const s of cloudflare) { expect(s.statut_contrat, s.nom).toBe('accepté en ligne (décision du fondateur du 23/11/2026)'); expect(s.dpa, s.nom).toMatch(/6\.4 \(3 avril 2026\).*accepté en ligne \(décision du fondateur du 23\/11\/2026\)/); expect(s.dpa, s.nom).not.toMatch(/examiné/); }
     expect(find(/^Mailjet/).statut).toMatch(/^en service depuis le 18\/11\/2026/); expect(find(/^Mailjet/).statut).not.toMatch(/non approuvée/);
   });
 
@@ -147,7 +151,7 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(JSON.stringify(t('T02'))).not.toMatch(/proposé, à valider|à confirmer/);
     const cf = registre.sous_traitants.find((x) => x.nom === 'Cloudflare, Inc. (Workers AI)');
     expect(cf.mecanisme_transfert).not.toMatch(/sans signature|à confirmer/);
-    expect(cf.dpa).toMatch(/DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du responsable du 23\/11\/2026\)$/);
+    expect(cf.dpa).toMatch(/DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du fondateur du 23\/11\/2026\)$/);
     expect(JSON.stringify(registre)).not.toMatch(/application du DPA sans signature/);
     expect(JSON.stringify(registre)).not.toMatch(/avocat|juriste a validé|expert a validé/);
   });
