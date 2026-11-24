@@ -226,7 +226,7 @@ export default function SuggestStructure() {
                         const isActive = idx === currentStep;
                         const isCompleted = idx < currentStep;
                         return (
-                            <div key={step.id} className="relative z-10 flex flex-col items-center gap-3 group">
+                            <div key={step.id} className="relative z-10 flex min-w-0 flex-1 flex-col items-center gap-3 group">
                                 <div
                                     className={cn(
                                         'w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 border-2',
@@ -239,7 +239,7 @@ export default function SuggestStructure() {
                                 >
                                     {isCompleted ? <CheckCircle2 size={20} /> : <Icon size={20} />}
                                 </div>
-                                <span className={cn('text-xs font-bold uppercase tracking-widest', isActive ? 'text-indigo-600' : 'text-slate-600')}>
+                                <span className={cn('max-w-full break-words text-center text-xs font-bold uppercase tracking-wide sm:tracking-widest', isActive ? 'text-indigo-600' : 'text-slate-600')}>{/* 24/11/2026: wraps instead of overflowing at 320 px with WCAG text spacing (uk) */}
                                     {STEP_TITLES[step.id]}
                                 </span>
                             </div>
@@ -495,13 +495,13 @@ export default function SuggestStructure() {
                             )}
 
                             {/* Action bar */}
-                            <div className="pt-8 flex items-center justify-between gap-4 border-t border-slate-100">
+                            <div className="pt-8 flex flex-wrap items-center justify-between gap-4 border-t border-slate-100">
                                 <Button
                                     type="button"
                                     variant="ghost"
                                     onClick={prevStep}
                                     disabled={currentStep === 0 || loading}
-                                    className="h-12 px-6 rounded-xl text-slate-500 font-bold disabled:opacity-0"
+                                    className="h-12 px-4 sm:px-6 rounded-xl text-slate-500 font-bold disabled:opacity-0"
                                 >
                                     <ArrowLeft className="me-2 w-4 h-4 rtl:-scale-x-100" aria-hidden="true" /> {t('structures:suggest.back', 'Retour')}
                                 </Button>
@@ -510,7 +510,7 @@ export default function SuggestStructure() {
                                     type="submit"
                                     disabled={loading}
                                     className={cn(
-                                        'h-14 px-10 rounded-2xl font-black text-lg transition-all shadow-lg group',
+                                        'h-auto min-h-14 max-w-full whitespace-normal px-6 py-3 sm:px-10 rounded-2xl font-black text-lg transition-all shadow-lg group',
                                         currentStep === STEPS.length - 1
                                             ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
                                             : 'bg-slate-900 hover:bg-slate-800 text-white',
