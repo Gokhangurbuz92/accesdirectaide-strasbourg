@@ -30,8 +30,7 @@ const DPA_INCONNU = 'inconnu / non signé';
 const NON_VERIFIE = 'NON VÉRIFIÉ';
 // Legal v5: an agreement incorporated by the provider's terms is NOT a signed agreement — the register says which one it is, and when it was read
 const DPA_INTEGRE = 'intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026';
-// FA-D5: Cloudflare — DPA v6.4 incorporated by the Self-Serve Subscription Agreement § 6.1, read 09/11/2026 (CONTROL/v2/PRESTATAIRES_CONTRATS_PREUVES_FR.md)
-const DPA_INTEGRE_0911 = 'intégré aux conditions de service (non signé) — pages publiques lues le 09/11/2026';
+// FA-D5: Cloudflare — DPA v6.4 incorporated by the Self-Serve Subscription Agreement § 6.1, first read 09/11/2026 (CONTROL/v2/PRESTATAIRES_CONTRATS_PREUVES_FR.md); superseded by DPA_CLOUDFLARE_V64 below
 // FA-D5: Scaleway — the owner's statement « Scaleway DPA : kabul » (13/11/2026, AIPD V2 annex § 8); the PDF is not archived yet
 const DPA_CLOUDFLARE_V64 = 'intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du fondateur du 23/11/2026)';
 // Cloudflare (R2) shares the same Cloudflare account and DPA: v6.4 accepted online by the same 23/11 decision (first read 09/11/2026)
