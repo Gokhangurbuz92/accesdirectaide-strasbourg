@@ -1,6 +1,6 @@
 /**
  * G14-R3G — the representative of a protected adult on a REAL PostgreSQL, through the real router (capability gate + assisted-session gate) and handler.
- * Migration 0064 is PENDING (drizzle/pending, not in the journal): this suite applies it to its database when the table is absent, and proves its
+ * Migration 0064 is in the journal since release 3 (idx 64); on a database where it is not applied yet this suite applies it when the table is absent, and proves its
  * rollback and re-application at the end.
  *   before verification nothing opens; the neutral answer (no account oracle); the administrator verifies the facts → ACT (tutelle): view (logged for the
  *   person), sensitive step hidden, cancel at once; CONFIRM (curatelle): a request the person confirms; contest = suspension at once; reinstatement;
@@ -49,7 +49,7 @@ describe.skipIf(!hasDatabase)('G14-R3G — représentant légal d’un majeur pr
     ({ routes } = await import('../../api/routes.js'));
     svc = await import('../../api/_services/legal-protection.js');
     if (!(await db.execute(sql`SELECT to_regclass('"LegalProtectionMandate"') IS NOT NULL AS ok`)).rows[0].ok) {
-      await db.execute(sql.raw(fs.readFileSync('drizzle/pending/0064_r3g_legal_protection.sql', 'utf8').replaceAll('--> statement-breakpoint', '')));
+      await db.execute(sql.raw(fs.readFileSync('drizzle/0064_r3g_legal_protection.sql', 'utf8').replaceAll('--> statement-breakpoint', '')));
       installedHere = true;
     }
     const { recordAgeDeclaration } = await import('../../api/_utils/age-policy.js');
@@ -85,7 +85,7 @@ describe.skipIf(!hasDatabase)('G14-R3G — représentant légal d’un majeur pr
     await db.execute(sql`DELETE FROM "ProRdvService" WHERE id = ${SVC}`);
     await db.execute(sql`DELETE FROM "CitizenUser" WHERE id IN (${list})`);   // cascades the links, tokens, steps
     await db.execute(sql`DELETE FROM "Structure" WHERE id = ${STR}`);
-    if (installedHere) await db.execute(sql.raw(fs.readFileSync('drizzle/pending/0064_down.sql', 'utf8')));
+    if (installedHere) await db.execute(sql.raw(fs.readFileSync('drizzle/rollback/0064_down.sql', 'utf8')));
     delete process.env.ADA_PARCOURS_DELEGATE_READ;
   });
 
@@ -213,11 +213,15 @@ describe.skipIf(!hasDatabase)('G14-R3G — représentant légal d’un majeur pr
   });
 
   it('migration 0064: rollback then re-application leave the database as expected (on this suite\'s database)', async () => {
-    const down = fs.readFileSync('drizzle/pending/0064_down.sql', 'utf8'); const up = fs.readFileSync('drizzle/pending/0064_r3g_legal_protection.sql', 'utf8').replaceAll('--> statement-breakpoint', '');
+    const down = fs.readFileSync('drizzle/rollback/0064_down.sql', 'utf8'); const up = fs.readFileSync('drizzle/0064_r3g_legal_protection.sql', 'utf8').replaceAll('--> statement-breakpoint', '');
+    // the down file also forgets the journal row: keep it to put it back after the re-application (the database stays as migrated)
+    const rec = (await db.execute(sql`SELECT to_regclass('drizzle.__drizzle_migrations') IS NOT NULL AS ok`)).rows[0].ok
+      ? (await db.execute(sql`SELECT hash, created_at FROM drizzle.__drizzle_migrations WHERE created_at = 1795060000000`)).rows : [];
     await db.execute(sql.raw(down));
     expect((await db.execute(sql`SELECT to_regclass('"LegalProtectionMandate"') IS NOT NULL AS ok`)).rows[0].ok).toBe(false);
     await db.execute(sql.raw(down));   // idempotent
     await db.execute(sql.raw(up));
+    for (const r of rec) await db.execute(sql`INSERT INTO drizzle.__drizzle_migrations (hash, created_at) VALUES (${r.hash}, ${r.created_at})`);
     const cons = (await db.execute(sql`SELECT count(*)::int n FROM pg_constraint WHERE conrelid = '"LegalProtectionMandate"'::regclass`)).rows[0].n;
     expect(cons).toBe(26);   // 22 CHECK + primary key + 3 foreign keys
   });

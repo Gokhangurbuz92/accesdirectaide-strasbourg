@@ -449,6 +449,13 @@
       "when": 1795050000000,
       "tag": "0063_g14_r3_booking_needs_external",
       "breakpoints": true
+    },
+    {
+      "idx": 64,
+      "version": "7",
+      "when": 1795060000000,
+      "tag": "0064_r3g_legal_protection",
+      "breakpoints": true
     }
   ]
 }

@@ -26,7 +26,7 @@ describe('G14-R2 drizzle snapshots vs src/db/schema.ts', () => {
   it('the bge-m3 objects live in the 0060 SQL and rollback only, never in a snapshot or in the Drizzle schema', () => {
     expect(fs.readFileSync('drizzle/0060_g14_ai_bge_m3_index.sql', 'utf8')).toMatch(/ADD COLUMN IF NOT EXISTS "embedding_m3" vector\(1024\)/);
     expect(fs.readFileSync('drizzle/rollback/0060_down.sql', 'utf8')).toMatch(/embedding_m3/);
-    for (const f of ['0060', '0061', '0062', '0063']) expect(fs.readFileSync(`drizzle/meta/${f}_snapshot.json`, 'utf8'), f).not.toMatch(/embedding_m3/);
+    for (const f of ['0060', '0061', '0062', '0063', '0064']) expect(fs.readFileSync(`drizzle/meta/${f}_snapshot.json`, 'utf8'), f).not.toMatch(/embedding_m3/);
     expect(fs.readFileSync('src/db/schema.ts', 'utf8')).not.toMatch(/(?:vector|text|timestamp)\('embedding_m3/);
   });
 });

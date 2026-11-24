@@ -51,7 +51,8 @@ describe('Production migration plan (scripts/db-deploy-migrate.mjs)', () => {
   const T60 = '0060_g14_ai_bge_m3_index';   // G14-AI
   const T61 = '0061_g14_ps_social_referrals';   // G14-PS: social referrals (non-HDS)
   const T62 = '0062_g14_obs_demand_signals';   // G14-OBS
-  const T63 = '0063_g14_r3_booking_needs_external';   // G14 release 3: the newest
+  const T63 = '0063_g14_r3_booking_needs_external';   // G14 release 3
+  const T64 = '0064_r3g_legal_protection';   // G14 release 3 (R3G): the newest
   it('the journal has 0045 after 0044 and a rollback file that forgets its journal row', () => {
     const e = journal.find((x) => x.tag === T45);
     expect(e.idx).toBe(45);
@@ -63,34 +64,35 @@ describe('Production migration plan (scripts/db-deploy-migrate.mjs)', () => {
     const p = planDeploy(journal, when('0042_r31_orientation_funding_pilot'));
     expect(p).toMatchObject({ ok: false, reason: 'OBSOLETE_MIGRATION_PENDING' });
     // every later « when » is pending: 0043, 0044, 0045 and the migrations added since (M1: 0046; M2: 0047, 0048; pro messages: 0049; C12: 0050; P19: 0051)
-    expect(p.pending).toEqual(['0043_r38_guest_booking', '0044_r39_guest_reminder_consent', T45, T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63]);
+    expect(p.pending).toEqual(['0043_r38_guest_booking', '0044_r39_guest_reminder_consent', T45, T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64]);
   });
   it('--only 0045 on 0042 applies exactly 0045; on 0044 too; afterwards only later migrations are pending and 0043 / 0044 stay unapplied for good', () => {
     expect(planDeploy(journal, when('0042_r31_orientation_funding_pilot'), T45)).toEqual({ ok: true, apply: [journal.find((x) => x.tag === T45)] });
     expect(planDeploy(journal, when('0044_r39_guest_reminder_consent'), T45).ok).toBe(true);
     // only the later, non-obsolete migrations (M1: 0046; M2: 0047, 0048; pro messages: 0049; C12: 0050; P19: 0051): never 0043 / 0044
     const after = planDeploy(journal, when(T45));
-    expect(after).toEqual({ ok: true, apply: [T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
+    expect(after).toEqual({ ok: true, apply: [T46, T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
     expect(after.apply.map((x) => x.tag).filter((t) => OBSOLETE_MIGRATIONS.includes(t))).toEqual([]);
-    expect(planDeploy(journal, when(T46))).toEqual({ ok: true, apply: [T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T47))).toEqual({ ok: true, apply: [T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T48))).toEqual({ ok: true, apply: [T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T49))).toEqual({ ok: true, apply: [T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T50))).toEqual({ ok: true, apply: [T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T51))).toEqual({ ok: true, apply: [T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T52))).toEqual({ ok: true, apply: [T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T53))).toEqual({ ok: true, apply: [T54, T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T54))).toEqual({ ok: true, apply: [T55, T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T55))).toEqual({ ok: true, apply: [T56, T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T56))).toEqual({ ok: true, apply: [T57, T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T57))).toEqual({ ok: true, apply: [T58, T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T58))).toEqual({ ok: true, apply: [T59, T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T59))).toEqual({ ok: true, apply: [T60, T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T60))).toEqual({ ok: true, apply: [T61, T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T61))).toEqual({ ok: true, apply: [T62, T63].map((t) => journal.find((x) => x.tag === t)) });
-    expect(planDeploy(journal, when(T62))).toEqual({ ok: true, apply: [journal.find((x) => x.tag === T63)] });
-    expect(planDeploy(journal, when(T63))).toEqual({ ok: true, apply: [] });
-    expect(journal[journal.length - 1].tag).toBe(T63);
+    expect(planDeploy(journal, when(T46))).toEqual({ ok: true, apply: [T47, T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T47))).toEqual({ ok: true, apply: [T48, T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T48))).toEqual({ ok: true, apply: [T49, T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T49))).toEqual({ ok: true, apply: [T50, T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T50))).toEqual({ ok: true, apply: [T51, T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T51))).toEqual({ ok: true, apply: [T52, T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T52))).toEqual({ ok: true, apply: [T53, T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T53))).toEqual({ ok: true, apply: [T54, T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T54))).toEqual({ ok: true, apply: [T55, T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T55))).toEqual({ ok: true, apply: [T56, T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T56))).toEqual({ ok: true, apply: [T57, T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T57))).toEqual({ ok: true, apply: [T58, T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T58))).toEqual({ ok: true, apply: [T59, T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T59))).toEqual({ ok: true, apply: [T60, T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T60))).toEqual({ ok: true, apply: [T61, T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T61))).toEqual({ ok: true, apply: [T62, T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T62))).toEqual({ ok: true, apply: [T63, T64].map((t) => journal.find((x) => x.tag === t)) });
+    expect(planDeploy(journal, when(T63))).toEqual({ ok: true, apply: [journal.find((x) => x.tag === T64)] });
+    expect(planDeploy(journal, when(T64))).toEqual({ ok: true, apply: [] });
+    expect(journal[journal.length - 1].tag).toBe(T64);
     expect(planDeploy(journal, when(T45), T45)).toEqual({ ok: false, reason: 'ALREADY_APPLIED' });
   });
   it('refusals: an obsolete tag, an unknown tag, an empty database, an earlier non-obsolete migration still pending', () => {

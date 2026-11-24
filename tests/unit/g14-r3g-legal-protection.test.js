@@ -144,15 +144,19 @@ describe('G14-R3G powers — nothing before verification, nothing after the end,
   });
 });
 
-describe('G14-R3G migration 0064 — pending, outside the journal', () => {
-  const sqlText = readFileSync('drizzle/pending/0064_r3g_legal_protection.sql', 'utf8');
-  const down = readFileSync('drizzle/pending/0064_down.sql', 'utf8');
-  it('not in the journal (r3d may take 0063): the guard stays green; the table is absent from the Drizzle schema', () => {
+describe('G14-R3G migration 0064 — in the journal after 0063 (release 3 integration)', () => {
+  const sqlText = readFileSync('drizzle/0064_r3g_legal_protection.sql', 'utf8');
+  const down = readFileSync('drizzle/rollback/0064_down.sql', 'utf8');
+  it('journal idx 64 after 0063, « when » greater than 0063\'s; the guard stays green; the table is declared in the Drizzle schema', () => {
     const real = loadMigrations('drizzle');
-    expect(real.entries.some((e) => /0064/.test(e.tag))).toBe(false);
+    const e63 = real.entries.find((e) => e.idx === 63); const e64 = real.entries.find((e) => e.idx === 64);
+    expect(e63.tag).toBe('0063_g14_r3_booking_needs_external');
+    expect(e64).toMatchObject({ tag: '0064_r3g_legal_protection', when: 1795060000000 });
+    expect(e64.when).toBeGreaterThan(e63.when);
     expect(verifyJournal(real).ok).toBe(true);
-    expect(readFileSync('src/db/schema.ts', 'utf8')).not.toMatch(/LegalProtectionMandate/);
-    expect(sqlText).toMatch(/PENDING — NOT IN THE JOURNAL/); expect(sqlText).toMatch(/1795060000000/); expect(down).toMatch(/1795060000000/);
+    expect(readFileSync('src/db/schema.ts', 'utf8')).toMatch(/export const LegalProtectionMandate = pgTable\('LegalProtectionMandate'/);
+    expect(readFileSync('drizzle/meta/0064_snapshot.json', 'utf8')).toMatch(/"public\.LegalProtectionMandate"/);
+    expect(down).toMatch(/1795060000000/);
   });
   it('additive only, with the legal constraints in the database', () => {
     expect(sqlText).not.toMatch(/\bDROP\b|ALTER TABLE "(?!LegalProtectionMandate")/);

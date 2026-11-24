@@ -2,12 +2,10 @@
 -- account of their representative under a court measure (tutelle, curatelle simple / renforcée / aménagée, habilitation familiale générale / spéciale,
 -- mandat spécial of a sauvegarde de justice), held by a relative or by a mandataire judiciaire à la protection des majeurs (MJPM).
 --
--- PENDING — NOT IN THE JOURNAL. Number 0064 because the parallel branch g14-r3d may create 0063. scripts/db-migrate-guard.mjs refuses a journal gap
--- (IDX_NOT_CONTIGUOUS) and drizzle's migrator compares « when » with the NEWEST applied row only: a 0063 recorded after 0064 would be skipped for good.
--- The integrator therefore moves this file to drizzle/0064_r3g_legal_protection.sql and adds the journal entry idx 64 only AFTER 0063 (idx 63) is in
--- the journal, with a « when » greater than 0063's (proposed 1795060000000), plus drizzle/rollback/0064_down.sql (= drizzle/pending/0064_down.sql) and
--- the snapshot. Until then the code reads the table through raw SQL behind a presence check (api/_services/legal-protection.js legalProtectionInstalled):
--- without it the feature answers LEGAL_PROTECTION_NOT_INSTALLED and nothing is read or written.
+-- Integrated in release 3 (g14-r3, 24/11/2026): journal idx 64, « when » 1795060000000 (> 0063's 1795050000000), after g14-r3d's 0063 — scripts/db-migrate-guard.mjs
+-- refuses a journal gap and drizzle's migrator compares « when » with the newest applied row only. Rollback: drizzle/rollback/0064_down.sql; snapshot
+-- drizzle/meta/0064_snapshot.json; the table is declared in src/db/schema.ts. The code still reads it behind a presence check
+-- (api/_services/legal-protection.js legalProtectionInstalled): on a database without 0064 the feature answers LEGAL_PROTECTION_NOT_INSTALLED.
 --
 -- Additive only: one new table, its CHECK constraints, foreign keys and indexes. No existing table, column, constraint or row changes; nothing is backfilled.
 --

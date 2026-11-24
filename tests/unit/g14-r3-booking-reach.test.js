@@ -230,9 +230,9 @@ describe('migration 0063: additive, journaled, reversible', () => {
     expect(sqlOnly).toMatch(/"StructureExternalBooking_url_check" CHECK \("StructureExternalBooking"\."url" ~ '\^https:\/\//);
     expect(sqlOnly).toMatch(/"StructureExternalBooking_review_check"/);
   });
-  it('the journal ends with 0063, the snapshot has both tables, the rollback drops them and forgets the row', () => {
+  it('the journal has 0063 (followed by R3G\'s 0064), the snapshot has both tables, the rollback drops them and forgets the row', () => {
     const journal = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries;
-    expect(journal.at(-1)).toMatchObject({ idx: 63, tag: '0063_g14_r3_booking_needs_external', when: 1795050000000 });
+    expect(journal.find((e) => e.idx === 63)).toMatchObject({ idx: 63, tag: '0063_g14_r3_booking_needs_external', when: 1795050000000 });
     const snap = JSON.parse(fs.readFileSync('drizzle/meta/0063_snapshot.json', 'utf8'));
     expect(Object.keys(snap.tables)).toEqual(expect.arrayContaining(['public.ProRdvServiceSubdomain', 'public.StructureExternalBooking']));
     expect(snap.prevId).toBe(JSON.parse(fs.readFileSync('drizzle/meta/0062_snapshot.json', 'utf8')).id);

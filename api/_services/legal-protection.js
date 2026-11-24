@@ -29,7 +29,7 @@
  *   never restricts it. Personal health information is never shown (G8: sensitive steps stay hidden), and a processing restriction (art. 18) stops all.
  *
  * Gate: capability citizen.legal_protection (closed by default; ACCOUNTS_EXTRAS legal_protection; preflight legal.r3_legal_protection).
- * Storage: "LegalProtectionMandate" (drizzle/pending/0064, raw presence check); history in "AuditLog" (entity CitizenUser = the person, so the person's
+ * Storage: "LegalProtectionMandate" (migration 0064, journal idx 64; raw presence check); history in "AuditLog" (entity CitizenUser = the person, so the person's
  * history shows it); pending requests = AuthToken rows of the person (type LEGAL_REP_ACTION, « lprq: » + sha-256(id): never a usable token) with their
  * content in the AuditLog row « lprq:<id> », as G14-AID does.
  */

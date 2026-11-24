@@ -24,7 +24,7 @@ const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog',
   'CitizenDelegation', 'DelegationAccessEvent', 'GuardianRelationship'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016); G14-R3: delegations and guardian links (on 0042)
 // G14: the expansion steps need the 0053–0059 tables, absent from this 0042-like mock: they are skipped (skipped_steps) and tested on a real DB
 const EXPANSION_IDS = new Set(Object.keys(RETENTION_POLICY.decidedSteps || {}));
-// G14-R3G: the representative-of-a-protected-adult steps need "LegalProtectionMandate" (migration 0064, pending): absent from this mock, skipped
+// G14-R3G: the representative-of-a-protected-adult steps need "LegalProtectionMandate" (migration 0064): absent from this 0042-like mock, skipped
 const LP_IDS = new Set(['legalProtectionStaleDeclarationsDeleted', 'legalProtectionRejectedDeleted', 'legalProtectionEndedDeleted']);
 const dialect = new PgDialect();
 const render = (w) => dialect.sqlToQuery(w).sql;
