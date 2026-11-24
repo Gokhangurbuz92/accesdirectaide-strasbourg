@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * G14-R3 (owner 24/11/2026: HDS for Mon Coffre and shared dossiers) — the fail-closed switch between the main application (Vercel + Neon, NOT HDS) and
+ * G14-R3 / R4 (owner 24/11/2026: HDS for Mon Coffre, shared dossiers, referral payloads, attachments) — the fail-closed switch between the main application (Vercel + Neon, NOT HDS) and
  * the HDS service (services/hds, Scalingo osc-fr1 with the HDS option). Architecture: CONTROL/master/G14_HDS_MIGRATION_PLAN.md (option 1).
  *
  * In a deployed environment (VERCEL_ENV production / preview) a capability served by the HDS service (HDS_SERVICE_CAPABILITIES) opens ONLY when, on top
@@ -18,17 +18,28 @@
  */
 import { parseTicketPrivateKey, TICKET_KID_FORMAT } from '../lib/hds-ticket.js';
 
-/** capabilities whose data live in the HDS service, never on Vercel / Neon in a deployed environment */
-export const HDS_SERVICE_CAPABILITIES = Object.freeze(['citizen.vault', 'citizen.shared_dossier']);
+/** capabilities whose data live in the HDS service, never on Vercel / Neon in a deployed environment (G14-R4: message attachments joined) */
+export const HDS_SERVICE_CAPABILITIES = Object.freeze(['citizen.vault', 'citizen.shared_dossier', 'messaging.attachments']);
+
+/**
+ * G14-R4 — capabilities whose WORKFLOW stays in the main application (closed codes, states, dates, identifiers: no health payload) while their PAYLOAD
+ * (the dossier access of a referral, its free-text note, the dossier a partner tool opens) lives only in the HDS service. Deployed, they open only through
+ * the same ready gateway; their Vercel routes keep running for the workflow and refuse any free text or document (api/_services/referrals.js).
+ */
+export const HDS_PAYLOAD_CAPABILITIES = Object.freeze(['pro.referrals', 'partner.referral_adapter', 'citizen.orientation_records']);
 
 /**
  * Port status per capability — changed only by a reviewed code change. « ported »: every route the browser needs exists in services/hds and the
- * frontend calls it. citizen.shared_dossier: the data plane exists (dossier, grants, files, access log, erasure) but share/create (rights estimate),
- * the passport, invitations, threads, secure messages, the professional views / export / attestation / SIAO hand-over and Parcours import still run
- * on Vercel only — so it stays closed.
+ * frontend calls it (G14-R4: shared dossiers — creation, owner key, consent, grants with expiry, revocation re-key, files, threads, professional views and
+ * client-side export / attestation / SIAO sheet, organisation and member keys, the pro ticket; message attachments; the referral payload). What stays on
+ * Vercel for a dossier in a deployed environment: nothing (its routes answer 409 HDS_SERVICE_REQUIRED). Account-free share links (share/create without a
+ * session, the public passport link) have NO HDS equivalent: an HDS dossier needs a signed-in account (stated in CONTROL/master/completion/R4_OZET_TR.md).
  * @type {Readonly<Record<string, 'ported' | 'partial'>>}
  */
-export const HDS_MODULES = Object.freeze({ 'citizen.vault': 'ported', 'citizen.shared_dossier': 'partial' });
+export const HDS_MODULES = Object.freeze({ 'citizen.vault': 'ported', 'citizen.shared_dossier': 'ported', 'messaging.attachments': 'ported', 'pro.referrals': 'ported', 'partner.referral_adapter': 'ported', 'citizen.orientation_records': 'ported' });
+
+/** the HDS-served capabilities a payload capability depends on (all must be ported) */
+export const HDS_PAYLOAD_DEPENDS = Object.freeze({ 'pro.referrals': ['citizen.shared_dossier'], 'partner.referral_adapter': ['citizen.shared_dossier', 'pro.referrals'], 'citizen.orientation_records': ['citizen.shared_dossier'] });
 
 /**
  * Certified hosts (allow-list). Source: Scalingo HDS certificate n° 38436 (BYCYB, HDS 2.0, activities 1–6, valid until 11/09/2028), read 24/11/2026 on
@@ -59,7 +70,10 @@ export function certifiedHostOf(hostname) {
 }
 
 /** @param {string} key */
-export const hdsModuleReady = (key) => HDS_MODULES[key] === 'ported';
+export const hdsModuleReady = (key) => HDS_MODULES[key] === 'ported' && (/** @type {Record<string, string[]>} */ (HDS_PAYLOAD_DEPENDS)[key] || []).every((d) => HDS_MODULES[d] === 'ported');
+
+/** does this capability depend on the HDS gateway when deployed (its data or its payload live there) @param {string} key */
+export const hdsGatedCapability = (key) => HDS_SERVICE_CAPABILITIES.includes(key) || HDS_PAYLOAD_CAPABILITIES.includes(key);
 
 /**
  * State of the gateway (no I/O, never a value).

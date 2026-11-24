@@ -13,7 +13,7 @@ export const HDS_TICKET_TTL_SEC = 60;
 export const HDS_TICKET_ISSUER = 'ada-main';
 export const HDS_TICKET_AUDIENCE = 'ada-hds';
 /** the only claims a ticket may carry (the HDS service refuses any other) */
-export const HDS_TICKET_CLAIMS = Object.freeze(['iss', 'aud', 'sub', 'typ', 'caps', 'str', 'role', 'jti', 'iat', 'nbf', 'exp']);
+export const HDS_TICKET_CLAIMS = Object.freeze(['iss', 'aud', 'sub', 'typ', 'caps', 'str', 'role', 'obj', 'jti', 'iat', 'nbf', 'exp']);
 
 /** @param {Buffer | string} b */
 const b64url = (b) => Buffer.from(b).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
@@ -31,7 +31,7 @@ export function parseTicketPrivateKey(raw) {
 export const TICKET_KID_FORMAT = /^[A-Za-z0-9._-]{1,64}$/;
 
 /**
- * @param {{ sub: string, typ: 'citizen' | 'pro' | 'system', caps: string[], str?: string, role?: string }} who
+ * @param {{ sub: string, typ: 'citizen' | 'pro' | 'system', caps: string[], str?: string, role?: string, obj?: string }} who
  * @param {{ privateKey: crypto.KeyObject, kid: string, now?: number, ttlSec?: number }} o
  * @returns {{ ticket: string, expiresAt: string, jti: string }}
  */
@@ -43,6 +43,7 @@ export function signHdsTicket(who, o) {
   const claims = { iss: HDS_TICKET_ISSUER, aud: HDS_TICKET_AUDIENCE, sub: String(who.sub), typ: who.typ, caps: [...who.caps], jti, iat, exp: iat + ttl };
   if (who.str) claims.str = String(who.str);
   if (who.role) claims.role = String(who.role);
+  if (who.obj) claims.obj = String(who.obj);   // G14-R4: object binding (an appointment conversation for messaging.attachments)
   const head = b64url(JSON.stringify({ alg: 'ES256', typ: 'JWT', kid: o.kid }));
   const body = b64url(JSON.stringify(claims));
   const sig = crypto.sign('sha256', Buffer.from(`${head}.${body}`), { key: o.privateKey, dsaEncoding: 'ieee-p1363' });

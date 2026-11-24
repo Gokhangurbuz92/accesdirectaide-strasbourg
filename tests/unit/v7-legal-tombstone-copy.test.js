@@ -25,7 +25,7 @@ const COPY = { TOMBSTONE_COPY_S3_ENDPOINT: 'https://abc123.eu.r2.cloudflarestora
 describe('legal drafts v7-2026-11-18 — v6 + one sentence', () => {
   it('two approvable versions; v7 is the newest draft, still pending approval', () => {
     // G4 (19/11/2026): v8 follows, for the two professional documents only (g4-pro-terms-v8.test.js); v7 stays the citizen / notice version
-    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v9-2026-11-22', 'v10-2026-11-22', 'v11-2026-11-22', 'v12-2026-11-23', 'v13-2026-11-23', 'v9-2026-11-23', 'v10-2026-11-23', 'v13-2026-11-24', 'v14-2026-11-24', 'v11-2026-11-24']);   // G14-R3 (proposed 24/11/2026): cgu-citoyen v13-2026-11-24, notice v14-2026-11-24;   // G8: v9 = the privacy notice only; G14: v9-2026-11-22 = the professional terms only; v10 = citizen terms + notice (Mon Parcours), v11 = notice for K8
+    expect(LEGAL_DRAFT_VERSIONS).toEqual(['v6-2026-11-17', 'v7-2026-11-18', 'v8-2026-11-19', 'v9-2026-11-19', 'v9-2026-11-22', 'v10-2026-11-22', 'v11-2026-11-22', 'v12-2026-11-23', 'v13-2026-11-23', 'v9-2026-11-23', 'v10-2026-11-23', 'v13-2026-11-24', 'v14-2026-11-24', 'v11-2026-11-24', 'v15-2026-11-24']);   // G14-R4: notice v15 (cgu-citoyen v14 shares the v14-2026-11-24 entry)   // G14-R3 (proposed 24/11/2026): cgu-citoyen v13-2026-11-24, notice v14-2026-11-24;   // G8: v9 = the privacy notice only; G14: v9-2026-11-22 = the professional terms only; v10 = citizen terms + notice (Mon Parcours), v11 = notice for K8
     expect(LEGAL_DRAFTS_VERSION).toBe('v7-2026-11-18');
     for (const d of [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7]) { expect(d.version).toBe(LEGAL_DRAFTS_V7); expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL); }
     for (const d of [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6]) expect(d.version).toBe(LEGAL_DRAFTS_V6);
@@ -83,7 +83,7 @@ describe('v7 — approval by name, coexistence with v6', () => {
     expect(draftFor('notice-confidentialite', ctx(V7)).version).toBe(LEGAL_DRAFTS_V7);
     expect(draftFor('notice-confidentialite', ctx(`${V6},${V7}`)).version).toBe(LEGAL_DRAFTS_V7);
     expect(draftByPath('/confidentialite/notice', ctx(V6)).version).toBe(LEGAL_DRAFTS_V6);
-    expect(draftByPath('/confidentialite/notice').version).toBe('v14-2026-11-24');   // G14-R3 (proposed 24/11/2026)   // G14 expansion: notice v13 (v11 + expansion + video) is the newest draft   // G4 notice v8, then G8 notice v9 (19/11/2026): the newest draft (tests/unit/g8-notice-v9.test.jsx)
+    expect(draftByPath('/confidentialite/notice').version).toBe('v15-2026-11-24');   // G14-R4   // G14-R3 (proposed 24/11/2026)   // G14 expansion: notice v13 (v11 + expansion + video) is the newest draft   // G4 notice v8, then G8 notice v9 (19/11/2026): the newest draft (tests/unit/g8-notice-v9.test.jsx)
     expect(approvedVersionOf('notice-confidentialite', V6)).toBe(LEGAL_DRAFTS_V6);
     expect(approvedVersionOf('notice-confidentialite', 'v5-2026-11-15')).toBe(null);
   });

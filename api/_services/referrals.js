@@ -26,6 +26,7 @@ import { and, desc, eq, inArray, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog, ProCase, ProCaseEvent, ProAppointment, Referral, ReferralEvent, SharedDossierGrant } from '../../src/db/schema.js';
 import { notPutAsideAsDuplicateSql } from '../_utils/org-eligibility.js';
+import { hdsGatewayState, isDeployed } from '../_utils/hds-gateway.js';
 import { activeGrantExists, activeMemberSql, caseAccessSql, REFERRAL_AWAITING_ANSWER_STATUSES, REFERRAL_EXPIRE_AFTER_DUE_DAYS } from '../_utils/share-access.js';
 import { referralChainSchema, referralTable } from '../_utils/schema-features.js';
 import { endReferentsForLostAccess } from './dossier-referent.js';
@@ -166,16 +167,66 @@ export async function suggestableStructures(ctx, id, q = '', db = defaultDb) {
 }
 
 /** Sender: propose a referral of a case the caller may open. It waits for the CITIZEN's authorization (nothing is shared before). Idempotent on idempotencyKey. */
+/**
+ * G14-R4 — free text of a referral (proposal message, request for information, reply, outcome summary) is a possible health payload: in a deployed
+ * environment it is never written here; it travels end-to-end encrypted in the HDS dossier thread (referral note). The workflow (closed codes, states,
+ * dates, identifiers) stays here.
+ */
+export const FREE_TEXT_IN_HDS = 'FREE_TEXT_IN_HDS';
+function freeTextRefused(input, envVars = process.env) {
+  if (!isDeployed(envVars)) return null;
+  const has = ['message', 'citizenSummary'].some((k) => String(input?.[k] ?? '').trim());
+  return has ? bad(FREE_TEXT_IN_HDS, 'Le texte libre d’une orientation est chiffré de bout en bout et transmis avec le dossier chez l’hébergeur certifié : il n’est pas enregistré ici.', 422) : null;
+}
+
+/**
+ * G14-R4 — a referral of a dossier held by the HDS service: the main side checks with the service (identifiers only) that the sender's organisation holds
+ * an active grant, learns which account owns it, and keeps a CONTENT-FREE pointer row (SharedDiagnostic with the same id, subjectType HDS_DOSSIER, empty
+ * situation / results) so the existing workflow (consent, states, deadlines, notices, partner outbox) applies unchanged. No case is needed.
+ */
+export const HDS_POINTER_SUBJECT = 'HDS_DOSSIER';
+async function proposeHds(ctx, input, deps, db) {
+  const dossierId = String(input?.hdsDossierId || '');
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(dossierId)) return bad('not_found', 'Dossier introuvable.', 404);
+  const toStructureId = String(input?.toStructureId || '');
+  let ref;
+  try { ref = await (deps.dossierRef || (await import('../lib/hds-internal.js')).dossierRef)({ dossierId, structureId: ctx.structureId, toStructureId }); }
+  catch { return bad('HDS_UNAVAILABLE', 'Le service certifié ne répond pas : réessayez plus tard.', 503); }
+  if (!ref.exists || !ref.active || !ref.ownerId) return bad('not_found', 'Dossier introuvable.', 404);
+  if (ref.toStatus !== 'pending_citizen') return bad('HDS_PAYLOAD_MISSING', 'Préparez d’abord l’accès chiffré pour la structure destinataire.', 409);
+  const [owner] = (await db.execute(sql`SELECT id FROM "CitizenUser" WHERE id = ${ref.ownerId} AND "emailVerifiedAt" IS NOT NULL`)).rows;
+  if (!owner) return bad('NO_CITIZEN_ACCOUNT', 'Cette orientation ne peut pas être proposée : le dossier n’est rattaché à aucun compte vérifié, personne ne pourrait donner son accord.', 409);
+  const until = new Date(Date.now() + 400 * 86400000);
+  await db.execute(sql`INSERT INTO "SharedDiagnostic" (id, "expiresAt", situation, results, "viewCount", "subjectType", "ownerCitizenId", "privacySubjectId")
+    VALUES (${dossierId}, ${until}, ${JSON.stringify({})}::jsonb, ${JSON.stringify({})}::jsonb, 0, ${HDS_POINTER_SUBJECT}, ${ref.ownerId}, ${ref.ownerId})
+    ON CONFLICT (id) DO UPDATE SET "expiresAt" = EXCLUDED."expiresAt" WHERE "SharedDiagnostic"."subjectType" = ${HDS_POINTER_SUBJECT} AND "SharedDiagnostic"."ownerCitizenId" = ${ref.ownerId}`);
+  const [pointer] = (await db.execute(sql`SELECT 1 AS ok FROM "SharedDiagnostic" WHERE id = ${dossierId} AND "subjectType" = ${HDS_POINTER_SUBJECT} AND "ownerCitizenId" = ${ref.ownerId}`)).rows;
+  if (!pointer) return bad('not_found', 'Dossier introuvable.', 404);
+  return { ok: true, dossierId };
+}
+
 export async function propose(ctx, input, deps = {}) {
   const db = deps.db || defaultDb;
+  const refused = freeTextRefused(input, deps.envVars);
+  if (refused) return refused;
   const { R, f } = await tableOf(db);
   const previousId = input?.previousReferralId ? String(input.previousReferralId) : null;
   if (previousId && !f.chain) return unavailable();
   const reasonCode = String(input?.reasonCode || ''); const message = String(input?.message || '').trim(); const key = String(input?.idempotencyKey || '').slice(0, 80) || null;
   if (!REASONS.includes(reasonCode)) return bad('INVALID_REASON', 'Choisissez le motif de l’orientation.');
   if (message.length > 1500) return bad('INVALID_MESSAGE', 'Le message fait 1500 caractères au plus.');
-  const [c] = await db.select().from(ProCase).where(and(eq(ProCase.id, String(input?.caseId || '')), eq(ProCase.structureId, ctx.structureId))).limit(1);
-  if (!c || !(await db.execute(sql`SELECT 1 AS ok WHERE ${activeGrantExists(c.sharedDiagnosticId, ctx)}`)).rows.length) return bad('not_found', 'Dossier introuvable.', 404);
+  // G14-R4: an HDS dossier (no case here, no grant here: the service answers for both) — only once the gateway is ready
+  const hds = input?.hdsDossierId !== undefined && hdsGatewayState(deps.envVars || process.env).ready;
+  if (input?.hdsDossierId !== undefined && !hds) return bad('HDS_UNAVAILABLE', 'Le service certifié n’est pas configuré sur cet environnement.', 503);
+  let c;
+  if (hds) {
+    const h = await proposeHds(ctx, input, deps, db);
+    if (!h.ok) return h;
+    c = { id: null, sharedDiagnosticId: h.dossierId, structureId: ctx.structureId, status: 'OPEN' };
+  } else {
+    [c] = await db.select().from(ProCase).where(and(eq(ProCase.id, String(input?.caseId || '')), eq(ProCase.structureId, ctx.structureId))).limit(1);
+    if (!c || !(await db.execute(sql`SELECT 1 AS ok WHERE ${activeGrantExists(c.sharedDiagnosticId, ctx)}`)).rows.length) return bad('not_found', 'Dossier introuvable.', 404);
+  }
   if (c.status === 'CLOSED') return bad('CASE_CLOSED', 'Ce dossier est clôturé.', 409);
   const toStructureId = String(input?.toStructureId || '');
   // PKG-11 audit: the chosen organization itself is checked (the former filter over the first 30 names refused every receiver ranked 31st or later)
@@ -210,7 +261,7 @@ export async function propose(ctx, input, deps = {}) {
   await remember(db, f, id, 'SENDER', rows[0].messageEncrypted);
   if (previous) await db.insert(AuditLog).values({ action: 'REFERRAL_REDIRECT_PROPOSED', actor: 'pro', actor_id: ctx.userId, entity: 'Referral', entity_id: id,
     details: { previousReferralId: previous.id, byStructureId: ctx.structureId, followsSuggestion: previous.suggestedStructureId === toStructureId } }).catch(() => {});
-  await db.insert(ProCaseEvent).values({ caseId: c.id, structureId: c.structureId, actorProUserId: ctx.userId, kind: 'REFERRAL', toValue: 'PENDING_CITIZEN' });
+  if (c.id) await db.insert(ProCaseEvent).values({ caseId: c.id, structureId: c.structureId, actorProUserId: ctx.userId, kind: 'REFERRAL', toValue: 'PENDING_CITIZEN' });
   const notice = await tellCitizen(db, rows[0], deps.sendMail || defaultSendMail, 'Une proposition d’orientation attend votre accord',
     `Une structure qui vous accompagne propose de transmettre votre dossier à ${target.name}${previous ? ', à la suite d’une orientation qui n’a pas abouti' : ''}. Rien n’est transmis sans votre accord.\nDécidez depuis Mon Espace : ${buildAppUrl('/compte/orientations')}`, 'PENDING_CITIZEN');
   // G2: the sender learns whether an e-mail left (the proposal is in Mon Espace either way) instead of an unconditional « the person is told »
@@ -248,7 +299,7 @@ export async function citizenList(userId, db = defaultDb) {
   // the person owns every referral of the chain: both directions are theirs to see. A referral that was cancelled does not count as « the next one ».
   const nextOf = new Map();
   for (const r of [...rows].reverse()) if (r.previousReferralId && r.status !== 'CANCELLED') nextOf.set(r.previousReferralId, r.id);
-  return { ok: true, status: 200, referrals: rows.map((r) => ({ id: r.id, dossierId: r.sharedDiagnosticId, from: r.fromName, to: r.toName, status: r.status, reasonCode: r.reasonCode,
+  return { ok: true, status: 200, referrals: rows.map((r) => ({ id: r.id, dossierId: r.sharedDiagnosticId, ref: r.idempotencyKey || null, from: r.fromName, to: r.toName, status: r.status, reasonCode: r.reasonCode,
     message: r.messageEncrypted ? openText(r.messageEncrypted, ctxOf(r.id)) : '', outcome: r.outcome, outcomeSummary: openSummary(r.id, r.outcomeCitizenSummary), createdAt: r.createdAt, sentAt: r.sentAt,
     // A09: what the e-mail promises (« détails dans Mon Espace »): the controlled motive of the answer — never the receiver's free text — and when it was given
     responseCode: r.responseCode || null, respondedAt: r.respondedAt || null, closedAt: r.closedAt || null,
@@ -386,6 +437,8 @@ export async function getReferral(ctx, id, db = defaultDb) {
 /** Receiver actions: acknowledge | accept | decline | needs_info | link_appointment | start | complete. Sender actions: reply | cancel | close. */
 export async function act(ctx, id, action, input = {}, deps = {}) {
   const db = deps.db || defaultDb;
+  const refused = freeTextRefused(input, deps.envVars);   // G14-R4: no free text of a referral on this side when deployed (it travels in the HDS thread)
+  if (refused) return refused;
   const { R, f } = await tableOf(db);
   const [r] = await db.select().from(R).where(eq(Referral.id, String(id || ''))).limit(1);
   if (!r || !(await db.execute(sql`SELECT 1 AS ok WHERE ${activeMemberSql(ctx)}`)).rows.length) return notFound();

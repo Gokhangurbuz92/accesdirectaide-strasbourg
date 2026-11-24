@@ -21,6 +21,10 @@ import { proModuleStates } from '../../api/_utils/pro-modules.js';
 
 const PROD = { VERCEL_ENV: 'production' };
 const HDS = `HDS1:example-host:CERT-2026-0001:2099-12-31:${'a'.repeat(64)}`;
+/** G14-R4: attachments, referral payloads and the partner bridge live at the HDS service — in production they also need the ready gateway (scalingo token) */
+const { generateTicketKeyPair: hdsPair } = await import('../../api/lib/hds-ticket.js');
+const GATEWAY = { HDS_SERVICE_URL: 'https://ada-hds-strasbourg.osc-fr1.scalingo.io', HDS_PRODUCTION_APPROVED: 'true', HDS_TICKET_KID: 'k1', HDS_TICKET_PRIVATE_KEY: hdsPair().privateKeyB64,
+  ADA_HDS_CERTIFIED_HOSTING: `HDS1:scalingo:38436:2099-12-31:${'a'.repeat(64)}` };
 const LISTED = { ...PROD, ADA_CAPABILITIES_OPEN: 'messaging.conversations' };
 const ELIGIBLE = { statut: 'actif', verification_status: 'VERIFIED', numero_finess: null, type_finess: null, type_structure: 'centre social', nom: 'Centre social du quartier',
   sensitivity: { value: 'ordinary', reviewedAt: '2026-11-20T10:00:00.000Z', reviewedBy: 'admin@example.test' } };
@@ -39,7 +43,8 @@ describe('R3 messaging capabilities', () => {
     expect(CAPABILITIES['messaging.conversations'].hdsDependsOnStructure).toBe(true);
     expect(CAPABILITIES['messaging.attachments'].hdsDependsOnStructure).toBeFalsy();
     expect(capabilityState('messaging.attachments', { ...PROD, ADA_CAPABILITIES_OPEN: 'messaging.attachments' }, { structureCategory: 'NOT_ESSMS' }).reason).toBe('HDS_HOSTING_NOT_ATTESTED');
-    expect(capabilityState('messaging.attachments', { ...PROD, ADA_CAPABILITIES_OPEN: 'messaging.attachments', ADA_HDS_CERTIFIED_HOSTING: HDS }).open).toBe(true);
+    expect(capabilityState('messaging.attachments', { ...PROD, ADA_CAPABILITIES_OPEN: 'messaging.attachments', ADA_HDS_CERTIFIED_HOSTING: HDS }).reason).toBe('HDS_SERVICE_URL_ABSENT');   // G14-R4
+    expect(capabilityState('messaging.attachments', { ...PROD, ADA_CAPABILITIES_OPEN: 'messaging.attachments', ...GATEWAY }).open).toBe(true);
   });
   it('every conversation route is gated; the public forms of communications are not', () => {
     for (const p of ['messages/conversations', 'messages/conversations/x', 'messages/from-appointment/a', 'pro/messages', 'pro/messages/conversations/x', 'secure-messages'])
@@ -102,8 +107,10 @@ describe('R3 messaging preflight', () => {
     expect(ok[0]).toBe('WARN'); expect(ok[1]).toMatch(/NOT_ESSMS/); expect(ok[1]).toMatch(/attachments closed/);
     const r = evaluateReleasePreflight({ ...listed, ADA_BETA_OPEN_SURFACES: 'communications,appointments' });
     expect(r.find((x) => x.id === 'storage.configured').status).toBe('PASS');   // no file can be attached: no bucket needed
-    const files = evaluateReleasePreflight({ ...listed, ADA_BETA_OPEN_SURFACES: 'communications,appointments', ADA_CAPABILITIES_OPEN: 'messaging.conversations,messaging.attachments', ADA_HDS_CERTIFIED_HOSTING: HDS });
-    expect(files.find((x) => x.id === 'storage.configured').status).toBe('FAIL');   // attachments open: the EU bucket is required
+    const files = evaluateReleasePreflight({ ...listed, ADA_BETA_OPEN_SURFACES: 'communications,appointments', ADA_CAPABILITIES_OPEN: 'messaging.conversations,messaging.attachments', ...GATEWAY });
+    const st = files.find((x) => x.id === 'storage.configured');
+    expect(st.status).toBe('PASS');   // G14-R4: attachments open go end-to-end encrypted to the HDS service — no bucket
+    expect(st.detail || st.message || JSON.stringify(st)).toMatch(/HDS service/);
   });
 });
 
@@ -151,7 +158,7 @@ describe('R3 partner bridge: rotation, rate limit, preflight, provider row', () 
     expect(chk({ ...beta, ...HTTPS_ENV })[1]).toMatch(/PRODUCTION_APPROVED/);
     const approved = { ...beta, ...HTTPS_ENV, ADA_PARTNER_ADAPTERS_PRODUCTION_APPROVED: 'true' };
     expect(chk(approved)[0]).toBe('WARN');   // capability closed: inert
-    const capOpen = { ...approved, ADA_BETA_OPEN_SURFACES: 'pro', ADA_CAPABILITIES_OPEN: 'partner.referral_adapter,pro.referrals', ADA_HDS_CERTIFIED_HOSTING: HDS };
+    const capOpen = { ...approved, ADA_BETA_OPEN_SURFACES: 'pro,documents', ADA_CAPABILITIES_OPEN: 'partner.referral_adapter,pro.referrals', ...GATEWAY };
     expect(chk(capOpen)).toEqual(['FAIL', expect.stringMatching(/partner-outbox/)]);
     const full = { ...capOpen, ADA_BETA_OPEN_JOBS: 'partner-outbox', ADA_JOBS_APPROVED: 'partner-outbox' };
     expect(chk(full)[0]).toBe('PASS');

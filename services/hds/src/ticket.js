@@ -10,7 +10,7 @@
 import crypto from 'node:crypto';
 
 export const TICKET_TYPES = Object.freeze(['citizen', 'pro', 'system']);
-export const TICKET_CLAIMS = Object.freeze(['iss', 'aud', 'sub', 'typ', 'caps', 'str', 'role', 'jti', 'iat', 'nbf', 'exp']);
+export const TICKET_CLAIMS = Object.freeze(['iss', 'aud', 'sub', 'typ', 'caps', 'str', 'role', 'obj', 'jti', 'iat', 'nbf', 'exp']);
 
 /** @param {string} s */
 const b64urlDecode = (s) => Buffer.from(s.replace(/-/g, '+').replace(/_/g, '/'), 'base64');
@@ -63,5 +63,8 @@ export function verifyTicket(token, o) {
   if (claims.exp < now - skew) return { ok: false, reason: 'TICKET_EXPIRED' };
   if (claims.str !== undefined && (typeof claims.str !== 'string' || !/^[A-Za-z0-9_-]{1,64}$/.test(claims.str))) return { ok: false, reason: 'TICKET_STRUCTURE' };
   if (claims.typ === 'pro' && !claims.str) return { ok: false, reason: 'TICKET_STRUCTURE' };
+  // G14-R4: role (closed list) and the object binding of an attachment ticket (rdvconv:<conversation>:<citizen>:<structure>)
+  if (claims.role !== undefined && !['PRO', 'STRUCTURE_ADMIN'].includes(claims.role)) return { ok: false, reason: 'TICKET_ROLE' };
+  if (claims.obj !== undefined && (typeof claims.obj !== 'string' || !/^rdvconv:[A-Za-z0-9_-]{1,64}:[A-Za-z0-9_.-]{1,64}:[A-Za-z0-9_-]{1,64}$/.test(claims.obj))) return { ok: false, reason: 'TICKET_OBJECT' };
   return { ok: true, claims };
 }

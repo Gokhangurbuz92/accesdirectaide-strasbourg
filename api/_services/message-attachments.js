@@ -14,6 +14,16 @@ import { RdvConversation, RdvConversationMessage, RdvMessageAttachment } from '.
 import { storage as defaultStorage } from '../lib/storage.js';
 import { openBuffer, openText, sealBuffer, sealText } from '../lib/data-keys.js';
 import { sniffType } from './mon-espace.js';
+import { isDeployed } from '../_utils/hds-gateway.js';
+
+/**
+ * G14-R4 — attachments through the HDS service (messaging.attachments): the browser encrypts the file end to end (src/lib/dossierCrypto.js), stores it at
+ * the HDS service with a ticket bound to the conversation, then sends here ONLY its reference { hdsAttachmentId, byteLength, sha256 } (of the ciphertext).
+ * The row keeps storageKey « hds:<id> », a neutral name and the octet-stream type; the real name and type exist only encrypted at the HDS service.
+ * In a deployed environment file BYTES are refused here (409 HDS_SERVICE_REQUIRED): they never reach Vercel / object storage.
+ */
+export const HDS_KEY_PREFIX = 'hds:';
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 // R34 (R33 audit G5): 3 MB, as the Coffre (src/lib/fileVaultLimits.js) — the file travels as base64 JSON (+33 %) and a serverless request body is capped near
 // 4.5 MB, so 5 MB (6.7 MB encoded) failed on the hosting before reaching this check
@@ -33,9 +43,15 @@ function decode(value) {
 }
 
 /** Validate an attachment BEFORE anything is written. Returns { ok, file } or a refusal. */
-export function prepareAttachment(input) {
+export function prepareAttachment(input, envVars = process.env) {
   if (input === undefined || input === null) return { ok: true, file: null };
   if (typeof input !== 'object') return bad('INVALID_ATTACHMENT', 'Pièce jointe invalide.');
+  if (input.hdsAttachmentId !== undefined) {
+    const id = String(input.hdsAttachmentId); const n = Number(input.byteLength); const sum = String(input.sha256 || '');
+    if (!UUID_RE.test(id) || !Number.isInteger(n) || n <= 0 || n > MAX_ATTACHMENT_BYTES + 64 || !/^[0-9a-f]{64}$/.test(sum)) return bad('INVALID_ATTACHMENT', 'Pièce jointe invalide.');
+    return { ok: true, file: { hds: true, id, byteLength: n, sha256: sum } };
+  }
+  if (isDeployed(envVars)) return bad('HDS_SERVICE_REQUIRED', 'Les pièces jointes sont chiffrées dans votre navigateur et conservées chez un hébergeur certifié : ce service ne les reçoit pas.', 409);
   const buf = decode(input.contentBase64);
   if (buf !== TOO_LARGE && (!buf || !buf.length)) return bad('INVALID_ATTACHMENT', 'Pièce jointe illisible.');
   if (buf === TOO_LARGE || buf.length > MAX_ATTACHMENT_BYTES) return bad('ATTACHMENT_TOO_LARGE', 'La pièce jointe dépasse 3 Mo.', 413);
@@ -52,6 +68,15 @@ export async function insertMessageWithAttachment({ conversationId, senderType, 
   if (!file) {
     const [message] = await db.insert(RdvConversationMessage).values({ conversationId, senderType, senderProUserId, senderCitizenUserId, body }).returning();
     return { message, attachment: null };
+  }
+  if (file.hds) {
+    return db.transaction(async (tx) => {
+      const [message] = await tx.insert(RdvConversationMessage).values({ conversationId, senderType, senderProUserId, senderCitizenUserId, body }).returning();
+      const [attachment] = await tx.insert(RdvMessageAttachment).values({ id: file.id, conversationId, messageId: message.id, uploaderType: senderType === 'PRO' ? 'PRO' : 'CITIZEN',
+        storageKey: `${HDS_KEY_PREFIX}${file.id}`, filenameEncrypted: sealText('piece-jointe', { purpose: 'message-attachment-name', context: ctxOf(conversationId, file.id) }),
+        mimeType: 'application/octet-stream', byteLength: file.byteLength, checksumSha256: file.sha256 }).returning();
+      return { message, attachment: view(attachment) };
+    });
   }
   const id = crypto.randomUUID();
   const key = await storage.upload(sealBuffer(file.buf, { purpose: 'message-attachment', context: ctxOf(conversationId, id) }), 'application/octet-stream');
@@ -72,7 +97,8 @@ export async function insertMessageWithAttachment({ conversationId, senderType, 
 function view(a) {
   let name = 'piece-jointe';
   try { name = openText(a.filenameEncrypted, { purpose: 'message-attachment-name', context: ctxOf(a.conversationId, a.id) }) || name; } catch { /* neutral label */ }
-  return { id: a.id, messageId: a.messageId, name, mimeType: a.mimeType, byteLength: a.byteLength, uploaderType: a.uploaderType, createdAt: a.createdAt };
+  const hds = String(a.storageKey || '').startsWith(HDS_KEY_PREFIX);
+  return { id: a.id, messageId: a.messageId, name, mimeType: a.mimeType, byteLength: a.byteLength, uploaderType: a.uploaderType, createdAt: a.createdAt, ...(hds ? { hds: true } : {}) };
 }
 
 /** messageId -> [attachment] for one conversation (metadata only). */
@@ -88,6 +114,7 @@ export async function readAttachment(conversationId, attachmentId, deps = {}) {
   const db = deps.db || defaultDb; const storage = deps.storage || defaultStorage;
   const [a] = await db.select().from(RdvMessageAttachment).where(and(eq(RdvMessageAttachment.id, String(attachmentId || '')), eq(RdvMessageAttachment.conversationId, String(conversationId || '')))).limit(1);
   if (!a) return bad('not_found', 'Pièce jointe introuvable.', 404);
+  if (String(a.storageKey).startsWith(HDS_KEY_PREFIX)) return bad('HDS_SERVICE_REQUIRED', 'Cette pièce jointe est chiffrée chez l’hébergeur certifié : ouvrez-la depuis la conversation.', 409);
   const bytes = openBuffer(await storage.download(a.storageKey), { purpose: 'message-attachment', context: ctxOf(a.conversationId, a.id) });
   return { ok: true, bytes, meta: view(a) };
 }
@@ -95,7 +122,8 @@ export async function readAttachment(conversationId, attachmentId, deps = {}) {
 /** Storage keys of every attachment in the conversations of one citizen (erasure: the rows cascade, these blobs are purged after commit). */
 export async function storageKeysOfCitizen(citizenUserId, db = defaultDb) {
   const conv = db.select({ id: RdvConversation.id }).from(RdvConversation).where(eq(RdvConversation.citizenUserId, citizenUserId));
-  return (await db.select({ k: RdvMessageAttachment.storageKey }).from(RdvMessageAttachment).where(inArray(RdvMessageAttachment.conversationId, conv))).map((r) => r.k);
+  // G14-R4: « hds:… » rows have no blob here (the HDS service erases them with the person: api/lib/hds-erasure.js)
+  return (await db.select({ k: RdvMessageAttachment.storageKey }).from(RdvMessageAttachment).where(inArray(RdvMessageAttachment.conversationId, conv))).map((r) => r.k).filter((k) => !String(k).startsWith(HDS_KEY_PREFIX));
 }
 
 /** HTTP answer for a decrypted attachment: forced download, content type from the stored (sniffed) type, never rendered inline. */

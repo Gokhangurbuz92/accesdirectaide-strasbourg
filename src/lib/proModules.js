@@ -11,6 +11,7 @@ export const PRO_SCREEN_MODULES = Object.freeze({
   '/pro/orientations': 'referrals',
   '/pro/selections': 'selections',
   '/pro/dossier': 'dossiers',
+  '/pro/partages-chiffres': 'dossiers',   // G14-R4: the encrypted dossiers (HDS service) — the same capability citizen.shared_dossier
   '/pro/attestation': 'dossiers',
   '/pro/rdv': 'agenda',
   '/pro/appointments': 'agenda',

@@ -1,9 +1,9 @@
 // @ts-check
 /**
- * G14-R3 — browser client of the HDS service (services/hds). For each call: a single-use ticket from the main API (/api/citizen/hds-ticket, cookie
- * session), then the request goes DIRECTLY to the HDS origin with `Authorization: Bearer <ticket>` — no cookie (credentials: 'omit'), no referrer, nothing
- * in the URL. The main API never sees the document. When the main API answers HDS_GATEWAY_NOT_CONFIGURED (the LAB without an HDS service), the caller
- * keeps its legacy path (null is returned) and that answer is remembered for the page's life.
+ * G14-R3 / R4 — browser client of the HDS service (services/hds). For each call: a single-use ticket from the main API (/api/citizen/hds-ticket or, for an
+ * ADA Pro member, /api/pro/hds-ticket — cookie session), then the request goes DIRECTLY to the HDS origin with `Authorization: Bearer <ticket>` — no cookie
+ * (credentials: 'omit'), no referrer, nothing in the URL. The main API never sees the document. When the main API answers HDS_GATEWAY_NOT_CONFIGURED (the LAB
+ * without an HDS service), the caller keeps its legacy path (null is returned) and that answer is remembered for the page's life.
  */
 
 /** @type {'hds' | 'legacy' | null} */
@@ -14,28 +14,48 @@ export const hdsVaultMode = () => mode;
 export const resetHdsMode = () => { mode = null; };
 
 /** @typedef {{ status: number, code: string, serverMessage: string }} HdsFailure */
+/** @typedef {{ side?: 'citizen' | 'pro', conversation?: string }} TicketOptions */
 
 /** @param {number} status @param {any} data @returns {HdsFailure} */
 const failure = (status, data) => ({ status, code: typeof data?.error === 'string' ? data.error : '', serverMessage: typeof data?.message === 'string' ? data.message : '' });
 
-/** @param {string} cap @returns {Promise<{ ticket: string, origin: string } | null>} */
-export async function hdsTicket(cap) {
+/** the professional ticket goes through the ADA Pro client (its own session header) @param {string} cap @param {TicketOptions} o */
+async function proTicket(cap, o) {
+  const { proRdvRequest } = await import('@/api/pro-rdv-client');
+  try {
+    const data = await proRdvRequest('/api/pro/hds-ticket', { query: { cap, ...(o.conversation ? { conversation: o.conversation } : {}) } });
+    return { status: 200, data };
+  } catch (e) {
+    const err = /** @type {any} */ (e);
+    return { status: Number(err?.status) || 0, data: err?.payload || { error: err?.status ? '' : 'network' } };
+  }
+}
+
+/** @param {string} cap @param {TicketOptions} [o] @returns {Promise<{ ticket: string, origin: string, role?: string } | null>} */
+export async function hdsTicket(cap, o = {}) {
   if (mode === 'legacy') return null;
-  let res;
-  try { res = await fetch(`/api/citizen/hds-ticket?cap=${encodeURIComponent(cap)}`, { credentials: 'same-origin' }); } catch { throw failure(0, { error: 'network' }); }
-  const data = await res.json().catch(() => ({}));
-  if ((res.status === 503 && data.error === 'HDS_GATEWAY_NOT_CONFIGURED') || res.status === 404) { mode = 'legacy'; return null; }
-  if (!res.ok || typeof data.ticket !== 'string' || typeof data.origin !== 'string') throw failure(res.status, data);
+  let status = 0;
+  /** @type {any} */
+  let data = {};
+  if (o.side === 'pro') { const r = await proTicket(cap, o); status = r.status; data = /** @type {any} */ (r.data); }
+  else {
+    const q = `cap=${encodeURIComponent(cap)}${o.conversation ? `&conversation=${encodeURIComponent(o.conversation)}` : ''}`;
+    let res;
+    try { res = await fetch(`/api/citizen/hds-ticket?${q}`, { credentials: 'same-origin' }); } catch { throw failure(0, { error: 'network' }); }
+    status = res.status; data = /** @type {any} */ (await res.json().catch(() => ({})));
+  }
+  if ((status === 503 && data?.error === 'HDS_GATEWAY_NOT_CONFIGURED') || (status === 404 && !o.conversation)) { mode = 'legacy'; return null; }
+  if (status !== 200 || typeof data?.ticket !== 'string' || typeof data?.origin !== 'string') throw failure(status, data);
   mode = 'hds';
-  return { ticket: data.ticket, origin: data.origin };
+  return { ticket: data.ticket, origin: data.origin, ...(data.role ? { role: String(data.role) } : {}) };
 }
 
 /**
- * @param {string} cap @param {string} path @param {{ method?: string, body?: unknown }} [opts]
+ * @param {string} cap @param {string} path @param {{ method?: string, body?: unknown } & TicketOptions} [opts]
  * @returns {Promise<any | null>} null = no HDS service here (use the legacy path)
  */
 export async function hdsRequest(cap, path, opts = {}) {
-  const t = await hdsTicket(cap);
+  const t = await hdsTicket(cap, opts);
   if (!t) return null;
   let res;
   try {

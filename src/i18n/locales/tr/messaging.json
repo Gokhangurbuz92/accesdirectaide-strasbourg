@@ -161,5 +161,9 @@
   "report.sending": "Gönderiliyor…",
   "report.cancel": "Vazgeç",
   "report.done": "Teşekkürler: mesaj AccesDirectAide ekibine bildirildi. Mesajın metni ekibe iletilmez; ekip sizinle bu görüşme üzerinden yeniden iletişime geçebilir.",
-  "report.failed": "Bildirim gönderilemedi. Daha sonra yeniden deneyin."
+  "report.failed": "Bildirim gönderilemedi. Daha sonra yeniden deneyin.",
+  "attachments.hds_citizen_key": "Bu kişi Mon Coffre'u henüz etkinleştirmedi: şifreli ek ona gönderilemez.",
+  "attachments.hds_org_key": "Kurum şifreleme anahtarını henüz oluşturmadı: mesajınızı ek olmadan gönderin.",
+  "attachments.hds_unlock_citizen": "Bu şifreli eki okumak için önce Mon Coffre'u gizli parolanızla açın.",
+  "attachments.hds_unlock_pro": "Bu şifreli eki okumak için önce « Şifreli dosyalar » bölümünde anahtarlarınızı açın."
 }

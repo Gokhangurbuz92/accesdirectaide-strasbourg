@@ -161,10 +161,10 @@ const OPEN_R3 = 'cgu-citoyen@v13-2026-11-24,notice-confidentialite@v14-2026-11-2
 describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026-11-24 (approved by the owner 24/11/2026)', () => {
   it('versions, order, status: drafts until the build names them; release 2 value keeps v13 / v12', () => {
     expect([L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_R3_CGU]).toEqual(['v14-2026-11-24', 'v13-2026-11-24']);
-    expect([...L.LEGAL_DRAFT_VERSIONS].slice(-3)).toEqual([L.LEGAL_DRAFTS_R3_CGU, L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_PRO_V11]);   // + cgu-professionnel v11 (release-3 follow-up)
+    expect([...L.LEGAL_DRAFT_VERSIONS].slice(-4, -1)).toEqual([L.LEGAL_DRAFTS_R3_CGU, L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_PRO_V11]);   // + cgu-professionnel v11 (release-3 follow-up); G14-R4: notice v15 follows
     expect(L.LEGAL_DRAFTS_R3_STATUS).toMatch(/^APPROVED — approuvée le 24\/11\/2026 par le responsable/);
     expect(L.LEGAL_DRAFTS_R3_STATUS).not.toMatch(/avocat|expert|proposée|en attente/);
-    expect(L.latestDraftVersionOf(N)).toBe('v14-2026-11-24'); expect(L.latestDraftVersionOf(C)).toBe('v13-2026-11-24');
+    expect(L.latestDraftVersionOf(N)).toBe('v15-2026-11-24'); expect(L.latestDraftVersionOf(C)).toBe('v14-2026-11-24');   // G14-R4 drafts are newer
     expect(L.approvedVersionOf(N, OPEN_R2)).toBe('v13-2026-11-23'); expect(L.approvedVersionOf(C, OPEN_R2)).toBe('v12-2026-11-23');
     expect(L.approvedVersionOf(N, OPEN_R3)).toBe('v14-2026-11-24'); expect(L.approvedVersionOf(C, OPEN_R3)).toBe('v13-2026-11-24');
     for (const t of OPEN_R3.split(',')) expect(L.knownApprovalToken(t), t).toBe(true);
@@ -224,9 +224,9 @@ describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026
     }
   });
 
-  it('LEGAL_DRAFT_DOCUMENTS shows the newest drafts (notice v14, cgu v13)', () => {
-    expect(find(L.LEGAL_DRAFT_DOCUMENTS, N).version).toBe('v14-2026-11-24');
-    expect(find(L.LEGAL_DRAFT_DOCUMENTS, C).version).toBe('v13-2026-11-24');
+  it('LEGAL_DRAFT_DOCUMENTS shows the newest drafts (G14-R4: notice v15, cgu v14 — they carry the release-3 texts)', () => {
+    expect(find(L.LEGAL_DRAFT_DOCUMENTS, N).version).toBe('v15-2026-11-24');
+    expect(find(L.LEGAL_DRAFT_DOCUMENTS, C).version).toBe('v14-2026-11-24');
   });
 });
 
@@ -234,7 +234,7 @@ describe('G14-R3 register lines T29–T32', () => {
   const reg = JSON.parse(readFileSync('REGISTRE_RGPD.json', 'utf8'));
   const t = (/** @type {string} */ id) => reg.traitements.find((x) => x.id === id);
   it('household, guardian link (restricted), trusted persons, events; decided durations still « non appliqué » (no step approved)', () => {
-    expect(reg.version).toBe('0.8');
+    expect(reg.version).toBe('0.9');   // 0.8 = R3 approval, 0.9 = G14-R4 drafts
     expect(t('T29').nom).toMatch(/Mon foyer/); expect(t('T30').nom).toMatch(/représentant légal/); expect(t('T31').nom).toMatch(/Personnes de confiance/); expect(t('T32').nom).toMatch(/événements/);
     expect(t('T30').statut).toMatch(/MINOR_ACCOUNTS_CLOSED/);
     for (const id of ['T30', 'T31']) for (const c of t(id).conservation.filter((/** @type {any} */ x) => /décidée par le responsable le 24\/11\/2026/.test(x.description))) expect(c.statut).toBe('non appliqué');

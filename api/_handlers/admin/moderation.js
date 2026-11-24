@@ -50,7 +50,7 @@ export default async function handler(req, res) {
       }
       if (view === 'roles') return res.status(200).json(await roleAdministration().list());
       if (await requireStaff()) return undefined;
-      if (view === 'notices') return res.status(200).json({ items: await contentNotices().list(actor, String(req.query?.status || 'received')) });
+      if (view === 'notices') { const cn = contentNotices(); return res.status(200).json({ items: await cn.list(actor, String(req.query?.status || 'received')), sla: await cn.slaStatus() }); }
       if (view === 'appeals') {
         const status = String(req.query?.status || 'open');
         if (!['open', 'upheld', 'reversed', 'modified'].includes(status)) return res.status(400).json({ error: 'BAD_STATUS' });

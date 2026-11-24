@@ -34,6 +34,7 @@ const GUARDED = [
 /** reviewed: not a citizen-facing content read path (reason in the comment) */
 const REVIEWED_NOT_PUBLIC = {
   'api/_services/legal-protection.js': 'G14-R3G: the verified representative of a protected adult (and that person) — reads the name of the Structure of the person\'s own appointments and of a declared MJPM service by SIRET; never a public read path',
+  'api/_handlers/pro/hds-ticket.js': 'G14-R4: the professional HDS ticket — reads the caller\'s own membership and the statut of ITS Structure (active member of an active organisation) and the structure of one conversation; never a public read path',
   'api/_services/messaging-policy.js': 'R3: decides whether an appointment conversation is served (structure classification + service review of the appointment); reads Structure classification columns only, returns a yes / no, never a public read path',
   'api/_services/social-referrals.js': 'G14-PS: social referral (MFA professional members of verified organisations, and the person about their own referrals): reads Structure identity / classification of the parties only; never a public read path',
   // administration / operations (authenticated staff; reviewers must see hidden records)

@@ -126,5 +126,7 @@
   "admin.transparency": "Zahlen für den Jahresbericht (nur Zählungen)",
   "admin.title": "Moderation und Meldungen",
   "admin.intro": "Funktionen, die eine benannte Person brauchen, bleiben geschlossen, solange niemand benannt ist. Keine Entscheidung ist automatisch.",
-  "admin.not_staff": "Die Warteschlangen für Meldungen und Beschwerden sind benannten Personen vorbehalten."
+  "admin.not_staff": "Die Warteschlangen für Meldungen und Beschwerden sind benannten Personen vorbehalten.",
+  "admin.overdue": "Verspätet: zu bearbeiten vor dem {{d}} ({{h}} Stunden laut Charta).",
+  "admin.due": "Zu bearbeiten vor dem {{d}} ({{h}} Stunden laut Charta)."
 }

@@ -22,7 +22,7 @@ const ROOT_DIR = path.join(__dirname, '..');
  */
 
 // Date de révision du contenu (fixe). À changer uniquement quand le contenu du registre est révisé — jamais la date d'exécution.
-export const REGISTRE_VERSION = '0.8';   // Release 3 owner legal approval (24/11/2026, OWNER_VALIDATED; CONTROL/master/completion/R3_OWNER_APPROVAL_2026-11-24.md): T04 (P29), T05 (P28), T11 / T15 (notice § 14), T29–T34 bases and the release-3 durations decided, AIPD lines R1–R9 signed by the owner (not a lawyer's or an expert's review). 0.7 = G14-R3 (24/11/2026, PROPOSED): release-3 follow-up (same 0.7): T04 appointment messaging (capability, HDS waiver, E9, in-thread report), T05 Mon Coffre at Scalingo HDS (E2E, art. 9.2.a), T10 content reports, T11 / T15 institution space and conventions (durations proposed), T34 partner referral bridge (FA-D7), Scalingo SAS (HDS) as a planned processor; T29 household, T30 guardian link (restricted form), T31 trusted persons, T32 events (X04); G14-R3G (same package): T33 representative of a protected adult. 0.6 = G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
+export const REGISTRE_VERSION = '0.9';   // G14-R4 (24/11/2026, PROPOSED): T35 testimonials (X02), T36 community stories (X01), T37 inclusive job board (X05) and the Release-4 notes (statut_r4) of T03 / T04 / T05 (shared dossiers, attachments and Mon Coffre recovery at the HDS service) — drafts until the owner approves notice v15 / cgu-citoyen v14. 0.8 = Release 3 owner legal approval (24/11/2026, OWNER_VALIDATED; CONTROL/master/completion/R3_OWNER_APPROVAL_2026-11-24.md): T04 (P29), T05 (P28), T11 / T15 (notice § 14), T29–T34 bases and the release-3 durations decided, AIPD lines R1–R9 signed by the owner (not a lawyer's or an expert's review). 0.7 = G14-R3 (24/11/2026, PROPOSED): release-3 follow-up (same 0.7): T04 appointment messaging (capability, HDS waiver, E9, in-thread report), T05 Mon Coffre at Scalingo HDS (E2E, art. 9.2.a), T10 content reports, T11 / T15 institution space and conventions (durations proposed), T34 partner referral bridge (FA-D7), Scalingo SAS (HDS) as a planned processor; T29 household, T30 guardian link (restricted form), T31 trusted persons, T32 events (X04); G14-R3G (same package): T33 representative of a protected adult. 0.6 = G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
 export const REGISTRE_DATE_REVISION = '2026-11-24';
 
 export const CONTACT_PROTECTION_DONNEES = '[À COMPLÉTER : contact protection des données]';
@@ -292,6 +292,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 id: 'T03',
                 nom: 'Partage de dossier avec des structures',
                 finalite: 'À l\'initiative de la personne, permettre à une structure vérifiée de consulter son dossier',
+                statut_r4: "G14-R4 (24/11/2026, LAB) : portage chez l'hébergeur HDS (Scalingo, osc-fr1) prêt — chiffrement de bout en bout (clé du dossier, clés des structures), consentement explicite par structure (texte à approuver, HDS_SHARE_CONSENT_VERSION), date de fin, retrait = re-chiffrement, journal sans contenu ; capacité citizen.shared_dossier fermée ; notice v15 / cgu v14 proposées",
                 base_legale_proposee: 'Consentement spécifique par structure et par finalité (art. 6.1.a), révocable ; art. 9.2.a si données de santé — à valider',
                 categories_donnees: ['Copie du questionnaire (situation, chiffrée au repos) et résultats (non chiffrés)', 'Documents joints (chiffrés)', 'Autorisations, invitations, nombre de consultations'],
                 categories_personnes: ['Citoyens', 'Professionnels des structures'],
@@ -304,6 +305,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 id: 'T04',
                 nom: 'Messagerie et pièces jointes',
                 finalite: 'Échanges entre la personne et une structure (dossier partagé ou rendez-vous)',
+                statut_r4: "G14-R4 : pièces jointes chiffrées de bout en bout chez l'hébergeur HDS (messaging.attachments fermée ; Vercel refuse les octets en production)",
                 base_legale_proposee: 'Service demandé (art. 6.1.b) ; art. 9.2.a si données de santé confiées — à valider',
                 categories_donnees: ['Messages du dossier (chiffrés par enveloppe)', 'Messages de rendez-vous (chiffrés à l\'enregistrement, clé serveur)', 'Pièces jointes (chiffrées)'],
                 categories_personnes: ['Citoyens', 'Professionnels'],
@@ -325,6 +327,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 id: 'T05',
                 nom: 'Coffre (documents personnels)',
                 finalite: 'Conserver et retrouver ses justificatifs',
+                statut_r4: "G14-R4 : code de secours à usage unique créé dans le navigateur (jamais envoyé), changement de phrase secrète ; l'hébergeur garde une empreinte à sens unique (authHash)",
                 base_legale_proposee: 'Art. 6.1.b ; art. 9.2.a pour les documents médicaux déposés volontairement — à valider',
                 categories_donnees: ['Fichiers (art. 9 possible)', 'Nom de fichier chiffré', 'Catégorie, type, taille, empreinte'],
                 categories_personnes: ['Citoyens', 'Tiers figurant sur les documents'],
@@ -689,6 +692,59 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                     texte('Page d\'un événement terminé', 'non appliqué', '365 jours — décidée le 22/11/2026, étape academyEventsEndedDeleted non approuvée'),
                 ],
                 mesures_securite: 'Compte majeur exigé (isAdultAccount) ; aucun texte libre ; le besoin n\'est gardé qu\'avec l\'accord vrai ; verrou de capacité ; rappel sans titre, lieu ni besoin ; administration éditoriale par un administrateur nommé avec MFA',
+            },
+            // G14-R4 (24/11/2026): the X02 / X01 / X05 opening package — closed capabilities, AIPD lines to sign (docs/rgpd-r4-aipd-lignes.md)
+            {
+                id: 'T35',
+                nom: 'Témoignages (X02)',
+                statut: 'capacité community.testimonials fermée (surface « testimonials ») ; textes approuvés le 23/11/2026 (notice v12 / v13 § 3 ter, § 4, § 13 ; cgu-citoyen v12 § 7 bis) ; ligne AIPD X02 non signée ; modérateur nommé requis (le responsable, seul) ; préparé à la Release 4',
+                finalite: 'Publier, après relecture, le témoignage d\'une personne majeure ; traiter les signalements, décisions motivées et contestations (DSA)',
+                base_legale_proposee: 'Consentement (art. 6.1.a) par texte, case jamais cochée d\'avance, retrait à tout moment ; signalements et modération : intérêt légitime (art. 6.1.f)',
+                categories_donnees: ['Texte, prénom ou pseudonyme choisi, langue, état et dates', 'Preuve de l\'accord et de son retrait (ConsentLog TESTIMONIAL_PUBLICATION)', 'Signalements (motif d\'une liste fermée), décisions, contestations, mesures contre les abus'],
+                categories_personnes: ['Citoyens majeurs titulaires d\'un compte', 'Personnes qui signalent (avec ou sans compte)'],
+                destinataires: ['Public (texte publié et nom choisi)', 'Le modérateur nommé (jamais l\'adresse ni le compte de l\'auteur, ni l\'identité de qui signale)'],
+                sous_traitants: [vercel, neon, 'Mailjet (e-mails de modération, lorsque la fonction est ouverte)'],
+                conservation: [
+                    texte('Texte non relu', 'non appliqué', 'retiré automatiquement après 60 jours — décidé le 22/11/2026, étape testimonialsPendingExpired non approuvée'),
+                    texte('Ligne sans texte', 'non appliqué', '365 jours — décidé, étape testimonialSkeletonsDeleted non approuvée'),
+                    texte('Signalement', 'non appliqué', 'à la décision, au plus tard 90 jours — décidé, étape testimonialReportsDeleted non approuvée'),
+                    texte('Décisions, contestations, sanctions', 'non appliqué', '1 an après la clôture du dossier — décidé le 23/11/2026'),
+                ],
+                mesures_securite: 'Compte majeur ; relecture humaine avant publication ; aucune décision automatisée ; refus des textes parlant de santé ou d\'un tiers ; modération par administrateur nommé avec MFA ; délais 24 h (urgent) / 7 jours affichés dans la file',
+            },
+            {
+                id: 'T36',
+                nom: 'Histoires de la communauté sous pseudonyme (X01)',
+                statut: 'capacité community.stories fermée (surface « stories ») ; textes approuvés le 23/11/2026 (notice v12 / v13 ; cgu-citoyen v12 § 7 bis) ; ligne AIPD X01 non signée ; modérateur nommé requis ; préparé à la Release 4',
+                finalite: 'Publier, après relecture, les histoires d\'une personne majeure sous un pseudonyme jamais relié publiquement à son compte ; modération DSA',
+                base_legale_proposee: 'Consentement (art. 6.1.a) par histoire ; modération : intérêt légitime (art. 6.1.f)',
+                categories_donnees: ['Pseudonyme (ligne membre distincte), texte, état et dates', 'Preuve de l\'accord (ConsentLog COMMUNITY_STORY_PUBLICATION)', 'Signalements, décisions, contestations, sanctions'],
+                categories_personnes: ['Citoyens majeurs titulaires d\'un compte'],
+                destinataires: ['Public (histoire et pseudonyme)', 'Le modérateur nommé'],
+                sous_traitants: [vercel, neon, 'Mailjet (e-mails de modération, lorsque la fonction est ouverte)'],
+                conservation: [
+                    texte('Texte non relu', 'non appliqué', 'retiré après 60 jours — décidé, étape storiesPendingExpired non approuvée'),
+                    texte('Pseudonyme inactif', 'non appliqué', '730 jours sans histoire publiée ni en attente — décidé, étape communityMembersInactiveDeleted non approuvée'),
+                    texte('Décisions, contestations, sanctions', 'non appliqué', '1 an après la clôture du dossier — décidé le 23/11/2026'),
+                ],
+                mesures_securite: 'Pseudonyme séparé du compte ; quitter la communauté supprime le pseudonyme et les histoires ; relecture humaine ; MFA du modérateur ; aucune décision automatisée',
+            },
+            {
+                id: 'T37',
+                nom: 'Offres d\'emploi inclusives (X05)',
+                statut: 'capacité community.employment fermée (surface « employment ») ; textes proposés le 24/11/2026 (notice v15 P32, cgu-citoyen v14) ; ligne AIPD X05 non signée ; modérateur nommé requis ; préparé à la Release 4',
+                finalite: 'Publier les offres d\'employeurs vérifiés (E01), relues avant publication, et les modérer ; aucune donnée sur les candidats',
+                base_legale_proposee: 'Intérêt légitime (art. 6.1.f) de l\'exploitant et des employeurs ; modération : intérêt légitime',
+                categories_donnees: ['Contenu de l\'offre (champs fermés, aucun critère de l\'article L1132-1 du code du travail)', 'Moyen de candidature (URL ou adresse électronique professionnelle)', 'Compte ADA Pro de l\'administrateur de la structure qui l\'écrit', 'Signalements, décisions, contestations'],
+                categories_personnes: ['Membres administrateurs des structures employeuses', 'Personnes qui signalent'],
+                destinataires: ['Public (offres publiées)', 'Le modérateur nommé (l\'offre et l\'employeur, jamais l\'auteur)'],
+                sous_traitants: [vercel, neon, 'Mailjet (e-mails de modération, lorsque la fonction est ouverte)'],
+                conservation: [
+                    texte('Moyen de candidature', 'non appliqué', '30 jours après la fin de l\'offre — décidé le 22/11/2026, étape jobListingApplyTargetsErased non approuvée'),
+                    texte('Offre terminée', 'non appliqué', '365 jours — décidé, étape jobListingsEndedDeleted non approuvée'),
+                    texte('Brouillon ou offre refusée', 'non appliqué', '180 jours — décidé, étape jobListingDraftsDeleted non approuvée'),
+                ],
+                mesures_securite: 'Aucun formulaire de candidature, aucun compteur de clics, aucun journal de consultation ; champs discriminatoires refusés par construction ; vérification de l\'employeur recontrôlée à chaque lecture publique ; modération MFA',
             },
             {
                 // FA-D5 (18/11/2026): P17 + P15b of the V2 register (CONTROL/v2/D2_V2_BASES_LEGALES_FR.md), notice v7 § 4 and § 6

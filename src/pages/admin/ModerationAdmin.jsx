@@ -98,6 +98,9 @@ function Notices() {
           {items.map((n) => (
             <li key={n.id} className="space-y-1 rounded-xl border border-slate-200 bg-white p-3 text-sm" data-testid="admin-notice">
               <p className="font-semibold">{n.priority === 'urgent' ? `⚠ ${t('moderation:admin.urgent', 'Urgent')} — ` : ''}{categoryLabel(n.category, t)} — {contentTypeLabel(n.contentType, t)}</p>
+              {n.dueAt ? <p className={n.overdue ? 'text-sm font-semibold text-red-800' : 'text-sm text-slate-800'} data-testid="admin-notice-due">{n.overdue
+                ? t('moderation:admin.overdue', 'En retard : à traiter avant le {{d}} ({{h}} heures selon la charte).', { d: formatDateTime(n.dueAt), h: n.priority === 'urgent' ? 24 : 168 })
+                : t('moderation:admin.due', 'À traiter avant le {{d}} ({{h}} heures selon la charte).', { d: formatDateTime(n.dueAt), h: n.priority === 'urgent' ? 24 : 168 })}</p> : null}
               <p dir="ltr" className="break-all font-mono text-xs">{n.id} · {n.contentRef}</p>
               <p className="whitespace-pre-line">{n.explanation}</p>
               <p className="text-xs text-slate-700">{formatDateTime(n.createdAt)}{n.declaredTrustedFlagger ? ` · ${t('moderation:admin.trusted', 'déclare être signaleur de confiance (à vérifier sur la liste de l’Arcom)')}` : ''}{n.hasContact ? '' : ` · ${t('moderation:admin.no_contact', 'sans adresse')}`}</p>

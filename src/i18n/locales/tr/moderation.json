@@ -126,5 +126,7 @@
   "admin.transparency": "Yıllık rapor için rakamlar (yalnızca sayımlar)",
   "admin.title": "Moderasyon ve bildirimler",
   "admin.intro": "Atanmış bir kişi gerektiren işlevler, kimse atanmadığı sürece kapalı kalır. Hiçbir karar otomatik değildir.",
-  "admin.not_staff": "Bildirim ve itiraz kuyrukları atanmış kişilere ayrılmıştır."
+  "admin.not_staff": "Bildirim ve itiraz kuyrukları atanmış kişilere ayrılmıştır.",
+  "admin.overdue": "Gecikmiş: {{d}} tarihinden önce işlenmeli (tüzüğe göre {{h}} saat).",
+  "admin.due": "{{d}} tarihinden önce işlenmeli (tüzüğe göre {{h}} saat)."
 }

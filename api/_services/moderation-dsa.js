@@ -38,6 +38,14 @@ export const FEATURES = Object.freeze(['testimonials', 'stories', 'employment', 
 export const ENTRAIDE_MIN_MODERATORS = 2;
 export const APPEAL_MONTHS = 6;
 export const SOLE_REVIEW_DELAY_MS = 24 * 3600 * 1000;
+/**
+ * G14-R4 — the charter's deadlines (§ 13 p3 of the notice, /charte-de-moderation): a notice that suggests a threat to life or safety (priority « urgent »)
+ * is handled within 24 hours, every other notice within 7 days. The queue shows each notice's due time and whether it is late; slaStatus() gives the
+ * content-free counts (no text, no identity) an operator check can read.
+ */
+export const NOTICE_SLA_HOURS = Object.freeze({ urgent: 24, trusted: 168, ordinary: 168 });
+/** @param {{ priority: string, createdAt: Date | string }} n */
+export const noticeDueAt = (n) => new Date(new Date(n.createdAt).getTime() + (NOTICE_SLA_HOURS[n.priority] ?? NOTICE_SLA_HOURS.ordinary) * 3600 * 1000);
 export const NOTICE_CATEGORIES = Object.freeze(['ILLEGAL_CONTENT', 'TERMS_VIOLATION', 'SAFETY_THREAT', 'CHILD_SAFETY']);
 export const NOTICE_CONTENT_TYPES = Object.freeze(['testimonial', 'story', 'job_listing', 'entraide', 'other']);
 export const DECISION_ACTIONS = Object.freeze(['rejected', 'taken_down', 'offer_closed', 'member_suspended', 'member_reinstated', 'reports_dismissed', 'notice_no_action']);
@@ -271,7 +279,7 @@ export function decisionRecorder({ db = defaultDb, now = () => new Date(), send 
     return (res?.rows || res || []).map((r) => ({ id: String(r.id), email: String(r.email) }));
   };
   const structureAdmins = async (structureId) => {
-    const res = await db.execute(sql`SELECT email FROM "ProUser" WHERE "structureId" = ${structureId} AND role = 'structure_admin' AND status = 'active'`);
+    const res = await db.execute(sql`SELECT email FROM "ProUser" WHERE "structureId" = ${structureId} AND upper(role) = 'STRUCTURE_ADMIN' AND status = 'active'`);
     return (res?.rows || res || []).map((r) => String(r.email));
   };
   return {
@@ -398,7 +406,16 @@ export function contentNotices({ db = defaultDb, now = () => new Date(), send, v
         .from(ContentNotice).where(eq(ContentNotice.status, status === 'decided' ? 'decided' : 'received'))
         .orderBy(sql`CASE ${ContentNotice.priority} WHEN 'urgent' THEN 0 WHEN 'trusted' THEN 1 ELSE 2 END`, asc(ContentNotice.createdAt)).limit(200);
       await audit('CONTENT_NOTICE_QUEUE_READ', actor, status, { count: rows.length });
-      return rows;
+      const t = now().getTime();
+      return rows.map((r) => (r.status === 'received' ? { ...r, dueAt: noticeDueAt(r), overdue: noticeDueAt(r).getTime() < t } : r));
+    },
+    /** content-free counts of the open notices against the charter's deadlines (24 h urgent / 7 days) */
+    async slaStatus() {
+      if (!(await moderationSchemaAvailable(db))) throw err('MODERATION_NOT_AVAILABLE', 503);
+      const rows = await db.select({ priority: ContentNotice.priority, createdAt: ContentNotice.createdAt }).from(ContentNotice).where(eq(ContentNotice.status, 'received'));
+      const t = now().getTime();
+      const late = rows.filter((r) => noticeDueAt(r).getTime() < t);
+      return { open: rows.length, openUrgent: rows.filter((r) => r.priority === 'urgent').length, overdue: late.length, overdueUrgent: late.filter((r) => r.priority === 'urgent').length };
     },
     /**
      * close a notice: `action_taken` links the decision the moderator recorded on the content (through the feature's own action with noticeId),

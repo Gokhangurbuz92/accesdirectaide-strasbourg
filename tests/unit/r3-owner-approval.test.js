@@ -118,7 +118,7 @@ describe('R3 owner approval — register 0.8', () => {
   const reg = JSON.parse(readFileSync('REGISTRE_RGPD.json', 'utf8'));
   const t = (/** @type {string} */ id) => reg.traitements.find((/** @type {any} */ x) => x.id === id);
   it('T29–T34 decided on 24/11/2026; no « proposé / à valider / à approuver » left in them; no claim of review', () => {
-    expect(reg.version).toBe('0.8');
+    expect(reg.version).toBe('0.9');   // 0.8 = R3 approval, 0.9 = G14-R4 drafts
     for (const id of ['T29', 'T30', 'T31', 'T32', 'T33', 'T34']) {
       const s = JSON.stringify(t(id));
       expect(s, id).toMatch(/24\/11\/2026/);

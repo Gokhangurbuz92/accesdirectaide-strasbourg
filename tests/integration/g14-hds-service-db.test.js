@@ -71,7 +71,7 @@ describe.skipIf(!reachable)('G14-R3 HDS service on the LAB test cluster', () => 
     for (const db of [DB, RESTORED]) execFileSync('psql', [url('postgres'), '-qc', `DROP DATABASE IF EXISTS ${db}`], { stdio: 'pipe' });
     execFileSync('psql', [url('postgres'), '-qc', `CREATE DATABASE ${DB}`], { stdio: 'pipe' });
     const p = createPool(url(DB), { max: 1 });
-    expect(await migrate(p)).toEqual(['0001_hds_init.sql']);
+    expect(await migrate(p)).toEqual(['0001_hds_init.sql', '0002_hds_r4_sharing.sql']);
     expect(await migrate(p)).toEqual([]);   // idempotent
     await p.end();
     setLogSink((l) => logLines.push(l));
@@ -149,7 +149,7 @@ describe.skipIf(!reachable)('G14-R3 HDS service on the LAB test cluster', () => 
     await stop(on); running.splice(running.indexOf(on), 1);
   }, 30000);
 
-  it('shared-dossier data plane: owner, granted organisation, revocation, access log', async () => {
+  it('shared-dossier data plane: owner only, nobody else (grants, keys, re-key: tests/integration/g14-r4-hds-sharing-db.test.js)', async () => {
     const c = (/** @type {string} */ sub) => ticket(sub, ['citizen.shared_dossier']);
     const pro = (/** @type {string} */ str) => signHdsTicket({ sub: 'pro-synthetic-1', typ: 'pro', caps: ['citizen.shared_dossier'], str }, { privateKey: key, kid: 'k1' }).ticket;
     const content = { iv: Buffer.alloc(12, 1).toString('base64'), ct: Buffer.from(`opaque client ciphertext ${'x'.repeat(40)}`).toString('base64') };
@@ -157,21 +157,13 @@ describe.skipIf(!reachable)('G14-R3 HDS service on the LAB test cluster', () => 
     expect(created.status).toBe(201);
     const id = created.body.id;
     expect((await call(svc.base, 'GET', `/v1/dossiers/${id}`, { t: pro('struct-1') })).status).toBe(404);
-    const wrappedKey = { iv: Buffer.alloc(12, 2).toString('base64'), ct: Buffer.alloc(48, 3).toString('base64') };
-    expect((await call(svc.base, 'POST', `/v1/dossiers/${id}/grants`, { t: c(A), body: { structureId: 'struct-1', wrappedKey } })).status).toBe(200);
-    const seen = await call(svc.base, 'GET', `/v1/dossiers/${id}`, { t: pro('struct-1') });
-    expect(seen.body).toMatchObject({ id, content, wrappedKey, files: [] });
-    expect((await call(svc.base, 'GET', `/v1/dossiers/${id}`, { t: pro('struct-2') })).status).toBe(404);
     expect((await call(svc.base, 'GET', `/v1/dossiers/${id}`, { t: c(B) })).status).toBe(404);
-    expect((await call(svc.base, 'POST', `/v1/dossiers/${id}/grants`, { t: c(B), body: { structureId: 'struct-2' } })).status).toBe(404);
-    const k = await vc.createKeyring('phrase dossier synthétique');
-    const fb = await vc.encryptDocument(k.vaultKey, { bytes: pdf('pro file'), name: 'attestation.pdf', category: 'autre', type: 'application/pdf' });
-    expect((await call(svc.base, 'POST', `/v1/dossiers/${id}/files`, { t: pro('struct-1'), body: fb })).status).toBe(201);
-    expect((await call(svc.base, 'DELETE', `/v1/dossiers/${id}/grants`, { t: c(A), body: { structureId: 'struct-1' } })).status).toBe(200);
-    expect((await call(svc.base, 'GET', `/v1/dossiers/${id}`, { t: pro('struct-1') })).status).toBe(404);
+    expect((await call(svc.base, 'GET', `/v1/dossiers/${id}`, { t: c(A) })).body).toMatchObject({ id, content, files: [], grants: [] });
+    // a grant without the person's explicit consent, or to an organisation without a key, is refused
+    const wrappedKey = { iv: Buffer.alloc(12, 2).toString('base64'), ct: Buffer.alloc(48, 3).toString('base64') };
+    expect((await call(svc.base, 'POST', `/v1/dossiers/${id}/grants`, { t: c(A), body: { structureId: 'struct-1', wrappedKey } })).status).toBe(400);
     const log = await call(svc.base, 'GET', `/v1/dossiers/${id}/access-log`, { t: c(A) });
-    expect(log.body.events.map((/** @type {any} */ e) => e.action)).toEqual(expect.arrayContaining(['DOSSIER_ACCESS_GRANTED', 'DOSSIER_VIEWED', 'FILE_UPLOADED', 'DOSSIER_ACCESS_REVOKED']));
-    expect(JSON.stringify(log.body)).not.toContain('pro-synthetic-1');
+    expect(log.body.events.map((/** @type {any} */ e) => e.action)).toEqual(['DOSSIER_CREATED']);
   }, 30000);
 
   it('encryption at rest: a dump of the whole HDS database holds no canary, no file name, no category', () => {

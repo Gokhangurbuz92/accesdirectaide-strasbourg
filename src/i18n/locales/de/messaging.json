@@ -161,5 +161,9 @@
   "report.sending": "Wird gesendet…",
   "report.cancel": "Abbrechen",
   "report.done": "Danke: Die Nachricht wurde dem Team von AccesDirectAide gemeldet. Der Text der Nachricht wird ihm nicht übermittelt; es kann Sie über dieses Gespräch erneut kontaktieren.",
-  "report.failed": "Die Meldung konnte nicht gesendet werden. Versuchen Sie es später erneut."
+  "report.failed": "Die Meldung konnte nicht gesendet werden. Versuchen Sie es später erneut.",
+  "attachments.hds_citizen_key": "Die Person hat Mon Coffre noch nicht eingerichtet: Der verschlüsselte Anhang kann ihr nicht gesendet werden.",
+  "attachments.hds_org_key": "Die Einrichtung hat ihren Verschlüsselungsschlüssel noch nicht erstellt: Senden Sie Ihre Nachricht ohne Anhang.",
+  "attachments.hds_unlock_citizen": "Öffnen Sie zuerst Mon Coffre mit Ihrer Passphrase, um diesen verschlüsselten Anhang zu lesen.",
+  "attachments.hds_unlock_pro": "Öffnen Sie zuerst Ihre Schlüssel unter « Verschlüsselte Dossiers », um diesen verschlüsselten Anhang zu lesen."
 }

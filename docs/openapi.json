@@ -124,7 +124,7 @@
                 "Auth"
             ],
             "summary": "Ticket à usage unique pour le service HDS (G14-R3)",
-            "description": "Session citoyenne vérifiée. ?cap=citizen.vault | citizen.shared_dossier. Rend un ticket ES256 (60 s, usage unique) et l'origine du service HDS ; aucun document, nom de fichier ni contenu n'est reçu ni lu ici. Le navigateur appelle ensuite le service HDS directement (contenu chiffré de bout en bout).",
+            "description": "Session citoyenne vérifiée. ?cap=citizen.vault | citizen.shared_dossier | messaging.attachments (avec &conversation=<id> : ticket lié à cette conversation de la personne). Rend un ticket ES256 (60 s, usage unique) et l'origine du service HDS ; aucun document, nom de fichier ni contenu n'est reçu ni lu ici. Le navigateur appelle ensuite le service HDS directement (contenu chiffré de bout en bout).",
             "responses": {
                 "200": {
                     "description": "{ ticket, expiresAt, origin }"
@@ -137,6 +137,32 @@
                 },
                 "503": {
                     "description": "CAPABILITY_NOT_OPEN, HDS_MODULE_NOT_PORTED ou HDS_GATEWAY_NOT_CONFIGURED (pas de service HDS : le chemin LAB reste utilisé)"
+                }
+            }
+        }
+    },
+    "/pro/hds-ticket": {
+        "get": {
+            "tags": [
+                "Pro"
+            ],
+            "summary": "Ticket professionnel à usage unique pour le service HDS (G14-R4)",
+            "description": "Session ADA Pro, membre actif d'une structure active. ?cap=citizen.shared_dossier | pro.referrals | messaging.attachments (&conversation=<id> : une conversation de la structure). Rend un ticket ES256 (60 s, usage unique ; typ pro, structure, rôle PRO ou STRUCTURE_ADMIN) et l'origine du service HDS ; aucun dossier, document ni note n'est reçu ni lu ici. Le navigateur ouvre ensuite les dossiers chiffrés de bout en bout directement au service HDS.",
+            "responses": {
+                "200": {
+                    "description": "{ ticket, expiresAt, origin, role }"
+                },
+                "400": {
+                    "description": "INVALID_CAPABILITY ou INVALID_CONVERSATION"
+                },
+                "403": {
+                    "description": "Membre ou structure inactifs"
+                },
+                "404": {
+                    "description": "Conversation d'une autre structure"
+                },
+                "503": {
+                    "description": "CAPABILITY_NOT_OPEN, HDS_MODULE_NOT_PORTED ou HDS_GATEWAY_NOT_CONFIGURED"
                 }
             }
         }

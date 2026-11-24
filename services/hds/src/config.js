@@ -10,6 +10,9 @@
  *   HDS_TICKET_ISSUER / HDS_TICKET_AUDIENCE  default ada-main / ada-hds
  *   HDS_HEALTH_CATEGORY_ENABLED              "true" lets Mon Coffre accept the « sante » category, ONLY with an explicit consent of the version below
  *   HDS_HEALTH_CONSENT_VERSION               the approved art. 9 consent text version (e.g. consentement-sante@v1-2026-12-01)
+ *   HDS_SHARE_CONSENT_VERSION                G14-R4: the approved text version of the consent to share a dossier with an organisation (e.g.
+ *                                            partage-dossier@v1-2026-12-01). ABSENT = every new grant is refused (422 SHARE_CONSENT_NOT_CONFIGURED): sharing stays
+ *                                            closed until the owner approves the text. Outside production only, « partage-dossier@lab » is the default.
  *   PORT                                     set by Scalingo
  */
 import { parseKeyring } from './envelope.js';
@@ -40,6 +43,9 @@ export function loadConfig(env = process.env) {
   const healthEnabled = String(env.HDS_HEALTH_CATEGORY_ENABLED || '').trim() === 'true';
   const healthConsentVersion = String(env.HDS_HEALTH_CONSENT_VERSION || '').trim();
   if (healthEnabled && !/^[a-z0-9-]+@v[0-9][A-Za-z0-9.-]{0,40}$/.test(healthConsentVersion)) missing.push('HDS_HEALTH_CONSENT_VERSION (required when HDS_HEALTH_CATEGORY_ENABLED=true)');
+  const shareRaw = String(env.HDS_SHARE_CONSENT_VERSION || '').trim();
+  if (shareRaw && !/^[a-z0-9-]+@v[0-9][A-Za-z0-9.-]{0,40}$/.test(shareRaw)) missing.push('HDS_SHARE_CONSENT_VERSION (format name@vN…)');
+  const shareConsentVersion = shareRaw || (production ? '' : 'partage-dossier@lab');
   if (env.SENTRY_DSN) missing.push('SENTRY_DSN must NOT be set on the HDS service (no error tracker receives HDS traffic)');
   const port = Number(env.PORT || 4510);
   if (!Number.isInteger(port) || port <= 0 || port === 3000) missing.push('PORT (3000 is reserved for the owner LAB)');
@@ -51,6 +57,6 @@ export function loadConfig(env = process.env) {
   return Object.freeze({
     production, databaseUrl, port, origins, keyring: /** @type {import('./envelope.js').Keyring} */ (ring), ticketKeys: keys,
     issuer: String(env.HDS_TICKET_ISSUER || 'ada-main'), audience: String(env.HDS_TICKET_AUDIENCE || 'ada-hds'),
-    healthEnabled, healthConsentVersion,
+    healthEnabled, healthConsentVersion, shareConsentVersion,
   });
 }

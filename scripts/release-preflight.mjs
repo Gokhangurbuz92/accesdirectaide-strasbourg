@@ -9,11 +9,11 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
-import { approvedAtLeast, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE } from '../src/config/legal-drafts.js';
+import { approvedAtLeast, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R4_CGU, LEGAL_DRAFTS_R4_NOTICE, LEGAL_DRAFTS_V12 } from '../src/config/legal-drafts.js';
 import { externalBookingMode } from '../api/lib/external-booking.js';
 import { partnerAdapterConfig } from '../api/lib/partner-adapter/config.js';
 import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation, hdsAttestationProvider } from '../api/_utils/capabilities.js';
-import { HDS_MODULES, HDS_SERVICE_CAPABILITIES, hdsGatewayState } from '../api/_utils/hds-gateway.js';
+import { HDS_MODULES, HDS_PAYLOAD_CAPABILITIES, HDS_SERVICE_CAPABILITIES, hdsGatewayState, hdsModuleReady } from '../api/_utils/hds-gateway.js';
 import fs from 'node:fs';
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
@@ -26,6 +26,47 @@ import { OPENFISCA_FRANCE_PIN, SCALEWAY_TIERS } from '../api/lib/openfiscaPins.j
 export const R3_LEGAL_CAPABILITIES = Object.freeze(['citizen.household', 'citizen.guardians', 'citizen.delegations']);
 /** G14-R3G: the representative of a protected adult — described only from notice v14-2026-11-24 (P27) and cgu-citoyen v13-2026-11-24 (§ 5 item « protection juridique ») */
 export const R3G_LEGAL_CAPABILITY = 'citizen.legal_protection';
+
+/**
+ * G14-R4 — the texts a Release-4 feature needs in force (never a value, no database read):
+ *   shared dossiers, message attachments, Mon Coffre (recovery code), referral payload / partner bridge, job board X05 → notice v15-2026-11-24 (+ cgu-citoyen
+ *   v14-2026-11-24 for what a person uses); X01 stories / X02 testimonials → the expansion texts (notice and cgu-citoyen v12-2026-11-23 or later).
+ * X01 / X02 / X05 also need a NAMED moderator (moderation-dsa.js answers 503 MODERATION_NOT_STAFFED otherwise): reported as a reminder (WARN), not read here.
+ * X03 (Entraide) is never part of this list: it stays closed until its dedicated AIPD, a safety officer and two moderators.
+ * @param {Record<string, string | undefined>} env @param {{ get: (k: string) => string }} ctx
+ * @returns {Array<[string, 'PASS' | 'WARN' | 'FAIL', string]>}
+ */
+export function r4LegalChecks(env, { get }) {
+  const prodEnv = { ...env, VERCEL_ENV: 'production' };
+  const open = (/** @type {string} */ c) => capabilityState(c, prodEnv).open;
+  const approved = get('VITE_LEGAL_DOCS_APPROVED_VERSION');
+  const N15 = ['notice-confidentialite', LEGAL_DRAFTS_R4_NOTICE]; const C14 = ['cgu-citoyen', LEGAL_DRAFTS_R4_CGU];
+  const N12 = ['notice-confidentialite', LEGAL_DRAFTS_V12]; const C12 = ['cgu-citoyen', LEGAL_DRAFTS_V12];
+  /** @type {Array<[string, boolean, string[][]]>} */
+  const features = [
+    ['citizen.shared_dossier', open('citizen.shared_dossier'), [N15, C14]],
+    ['messaging.attachments', open('messaging.attachments'), [N15, C14]],
+    ['citizen.vault', open('citizen.vault'), [N15, C14]],
+    ['pro.referrals', open('pro.referrals'), [N15]],
+    ['partner.referral_adapter', open('partner.referral_adapter'), [N15]],
+    ['community.employment', open('community.employment'), [N15, C14]],
+    ['community.stories', open('community.stories'), [N12, C12]],
+    ['community.testimonials', open('community.testimonials'), [N12, C12]],
+  ];
+  /** @type {Array<[string, 'PASS' | 'WARN' | 'FAIL', string]>} */
+  const out = [];
+  const on = features.filter(([, isOpen]) => isOpen);
+  if (on.length) {
+    const missing = [...new Set(on.flatMap(([, , docs]) => docs.filter(([id, v]) => !approvedAtLeast(id, v, approved)).map(([id, v]) => `${id}@${v}`)))];
+    out.push(['legal.r4_texts', missing.length ? 'FAIL' : 'PASS', missing.length ? `${on.map(([n]) => n).join(', ')} open but VITE_LEGAL_DOCS_APPROVED_VERSION does not name ${missing.join(', ')} (or later)`
+      : `${on.map(([n]) => n).join(', ')} open with the texts that describe them in force`]);
+  }
+  const ugc = ['community.stories', 'community.testimonials', 'community.employment'].filter(open);
+  if (ugc.length) out.push(['moderation.named_moderator', 'WARN', `${ugc.join(', ')} open: a NAMED moderator (administrator with MFA, charter acknowledged) must be assigned in Administration > Modération, otherwise every publication answers 503 MODERATION_NOT_STAFFED; deadlines 24 h (urgent) / 7 days`]);
+  if (open('community.entraide')) out.push(['moderation.entraide_closed', 'FAIL', 'community.entraide (X03) must stay closed until its dedicated AIPD, a safety officer and two moderators']);
+  if (open('citizen.shared_dossier')) out.push(['hds.share_consent_version', 'WARN', 'citizen.shared_dossier open: the HDS service must carry HDS_SHARE_CONSENT_VERSION = the approved consent text version (Scalingo env; not visible here) — absent, every share is refused']);
+  return out;
+}
 
 /**
  * G14-AI — the citizen assistant on Cloudflare Workers AI (owner decision 23/11/2026, 0 €). Off (AI_PROVIDER unset, no CF_WORKERS_AI_*) = PASS.
@@ -90,9 +131,10 @@ export function openfiscaCheck(get) {
  * @returns {['PASS' | 'WARN' | 'FAIL', string]}
  */
 export function hdsGatewayCheck(get, env, opts = {}) {
-  const named = get('ADA_CAPABILITIES_OPEN').split(',').map((x) => x.trim().toLowerCase()).filter((x) => HDS_SERVICE_CAPABILITIES.includes(x));
+  // G14-R4: the capabilities whose PAYLOAD lives in the HDS service (referrals, partner bridge, orientation records) count too
+  const named = get('ADA_CAPABILITIES_OPEN').split(',').map((x) => x.trim().toLowerCase()).filter((x) => HDS_SERVICE_CAPABILITIES.includes(x) || HDS_PAYLOAD_CAPABILITIES.includes(x));
   const touched = ['HDS_SERVICE_URL', 'HDS_TICKET_PRIVATE_KEY', 'HDS_TICKET_KID', 'HDS_PRODUCTION_APPROVED'].filter((k) => get(k));
-  if (!named.length && !touched.length) return ['PASS', 'HDS gateway off: Mon Coffre and shared dossiers stay closed (no HDS_* variable, none named in ADA_CAPABILITIES_OPEN)'];
+  if (!named.length && !touched.length) return ['PASS', 'HDS gateway off: Mon Coffre, shared dossiers, attachments and referral payloads stay closed (no HDS_* variable, none named in ADA_CAPABILITIES_OPEN)'];
   const problems = [];
   const gw = hdsGatewayState(env, { deployed: true });
   if (!gw.ready) problems.push(`gateway: ${gw.reason}`);
@@ -105,7 +147,7 @@ export function hdsGatewayCheck(get, env, opts = {}) {
     if (!values.length || values.some((v) => !v.includes(origin))) problems.push(`the site CSP connect-src (vercel.json) must allow ${origin}, or the browser cannot reach the HDS service`);
   }
   if (problems.length) return ['FAIL', `HDS gateway incomplete: ${problems.join('; ')}`];
-  const notPorted = named.filter((c) => HDS_MODULES[c] !== 'ported');
+  const notPorted = named.filter((c) => HDS_MODULES[c] !== 'ported' || !hdsModuleReady(c));
   return notPorted.length ? ['WARN', `HDS gateway ready (${gw.origin}); still closed because not ported to the HDS service: ${notPorted.join(', ')}`]
     : ['PASS', `HDS gateway ready: ${gw.origin} (certified host allow-list, approval recorded, signing key valid, CSP allows it)`];
 }
@@ -216,9 +258,10 @@ export function evaluateReleasePreflight(env, opts = {}) {
   const vault = get('ADA_VAULT_KEY') || get('OUTLOOK_TOKEN_ENCRYPTION_KEY');
   add('crypto.vault_key', (/^[0-9a-fA-F]{64}$/.test(vault) || vault.length >= 32) && vault !== get('ADA_ENCRYPTION_KEY') ? 'PASS' : 'FAIL', 'ADA_VAULT_KEY (MFA secrets): 64 hex chars or >= 32 chars, distinct from ADA_ENCRYPTION_KEY');
   add('kv.configured', (get('KV_REST_API_URL') || get('UPSTASH_KV_REST_API_URL')) && (get('KV_REST_API_TOKEN') || get('UPSTASH_KV_REST_API_TOKEN')) ? 'PASS' : 'FAIL', 'Upstash KV: sign-in, sign-up, booking, contact and administration fail closed without it');
-  // R3: messages carry no file unless messaging.attachments (HDS) is open — the bucket is needed for the documents surface or message attachments only
+  // R3: messages carry no file unless messaging.attachments (HDS) is open — the bucket is needed for the documents surface only. G14-R4: open in production,
+  // attachments ALWAYS go to the HDS service (capabilityState needs the ready gateway; Vercel refuses the bytes, api/_services/message-attachments.js): no bucket
   const attachmentsOpen = needs(['communications']) && capabilityState('messaging.attachments', { ...env, VERCEL_ENV: 'production' }).open;
-  if (!needs(['documents']) && !attachmentsOpen) add('storage.configured', 'PASS', notUsed('the Coffre and attachments') + '; message attachments closed (messaging.attachments)');
+  if (!needs(['documents'])) add('storage.configured', 'PASS', notUsed('the Coffre') + (attachmentsOpen ? '; message attachments open: stored end-to-end encrypted at the HDS service (no bucket)' : '; message attachments closed (messaging.attachments)'));
   else add('storage.configured', ['STORAGE_ENDPOINT', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY_ID', 'STORAGE_SECRET_ACCESS_KEY'].every((k) => get(k)) ? 'PASS' : 'FAIL', 'object storage (Coffre, attachments): an EU bucket under a DPA');
   // R34 (G11): the LAB's local file store must not reach production (the runtime ignores it there; the variable signals a copied LAB environment)
   add('storage.no_local_dir', !get('ADA_LOCAL_STORAGE_DIR') ? 'PASS' : beta ? 'WARN' : 'FAIL', 'ADA_LOCAL_STORAGE_DIR is LAB only: delete it from the production environment');
@@ -308,6 +351,8 @@ export function evaluateReleasePreflight(env, opts = {}) {
         : `${open.map(([n]) => n).join(', ')} open with the release-3 texts in force`);
     }
   }
+  // G14-R4: the texts of the Release-4 features and of X01 / X02 / X05; the moderation reminder
+  for (const [id, status, detail] of r4LegalChecks(env, { get })) add(id, status, detail);
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'
     : `accounts in the booking scope: sign-up/in, verification, password, profile, adult statement, rectification, preferences, restriction, deletion, export, Mon Espace summary${

@@ -92,10 +92,12 @@ describe('gateway switch (fail-closed)', () => {
     expect(gw.hdsGatewayState(lab, { deployed: false })).toMatchObject({ ready: true, certified: false });
     expect(gw.hdsGatewayState(lab, { deployed: true }).reason).toBe('HDS_SERVICE_URL_NOT_HTTPS');
   });
-  it('capability: the vault opens with all of it, shared dossiers never (not ported); the LAB is unchanged', () => {
+  it('capability: the vault and (G14-R4) shared dossiers open with all of it; payload capabilities need the gateway too; the LAB is unchanged', () => {
     expect(capabilityState('citizen.vault', PROD_VAULT)).toEqual({ open: true, reason: null });
-    expect(capabilityState('citizen.shared_dossier', { ...PROD_VAULT, ADA_CAPABILITIES_OPEN: 'citizen.shared_dossier' }).reason).toBe('HDS_MODULE_NOT_PORTED');
-    expect(gw.HDS_MODULES).toEqual({ 'citizen.vault': 'ported', 'citizen.shared_dossier': 'partial' });
+    expect(capabilityState('citizen.shared_dossier', { ...PROD_VAULT, ADA_CAPABILITIES_OPEN: 'citizen.shared_dossier' })).toEqual({ open: true, reason: null });
+    expect(capabilityState('citizen.shared_dossier', { ...PROD_VAULT, ADA_CAPABILITIES_OPEN: 'citizen.shared_dossier', HDS_SERVICE_URL: '' }).reason).toBe('HDS_SERVICE_URL_ABSENT');
+    expect(capabilityState('pro.referrals', { ...PROD_VAULT, ADA_BETA_OPEN_SURFACES: 'documents,pro', ADA_CAPABILITIES_OPEN: 'pro.referrals', HDS_PRODUCTION_APPROVED: '' }).reason).toBe('HDS_PRODUCTION_NOT_APPROVED');
+    expect(gw.HDS_MODULES).toEqual({ 'citizen.vault': 'ported', 'citizen.shared_dossier': 'ported', 'messaging.attachments': 'ported', 'pro.referrals': 'ported', 'partner.referral_adapter': 'ported', 'citizen.orientation_records': 'ported' });
     expect(capabilityState('citizen.vault', { ADA_CAPABILITY_ENFORCEMENT: '1', ADA_CAPABILITIES_OPEN: 'citizen.vault', ADA_HDS_CERTIFIED_HOSTING: TOKEN_SCALINGO }).open).toBe(true);
   });
 });
@@ -135,7 +137,7 @@ describe('Vercel never serves HDS data in a deployed environment', () => {
 describe('release preflight: hds.gateway', () => {
   const get = (/** @type {Record<string, string>} */ e) => (/** @type {string} */ k) => String(e[k] ?? '').trim();
   const csp = (/** @type {string} */ extra) => `"value": "default-src 'self'; connect-src 'self'${extra}; img-src 'self'"`;
-  it('off = PASS; a partial configuration = FAIL naming what is missing; complete with CSP = PASS; shared dossier named = WARN (not ported)', () => {
+  it('off = PASS; a partial configuration = FAIL naming what is missing; complete with CSP = PASS; shared dossier named = PASS (ported, G14-R4)', () => {
     expect(hdsGatewayCheck(get({}), {}, { cspText: csp('') })[0]).toBe('PASS');
     const partial = { HDS_SERVICE_URL: 'https://hds.example.com' };
     const r1 = hdsGatewayCheck(get(partial), partial, { cspText: csp('') });
@@ -146,7 +148,10 @@ describe('release preflight: hds.gateway', () => {
     const wrongProvider = { ...PROD_VAULT, ADA_HDS_CERTIFIED_HOSTING: `HDS1:other-host:CERT-1:2099-12-31:${HEX}` };
     expect(hdsGatewayCheck(get(wrongProvider), wrongProvider, { cspText: csp(` ${gw.HDS_DEFAULT_ORIGIN}`) })[1]).toMatch(/provider « scalingo »/);
     const both = { ...PROD_VAULT, ADA_CAPABILITIES_OPEN: 'citizen.vault,citizen.shared_dossier' };
-    expect(hdsGatewayCheck(get(both), both, { cspText: csp(` ${gw.HDS_DEFAULT_ORIGIN}`) })).toEqual(['WARN', expect.stringMatching(/not ported.*citizen\.shared_dossier/)]);
+    expect(hdsGatewayCheck(get(both), both, { cspText: csp(` ${gw.HDS_DEFAULT_ORIGIN}`) })[0]).toBe('PASS');
+    // a payload capability named without any gateway variable is no longer « off »: it FAILS until the gateway is complete
+    const referralsOnly = { ADA_CAPABILITIES_OPEN: 'pro.referrals' };
+    expect(hdsGatewayCheck(get(referralsOnly), referralsOnly, { cspText: csp('') })[0]).toBe('FAIL');
   });
   it('the shipped CSP allows exactly the live HDS origin (release 3, 24/11/2026): a configured gateway passes; another allow-listed host still fails', () => {
     const vercel = readFileSync('vercel.json', 'utf8');

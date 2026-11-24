@@ -27,3 +27,48 @@ export async function saveDownload(response, name) {
   document.body.appendChild(link); link.click(); link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+
+/**
+ * G14-R4 — through the HDS service when this site has one (messaging.attachments): the file is encrypted in this browser for the person AND the
+ * organisation, stored at the certified host with a ticket bound to the conversation, and only its reference { hdsAttachmentId, byteLength, sha256 } is sent
+ * with the message. Without an HDS service (the LAB), the legacy upload. Errors carry a code (CITIZEN_KEY_MISSING, ORG_KEY_MISSING, UNSUPPORTED_TYPE).
+ * @param {'citizen' | 'pro'} side @param {string} conversationId @param {File | null | undefined} file
+ */
+export async function prepareOutgoingAttachment(side, conversationId, file) {
+  if (!file) return null;
+  if (file.size > ATTACHMENT_MAX_BYTES) throw new Error(i18n.t('messaging:attachments.too_large', 'La pièce jointe dépasse 3 Mo.'));
+  const { uploadAttachment } = await import('./hdsSharing.js');
+  let ref = null;
+  try { ref = await uploadAttachment(side, conversationId, file); }
+  catch (e) {
+    const code = /** @type {any} */ (e)?.code;
+    if (code === 'CITIZEN_KEY_MISSING') throw new Error(i18n.t('messaging:attachments.hds_citizen_key', 'La personne n’a pas encore activé Mon Coffre : la pièce jointe chiffrée ne peut pas lui être envoyée.'));
+    if (code === 'ORG_KEY_MISSING') throw new Error(i18n.t('messaging:attachments.hds_org_key', 'La structure n’a pas encore créé sa clé de chiffrement : envoyez votre message sans pièce jointe.'));
+    if (code === 'UNSUPPORTED_TYPE') throw new Error(i18n.t('messaging:attachments.bad_type', 'Seuls les fichiers PDF, PNG et JPEG sont acceptés.'));
+    throw e;
+  }
+  return ref || readAttachment(file);
+}
+
+/**
+ * open a received attachment: from the HDS service (decrypted here with the person's or the organisation's key) or the legacy download
+ * @param {'citizen' | 'pro'} side @param {string} conversationId @param {{ id: string, name: string, hds?: boolean }} a @param {() => Promise<Response>} legacy
+ */
+export async function openIncomingAttachment(side, conversationId, a, legacy) {
+  if (a.hds) {
+    const { downloadAttachment } = await import('./hdsSharing.js');
+    const { saveBlob } = await import('./hdsClient.js');
+    let out;
+    try { out = await downloadAttachment(side, conversationId, a.id); }
+    catch (e) {
+      const code = /** @type {any} */ (e)?.code;
+      if (code === 'VAULT_LOCKED') throw new Error(i18n.t('messaging:attachments.hds_unlock_citizen', 'Ouvrez d’abord Mon Coffre avec votre phrase secrète pour lire cette pièce jointe chiffrée.'));
+      if (code === 'ORG_KEY_LOCKED') throw new Error(i18n.t('messaging:attachments.hds_unlock_pro', 'Ouvrez d’abord vos clés dans « Dossiers chiffrés » pour lire cette pièce jointe chiffrée.'));
+      throw e;
+    }
+    if (out) { saveBlob(new Blob([/** @type {BlobPart} */ (/** @type {unknown} */ (out.bytes))], { type: out.type }), out.name); return; }
+  }
+  const r = await legacy();
+  if (!r.ok) throw new Error(String(r.status));
+  await saveDownload(r, a.name);
+}

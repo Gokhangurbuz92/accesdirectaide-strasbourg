@@ -1,6 +1,6 @@
 {
   "name": "ada-hds-strasbourg",
-  "description": "AccesDirectAide HDS service (Mon Coffre, shared-dossier data). Region osc-fr1, HDS option. Prepared in LAB, NOT deployed.",
+  "description": "AccesDirectAide HDS service (Mon Coffre, shared dossiers, organisation keys, referral payloads, message attachments). Region osc-fr1, HDS option. Prepared in LAB, NOT deployed.",
   "env": {
     "NODE_ENV": { "value": "production" },
     "ALLOWED_ORIGIN": { "description": "exact https origin of the main site (comma list), e.g. https://<APP_BASE_URL host>", "required": true },
@@ -8,7 +8,8 @@
     "HDS_DATA_KEYS": { "description": "<kid>:<64 hex> key-encryption keys, first = active; generated in the HDS environment only, never copied elsewhere", "required": true },
     "HDS_TICKET_ISSUER": { "value": "ada-main" },
     "HDS_TICKET_AUDIENCE": { "value": "ada-hds" },
-    "HDS_HEALTH_CATEGORY_ENABLED": { "value": "false" }
+    "HDS_HEALTH_CATEGORY_ENABLED": { "value": "false" },
+    "HDS_SHARE_CONSENT_VERSION": { "description": "approved version of the dossier-sharing consent text (e.g. partage-dossier@v1-2026-12-01); absent = every new share refused", "required": false }
   },
   "addons": [
     { "plan": "postgresql:postgresql-business-512", "description": "PostgreSQL Business 512M (HDS-eligible plan; verify the exact plan id with `scalingo addons-plans postgresql`)" }

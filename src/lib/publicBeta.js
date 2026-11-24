@@ -27,7 +27,7 @@ const RESTRICTED = ['/admin', '/pro', '/login', '/auth', '/compte', '/appointmen
 /** @type {Record<string, string[]>} */
 export const SCREEN_SURFACES = {
   accounts: ['/login', '/auth', '/compte'], pro: ['/pro'], institution: ['/institution'], appointments: ['/appointments', '/rdv', '/r'],
-  communications: ['/contact', '/demande-aide', '/proposer-une-structure'], documents: ['/share', '/passport'],
+  communications: ['/contact', '/demande-aide', '/proposer-une-structure'], documents: ['/share', '/passport', '/compte/dossiers-chiffres', '/pro/partages-chiffres'],
   diagnostic: ['/diagnostic', '/assistant', '/mon-assistant', '/orientation'], admin: ['/admin', '/adminaides', '/adminstructures', '/adminappointments', '/admindemarches'],
   events: ['/academie', '/evenements', '/compte/evenements', '/admin/academie-evenements'],
   testimonials: ['/temoignages', '/compte/temoignages', '/admin/temoignages'],
