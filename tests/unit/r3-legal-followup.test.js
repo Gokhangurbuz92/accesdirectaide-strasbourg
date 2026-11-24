@@ -146,6 +146,6 @@ describe('register REGISTRE_RGPD.json (generated) — release-3 lines', () => {
     expect(t('T34').statut).toMatch(/aucun partenaire connecté/);
     expect(JSON.stringify(t('T33'))).not.toMatch(/en attente, hors journal/);
     const scalingo = reg.sous_traitants.find((/** @type {any} */ s) => /Scalingo/.test(s.nom));
-    expect(scalingo.statut).toMatch(/^prévu/); expect(scalingo.dpa).toBe('inconnu / non signé');
+    expect(scalingo.statut).toMatch(/^actif/); expect(scalingo.dpa).toMatch(/^accepté en ligne — Annexe HDS v2\.5\.0.*22\/11\/2026/); expect(scalingo.dpa).not.toMatch(/signée par|contresign/);
   });
 });

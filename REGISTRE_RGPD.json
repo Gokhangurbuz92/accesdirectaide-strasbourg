@@ -257,7 +257,7 @@
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Vercel (hébergement ; en service pour la bêta publique restreinte)"
       ],
-      "evolution_r3": "Service HDS distinct (branche g14-r3f) : Scalingo SAS, région osc-fr1 (France), option HDS, certificat HDS n° 38436 (valable jusqu'au 11/09/2028) ; documents et métadonnées chiffrés de bout en bout dans le navigateur (AES-256-GCM, clé dérivée d'une phrase secrète par PBKDF2-SHA256, jamais transmise) puis chiffrés une seconde fois côté serveur ; tickets d'accès signés à usage unique (60 s) ; aucune donnée de ce traitement chez Vercel, Neon, Upstash ou Sentry. Documents de santé : consentement explicite (art. 9.2.a), case jamais pré-cochée, retirable. Fermé tant que l'annexe HDS n'est pas souscrite et HDS_PRODUCTION_APPROVED absent (ligne AIPD R9 signée par le responsable le 24/11/2026)",
+      "evolution_r3": "Service HDS distinct (branche g14-r3f) : Scalingo SAS, région osc-fr1 (France), option HDS, certificat HDS n° 38436 (valable jusqu'au 11/09/2028) ; documents et métadonnées chiffrés de bout en bout dans le navigateur (AES-256-GCM, clé dérivée d'une phrase secrète par PBKDF2-SHA256, jamais transmise) puis chiffrés une seconde fois côté serveur ; tickets d'accès signés à usage unique (60 s) ; aucune donnée de ce traitement chez Vercel, Neon, Upstash ou Sentry. Documents de santé : consentement explicite (art. 9.2.a), case jamais pré-cochée, retirable. Annexe HDS v2.5.0 acceptée en ligne le 22/11/2026 et service HDS déployé le 24/11/2026 ; fermé tant que HDS_PRODUCTION_APPROVED est absent (ligne AIPD R9 signée par le responsable le 24/11/2026)",
       "base_legale_r3": "Art. 6.1.b ; documents de santé : consentement explicite art. 9.2.a, case jamais pré-cochée — notice v14, P28, décidé par le responsable le 24/11/2026",
       "conservation": [
         {
@@ -1412,17 +1412,17 @@
     {
       "nom": "Scalingo SAS (HDS)",
       "role": "Mon Coffre : service séparé qui ne conserve que des documents chiffrés de bout en bout dans le navigateur (branche g14-r3f)",
-      "statut": "prévu (rien de créé ni de souscrit ; annexe HDS à souscrire par le responsable)",
+      "statut": "actif — service HDS déployé le 24/11/2026 (osc-fr1, 2 conteneurs S + PostgreSQL Business 512M) ; Mon Coffre fermé tant que HDS_PRODUCTION_APPROVED est absent",
       "localisation": "France — région osc-fr1",
       "entite_contractante": "Scalingo SAS (France) — certificat HDS n° 38436 (valable jusqu'au 11/09/2028)",
       "mecanisme_transfert": "aucun transfert hors UE",
-      "dpa": "inconnu / non signé",
-      "statut_contrat": "examiné"
+      "dpa": "accepté en ligne — Annexe HDS v2.5.0 de Scalingo, acceptée par le responsable le 22/11/2026 (non signé ; copie CONTROL/v2/scalingo-hds-fr-2_5_0.pdf, sha256 24997f6e…) ; point de contact HDS : le fondateur",
+      "statut_contrat": "accepté"
     },
     {
       "nom": "Scaleway SAS (OpenFisca)",
       "role": "Hébergement de notre moteur de calcul OpenFisca (branche g14-of fusionnée dans la version a628f7b)",
-      "statut": "prévu",
+      "statut": "actif depuis la version a628f7b (24/11/2026)",
       "localisation": "France (Paris, fr-par)",
       "mecanisme_transfert": "aucun transfert hors UE",
       "dpa": "accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément",
