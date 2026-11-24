@@ -143,13 +143,17 @@ describe.skipIf(!hasDatabase)('R3 messaging HDS gate (real DB)', () => {
     expect((await callS(conv.e, P_E, ESSMS)).statusCode).toBe(503);
     expect((await callS(`unknown-${TS}`, P_OK, OK)).statusCode).toBe(404);
   });
-  it('with a valid HDS attestation every conversation is served and files are allowed once messaging.attachments is listed', async () => {
+  // G14-R4b: the messages are stored in Neon, not at the HDS service — a valid HDS attestation no longer widens the conversations (owner decision P29:
+  // NOT_ESSMS + « ordinary » only); the attachments (stored at the HDS service) still follow messaging.attachments inside a served conversation
+  it('with a valid HDS attestation the ESSMS and unreviewed conversations stay closed; attachments follow messaging.attachments in the served one', async () => {
     enforced({ ADA_HDS_CERTIFIED_HOSTING: HDS });
-    expect((await callC('GET', `/conversations/${conv.e}`)).statusCode).toBe(200);
-    expect((await callC('GET', `/conversations/${conv.e}`)).body.item.attachmentsAllowed).toBe(false);   // not listed yet
+    expect((await callC('GET', `/conversations/${conv.e}`)).statusCode).toBe(503);
+    expect((await callC('GET', `/conversations/${conv.unrev}`)).statusCode).toBe(503);
+    expect((await callC('GET', `/conversations/${conv.ok}`)).statusCode).toBe(200);
+    expect((await callC('GET', `/conversations/${conv.ok}`)).body.item.attachmentsAllowed).toBe(false);   // not listed yet
     enforced({ ADA_HDS_CERTIFIED_HOSTING: HDS, ADA_CAPABILITIES_OPEN: 'messaging.conversations,messaging.attachments' });
-    expect((await callC('GET', '/conversations')).body.items).toHaveLength(3);
-    expect((await callC('GET', `/conversations/${conv.e}`)).body.item.attachmentsAllowed).toBe(true);
-    expect((await callP('GET', `/${conv.e}`, P_E, ESSMS)).statusCode).toBe(200);
+    expect((await callC('GET', '/conversations')).body.items).toHaveLength(1);
+    expect((await callC('GET', `/conversations/${conv.ok}`)).body.item.attachmentsAllowed).toBe(true);
+    expect((await callP('GET', `/${conv.e}`, P_E, ESSMS)).statusCode).toBe(503);
   });
 });
