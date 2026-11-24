@@ -1,5 +1,5 @@
 import { Trans } from 'react-i18next';
-import { frontendEnv } from '@/config/env';
+import { errorTrackingActive, frontendEnv } from '@/config/env';
 import i18n, { useT } from '@/i18n';
 import { publicContactEmail } from '@/lib/contactEmail';
 import { Link } from 'react-router-dom';
@@ -18,6 +18,7 @@ export default function BetaProcessingNotice() {
   // R3H (live audit 24/11/2026): with appointments and the citizen assistant opened, this notice still listed both as « not open »
   const rdv = accounts && bookingOpened(true);
   const assistant = assistantOpened(true);
+  const errors = errorTrackingActive();   // R5-S1: Sentry EU (errors only) active in this build — no longer listed as « not open »
   const notice = <Link key="notice" to="/confidentialite/notice" className="underline underline-offset-2" />;
   return (
     <section className="rounded-2xl border border-amber-200 bg-amber-50 p-6 text-amber-950 shadow-sm" aria-labelledby="beta-processing-title" data-testid="beta-processing-notice">
@@ -49,18 +50,34 @@ export default function BetaProcessingNotice() {
               components={[notice]} />
           </li>
         )}
+        {errors && (
+          <li data-testid="beta-errors-on">
+            <Trans i18n={i18n} i18nKey="legal:beta.errors_on" defaults="Le suivi des erreurs techniques (Sentry, données stockées dans l’Union européenne) est actif : quand une erreur se produit, sa description est envoyée sans votre e-mail, votre adresse IP ni ce que vous tapez ; détails dans la <0>politique de confidentialité</0>."
+              components={[<Link key="privacy" to="/politique-confidentialite" className="underline underline-offset-2" />]} />
+          </li>
+        )}
         {email && <li>{t('legal:beta.email', 'Si vous nous écrivez à {{email}}, votre message est reçu dans notre messagerie (Microsoft Outlook) et sert seulement à vous répondre.', { email })}</li>}
       </ul>
       <p className="mt-3 text-sm leading-relaxed">
         {accounts && rdv && assistant
-          ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv_assistant" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+          ? (errors
+                    ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv_assistant_errorsOn" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents et mesure d’audience. Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+                    : <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv_assistant" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />)
           : accounts && rdv
-          ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+          ? (errors
+                    ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv_errorsOn" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, assistant et mesure d’audience. Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+                    : <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_rdv" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />)
           : accounts && assistant
-          ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_assistant" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+          ? (errors
+                    ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_assistant_errorsOn" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous et mesure d’audience. Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+                    : <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_assistant" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />)
           : accounts
-          ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
-          : <Trans i18n={i18n} i18nKey="legal:beta.closed" defaults="Ne sont <strong>pas</strong> ouverts : comptes, dossiers, messages, documents, rendez-vous, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />}
+          ? (errors
+                    ? <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts_errorsOn" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous, assistant et mesure d’audience. Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+                    : <Trans i18n={i18n} i18nKey="legal:beta.closed_accounts" defaults="Ne sont <strong>pas</strong> ouverts : dossiers, messages, documents, rendez-vous, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />)
+          : (errors
+                    ? <Trans i18n={i18n} i18nKey="legal:beta.closed_errorsOn" defaults="Ne sont <strong>pas</strong> ouverts : comptes, dossiers, messages, documents, rendez-vous, assistant et mesure d’audience. Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />
+                    : <Trans i18n={i18n} i18nKey="legal:beta.closed" defaults="Ne sont <strong>pas</strong> ouverts : comptes, dossiers, messages, documents, rendez-vous, assistant, mesure d’audience et suivi des erreurs (Sentry). Les passages de cette page qui les décrivent s’appliqueront à leur ouverture." />)}
       </p>
     </section>
   );

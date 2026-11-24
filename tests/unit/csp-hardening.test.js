@@ -22,9 +22,10 @@ describe('CSP (vercel.json)', () => {
   // script could otherwise send data to any project on those services. Turning one on is a deliberate change of this list (docs/deployment.md).
   // Release 3 (owner 24/11/2026, P28 / AIPD R9): the browser reaches Mon Coffre's HDS service (Scalingo osc-fr1) — exactly that origin, no wildcard;
   // citizen.vault itself stays closed by default (capabilities). The API responses (security.js) keep 'self' only.
-  it('connections: the site itself and the HDS service only, while Sentry and the audience measurement are off', () => {
-    expect(csp['connect-src']).toEqual(["'self'", 'https://ada-hds-strasbourg.osc-fr1.scalingo.io']);
-    expect(readFileSync('api/_services/page-head.js', 'utf8')).toContain("connect-src 'self' https://ada-hds-strasbourg.osc-fr1.scalingo.io;");
+  // R5-S1 (Sentry EU, errors only): the EU ingest wildcard https://*.ingest.de.sentry.io is added — no other Sentry host (tests/unit/sentry-eu-scrub.test.js).
+  it('connections: the site itself, the HDS service and the Sentry EU ingest only, while the audience measurement is off', () => {
+    expect(csp['connect-src']).toEqual(["'self'", 'https://ada-hds-strasbourg.osc-fr1.scalingo.io', 'https://*.ingest.de.sentry.io']);
+    expect(readFileSync('api/_services/page-head.js', 'utf8')).toContain("connect-src 'self' https://ada-hds-strasbourg.osc-fr1.scalingo.io https://*.ingest.de.sentry.io;");
     expect(readFileSync('api/_utils/security.js', 'utf8')).toContain(`"connect-src 'self'",`);
     expect(csp['object-src']).toEqual(["'none'"]);
   });
