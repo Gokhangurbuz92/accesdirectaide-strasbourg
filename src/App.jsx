@@ -7,6 +7,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from "@/lib/queryClient";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { lazy, Suspense } from 'react';
+import lazyWithRetry from '@/lib/lazyWithRetry';
 
 // Lazy-load analytics — not critical for first paint
 const Analytics = lazy(() =>
@@ -15,7 +16,7 @@ const Analytics = lazy(() =>
 const SpeedInsights = lazy(() =>
   import('@vercel/speed-insights/react').then((mod) => ({ default: mod.SpeedInsights }))
 );
-const CookieBanner = lazy(() => import('@/components/CookieBanner'));
+const CookieBanner = lazyWithRetry(() => import('@/components/CookieBanner'));   // R3: mounted on every page, outside the routes
 
 import { MotionConfig } from 'framer-motion';
 import { frontendEnv } from '@/config/env';

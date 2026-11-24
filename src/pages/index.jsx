@@ -1,4 +1,5 @@
-import { Suspense, lazy, Component } from "react";
+import { Suspense, Component } from "react";
+import lazy from "@/lib/lazyWithRetry";   // R3 (QA v79): a lost download of a page's code is tried again before the error screen
 import { BrowserRouter, MemoryRouter, Route, Routes, useLocation, Navigate, useParams } from 'react-router-dom';
 import RedirectKeepingQuery from '@/components/routing/RedirectKeepingQuery';   // FA-D1 (D-FA1-2): a moved path keeps its query
 import ScrollToTop from '@/components/navigation/ScrollToTop';
