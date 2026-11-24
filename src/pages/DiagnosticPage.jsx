@@ -234,7 +234,7 @@ export default function DiagnosticPage() {
                 <title>{t('diagnostic:page.meta_title', 'Simulateur de Droits Sociaux | Accès Direct Aide')}</title>
                 <meta
                     name="description"
-                    content={t('diagnostic:page.meta_description', 'Pré-orientez-vous localement vers certaines aides. Cette simulation est indicative, non-opposable et ne remplace pas une instruction officielle.')}
+                    content={t('diagnostic:page.meta_description_v2', 'Obtenez des pistes d’orientation et une estimation indicative pour certaines aides. Ce calcul n’est ni officiel ni opposable et ne remplace pas l’instruction de votre demande par l’organisme.')}
                 />
             </Helmet>
 
@@ -243,7 +243,8 @@ export default function DiagnosticPage() {
                 <header className="mb-10 text-center">
                     <div role="status" aria-live="polite" data-testid="simulation-mode-badge" className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-1.5 text-xs font-semibold text-blue-700">
                         <Calculator className="h-3.5 w-3.5" aria-hidden="true" />
-                        {t('diagnostic:page.badge', 'Simulation locale — indicative et non-opposable')}
+                        {/* R3H: the answers are sent to the server (privacy notice below) and the amounts come from the self-hosted OpenFisca engine: never « locale » */}
+                        {t('diagnostic:page.badge_v2', 'Estimation indicative — non opposable, ce n’est pas une décision')}
                     </div>
                     <h1 className="mb-3 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
                         {t('diagnostic:page.title', 'Simulateur de Droits Sociaux')}

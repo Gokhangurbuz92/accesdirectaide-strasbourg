@@ -1,7 +1,5 @@
 {
   "page.meta_title": "Social Rights Simulator | Accès Direct Aide",
-  "page.meta_description": "Get a local pre-orientation towards some social support schemes. This simulation is only indicative, is not an official decision and does not replace the official processing of an application.",
-  "page.badge": "Local simulation — indicative only, not an official decision",
   "page.title": "Social Rights Simulator",
   "page.intro": "Get unofficial orientation leads towards some social support schemes.",
   "form.title": "My situation",
@@ -311,5 +309,7 @@
   "estimate.withheld.commune_outside": "No amount: housing aid is estimated here only for the municipalities of the Eurométropole de Strasbourg (the amount depends on the municipality). Your CAF calculates it for your municipality.",
   "official.amounts_note": "Amounts and ceilings: only those on the official page count, at the date it shows. ADA does not use them for the result above.",
   "official.owner_reviewed": "Rule reviewed by the ADA team from these official pages (not by an independent expert). The organisation decides.",
-  "item.verify_with_body": "To be checked with the competent organisation."
+  "item.verify_with_body": "To be checked with the competent organisation.",
+  "page.badge_v2": "Indicative estimate — not binding, not a decision",
+  "page.meta_description_v2": "Get leads and an indicative estimate for some social support schemes. This calculation is neither official nor binding and does not replace the processing of your application by the organisation."
 }

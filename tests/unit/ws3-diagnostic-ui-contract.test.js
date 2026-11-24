@@ -15,7 +15,7 @@ describe('WS3 diagnostic UI contract', () => {
         expect(source).toContain('data-testid="simulation-mode-badge"');
         expect(source).toContain('role="status"');
         expect(source).toContain('aria-live="polite"');
-        expect(source).toContain('Simulation locale — indicative et non-opposable');
+        expect(source).toContain('Estimation indicative — non opposable, ce n’est pas une décision');   // R3H (24/11/2026): the answers go to the server and OpenFisca — « Simulation locale » was untrue
         expect(source).toContain(disclaimer);
         expect(source).toContain('role="alert"');
         expect(source).toContain('aria-live="assertive"');

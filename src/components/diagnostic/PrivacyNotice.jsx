@@ -1,6 +1,8 @@
 // @ts-nocheck
 import { Link } from 'react-router-dom';
 import { useT } from '@/i18n';
+import { frontendEnv } from '@/config/env';
+import { shareOpened } from '@/lib/publicBeta';
 
 /**
  * Provisional LAB wording (owner-supplied proposal, NOT legal approval; release gate for legal basis / retention / notice stays OPEN).
@@ -37,16 +39,20 @@ export const PRIVACY_TEXT = Object.freeze({ ...privacyText(french), falc: Object
 export default function PrivacyNotice() {
     const { t } = useT('diagnostic');
     const text = privacyText(t);
+    // R3H (live audit 24/11/2026): the sentences about sharing the diagnostic with a structure are shown only when this build offers the sharing (« documents »
+    // surface, the same switch as the « Partager » button of DiagnosticOutcome); otherwise they described a step nobody can take
+    const sharing = shareOpened(frontendEnv.flags.publicBeta);
+    const falc = sharing ? text.falc : text.falc.filter((_l, i) => i !== 2 && i !== 3);
     return (
         <section aria-labelledby="diag-privacy-title" data-testid="privacy-notice" className="mx-auto max-w-xl text-start text-sm text-slate-800">
             <h2 id="diag-privacy-title" className="text-sm font-bold text-slate-900">{text.title}</h2>
             <p className="mt-1">{text.p1}</p>
-            <p className="mt-2" data-testid="privacy-sharing-sentence">{text.p2}</p>
+            {sharing && <p className="mt-2" data-testid="privacy-sharing-sentence">{text.p2}</p>}
             <p className="mt-2" data-testid="privacy-browser-sentence">{text.p3}</p>
             <details className="mt-2">
                 <summary className="min-h-11 cursor-pointer py-2 font-semibold text-indigo-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600">{text.falcTitle}</summary>
                 <ul className="mt-1 list-disc space-y-1 ps-5">
-                    {text.falc.map((l) => <li key={l}>{l}</li>)}
+                    {falc.map((l) => <li key={l}>{l}</li>)}
                 </ul>
             </details>
             <p className="mt-1">

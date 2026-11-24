@@ -41,7 +41,7 @@ afterEach(async () => { cleanup(); vi.unstubAllGlobals(); await act(async () => 
 describe('French: the former text, exactly', () => {
   it('the page, the form and the result keep their French wording; the legal notice has no summary in French', async () => {
     render(wrap(h(DiagnosticPage)));
-    for (const s of ['Simulateur de Droits Sociaux', 'Obtenez des pistes d\'orientation, non officielles, vers certaines aides sociales.', 'Simulation locale — indicative et non-opposable',
+    for (const s of ['Simulateur de Droits Sociaux', 'Obtenez des pistes d\'orientation, non officielles, vers certaines aides sociales.', 'Estimation indicative — non opposable, ce n’est pas une décision',
       'Choisissez une tranche d\'âge si vous ne souhaitez pas donner votre date de naissance. Un seul des deux suffit.', 'Hébergé(e) gratuitement', 'Sans emploi / Recherche',
       'Cette simulation est indicative et non-opposable. Seule une instruction officielle par l\'organisme compétent (CAF, CPAM, Département) a valeur légale.',
       'Complétez les informations à gauche pour obtenir des pistes d\'orientation (RSA, APL, FAJ\'EMS…). Ce n\'est pas une décision.']) expect(document.body.textContent).toContain(s);

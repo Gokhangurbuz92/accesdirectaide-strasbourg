@@ -1,7 +1,5 @@
 {
   "page.meta_title": "Sosyal Haklar Simülatörü | Accès Direct Aide",
-  "page.meta_description": "Bazı yardımlar için yerel bir ön yönlendirme alın. Bu simülasyon yalnızca bilgi amaçlıdır, resmî bir karar değildir ve bir başvurunun resmî olarak incelenmesinin yerini tutmaz.",
-  "page.badge": "Yerel simülasyon — yalnızca bilgi amaçlı, resmî bir karar değildir",
   "page.title": "Sosyal Haklar Simülatörü",
   "page.intro": "Bazı sosyal yardımlar için resmî olmayan yönlendirme önerileri alın.",
   "form.title": "Durumum",
@@ -311,5 +309,7 @@
   "estimate.withheld.commune_outside": "Tutar yok: konut yardımı burada yalnızca Eurométropole de Strasbourg belediyeleri için tahmin edilir (tutar belediyeye bağlıdır). CAF’ınız bunu belediyeniz için hesaplar.",
   "official.amounts_note": "Tutarlar ve tavanlar: Yalnızca resmî sayfadakiler, sayfada belirtilen tarih itibarıyla geçerlidir. ADA bunları yukarıdaki sonuç için kullanmaz.",
   "official.owner_reviewed": "Kural, ADA ekibi tarafından bu resmî sayfalara dayanarak incelendi (bağımsız bir uzman tarafından değil). Kararı yetkili kurum verir.",
-  "item.verify_with_body": "Yetkili kurumla doğrulanmalıdır."
+  "item.verify_with_body": "Yetkili kurumla doğrulanmalıdır.",
+  "page.badge_v2": "Bilgi amaçlı tahmin — bağlayıcı değildir, bir karar değildir",
+  "page.meta_description_v2": "Bazı yardımlar için yönlendirme ve bilgi amaçlı bir tahmin alın. Bu hesaplama resmî ya da bağlayıcı değildir ve başvurunuzun kurum tarafından incelenmesinin yerini tutmaz."
 }
