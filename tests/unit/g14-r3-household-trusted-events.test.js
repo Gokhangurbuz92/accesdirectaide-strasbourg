@@ -148,9 +148,12 @@ const NOTICE_ADDED = ['booking.external_v14', 'institutions.p1_v14', 'institutio
   'processors.i4_v14', 'processors.scalingo_v14', 'purposes.p24_v14', 'purposes.p25_v14', 'purposes.p26_v14', 'purposes.p27_v14', 'purposes.p28_v14', 'purposes.p29_v14',
   'recipients.legal_protection_v14', 'recipients.messaging_v14', 'recipients.partners_v14', 'recipients.trusted_v14',
   'retention.delegations_v14', 'retention.guardians_v14', 'retention.household_v14', 'retention.i14_v14', 'retention.legal_protection_v14', 'retention.messaging_v14', 'retention.vault_v14',
-  'rights.legal_protection_v14', 'rights.r3_v14', 'rights.vault_v14'];   // + G14-R3G (P27); + release-3 follow-up (P28 Mon Coffre HDS, P29 messaging, partners, external booking, § 14 institutions)
+  'rights.legal_protection_v14', 'rights.r3_v14', 'rights.vault_v14',
+  // editorial adjustment of 24/11/2026: the v12 events / testimonials / stories / « Signaler un contenu » texts made conditional (see the last describe)
+  'moderation.p1_v14', 'moderation.p2_v14', 'participation.events_v14', 'participation.stories_v14', 'participation.testimonials_v14',
+  'retention.content_v14', 'retention.events_v14', 'retention.notices_v14'].sort();   // + G14-R3G (P27); + release-3 follow-up (P28 Mon Coffre HDS, P29 messaging, partners, external booking, § 14 institutions)
 const CGU_ADDED = ['account.household_v13', 'account.i1_v13', 'account.legal_protection_v13', 'account.trusted_v13', 'account.vault_v13', 'appointments.external_v13', 'appointments.messaging_v13',
-  'appointments.p1_v13', 'appointments.p2_v13', 'appointments.p3_v13', 'appointments.p5_v13', 'appointments.title_v13', 'use.i3_v13'];
+  'appointments.p1_v13', 'appointments.p2_v13', 'appointments.p3_v13', 'appointments.p5_v13', 'appointments.title_v13', 'publishing.i1_v13', 'publishing.i5_v13', 'use.i3_v13'];
 const LANGS = ['en', 'de', 'tr', 'ar', 'uk'];
 const OPEN_R2 = 'cgu-citoyen@v12-2026-11-23,notice-confidentialite@v13-2026-11-23,cgu-professionnel@v10-2026-11-23,conditions-structures@v9-2026-11-23';
 const OPEN_R3 = 'cgu-citoyen@v13-2026-11-24,notice-confidentialite@v14-2026-11-24,cgu-professionnel@v10-2026-11-23,conditions-structures@v9-2026-11-23';
@@ -171,7 +174,8 @@ describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026
   it('notice v14 = notice v13 + exactly the release-3 keys; nothing of v13 is removed except the two replaced items', () => {
     const a = keys(n13); const b = keys(n14);
     expect(Object.keys(b).filter((k) => a[k] !== b[k]).sort()).toEqual(NOTICE_ADDED);
-    expect(Object.keys(a).filter((k) => !(k in b)).sort()).toEqual(['processors.i4_v13', 'retention.i14_v13']);
+    expect(Object.keys(a).filter((k) => !(k in b)).sort()).toEqual(['moderation.p1_v12', 'moderation.p2_v12', 'participation.events_v12', 'participation.stories_v12', 'participation.testimonials_v12',
+      'processors.i4_v13', 'retention.content_v12', 'retention.events_v12', 'retention.i14_v13', 'retention.notices_v12']);
     expect(b['retention.i14_v14']).toBe(a['retention.i14_v13'].replace(', membres du foyer', ''));
     expect(b['processors.i4_v14']).toBe(a['processors.i4_v13'].replace('avis du compte, invitations et avis', 'avis du compte, invitations des personnes de confiance, invitations et avis'));
     const ks = Object.values(n14.sections.find((/** @type {any} */ s) => s.id === 'purposes').itemKeys);
@@ -186,7 +190,7 @@ describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026
     const changed = Object.keys(b).filter((k) => a[k] !== b[k]).sort();
     // the unchanged items of § 7 now carry their explicit default key (i1, i2): same key, same text
     expect(changed).toEqual(CGU_ADDED);
-    expect(Object.keys(a).filter((k) => !(k in b)).sort()).toEqual(['account.i1', 'appointments.p1', 'appointments.p2', 'appointments.p3', 'appointments.p5', 'appointments.title', 'use.i3']);
+    expect(Object.keys(a).filter((k) => !(k in b)).sort()).toEqual(['account.i1', 'appointments.p1', 'appointments.p2', 'appointments.p3', 'appointments.p5', 'appointments.title', 'publishing.i1_v12', 'publishing.i5_v12', 'use.i3']);
     expect(b['appointments.p4']).toBe(a['appointments.p4']);
     expect(b['account.trusted_v13']).toMatch(/Si vous êtes la personne de confiance, vous utilisez cet accès seulement pour aider/);
     for (const k of CGU_ADDED) expect(b[k], k).not.toMatch(/sera ouverte|pas encore ouverts\)|lorsqu'elle sera ouverte/);
@@ -250,5 +254,31 @@ describe('G14-R3 release preflight — the three account modules need the releas
     expect(check({ ...R3, VITE_LEGAL_DOCS_APPROVED_VERSION: OPEN_R2 }).status).toBe('FAIL');
     expect(check({ ...R3, VITE_LEGAL_DOCS_APPROVED_VERSION: OPEN_R3 }).status).toBe('PASS');
     expect(check({ ...R2, VITE_LEGAL_DOCS_APPROVED_VERSION: OPEN_R2 })).toBeUndefined();
+  });
+});
+
+describe('editorial adjustment of 24/11/2026 — v14 / v13 describe the closed X04 / X02 / X01 surfaces and « Signaler un contenu » conditionally, nothing else changes', () => {
+  const A = { 'participation.events_v14': 'participation.events_v12', 'participation.testimonials_v14': 'participation.testimonials_v12', 'participation.stories_v14': 'participation.stories_v12',
+    'retention.events_v14': 'retention.events_v12', 'retention.content_v14': 'retention.content_v12', 'retention.notices_v14': 'retention.notices_v12',
+    'moderation.p1_v14': 'moderation.p1_v12', 'moderation.p2_v14': 'moderation.p2_v12' };
+  const strip = (/** @type {string} */ t) => t.replace(/ \(lorsque (cette fonction est ouverte|ces fonctions sont ouvertes)\)|, lorsque (cette fonction est ouverte|ces fonctions sont ouvertes)/, '');
+  it('each text = its v12 text + only the conditional phrase (no basis, duration or right changed), French', () => {
+    const a = keys(n13); const b = keys(n14); const ca = keys(c12); const cb = keys(c13);
+    for (const [k, base] of Object.entries(A)) { expect(b[k], k).toMatch(/lorsque (cette fonction est ouverte|ces fonctions sont ouvertes)/); expect(strip(b[k]), k).toBe(a[base]); }
+    for (const [k, base] of [['publishing.i1_v13', 'publishing.i1_v12'], ['publishing.i5_v13', 'publishing.i5_v12']]) {
+      expect(cb[k], k).toMatch(/lorsque (cette fonction est ouverte|ces fonctions sont ouvertes)/); expect(strip(cb[k]), k).toBe(ca[base]);
+    }
+  });
+  it('translated in the five other languages, each = its v12 translation + one added phrase', () => {
+    const all = { ...Object.fromEntries(Object.entries(A).map(([k, v]) => [`privacyNotice.${k}`, `privacyNotice.${v}`])),
+      'cguCitoyen.publishing.i1_v13': 'cguCitoyen.publishing.i1_v12', 'cguCitoyen.publishing.i5_v13': 'cguCitoyen.publishing.i5_v12' };
+    for (const lang of LANGS) {
+      const loc = JSON.parse(readFileSync(`src/i18n/locales/${lang}/legaldraft.json`, 'utf8'));
+      for (const [k, base] of Object.entries(all)) {
+        expect(typeof loc[k], `${lang} ${k}`).toBe('string');
+        expect(loc[k].length - loc[base].length, `${lang} ${k}`).toBeGreaterThan(8);
+        expect(loc[k].length - loc[base].length, `${lang} ${k}`).toBeLessThan(45);
+      }
+    }
   });
 });
