@@ -140,7 +140,7 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
 
   it('G14 owner legal approval (23/11/2026): P18, P19, P20 and the social referrals carry decided bases and durations; Cloudflare DPA v6.4 accepted online', () => {
     const t = (/** @type {string} */ id) => registre.traitements.find((x) => x.id === id);
-    expect(registre.version).toBe('0.7');   // G14-R3 (24/11/2026): T29–T32
+    expect(registre.version).toBe('0.8');   // G14-R3 (24/11/2026): T29–T32; 0.8 = Release 3 owner approval (24/11/2026)
     expect(t('T02').base_legale_g14).toMatch(/P18 : intérêt légitime .*\(art\. 6\.1\.f\) — décidé par le responsable le 23\/11\/2026$/);
     expect(t('T02').base_legale_proposee).toMatch(/^Intérêt légitime .*P18, décidé par le responsable le 23\/11\/2026$/);
     expect(t('T08').base_legale_proposee).toMatch(/P19, décidé par le responsable le 23\/11\/2026$/);

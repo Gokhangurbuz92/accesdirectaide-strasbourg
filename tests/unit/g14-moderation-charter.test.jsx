@@ -79,7 +79,7 @@ describe('legal notice: DSA single point of contact', () => {
 describe('moderation cases: retention decided 23/11/2026, not approved', () => {
   const sqlText = (/** @type {any} */ q) => JSON.stringify(q?.queryChunks ?? q);
   it('two steps on MODERATION_CASE_CLOSED_DAYS (365), decided, not approved; the policy version moves to g14-expansion-2', () => {
-    expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
+    expect(RETENTION_POLICY.version).toBe('g14-r3-2026-11-24-a7-365d');   // R3 (owner 24/11/2026): a new version for the release-3 durations; these durations unchanged
     expect(RETENTION_POLICY.durations.MODERATION_CASE_CLOSED_DAYS.days).toBe(365);
     const steps = expansionSteps({ heldSql: () => 'HELD', personProtectedSql: () => 'PROTECTED' });
     expect(steps.length).toBe(28);   // g14-r2: 25 + the 2 moderation-case steps + G14-PS socialReferralsClosedDeleted (decided by the owner 23/11/2026)

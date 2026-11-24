@@ -1,13 +1,13 @@
 /**
  * G14-R3G (24/11/2026, release-3 package) — the representative of a protected adult (tutelle, curatelle, habilitation familiale, mandat spécial; a relative
- * or an MJPM). PROPOSED, not approved. Covers, without a database:
+ * or an MJPM). APPROVED by the owner on 24/11/2026 (OWNER_VALIDATED, not a lawyer's review). Covers, without a database:
  *   - the narrow gate: ADA_BETA_ACCOUNTS_EXTRA=legal_protection + ADA_CAPABILITIES_OPEN=citizen.legal_protection, closed by default; routes and screens;
  *   - the law as data: which measure carries which mode, who can hold it, the longest end date (Code civil art. 439, 441, 442, 494-1, 494-6; CASF L471-1
  *     and L471-2, read on Légifrance 24/11/2026), the areas a decision can cover;
  *   - the powers: ACT only for tutelle / habilitation générale en représentation, CONFIRM otherwise; nothing before VERIFIED, nothing after validUntil
  *     or while SUSPENDED;
  *   - the pending migration 0064 (not in the journal: the guard stays green) and its constraints;
- *   - the proposed durations and purge steps (never executable), the preflight check, the notice v14 P27 / cgu v13 texts (figures = code, six
+ *   - the decided durations and purge steps (executable only once approved), the preflight check, the notice v14 P27 / cgu v13 texts (figures = code, six
  *     languages), the register line T33, the « mode accompagnant » role.
  */
 import { readFileSync } from 'node:fs';
@@ -22,7 +22,7 @@ const { CAPABILITIES, capabilityState, capabilitiesOfRoute } = await import('../
 const { isBetaRestrictedPath, ACCOUNTS_EXTRA_SCREENS } = await import('../../src/lib/publicBeta.js');
 const LP = await import('../../api/_services/legal-protection.js');
 const { HELPER_ROLES } = await import('../../api/_services/assisted-mode.js');
-const { RETENTION_POLICY, R3_PROPOSAL, stepApprovalProblem } = await import('../../api/_services/retention-policy.js');
+const { RETENTION_POLICY, R3_DECISION, stepApprovalProblem } = await import('../../api/_services/retention-policy.js');
 const { PURGE_STEPS, legalProtectionStaleWhere, legalProtectionRejectedWhere, legalProtectionEndedWhere } = await import('../../api/_handlers/cron/gdpr-purge.js');
 const L = await import('../../src/config/legal-drafts.js');
 const { claimsEntitlement } = await import('../../api/lib/entitlementWording.js');
@@ -169,24 +169,27 @@ describe('G14-R3G migration 0064 — in the journal after 0063 (release 3 integr
   });
 });
 
-describe('G14-R3G durations and purge steps — PROPOSED, never executable', () => {
+describe('G14-R3G durations and purge steps — decided by the owner 24/11/2026, executable only once approved', () => {
   const D = RETENTION_POLICY.durations;
   const ids = ['legalProtectionStaleDeclarationsDeleted', 'legalProtectionRejectedDeleted', 'legalProtectionEndedDeleted'];
-  it('three durations « à approuver »; the policy version unchanged', () => {
-    expect(D.LEGAL_PROTECTION_DECLARED_STALE_DAYS).toMatchObject({ days: 90, ecode: 'C23', pendingApproval: R3_PROPOSAL });
-    expect(D.LEGAL_PROTECTION_REJECTED_DAYS).toMatchObject({ days: 90, ecode: 'C23', pendingApproval: R3_PROPOSAL });
-    expect(D.LEGAL_PROTECTION_ENDED_DAYS).toMatchObject({ days: 365, ecode: 'C23', pendingApproval: R3_PROPOSAL });
-    expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
+  it('three durations decided on 24/11/2026 (no pendingApproval); the new policy version; special review 365 days', () => {
+    expect(D.LEGAL_PROTECTION_DECLARED_STALE_DAYS).toMatchObject({ days: 90, ecode: 'C23', decidedOn: '2026-11-24', basis: R3_DECISION });
+    expect(D.LEGAL_PROTECTION_REJECTED_DAYS).toMatchObject({ days: 90, ecode: 'C23', decidedOn: '2026-11-24', basis: R3_DECISION });
+    expect(D.LEGAL_PROTECTION_ENDED_DAYS).toMatchObject({ days: 365, ecode: 'C23', decidedOn: '2026-11-24', basis: R3_DECISION });
+    for (const k of ['LEGAL_PROTECTION_DECLARED_STALE_DAYS', 'LEGAL_PROTECTION_REJECTED_DAYS', 'LEGAL_PROTECTION_ENDED_DAYS']) expect(D[k].pendingApproval, k).toBeUndefined();
+    expect(RETENTION_POLICY.version).toBe('g14-r3-2026-11-24-a7-365d');
     expect(LP.SPECIAL_REVIEW_DAYS).toBe(365);
   });
-  it('the steps stay refused even with a complete approval record; their SQL keeps held rows and protected persons', () => {
+  it('the steps are refused without an approval record, accepted with a complete one; their SQL keeps held rows and protected persons', () => {
     const rec = { approvedOn: '2026-11-24', dryRunReviewedOn: '2026-11-24', backupVerified: 'synthetic backup proof' };
     const withRecords = { ...RETENTION_POLICY, approvedSteps: { ...RETENTION_POLICY.approvedSteps, ...Object.fromEntries(ids.map((i) => [i, rec])) } };
     for (const id of ids) {
       const step = PURGE_STEPS.find((s) => s.id === id);
       expect(step, id).toMatchObject({ kind: 'delete', table: 'LegalProtectionMandate' });
       expect(step.tables).toContain('LegalProtectionMandate');
-      expect(stepApprovalProblem(withRecords, step), id).toBe('DURATION_PENDING_APPROVAL');
+      expect(stepApprovalProblem(RETENTION_POLICY, step), id).toBe('STEP_NOT_APPROVED_IN_POLICY');
+      expect(RETENTION_POLICY.decidedSteps[id], id).toMatchObject({ decidedOn: '2026-11-24' });
+      expect(stepApprovalProblem(withRecords, step), id).toBeNull();
     }
     const d = new PgDialect(); const q = (/** @type {any} */ w) => d.sqlToQuery(w).sql; const at = new Date('2026-01-01T00:00:00Z');
     const a = q(legalProtectionStaleWhere(at)); const b = q(legalProtectionRejectedWhere(at)); const c = q(legalProtectionEndedWhere(at));
@@ -208,6 +211,7 @@ describe('G14-R3G texts — notice v14 P27 and cgu v13 (same draft versions, ext
     for (const w of ['n\'est ni envoyée ni conservée', 'intelligence artificielle', 'aucun certificat médical', 'n\'ouvre aucun accès', 'jusqu\'à la date de fin',
       'sans les étapes sensibles', 'Mon Coffre', 'suspendu', 'forme chiffrée', 'mandataire judiciaire à la protection des majeurs']) expect(p, w).toContain(w);
     expect(p).toMatch(/Base : intérêt légitime \(art\. 6, 1, f\)/);
+    expect(p).toMatch(/donnée concernant la santé, son enregistrement repose aussi sur l'art\. 9, 2, f \(constatation, exercice ou défense d'un droit en justice\)\.$/);   // owner 24/11/2026
     expect(n14['purposes.p25_v14']).toMatch(/se déclare à part \(P27\)/);
     expect(n14['purposes.p25_v14']).not.toMatch(/la vérification de ces mesures n'existe pas/);
   });
@@ -236,12 +240,14 @@ describe('G14-R3G texts — notice v14 P27 and cgu v13 (same draft versions, ext
 });
 
 describe('G14-R3G register line T33 and release preflight', () => {
-  it('T33: proposed, durations « non appliqué », the art. 9 question open, no claim of review', () => {
+  it('T33: decided 24/11/2026, durations « non appliqué » (no step approved), art. 9.2.f, no claim of review', () => {
     const reg = JSON.parse(readFileSync('REGISTRE_RGPD.json', 'utf8'));
     const t = reg.traitements.find((/** @type {any} */ x) => x.id === 'T33');
     expect(t.nom).toMatch(/majeur protégé/);
-    expect(t.base_legale_proposee).toMatch(/à valider par le responsable/); expect(t.base_legale_proposee).toMatch(/art\. 9/);
-    for (const c of t.conservation.filter((/** @type {any} */ x) => /PROPOSÉE/.test(x.description))) expect(c.statut).toBe('non appliqué');
+    expect(t.base_legale_proposee).toMatch(/décidé par le responsable le 24\/11\/2026/); expect(t.base_legale_proposee).toMatch(/art\. 9\.2\.f/);
+    expect(JSON.stringify(t)).not.toMatch(/à valider|PROPOSÉE|à approuver|question ouverte/);
+    const decided = t.conservation.filter((/** @type {any} */ x) => /décidée par le responsable le 24\/11\/2026/.test(x.description));
+    expect(decided).toHaveLength(3); for (const c of decided) expect(c.statut).toBe('non appliqué');
     expect(t.mesures_securite).toMatch(/jamais reçue ni stockée/);
     expect(JSON.stringify(t)).not.toMatch(/avocat|juriste a validé|expert a validé|approuvé par le responsable/);
   });

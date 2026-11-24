@@ -1,11 +1,11 @@
 /**
  * G14-R3 (24/11/2026, founder's yes to preparing the release-3 package) — « Mon foyer » (C03), the minor ↔ legal guardian link in its guarded form (C05),
- * the trusted persons (C23) and the Académie / events (X04). PROPOSED, not approved. Covers:
+ * the trusted persons (C23) and the Académie / events (X04). APPROVED by the owner on 24/11/2026 (OWNER_VALIDATED, not a lawyer's review). Covers:
  *   - the narrow gate: ADA_BETA_ACCOUNTS_EXTRA=household,guardians,delegations opens exactly these routes and capabilities (each still named in
  *     ADA_CAPABILITIES_OPEN), where ADA_BETA_ACCOUNTS_SCOPE=full would also open favourites / history / shares / referrals routes and the optional profile
  *     fields (age band, département — Release B minimisation);
  *   - the guardian guard: no NEW link while minors' own accounts are closed (MINOR_ACCOUNTS_CLOSED), enforced wherever capabilities are enforced;
- *   - the proposed durations and purge steps of C23 / C05 (pendingApproval: never executable);
+ *   - the durations and purge steps of C23 / C05, decided 24/11/2026 (decided, not approved: each step needs its own approval record);
  *   - notice-confidentialite v14-2026-11-24 and cgu-citoyen v13-2026-11-24: exact differences with their bases, figures = code, six languages, drafts until
  *     VITE_LEGAL_DOCS_APPROVED_VERSION names them;
  *   - the register lines T29–T32.
@@ -24,7 +24,7 @@ const { optionalProfileFieldsOpen } = await import('../../api/_utils/profile-min
 const { isBetaRestrictedPath, ACCOUNTS_EXTRA_SCREENS } = await import('../../src/lib/publicBeta.js');
 const { MINOR_ACCOUNTS_CLOSED } = await import('../../api/_services/guardianship.js');
 const guardiansHandler = (await import('../../api/_handlers/citizen/guardians.js')).default;
-const { RETENTION_POLICY, R3_PROPOSAL, stepApprovalProblem } = await import('../../api/_services/retention-policy.js');
+const { RETENTION_POLICY, R3_DECISION, stepApprovalProblem } = await import('../../api/_services/retention-policy.js');
 const { PURGE_STEPS, delegationInvitationsExpiredWhere, delegationsEndedWhere, guardianLinksRevokedWhere } = await import('../../api/_handlers/cron/gdpr-purge.js');
 const L = await import('../../src/config/legal-drafts.js');
 const { claimsEntitlement } = await import('../../api/lib/entitlementWording.js');
@@ -107,25 +107,26 @@ describe('G14-R3 guardian guard — no new link while minors’ accounts are clo
   });
 });
 
-describe('G14-R3 durations and purge steps — PROPOSED, never executable while pending', () => {
+describe('G14-R3 durations and purge steps — decided by the owner 24/11/2026, executable only once each step is approved', () => {
   const D = RETENTION_POLICY.durations;
   const ids = ['delegationInvitationsExpiredDeleted', 'delegationsEndedDeleted', 'guardianLinksRevokedDeleted'];
-  it('three durations proposed, marked « à approuver », the policy version unchanged', () => {
-    expect(D.DELEGATION_INVITATION_EXPIRED_DAYS).toMatchObject({ days: 30, ecode: 'C23', pendingApproval: R3_PROPOSAL });
-    expect(D.DELEGATION_ENDED_DAYS).toMatchObject({ days: 365, ecode: 'C23', pendingApproval: R3_PROPOSAL });
-    expect(D.GUARDIAN_LINK_REVOKED_DAYS).toMatchObject({ days: 30, ecode: 'C05', pendingApproval: R3_PROPOSAL });
-    expect(R3_PROPOSAL).toMatch(/^À APPROUVER/);
-    expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
-    for (const id of ids) expect(RETENTION_POLICY.decidedSteps[id], id).toBeUndefined();
+  it('three durations decided on 24/11/2026 (no « à approuver » mark), a new policy version', () => {
+    expect(D.DELEGATION_INVITATION_EXPIRED_DAYS).toMatchObject({ days: 30, ecode: 'C23', decidedOn: '2026-11-24', basis: R3_DECISION });
+    expect(D.DELEGATION_ENDED_DAYS).toMatchObject({ days: 365, ecode: 'C23', decidedOn: '2026-11-24', basis: R3_DECISION });
+    expect(D.GUARDIAN_LINK_REVOKED_DAYS).toMatchObject({ days: 30, ecode: 'C05', decidedOn: '2026-11-24', basis: R3_DECISION });
+    for (const k of ['DELEGATION_INVITATION_EXPIRED_DAYS', 'DELEGATION_ENDED_DAYS', 'GUARDIAN_LINK_REVOKED_DAYS']) expect(D[k].pendingApproval, k).toBeUndefined();
+    expect(RETENTION_POLICY.version).toBe('g14-r3-2026-11-24-a7-365d');
+    for (const id of ids) { expect(RETENTION_POLICY.decidedSteps[id], id).toMatchObject({ decidedOn: '2026-11-24' }); expect(RETENTION_POLICY.approvedSteps[id], id).toBeUndefined(); }
   });
-  it('the steps exist and stay refused even with a complete approval record', () => {
+  it('the steps exist; refused without an approval record, accepted with a complete one', () => {
     const rec = { approvedOn: '2026-11-24', dryRunReviewedOn: '2026-11-24', backupVerified: 'synthetic backup proof' };
     const withRecords = { ...RETENTION_POLICY, approvedSteps: { ...RETENTION_POLICY.approvedSteps, ...Object.fromEntries(ids.map((i) => [i, rec])) } };
     for (const id of ids) {
       const step = PURGE_STEPS.find((s) => s.id === id);
       expect(step, id).toBeTruthy();
       expect(step.kind).toBe('delete');
-      expect(stepApprovalProblem(withRecords, step), id).toBe('DURATION_PENDING_APPROVAL');
+      expect(stepApprovalProblem(RETENTION_POLICY, step), id).toBe('STEP_NOT_APPROVED_IN_POLICY');
+      expect(stepApprovalProblem(withRecords, step), id).toBeNull();
     }
   });
   it('SQL: the anchors and the safeguards (legal hold, restriction, open request) of each step', () => {
@@ -154,12 +155,12 @@ const LANGS = ['en', 'de', 'tr', 'ar', 'uk'];
 const OPEN_R2 = 'cgu-citoyen@v12-2026-11-23,notice-confidentialite@v13-2026-11-23,cgu-professionnel@v10-2026-11-23,conditions-structures@v9-2026-11-23';
 const OPEN_R3 = 'cgu-citoyen@v13-2026-11-24,notice-confidentialite@v14-2026-11-24,cgu-professionnel@v10-2026-11-23,conditions-structures@v9-2026-11-23';
 
-describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026-11-24 (PROPOSED)', () => {
+describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026-11-24 (approved by the owner 24/11/2026)', () => {
   it('versions, order, status: drafts until the build names them; release 2 value keeps v13 / v12', () => {
     expect([L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_R3_CGU]).toEqual(['v14-2026-11-24', 'v13-2026-11-24']);
     expect([...L.LEGAL_DRAFT_VERSIONS].slice(-3)).toEqual([L.LEGAL_DRAFTS_R3_CGU, L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_PRO_V11]);   // + cgu-professionnel v11 (release-3 follow-up)
-    expect(L.LEGAL_DRAFTS_R3_STATUS).toMatch(/^DRAFT — proposée le 24\/11\/2026, en attente de l’approbation du responsable/);
-    expect(L.LEGAL_DRAFTS_R3_STATUS).not.toMatch(/avocat|expert|approuvée le/);
+    expect(L.LEGAL_DRAFTS_R3_STATUS).toMatch(/^APPROVED — approuvée le 24\/11\/2026 par le responsable/);
+    expect(L.LEGAL_DRAFTS_R3_STATUS).not.toMatch(/avocat|expert|proposée|en attente/);
     expect(L.latestDraftVersionOf(N)).toBe('v14-2026-11-24'); expect(L.latestDraftVersionOf(C)).toBe('v13-2026-11-24');
     expect(L.approvedVersionOf(N, OPEN_R2)).toBe('v13-2026-11-23'); expect(L.approvedVersionOf(C, OPEN_R2)).toBe('v12-2026-11-23');
     expect(L.approvedVersionOf(N, OPEN_R3)).toBe('v14-2026-11-24'); expect(L.approvedVersionOf(C, OPEN_R3)).toBe('v13-2026-11-24');
@@ -191,7 +192,7 @@ describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026
     for (const k of CGU_ADDED) expect(b[k], k).not.toMatch(/sera ouverte|pas encore ouverts\)|lorsqu'elle sera ouverte/);
   });
 
-  it('figures = code: household 12 / 30 characters, invitation 7 days, durations 30 / 90 / 180 / 365, proposed retention 30 days / 12 months / 30 days', () => {
+  it('figures = code: household 12 / 30 characters, invitation 7 days, durations 30 / 90 / 180 / 365, decided retention 30 days / 12 months / 30 days', () => {
     const b = keys(n14);
     expect(MAX_HOUSEHOLD).toBe(12); expect(HOUSEHOLD_RELATIONS).toEqual(['partner', 'child', 'parent', 'sibling', 'other']);
     expect(b['purposes.p24_v14']).toMatch(/12 au plus/); expect(b['purposes.p24_v14']).toMatch(/30 caractères au plus/);
@@ -228,13 +229,14 @@ describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026
 describe('G14-R3 register lines T29–T32', () => {
   const reg = JSON.parse(readFileSync('REGISTRE_RGPD.json', 'utf8'));
   const t = (/** @type {string} */ id) => reg.traitements.find((x) => x.id === id);
-  it('household, guardian link (restricted), trusted persons, events; proposed durations said « non appliqué » and « à approuver »', () => {
-    expect(reg.version).toBe('0.7');
+  it('household, guardian link (restricted), trusted persons, events; decided durations still « non appliqué » (no step approved)', () => {
+    expect(reg.version).toBe('0.8');
     expect(t('T29').nom).toMatch(/Mon foyer/); expect(t('T30').nom).toMatch(/représentant légal/); expect(t('T31').nom).toMatch(/Personnes de confiance/); expect(t('T32').nom).toMatch(/événements/);
     expect(t('T30').statut).toMatch(/MINOR_ACCOUNTS_CLOSED/);
-    for (const id of ['T30', 'T31']) for (const c of t(id).conservation.filter((/** @type {any} */ x) => /PROPOSÉE/.test(x.description))) expect(c.statut).toBe('non appliqué');
+    for (const id of ['T30', 'T31']) for (const c of t(id).conservation.filter((/** @type {any} */ x) => /décidée par le responsable le 24\/11\/2026/.test(x.description))) expect(c.statut).toBe('non appliqué');
+    expect(t('T31').conservation.filter((/** @type {any} */ x) => /décidée par le responsable le 24\/11\/2026/.test(x.description))).toHaveLength(2);
     expect(t('T31').conservation.map((/** @type {any} */ c) => c.description).join(' ')).toMatch(/30 jours après son expiration.*365 jours après sa fin/);
-    for (const id of ['T29', 'T30', 'T31']) expect(t(id).base_legale_proposee, id).toMatch(/à valider par le responsable/);
+    for (const id of ['T29', 'T30', 'T31']) { expect(t(id).base_legale_proposee, id).toMatch(/décidé par le responsable le 24\/11\/2026/); expect(JSON.stringify(t(id)), id).not.toMatch(/à valider|PROPOSÉE|à approuver|proposée à la release/); }
     expect(t('T32').base_legale_proposee).toMatch(/art\. 9\.2\.a/);
     expect(JSON.stringify([t('T29'), t('T30'), t('T31'), t('T32')])).not.toMatch(/avocat|juriste a validé|expert a validé|approuvé par le responsable/);
   });

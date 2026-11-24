@@ -2,7 +2,7 @@
 /**
  * G14 — the 28 purge steps of the expansion content (X04 events, X02 testimonials, X01 stories, X05 job listings, X03 Entraide), of the account-free
  * DSA notices, of the moderation cases (decisions, appeals, sanctions) and of the closed social referrals (G14-PS). Durations: the versioned policy (api/_services/retention-policy.js, version
- * g14-expansion-2-2026-11-23-a7-365d), decided by the controller (décision du responsable 22/11/2026, formulaire G14, questions 14–28; 23/11/2026 for the
+ * g14-r3-2026-11-24-a7-365d since 24/11/2026; these expansion durations unchanged since g14-expansion-2-2026-11-23-a7-365d), decided by the controller (décision du responsable 22/11/2026, formulaire G14, questions 14–28; 23/11/2026 for the
  * moderation cases and the social referrals). The steps follow the rules of api/_handlers/cron/gdpr-purge.js: a dry run by
  * default; each one executes only once the controller records its OWN approval in the policy (approvedSteps: dry run read, backup verified) and the operator
  * lists it in GDPR_PURGE_APPROVED_STEPS; X03 steps also wait for the dedicated X03 AIPD (decidedSteps condition, STEP_CONDITION_OPEN).

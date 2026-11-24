@@ -264,8 +264,8 @@ export const parcoursClosedStepsWhere = (before) => and(inArray(ParcoursItem.sta
     sql`NOT ${heldSql(ParcoursItem.id, ParcoursItem.userId)}`, sql`NOT ${personProtectedSql(ParcoursItem.userId)}`);
 
 /**
- * G14-R3 — trusted persons (C23) and guardian links (C05). Durations PROPOSED « à approuver » (retention-policy.js pendingApproval): these steps cannot
- * execute until a reviewed commit removes that mark AND each step gets its own approval record. A legal hold on the row or on either person, a processing
+ * G14-R3 — trusted persons (C23) and guardian links (C05). Durations DECIDED by the owner on 24/11/2026 (retention-policy.js R3_DECISION): decided is not
+ * approved — each step executes only once it gets its own approval record (dry run read, backup verified) and is listed. A legal hold on the row or on either person, a processing
  * restriction or an open access request of either person keeps the row.
  *   delegationInvitationsExpiredDeleted  an invitation never answered (INVITED), DELEGATION_INVITATION_EXPIRED_DAYS after inviteExpiresAt — it holds the
  *                                        invited person's e-mail address, who never joined
@@ -289,7 +289,7 @@ export const guardianLinksRevokedWhere = (before) => and(eq(GuardianRelationship
     sql`NOT ${personProtectedSql(GuardianRelationship.minorId)}`, sql`NOT ${personProtectedSql(GuardianRelationship.guardianId)}`);
 
 /**
- * G14-R3G — the representative of a protected adult (C23 family). PROPOSED « à approuver » (not executable). A legal hold on the row or on either person, a
+ * G14-R3G — the representative of a protected adult (C23 family). Durations DECIDED 24/11/2026 (each step still needs its own approval). A legal hold on the row or on either person, a
  * processing restriction or an open access request of either person keeps the row. The table comes with migration 0064 (journal idx 64): on a database
  * without it, these steps count and delete nothing.
  *   legalProtectionStaleDeclarationsDeleted  DECLARED (never verified), LEGAL_PROTECTION_DECLARED_STALE_DAYS after createdAt
@@ -313,9 +313,8 @@ const lpDeleteStep = (where) => ({
 });
 
 /**
- * G14-R3 follow-up — communications forms, institution accounts, partner conventions. Durations PROPOSED « à approuver » (retention-policy.js
- * pendingApproval): the two delete steps cannot execute until a reviewed commit removes that mark AND each step gets its own approval record; the two
- * others only count (report).
+ * G14-R3 follow-up — communications forms, institution accounts, partner conventions. Durations DECIDED by the owner on 24/11/2026 (retention-policy.js
+ * R3_DECISION): the two delete steps execute only once each gets its own approval record (dry run read, backup verified); the two others only count (report).
  *   contentReportsClosedDeleted         a ContentReport FIXED or REJECTED, CONTENT_REPORT_CLOSED_DAYS after its last change
  *   partnershipRequestsClosedDeleted    a PartnershipRequest no longer « pending », PARTNERSHIP_REQUEST_CLOSED_DAYS after its last change
  *   suspendedInstitutionAccountsReport  REPORT: an InstitutionAccount SUSPENDED whose last sign-in (else creation) is older than INSTITUTION_ACCOUNT_SUSPENDED_DAYS
@@ -542,7 +541,7 @@ export const PURGE_STEPS = [
         tables: ['ParcoursItem', 'ParcoursEvent', 'LegalHold', 'DSRRequest'],
         ...deleteStep(ParcoursItem, (ctx) => parcoursClosedStepsWhere(ctx.cutoff('PARCOURS_CLOSED_STEP_DAYS'))) },
 
-    // 20c–20e. G14-R3 — trusted persons and guardian links (PROPOSED « à approuver »: not executable while pendingApproval is set)
+    // 20c–20e. G14-R3 — trusted persons and guardian links (durations decided 24/11/2026; each step executes only once approved)
     { id: 'delegationInvitationsExpiredDeleted', summaryKey: 'delegation_invitations_expired_deleted', ecode: 'C23', kind: 'delete', table: 'CitizenDelegation',
         durationKey: 'DELEGATION_INVITATION_EXPIRED_DAYS', tables: ['CitizenDelegation', 'LegalHold', 'DSRRequest'],
         ...deleteStep(CitizenDelegation, (ctx) => delegationInvitationsExpiredWhere(ctx.cutoff('DELEGATION_INVITATION_EXPIRED_DAYS'))) },
@@ -553,7 +552,7 @@ export const PURGE_STEPS = [
         tables: ['GuardianRelationship', 'LegalHold', 'DSRRequest'],
         ...deleteStep(GuardianRelationship, (ctx) => guardianLinksRevokedWhere(ctx.cutoff('GUARDIAN_LINK_REVOKED_DAYS'))) },
 
-    // 20f–20h. G14-R3G — representative of a protected adult (PROPOSED « à approuver »: not executable while pendingApproval is set; table of migration 0064)
+    // 20f–20h. G14-R3G — representative of a protected adult (durations decided 24/11/2026; each step executes only once approved; table of migration 0064)
     { id: 'legalProtectionStaleDeclarationsDeleted', summaryKey: 'legal_protection_stale_declarations_deleted', ecode: 'C23', kind: 'delete', table: 'LegalProtectionMandate',
         durationKey: 'LEGAL_PROTECTION_DECLARED_STALE_DAYS', tables: ['LegalProtectionMandate', 'LegalHold', 'DSRRequest'],
         ...lpDeleteStep((ctx) => legalProtectionStaleWhere(ctx.cutoff('LEGAL_PROTECTION_DECLARED_STALE_DAYS'))) },
@@ -580,7 +579,7 @@ export const PURGE_STEPS = [
         sharedController: 'professional accounts are referenced by structure records',
         count: (db, ctx) => countWhere(db, ProUser, and(eq(ProUser.status, 'disabled'), lt(ProUser.updatedAt, ctx.cutoff('PRO_USER_DISABLED_DAYS')))) },
 
-    // 22b. G14-R3 follow-up — PROPOSED « à approuver » (never executable while pendingApproval): content reports and partnership requests once handled;
+    // 22b. G14-R3 follow-up — durations decided 24/11/2026 (each step executes only once approved): content reports and partnership requests once handled;
     //      suspended institution accounts and ended conventions are only COUNTED (no suspension date recorded; an account references its convention).
     { id: 'contentReportsClosedDeleted', summaryKey: 'content_reports_closed_deleted', ecode: 'R3-COM', kind: 'delete', table: 'ContentReport', durationKey: 'CONTENT_REPORT_CLOSED_DAYS', tables: ['ContentReport'],
         ...deleteStep(ContentReport, (ctx) => contentReportsClosedWhere(ctx.cutoff('CONTENT_REPORT_CLOSED_DAYS'))) },

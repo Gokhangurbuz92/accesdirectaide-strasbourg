@@ -52,8 +52,16 @@ const PROOF = 'preuve (proposition, à justifier par écrit)';
 const G14 = 'décision du responsable 22/11/2026, formulaire G14 (pas une obligation légale)';
 const G14_X03 = 'décision du responsable 22/11/2026, formulaire G14 — applicable avec l’AIPD dédiée X03 (pas une obligation légale)';
 const G14_DECISION = 'décision du responsable 22/11/2026, formulaire G14';
-/** G14-R3 (24/11/2026): the mark of a duration proposed for the release-3 package and not yet decided by the controller */
-export const R3_PROPOSAL = 'À APPROUVER — proposition G14-R3 du 24/11/2026 (paquet d’ouverture de la release 3), pas une décision du responsable';
+/**
+ * G14-R3 (24/11/2026): the release-3 durations, proposed on 24/11/2026 and DECIDED by the owner the same day (Release 3 legal approval, verbatim:
+ * CONTROL/master/completion/R3_OWNER_APPROVAL_2026-11-24.md; OWNER_VALIDATED — the controller's own approval, not a lawyer's or an expert's review).
+ */
+export const R3_DECISION = 'décision du responsable 24/11/2026, approbation juridique de la release 3 (pas une obligation légale)';
+export const R3_DECIDED_ON = '2026-11-24';
+/** the release-3 purge steps (delete and report) whose durations the owner decided on 24/11/2026 — decided, NOT approved (approvedSteps) */
+export const R3_DECIDED_STEP_IDS = Object.freeze(['rdvConversationsDeleted', 'delegationInvitationsExpiredDeleted', 'delegationsEndedDeleted', 'guardianLinksRevokedDeleted',
+  'legalProtectionStaleDeclarationsDeleted', 'legalProtectionRejectedDeleted', 'legalProtectionEndedDeleted',
+  'contentReportsClosedDeleted', 'partnershipRequestsClosedDeleted', 'suspendedInstitutionAccountsReport', 'endedPartnerAgreementsReport']);
 /** the X03 condition (question 27: « önerildiği gibi, ayrı AIPD ile birlikte ») */
 export const X03_AIPD_CONDITION = 'AIPD dédiée X03 signée';
 
@@ -85,6 +93,12 @@ export const G14_SOCIAL_REFERRAL_DECISION = 'décision du responsable 23/11/2026
 const G14_DECIDED_STEPS_23 = Object.fromEntries(['moderationDecisionsDeleted', 'moderationSanctionsDeleted']
   .map((id) => [id, { decidedOn: '2026-11-23', decision: G14_MODERATION_DECISION }]));
 G14_DECIDED_STEPS_23[SOCIAL_REFERRAL_STEP_ID] = { decidedOn: '2026-11-23', decision: G14_SOCIAL_REFERRAL_DECISION };
+/**
+ * G14-R3 (décision du responsable 24/11/2026): each release-3 step is a DECIDED step — not an approved one. The owner's own words: « silme adımları ancak
+ * dry-run okunduktan ve yedek doğrulandıktan sonra adım adım açılır » (each deletion step opens only after its dry run is read and a backup verified):
+ * it executes only once the controller records it in `approvedSteps` and the operator lists it in GDPR_PURGE_APPROVED_STEPS.
+ */
+const R3_DECIDED_STEPS = Object.fromEntries(R3_DECIDED_STEP_IDS.map((id) => [id, { decidedOn: R3_DECIDED_ON, decision: R3_DECISION }]));
 
 /** @type {RetentionPolicy} */
 export const RETENTION_POLICY = deepFreeze({
@@ -100,10 +114,14 @@ export const RETENTION_POLICY = deepFreeze({
   // G14 (décision du responsable 23/11/2026, options recommandées): one more duration (MODERATION_CASE_CLOSED_DAYS, decisions / appeals / sanctions 1 year
   // after the case is closed) → a NEW version g14-expansion-2-2026-11-23-a7-365d (g14-expansion-1-2026-11-22-a7-365d was never deployed); the deployment
   // pins GDPR_PURGE_POLICY_VERSION to it. Every other duration unchanged.
-  version: 'g14-expansion-2-2026-11-23-a7-365d',
+  // G14-R3 (décision du responsable 24/11/2026, approbation juridique de la release 3): the eleven release-3 durations (C23 trusted persons, C05 guardian
+  // links, protected adults, E9 appointment conversations, content reports, partnership requests, institution accounts, partner conventions) are decided
+  // → a NEW version g14-r3-2026-11-24-a7-365d. The deployment must re-pin GDPR_PURGE_POLICY_VERSION to it BEFORE the release-3 code runs in Production,
+  // otherwise every run (6c included) is a dry run (POLICY_VERSION_NOT_PINNED, fail-closed). Every other duration unchanged; A7 = 365.
+  version: 'g14-r3-2026-11-24-a7-365d',
   supersedes: 'r45-proposal-2-2026-11-05-a7-365d',
   status: POLICY_STATUS_APPROVED,
-  approvedPolicyVersion: 'g14-expansion-2-2026-11-23-a7-365d',
+  approvedPolicyVersion: 'g14-r3-2026-11-24-a7-365d',
   approvedChoices: { A7: 365 },
   // approvedSteps: one entry per step the controller approved (D4: step by step) — { [stepId]: { approvedOn, dryRunReviewedOn, backupVerified,
   //   sharedControllerBasis? } }. C3 step 6c ONLY (V2 stage 6B): unverified accounts deleted after 7 days. Dry run opened in Production 14/11/2026
@@ -121,7 +139,7 @@ export const RETENTION_POLICY = deepFreeze({
   // per-step approval above: D4 still requires, for each step, a dry-run report READ and a VERIFIED backup before it executes, and neither exists yet for
   // these steps (engineering never invents them). `decidedSteps` records the decision per step; the controller adds the step to `approvedSteps` after
   // reading its dry run. X03 steps carry a condition: the dedicated X03 AIPD must be signed first (question 27).
-  decidedSteps: { ...G14_DECIDED_STEPS, ...G14_DECIDED_STEPS_23 },
+  decidedSteps: { ...G14_DECIDED_STEPS, ...G14_DECIDED_STEPS_23, ...R3_DECIDED_STEPS },
   source: 'R43_DOSSIER_RGPD_ACTIVATION_FR.md § 3.1 — [PROPOSITION — À VALIDER RT]; R44_DECISIONS_RGPD_D1_D6_FR_v2.md annexe A (A7 au choix du responsable); G14_KARAR_FORMU_GENISLETME_TR.md (décision du responsable 22/11/2026, questions 14–28, 32)',
   ownerChoices: {
     A7: { durationKey: 'APPOINTMENT_CONFIRMED_DAYS', options: [365, 730], label: 'rendez-vous confirmés, tenus, absences : 1 an ou 2 ans après startAt (D4 v2, annexe A, ligne A7)' },
@@ -147,7 +165,7 @@ export const RETENTION_POLICY = deepFreeze({
     GUEST_HOLD_DAYS: { days: 1, anchor: 'guestHoldExpiresAt (0043+ only)', basis: OPS, ecode: 'E12' },
     PRO_NOTIFICATION_DAYS: { days: 180, anchor: 'createdAt', basis: OPS, ecode: 'E8' },
     PUSH_FAILING_DAYS: { days: 30, anchor: 'lastFailureAt (status FAILING)', basis: OPS, ecode: 'E8' },
-    RDV_CONVERSATION_DAYS: { days: 730, anchor: 'COALESCE(lastMessageAt, createdAt), or the anonymisation of the appointment', basis: OPS, ecode: 'E9' },
+    RDV_CONVERSATION_DAYS: { days: 730, anchor: 'COALESCE(lastMessageAt, createdAt), or the anonymisation of the appointment', basis: R3_DECISION, ecode: 'E9', decidedOn: R3_DECIDED_ON },
     LEGAL_HOLD_RELEASED_DAYS: { days: 365, anchor: 'releasedAt', basis: PROOF, ecode: 'E9b' },
     SUPPORT_REQUEST_DAYS: { days: 365, anchor: 'closedAt', basis: OPS, ecode: 'E9b' },
     DSR_REQUEST_DAYS: { days: 1095, anchor: 'completedAt', basis: PROOF, ecode: 'E9b' },
@@ -192,36 +210,35 @@ export const RETENTION_POLICY = deepFreeze({
     // appeal is open, its restriction has ended (GREATEST(appealUntil, restrictionEndsAt, last appeal reviewedAt)); a sanction: it no longer counts
     // (a warning: 12 months after it was given, WARNING_WINDOW_DAYS; a suspension: its end), or it was lifted, whichever comes first. Its appeals go with it.
     MODERATION_CASE_CLOSED_DAYS: { days: 365, anchor: 'closing of the case: decision GREATEST(appealUntil, restrictionEndsAt, MAX(appeal.reviewedAt)) with no open appeal; sanction LEAST(liftedAt, endsAt or createdAt + 365 days)', basis: 'décision du responsable 23/11/2026 (pas une obligation légale)', ecode: 'DSA', decidedOn: '2026-11-23' },
-    // G14-R3 (release-3 package, 24/11/2026) — PROPOSED « à approuver » (pendingApproval): the trusted persons (C23) and the guardian links (C05) had no
-    // duration of their own (they lived until the account was erased). Proposed by engineering, NOT decided: a step whose duration carries pendingApproval
-    // never executes (stepApprovalProblem DURATION_PENDING_APPROVAL), whatever its approval record and GDPR_PURGE_APPROVED_STEPS say. If the controller
-    // decides them, a reviewed commit replaces pendingApproval by decidedOn and the policy gets a new version (re-pinned GDPR_PURGE_POLICY_VERSION).
+    // G14-R3 (release-3 package, 24/11/2026) — DECIDED by the owner on 24/11/2026 (R3_DECISION): the trusted persons (C23) and the guardian links (C05)
+    // had no duration of their own (they lived until the account was erased). Decided is not approved: each step still needs its own approvedSteps record
+    // (dry run read, backup verified) and GDPR_PURGE_APPROVED_STEPS before it executes.
     // The household (C03) needs none: it is kept while the person keeps it, deleted by the person at any time and with the account (ON DELETE CASCADE).
-    DELEGATION_INVITATION_EXPIRED_DAYS: { days: 30, anchor: 'CitizenDelegation.inviteExpiresAt of an invitation never answered (status INVITED): the invited e-mail address goes with the row', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
-    DELEGATION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, expiresAt) of a delegation ended (REVOKED, DECLINED) or expired; its view log (DelegationAccessEvent) goes with it (ON DELETE CASCADE)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
-    GUARDIAN_LINK_REVOKED_DAYS: { days: 30, anchor: 'GuardianRelationship.updatedAt of a REVOKED link (the proof of each step stays in the consent ledger under its own rule)', basis: OPS, ecode: 'C05', pendingApproval: R3_PROPOSAL },
-    // G14-R3G (24/11/2026) — the representative of a protected adult (LegalProtectionMandate, migration 0064). PROPOSED « à approuver »: the row
+    DELEGATION_INVITATION_EXPIRED_DAYS: { days: 30, anchor: 'CitizenDelegation.inviteExpiresAt of an invitation never answered (status INVITED): the invited e-mail address goes with the row', basis: R3_DECISION, ecode: 'C23', decidedOn: R3_DECIDED_ON },
+    DELEGATION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, expiresAt) of a delegation ended (REVOKED, DECLINED) or expired; its view log (DelegationAccessEvent) goes with it (ON DELETE CASCADE)', basis: R3_DECISION, ecode: 'C23', decidedOn: R3_DECIDED_ON },
+    GUARDIAN_LINK_REVOKED_DAYS: { days: 30, anchor: 'GuardianRelationship.updatedAt of a REVOKED link (the proof of each step stays in the consent ledger under its own rule)', basis: R3_DECISION, ecode: 'C05', decidedOn: R3_DECIDED_ON },
+    // G14-R3G (24/11/2026) — the representative of a protected adult (LegalProtectionMandate, migration 0064). DECIDED 24/11/2026 (R3_DECISION): the row
     // holds only facts extracted from the court decision (never the decision); the history of views and actions stays in AuditLog under its own rule.
     //   DECLARED_STALE  a declaration the administrator never verified (the representative never showed the decision): 90 days after it was made
     //   REJECTED        a refused declaration (shown to the person, who may need it to report a false declaration): 90 days after the refusal
     //   ENDED           a link renounced, ended by the administrator or expired (validUntil passed): 365 days after its end — what was done under it
     //                   stays provable for the person for a year, as for the trusted persons
-    LEGAL_PROTECTION_DECLARED_STALE_DAYS: { days: 90, anchor: 'LegalProtectionMandate.createdAt of a declaration still DECLARED (never verified)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
-    LEGAL_PROTECTION_REJECTED_DAYS: { days: 90, anchor: 'LegalProtectionMandate.endedAt of a REJECTED declaration', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
-    LEGAL_PROTECTION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, validUntil) of a link ENDED, or VERIFIED / SUSPENDED past validUntil (expired)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
-    // G14-R3 follow-up (24/11/2026, same release-3 package) — PROPOSED « à approuver » (pendingApproval, never executable): the records of the communications
+    LEGAL_PROTECTION_DECLARED_STALE_DAYS: { days: 90, anchor: 'LegalProtectionMandate.createdAt of a declaration still DECLARED (never verified)', basis: R3_DECISION, ecode: 'C23', decidedOn: R3_DECIDED_ON },
+    LEGAL_PROTECTION_REJECTED_DAYS: { days: 90, anchor: 'LegalProtectionMandate.endedAt of a REJECTED declaration', basis: R3_DECISION, ecode: 'C23', decidedOn: R3_DECIDED_ON },
+    LEGAL_PROTECTION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, validUntil) of a link ENDED, or VERIFIED / SUSPENDED past validUntil (expired)', basis: R3_DECISION, ecode: 'C23', decidedOn: R3_DECIDED_ON },
+    // G14-R3 follow-up (24/11/2026, same release-3 package) — DECIDED 24/11/2026 (R3_DECISION; not approved steps): the records of the communications
     // forms, of the institution space and of the partner conventions had no duration (agents' audit, CONTROL/master/completion/R3_KURUM_MESAJ_KOPRU.md § 3.6).
     //   CONTENT_REPORT_CLOSED  a content report (« Signaler une erreur » on a public page, and the in-thread « Signaler » of a message: R3) once handled
     //                          (FIXED or REJECTED): 12 months after its last change — the reporter's optional e-mail goes with it
     //   PARTNERSHIP_REQUEST    a « Proposer une structure » / partnership request once answered (status other than « pending »): 12 months after its last change
     //   INSTITUTION_SUSPENDED  REPORT ONLY: an institution account SUSPENDED (convention ended, or suspended by an administrator) — no suspension date is
     //                          recorded (anchor: last sign-in, else creation); deleting it is an administrator's decision with the institution
-    //   PARTNER_AGREEMENT_ENDED REPORT ONLY: an ENDED convention, 5 years after endedAt (proof of what was agreed — a proposal, no legal text read); an
+    //   PARTNER_AGREEMENT_ENDED REPORT ONLY: an ENDED convention, 5 years after endedAt (proof of what was agreed — owner decision, no legal text read); an
     //                          account still references it (InstitutionAccount.agreementId, ON DELETE RESTRICT): never deleted by this job
-    CONTENT_REPORT_CLOSED_DAYS: { days: 365, anchor: 'ContentReport.updatedAt of a report FIXED or REJECTED', basis: OPS, ecode: 'R3-COM', pendingApproval: R3_PROPOSAL },
-    PARTNERSHIP_REQUEST_CLOSED_DAYS: { days: 365, anchor: 'PartnershipRequest.updatedAt of a request whose status is not « pending »', basis: OPS, ecode: 'R3-COM', pendingApproval: R3_PROPOSAL },
-    INSTITUTION_ACCOUNT_SUSPENDED_DAYS: { days: 365, anchor: 'COALESCE(lastLogin, createdAt) of an InstitutionAccount SUSPENDED (no suspension date recorded) — report only', basis: OPS, ecode: 'R3-INST', pendingApproval: R3_PROPOSAL },
-    PARTNER_AGREEMENT_ENDED_DAYS: { days: 1825, anchor: 'PartnerAgreement.endedAt of an ENDED convention — report only', basis: PROOF, ecode: 'R3-INST', pendingApproval: R3_PROPOSAL },
+    CONTENT_REPORT_CLOSED_DAYS: { days: 365, anchor: 'ContentReport.updatedAt of a report FIXED or REJECTED', basis: R3_DECISION, ecode: 'R3-COM', decidedOn: R3_DECIDED_ON },
+    PARTNERSHIP_REQUEST_CLOSED_DAYS: { days: 365, anchor: 'PartnershipRequest.updatedAt of a request whose status is not « pending »', basis: R3_DECISION, ecode: 'R3-COM', decidedOn: R3_DECIDED_ON },
+    INSTITUTION_ACCOUNT_SUSPENDED_DAYS: { days: 365, anchor: 'COALESCE(lastLogin, createdAt) of an InstitutionAccount SUSPENDED (no suspension date recorded) — report only', basis: R3_DECISION, ecode: 'R3-INST', decidedOn: R3_DECIDED_ON },
+    PARTNER_AGREEMENT_ENDED_DAYS: { days: 1825, anchor: 'PartnerAgreement.endedAt of an ENDED convention — report only', basis: R3_DECISION, ecode: 'R3-INST', decidedOn: R3_DECIDED_ON },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { openLinks } from '@/lib/publicBeta';
 import { passeportLocalEnabled } from '@/lib/passeport/flag';
 import NotificationCenter from '@/components/account/NotificationCenter';
 import FindAndBook from '@/components/account/FindAndBook';
+import TermsChangeNotice from '@/components/account/TermsChangeNotice';
 
 /**
  * PKG-2 / C13 — Mon Espace (/compte): one page that says where the person stands — Mon Parcours, the next deadline and appointment, Mon Coffre, favourites and the dossiers
@@ -30,6 +31,7 @@ function messagesText(m, t) {
 export default function MonEspace() {
   const { t } = useT('compte');
   const [state, setState] = useState({ loading: true, error: '', summary: null });
+  const headingRef = useRef(null);
   // R42: `t` is a dependency (it changes with the language), so the error message is never left in the previous language
   const load = useCallback(async () => {
     setState((s) => ({ ...s, loading: !s.summary, error: '' }));
@@ -81,7 +83,9 @@ export default function MonEspace() {
   return (
     <div className="container mx-auto max-w-4xl space-y-6 px-4 py-8" data-testid="mon-espace">
       <SEO title={t('compte:space.title', 'Mon Espace')} noindex />
-      <h1 className="text-2xl font-bold text-slate-900">{t('compte:space.title', 'Mon Espace')}</h1>
+      <h1 ref={headingRef} tabIndex={-1} className="text-2xl font-bold text-slate-900 focus:outline-none">{t('compte:space.title', 'Mon Espace')}</h1>
+      {/* Release 3 (owner 24/11/2026): the account holders are told here that the citizen terms changed — once, only when the build puts them in force */}
+      <TermsChangeNotice focusAfterDismiss={() => headingRef.current?.focus()} />
       {/* G14-FIND: « find and book » first — the page was empty in the restricted beta (every tile closed): now a real search and open screens */}
       <FindAndBook showGuide={visibleTiles.every((tile) => tile.public)} />   {/* the guide while no account screen is open (a public tile such as « Ma situation » does not count) */}
       <NotificationCenter />

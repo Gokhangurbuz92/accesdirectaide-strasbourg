@@ -1,9 +1,9 @@
 /**
- * Release-3 follow-up (24/11/2026, PROPOSED — drafts for the owner's approval, no lawyer or expert review claimed):
+ * Release-3 follow-up (24/11/2026; APPROVED by the owner on 24/11/2026 — OWNER_VALIDATED, no lawyer or expert review claimed):
  *   - notice-confidentialite v14-2026-11-24 and cgu-citoyen v13-2026-11-24 EXTENDED (same versions): appointment messaging (P29), Mon Coffre at the HDS
  *     host (P28, art. 9.2.a), the places' own booking pages, the partner bridge (no partner connected), § 14 institution users;
- *   - NEW draft cgu-professionnel v11-2026-11-24 (messaging rules, delegate member of a partner, own booking page);
- *   - retention proposals « à approuver » (ContentReport, PartnershipRequest, suspended InstitutionAccount, ended PartnerAgreement): never executable;
+ *   - NEW cgu-professionnel v11-2026-11-24 (messaging rules, delegate member of a partner, own booking page);
+ *   - retention decided 24/11/2026 (ContentReport, PartnershipRequest, suspended InstitutionAccount, ended PartnerAgreement): executable only once approved;
  *   - release preflight legal.r3_followup: a feature opened under older texts is a FAIL;
  *   - register (REGISTRE_RGPD.json): T04 / T05 / T10 / T11 / T15 lines, T34 partner bridge, Scalingo SAS (HDS) planned.
  */
@@ -14,7 +14,7 @@ vi.mock('@sentry/node', () => ({ captureException: vi.fn(), default: { captureEx
 vi.mock('../../src/db/index.js', () => ({ db: {} }));
 
 const L = await import('../../src/config/legal-drafts.js');
-const { RETENTION_POLICY, R3_PROPOSAL, stepApprovalProblem } = await import('../../api/_services/retention-policy.js');
+const { RETENTION_POLICY, R3_DECISION, stepApprovalProblem } = await import('../../api/_services/retention-policy.js');
 const { PURGE_STEPS } = await import('../../api/_handlers/cron/gdpr-purge.js');
 const { evaluateReleasePreflight } = await import('../../scripts/release-preflight.mjs');
 const { claimsEntitlement } = await import('../../api/lib/entitlementWording.js');
@@ -35,7 +35,8 @@ describe('notice v14 / cgu v13 (same versions, extended) — what the release-3 
     expect(t).toMatch(/N'écrivez pas d'information sur votre santé/);
     expect(t).toMatch(/jamais le texte/);
     expect(n14['retention.messaging_v14']).toMatch(/2 ans après son dernier message/);
-    expect(RETENTION_POLICY.durations.RDV_CONVERSATION_DAYS).toMatchObject({ days: 730, ecode: 'E9' });
+    expect(RETENTION_POLICY.durations.RDV_CONVERSATION_DAYS).toMatchObject({ days: 730, ecode: 'E9', decidedOn: '2026-11-24', basis: R3_DECISION });
+    expect(n14['retention.messaging_v14']).toMatch(/Signalement d'un message : supprimé 12 mois après son traitement\.$/);
   });
   it('Mon Coffre P28: end to end in the browser, Scalingo SAS HDS certificate 38436, art. 9.2.a consent never pre-ticked, lost passphrase = lost documents', () => {
     const t = n14['purposes.p28_v14'];
@@ -50,12 +51,13 @@ describe('notice v14 / cgu v13 (same versions, extended) — what the release-3 
     expect(n14['recipients.partners_v14']).toMatch(/aucun à ce jour/);
     expect(n14['recipients.partners_v14']).toMatch(/sans votre identité, ni dossier, ni document/);
   });
-  it('§ 14 institution users: data, proposed basis, durations proposed « à approuver », rights', () => {
+  it('§ 14 institution users: data, basis and durations decided by the owner on 24/11/2026, rights', () => {
     const doc = find(L.LEGAL_DRAFT_DOCUMENTS_R3_NOTICE, 'notice-confidentialite');
     expect(doc.sections.at(-1).id).toBe('institutions');
     expect(n14['institutions.p2_v14']).toMatch(/mot de passe sous forme hachée/);
-    expect(n14['institutions.p3_v14']).toMatch(/Base proposée : intérêt légitime/);
-    expect(n14['institutions.p4_v14']).toMatch(/proposées, à approuver/);
+    expect(n14['institutions.p3_v14']).toMatch(/Base : intérêt légitime \(art\. 6, 1, f\)/);
+    expect(n14['institutions.p4_v14']).toMatch(/12 mois après la dernière connexion ; une convention terminée est gardée 5 ans après sa fin, comme preuve de ce qui a été convenu ; le journal/);
+    for (const k of ['institutions.p3_v14', 'institutions.p4_v14', 'retention.messaging_v14']) expect(n14[k], k).not.toMatch(/propos|à approuver|à valider/);
     expect(n14['institutions.p1_v14']).toMatch(/Aucune convention n'est signée à ce jour/);
   });
   it('same draft versions; nothing claims an approval or a review; no entitlement wording', () => {
@@ -95,17 +97,20 @@ describe('cgu-professionnel v11-2026-11-24 — a NEW draft (professional obligat
   });
 });
 
-describe('retention proposals « à approuver » — never executable', () => {
+describe('retention decided by the owner on 24/11/2026 — decided, not approved', () => {
   const ids = ['contentReportsClosedDeleted', 'partnershipRequestsClosedDeleted', 'suspendedInstitutionAccountsReport', 'endedPartnerAgreementsReport'];
-  it('four durations marked pendingApproval; two delete steps refused, two report-only steps', () => {
+  it('four durations decided (no pendingApproval); two delete steps, two report-only steps; none approved', () => {
     const D = RETENTION_POLICY.durations;
-    for (const k of ['CONTENT_REPORT_CLOSED_DAYS', 'PARTNERSHIP_REQUEST_CLOSED_DAYS', 'INSTITUTION_ACCOUNT_SUSPENDED_DAYS', 'PARTNER_AGREEMENT_ENDED_DAYS']) expect(D[k].pendingApproval, k).toBe(R3_PROPOSAL);
+    for (const k of ['CONTENT_REPORT_CLOSED_DAYS', 'PARTNERSHIP_REQUEST_CLOSED_DAYS', 'INSTITUTION_ACCOUNT_SUSPENDED_DAYS', 'PARTNER_AGREEMENT_ENDED_DAYS']) {
+      expect(D[k].pendingApproval, k).toBeUndefined(); expect(D[k], k).toMatchObject({ decidedOn: '2026-11-24', basis: R3_DECISION });
+    }
     expect([D.CONTENT_REPORT_CLOSED_DAYS.days, D.PARTNERSHIP_REQUEST_CLOSED_DAYS.days, D.INSTITUTION_ACCOUNT_SUSPENDED_DAYS.days, D.PARTNER_AGREEMENT_ENDED_DAYS.days]).toEqual([365, 365, 365, 1825]);
     const steps = ids.map((id) => PURGE_STEPS.find((s) => s.id === id));
     expect(steps.map((s) => s.kind)).toEqual(['delete', 'delete', 'report', 'report']);
-    // even with a complete approval record, a duration still « à approuver » never executes
+    // decided is not approved: without its own record (dry run read, backup verified) a step never executes; with one it may
+    for (const s of steps) { expect(stepApprovalProblem(RETENTION_POLICY, s), s.id).toBe('STEP_NOT_APPROVED_IN_POLICY'); expect(RETENTION_POLICY.decidedSteps[s.id], s.id).toMatchObject({ decidedOn: '2026-11-24' }); }
     const policy = { ...RETENTION_POLICY, approvedSteps: Object.fromEntries(ids.map((id) => [id, { approvedOn: '2026-11-24', dryRunReviewedOn: '2026-11-24', backupVerified: 'verified' }])) };
-    for (const s of steps) expect(stepApprovalProblem(/** @type {any} */ (policy), s), s.id).toBe('DURATION_PENDING_APPROVAL');
+    for (const s of steps) expect(stepApprovalProblem(/** @type {any} */ (policy), s), s.id).toBeNull();
   });
 });
 
@@ -131,11 +136,11 @@ describe('release preflight legal.r3_followup', () => {
 describe('register REGISTRE_RGPD.json (generated) — release-3 lines', () => {
   const reg = JSON.parse(readFileSync('REGISTRE_RGPD.json', 'utf8'));
   const t = (/** @type {string} */ id) => reg.traitements.find((/** @type {any} */ x) => x.id === id);
-  it('T04 messaging, T05 Mon Coffre HDS, T10 / T15 proposals, T34 partner bridge, Scalingo planned', () => {
+  it('T04 messaging, T05 Mon Coffre HDS, T10 / T15 durations decided, T34 partner bridge, Scalingo planned', () => {
     expect(JSON.stringify(t('T04'))).toMatch(/730 jours après le dernier message/);
     expect(JSON.stringify(t('T04'))).toMatch(/jamais le texte/);
     expect(t('T05').evolution_r3).toMatch(/certificat HDS n° 38436/);
-    expect(JSON.stringify(t('T10'))).toMatch(/CONTENT_REPORT_CLOSED_DAYS, à approuver/);
+    expect(JSON.stringify(t('T10'))).toMatch(/décidée par le responsable le 24\/11\/2026 \(CONTENT_REPORT_CLOSED_DAYS ; étape contentReportsClosedDeleted exécutable seulement après son approbation/);
     expect(JSON.stringify(t('T15'))).toMatch(/INSTITUTION_ACCOUNT_SUSPENDED_DAYS/);
     expect(JSON.stringify(t('T15'))).toMatch(/PARTNER_AGREEMENT_ENDED_DAYS/);
     expect(t('T34').statut).toMatch(/aucun partenaire connecté/);

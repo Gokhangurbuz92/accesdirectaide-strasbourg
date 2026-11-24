@@ -158,7 +158,7 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     for (const x of [b['retention.content_v12'], f['publishing.i3_v12']]) expect(x).toMatch(/60 jours est retiré automatiquement/);
     expect(D.MODERATION_CASE_CLOSED_DAYS.days).toBe(365); expect(WARNING_WINDOW_DAYS).toBe(365);
     expect(b['retention.decisions_v12']).toMatch(/effacées 1 an après la clôture du dossier.*un avertissement, 12 mois après avoir été donné ; une suspension, à sa fin ou à sa levée/);
-    expect(RETENTION_POLICY.version).toBe('g14-expansion-2-2026-11-23-a7-365d');
+    expect(RETENTION_POLICY.version).toBe('g14-r3-2026-11-24-a7-365d');   // R3 (owner 24/11/2026): a new version for the release-3 durations; these durations unchanged
     // the charter: 24 hours / 7 days, linked from § 13 and CGU § 7 bis
     expect(b['moderation.p3_v12']).toMatch(/dans les 24 heures ; les autres signalements, dans les 7 jours/);
     expect(f['publishing.i6_v12']).toMatch(/dans les 24 heures.*autres signalements dans les 7 jours/);

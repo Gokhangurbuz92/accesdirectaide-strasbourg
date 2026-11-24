@@ -17,7 +17,7 @@
  *   SUSPENDED  the person contested a verified link: every power stops at once until the administrator reviews it (reinstated or ended).
  *   REJECTED / ENDED  no effect; the representative renounces, or the administrator ends it (mainlevée, change of measure, contest upheld, death…).
  *   EXPIRED    (computed) validUntil reached: the end date of the measure (art. 441, 442, 494-6, 439), or, for a habilitation familiale spéciale, which has
- *              no term, SPECIAL_REVIEW_DAYS after the verification (PROPOSED). Expiry ends every power by itself; a renewal is a new declaration.
+ *              no term, SPECIAL_REVIEW_DAYS after the verification (owner decision 24/11/2026). Expiry ends every power by itself; a renewal is a new declaration.
  *
  * Powers (always within the verified areas; never Mon Coffre, never the account's security, export, deletion, delegations; never a login as the person):
  *   ACT      tutelle, habilitation familiale générale en représentation (art. 473, 494-1, 494-6): the representative views the covered parts and acts
@@ -71,7 +71,7 @@ export const MEASURES = Object.freeze({
   HABILITATION_FAMILIALE_SPECIALE: Object.freeze({ modes: ['REPRESENTATION', 'ASSISTANCE'], kinds: ['FAMILLE'], maxYears: 0, term: false, refs: 'C. civ. art. 494-1, 494-6, 494-11 4°' }),
   SAUVEGARDE_MANDAT_SPECIAL: Object.freeze({ modes: ['REPRESENTATION', 'ASSISTANCE'], kinds: ['FAMILLE', 'MJPM'], maxYears: 1, term: true, refs: 'C. civ. art. 433 à 439 ; CASF L471-1' }),
 });
-/** PROPOSED (« à approuver »): how long a verified habilitation familiale spéciale (no term) stays effective before a new verification */
+/** DECIDED by the owner on 24/11/2026 (Release 3 legal approval: « 365 gün sonra yeniden doğrulanır »): how long a verified habilitation familiale spéciale (no term) stays effective before a new verification */
 export const SPECIAL_REVIEW_DAYS = 365;
 export const MAX_LIVE_PER_PERSON = 3;
 export const REQUEST_TOKEN_TYPE = 'LEGAL_REP_ACTION';

@@ -13,7 +13,7 @@ vi.mock('../../src/db/index.js', () => ({ db: {} }));
 vi.mock('../../api/_services/retention.js', () => ({ retentionReport: async () => ({ items: [] }) }));
 
 import {
-  RETENTION_POLICY, POLICY_STATUS_PROPOSED, isPolicyApproved, executionGate, approvedStepsFromEnv, policyDays,
+  RETENTION_POLICY, POLICY_STATUS_PROPOSED, isPolicyApproved, executionGate, approvedStepsFromEnv, policyDays, R3_DECIDED_STEP_IDS, R3_DECISION,
 } from '../../api/_services/retention-policy.js';
 import { RETENTION, PURGE_STEPS, runGdprPurge, anonymisationSet } from '../../api/_handlers/cron/gdpr-purge.js';
 import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION, proposedTestPolicy } from '../helpers/gdpr-purge-approval.js';
@@ -24,7 +24,8 @@ const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog',
   'CitizenDelegation', 'DelegationAccessEvent', 'GuardianRelationship', 'ContentReport', 'PartnershipRequest', 'InstitutionAccount', 'PartnerAgreement'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016); G14-R3: delegations and guardian links (on 0042)
 // G14-R3 follow-up: the communications forms (0000) and the institution tables (0026) exist on 0042
 // G14: the expansion steps need the 0053–0059 tables, absent from this 0042-like mock: they are skipped (skipped_steps) and tested on a real DB
-const EXPANSION_IDS = new Set(Object.keys(RETENTION_POLICY.decidedSteps || {}));
+// (the release-3 decided steps of 24/11/2026 read tables that exist on 0042 — or LegalProtectionMandate, LP_IDS below — so they are not counted here)
+const EXPANSION_IDS = new Set(Object.keys(RETENTION_POLICY.decidedSteps || {}).filter((id) => !R3_DECIDED_STEP_IDS.includes(id)));
 // G14-R3G: the representative-of-a-protected-adult steps need "LegalProtectionMandate" (migration 0064): absent from this 0042-like mock, skipped
 const LP_IDS = new Set(['legalProtectionStaleDeclarationsDeleted', 'legalProtectionRejectedDeleted', 'legalProtectionEndedDeleted']);
 const dialect = new PgDialect();
@@ -59,14 +60,17 @@ describe('R44 retention policy object', () => {
   it('V2 phase 1 (owner, 09/11/2026) + G14 (owner 22/11/2026, question 32): APPROVED with A7 = 365 named in the version, only step 6c approved, frozen; the proposal stays unapproved', () => {
     // G14: a new version (expansion durations), approved together with step 6c in one move; the earlier version is named in « supersedes »
     // G14 (23/11/2026): one more decided duration (MODERATION_CASE_CLOSED_DAYS) → g14-expansion-2 (g14-expansion-1 was never deployed)
-    expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'g14-expansion-2-2026-11-23-a7-365d', approvedPolicyVersion: 'g14-expansion-2-2026-11-23-a7-365d',
+    // R3 (owner 24/11/2026): the eleven release-3 durations decided → g14-r3-2026-11-24-a7-365d (GDPR_PURGE_POLICY_VERSION re-pinned before the R3 deploy)
+    expect(RETENTION_POLICY).toMatchObject({ status: 'APPROVED', version: 'g14-r3-2026-11-24-a7-365d', approvedPolicyVersion: 'g14-r3-2026-11-24-a7-365d',
       supersedes: 'r45-proposal-2-2026-11-05-a7-365d', approvedChoices: { A7: 365 } });
     // G14: 25 steps DECIDED (durations) — none of them APPROVED for execution (no dry run read, no backup verified yet); X03 steps wait for their AIPD
     // + 2 steps decided on 23/11/2026 (moderation decisions / appeals and sanctions, 1 year after the case is closed) + G14-PS social referrals (proposal)
-    expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(28);
+    // + 11 release-3 steps decided by the owner on 24/11/2026 (none approved: each needs its dry run read and a verified backup)
+    expect(Object.keys(RETENTION_POLICY.decidedSteps).length).toBe(39);
     for (const [id, d] of Object.entries(RETENTION_POLICY.decidedSteps)) {
       // G14-PS: the social referral step, decided by the owner on 23/11/2026 (12 months after closure); no duration is pending any more
       if (id === 'socialReferralsClosedDeleted') { expect(d).toMatchObject({ decidedOn: '2026-11-23', decision: expect.stringMatching(/^décision du responsable 23\/11\/2026/) }); expect(d.condition).toBeUndefined(); expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS).toMatchObject({ days: 365, decidedOn: '2026-11-23' }); expect(RETENTION_POLICY.durations.SOCIAL_REFERRAL_CLOSED_DAYS.pendingApproval).toBeUndefined(); continue; }
+      if (R3_DECIDED_STEP_IDS.includes(id)) { expect(d, id).toEqual({ decidedOn: '2026-11-24', decision: R3_DECISION }); continue; }   // Release 3 owner approval 24/11/2026
       if (id.startsWith('moderation')) { expect(d.decidedOn, id).toBe('2026-11-23'); expect(d.decision, id).toMatch(/^décision du responsable 23\/11\/2026/); expect(d.condition, id).toBeUndefined(); continue; }
       expect(d.decidedOn, id).toBe('2026-11-22');
       expect(d.decision, id).toMatch(/^décision du responsable 22\/11\/2026, formulaire G14, question \d+$/);

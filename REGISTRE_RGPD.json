@@ -1,6 +1,6 @@
 {
   "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
-  "version": "0.7",
+  "version": "0.8",
   "date_mise_a_jour": "2026-11-24",
   "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
   "sources_code": {
@@ -201,7 +201,8 @@
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Stockage objet S3/R2 (prévu)"
       ],
-      "statut_r3": "messagerie de rendez-vous : capacité messaging.conversations fermée par défaut ; ouverture proposée à la release 3 pour les structures non ESSMS (sans FINESS, vérifiées) et les services relus « ordinaires » ; pièces jointes (messaging.attachments) fermées tant qu'aucun hébergement HDS n'est attesté — notice v14, ligne AIPD R6 (à signer)",
+      "statut_r3": "messagerie de rendez-vous : capacité messaging.conversations fermée par défaut ; ouverture décidée par le responsable le 24/11/2026 (release 3) pour les structures non ESSMS (sans FINESS, vérifiées) et les services relus « ordinaires » ; pièces jointes (messaging.attachments) fermées tant qu'aucun hébergement HDS n'est attesté — notice v14, ligne AIPD R6 signée par le responsable le 24/11/2026",
+      "base_legale_r3": "Messagerie de rendez-vous : exécution des conditions d'utilisation (art. 6.1.b) — notice v14, P29, décidé par le responsable le 24/11/2026",
       "conservation": [
         {
           "donnee": "Messages du dossier partagé (cascade avec le dossier)",
@@ -217,14 +218,14 @@
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "730 jours après le dernier message, ou avec l'anonymisation du rendez-vous (RDV_CONVERSATION_DAYS, étape E9 rdvConversationsDeleted — exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée) ; avec le compte"
+          "description": "730 jours après le dernier message, ou avec l'anonymisation du rendez-vous — durée décidée par le responsable le 24/11/2026 (RDV_CONVERSATION_DAYS, étape E9 rdvConversationsDeleted — exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée) ; avec le compte"
         },
         {
           "donnee": "Signalement d'un message (« Signaler » dans la conversation)",
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "une ligne ContentReport sans le texte du message ; 365 jours après son traitement — durée PROPOSÉE (CONTENT_REPORT_CLOSED_DAYS, à approuver ; étape contentReportsClosedDeleted non exécutable)"
+          "description": "une ligne ContentReport sans le texte du message ; 365 jours après son traitement — durée décidée par le responsable le 24/11/2026 (CONTENT_REPORT_CLOSED_DAYS ; étape contentReportsClosedDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         }
       ],
       "destinataires_r3": [
@@ -256,8 +257,8 @@
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Vercel (hébergement ; en service pour la bêta publique restreinte)"
       ],
-      "evolution_r3": "Service HDS distinct (branche g14-r3f) : Scalingo SAS, région osc-fr1 (France), option HDS, certificat HDS n° 38436 (valable jusqu'au 11/09/2028) ; documents et métadonnées chiffrés de bout en bout dans le navigateur (AES-256-GCM, clé dérivée d'une phrase secrète par PBKDF2-SHA256, jamais transmise) puis chiffrés une seconde fois côté serveur ; tickets d'accès signés à usage unique (60 s) ; aucune donnée de ce traitement chez Vercel, Neon, Upstash ou Sentry. Documents de santé : consentement explicite (art. 9.2.a), case jamais pré-cochée, retirable. Fermé tant que l'annexe HDS n'est pas souscrite, l'AIPD (ligne R9) signée et HDS_PRODUCTION_APPROVED absent",
-      "base_legale_r3": "Art. 6.1.b ; documents de santé : consentement explicite art. 9.2.a — notice v14, P28 — à valider par le responsable",
+      "evolution_r3": "Service HDS distinct (branche g14-r3f) : Scalingo SAS, région osc-fr1 (France), option HDS, certificat HDS n° 38436 (valable jusqu'au 11/09/2028) ; documents et métadonnées chiffrés de bout en bout dans le navigateur (AES-256-GCM, clé dérivée d'une phrase secrète par PBKDF2-SHA256, jamais transmise) puis chiffrés une seconde fois côté serveur ; tickets d'accès signés à usage unique (60 s) ; aucune donnée de ce traitement chez Vercel, Neon, Upstash ou Sentry. Documents de santé : consentement explicite (art. 9.2.a), case jamais pré-cochée, retirable. Fermé tant que l'annexe HDS n'est pas souscrite et HDS_PRODUCTION_APPROVED absent (ligne AIPD R9 signée par le responsable le 24/11/2026)",
+      "base_legale_r3": "Art. 6.1.b ; documents de santé : consentement explicite art. 9.2.a, case jamais pré-cochée — notice v14, P28, décidé par le responsable le 24/11/2026",
       "conservation": [
         {
           "donnee": "Documents du coffre",
@@ -491,7 +492,7 @@
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "365 jours après leur traitement (FIXED ou REJECTED) — durée PROPOSÉE (CONTENT_REPORT_CLOSED_DAYS, à approuver ; étape contentReportsClosedDeleted non exécutable)"
+          "description": "365 jours après leur traitement (FIXED ou REJECTED) — durée décidée par le responsable le 24/11/2026 (CONTENT_REPORT_CLOSED_DAYS ; étape contentReportsClosedDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         }
       ],
       "mesures_securite": "Chiffrement par enveloppe ; interrupteur de fermeture"
@@ -514,7 +515,7 @@
         "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
-      "statut_r3": "portail institution (capacité institution.portal) fermé ; ouverture proposée à la release 3 après une convention signée avec une institution nommée — notice v14 § 14, ligne AIPD R7 (à signer) ; seuls les trimestres gelés sont lus (tâche observatory-freeze)",
+      "statut_r3": "portail institution (capacité institution.portal) fermé jusqu'à une convention signée avec une institution nommée — notice v14 § 14 (base des utilisateurs : intérêt légitime, art. 6.1.f, décidé par le responsable le 24/11/2026), ligne AIPD R7 signée par le responsable le 24/11/2026 ; seuls les trimestres gelés sont lus (tâche observatory-freeze)",
       "conservation": [
         {
           "donnee": "Agrégats",
@@ -717,6 +718,7 @@
         "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
       ],
+      "base_legale_r3": "Utilisateurs de l'espace des institutions : intérêt légitime (art. 6.1.f) — notice v14 § 14, décidé par le responsable le 24/11/2026",
       "categories_donnees_r3": [
         "Compte institution : e-mail, organisation, territoire, statut, convention, empreinte du mot de passe, échecs de connexion et verrouillage, lien de réinitialisation (empreinte), date de dernière connexion",
         "Journal des connexions et des lectures de statistiques (AuditLog A18)"
@@ -727,21 +729,21 @@
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "RAPPORT seulement, 365 jours après la dernière connexion (aucune date de suspension enregistrée) — durée PROPOSÉE (INSTITUTION_ACCOUNT_SUSPENDED_DAYS, à approuver ; étape suspendedInstitutionAccountsReport) ; la suppression reste une décision de l'administrateur avec l'institution"
+          "description": "RAPPORT seulement, 365 jours après la dernière connexion (aucune date de suspension enregistrée) — durée décidée par le responsable le 24/11/2026 (INSTITUTION_ACCOUNT_SUSPENDED_DAYS ; étape de rapport suspendedInstitutionAccountsReport) ; la suppression reste une décision de l'administrateur avec l'institution"
         },
         {
           "donnee": "PartnerAgreement terminée",
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "RAPPORT seulement, 5 ans après sa fin (preuve de ce qui a été convenu) — durée PROPOSÉE (PARTNER_AGREEMENT_ENDED_DAYS, à approuver ; étape endedPartnerAgreementsReport) ; jamais supprimée par la tâche (un compte la référence)"
+          "description": "RAPPORT seulement, 5 ans après sa fin (preuve de ce qui a été convenu) — durée décidée par le responsable le 24/11/2026 (PARTNER_AGREEMENT_ENDED_DAYS ; étape de rapport endedPartnerAgreementsReport) ; jamais supprimée par la tâche (un compte la référence)"
         },
         {
           "donnee": "PartnershipRequest",
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "365 jours après la réponse (statut autre que « pending ») — durée PROPOSÉE (PARTNERSHIP_REQUEST_CLOSED_DAYS, à approuver ; étape partnershipRequestsClosedDeleted non exécutable)"
+          "description": "365 jours après la réponse (statut autre que « pending ») — durée décidée par le responsable le 24/11/2026 (PARTNERSHIP_REQUEST_CLOSED_DAYS ; étape partnershipRequestsClosedDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         },
         {
           "donnee": "Journal des connexions et lectures (AuditLog)",
@@ -954,9 +956,9 @@
     {
       "id": "T29",
       "nom": "Mon foyer — membres du foyer décrits par la personne (C03)",
-      "statut": "capacité citizen.household fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=household + ADA_CAPABILITIES_OPEN)",
+      "statut": "capacité citizen.household fermée ; ouverture décidée par le responsable le 24/11/2026 (release 3 ; ADA_BETA_ACCOUNTS_EXTRA=household + ADA_CAPABILITIES_OPEN)",
       "finalite": "Permettre à la personne de garder, dans son profil, la composition de son foyer pour elle-même",
-      "base_legale_proposee": "Exécution des conditions d'utilisation (art. 6.1.b) pour la personne ; intérêt légitime (art. 6.1.f) pour les membres décrits, sans compte (notice v14, P24) — à valider par le responsable",
+      "base_legale_proposee": "Exécution des conditions d'utilisation (art. 6.1.b) pour la personne ; intérêt légitime (art. 6.1.f) pour les membres décrits, sans compte (notice v14, P24) — décidé par le responsable le 24/11/2026",
       "categories_donnees": [
         "Lien avec la personne (liste fermée)",
         "Tranche d'âge facultative (dont « moins de 18 ans » pour un enfant)",
@@ -982,14 +984,14 @@
           "description": "tant que la personne les garde ; suppression par la personne à tout moment ; effacés avec le compte (ON DELETE CASCADE)"
         }
       ],
-      "mesures_securite": "12 personnes au plus ; aucun texte libre au-delà de 30 caractères ; lu seulement quand la capacité est ouverte ; règle d'âge du compte (ageGate) ; information des membres décrits : art. 14.5.b (données minimales, aucun contact) — à valider"
+      "mesures_securite": "12 personnes au plus ; aucun texte libre au-delà de 30 caractères ; lu seulement quand la capacité est ouverte ; règle d'âge du compte (ageGate) ; information des membres décrits : art. 14.5.b (données minimales, aucun contact) — retenue avec la décision du 24/11/2026 (ligne AIPD R1)"
     },
     {
       "id": "T30",
       "nom": "Lien entre le compte d'une personne mineure et un représentant légal (C05) — forme restreinte",
-      "statut": "capacité citizen.guardians fermée ; ouverture proposée à la release 3 SANS création de lien : les comptes de mineurs restent fermés (citizen.minor_accounts non ouvrable) et la déclaration est refusée (MINOR_ACCOUNTS_CLOSED)",
+      "statut": "capacité citizen.guardians fermée ; ouverture décidée par le responsable le 24/11/2026 (release 3) SANS création de lien : les comptes de mineurs restent fermés (citizen.minor_accounts non ouvrable) et la déclaration est refusée (MINOR_ACCOUNTS_CLOSED)",
       "finalite": "Permettre à chacune des deux personnes de voir et de retirer un lien existant ; vérification renforcée par une personne habilitée, seulement si une politique d'âge validée la prévoit (aucune à ce jour)",
-      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v14, P26 — à valider par le responsable ; toute création de lien exigerait une décision distincte (politique d'âge, art. 8 RGPD, art. 45 loi Informatique et Libertés)",
+      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v14, P26, décidé par le responsable le 24/11/2026, forme restreinte seulement ; toute création de lien exigerait une décision distincte (politique d'âge, art. 8 RGPD, art. 45 loi Informatique et Libertés)",
       "categories_donnees": [
         "Identifiants des deux comptes",
         "État du lien",
@@ -1013,7 +1015,7 @@
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "30 jours après le retrait — durée PROPOSÉE (GUARDIAN_LINK_REVOKED_DAYS, à approuver ; étape guardianLinksRevokedDeleted non exécutable)"
+          "description": "30 jours après le retrait — durée décidée par le responsable le 24/11/2026 (GUARDIAN_LINK_REVOKED_DAYS ; étape guardianLinksRevokedDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         },
         {
           "donnee": "Preuves des étapes (ConsentLog)",
@@ -1028,9 +1030,9 @@
     {
       "id": "T31",
       "nom": "Personnes de confiance — délégation de consultation en lecture seule (C23)",
-      "statut": "capacité citizen.delegations fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=delegations + ADA_CAPABILITIES_OPEN)",
+      "statut": "capacité citizen.delegations fermée ; ouverture décidée par le responsable le 24/11/2026 (release 3 ; ADA_BETA_ACCOUNTS_EXTRA=delegations + ADA_CAPABILITIES_OPEN)",
       "finalite": "Permettre à la personne de laisser une personne qu'elle choisit consulter, en lecture seule et pour une durée limitée, les parties ouvertes de son espace (à ce jour : rendez-vous à venir)",
-      "base_legale_proposee": "Consentement de la personne (art. 6.1.a) ; intérêt légitime (art. 6.1.f) pour la personne invitée (notice v14, P25) — à valider par le responsable",
+      "base_legale_proposee": "Consentement de la personne (art. 6.1.a) ; intérêt légitime (art. 6.1.f) pour la personne invitée (notice v14, P25) — décidé par le responsable le 24/11/2026",
       "categories_donnees": [
         "Adresse électronique invitée",
         "Rôle indiqué",
@@ -1058,14 +1060,14 @@
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "30 jours après son expiration, avec l'adresse invitée — durée PROPOSÉE (DELEGATION_INVITATION_EXPIRED_DAYS, à approuver ; étape delegationInvitationsExpiredDeleted non exécutable)"
+          "description": "30 jours après son expiration, avec l'adresse invitée — durée décidée par le responsable le 24/11/2026 (DELEGATION_INVITATION_EXPIRED_DAYS ; étape delegationInvitationsExpiredDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         },
         {
           "donnee": "Délégation terminée, refusée ou expirée et son journal",
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "365 jours après sa fin — durée PROPOSÉE (DELEGATION_ENDED_DAYS, à approuver ; étape delegationsEndedDeleted non exécutable)"
+          "description": "365 jours après sa fin — durée décidée par le responsable le 24/11/2026 (DELEGATION_ENDED_DAYS ; étape delegationsEndedDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         },
         {
           "donnee": "Délégation en cours",
@@ -1080,9 +1082,9 @@
     {
       "id": "T33",
       "nom": "Représentant légal d'un majeur protégé — tutelle, curatelle, habilitation familiale, mandat spécial (proche ou MJPM)",
-      "statut": "capacité citizen.legal_protection fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=legal_protection + ADA_CAPABILITIES_OPEN) ; table de la migration 0064 (dans le journal, idx 64, depuis l'intégration de la release 3)",
+      "statut": "capacité citizen.legal_protection fermée ; ouverture décidée par le responsable le 24/11/2026 (release 3, après application de la migration 0064 en Production ; ADA_BETA_ACCOUNTS_EXTRA=legal_protection + ADA_CAPABILITIES_OPEN) ; table de la migration 0064 (dans le journal, idx 64, depuis l'intégration de la release 3)",
       "finalite": "Permettre à la personne désignée par le juge d'exercer sa mission dans le service (consulter, demander ou faire une action dans les parties couvertes par la décision vérifiée), en informant la personne protégée de tout ce qui est fait ; vérification humaine de la décision",
-      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v14, P27 — à valider par le responsable ; question ouverte : l'existence d'une mesure révèle-t-elle une donnée de santé (art. 9) ? Si oui, condition art. 9 à décider (R3_KORUMA_TEMSIL_FR.md)",
+      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v14, P27 ; l'existence d'une mesure est traitée comme une donnée concernant la santé (art. 9), condition art. 9.2.f (constatation, exercice ou défense d'un droit en justice) — décidé par le responsable le 24/11/2026 (R3_KORUMA_TEMSIL_FR.md ; décision du responsable, pas un avis juridique)",
       "categories_donnees": [
         "Identifiants des deux comptes",
         "Qualité du représentant (proche / MJPM, forme d'exercice L471-2, SIRET et structure facultatifs)",
@@ -1111,21 +1113,21 @@
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "90 jours après la déclaration — durée PROPOSÉE (LEGAL_PROTECTION_DECLARED_STALE_DAYS, à approuver ; étape legalProtectionStaleDeclarationsDeleted non exécutable)"
+          "description": "90 jours après la déclaration — durée décidée par le responsable le 24/11/2026 (LEGAL_PROTECTION_DECLARED_STALE_DAYS ; étape legalProtectionStaleDeclarationsDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         },
         {
           "donnee": "Déclaration refusée",
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "90 jours après le refus — durée PROPOSÉE (LEGAL_PROTECTION_REJECTED_DAYS, à approuver ; étape legalProtectionRejectedDeleted non exécutable)"
+          "description": "90 jours après le refus — durée décidée par le responsable le 24/11/2026 (LEGAL_PROTECTION_REJECTED_DAYS ; étape legalProtectionRejectedDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         },
         {
           "donnee": "Lien terminé ou expiré",
           "duree_jours": null,
           "source": null,
           "statut": "non appliqué",
-          "description": "365 jours après sa fin — durée PROPOSÉE (LEGAL_PROTECTION_ENDED_DAYS, à approuver ; étape legalProtectionEndedDeleted non exécutable)"
+          "description": "365 jours après sa fin — durée décidée par le responsable le 24/11/2026 (LEGAL_PROTECTION_ENDED_DAYS ; étape legalProtectionEndedDeleted exécutable seulement après son approbation : essai à blanc lu, sauvegarde vérifiée)"
         },
         {
           "donnee": "Journal (AuditLog)",
@@ -1142,7 +1144,7 @@
       "nom": "Pont d'orientation vers l'outil d'un partenaire (FA-D7, ada.partner-referral/1)",
       "statut": "capacité partner.referral_adapter fermée (exige l'hébergement HDS et pro.referrals) ; aucun partenaire connecté ; ouverture seulement après une convention signée avec un partenaire nommé et son membre délégué",
       "finalite": "Tenir informé l'outil d'une structure partenaire de l'état d'une orientation qu'elle reçoit, et recevoir ses réponses, sans ressaisie",
-      "base_legale_proposee": "Celle de l'orientation (P8 : consentement à chaque partage, art. 6.1.a ; art. 9.2.a si nécessaire) — extension de la ligne P8 de l'AIPD (R8) — à valider",
+      "base_legale_proposee": "Celle de l'orientation (P8 : consentement à chaque partage, art. 6.1.a ; art. 9.2.a si nécessaire) — extension de la ligne P8 de l'AIPD (R8, signée par le responsable le 24/11/2026) — décidé par le responsable le 24/11/2026",
       "categories_donnees": [
         "Identifiant opaque de l'orientation",
         "État, code de motif, échéance",
@@ -1182,7 +1184,7 @@
     {
       "id": "T32",
       "nom": "Académie et événements — inscription d'une personne majeure (X04)",
-      "statut": "capacité community.events fermée (surface « events ») ; textes approuvés le 23/11/2026 (notice v12 / v13 § 3 ter et § 4) ; ligne AIPD X04 non signée ; ouverture proposée à la release 3",
+      "statut": "capacité community.events fermée (surface « events ») ; textes approuvés le 23/11/2026 (notice v12 / v13 § 3 ter et § 4) ; ligne AIPD X04 (R4) signée par le responsable le 24/11/2026 ; ouverture décidée à la release 3",
       "finalite": "Inscrire une personne majeure à un événement publié, lui rappeler l'événement dans Mon Espace, préparer la salle à partir de nombres",
       "base_legale_proposee": "Exécution des conditions d'utilisation (art. 6.1.b) ; besoin d'accessibilité : consentement explicite (art. 9.2.a) par une case distincte jamais cochée d'avance — décidé le 22/11/2026 (formulaire G14)",
       "categories_donnees": [
