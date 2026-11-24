@@ -5,7 +5,16 @@ import { apiClient } from '@/api/client';
 import { explain } from './helpers.js';
 import { useT, formatDateTime } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
-import { needName } from '@/lib/socialNeeds';
+import { NEED_BY_ID, needName } from '@/lib/socialNeeds';
+import { ToneChip } from '@/components/ui/Tone';
+import { topicTone } from '@/design/categoryTone';
+
+/** colour system: the translated « Besoins : {{needs}} » line, each need a chip in its domain colour (the need is written: colour is never the only cue) */
+const NEEDS_SLOT = '\u2063NEEDS\u2063';
+function NeedsLine({ line, ids, name }) {
+  const [before, after = ''] = String(line).split(NEEDS_SLOT);
+  return <>{before}{ids.map((id, i) => <span key={id}>{i ? ', ' : ''}<ToneChip tone={topicTone(NEED_BY_ID.get(id)?.domain)}>{name(id)}</ToneChip></span>)}{after}</>;
+}
 
 /**
  * G14 release 3 — revue des pages de rendez-vous propres aux structures (« Rendez-vous sur leur site ») : /admin/rdv-externes.
@@ -73,7 +82,7 @@ export default function AdminExternalBooking() {
                   <th scope="row" className="p-1 text-start font-normal"><span {...fr}>{i.nom}</span>
                     <p className="text-xs">{t('admin:k5.extbooking.source', 'Proposée par {{source}}, {{date}}', { source: SOURCE[i.source] || i.source, date: formatDateTime(i.submittedAt) })}</p></th>
                   <td className="p-1"><code dir="ltr" className="break-all">{i.url}</code>
-                    {Array.isArray(i.subdomains) && i.subdomains.length ? <p className="text-xs">{t('admin:k5.extbooking.needs', 'Besoins : {{needs}}', { needs: i.subdomains.map((id) => needName(t, id)).join(', ') })}</p> : null}</td>
+                    {Array.isArray(i.subdomains) && i.subdomains.length ? <p className="text-xs"><NeedsLine line={t('admin:k5.extbooking.needs', 'Besoins : {{needs}}', { needs: NEEDS_SLOT })} ids={i.subdomains} name={(id) => needName(t, id)} /></p> : null}</td>
                   <td className="p-1 text-xs">
                     <p>{i.platform !== 'other' ? t('admin:k5.extbooking.platform', 'Plateforme publique reconnue ({{id}})', { id: i.platform }) : t('admin:k5.extbooking.own_site', 'Site propre (non reconnu comme plateforme)')}</p>
                     <p>{i.sameHostAsWebsite === true ? t('admin:k5.extbooking.same_host', 'Même domaine que le site de la fiche.') : i.sameHostAsWebsite === false ? t('admin:k5.extbooking.other_host', 'Domaine différent du site de la fiche : à vérifier.') : t('admin:k5.extbooking.no_site', 'Pas de site sur la fiche.')}</p>

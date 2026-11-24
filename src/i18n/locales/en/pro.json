@@ -1654,5 +1654,9 @@
  "dashboard.start.hours": "Set your availability",
  "dashboard.start.hours_hint": "The time slots offered to people",
  "dashboard.start.team": "Invite your team",
- "dashboard.start.team_hint": "The colleagues who see people"
+ "dashboard.start.team_hint": "The colleagues who see people",
+ "layout.guide": "ADA Pro guide",
+ "dashboard.guide_link": "ADA Pro guide: how it works",
+ "dashboard.start.guide": "All the details in the guide",
+ "breadcrumb.guide": "ADA Pro guide"
 }

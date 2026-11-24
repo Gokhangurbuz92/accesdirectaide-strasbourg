@@ -1654,5 +1654,9 @@
  "dashboard.start.hours": "Müsaitliğinizi belirleyin",
  "dashboard.start.hours_hint": "Kişilere sunulan zaman aralıkları",
  "dashboard.start.team": "Ekibinizi davet edin",
- "dashboard.start.team_hint": "Kişileri karşılayan meslektaşlar"
+ "dashboard.start.team_hint": "Kişileri karşılayan meslektaşlar",
+ "layout.guide": "ADA Pro kılavuzu",
+ "dashboard.guide_link": "ADA Pro kılavuzu: nasıl çalışır",
+ "dashboard.start.guide": "Tüm ayrıntılar kılavuzda",
+ "breadcrumb.guide": "ADA Pro kılavuzu"
 }

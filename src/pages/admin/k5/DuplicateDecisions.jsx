@@ -6,6 +6,8 @@ import { explain } from './helpers.js';
 import { reviewValue } from '@/components/admin/reviewValue.js';
 import { useT, formatDateTime } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
+import { ToneChip } from '@/components/ui/Tone';
+import { structureTone } from '@/design/categoryTone';
 import { DISTINCT, SAME } from './duplicatesModel.js';
 
 /**
@@ -28,7 +30,7 @@ function RecordCell({ t, r, fr }) {
     <div className="min-w-[12rem] space-y-0.5">
       <p className="font-semibold" {...fr}>{r.nom}</p>
       <p className="text-xs" {...fr}>{[r.adresse, [r.code_postal, r.ville].filter(Boolean).join(' ')].filter(Boolean).join(', ') || '—'}</p>
-      <p className="text-xs"><span {...fr}>{r.type_structure || '—'}</span>{ids ? ` · ${ids}` : ''}</p>
+      <p className="text-xs">{r.type_structure ? <ToneChip tone={structureTone(r.type_structure)}><span {...fr}>{r.type_structure}</span></ToneChip> : <span {...fr}>—</span>}{ids ? ` · ${ids}` : ''}</p>
       <p className="text-xs">{r.publication_hold ? t('admin:k5.dupdec.rec_held', 'Mise de côté (hors annuaire public)') : r.verification_status === 'VERIFIED' ? t('admin:k5.dupdec.rec_verified', 'Vérifiée') : t('admin:k5.dupdec.rec_unverified', 'Non vérifiée')}</p>
       {(r.sources || []).length ? <ul className="text-xs">{r.sources.map((s) => <li key={s.url}><a className="break-all text-primary underline" href={s.url} target="_blank" rel="noreferrer noopener">{s.url}</a></li>)}</ul> : null}
     </div>

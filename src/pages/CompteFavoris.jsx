@@ -7,6 +7,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
 import RecordText from '@/components/i18n/RecordText';
+import { Star } from 'lucide-react';
+import { ToneChip, ToneIcon } from '@/components/ui/Tone';
+import { contentTone, sectionTone } from '@/design/categoryTone';
 
 const PATH = { aide: '/aides/', demarche: '/demarches/', structure: '/structures/' };
 const typeLabels = (t) => ({ aide: t('compte:favorites.type.aide', 'Aide'), demarche: t('compte:favorites.type.demarche', 'Démarche'), structure: t('compte:favorites.type.structure', 'Structure') });
@@ -26,7 +29,7 @@ export default function CompteFavoris() {
   return (
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8" data-testid="compte-favoris">
       <SEO title={t('compte:favorites.mes_favoris', 'Mes favoris')} noindex />
-      <h1 className="text-2xl font-bold text-slate-900">{t('compte:favorites.mes_favoris', 'Mes favoris')}</h1>
+      <div className="flex items-center gap-3"><ToneIcon tone={sectionTone('favoris')} icon={Star} /><h1 className="text-2xl font-bold text-slate-900">{t('compte:favorites.mes_favoris', 'Mes favoris')}</h1></div>
       {state.error ? <div role="alert" data-testid="favoris-error" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900"><p>{state.error}</p><Button type="button" size="sm" variant="outline" className="mt-2" onClick={load}>{t('compte:favorites.reessayer', 'Réessayer')}</Button></div> : null}
       <div aria-live="polite" role="status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       <Card>
@@ -36,7 +39,7 @@ export default function CompteFavoris() {
             <ul className="space-y-2" data-testid="favoris-list">
               {state.favorites.map((f) => (
                 <li key={`${f.entityType}:${f.entityId}`} data-testid="favori-item" className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-200 p-2 text-sm">
-                  <span>{TYPE[f.entityType]} — {f.available ? <Link className="font-medium text-blue-800 underline" to={`${PATH[f.entityType]}${encodeURIComponent(f.slug)}`}><RecordText>{f.title}</RecordText></Link> : <span data-testid="favori-unavailable">{t('compte:favorites.cette_fiche_est_plus', 'Cette fiche n’est plus publiée.')}</span>} <span className="text-slate-600">{t('compte:favorites.added_on', '(ajoutée le {{date}})', { date: formatDate(f.createdAt) })}</span></span>
+                  <span><ToneChip tone={contentTone(f.entityType)}>{TYPE[f.entityType]}</ToneChip> — {f.available ? <Link className="font-medium text-blue-800 underline" to={`${PATH[f.entityType]}${encodeURIComponent(f.slug)}`}><RecordText>{f.title}</RecordText></Link> : <span data-testid="favori-unavailable">{t('compte:favorites.cette_fiche_est_plus', 'Cette fiche n’est plus publiée.')}</span>} <span className="text-slate-600">{t('compte:favorites.added_on', '(ajoutée le {{date}})', { date: formatDate(f.createdAt) })}</span></span>
                   <Button type="button" size="sm" variant="outline" onClick={async () => {
                     // R12 (C10): a failed removal says so (it was an unhandled error and the list looked unchanged without explanation)
                     try { await citizenApi.removeFavorite(f.entityType, f.entityId); setMessage(t('compte:favorites.removed', 'Favori retiré.')); load(); }

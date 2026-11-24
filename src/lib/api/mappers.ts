@@ -26,6 +26,8 @@ export interface AidCardViewModel {
     verifiedAt?: string | null;
     sourceLabel?: string;
     sourceUrl?: string;
+    /** the taxonomy slug (colour and chip of the card) */
+    category?: string;
 }
 
 export interface AidDetailSection {
@@ -85,6 +87,7 @@ export function mapAideToCard(item: ApiAideListItem): AidCardViewModel {
         verifiedAt: prov.verifiedAt,
         sourceLabel: prov.sourceLabel ?? undefined,
         sourceUrl: prov.sourceUrl ?? undefined,
+        category: item.categorie || undefined,
     };
 }
 

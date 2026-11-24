@@ -19,6 +19,7 @@ import { useT } from '@/i18n';
 import FalcPageDraft from '@/components/FalcPageDraft';
 import { frontendEnv } from '@/config/env';
 import { bookingOpened, isBetaRestrictedPath } from '@/lib/publicBeta';
+import { structureTone } from '@/design/categoryTone';
 import { DOMAIN_IDS, NEED_BY_ID, NEED_DOMAINS, domainName, needName } from '@/lib/socialNeeds';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
@@ -193,7 +194,7 @@ export default function Annuaire() {
   const typeOptions = TYPE_STRUCTURES.map((opt) => ({ value: opt.value, label: opt.value ? typeLabel(opt) : t('structures:filters.all', 'Tous') }));
   const activeFilters = [
     q && { key: 'q', label: `« ${q} »`, onRemove: () => handleParamChange('q', '') },
-    type && { key: 'type', label: typeLabel(TYPE_STRUCTURES.find((o) => o.value === type) || { value: type, label: type }), onRemove: () => handleParamChange('type', '') },
+    type && { key: 'type', label: typeLabel(TYPE_STRUCTURES.find((o) => o.value === type) || { value: type, label: type }), tone: structureTone(type), onRemove: () => handleParamChange('type', '') },
     city && { key: 'city', label: city, lang: 'fr', onRemove: () => handleParamChange('city', '') },
     zip && { key: 'zip', label: t('structures:filters.zip_chip', 'Code postal {{zip}}', { zip }), onRemove: () => handleParamChange('zip', '') },
     departement && { key: 'departement', label: departement, onRemove: () => handleParamChange('departement', '') },
@@ -294,7 +295,7 @@ export default function Annuaire() {
 
       <CatalogBody sidebar={renderFilters('')} sidebarLabel={t('structures:filters.toggle', 'Filtres')}>
         <div className="mb-5">
-          <ChoiceChips label={t('structures:filters.type', 'Type')} options={typeOptions} value={type} onChange={(v) => handleParamChange('type', v)} testId="structures-type-chips" />
+          <ChoiceChips label={t('structures:filters.type', 'Type')} options={typeOptions} value={type} onChange={(v) => handleParamChange('type', v)} testId="structures-type-chips" toneOf={structureTone} />
         </div>
 
         <ResultsBar summary={!isLoading && !error && structures.length > 0

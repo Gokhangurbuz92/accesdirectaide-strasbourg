@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from '@/App.jsx'
 import ErrorBoundary from '@/components/ErrorBoundary.jsx'
+import '@/lib/pwaInstall'   // 24/11/2026: keeps the browser's install offer (beforeinstallprompt) from the very first moment
 import '@/styles/tokens.css'
 import '@/styles/theme-palette.css'
 import '@/index.css'

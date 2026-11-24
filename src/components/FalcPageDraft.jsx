@@ -1,6 +1,11 @@
 import PropTypes from 'prop-types';
 import { useFalc } from '@/contexts/FalcContext';
+import { BookOpenText } from 'lucide-react';
 import { useT } from '@/i18n';
+import { TONES } from '@/design/categoryTone';
+import { ToneBar, ToneIcon } from '@/components/ui/Tone';
+
+const BLOCK_TONES = [TONES.blue, TONES.teal, TONES.amber, TONES.violet];
 import { FALC_PAGE_DRAFTS, FALC_DRAFT_STATUS } from '@/content/falc/citizenPages.fr';
 import { FALC_AUDIO_VOICE, falcAudioFor } from '@/content/falc/falcAudio';
 
@@ -21,31 +26,41 @@ export default function FalcPageDraft({ id, force = false }) {
   const headingId = `falc-draft-${draft.id}`;
   const audio = falcAudioFor(draft);
   return (
-    <section aria-labelledby={headingId} className="my-6 rounded-2xl border-2 border-blue-200 bg-white p-5 text-start font-sans text-lg leading-relaxed text-slate-900"
+    // 24/11/2026 (owner: « ortada dar bir kutu, çok kötü görünüyor »): the text spans the page as a row of short blocks — each block keeps its own short
+    // lines (the Unapei rule is about line length, not page width), one tinted card per block, the label, title and audio player on one band above.
+    <section aria-labelledby={headingId} className="my-6 overflow-hidden rounded-2xl border border-blue-200 bg-white text-start font-sans text-lg leading-relaxed text-slate-900 shadow-sm"
       data-testid="falc-page-draft" data-falc-status={draft.status} data-falc-draft={draft.id}>
-      <p className="mb-3 inline-block rounded-full border border-amber-300 bg-amber-50 px-3 py-1 text-sm font-semibold text-amber-950" data-testid="falc-draft-label">
-        {t('shared:falc.draft.label', 'Texte simplifié provisoire : pas encore relu par des personnes en situation de handicap intellectuel')}
-      </p>
-      <div lang="fr" dir="ltr">
-        <h2 id={headingId} className="mb-3 text-xl font-bold">{draft.title}</h2>
-        {draft.blocks.map((b) => (
-          <div key={b.heading} className="mb-4">
-            <h3 className="mb-1 text-lg font-semibold">{b.heading}</h3>
+      <div className="flex flex-col gap-3 border-b border-blue-100 bg-blue-50/60 p-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-3">
+          <ToneIcon tone={TONES.blue} icon={BookOpenText} />
+          <div>
+            <h2 id={headingId} className="text-xl font-bold" lang="fr" dir="ltr">{draft.title}</h2>
+            <p className="mt-1 inline-block rounded-full border border-amber-300 bg-amber-50 px-3 py-0.5 text-sm font-semibold text-amber-950" data-testid="falc-draft-label">
+              {t('shared:falc.draft.label', 'Texte simplifié provisoire : pas encore relu par des personnes en situation de handicap intellectuel')}
+            </p>
+          </div>
+        </div>
+        {audio ? (
+          <figure className="lg:w-[22rem]" data-testid="falc-audio">
+            <figcaption id={`${headingId}-audio`} className="mb-1 text-base font-semibold">{t('shared:falc.audio.label_duration', 'Écouter ce texte ({{minutes}} min)', { minutes: Math.max(1, Math.round(audio.seconds / 60)) })}</figcaption>
+            {/* WCAG 1.2.1 (audio only): the transcript is the simplified text itself, shown just below — no caption track applies to audio */}
+            {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
+            <audio controls preload="none" src={audio.file} aria-labelledby={`${headingId}-audio`} className="w-full">
+              <a href={audio.file}>{t('shared:falc.audio.download', 'Télécharger l’enregistrement')}</a>
+            </audio>
+            <p className="mt-1 text-xs text-slate-700"><span lang="fr">{FALC_AUDIO_VOICE.attribution}</span> <a className="underline" href={FALC_AUDIO_VOICE.licenceUrl} rel="noopener noreferrer">{t('shared:falc.audio.licence', 'Licence')}</a></p>
+          </figure>
+        ) : null}
+      </div>
+      <div lang="fr" dir="ltr" className="grid gap-4 p-5 md:grid-cols-2 xl:grid-cols-4" data-testid="falc-draft-text">
+        {draft.blocks.map((b, i) => (
+          <div key={b.heading} className="relative overflow-hidden rounded-xl border border-slate-200 bg-white p-4 ps-5">
+            <ToneBar tone={BLOCK_TONES[i % BLOCK_TONES.length]} side="start" />
+            <h3 className="mb-2 text-lg font-semibold">{b.heading}</h3>
             {b.lines.map((line) => <p key={line} className="mb-1">{line}</p>)}
           </div>
         ))}
       </div>
-      {audio ? (
-        <figure className="mt-2" data-testid="falc-audio">
-          <figcaption id={`${headingId}-audio`} className="mb-1 text-base font-semibold">{t('shared:falc.audio.label_duration', 'Écouter ce texte ({{minutes}} min)', { minutes: Math.max(1, Math.round(audio.seconds / 60)) })}</figcaption>
-          {/* WCAG 1.2.1 (audio only): the transcript is the simplified text itself, shown just above — no caption track applies to audio */}
-          {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-          <audio controls preload="none" src={audio.file} aria-labelledby={`${headingId}-audio`} className="w-full max-w-md">
-            <a href={audio.file}>{t('shared:falc.audio.download', 'Télécharger l’enregistrement')}</a>
-          </audio>
-          <p className="mt-1 text-sm text-slate-700"><span lang="fr">{FALC_AUDIO_VOICE.attribution}</span> <a className="underline" href={FALC_AUDIO_VOICE.licenceUrl} rel="noopener noreferrer">{t('shared:falc.audio.licence', 'Licence')}</a></p>
-        </figure>
-      ) : null}
     </section>
   );
 }

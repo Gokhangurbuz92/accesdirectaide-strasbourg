@@ -2,7 +2,9 @@
 import { useId } from 'react';
 import { X } from 'lucide-react';
 import { useT } from '@/i18n';
-import { MAX_NEEDS, NEED_DOMAINS, domainName, needName } from '@/lib/socialNeeds';
+import { MAX_NEEDS, NEED_BY_ID, NEED_DOMAINS, domainName, needName } from '@/lib/socialNeeds';
+import { topicTone } from '@/design/categoryTone';
+import { cn } from '@/lib/utils';
 
 /**
  * G14 release 3 — choose the needs (subdomains of the 20 × 86 taxonomy) a service or an own booking page answers. One fieldset; each domain is a
@@ -25,7 +27,7 @@ export default function NeedPicker({ value, onChange, disabled = false, testId =
       {chosen.length > 0 && (
         <ul className="flex flex-wrap gap-2" aria-label={t('pro:needs.chosen', 'Besoins choisis')} data-testid={`${testId}-chosen`}>
           {chosen.map((id) => (
-            <li key={id} className="inline-flex items-center gap-1 rounded-md border border-blue-200 bg-blue-50 px-2 py-1 text-blue-900">
+            <li key={id} className={cn('inline-flex items-center gap-1 rounded-md border px-2 py-1', topicTone(NEED_BY_ID.get(id)?.domain).chip)}>
               <span>{needName(t, id)}</span>
               <button type="button" disabled={disabled} onClick={() => toggle(id, false)}
                 className="inline-flex min-h-6 min-w-6 items-center justify-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
@@ -45,6 +47,7 @@ export default function NeedPicker({ value, onChange, disabled = false, testId =
           return (
             <details key={d.id} className="rounded" open={inDomain > 0 ? true : undefined}>
               <summary className="min-h-11 cursor-pointer py-2 font-medium text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700">
+                <span aria-hidden="true" className={cn('me-2 inline-block h-2.5 w-2.5 rounded-full align-middle', topicTone(d.id).dot)} />
                 {domainName(t, d.id)}{inDomain > 0 ? t('pro:needs.in_domain', ' ({{n}} choisi(s))', { n: inDomain }) : ''}
               </summary>
               <div className="space-y-1 ps-4">

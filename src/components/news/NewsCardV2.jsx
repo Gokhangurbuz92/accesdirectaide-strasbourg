@@ -6,6 +6,7 @@
 import { Link } from 'react-router-dom';
 import { Bookmark, BookmarkCheck, Layers } from 'lucide-react';
 import { DATE_SHORT, formatDate, useT } from '@/i18n';
+import { topicTone } from '@/design/categoryTone';
 import useContentTranslation from '@/hooks/useContentTranslation';
 import { htmlToPlainText } from '@/lib/htmlText';
 import NewsIllustration from './NewsIllustration';
@@ -49,7 +50,7 @@ export default function NewsCardV2({ item, featured = false, compact = false, sa
       <div className={`flex flex-1 flex-col ${featured ? 'p-5 md:p-7' : compact ? 'p-4' : 'p-5'}`}>
         <div className="mb-2 flex flex-wrap items-center gap-2 text-xs font-medium">
           <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-700"><span aria-hidden="true">{flag} </span>{geoLabel(item.geo?.scope || 'france', t, item.geo?.area)}</span>
-          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-800">{topicLabel(topic, t)}</span>
+          <span className={`rounded-full border px-2.5 py-1 ${topicTone(topic, 'blue').chip}`}>{topicLabel(topic, t)}</span>
           {item.est_important && <span className="rounded-full bg-amber-100 px-2.5 py-1 text-amber-900">{t('news:badge.important', 'Important')}</span>}
         </div>
         <h2 className={`font-heading font-bold leading-snug tracking-tight text-slate-900 group-hover:text-blue-800 ${featured ? 'text-2xl' : compact ? 'text-base' : 'text-lg'}`} data-testid="actualite-title" {...tr.attrs('titre')}>{title}</h2>

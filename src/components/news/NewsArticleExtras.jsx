@@ -13,6 +13,7 @@ import useNewsBookmarks from '@/hooks/useNewsBookmarks';
 import NewsIllustration from './NewsIllustration';
 import { geoLabel, laneLabel, topicLabel } from './newsLabels';
 import { useReducedData } from '@/lib/dataSaver';
+import { topicTone } from '@/design/categoryTone';
 
 const LONG = { day: 'numeric', month: 'long', year: 'numeric' };
 /** a thin progress bar of the reading position (decorative: the position is not information) */
@@ -68,7 +69,7 @@ export function NewsArticleHeader({ news }) {
     <>
       <div className="mb-3 flex flex-wrap gap-2 text-xs font-medium" data-testid="news-labels">
         <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-800">{geoLabel(news.geo?.scope || 'france', t, news.geo?.area)}</span>
-        {(news.topics || []).filter((x) => x !== 'une').map((x) => <span key={x} className="rounded-full bg-blue-50 px-2.5 py-1 text-blue-900">{topicLabel(x, t)}</span>)}
+        {(news.topics || []).filter((x) => x !== 'une').map((x) => <span key={x} className={`rounded-full border px-2.5 py-1 ${topicTone(x).chip}`}>{topicLabel(x, t)}</span>)}
         <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-900">{laneLabel(news, t)}</span>
       </div>
       <figure className="mb-6 overflow-hidden rounded-xl bg-slate-100">

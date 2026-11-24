@@ -12,6 +12,7 @@ import { Search, BookOpen, ExternalLink } from 'lucide-react';
 import LoadError from '@/components/LoadError';
 import i18n, { useLanguage, useT } from '@/i18n';
 import ContactLink from '@/components/ContactLink';
+import { topicTone } from '@/design/categoryTone';
 
 const CATEGORIES = [
   { value: '', label: 'Toutes les catégories' },
@@ -24,17 +25,6 @@ const CATEGORIES = [
   { value: 'ACCESSIBILITE', label: 'Accessibilité' },
   { value: 'ACCOMPAGNEMENT', label: 'Accompagnement' },
 ];
-
-const CATEGORY_COLORS = {
-  EMPLOI: 'bg-blue-100 text-blue-800',
-  LOGEMENT: 'bg-emerald-100 text-emerald-800',
-  SANTE: 'bg-red-100 text-red-800',
-  FAMILLE: 'bg-purple-100 text-purple-800',
-  HANDICAP: 'bg-amber-100 text-amber-800',
-  ENERGIE: 'bg-orange-100 text-orange-800',
-  ACCESSIBILITE: 'bg-indigo-100 text-indigo-800',
-  ACCOMPAGNEMENT: 'bg-teal-100 text-teal-800',
-};
 
 /** R32: a glossary category in the interface language (the values sent to the API do not change) */
 function categoryLabel(t, value) {
@@ -168,7 +158,7 @@ export default function Glossaire() {
                         <h2 className="text-lg font-bold text-slate-900" {...fr}>
                           {item.terme}
                         </h2>
-                        <Badge className={`border-0 text-xs ${CATEGORY_COLORS[item.categorie] || 'bg-slate-100 text-slate-800'}`}>
+                        <Badge className={`border text-xs ${topicTone(item.categorie).chip}`}>
                           {/* French: the category code, as received; another language: its name */}
                           {isSource || !item.categorie ? item.categorie : (categoryLabel(t, item.categorie) ?? item.categorie)}
                         </Badge>

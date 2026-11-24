@@ -17,6 +17,8 @@ import { useLanguage, useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { isBetaRestrictedPath } from '@/lib/publicBeta';
 import useContentTranslation from '@/hooks/useContentTranslation';
+import { ToneBar, ToneIcon } from '@/components/ui/Tone';
+import { contentTone, structureTone } from '@/design/categoryTone';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 const DEFAULT_LIMIT = 10;
@@ -52,11 +54,12 @@ function DemarcheResult({ d }) {
     <li>
       <Link
         to={d.slug ? `/demarches/${d.slug}` : `/demarches/view?id=${d.id}`}
-        className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-indigo-300 hover:shadow-md transition-all group"
+        className={`relative block overflow-hidden p-4 ps-5 bg-white rounded-xl border border-slate-200 ${contentTone('demarche').hover} hover:shadow-md transition-all group`}
       >
-        <h3 className="font-semibold text-slate-900 group-hover:text-indigo-700 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
+        <ToneBar tone={contentTone('demarche')} side="start" />
+        <h3 className="font-semibold text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
         {description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" {...tr.attrs('description')}>{description}</p>}
-        <span className="inline-flex items-center gap-1 text-indigo-600 text-sm font-medium mt-2">
+        <span className={`inline-flex items-center gap-1 ${contentTone('demarche').text} text-sm font-medium mt-2`}>
           {t('search:link.demarche', 'Voir la démarche')} <ArrowRight className="rtl-flip h-3 w-3" />
         </span>
       </Link>
@@ -73,12 +76,13 @@ function StructureResult({ s }) {
     <li>
       <Link
         to={s.slug ? `/structures/${s.slug}` : `/structures/view?id=${s.id}`}
-        className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-green-300 hover:shadow-md transition-all group"
+        className={`relative block overflow-hidden p-4 ps-5 bg-white rounded-xl border border-slate-200 ${contentTone('structure').hover} hover:shadow-md transition-all group`}
       >
-        <h3 className="font-semibold text-slate-900 group-hover:text-green-700 transition-colors" {...tr.attrs('title')}>{s.title}</h3>
+        <ToneBar tone={structureTone(s.category)} side="start" />
+        <h3 className="font-semibold text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('title')}>{s.title}</h3>
         {s.ville && <p className="text-xs text-slate-500 mt-0.5" {...tr.attrs('ville')}>{s.ville}</p>}
         {description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" {...tr.attrs('description')}>{description}</p>}
-        <span className="inline-flex items-center gap-1 text-green-700 text-sm font-medium mt-2">
+        <span className={`inline-flex items-center gap-1 ${contentTone('structure').text} text-sm font-medium mt-2`}>
           {t('search:link.structure', 'Voir la structure')} <ArrowRight className="rtl-flip h-3 w-3" />
         </span>
       </Link>
@@ -92,10 +96,11 @@ function GuideResult({ g }) {
   const tr = useContentTranslation('guide', g);
   return (
     <li>
-      <Link to={`/bonnes-pratiques/${g.slug}`} className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-blue-300 hover:shadow-md transition-all group">
+      <Link to={`/bonnes-pratiques/${g.slug}`} className={`relative block overflow-hidden p-4 ps-5 bg-white rounded-xl border border-slate-200 ${contentTone('guide').hover} hover:shadow-md transition-all group`}>
+        <ToneBar tone={contentTone('guide')} side="start" />
         <h3 className="font-semibold text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
         {g.description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" lang="fr">{g.description}</p>}
-        <span className="inline-flex items-center gap-1 text-blue-800 text-sm font-medium mt-2">
+        <span className={`inline-flex items-center gap-1 ${contentTone('guide').text} text-sm font-medium mt-2`}>
           {t('search:link.guide', 'Lire la fiche officielle')} <ArrowRight className="rtl-flip h-3 w-3" />
         </span>
       </Link>
@@ -109,10 +114,11 @@ function DispositifResult({ d }) {
   const tr = useContentTranslation('dispositif', d);
   return (
     <li>
-      <Link to={`/dispositifs/${d.slug}`} className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-teal-300 hover:shadow-md transition-all group">
-        <h3 className="font-semibold text-slate-900 group-hover:text-teal-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
+      <Link to={`/dispositifs/${d.slug}`} className={`relative block overflow-hidden p-4 ps-5 bg-white rounded-xl border border-slate-200 ${contentTone('dispositif').hover} hover:shadow-md transition-all group`}>
+        <ToneBar tone={contentTone('dispositif')} side="start" />
+        <h3 className="font-semibold text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
         {d.description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" lang="fr" dir="ltr">{d.description}</p>}
-        <span className="inline-flex items-center gap-1 text-teal-800 text-sm font-medium mt-2">
+        <span className={`inline-flex items-center gap-1 ${contentTone('dispositif').text} text-sm font-medium mt-2`}>
           {t('search:link.dispositif', 'Voir le dispositif')} <ArrowRight className="rtl-flip h-3 w-3" />
         </span>
       </Link>
@@ -129,11 +135,12 @@ function ActualiteResult({ a }) {
     <li>
       <Link
         to={a.slug ? `/actualites/${a.slug}` : `/actualites/view?id=${a.id}`}
-        className="block p-4 bg-white rounded-xl border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all group"
+        className={`relative block overflow-hidden p-4 ps-5 bg-white rounded-xl border border-slate-200 ${contentTone('actualite').hover} hover:shadow-md transition-all group`}
       >
-        <h3 className="font-semibold text-slate-900 group-hover:text-amber-700 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
+        <ToneBar tone={contentTone('actualite')} side="start" />
+        <h3 className="font-semibold text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('title')}>{tr.value('title')}</h3>
         {description && <p className="text-sm text-slate-700 mt-1 line-clamp-2" {...tr.attrs('description')}>{description}</p>}
-        <span className="inline-flex items-center gap-1 text-amber-800 text-sm font-medium mt-2">
+        <span className={`inline-flex items-center gap-1 ${contentTone('actualite').text} text-sm font-medium mt-2`}>
           {t('search:link.actualite', 'Lire la suite')} <ArrowRight className="rtl-flip h-3 w-3" />
         </span>
       </Link>
@@ -509,7 +516,7 @@ export default function Recherche() {
               {results.length > 0 && (
                 <div className="mb-8">
                   <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                    <Search className="h-5 w-5 text-blue-600" />
+                    <ToneIcon tone={contentTone('aide')} icon={Search} size="sm" />
                     {t('search:section.aides', 'Aides ({{n}})', { n: results.length })}
                   </h2>
                   <SearchResultsList results={results} cautions={orientation?.cautions} />
@@ -520,7 +527,7 @@ export default function Recherche() {
               {demarches.length > 0 && (
                 <div className="mb-8">
                   <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-indigo-600" />
+                    <ToneIcon tone={contentTone('demarche')} icon={FileText} size="sm" />
                     {t('search:section.demarches', 'Démarches ({{n}})', { n: demarches.length })}
                   </h2>
                   <ul className="grid gap-3 md:grid-cols-2">
@@ -535,7 +542,7 @@ export default function Recherche() {
               {dispositifs.length > 0 && (
                 <div className="mb-8">
                   <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                    <Landmark className="h-5 w-5 text-teal-700" aria-hidden="true" />
+                    <ToneIcon tone={contentTone('dispositif')} icon={Landmark} size="sm" />
                     {t('search:section.dispositifs', 'Dispositifs ({{n}})', { n: dispositifs.length })}
                   </h2>
                   <ul className="grid gap-3 md:grid-cols-2">
@@ -550,7 +557,7 @@ export default function Recherche() {
               {structures.length > 0 && (
                 <div className="mb-8">
                   <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                    <Building2 className="h-5 w-5 text-green-600" />
+                    <ToneIcon tone={contentTone('structure')} icon={Building2} size="sm" />
                     {t('search:section.structures', 'Structures ({{n}})', { n: structures.length })}
                   </h2>
                   {/* G14-FIND: with a commune, say where the places come from — a place elsewhere is never presented as « in your commune » */}
@@ -575,7 +582,7 @@ export default function Recherche() {
               {guides.length > 0 && (
                 <div className="mb-8">
                   <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                    <BookOpen className="h-5 w-5 text-blue-700" aria-hidden="true" />
+                    <ToneIcon tone={contentTone('guide')} icon={BookOpen} size="sm" />
                     {t('search:section.guides', 'Fiches pratiques officielles ({{n}})', { n: guides.length })}
                   </h2>
                   <ul className="grid gap-3 md:grid-cols-2">
@@ -590,7 +597,7 @@ export default function Recherche() {
               {actualites.length > 0 && (
                 <div className="mb-8">
                   <h2 className="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
-                    <Newspaper className="h-5 w-5 text-amber-600" />
+                    <ToneIcon tone={contentTone('actualite')} icon={Newspaper} size="sm" />
                     {t('search:section.actualites', 'Actualités ({{n}})', { n: actualites.length })}
                   </h2>
                   <ul className="grid gap-3 md:grid-cols-2">

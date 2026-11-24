@@ -59,7 +59,10 @@ describe('FA-D4 FALC drafts — display', () => {
     const box = screen.getByTestId('falc-page-draft');
     expect(box).toHaveAttribute('data-falc-status', 'simplified-draft-awaiting-participatory-validation');
     expect(screen.getByTestId('falc-draft-label')).toHaveTextContent('Texte simplifié provisoire');
-    expect(box.querySelector('[lang="fr"]')).toHaveTextContent('Exporter mes données');
+    // 24/11/2026: the title band and the block grid are both French (lang="fr"); the label between them stays in the interface language
+    expect(screen.getByTestId('falc-draft-text')).toHaveAttribute('lang', 'fr');
+    expect(screen.getByTestId('falc-draft-text')).toHaveTextContent('Exporter mes données');
+    expect(box.querySelector('h2')).toHaveAttribute('lang', 'fr');
     const r = await axe.run(container, { runOnly: ['wcag2a', 'wcag2aa'], rules: { 'color-contrast': { enabled: false } } });
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });

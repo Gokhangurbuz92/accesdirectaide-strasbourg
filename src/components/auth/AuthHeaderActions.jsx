@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Briefcase, ChevronDown, LogIn, UserPlus, Settings, MessageCircle, LogOut } from 'lucide-react';
+import { User, Briefcase, ChevronDown, LogIn, UserPlus, Settings, MessageCircle, LogOut, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
     DropdownMenu,
@@ -95,6 +95,12 @@ export function AuthHeaderActions() {
                             <Link to="/compte/parametres" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
                                 <Settings className="h-4 w-4 text-ada-link" aria-hidden="true" />
                                 <span>{t('layout:account.settings', 'Paramètres')}</span>
+                            </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link to="/compte/guide" className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm cursor-pointer">
+                                <BookOpen className="h-4 w-4 text-ada-link" aria-hidden="true" />
+                                <span>{t('layout:account.guide', 'Guide d’utilisation')}</span>
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
@@ -226,6 +232,10 @@ export function AuthMobileActions({ onNavigate }) {
                 <Link to="/compte/parametres" className={linkClass} onClick={onNavigate}>
                     <Settings className="h-4 w-4 text-ada-link" aria-hidden="true" />
                     {t('layout:account.settings', 'Paramètres')}
+                </Link>
+                <Link to="/compte/guide" className={linkClass} onClick={onNavigate}>
+                    <BookOpen className="h-4 w-4 text-ada-link" aria-hidden="true" />
+                    {t('layout:account.guide', 'Guide d’utilisation')}
                 </Link>
                 <button onClick={handleLogout} className={`${linkClass} w-full text-red-600 hover:bg-red-50`}>
                     <LogOut className="h-4 w-4" />

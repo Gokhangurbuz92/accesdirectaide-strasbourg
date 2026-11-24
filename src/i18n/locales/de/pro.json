@@ -1654,5 +1654,9 @@
  "dashboard.start.hours": "Verfügbarkeiten festlegen",
  "dashboard.start.hours_hint": "Die Zeitfenster, die den Personen angeboten werden",
  "dashboard.start.team": "Ihr Team einladen",
- "dashboard.start.team_hint": "Die Kolleginnen und Kollegen, die die Personen empfangen"
+ "dashboard.start.team_hint": "Die Kolleginnen und Kollegen, die die Personen empfangen",
+ "layout.guide": "ADA-Pro-Leitfaden",
+ "dashboard.guide_link": "ADA-Pro-Leitfaden: So funktioniert es",
+ "dashboard.start.guide": "Alle Einzelheiten im Leitfaden",
+ "breadcrumb.guide": "ADA-Pro-Leitfaden"
 }

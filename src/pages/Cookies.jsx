@@ -31,6 +31,7 @@ const localStorageRows = (t) => [
   ['ada_lang', t('legal:cookies.store.lang.purpose', 'La langue de l\'interface que vous avez choisie (ou « français » si vous avez refusé la suggestion de langue)'), t('legal:cookies.store.untilCleared', 'Jusqu\'à effacement')],
   ['ada_reader_prefs', t('legal:cookies.store.reader.purpose', 'Vos réglages de lecture à voix haute (vitesse, voix, surlignage)'), t('legal:cookies.store.untilCleared', 'Jusqu\'à effacement')],
   ['ada_onboarding_done, ada_chatbot_rgpd_dismissed', t('legal:cookies.store.onboarding.purpose', 'Ne plus afficher la visite guidée ou l\'information de l\'assistant'), t('legal:cookies.store.untilCleared', 'Jusqu\'à effacement')],
+  ['ada_install_dismissed', t('legal:cookies.store.install.purpose', 'Ne plus proposer l\'installation de l\'application sur cet appareil'), t('legal:cookies.store.install.duration', '60 jours')],
   ['ada_citizen_prefs, ada_pro_prefs, ada_admin_prefs', t('legal:cookies.store.prefs.purpose', 'Préférences d\'affichage de chaque espace'), t('legal:cookies.store.untilCleared', 'Jusqu\'à effacement')],
   ['ada_diagnostic_state', t('legal:cookies.store.diagnostic.purpose', 'Vos réponses au questionnaire, gardées sur l\'appareil'), t('legal:cookies.store.diagnostic.duration', '24 heures au plus, ou jusqu\'à « Recommencer »')],
   ['pro_token', t('legal:cookies.store.pro.purpose', 'Connexion à l\'espace professionnel'), t('legal:cookies.store.pro.duration', 'Jusqu\'à effacement ou déconnexion')],

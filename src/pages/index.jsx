@@ -236,6 +236,7 @@ const ProAvailability = lazy(() => import("./pro/Availability.jsx"));
 const ProTeam = lazy(() => import("./pro/Team.jsx"));
 const ProStructure = lazy(() => import("./pro/Structure.jsx"));
 const ProParametres = lazy(() => import("./pro/ProParametres.jsx"));
+const ProGuide = lazy(() => import("./pro/Guide.jsx"));   // Guide ADA Pro: /pro/guide (console) and /pro/guide-public (before sign-in)
 const ProAccompagnement = lazy(() => import("./pro/Accompagnement.jsx"));   // G14-AID: helper code
 const ProAppointments = lazy(() => import("./pro/Appointments.jsx"));
 const ProAppointmentDetail = lazy(() => import("./pro/AppointmentDetail.jsx"));
@@ -264,6 +265,9 @@ const SentryTestPage = lazy(() => import("./SentryTestPage.jsx"));
 // Glossaire
 const Glossaire = lazy(() => import("./Glossaire.jsx"));
 const Besoins = lazy(() => import("./Besoins.jsx"));   // extension R32: entry by need (social-sector reference)
+// 24/11/2026: the citizen help pages — « Questions fréquentes » (public) and « Guide d’utilisation » (public /guide, account /compte/guide)
+const QuestionsFrequentes = lazy(() => import("./QuestionsFrequentes.jsx"));
+const GuideUtilisation = lazy(() => import("./GuideUtilisation.jsx"));
 
 // Map for _getCurrentPage logic (keeping structure for logic compatibility)
 const PAGES = {
@@ -489,6 +493,7 @@ function PagesContent() {
                             className="w-full h-full min-h-screen"
                         >
                             <Routes location={location}>
+                                <Route path="/pro/guide-public" element={<ProGuide publicView />} />
                                 <Route path="/pro" element={<ProLayout />}>
                                     <Route index element={<Navigate to="dashboard" replace />} />
                                     <Route path="login" element={<ProLogin />} />
@@ -536,6 +541,7 @@ function PagesContent() {
                                     <Route path="rehearsal" element={<Navigate to="/pro/dashboard" replace />} />
                                     <Route path="mfa-settings" element={<ProGuard><ProMfaSettings /></ProGuard>} />
                                     <Route path="parametres" element={<ProGuard><ProParametres /></ProGuard>} />
+                                    <Route path="guide" element={<ProGuard><ProGuide /></ProGuard>} />
                                     <Route path="accompagnement" element={<ProGuard><ProAccompagnement /></ProGuard>} />
                                 </Route>
                                 {/* R37: an unknown /pro page was blank (no catch-all in this block) */}
@@ -575,6 +581,7 @@ function PagesContent() {
                                 <Route path="/compte/parametres" element={<CompteParametres />} />
                                 <Route path="/compte/profil" element={<CompteProfil />} />
                                 <Route path="/compte" element={<MonEspace />} />
+                                <Route path="/compte/guide" element={<GuideUtilisation account />} />
                                 <Route path="/compte/parcours" element={<CompteParcours />} />
                                 <Route path="/compte/coffre" element={<CompteCoffre />} />
                                 <Route path="/compte/dossiers-chiffres" element={<CompteDossiersChiffres />} />
@@ -636,6 +643,9 @@ function PagesContent() {
                                 <Route path="/categories/:slug" element={<Aides />} />
                                 <Route path="/situations/:slug" element={<SituationRedirect />} />
                                 <Route path="/glossaire" element={<Glossaire />} />
+                                <Route path="/questions-frequentes" element={<QuestionsFrequentes />} />
+                                <Route path="/faq" element={<Navigate to="/questions-frequentes" replace />} />
+                                <Route path="/guide" element={<GuideUtilisation />} />
                                 <Route path="/besoins" element={<Besoins />} />
 
                                 <Route path="/structures" element={<Annuaire />} />

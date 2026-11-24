@@ -4,6 +4,8 @@ import { ArrowRight, Building2, ExternalLink, FileText, MapPin, Phone } from 'lu
 import { useLanguage, useT } from '@/i18n';
 import { needLabel } from '@/lib/rightsPublicView';
 import reference from '../../../data/reference/social-domains.v1.json';
+import { TONES, topicTone } from '@/design/categoryTone';
+import { ToneBar } from '@/components/ui/Tone';
 
 /**
  * G4 — browser-only orientation: the need TOPICS of the person's choices (src/lib/orientationBrowserOnly.js orientationTopics), each with the official
@@ -30,7 +32,8 @@ export default function BrowserOrientationTopics({ topics }) {
           const numbers = need.numbers.filter((x) => EMERGENCY.has(x));
           const headingId = `local-topic-${need.id}`;
           return (
-            <li key={need.id} data-testid="local-topic" data-need={need.id} className="rounded-lg border border-slate-200 p-4">
+            <li key={need.id} data-testid="local-topic" data-need={need.id} className="relative overflow-hidden rounded-lg border border-slate-200 p-4 pt-5">
+              <ToneBar tone={need.urgent ? TONES.red : topicTone(need.id)} />
               <h3 id={headingId} className="flex flex-wrap items-center gap-2 text-base font-semibold text-slate-900">
                 {needLabel(need.id, tr, need.label)}
                 {need.urgent && <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-900">{tr('rights:needs.urgent', 'Urgent')}</span>}

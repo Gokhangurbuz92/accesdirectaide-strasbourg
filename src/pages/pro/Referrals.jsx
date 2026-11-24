@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
+import { ToneChip } from '@/components/ui/Tone';
+import { topicTone } from '@/design/categoryTone';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { label } from '@/lib/caseLabels';
@@ -61,7 +63,7 @@ function ReferralBoxes() {
       {state.loading ? <p role="status">{t('pro:referrals.loading', 'Chargement…')}</p> : state.referrals.length ? (
         <ul className="space-y-2">{state.referrals.map((r) => (
           <li key={r.id} data-testid="pro-ref-item" className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-slate-200 bg-white p-3 text-sm">
-            <span>{box === 'inbox' ? t('pro:referrals.from', 'De {{name}}', { name: r.fromName }) : t('pro:referrals.to', 'Vers {{name}}', { name: r.toName })}{r.reasonCode ? ` — ${label(REASON_LABELS, r.reasonCode)}` : ''} — <strong data-testid="pro-ref-status">{label(REFERRAL_STATUS_LABELS, r.status)}</strong>{r.overdue ? ` — ${t('pro:referrals.overdue', 'en retard')}` : ''}{r.stalled ? <span data-testid="pro-ref-stalled">{` — ${t('pro:referrals.stalled', 'acceptée, sans suite enregistrée')}`}</span> : null}{r.suggested ? <span data-testid="pro-ref-suggested">{` — ${t('pro:referrals.suggested_badge', 'autre structure suggérée')}`}</span> : null}{r.needsFollowUp ? <strong data-testid="pro-ref-follow-up">{` — ${t('pro:referrals.follow_up_badge', 'à relancer')}`}</strong> : null}</span>
+            <span>{box === 'inbox' ? t('pro:referrals.from', 'De {{name}}', { name: r.fromName }) : t('pro:referrals.to', 'Vers {{name}}', { name: r.toName })}{r.reasonCode ? <>{' — '}<ToneChip tone={topicTone(r.reasonCode)}>{label(REASON_LABELS, r.reasonCode)}</ToneChip></> : ''} — <strong data-testid="pro-ref-status">{label(REFERRAL_STATUS_LABELS, r.status)}</strong>{r.overdue ? ` — ${t('pro:referrals.overdue', 'en retard')}` : ''}{r.stalled ? <span data-testid="pro-ref-stalled">{` — ${t('pro:referrals.stalled', 'acceptée, sans suite enregistrée')}`}</span> : null}{r.suggested ? <span data-testid="pro-ref-suggested">{` — ${t('pro:referrals.suggested_badge', 'autre structure suggérée')}`}</span> : null}{r.needsFollowUp ? <strong data-testid="pro-ref-follow-up">{` — ${t('pro:referrals.follow_up_badge', 'à relancer')}`}</strong> : null}</span>
             <Button asChild size="sm" variant="outline"><Link to={`/pro/orientations/${encodeURIComponent(r.id)}`} data-testid="pro-ref-open">{t('pro:referrals.open', 'Ouvrir')}</Link></Button>
           </li>
         ))}</ul>
@@ -118,7 +120,7 @@ function ReferralDetail({ id }) {
       <div aria-live="polite" role="status" data-testid="pro-ref-status-msg">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {problem ? <p role="alert" data-testid="pro-ref-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
       <Card><CardHeader><CardTitle className="text-lg">{t('pro:referrals.card_request', 'Demande')}</CardTitle></CardHeader><CardContent className="space-y-2 text-sm">
-        {r.reasonCode ? <p>{t('pro:referrals.reason_label', 'Motif :')} {label(REASON_LABELS, r.reasonCode)}</p> : null}
+        {r.reasonCode ? <p>{t('pro:referrals.reason_label', 'Motif :')} <ToneChip tone={topicTone(r.reasonCode)}>{label(REASON_LABELS, r.reasonCode)}</ToneChip></p> : null}
         {r.message ? <p className="whitespace-pre-wrap rounded-md bg-slate-50 p-2" data-testid="pro-ref-message">{r.message}</p> : null}
         {r.responseCode ? <p>{t('pro:referrals.response_label', 'Réponse :')} {label(RESPONSE_LABELS, r.responseCode)}{r.responseMessage ? ` — « ${r.responseMessage} »` : ''}</p> : null}
         {r.suggested ? <p data-testid="pro-ref-suggested-name">{t('pro:referrals.suggested_label', 'Structure suggérée :')} <strong>{r.suggested.name}</strong> — {t('pro:referrals.suggested_nothing_sent', 'rien ne lui a été transmis.')}</p> : null}

@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { client } from '@/api/client';
 import { htmlToPlainText } from '@/lib/htmlText';
 import { formatDate, useT } from '@/i18n';
+import { PAGE } from '@/design/layout';
 import useContentTranslation from '@/hooks/useContentTranslation';
 
 /** @typedef {{ id: string, slug?: string | null, titre?: string, resume?: string | null, summary_falc?: string | null, date_publication?: string | null, published_at?: string | null }} NewsItem */
@@ -45,7 +46,7 @@ export default function NewsSection() {
 
   return (
     <section className="border-t border-slate-200 bg-slate-50 py-14 lg:py-16">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className={PAGE}>
         <div className="mb-8 flex items-center gap-3">
           <span className="h-8 w-1 rounded-full bg-blue-500" aria-hidden="true" />
           <h2 className="text-3xl font-bold text-slate-900">{t('home:news.title', 'Actualités officielles')}</h2>

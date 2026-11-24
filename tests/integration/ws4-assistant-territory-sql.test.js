@@ -137,6 +137,16 @@ describe('WS4 AssistantTerritoryResolver on synthetic temporary rows', () => {
     expect(result.territory.id).toBe('message-strasbourg');
   });
 
+  it('24/11/2026: a sentence given as the commune (« J’habite à Strasbourg et… ») is read like a message; a lone unknown word is not', async () => {
+    await territory('sentence-strasbourg', 'COMMUNE', '67482');
+    await label('sentence-strasbourg', 'Strasbourg');
+    const result = await resolveAssistantTerritory({ rawTerritory: "J'habite à Strasbourg et je n'arrive plus à payer mon loyer" }, database);
+    expect(result.status).toBe('RESOLVED');
+    expect(result.matchedBy).toBe('SUPPLIED_SENTENCE');
+    expect(result.territory.id).toBe('sentence-strasbourg');
+    expect((await resolveAssistantTerritory({ rawTerritory: 'Strasburgo' }, database)).status).toBe('UNRESOLVED');
+  });
+
   it('fails closed when the supplied label is ambiguous', async () => {
     await territory('same-name-a', 'COMMUNE', '10001');
     await territory('same-name-b', 'COMMUNE', '20002');

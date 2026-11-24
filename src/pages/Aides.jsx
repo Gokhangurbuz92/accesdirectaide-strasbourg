@@ -19,6 +19,7 @@ import { buildAidesItemListSchema, buildBreadcrumbSchema } from '@/lib/seo';
 import { useAidesListing } from '@/lib/hooks/useAidesListing';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 import { categoryLabel } from '@/components/ui/CategoryChip';
+import { topicTone } from '@/design/categoryTone';
 import { Trans } from 'react-i18next';
 import i18n, { useLanguage, useT } from '@/i18n';
 import FalcPageDraft from '@/components/FalcPageDraft';
@@ -281,7 +282,7 @@ export default function Aides() {
   const territoryLabel = (value) => territoryOptions.find((o) => o.value === value)?.label || value;
   const activeFilters = [
     q && { key: 'q', label: `« ${q} »`, onRemove: () => handleParamChange('q', '') },
-    category && !categorySlug && { key: 'category', label: (categoryOptions.find((o) => o.value === category) || { label: category }).label, lang: (categoryOptions.find((o) => o.value === category) || {}).lang, onRemove: () => handleParamChange('category', '') },
+    category && !categorySlug && { key: 'category', label: (categoryOptions.find((o) => o.value === category) || { label: category }).label, lang: (categoryOptions.find((o) => o.value === category) || {}).lang, tone: topicTone(category), onRemove: () => handleParamChange('category', '') },
     situation && { key: 'situation', label: situationLabel(situation), lang: 'fr', onRemove: () => handleParamChange('situation', '') },
     territory && !territorySlug && { key: 'territory', label: territoryLabel(territory), onRemove: () => handleParamChange('territory', '') },
     localFilters.urgentOnly && { key: 'urgent', label: t('aides:filters.urgent_only', 'Urgence uniquement'), onRemove: () => setLocalFilters({ ...localFilters, urgentOnly: false }) },
@@ -382,7 +383,7 @@ export default function Aides() {
       <CatalogBody sidebar={renderFilters('')} sidebarLabel={t('aides:filters.region_label', 'Filtres de recherche')}>
         {!categorySlug && (
           <div className="mb-5">
-            <ChoiceChips label={t('aides:filters.category', 'Catégorie')} options={categoryOptions} value={category} onChange={(v) => handleParamChange('category', v)} testId="aides-category-chips" />
+            <ChoiceChips label={t('aides:filters.category', 'Catégorie')} options={categoryOptions} value={category} onChange={(v) => handleParamChange('category', v)} testId="aides-category-chips" toneOf={topicTone} />
           </div>
         )}
         <ResultsBar summary={isSuccess && filteredItems.length > 0 ? <span data-testid="aides-success-state">{countText}</span> : null}>

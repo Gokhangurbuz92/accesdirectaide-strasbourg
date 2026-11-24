@@ -10,6 +10,8 @@ import OfficialServices from '@/components/OfficialServices';
 import { ArrowRight, Compass, ExternalLink, Gavel, GraduationCap, HeartPulse, Home, Hourglass, IdCard, Landmark, Scale } from 'lucide-react';
 import { CONTAINER, ChoiceChips, FilterField, SELECT } from '@/components/layout/catalog';
 import { formatDate, useLanguage, useT } from '@/i18n';
+import { topicTone } from '@/design/categoryTone';
+import { ToneChip } from '@/components/ui/Tone';
 
 const CATEGORY_ICON = { droits: Scale, jeunes: GraduationCap, logement: Home, sante: HeartPulse, retraite: Hourglass, justice: Gavel, papiers: IdCard, orientation: Compass };
 
@@ -33,7 +35,7 @@ function OfficialTools() {
                 </p>
             </div>
             <div className="mt-5">
-                <ChoiceChips label={t('tools:filters.category', 'Catégorie')} value={topic} onChange={setTopic} testId="official-tools-topics"
+                <ChoiceChips label={t('tools:filters.category', 'Catégorie')} value={topic} onChange={setTopic} testId="official-tools-topics" toneOf={topicTone}
                     options={[{ value: '', label: t('tools:filters.category-all', 'Toutes'), count: OFFICIAL_TOOLS.length },
                         ...topics.map((c) => ({ value: c, label: topicName(c), count: OFFICIAL_TOOLS.filter((tool) => tool.categorie === c).length }))]} />
             </div>
@@ -45,12 +47,12 @@ function OfficialTools() {
                     return (
                         <li key={tool.id} className="group flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-subtle transition-shadow hover:border-blue-200 hover:shadow-float" data-testid="official-tool">
                             <div className="flex items-start justify-between gap-3">
-                                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-800" aria-hidden="true"><Icon className="h-5 w-5" /></span>
+                                <span className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${topicTone(tool.categorie, 'blue').tile}`} aria-hidden="true"><Icon className="h-5 w-5" /></span>
                                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-900">
                                     <Landmark className="h-3.5 w-3.5" aria-hidden="true" />{t('tools:official.badge', 'Service officiel')}
                                 </span>
                             </div>
-                            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-blue-800">{text.categorie}</p>
+                            <p className="mt-4"><span className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-semibold uppercase tracking-wide ${topicTone(tool.categorie, 'blue').chip}`}>{text.categorie}</span></p>
                             <h3 className="mt-1 font-heading text-base font-semibold leading-snug text-slate-900">{text.titre}</h3>
                             <p className="mt-1.5 flex-1 text-sm leading-relaxed text-slate-600">{text.description}</p>
                             <a href={tool.url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center gap-1.5 self-start rounded-lg text-sm font-semibold text-blue-800 hover:text-blue-950 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700">
@@ -181,6 +183,7 @@ export default function Tools() {
                                             <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-800" {...(typeLabels[tool.type] ? {} : fr)}>
                                                 {typeLabels[tool.type] || tool.type}
                                             </span>
+                                            {tool.categorie && <ToneChip tone={topicTone(tool.categorie)} lang="fr">{tool.categorie.charAt(0).toUpperCase() + tool.categorie.slice(1)}</ToneChip>}
                                         </div>
                                         <h3 className="mt-3 font-heading text-lg font-semibold leading-snug text-slate-900 group-hover:text-blue-800" {...fr}>
                                             {tool.titre}

@@ -16,7 +16,19 @@ import {
     AlertCircle,
     Clock,
     Shield,
+    Building2,
+    ListChecks,
+    Copy,
+    FilePlus,
+    BookOpen,
+    Flag,
+    ClipboardCheck,
+    LifeBuoy,
+    ShieldAlert,
+    Lock,
 } from 'lucide-react';
+import { ToneBar, ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
 import { useT, formatDateTime, formatTime } from '@/i18n';
 
 /**
@@ -121,6 +133,13 @@ export default function AdminDashboard() {
         { key: 'bg', title: t('admin:dashboard.card.bg.title', 'Accès d’urgence à examiner'), to: '/admin/operations', count: n(tasks.breakGlass), unit: t('admin:dashboard.card.bg.unit', 'à examiner'), todo: t('admin:dashboard.card.bg.todo', 'Un accès d’urgence est examiné ensuite, avec les actions faites pendant la fenêtre, par un autre administrateur — ou par vous-même tant que vous êtes le seul administrateur actif avec MFA.') },
     ];
     const waiting = cards.filter((c) => c.count > 0);
+    // colour system: each task card in the colour of the administration section it opens (icon tile + top bar); the amber border still says « en attente »
+    /** @type {Record<string, [string, any]>} */
+    const TASK_SECTION = {
+        proreg: ['organisations', Building2], ws2: ['catalogue', ListChecks], orgs: ['organisations', Building2], dup: ['catalogue', Copy], prop: ['contenus', FilePlus],
+        falc: ['contenus', BookOpen], rep: ['moderation', Flag], quality: ['catalogue', ClipboardCheck], ai: ['ia', Cpu], privacy: ['securite', Lock],
+        support: ['messages', LifeBuoy], bg: ['securite', ShieldAlert],
+    };
 
     return (
         <div className="min-h-screen bg-slate-50">
@@ -149,11 +168,18 @@ export default function AdminDashboard() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
                 <VeilleSummary />
                 <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" data-testid="admin-tasks">
-                    {cards.map((c) => (
+                    {cards.map((c) => {
+                        const [section, TaskIcon] = TASK_SECTION[c.key] || ['journal', FileText];
+                        const tone = sectionTone(section, 'indigo');
+                        return (
                         <li key={c.key} data-testid="admin-task" data-task={c.key}
-                            className={`rounded-lg border bg-white p-4 ${c.count > 0 ? 'border-amber-400' : 'border-slate-200'}`}>
+                            className={`relative overflow-hidden rounded-lg border bg-white p-4 ${c.count > 0 ? 'border-amber-400' : 'border-slate-200'}`}>
+                            <ToneBar tone={tone} />
                             <div className="flex items-start justify-between gap-3">
-                                <h2 className="font-semibold text-slate-900">{c.title}</h2>
+                                <div className="flex min-w-0 items-center gap-3">
+                                    <ToneIcon tone={tone} icon={TaskIcon} size="sm" />
+                                    <h2 className="font-semibold text-slate-900">{c.title}</h2>
+                                </div>
                                 <span className={`shrink-0 rounded px-2 py-0.5 text-sm font-semibold ${c.count == null ? 'bg-slate-100 text-slate-800' : c.count > 0 ? 'bg-amber-100 text-amber-900' : 'bg-emerald-50 text-emerald-800'}`} data-testid="admin-task-count">
                                     {c.count == null ? t('admin:dashboard.count_unavailable', 'indisponible') : c.count > 0 ? `${c.count} ${c.unit}` : t('admin:dashboard.count_none', 'Rien en attente')}
                                 </span>
@@ -164,7 +190,8 @@ export default function AdminDashboard() {
                                 {t('admin:dashboard.open', 'Ouvrir « {{title}} »', { title: c.title })}
                             </Link>
                         </li>
-                    ))}
+                        );
+                    })}
                 </ul>
 
                 <details className="rounded-lg border border-slate-200 bg-white" data-testid="admin-dashboard-technical">

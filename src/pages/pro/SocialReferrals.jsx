@@ -2,6 +2,8 @@
 import { useCallback, useEffect, useId, useState } from 'react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
+import { ToneChip } from '@/components/ui/Tone';
+import { topicTone } from '@/design/categoryTone';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { formatDate, useT } from '@/i18n';
 import { lbl, socialReferralLabels } from '@/lib/socialReferralLabels';
@@ -111,7 +113,7 @@ export default function SocialReferrals() {
           {list.items.map((r) => (
             <li key={r.id} className="space-y-2 py-3" data-testid="social-row">
               <p><strong>{tab === 'inbox' ? r.from : r.to}</strong> — {lbl(L.status, r.status)}{r.responseCode ? ` (${lbl(L.decline, r.responseCode)})` : ''}</p>
-              <p className="text-sm text-slate-700">{formatDate(r.createdAt)} · {(r.reasonCodes || []).map((c) => lbl(L.reason, c)).join(', ')}{r.consentChannel === 'ASSISTED_ON_SCREEN' ? ` · ${t('socialref:pro.assisted_flag', 'accord donné sur écran')}` : ''}</p>
+              <p className="text-sm text-slate-700">{formatDate(r.createdAt)} · {(r.reasonCodes || []).map((c, i) => <span key={c}>{i ? ', ' : ''}<ToneChip tone={topicTone(c)}>{lbl(L.reason, c)}</ToneChip></span>)}{r.consentChannel === 'ASSISTED_ON_SCREEN' ? ` · ${t('socialref:pro.assisted_flag', 'accord donné sur écran')}` : ''}</p>
               <div className="flex flex-wrap gap-2">
                 <Button type="button" size="sm" variant="outline" onClick={() => detail(r.id)}>{t('socialref:pro.details', 'Détails')}</Button>
                 {tab === 'outbox' && r.status === 'PENDING_CITIZEN' ? <>

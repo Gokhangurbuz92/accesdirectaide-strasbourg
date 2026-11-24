@@ -7,8 +7,10 @@ import {
     User, Bell, Shield, Accessibility, Database,
     Mail, Phone, CheckCircle, XCircle, ExternalLink,
     Download, Trash2, AlertTriangle, Eye,
-    Sun, Type, Minus, ArrowLeft
+    Sun, Type, Minus, ArrowLeft, Settings
 } from 'lucide-react';
+import { ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
 
 import SEO from '@/components/SEO';
 import { Card, CardContent } from '@/components/ui/card';
@@ -665,7 +667,10 @@ export default function CompteParametres() {
                     </Link>
                 </p>
                 <div className="mb-6 sm:mb-8">
-                    <h1 className="text-3xl font-bold tracking-tight text-ada-ink sm:text-4xl">{t('compte:settings.parametres', 'Paramètres')}</h1>
+                    <div className="flex items-center gap-3">
+                        <ToneIcon tone={sectionTone('parametres')} icon={Settings} />
+                        <h1 className="text-3xl font-bold tracking-tight text-ada-ink sm:text-4xl">{t('compte:settings.parametres', 'Paramètres')}</h1>
+                    </div>
                     <p className="mt-2 text-base text-ada-ink-3">{t('compte:settings.gerez_votre_compte_vos', 'Gérez votre compte et vos préférences')}</p>
                 </div>
 

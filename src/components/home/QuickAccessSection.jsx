@@ -3,13 +3,15 @@ import { HandHeart, FileText, MapPin, Bot, Calculator } from 'lucide-react';
 import { frontendEnv } from '@/config/env';
 import { openLinks } from '@/lib/publicBeta';
 import { useT } from '@/i18n';
+import { contentTone } from '@/design/categoryTone';
+import { ToneIcon } from '@/components/ui/Tone';
 
 const items = [
   { key: 'aides', label: 'Toutes les aides', to: '/aides', icon: HandHeart },
   { key: 'demarches', label: 'Démarches', to: '/demarches', icon: FileText },
   { key: 'structures', label: 'Lieux d\'accueil', to: '/structures', icon: MapPin },
   { key: 'assistant', label: 'Mon Assistant', to: '/orientation', icon: Bot },
-  { key: 'simulator', label: 'Simulateur', to: '/diagnostic', icon: Calculator },
+  { key: 'simulator', label: 'Simulateur', to: '/diagnostic', icon: Calculator, toneKey: 'outil' },
 ];
 
 export default function QuickAccessSection() {
@@ -35,9 +37,8 @@ export default function QuickAccessSection() {
               to={item.to}
               className="rounded-xl border border-slate-200 bg-white p-5 transition hover:border-blue-300 hover:shadow-sm"
             >
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-blue-50 text-blue-600">
-                <item.icon className="h-5 w-5" />
-              </div>
+              {/* 24/11/2026: each kind of content in its colour (src/design/categoryTone.js); the simulator is a tool, the assistant has no kind of its own */}
+              <ToneIcon tone={contentTone(item.toneKey || item.key, 'cyan')} icon={item.icon} className="mb-4" />
               <p className="text-sm font-semibold text-slate-900">{labels[item.key] ?? item.label}</p>
             </Link>
           ))}

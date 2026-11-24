@@ -6,6 +6,8 @@ import PageHeader from '@/components/layout/PageHeader';
 import { useT } from '@/i18n';
 import reference from '../../data/reference/social-domains.v1.json';
 import coverage from '../../data/reference/social-coverage.v1.json';
+import { topicTone } from '@/design/categoryTone';
+import { ToneBar } from '@/components/ui/Tone';
 
 /**
  * Extension R32 — « Trouver de l'aide par besoin »: entry by need, built on the versioned social-sector reference (data/reference). Honest by
@@ -59,7 +61,8 @@ export default function Besoins() {
           const shown = d.subdomains.filter((s) => status[s.id] && status[s.id].status !== 'TAXONOMY_ONLY');
           return (
             <li key={d.id}>
-              <details className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm" data-testid={`need-${d.id}`}>
+              <details className={`relative overflow-hidden rounded-xl border border-slate-200 bg-white p-4 ps-5 shadow-sm ${topicTone(d.id).hover}`} data-testid={`need-${d.id}`}>
+                <ToneBar tone={topicTone(d.id)} side="start" />
                 <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-3 text-base font-semibold text-slate-900">
                   <span>{label('domain', d.id, d.fr)}</span>
                   <span className="text-sm font-normal text-slate-600">{t('reference:count', { count: shown.length, defaultValue_one: '{{count}} sujet avec des fiches', defaultValue_other: '{{count}} sujets avec des fiches' })}</span>

@@ -25,6 +25,7 @@ import PropTypes from 'prop-types';
 import brand from '@/lib/brand-config';
 import { frontendEnv } from '@/config/env';
 import { accountEntriesShown, assistantOpened, openLinks } from '@/lib/publicBeta';
+import { PAGE } from '@/design/layout';
 import '@/styles/layout-accessibility.css';
 import LanguageSelector from '@/components/i18n/LanguageSelector';
 import LanguageSuggestion from '@/components/i18n/LanguageSuggestion';
@@ -40,6 +41,7 @@ const FOOTER_EMERGENCY = ['112', '15', '17', '115', '119', '3919', '3114'];
 // Lazy-load non-critical components to reduce first-paint bundle
 const AccessibilityPanel = lazy(() => import('@/components/ui/AccessibilityPanel'));
 const HideScreenButton = lazy(() => import('@/components/ui/HideScreenButton'));
+const InstallApp = lazy(() => import('@/components/pwa/InstallApp'));
 const ChatAssistant = lazy(() => import('@/components/chat/ChatAssistant'));
 
 const NAV_ITEMS = [
@@ -96,6 +98,9 @@ const FOOTER_ABOUT = [
   { label: 'Partenaires', href: '/partenaires' },
   { label: 'Impact', href: '/impact' },
   { label: 'Signaler une erreur', href: '/contact?sujet=signalement_erreur' },
+  // 24/11/2026: the citizen help pages
+  { label: 'Questions fréquentes', href: '/questions-frequentes' },
+  { label: 'Guide d’utilisation', href: '/guide' },
 ];
 
 const FOOTER_LEGAL = [
@@ -142,6 +147,8 @@ const LABELS = {
   'Partenaires': (t) => t('layout:footer.partners', 'Partenaires'),
   'Impact': (t) => t('layout:footer.impact', 'Impact'),
   'Signaler une erreur': (t) => t('layout:footer.report', 'Signaler une erreur'),
+  'Questions fréquentes': (t) => t('layout:footer.faq', 'Questions fréquentes'),
+  'Guide d’utilisation': (t) => t('layout:footer.guide', 'Guide d’utilisation'),
   'Accessibilité': (t) => t('layout:footer.accessibility', 'Accessibilité'),
   'Mentions légales': (t) => t('layout:footer.legalNotice', 'Mentions légales'),
   'Politique de confidentialité': (t) => t('layout:footer.privacy', 'Politique de confidentialité'),
@@ -211,7 +218,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
             on a phone the same controls sit as icons beside the menu button. The reader's controls open under the header (ReadAloudPanel in <main>). */}
         {!phone && (
           <div className="hidden sm:block border-b border-slate-100 bg-slate-50/80" data-testid="header-utilities">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-end gap-x-2 gap-y-1 py-0.5">
+            <div className={`${PAGE} flex flex-wrap items-center justify-end gap-x-2 gap-y-1 py-0.5`}>
               <LanguageSelector compact />
               <Suspense fallback={null}>
                 <AccessibilityPanel />
@@ -221,7 +228,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
             </div>
           </div>
         )}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className={PAGE}>
           {/* R42: the row may wrap (min height instead of a fixed one): when the menu and the account entries do not fit on one line (long
               labels, an administrator's menu, large text), the account entries move to a second line instead of pushing the page sideways.
               Nothing is hidden or clipped and the order (logo, menu, accounts, menu button) is the reading and keyboard order. */}
@@ -423,7 +430,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
           />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-12">
+        <div className={`relative z-10 ${PAGE} py-12`}>
           {/* R34: the official emergency numbers on every page (they were only on « Trouver de l'aide par besoin ») */}
           <section aria-labelledby="footer-emergency" className="mb-8 rounded-lg border border-white/20 bg-white/5 p-4" data-testid="footer-emergency">
             <h2 id="footer-emergency" className="text-base font-semibold text-white">{t('layout:footer.emergency', 'En cas d’urgence ou de danger')}</h2>
@@ -533,6 +540,11 @@ export default function Layout({ children }) {   // R26: the active menu entry c
       {/* Privacy Screen — Bouton "Cacher mon écran" */}
       <Suspense fallback={null}>
         <HideScreenButton />
+      </Suspense>
+
+      {/* 24/11/2026: « Installer l'application » — a discreet, closable suggestion (tablet / computer; on phones the home page and Mon Espace show it inline) */}
+      <Suspense fallback={null}>
+        <InstallApp variant="floating" />
       </Suspense>
 
     </div>

@@ -132,5 +132,8 @@
  "notFound.search": "Sitede arayın",
  "notFound.themes": "İhtiyaca göre listeyi görün",
  "logout_failed": "Oturum kapatılamadı. Yeniden deneyin; ortak kullanılan bir cihazda tarayıcıyı da kapatın.",
- "offline.banner": "İnternete bağlı değilsiniz. Gördükleriniz güncel olmayabilir ve gönderdikleriniz iletilmez."
+ "offline.banner": "İnternete bağlı değilsiniz. Gördükleriniz güncel olmayabilir ve gönderdikleriniz iletilmez.",
+ "footer.faq": "Sık sorulan sorular",
+ "footer.guide": "Kullanım kılavuzu",
+ "account.guide": "Kullanım kılavuzu"
 }

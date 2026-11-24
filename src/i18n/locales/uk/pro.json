@@ -1668,5 +1668,9 @@
  "dashboard.start.hours": "Визначте доступність",
  "dashboard.start.hours_hint": "Часові проміжки, які пропонують людям",
  "dashboard.start.team": "Запросіть команду",
- "dashboard.start.team_hint": "Колеги, які приймають людей"
+ "dashboard.start.team_hint": "Колеги, які приймають людей",
+ "layout.guide": "Посібник ADA Pro",
+ "dashboard.guide_link": "Посібник ADA Pro: як це працює",
+ "dashboard.start.guide": "Усі подробиці в посібнику",
+ "breadcrumb.guide": "Посібник ADA Pro"
 }

@@ -3,6 +3,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
+import { Lock } from 'lucide-react';
+import { ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import { COFFRE_UPLOAD_CATEGORIES, fileToBase64 } from '@/lib/monEspace';
@@ -172,7 +175,7 @@ export default function CompteCoffre() {
   return (
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8" data-testid="compte-coffre">
       <SEO title={t('compte:coffre.mon_coffre', 'Mon Coffre')} noindex />
-      <h1 className="text-2xl font-bold text-slate-900">{t('compte:coffre.mon_coffre', 'Mon Coffre')}</h1>
+      <div className="flex items-center gap-3"><ToneIcon tone={sectionTone('coffre')} icon={Lock} /><h1 className="text-2xl font-bold text-slate-900">{t('compte:coffre.mon_coffre', 'Mon Coffre')}</h1></div>
       {e2e.on ? <p className="text-sm text-slate-700" data-testid="coffre-e2e-intro">{t('compte:coffre.e2e_intro_r4', 'Vos documents sont chiffrés dans votre navigateur avant d’être envoyés à un hébergeur certifié pour les données de santé : ni AccèsDirectAide ni l’hébergeur ne peuvent les lire. Si vous oubliez votre phrase secrète, votre code de secours ouvre Mon Coffre. Si vous perdez les deux, vos documents sont perdus.')}</p> : null}
       {e2e.on ? null : <p className="text-sm text-slate-700">{t('compte:coffre.gardez_ici_vos_papiers', 'Gardez ici vos papiers importants. Chaque fichier est chiffré sur le serveur avant d’être conservé ; vous seul y avez accès depuis votre compte.')}</p>}
       {/* G14-R4b: at the HDS service the host IS certified — the notice then says whether health documents are accepted (consent box below) or not yet */}

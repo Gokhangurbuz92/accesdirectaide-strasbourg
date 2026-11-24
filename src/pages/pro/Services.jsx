@@ -21,7 +21,9 @@ import BookingConfigPanel from '@/components/rdv/BookingConfigPanel.jsx';
 import ChannelStatusPanel from '@/components/rdv/ChannelStatusPanel.jsx';
 import ExternalBookingPanel from '@/components/rdv/ExternalBookingPanel.jsx';
 import NeedPicker from '@/components/needs/NeedPicker';
-import { needName } from '@/lib/socialNeeds';
+import { NEED_BY_ID, needName } from '@/lib/socialNeeds';
+import { ToneChip } from '@/components/ui/Tone';
+import { topicTone } from '@/design/categoryTone';
 import { useT } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
 
@@ -35,6 +37,24 @@ function toNonNegativeInt(value, fallback = 0) {
   const parsed = Number.parseInt(String(value || ''), 10);
   if (!Number.isFinite(parsed) || parsed < 0) return fallback;
   return parsed;
+}
+
+/** colour system: the translated « Besoins : {{needs}} » line, each need as a chip in its domain colour (the need is written: colour is never the only cue) */
+const NEEDS_SLOT = '\u2063NEEDS\u2063';
+function NeedsLine({ line, ids, name }) {
+  const [before, after = ''] = String(line).split(NEEDS_SLOT);
+  return (
+    <>
+      {before}
+      {ids.map((id, i) => (
+        <span key={id}>
+          {i ? <span aria-hidden="true" className="mx-1 text-slate-500">·</span> : null}
+          <ToneChip tone={topicTone(NEED_BY_ID.get(id)?.domain)}>{name(id)}</ToneChip>
+        </span>
+      ))}
+      {after}
+    </>
+  );
 }
 
 export default function ProServices() {
@@ -422,7 +442,7 @@ export default function ProServices() {
                 <p>{t('pro:services.buffers_line', 'Buffers: -{{before}} min / +{{after}} min', { before: service.bufferBeforeMinutes, after: service.bufferAfterMinutes })}</p>
                 {needsAvailable ? (
                   <p data-testid="pro-service-needs">{Array.isArray(service.subdomains) && service.subdomains.length
-                    ? t('pro:needs.line', 'Besoins : {{needs}}', { needs: service.subdomains.map((id) => needName(t, id)).join(' · ') })
+                    ? <NeedsLine line={t('pro:needs.line', 'Besoins : {{needs}}', { needs: NEEDS_SLOT })} ids={service.subdomains} name={(id) => needName(t, id)} />
                     : t('pro:needs.none', 'Besoins : aucun choisi (le lieu n’apparaît pas quand on cherche où prendre rendez-vous pour un besoin).')}</p>
                 ) : null}
                 <p data-testid="pro-service-modes">{t('pro:services.modes_line', 'Modalités : {{modes}}', { modes: (Array.isArray(service.modes) && service.modes.length ? service.modes : ['IN_PERSON']).map((m) => (m === 'VIDEO' ? t('pro:services.modality_video', 'À distance (visio)') : t('pro:services.modality_in_person', 'En présentiel'))).join(' · ') })}</p>

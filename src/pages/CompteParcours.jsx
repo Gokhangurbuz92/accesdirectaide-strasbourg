@@ -13,6 +13,9 @@ import { openLinks } from '@/lib/publicBeta';
 import HumanHelpBlock, { HUMAN_HELP_DIRECTORY } from '@/components/HumanHelpBlock';
 import { PLAN_CLOSURES, groupByNeed, needsRecovery, nextActionOf } from '@/lib/parcoursPlan';
 import CompteParcoursLimited from './CompteParcoursLimited';
+import { ToneBar } from '@/components/ui/Tone';
+import { topicTone } from '@/design/categoryTone';
+import { NEED_BY_ID } from '@/lib/socialNeeds';
 // G14-LITE: « Garder Mon Parcours sur cet appareil » (default off) and the read-only copy shown without Internet
 import { OfflineParcoursSwitch, OfflineParcoursView } from '@/components/parcours/ParcoursOffline';
 import { clearOfflineParcours, isNetworkFailure, readOfflineParcours } from '@/lib/offlineParcours';
@@ -336,7 +339,9 @@ export default function CompteParcours() {
           {active.length && grouped ? (
             <div className="space-y-4" data-testid="parcours-active">
               {groups.map((g) => (
-                <section key={g.need ? g.need.id : 'other'} data-testid="parcours-group" aria-labelledby={`parcours-group-${g.need ? g.need.id : 'other'}`}>
+                <section key={g.need ? g.need.id : 'other'} data-testid="parcours-group" aria-labelledby={`parcours-group-${g.need ? g.need.id : 'other'}`} className="relative ps-4">
+                  {/* colour system: the need's domain colour as a start bar (the heading names the need: colour is never the only cue) */}
+                  <ToneBar side="start" className="rounded-full" tone={g.need ? topicTone(NEED_BY_ID.get(g.need.id)?.domain || g.need.id) : topicTone(null)} />
                   <h3 id={`parcours-group-${g.need ? g.need.id : 'other'}`} className="mb-2 text-base font-semibold text-slate-900">
                     {g.need ? <><span className="font-medium text-slate-700">{t('compte:parcours.group_need', 'Besoin :')}</span> <span {...FR}>{g.need.label}</span></> : t('compte:parcours.group_other', 'Autres étapes')}
                   </h3>

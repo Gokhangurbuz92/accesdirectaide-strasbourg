@@ -76,5 +76,9 @@
   "territory.postal.qpv-address": "Diese Website weiß nicht, ob Ihre Adresse in einem dieser Viertel liegt. Nutzen Sie zur Prüfung die Adresssuche der offiziellen Website:",
   "territory.postal.qpv-none": "Für diese Gemeinde ist kein vorrangiges Stadtviertel der Stadtpolitik (quartier prioritaire) aufgeführt (offizielle Liste 2024).",
   "territory.postal.source": "Quellen: La Poste, « Base officielle des codes postaux »; Agence nationale de la cohésion des territoires, Liste der vorrangigen Viertel 2024 (Licence Ouverte). Daten gelesen am {{date}}.",
-  "hero.situation": "Oder sagen Sie uns, was Ihnen passiert: Miete, Arbeit, Ankunft in Straßburg…"
+  "hero.situation": "Oder sagen Sie uns, was Ihnen passiert: Miete, Arbeit, Ankunft in Straßburg…",
+  "help.title": "Eine Frage?",
+  "help.text": "Antworten auf häufige Fragen und eine Schritt-für-Schritt-Anleitung zur Nutzung der Website.",
+  "help.faq": "Häufige Fragen ansehen",
+  "help.guide": "Benutzerhandbuch"
 }

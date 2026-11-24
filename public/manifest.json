@@ -34,5 +34,67 @@
   ],
   "id": "/",
   "scope": "/",
-  "lang": "fr"
+  "lang": "fr",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "categories": [
+    "government",
+    "social",
+    "utilities"
+  ],
+  "shortcuts": [
+    {
+      "name": "Aides",
+      "url": "/aides",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Démarches",
+      "url": "/demarches",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Lieux d’accueil",
+      "short_name": "Annuaire",
+      "url": "/structures",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Mon Espace",
+      "url": "/compte",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ADA Pro",
+      "url": "/pro/dashboard",
+      "icons": [
+        {
+          "src": "/icons/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }

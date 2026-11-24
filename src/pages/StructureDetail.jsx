@@ -34,6 +34,8 @@ import { getProvenance } from '@/lib/provenance';
 import { buildPublicRdvPath } from '@/lib/rdvRouting';
 import { departementLabel } from '@/lib/structureFields';
 import FavoriteButton from '@/components/FavoriteButton';
+import { ToneBar } from '@/components/ui/Tone';
+import { structureTone } from '@/design/categoryTone';
 import AddToParcoursButton from '@/components/AddToParcoursButton';
 import { useFalc } from '@/contexts/FalcContext';
 import { formatDate, useT } from '@/i18n';
@@ -325,12 +327,13 @@ export default function StructureDetail() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Contenu principal */}
           <div className="lg:col-span-2 space-y-6">
-            {/* En-tête */}
-            <Card>
+            {/* En-tête — 24/11/2026: the family colour of the type of place as the accent bar and the type chip (src/design/categoryTone.js) */}
+            <Card className="relative overflow-hidden">
+              <ToneBar tone={structureTone(structure.type_structure)} />
               <CardContent className="p-6 md:p-8">
                 <div className="flex flex-wrap gap-2 mb-4">
                   {TYPE_LABELS[structure.type_structure] && (
-                    <Badge className="bg-blue-100 text-blue-800">
+                    <Badge variant="outline" className={structureTone(structure.type_structure).chip}>
                       {typeLabel(structure.type_structure)}
                     </Badge>
                   )}

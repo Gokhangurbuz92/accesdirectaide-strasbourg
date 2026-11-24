@@ -23,8 +23,11 @@ import {
   AlertCircle,
   CheckCircle2,
   ChevronRight,
-  RotateCcw
+  RotateCcw,
+  Building2
 } from 'lucide-react';
+import { ToneIcon } from '@/components/ui/Tone';
+import { structureTone } from '@/design/categoryTone';
 import { Skeleton } from '@/components/ui/skeleton';
 import { buildAideDetailSchemas, truncateDescription } from '@/lib/seo';
 import ProvenanceFreshness from '@/components/ProvenanceFreshness';
@@ -633,10 +636,14 @@ function StructureSuggestion({ struct, nextPath, aideSlug }) {
     >
       <Link
         to={struct.slug ? `/structures/${struct.slug}` : `/structures/view?id=${struct.id}`}
-        className="block hover:text-blue-700 transition-colors"
+        className="flex items-start gap-3 hover:text-blue-700 transition-colors"
       >
-        <p className="font-medium text-slate-900" {...tr.attrs('nom')}>{struct.nom}</p>
-        <p className="text-sm text-slate-600" {...tr.attrs('ville')}>{struct.ville}</p>
+        {/* 24/11/2026: the family colour of the type of place (src/design/categoryTone.js), as on the Annuaire cards */}
+        <ToneIcon tone={structureTone(struct.type_structure)} icon={Building2} size="sm" />
+        <span className="min-w-0">
+          <p className="font-medium text-slate-900" {...tr.attrs('nom')}>{struct.nom}</p>
+          <p className="text-sm text-slate-600" {...tr.attrs('ville')}>{struct.ville}</p>
+        </span>
       </Link>
       <div className="mt-3 flex flex-wrap gap-2">
         {bookingPath && (

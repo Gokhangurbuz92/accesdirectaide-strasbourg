@@ -132,5 +132,8 @@
  "notFound.search": "Auf der Website suchen",
  "notFound.themes": "Liste nach Bedarf ansehen",
  "logout_failed": "Die Abmeldung ist fehlgeschlagen. Versuchen Sie es erneut; schließen Sie auf einem gemeinsam genutzten Gerät auch den Browser.",
- "offline.banner": "Sie sind nicht mit dem Internet verbunden. Was Sie sehen, ist vielleicht nicht aktuell, und Ihre Sendungen gehen nicht ab."
+ "offline.banner": "Sie sind nicht mit dem Internet verbunden. Was Sie sehen, ist vielleicht nicht aktuell, und Ihre Sendungen gehen nicht ab.",
+ "footer.faq": "Häufige Fragen",
+ "footer.guide": "Benutzerhandbuch",
+ "account.guide": "Benutzerhandbuch"
 }

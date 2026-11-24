@@ -283,5 +283,21 @@
  "parcours_add.consent_check": "Ich bin einverstanden, dass dieser Schritt in Mon Parcours gespeichert wird.",
  "parcours_add.consent_confirm": "Mit meiner Einwilligung speichern",
  "parcours_add.consent_cancel": "Nicht speichern",
- "chat.limits": "Ich bin ein automatischer Assistent: Ich kann mich irren. Prüfen Sie die offizielle Seite; nur die zuständige Stelle entscheidet über Ihre Rechte. Im Notfall rufen Sie die 112 an."
+ "chat.limits": "Ich bin ein automatischer Assistent: Ich kann mich irren. Prüfen Sie die offizielle Seite; nur die zuständige Stelle entscheidet über Ihre Rechte. Im Notfall rufen Sie die 112 an.",
+ "install.installed": "Die App ist auf diesem Gerät installiert.",
+ "install.title_pro": "ADA Pro auf diesem Gerät installieren",
+ "install.title": "Die App AccesDirectAide installieren",
+ "install.why": "Ein Symbol auf Ihrem Startbildschirm oder Desktop, Öffnen im Vollbild und Benachrichtigungen auf iPhone und iPad. Kostenlos, ohne App-Store.",
+ "install.ios.1": "Tippen Sie in Safari auf die Teilen-Taste (das Quadrat mit dem Pfeil nach oben).",
+ "install.ios.2": "Wählen Sie „Zum Home-Bildschirm“. Wenn Sie es nicht sehen, scrollen Sie in der Liste.",
+ "install.ios.3": "Tippen Sie auf „Hinzufügen“. Öffnen Sie AccesDirectAide dann über das Symbol.",
+ "install.mac.1": "Öffnen Sie in Safari das Menü Ablage (oder die Teilen-Taste).",
+ "install.mac.2": "Wählen Sie „Zum Dock hinzufügen“.",
+ "install.android.1": "Öffnen Sie das Browsermenü (die drei Punkte).",
+ "install.android.2": "Wählen Sie „App installieren“ oder „Zum Startbildschirm hinzufügen“.",
+ "install.firefox": "Firefox auf dem Computer kann keine Website installieren. Nutzen Sie Chrome, Edge oder Safari oder setzen Sie ein Lesezeichen.",
+ "install.other": "Suchen Sie im Menü Ihres Browsers nach „Installieren“ oder „Zum Startbildschirm hinzufügen“.",
+ "install.close": "Nicht mehr vorschlagen",
+ "install.button": "App installieren",
+ "install.later": "Kein Problem: Sie können sie später in Ihrem Bereich installieren."
 }

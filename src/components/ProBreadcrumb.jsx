@@ -33,6 +33,7 @@ const routeLabels = (t) => ({
     attestation: t('pro:breadcrumb.attestation', 'Récapitulatif officiel'),
     parametres: t('pro:breadcrumb.parametres', 'Paramètres'),
     'mfa-settings': t('pro:breadcrumb.mfa_settings', 'Double authentification'),
+    guide: t('pro:breadcrumb.guide', 'Guide ADA Pro'),
 });
 
 /** R47: sections that have no page of their own (only their records do): shown as text, not as a link to the « page introuvable » */

@@ -5,6 +5,7 @@ import { formatDate, formatNumber, useT } from '@/i18n';
 import reference from '../../../data/reference/social-domains.v1.json';
 import steps from '../../../data/reference/parcours-step-types.v1.json';
 import { situationLabel } from '@/lib/situationLabels';
+import { topicTone } from '@/design/categoryTone';
 
 /**
  * G14-OBS — the published data of /observatoire (GET /api/public/observatoire). Every chart is a TABLE first (caption, header cells, scope): the bars are
@@ -135,7 +136,7 @@ function Quarter({ q, names }) {
             : t('observatory:search.summary_none', 'Aucun sujet n’a atteint 5 recherches ce trimestre.')}</p>
           <Table testId="obs-search-table" caption={t('observatory:search.caption', 'Recherches par domaine, lieux publiés dans l’Eurométropole au moment du gel, et lecture')}
             head={[t('observatory:col.domain', 'Domaine'), t('observatory:col.searches', 'Recherches'), t('observatory:col.places', 'Lieux publiés'), t('observatory:col.reading', 'Lecture')]}
-            rows={ranked.map((d) => ({ key: d.domain, cells: [L.domain(d.domain),
+            rows={ranked.map((d) => ({ key: d.domain, cells: [<span key="d" className="inline-flex items-center gap-2"><span aria-hidden="true" className={`h-2.5 w-2.5 shrink-0 rounded-full ${topicTone(d.domain).dot}`} />{L.domain(d.domain)}</span>,
               <>{d.publishedSum >= 5 ? <span className="font-semibold tabular-nums">{formatNumber(d.publishedSum)}</span> : <span className="text-slate-600">{t('observatory:small_numbers', 'petits nombres, non publiés')}</span>}{d.maskedCells > 0 && d.publishedSum >= 5 ? <span className="block text-xs text-slate-600">{t('observatory:partial', 'au moins (des valeurs sont masquées)')}</span> : null}<Bar v={d.publishedSum} max={max} /></>,
               <Supply key="p" v={gapOf.get(d.domain)?.places ?? null} />, <GapText key="g" g={gapOf.get(d.domain) || { kind: 'NOT_MEASURED' }} />] }))} />
           <div>

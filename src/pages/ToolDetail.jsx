@@ -1,12 +1,14 @@
 // @ts-nocheck
 
 import { useState, useEffect } from 'react';
+import { ToneBar } from '@/components/ui/Tone';
 import { useParams, Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Download, ExternalLink } from 'lucide-react';
 import { sanitizeHtml } from '@/lib/sanitize';
 import LoadError from '@/components/LoadError';
 import { useLanguage, useT } from '@/i18n';
+import { topicTone } from '@/design/categoryTone';
 
 export default function ToolDetail() {
     const { t } = useT('tools');
@@ -49,17 +51,18 @@ export default function ToolDetail() {
                 path={`/outils/${slug}`}
             />
 
-            <Link to="/outils" className="text-purple-600 hover:underline mb-6 block">
+            <Link to="/outils" className="mb-6 block font-medium text-blue-800 hover:underline">
                 {t('tools:detail.back', '← Retour à la boite à outils')}
             </Link>
 
-            <article className="bg-white p-8 rounded-lg shadow-lg border-t-4 border-purple-500">
+            <article className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+                <ToneBar tone={topicTone(tool.categorie, 'amber')} />
                 <header className="mb-8">
                     <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="bg-purple-100 text-purple-800 text-sm px-3 py-1 rounded-full uppercase font-bold" {...fr}>
+                        <span className="rounded-full border border-slate-200 bg-slate-100 px-3 py-1 text-sm font-bold uppercase text-slate-800" {...fr}>
                             {tool.type}
                         </span>
-                        {tool.categorie && <span className="text-gray-500 text-sm px-2 py-1 bg-gray-100 rounded" {...fr}>{tool.categorie}</span>}
+                        {tool.categorie && <span className={`text-sm font-semibold px-2 py-1 border rounded ${topicTone(tool.categorie).chip}`} {...fr}>{tool.categorie}</span>}
                     </div>
 
                     <h1 className="text-3xl font-bold text-gray-900 mb-4" {...fr}>{tool.titre}</h1>
@@ -89,7 +92,7 @@ export default function ToolDetail() {
                                     href={tool.url_download}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="block w-full text-center bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-4 rounded transition flex items-center justify-center gap-2"
+                                    className="block w-full text-center bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded transition flex items-center justify-center gap-2"
                                 >
                                     {tool.type === 'numerique' ? <ExternalLink size={20} /> : <Download size={20} />}
                                     {tool.type === 'numerique' ? t('tools:detail.open-site', 'Ouvrir le site') : t('tools:detail.download', 'Télécharger')}

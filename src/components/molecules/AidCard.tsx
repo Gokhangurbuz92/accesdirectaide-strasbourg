@@ -7,6 +7,9 @@ import { RecordProvenance, CardActionStrip } from "@/components/cards/RecordCard
 import { cn } from "@/lib/utils";
 import { formatDate, useT } from "@/i18n";
 import useContentTranslation from "@/hooks/useContentTranslation";
+// @ts-ignore JS module
+import CategoryChip, { resolveCategory } from "@/components/ui/CategoryChip";
+import { topicTone } from "@/design/categoryTone";
 
 export interface AidCardProps {
     title: string;
@@ -18,6 +21,8 @@ export interface AidCardProps {
     sourceUrl?: string;
     now?: Date;
     className?: string;
+    /** taxonomy slug: chip and colour of the card */
+    category?: string;
 }
 
 /** R32: the aide's slug — the key of its translation — read back from the card's link (mapAideToCard builds it as /aides/<encoded slug>) */
@@ -31,7 +36,7 @@ function slugFromHref(href: string): string | undefined {
  * R27: the aide card has the démarche card's structure — the whole card is the link, the same provenance line (« Vérifié le … · Source : … ») and the
  * same action strip (« Voir l'aide »). It used to show an uppercase « VÉRIFIÉ LE » pill and no action at all.
  */
-export function AidCard({ title, href, summary, isUrgent, verifiedAt, sourceLabel, sourceUrl, now, className }: AidCardProps) {
+export function AidCard({ title, href, summary, isUrgent, verifiedAt, sourceLabel, sourceUrl, now, className, category }: AidCardProps) {
     const { t } = useT("aides");
     // R32: the card's own record: its title in the interface language when a verified translation may be shown, else in French marked lang="fr".
     // The summary is the easy-to-read summary or « C'est quoi ? » (the card does not know which): it is shown in French, marked as such.
@@ -42,8 +47,10 @@ export function AidCard({ title, href, summary, isUrgent, verifiedAt, sourceLabe
     const formatted = date && !Number.isNaN(date.getTime()) && status !== "unknown" ? formatDate(date, { day: "2-digit", month: "2-digit", year: "numeric" }) : undefined;
     return (
         <Card className={cn("group relative flex h-full flex-col overflow-hidden border-slate-200 bg-white transition-all hover:border-blue-300 hover:shadow-md", className)} data-testid="aide-card">
+            <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 ${topicTone(resolveCategory(category)?.slug, "blue").bar}`} data-testid="card-tone" />
             <CardContent className="flex h-full flex-col p-0">
                 <div className="flex flex-1 flex-col gap-3 p-6">
+                    {resolveCategory(category) && <div className="-mb-1"><CategoryChip slug={category} /></div>}
                     <div className="flex items-start justify-between gap-2">
                         <h3 className="text-lg font-semibold leading-tight text-slate-900 group-hover:text-blue-800">
                             <Link

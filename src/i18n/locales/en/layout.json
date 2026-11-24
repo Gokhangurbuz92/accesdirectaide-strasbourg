@@ -132,5 +132,8 @@
  "notFound.search": "Search the site",
  "notFound.themes": "See the list by need",
  "logout_failed": "Sign-out failed. Try again; on a shared device, also close the browser.",
- "offline.banner": "You are not connected to the Internet. What you see may not be up to date, and nothing you send will go through."
+ "offline.banner": "You are not connected to the Internet. What you see may not be up to date, and nothing you send will go through.",
+ "footer.faq": "Frequently asked questions",
+ "footer.guide": "User guide",
+ "account.guide": "User guide"
 }

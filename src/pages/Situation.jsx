@@ -2,7 +2,7 @@
 import { useContext, useId, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { QueryClientContext, useQuery } from '@tanstack/react-query';
-import { AlertTriangle, ArrowLeft, ArrowRight, Building2, CalendarCheck, ExternalLink, FileText, Info, ListPlus, MapPin, Phone, Search } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, Building2, CalendarCheck, Compass, ExternalLink, FileText, Info, ListPlus, MapPin, Phone, Search } from 'lucide-react';
 import SEO from '@/components/SEO';
 import PageHeader from '@/components/layout/PageHeader';
 import { Button } from '@/components/ui/button';
@@ -18,6 +18,8 @@ import { familyLabel, situationLabel } from '@/lib/situationLabels';
 import SituationSignalOptIn from '@/components/observatoire/SituationSignalOptIn';
 import { sendSituationSignal, situationSignalsOpened } from '@/lib/observatoire';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
+import { TONES, topicTone } from '@/design/categoryTone';
+import { ToneBar, ToneIcon } from '@/components/ui/Tone';
 
 /**
  * G14-RG (owner approval 23/11/2026) — « Ma situation »: the one-door flow of the Rights Graph. A person picks a life situation, or writes a few words that
@@ -142,6 +144,7 @@ function Result({ s }) {
   const stepCodes = s.steps.filter((x) => x.kind === 'stepType');
   return (
     <article aria-label={label} className="space-y-8" data-testid={`situation-result-${s.id}`}>
+      <div className="flex items-center gap-3"><ToneIcon tone={s.danger ? TONES.red : topicTone(s.family)} icon={s.danger ? AlertTriangle : Compass} /><span aria-hidden="true" className={`h-1 flex-1 rounded-full ${(s.danger ? TONES.red : topicTone(s.family)).bar}`} /></div>
       {s.danger && s.emergency.length > 0 && <Emergency numbers={s.emergency} fr={fr} />}
 
       <section aria-labelledby="situation-rights">
@@ -351,17 +354,18 @@ export default function Situation() {
               <p className="mt-1 text-slate-800">{t('situation:list.families', 'Les situations sont rangées par thème :')}</p>
               <ul className="mt-2 flex flex-wrap gap-2" data-testid="situation-families">
                 {FAMILIES.map((f) => (
-                  <li key={f}><a href={`#famille-${f}`} className="inline-flex min-h-11 items-center rounded-full border border-slate-300 bg-white px-3 text-sm font-medium text-blue-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700">{familyLabel(f, t)}</a></li>
+                  <li key={f}><a href={`#famille-${f}`} className={`inline-flex min-h-11 items-center rounded-full border px-3 text-sm font-medium underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${topicTone(f).chip}`}>{familyLabel(f, t)}</a></li>
                 ))}
               </ul>
               {FAMILIES.map((f) => (
                 <section key={f} id={`famille-${f}`} aria-labelledby={`famille-${f}-title`} className="mt-6 scroll-mt-24" data-family={f}>
-                  <h3 id={`famille-${f}-title`} className="text-lg font-semibold text-slate-900">{familyLabel(f, t)}</h3>
+                  <h3 id={`famille-${f}-title`} className="flex items-center gap-2 text-lg font-semibold text-slate-900"><span aria-hidden="true" className={`h-5 w-1.5 shrink-0 rounded-full ${topicTone(f).bar}`} />{familyLabel(f, t)}</h3>
                   <ul className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
                     {SITUATIONS.filter((x) => x.family === f).map((x) => (
                       <li key={x.id}>
                         <Link to={`/situation/${x.id}`} data-situation={x.id} onClick={() => choose(x.id)}
-                          className={`flex min-h-11 h-full items-center justify-between gap-2 rounded-lg border bg-white px-3 py-2 font-medium text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${x.danger ? 'border-red-300' : 'border-slate-300'}`}>
+                          className={`relative flex min-h-11 h-full items-center justify-between gap-2 overflow-hidden rounded-lg border bg-white py-2 pe-3 ps-4 font-medium text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${x.danger ? 'border-red-300' : `border-slate-300 ${topicTone(f).hover}`}`}>
+                          <ToneBar tone={x.danger ? TONES.red : topicTone(f)} side="start" />
                           <span>{situationLabel(x.id, t)}</span>
                           {x.danger && <span className="shrink-0 rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-900">{t('situation:list.urgent', 'Urgent')}</span>}
                         </Link>

@@ -283,5 +283,21 @@
  "parcours_add.consent_check": "I accept that this step is recorded in Mon Parcours.",
  "parcours_add.consent_confirm": "Record with my consent",
  "parcours_add.consent_cancel": "Do not record",
- "chat.limits": "I am an automatic assistant: I can be wrong. Check the official page; only the organisation concerned decides on your rights. In an emergency, call 112."
+ "chat.limits": "I am an automatic assistant: I can be wrong. Check the official page; only the organisation concerned decides on your rights. In an emergency, call 112.",
+ "install.installed": "The app is installed on this device.",
+ "install.title_pro": "Install ADA Pro on this device",
+ "install.title": "Install the AccesDirectAide app",
+ "install.why": "An icon on your home screen or desktop, full-screen opening, and notifications on iPhone and iPad. Free, no app store.",
+ "install.ios.1": "In Safari, tap the Share button (the square with an arrow pointing up).",
+ "install.ios.2": "Choose “Add to Home Screen”. If you do not see it, scroll the list.",
+ "install.ios.3": "Tap “Add”. Then open AccesDirectAide from its icon.",
+ "install.mac.1": "In Safari, open the File menu (or the Share button).",
+ "install.mac.2": "Choose “Add to Dock”.",
+ "install.android.1": "Open the browser menu (the three dots).",
+ "install.android.2": "Choose “Install app” or “Add to Home screen”.",
+ "install.firefox": "Firefox on a computer cannot install a website. Use Chrome, Edge or Safari, or add a bookmark.",
+ "install.other": "Look for “Install” or “Add to Home screen” in your browser menu.",
+ "install.close": "Do not suggest again",
+ "install.button": "Install the app",
+ "install.later": "No problem: you can install it later from your space."
 }

@@ -363,5 +363,7 @@
  "mentions.contact.legal_email": "For a legal question, a copyright matter, to report illegal content or an error, or about our terms of use: contact@accesdirectaide.fr.",
  "privacy.data.appointments.title_open": "4. Appointments",
  "privacy.data.appointments.text_open": "Appointment requests are open, from a personal account. What is processed, what is passed on to the organisation and how long it is kept are described in the <0>accounts notice</0> (sections 3, 4 and 9), which is authoritative.",
- "security.stored.bookings_open": "<strong>People's appointments</strong>: the service, time slot and format chosen; the organisation receives neither your name, nor your e-mail address, nor your telephone number (accounts notice, section 9)."
+ "security.stored.bookings_open": "<strong>People's appointments</strong>: the service, time slot and format chosen; the organisation receives neither your name, nor your e-mail address, nor your telephone number (accounts notice, section 9).",
+ "cookies.store.install.purpose": "Stop suggesting installing the app on this device",
+ "cookies.store.install.duration": "60 days"
 }

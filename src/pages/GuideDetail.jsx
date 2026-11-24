@@ -16,6 +16,7 @@ import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice
 import useContentTranslation from '@/hooks/useContentTranslation';
 import i18n, { formatDate, useT } from '@/i18n';
 import { guideNextSteps } from '@/config/guideNextSteps';
+import { topicTone } from '@/design/categoryTone';
 
 const parse = (raw) => { try { return typeof raw === 'string' ? JSON.parse(raw) : raw; } catch { return null; } };
 // R28: a guide is either the editorial step list, or an official Service-Public sheet reproduced without change ({ version: 'official-sheet-v1', intro, steps, provenance })
@@ -82,7 +83,8 @@ export default function GuideDetail() {
             <PageHeader title={<span {...tr.attrs('titre')}>{tr.value('titre')}</span>} eyebrow={official ? t('guides:detail.eyebrow_official', 'Guide pratique · fiche officielle') : t('guides:detail.eyebrow', 'Guide pratique')} width="reading" titleId="guide-title">
                 {tags.length > 0 && (
                     <ul className="flex flex-wrap gap-2" aria-label={t('guides:detail.tags_label', 'Thème et public')}>
-                        {tags.map(([tag, field]) => <li key={tag} className="rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white" {...tr.attrs(field)}>{tag}</li>)}
+                        {/* 24/11/2026: the theme in its topic colour (a light chip, dark text: readable on the dark banner); the audiences stay neutral */}
+                        {tags.map(([tag, field]) => <li key={tag} className={`rounded-full px-3 py-1 text-sm font-medium ${field === 'categorie' ? `border font-semibold ${topicTone(guide.categorie).chip}` : 'bg-white/15 text-white'}`} {...tr.attrs(field)}>{tag}</li>)}
                     </ul>
                 )}
             </PageHeader>

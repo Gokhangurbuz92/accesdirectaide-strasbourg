@@ -16,7 +16,9 @@ import { Button } from '@/components/ui/button';
 import { useT } from '@/i18n';
 
 /** the content width shared by every catalogue page */
-export const CONTAINER = 'mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8';
+// the shared page width (src/design/layout.js) — the catalogue pages line up with the header, the home page and the footer
+import { PAGE } from '@/design/layout';
+export const CONTAINER = PAGE;
 
 /**
  * The search form inside the page banner: a large white field and its button, one row from `sm`.
@@ -172,7 +174,8 @@ InlineSelect.propTypes = { id: PropTypes.string.isRequired, label: PropTypes.str
 
 /**
  * The active filters as removable chips, and « Tout effacer ».
- * @param {{ items: { key: string, label: string, onRemove: () => void, lang?: string }[], onClear?: () => void }} props
+ * @param {{ items: { key: string, label: string, onRemove: () => void, lang?: string, tone?: { chip: string } }[], onClear?: () => void }} props
+ * `tone` (optional, src/design/categoryTone.js): the chip of a topic filter in its topic colour; without it, the neutral blue chip.
  */
 export function ActiveFilters({ items, onClear }) {
   const { t } = useT('shared');
@@ -183,7 +186,7 @@ export function ActiveFilters({ items, onClear }) {
       <ul className="contents">
         {items.map((it) => (
           <li key={it.key}>
-            <button type="button" onClick={it.onRemove} className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 ps-3 pe-2 text-sm font-medium text-blue-900 hover:border-blue-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"
+            <button type="button" onClick={it.onRemove} className={`inline-flex min-h-9 items-center gap-1.5 rounded-full border ps-3 pe-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${it.tone ? `${it.tone.chip} hover:border-slate-500` : 'border-blue-200 bg-blue-50 text-blue-900 hover:border-blue-400'}`}
               aria-label={t('shared:filters.remove', 'Retirer le filtre {{label}}', { label: it.label })}>
               <span lang={it.lang}>{it.label}</span><X className="h-4 w-4" aria-hidden="true" />
             </button>
@@ -219,22 +222,27 @@ Pager.propTypes = { page: PropTypes.number.isRequired, totalPages: PropTypes.num
 
 /**
  * Horizontal quick choices (categories, types, zones): one row that scrolls on phones, wraps from `md`.
- * @param {{ label: string, options: { value: string, label: string, count?: number, lang?: string }[], value: string, onChange: (v: string) => void, testId?: string }} props
+ * `toneOf` (optional): value → a TONES entry (topicTone, structureTone… src/design/categoryTone.js); an idle chip then shows its topic colour and the
+ * active one its strong colour. « Tous » (empty value) and calls without it keep the neutral look.
+ * @param {{ label: string, options: { value: string, label: string, count?: number, lang?: string }[], value: string, onChange: (v: string) => void, testId?: string, toneOf?: (value: string) => { chip: string, active: string } }} props
  */
-export function ChoiceChips({ label, options, value, onChange, testId }) {
+export function ChoiceChips({ label, options, value, onChange, testId, toneOf }) {
   return (
     <div role="group" aria-label={label} data-testid={testId} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 md:flex-wrap md:overflow-visible">
       {options.map((o) => {
         const active = value === o.value;
+        const tone = toneOf && o.value ? toneOf(o.value) : null;
+        const look = tone ? (active ? tone.active : `${tone.chip} hover:border-slate-500`)
+          : (active ? 'border-blue-800 bg-blue-800 text-white' : 'border-slate-300 bg-white text-slate-800 hover:border-blue-400 hover:text-blue-900');
         return (
           <button key={o.value || 'all'} type="button" aria-pressed={active} onClick={() => onChange(active && o.value ? '' : o.value)}
-            className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-1 ${active ? 'border-blue-800 bg-blue-800 text-white' : 'border-slate-300 bg-white text-slate-800 hover:border-blue-400 hover:text-blue-900'}`}>
+            className={`inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 focus-visible:ring-offset-1 ${look}`}>
             <span lang={o.lang}>{o.label}</span>
-            {o.count != null && <span className={`text-xs ${active ? 'text-blue-100' : 'text-slate-500'}`}>{o.count}</span>}
+            {o.count != null && <span className={`text-xs ${active ? (tone ? 'text-white/80' : 'text-blue-100') : (tone ? 'opacity-80' : 'text-slate-500')}`}>{o.count}</span>}
           </button>
         );
       })}
     </div>
   );
 }
-ChoiceChips.propTypes = { label: PropTypes.string.isRequired, options: PropTypes.array.isRequired, value: PropTypes.string.isRequired, onChange: PropTypes.func.isRequired, testId: PropTypes.string };
+ChoiceChips.propTypes = { label: PropTypes.string.isRequired, options: PropTypes.array.isRequired, value: PropTypes.string.isRequired, onChange: PropTypes.func.isRequired, testId: PropTypes.string, toneOf: PropTypes.func };

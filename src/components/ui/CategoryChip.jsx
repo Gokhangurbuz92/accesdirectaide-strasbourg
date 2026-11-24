@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { Badge } from "@/components/ui/badge";
 import { useT } from '@/i18n';
+import { topicTone } from '@/design/categoryTone';
 
 /**
  * Unified taxonomy — source of truth for categories.
@@ -8,24 +9,30 @@ import { useT } from '@/i18n';
  * This is the ONLY place category colors/labels are defined for the UI.
  */
 const TAXONOMY = {
-    'papiers-citoyennete': { label: 'Papiers - Citoyenneté', color: 'bg-slate-100 text-slate-800' },
-    'famille': { label: 'Famille', color: 'bg-pink-100 text-pink-800' },
-    'social-sante': { label: 'Social - Santé', color: 'bg-green-100 text-green-800' },
-    'personnes-agees': { label: 'Personnes âgées', color: 'bg-amber-100 text-amber-800' },
-    'handicap': { label: 'Handicap', color: 'bg-purple-100 text-purple-800' },
-    'travail-formation': { label: 'Travail - Formation', color: 'bg-blue-100 text-blue-800' },
-    'logement': { label: 'Logement', color: 'bg-orange-100 text-orange-800' },
-    'transports': { label: 'Transports', color: 'bg-cyan-100 text-cyan-800' },
-    'argent': { label: 'Argent - Impôts', color: 'bg-yellow-100 text-yellow-800' },
-    'justice': { label: 'Justice', color: 'bg-red-100 text-red-800' },
-    'etranger': { label: 'Étranger', color: 'bg-teal-100 text-teal-800' },
-    'loisirs': { label: 'Loisirs - Sport - Culture', color: 'bg-indigo-100 text-indigo-800' },
-    'lgbtqi-plus': { label: 'LGBTQI+', color: 'bg-fuchsia-100 text-fuchsia-800' },
+    'papiers-citoyennete': { label: 'Papiers - Citoyenneté' },
+    'famille': { label: 'Famille' },
+    'social-sante': { label: 'Social - Santé' },
+    'personnes-agees': { label: 'Personnes âgées' },
+    'handicap': { label: 'Handicap' },
+    'travail-formation': { label: 'Travail - Formation' },
+    'logement': { label: 'Logement' },
+    'transports': { label: 'Transports' },
+    'argent': { label: 'Argent - Impôts' },
+    'justice': { label: 'Justice' },
+    'etranger': { label: 'Étranger' },
+    'loisirs': { label: 'Loisirs - Sport - Culture' },
+    'lgbtqi-plus': { label: 'LGBTQI+' },
 };
 
 // Legacy slug aliases → canonical slug
 const SLUG_ALIASES = {
     'sante': 'social-sante',
+    'santé': 'social-sante',
+    'social': 'social-sante',
+    'culture': 'loisirs',
+    'sport': 'loisirs',
+    'credit': 'argent',
+    'retraite': 'personnes-agees',
     'emploi': 'travail-formation',
     'budget': 'argent',
     'mobilite': 'transports',
@@ -76,7 +83,7 @@ export function categoryLabel(rawSlug, t) {
 /**
  * Resolve a raw category slug to its canonical taxonomy entry.
  * @param {string|null|undefined} rawSlug
- * @returns {{ slug: string, label: string, color: string } | null}
+ * @returns {{ slug: string, label: string } | null}
  */
 export function resolveCategory(rawSlug) {
     if (!rawSlug) return null;
@@ -95,7 +102,7 @@ export function resolveCategory(rawSlug) {
 
 /**
  * Get all categories for filter dropdowns.
- * @returns {Array<{ slug: string, label: string, color: string }>}
+ * @returns {Array<{ slug: string, label: string }>}
  */
 export function getAllCategories() {
     return Object.entries(TAXONOMY).map(([slug, v]) => ({ slug, ...v }));
@@ -112,7 +119,7 @@ export default function CategoryChip({ slug, label, className = '' }) {
     if (!resolved && !label) return null;
 
     const displayLabel = resolved?.label || label;
-    const displayColor = resolved?.color || 'bg-slate-100 text-slate-800';
+    const displayColor = topicTone(resolved?.slug).chip;   // one colour per topic on every page (src/design/categoryTone.js)
 
     // Never display "Autre" / "autre" / "À vérifier" / "Non vérifié"
     if (!displayLabel) return null;

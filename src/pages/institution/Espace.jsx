@@ -13,6 +13,7 @@ import { methodText } from '@/lib/observatoryMethodText';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
 import { useFormErrors } from '@/components/forms/useFormErrors';
 import { emailMessage, fieldA11y, looksLikeEmail, requiredMessage } from '@/lib/fieldErrors';
+import { topicTone } from '@/design/categoryTone';
 
 const KEY = 'institution_token';
 const get = () => { try { return sessionStorage.getItem(KEY) || ''; } catch { return ''; } };
@@ -153,7 +154,7 @@ export default function InstitutionEspace() {
               {obs.scope?.byNeed === 'PARTIAL' ? <p className="text-sm" data-testid="institution-by-need-partial">{t('institution:space.by_need_partial', 'Le tableau par besoin compte seulement les intercommunalités entièrement situées dans votre territoire.')}</p> : null}
               <table className="text-sm" data-testid="institution-by-need"><caption className="text-start font-medium">{t('institution:space.par_besoin', 'Par besoin')}</caption>
                 <thead><tr><th scope="col" className="pe-4 text-start">{t('institution:space.besoin', 'Besoin')}</th><th scope="col" className="pe-4 text-start">{t('institution:space.orientations', 'Orientations')}</th><th scope="col" className="pe-4 text-start">{t('institution:space.refusees_capacite', 'Refusées faute de capacité')}</th><th scope="col" className="text-start">{t('institution:space.hors_perimetre', 'Hors périmètre')}</th></tr></thead>
-                <tbody>{obs.byNeed.map((r) => <tr key={r.need}><th scope="row" className="pe-4 text-start font-normal" data-need={r.need}>{needLabel[r.need] || r.need}</th><td className="pe-4">{n(r.sent)}</td><td className="pe-4">{n(r.unmet)}</td><td>{n(r.outOfScope)}</td></tr>)}</tbody></table>
+                <tbody>{obs.byNeed.map((r) => <tr key={r.need}><th scope="row" className="pe-4 text-start font-normal" data-need={r.need}><span aria-hidden="true" className={`me-2 inline-block h-2.5 w-2.5 rounded-full align-middle ${topicTone(r.need).dot}`} />{needLabel[r.need] || r.need}</th><td className="pe-4">{n(r.sent)}</td><td className="pe-4">{n(r.unmet)}</td><td>{n(r.outOfScope)}</td></tr>)}</tbody></table>
               <table className="text-sm" data-testid="institution-by-commune"><caption className="text-start font-medium">{t('institution:space.par_commune_moins_3', 'Par commune (au moins 3 structures vérifiées)')}</caption>
                 <thead><tr><th scope="col" className="pe-4 text-start">{t('institution:space.commune', 'Commune')}</th><th scope="col" className="pe-4 text-start">{t('institution:space.orientations', 'Orientations')}</th><th scope="col" className="pe-4 text-start">{t('institution:space.refusees_capacite', 'Refusées faute de capacité')}</th><th scope="col" className="text-start">{t('institution:space.hors_perimetre', 'Hors périmètre')}</th></tr></thead>
                 <tbody>{obs.byCommune.map((r) => <tr key={r.commune}><th scope="row" className="pe-4 text-start font-normal">{r.commune}</th><td className="pe-4">{n(r.sent)}</td><td className="pe-4">{n(r.unmet)}</td><td>{n(r.outOfScope)}</td></tr>)}</tbody></table>

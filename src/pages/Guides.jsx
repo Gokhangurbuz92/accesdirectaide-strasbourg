@@ -10,6 +10,7 @@ import PageHeader from '@/components/layout/PageHeader';
 import EmptyCatalogue from '@/components/layout/EmptyCatalogue';
 import i18n, { useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
+import { topicTone } from '@/design/categoryTone';
 
 /** one guide of the list — R32: its category, title and summary are the record's own text (French, marked lang="fr", until a verified translation exists) */
 function GuideCard({ guide, index }) {
@@ -24,7 +25,7 @@ function GuideCard({ guide, index }) {
                 <article className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 group-hover:shadow-md transition">
                     <div className="flex gap-2 mb-2">
                         {categorie && (
-                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full uppercase font-bold" {...tr.attrs('categorie')}>
+                            <span className={`border text-xs px-2 py-1 rounded-full uppercase font-bold ${topicTone(guide.categorie).chip}`} {...tr.attrs('categorie')}>
                                 {categorie}
                             </span>
                         )}

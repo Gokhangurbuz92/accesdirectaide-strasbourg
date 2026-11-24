@@ -1,8 +1,9 @@
 // @ts-nocheck
 import { useCallback, useEffect, useRef, useState } from 'react';
+import InstallApp from '@/components/pwa/InstallApp';
 import { Link } from 'react-router-dom';
 import {
-  ArrowRight, Archive, Bell, CalendarClock, CalendarDays, Compass, FolderOpen, Gavel, HandHelping, History, Lock, MessageSquare, Route, Scale, Share2,
+  ArrowRight, Archive, Bell, BookOpen, CalendarClock, CalendarDays, Compass, FolderOpen, Gavel, HandHelping, History, Lock, MessageSquare, Route, Scale, Share2,
   Star, UserRound, Users,
 } from 'lucide-react';
 import SEO from '@/components/SEO';
@@ -16,6 +17,9 @@ import { passeportLocalEnabled } from '@/lib/passeport/flag';
 import NotificationCenter from '@/components/account/NotificationCenter';
 import FindAndBook from '@/components/account/FindAndBook';
 import TermsChangeNotice from '@/components/account/TermsChangeNotice';
+import { ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
+import { cn } from '@/lib/utils';
 
 /**
  * PKG-2 / C13 — Mon Espace (/compte): one page that says where the person stands — Mon Parcours, the next deadline and appointment, Mon Coffre, favourites and the dossiers
@@ -36,7 +40,13 @@ function messagesText(m, t) {
 const TILE_ICONS = {
   'tile-parcours': Route, 'tile-coffre': Lock, 'tile-favoris': Star, 'tile-profil': UserRound, 'tile-dossiers': FolderOpen, 'tile-orientations': Share2,
   'tile-rdv': CalendarDays, 'tile-messages': MessageSquare, 'tile-historique': History, 'tile-delegations': Users, 'tile-accompagnement': HandHelping,
-  'tile-protection-juridique': Scale, 'tile-moderation': Gavel, 'tile-situation': Compass, 'tile-orientations-sociales': Share2, 'tile-passeport': Archive,
+  'tile-protection-juridique': Scale, 'tile-moderation': Gavel, 'tile-situation': Compass, 'tile-orientations-sociales': Share2, 'tile-passeport': Archive, 'tile-guide': BookOpen,
+};
+/** colour system (src/design/categoryTone.js): each rubric takes its section colour, the same as in its page header */
+const TILE_SECTION = {
+  'tile-parcours': 'parcours', 'tile-coffre': 'coffre', 'tile-favoris': 'favoris', 'tile-profil': 'profil', 'tile-dossiers': 'dossiers', 'tile-orientations': 'orientations',
+  'tile-rdv': 'rendez-vous', 'tile-messages': 'messages', 'tile-historique': 'historique', 'tile-delegations': 'confiance', 'tile-accompagnement': 'accompagnant',
+  'tile-protection-juridique': 'protection', 'tile-moderation': 'moderation', 'tile-situation': 'situation', 'tile-orientations-sociales': 'orientations', 'tile-passeport': 'coffre', 'tile-guide': 'guide',
 };
 /** the page frame shared by every state of the page (loading, error, content): wide enough to use a desktop, a readable gutter on a phone */
 const FRAME = 'mx-auto w-full max-w-6xl px-[var(--ada-gutter)] py-8 sm:py-10';
@@ -94,6 +104,8 @@ export default function MonEspace() {
     // G14-PS: the social referrals (surface « social_referrals »: hidden by openLinks while it is closed)
     { to: '/compte/orientations-sociales', testid: 'tile-orientations-sociales', title: t('compte:space.tile.orientations_sociales', 'Mes orientations sociales'), body: t('compte:space.tile.orientations_sociales_body', 'Propositions d’une structure de vous orienter vers une autre : rien n’est transmis sans votre accord.') },
     // G14-PS: the Passeport Social is browser-only, offered only when the build sets VITE_PASSEPORT_SOCIAL=local
+    // 24/11/2026: the user guide (static help, open with the accounts in every scope); `public` so it does not count as an account screen for « Pour commencer »
+    { to: '/compte/guide', testid: 'tile-guide', public: true, title: t('compte:space.tile.guide', 'Guide d’utilisation'), body: t('compte:space.tile.guide_body', 'Comment utiliser chaque rubrique, pas à pas.') },
     ...(passeportLocalEnabled() ? [{ to: '/passeport-social', testid: 'tile-passeport', title: t('compte:space.tile.passeport', 'Passeport Social'), body: t('compte:space.tile.passeport_body', 'Vos documents et votre résumé, chiffrés sur cet appareil seulement.') }] : []),
   ];
   // R43 (E2): during the beta, a tile of a screen this build keeps closed (narrow accounts scope) is not offered
@@ -103,7 +115,7 @@ export default function MonEspace() {
     <>
       {s.parcours ? (<Card data-testid="espace-next-due">
         <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ada-action-soft text-ada-link" aria-hidden="true"><CalendarClock className="h-5 w-5" /></span>
+          <ToneIcon tone={sectionTone('parcours')} icon={CalendarClock} className="h-9 w-9 rounded-lg" />
           <CardTitle className="text-base">{t('compte:space.next_due', 'Prochaine échéance')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-ada-ink-2">
@@ -112,7 +124,7 @@ export default function MonEspace() {
       </Card>) : null}
       {'nextAppointment' in s ? (<Card data-testid="espace-next-appointment">
         <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ada-action-soft text-ada-link" aria-hidden="true"><CalendarDays className="h-5 w-5" /></span>
+          <ToneIcon tone={sectionTone('rendez-vous')} icon={CalendarDays} className="h-9 w-9 rounded-lg" />
           <CardTitle className="text-base">{t('compte:space.next_appointment', 'Prochain rendez-vous')}</CardTitle>
         </CardHeader>
         <CardContent className="text-sm text-ada-ink-2">
@@ -129,6 +141,7 @@ export default function MonEspace() {
       <header className="mb-6 sm:mb-8">
         <h1 ref={headingRef} tabIndex={-1} className="text-3xl font-bold tracking-tight text-ada-ink focus:outline-none sm:text-4xl">{t('compte:space.title', 'Mon Espace')}</h1>
         <p className="mt-2 max-w-prose text-base text-ada-ink-3">{t('compte:space.subtitle', 'Vos démarches, vos rendez-vous et vos documents, au même endroit.')}</p>
+        <Link to="/compte/guide" className="mt-3 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-ada-link underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-bt-accent rounded" data-testid="mon-espace-guide"><BookOpen className="h-4 w-4" aria-hidden="true" />{t('compte:space.guide_link', 'Comment utiliser Mon Espace ? Voir le guide')}</Link>
       </header>
       <div className="space-y-6">
         {/* Release 3 (owner 24/11/2026): the account holders are told here that the citizen terms changed — once, only when the build puts them in force */}
@@ -148,10 +161,11 @@ export default function MonEspace() {
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
             {visibleTiles.map((tile) => {
               const Icon = TILE_ICONS[tile.testid] || Bell;
+              const tone = sectionTone(TILE_SECTION[tile.testid]);
               return (
                 <li key={tile.to} className="flex">
-                  <Link to={tile.to} data-testid={tile.testid} className="ada-tile group">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-ada-action-soft text-ada-link" aria-hidden="true"><Icon className="h-5 w-5" /></span>
+                  <Link to={tile.to} data-testid={tile.testid} className={cn('ada-tile group', tone.hover)}>
+                    <ToneIcon tone={tone} icon={Icon} />
                     <span className="min-w-0 flex-1">
                       <span className="block text-base font-semibold text-ada-ink group-hover:underline group-hover:underline-offset-2">{tile.title}</span>
                       <span className="mt-1 block text-sm text-ada-ink-3">{tile.body}</span>
@@ -163,6 +177,8 @@ export default function MonEspace() {
             })}
           </ul>
         </nav>}
+        {/* 24/11/2026: install Mon Espace as an app on this phone / computer */}
+        <div className="mt-8 max-w-2xl"><InstallApp /></div>
       </div>
     </div>
   );

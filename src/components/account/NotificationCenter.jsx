@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import { formatDate, useT } from '@/i18n';
+import { Bell } from 'lucide-react';
+import { ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
 
 /** @param {(k: string, d: string) => string} t @returns {Record<string, string>} */
 const kindLabels = (t) => ({
@@ -58,7 +61,8 @@ export default function NotificationCenter() {
   };
   return (
     <Card data-testid="notification-center">
-      <CardHeader>
+      <CardHeader className="flex-row items-center gap-3 space-y-0 pb-3">
+        <ToneIcon tone={sectionTone('notifications')} icon={Bell} className="h-9 w-9 rounded-lg" />
         <CardTitle as="h2" id="notifications-title" className="text-base">
           {t('compte:notifications.title', 'Notifications')}
           {data.unread ? <span className="ms-2 rounded-full bg-blue-800 px-2 py-0.5 text-xs font-semibold text-white" data-testid="notifications-unread">{t('compte:notifications.unread', '{{n}} non lue(s)', { n: data.unread })}</span> : null}

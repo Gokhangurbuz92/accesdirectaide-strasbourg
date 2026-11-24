@@ -1682,5 +1682,9 @@
  "dashboard.start.hours": "حدّد أوقات توفرك",
  "dashboard.start.hours_hint": "المواعيد المتاحة المقترحة على الأشخاص",
  "dashboard.start.team": "ادعُ فريقك",
- "dashboard.start.team_hint": "الزملاء الذين يستقبلون الأشخاص"
+ "dashboard.start.team_hint": "الزملاء الذين يستقبلون الأشخاص",
+ "layout.guide": "دليل ADA Pro",
+ "dashboard.guide_link": "دليل ADA Pro: كيف يعمل",
+ "dashboard.start.guide": "كل التفاصيل في الدليل",
+ "breadcrumb.guide": "دليل ADA Pro"
 }

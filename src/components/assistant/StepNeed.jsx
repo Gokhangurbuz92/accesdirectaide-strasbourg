@@ -1,14 +1,17 @@
 // @ts-nocheck
 import { Home, Heart, Briefcase, FileText, AlertTriangle } from 'lucide-react';
 import { useT } from '@/i18n';
+import { topicTone } from '@/design/categoryTone';
+import { ToneIcon } from '@/components/ui/Tone';
 
-// R40: the labels are in the interface language (namespace `diagnostic`); the keys are the values the wizard stores
+// R40: the labels are in the interface language (namespace `diagnostic`); the keys are the values the wizard stores.
+// Colours: the topic colour of the platform (src/design/categoryTone.js) as an accent; « urgence » keeps its full rose (danger) look.
 const NEEDS = [
-    { key: 'logement', icon: Home, color: 'bg-blue-50 text-blue-900 border-blue-200 hover:bg-blue-100' },
-    { key: 'sante', icon: Heart, color: 'bg-emerald-50 text-emerald-900 border-emerald-200 hover:bg-emerald-100' },
-    { key: 'travail', icon: Briefcase, color: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100' },
-    { key: 'papiers', icon: FileText, color: 'bg-indigo-50 text-indigo-900 border-indigo-200 hover:bg-indigo-100' },
-    { key: 'urgence', icon: AlertTriangle, color: 'bg-rose-50 text-rose-900 border-rose-200 hover:bg-rose-100' },
+    { key: 'logement', icon: Home },
+    { key: 'sante', icon: Heart },
+    { key: 'travail', icon: Briefcase },
+    { key: 'papiers', icon: FileText },
+    { key: 'urgence', icon: AlertTriangle, urgent: 'bg-rose-50 text-rose-900 border-rose-200 hover:bg-rose-100' },
 ];
 
 export default function StepNeed({ onNext }) {
@@ -25,14 +28,14 @@ export default function StepNeed({ onNext }) {
             <h2 className="text-xl font-black text-slate-900 mb-2">{t('diagnostic:wizard.need.title', 'Quel est votre besoin principal ?')}</h2>
             <p className="mb-8 text-sm text-slate-700 font-medium">{t('diagnostic:wizard.need.intro', 'Choisissez la catégorie qui correspond le mieux.')}</p>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2" role="group" aria-label={t('diagnostic:wizard.need.group', 'Catégorie de besoin')}>
-                {NEEDS.map(({ key, icon: Icon, color }) => (
+                {NEEDS.map(({ key, icon: Icon, urgent }) => (
                     <button
                         key={key}
                         type="button"
                         onClick={() => onNext({ need: key })}
-                        className={`flex items-center gap-4 p-5 rounded-xl border transition-all font-bold text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${color}`}
+                        className={`flex items-center gap-4 p-5 rounded-xl border transition-all font-bold text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 ${urgent || `border-slate-200 bg-white text-slate-900 hover:bg-slate-50 ${topicTone(key).hover}`}`}
                     >
-                        <Icon className="h-6 w-6 shrink-0" aria-hidden="true" />
+                        {urgent ? <Icon className="h-6 w-6 shrink-0" aria-hidden="true" /> : <ToneIcon tone={topicTone(key)} icon={Icon} />}
                         <span>{LABELS[key]}</span>
                     </button>
                 ))}

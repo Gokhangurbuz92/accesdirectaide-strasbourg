@@ -6,6 +6,8 @@ import { explain } from './helpers.js';
 import { reviewValue } from '@/components/admin/reviewValue.js';
 import { useT, formatDateTime } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
+import { ToneChip } from '@/components/ui/Tone';
+import { structureTone } from '@/design/categoryTone';
 import DuplicateDecisions from './DuplicateDecisions.jsx';
 import { DISTINCT, SAME, batchItems, chunks, draftFor, draftProblems, filterPairs, paginate, reconcileDrafts, sortPairs, summary, wellDocumented } from './duplicatesModel.js';
 
@@ -93,7 +95,7 @@ function RecordSummary({ t, r, fr, label }) {
     <div className="min-w-0 space-y-0.5">
       <p className="font-semibold"><span className="sr-only">{label} : </span><span {...fr}>{r.nom}</span><span className="text-xs font-normal">{RECORD_STATE(t, r)}</span></p>
       <p className="text-xs" {...fr}>{[r.adresse, [r.code_postal, r.ville].filter(Boolean).join(' ')].filter(Boolean).join(', ') || '—'}</p>
-      <p className="text-xs"><span {...fr}>{r.type_structure || '—'}</span>{ids ? ` · ${ids}` : ''}</p>
+      <p className="text-xs">{r.type_structure ? <ToneChip tone={structureTone(r.type_structure)}><span {...fr}>{r.type_structure}</span></ToneChip> : <span {...fr}>—</span>}{ids ? ` · ${ids}` : ''}</p>
       <div className="text-xs"><Sources t={t} list={r.sources} /></div>
     </div>
   );

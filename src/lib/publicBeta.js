@@ -96,7 +96,8 @@ const builtSub = () => {
 // G14 (local citizen acceptance 22/11): /compte/profil holds the profile, the account language (C04) and the e-mail preferences (C20/N01), which the server
 // already serves in the narrow scope (citizen/profile, citizen/preferences: api/_utils/public-beta.js ACCOUNTS_BOOKING_SCOPE) — it was missing here, so the
 // settings links led to the closed page.
-export const ACCOUNTS_BOOKING_SCREENS = Object.freeze({ prefixes: ['/login', '/auth', '/compte/rendez-vous', '/compte/parametres', '/compte/profil'], exact: ['/compte'] });
+// 24/11/2026: « Guide d’utilisation » (/compte/guide) is static help (no server call): it opens with the accounts, in every scope
+export const ACCOUNTS_BOOKING_SCREENS = Object.freeze({ prefixes: ['/login', '/auth', '/compte/rendez-vous', '/compte/parametres', '/compte/profil', '/compte/guide'], exact: ['/compte'] });
 export const PRO_SELF_REGISTRATION_SCREEN = '/pro/register';
 
 /** @param {string} p normalized path @param {string} x screen prefix */
@@ -117,6 +118,7 @@ const builtBrowserOnly = () => {
 export function isBetaRestrictedPath(pathname, open = builtOpen(), sub = builtSub(), browserOnly = builtBrowserOnly()) {
   const p = String(pathname || '/').toLowerCase().split(/[?#]/)[0].replace(/\/+$/, '') || '/';
   if (browserOnly && under(p, BROWSER_ONLY_SCREEN)) return false;
+  if (p === '/pro/guide-public') return false;   // Guide ADA Pro, public version: a static explanation for structures before they register (no account, no API)
   // X04: the events screens follow ONLY the « events » surface — they sit under /compte and /admin, whose openings must not open them
   if (SCREEN_SURFACES.events.some((x) => under(p, x))) return !open.includes('events');
   // X02: the testimonial screens follow ONLY the « testimonials » surface, for the same reason

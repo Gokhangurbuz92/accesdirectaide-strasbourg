@@ -6,6 +6,9 @@ import SEO from '@/components/SEO';
 import MailOutcomeNote from '@/components/rdv/MailOutcomeNote.jsx';
 import SensitiveConsentField from '@/components/rdv/SensitiveConsentField.jsx';
 import { Button } from '@/components/ui/button';
+import { CalendarDays } from 'lucide-react';
+import { ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import VisioWindow from '@/components/Visio/VisioWindow';
@@ -130,7 +133,7 @@ export default function CompteRendezVous() {
   return (
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8" data-testid="compte-rdv">
       <SEO title={t('compte:rdv.mes_rendez_vous', 'Mes rendez-vous')} noindex />
-      <h1 className="text-2xl font-bold text-slate-900">{t('compte:rdv.mes_rendez_vous', 'Mes rendez-vous')}</h1>
+      <div className="flex items-center gap-3"><ToneIcon tone={sectionTone('rendez-vous')} icon={CalendarDays} /><h1 className="text-2xl font-bold text-slate-900">{t('compte:rdv.mes_rendez_vous', 'Mes rendez-vous')}</h1></div>
       <p className="text-sm text-slate-700" data-testid="rdv-policy">{t('compte:rdv.vous_pouvez_deplacer_rendez', 'Vous pouvez déplacer un rendez-vous jusqu’à 24 heures avant, deux fois au plus. Le créneau actuel n’est libéré que lorsque le nouveau est réservé.')}</p>
       {state.error ? <div role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900"><p>{state.error}</p>{state.auth ? <Button asChild variant="outline" className="mt-2"><Link to="/auth/login?next=/compte/rendez-vous">{t('compte:rdv.connecter', 'Se connecter')}</Link></Button> : <Button type="button" variant="outline" className="mt-2" onClick={load}>{t('compte:rdv.reessayer', 'Réessayer')}</Button>}</div> : null}
       {problem ? <p role="alert" data-testid="rdv-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}

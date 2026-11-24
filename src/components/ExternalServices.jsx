@@ -10,6 +10,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ExternalLink } from 'lucide-react';
+import { topicTone } from '@/design/categoryTone';
 import { Trans } from 'react-i18next';
 import i18n, { formatDate, useLanguage, useT } from '@/i18n';
 
@@ -64,7 +65,7 @@ export default function ExternalServices({ data, easy = false, textAttrs = {} })
               </p>
               {s.themes?.length > 0 && (
                 <div className="flex flex-wrap gap-1 mt-1">
-                  {s.themes.map((/** @type {string} */ theme, /** @type {number} */ j) => <Badge key={j} variant="neutral" className="bg-slate-100 text-slate-700" {...textAttrs}>{theme}</Badge>)}
+                  {s.themes.map((/** @type {string} */ theme, /** @type {number} */ j) => <Badge key={j} variant="neutral" className={topicTone(theme).chip} {...textAttrs}>{theme}</Badge>)}
                 </div>
               )}
               {s.publics?.length > 0 && <p className="text-sm text-slate-700 mt-1">{t('structures:external.for', 'Pour :')} <span {...textAttrs}>{s.publics.join(', ')}</span></p>}

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { postRecommendations } from '@/lib/assistant/client';
 import { formatDate, useT } from '@/i18n';
+import { contentTone } from '@/design/categoryTone';
+import { ToneChip } from '@/components/ui/Tone';
 
 /**
  * PKG-11 / P16 — next to the assessment, what the VERIFIED catalogue holds for the need the person named in the first step: aides, démarches and structures,
@@ -38,7 +40,7 @@ export default function NeedRecommendations({ need, label, territory }) {
         <ol className="mt-3 space-y-3">
           {state.items.map((it) => (
             <li key={`${it.type}-${it.slug || it.url}`} className="rounded-md border border-slate-200 p-3" data-testid="need-recommendation" data-kind={it.type}>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-700">{KIND[it.type] || it.type}</p>
+              <p className="text-xs font-semibold uppercase tracking-wide"><ToneChip tone={contentTone(it.type, 'slate')}>{KIND[it.type] || it.type}</ToneChip></p>
               <Link to={it.url} className="inline-flex min-h-11 items-center font-semibold text-blue-800 underline underline-offset-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700"><span {...FR}>{it.title}</span></Link>
               {it.whyShown ? <p className="text-sm text-slate-800" data-testid="need-recommendation-why">{t('diagnostic:wizard.recos.why', 'Pourquoi cette piste :')} <span {...FR}>{it.whyShown}</span></p> : null}
               {it.sourceUrl || it.verifiedAt ? (

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { EyeOff } from 'lucide-react';
 import { frontendEnv } from '@/config/env';
+import { assistantOpened } from '@/lib/publicBeta';
 import { useT } from '@/i18n';
 
 // R40: the texts are in the interface language (namespace `layout`)
@@ -75,7 +76,7 @@ export default function HideScreenButton() {
     }
 
     return (
-        <div className={`fixed ${frontendEnv.flags.publicBeta ? 'bottom-6' : 'bottom-24'} right-4 z-[40] sm:right-6`}>   {/* above the assistant button when it is shown */}
+        <div className={`fixed ${assistantOpened(frontendEnv.flags.publicBeta) ? 'bottom-[calc(5.5rem+var(--cookie-banner-offset,0px))]' : 'bottom-[calc(1.5rem+var(--cookie-banner-offset,0px))]'} right-4 z-[40] sm:right-6`}>   {/* 24/11/2026: above the assistant button whenever the assistant is shown (same rule as Layout.jsx) — they overlapped once the assistant opened in the beta */}
             {/* R26: a safety control (hide the page at once if someone looks over your shoulder) — its purpose is now written on it; a bare red
                 circle read as an alert or an error */}
             <button

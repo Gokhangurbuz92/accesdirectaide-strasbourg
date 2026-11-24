@@ -283,5 +283,21 @@
  "parcours_add.consent_check": "Bu adımın Mon Parcours’a kaydedilmesini kabul ediyorum.",
  "parcours_add.consent_confirm": "İznimle kaydet",
  "parcours_add.consent_cancel": "Kaydetme",
- "chat.limits": "Ben otomatik bir asistanım: yanılabilirim. Resmî sayfayı kontrol edin; haklarınız hakkında yalnızca ilgili kurum karar verir. Acil durumda 112'yi arayın."
+ "chat.limits": "Ben otomatik bir asistanım: yanılabilirim. Resmî sayfayı kontrol edin; haklarınız hakkında yalnızca ilgili kurum karar verir. Acil durumda 112'yi arayın.",
+ "install.installed": "Uygulama bu cihaza yüklü.",
+ "install.title_pro": "ADA Pro’yu bu cihaza yükleyin",
+ "install.title": "AccesDirectAide uygulamasını yükleyin",
+ "install.why": "Ana ekranınızda veya masaüstünüzde bir simge, tam ekran açılış ve iPhone ile iPad’de bildirimler. Ücretsiz, uygulama mağazası gerekmez.",
+ "install.ios.1": "Safari’de Paylaş düğmesine dokunun (yukarı ok bulunan kare).",
+ "install.ios.2": "“Ana Ekrana Ekle”yi seçin. Göremiyorsanız listeyi kaydırın.",
+ "install.ios.3": "“Ekle”ye dokunun. Ardından AccesDirectAide’ı simgesinden açın.",
+ "install.mac.1": "Safari’de Dosya menüsünü (veya Paylaş düğmesini) açın.",
+ "install.mac.2": "“Dock’a Ekle”yi seçin.",
+ "install.android.1": "Tarayıcı menüsünü açın (üç nokta).",
+ "install.android.2": "“Uygulamayı yükle” veya “Ana ekrana ekle”yi seçin.",
+ "install.firefox": "Bilgisayardaki Firefox bir siteyi yükleyemez. Chrome, Edge veya Safari kullanın ya da bir yer imi ekleyin.",
+ "install.other": "Tarayıcınızın menüsünde “Yükle” veya “Ana ekrana ekle” seçeneğini arayın.",
+ "install.close": "Bir daha önerme",
+ "install.button": "Uygulamayı yükle",
+ "install.later": "Sorun değil: daha sonra alanınızdan yükleyebilirsiniz."
 }

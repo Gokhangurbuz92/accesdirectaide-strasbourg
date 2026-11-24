@@ -76,5 +76,9 @@
   "territory.postal.qpv-address": "Bu site adresinizin bu mahallelerden birinde olup olmadığını bilmez. Kontrol etmek için resmî sitenin adres aramasını kullanın:",
   "territory.postal.qpv-none": "Bu belediye için listelenmiş kent politikası öncelikli mahallesi (quartier prioritaire) yok (2024 resmî listesi).",
   "territory.postal.source": "Kaynaklar: La Poste, « Base officielle des codes postaux »; Agence nationale de la cohésion des territoires, 2024 öncelikli mahalleler listesi (Licence Ouverte). Verilerin okunduğu tarih: {{date}}.",
-  "hero.situation": "Ya da başınıza geleni söyleyin: kira, iş, Strazburg'a geliş…"
+  "hero.situation": "Ya da başınıza geleni söyleyin: kira, iş, Strazburg'a geliş…",
+  "help.title": "Bir sorunuz mu var?",
+  "help.text": "Sık sorulan soruların yanıtları ve siteyi kullanmak için adım adım bir kılavuz.",
+  "help.faq": "Sık sorulan soruları görün",
+  "help.guide": "Kullanım kılavuzu"
 }

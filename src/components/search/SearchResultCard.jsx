@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { getSearchCategoryLabel, normalizeSearchCategory } from '@/lib/searchClient';
 import { useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
+import { topicTone } from '@/design/categoryTone';
 
 /** R32: a search category in the interface language (same keys as the search form) */
 function categoryLabel(t, value) {
@@ -42,7 +43,7 @@ export default function SearchResultCard({ result, cautions }) {
       data-testid="search-result-card"
     >
       <div className="mb-3 flex flex-wrap items-center gap-2">
-        <Badge className="bg-blue-50 text-blue-700 hover:bg-blue-100">
+        <Badge variant="outline" className={topicTone(categoryCode).chip}>
           {category}
         </Badge>
         {hasScore && (

@@ -17,11 +17,16 @@ import {
   Plus,
   ExternalLink,
   CheckCircle2,
+  LifeBuoy,
 } from 'lucide-react';
 import { useProLabels } from '@/lib/proLabelsI18n';
 import { formatDate, useT } from '@/i18n';
 import { isNotOpenRefusal, moduleOpen } from '@/lib/proModules';
 import { NotYetOpenBadge } from '@/components/pro/NotYetOpen';
+import { ToneBar, ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
+import { cn } from '@/lib/utils';
+import InstallApp from '@/components/pwa/InstallApp';
 
 /**
  * ProDashboard — Hub central de l'Espace Professionnel
@@ -160,6 +165,9 @@ export default function ProDashboard() {
                     <p className="text-sm text-slate-700">
                         {t('pro:dashboard.welcome', 'Bienvenue, {{email}}', { email: user?.email })}
                     </p>
+                    <Link to="/pro/guide" data-testid="pro-dashboard-guide" className={cn('mt-1 inline-flex min-h-11 items-center gap-2 rounded-md text-sm font-semibold underline underline-offset-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-600', sectionTone('support').text)}>
+                        <LifeBuoy className="h-4 w-4" aria-hidden="true" />{t('pro:dashboard.guide_link', 'Guide ADA Pro : comment ça marche')}
+                    </Link>
                 </div>
                 {agendaOpen ? (
                 <div className="flex gap-3">
@@ -189,17 +197,20 @@ export default function ProDashboard() {
             {agendaOpen && appointments.length === 0 && ['STRUCTURE_ADMIN', 'SUPERADMIN'].includes(user?.role) ? (
                 <section aria-labelledby="pro-start-title" className="rounded-2xl border border-ada-line bg-ada-surface p-5 shadow-sm sm:p-6" data-testid="pro-start-checklist">
                     <h2 id="pro-start-title" className="text-lg font-bold text-ada-ink">{t('pro:dashboard.start.title', 'Pour bien démarrer')}</h2>
-                    <p className="mt-1 text-sm text-ada-ink-3">{t('pro:dashboard.start.intro', 'Quatre étapes pour recevoir vos premiers rendez-vous en ligne.')}</p>
+                    <p className="mt-1 text-sm text-ada-ink-3">{t('pro:dashboard.start.intro', 'Quatre étapes pour recevoir vos premiers rendez-vous en ligne.')}{' '}
+                        <Link to="/pro/guide#demarrer" className="font-semibold text-ada-action underline underline-offset-2">{t('pro:dashboard.start.guide', 'Tout le détail dans le guide')}</Link>
+                    </p>
                     <ol className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                         {[
-                            ['/pro/structure', t('pro:dashboard.start.structure', 'Compléter la fiche de la structure'), t('pro:dashboard.start.structure_hint', 'Adresse, horaires, contact')],
-                            ['/pro/rdv/services', t('pro:dashboard.start.services', 'Créer un service'), t('pro:dashboard.start.services_hint', 'Le motif et la durée d’un rendez-vous')],
-                            ['/pro/rdv/disponibilites', t('pro:dashboard.start.hours', 'Définir les disponibilités'), t('pro:dashboard.start.hours_hint', 'Les créneaux proposés aux personnes')],
-                            ['/pro/team', t('pro:dashboard.start.team', 'Inviter l’équipe'), t('pro:dashboard.start.team_hint', 'Les collègues qui reçoivent les personnes')],
-                        ].map(([to, label, hint], i) => (
+                            ['/pro/structure', t('pro:dashboard.start.structure', 'Compléter la fiche de la structure'), t('pro:dashboard.start.structure_hint', 'Adresse, horaires, contact'), 'structure'],
+                            ['/pro/rdv/services', t('pro:dashboard.start.services', 'Créer un service'), t('pro:dashboard.start.services_hint', 'Le motif et la durée d’un rendez-vous'), 'services'],
+                            ['/pro/rdv/disponibilites', t('pro:dashboard.start.hours', 'Définir les disponibilités'), t('pro:dashboard.start.hours_hint', 'Les créneaux proposés aux personnes'), 'disponibilites'],
+                            ['/pro/team', t('pro:dashboard.start.team', 'Inviter l’équipe'), t('pro:dashboard.start.team_hint', 'Les collègues qui reçoivent les personnes'), 'team'],
+                        ].map(([to, label, hint, section], i) => (
                             <li key={to} className="flex">
-                                <Link to={to} className="ada-tile h-full !p-4">
-                                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-ada-action text-sm font-bold text-white" aria-hidden="true">{i + 1}</span>
+                                {/* colour system: each step in the colour of the screen it opens (the same as in the menu) */}
+                                <Link to={to} className={cn('ada-tile h-full !p-4', sectionTone(section).hover)}>
+                                    <span className={cn('flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold', sectionTone(section).active)} aria-hidden="true">{i + 1}</span>
                                     <span className="min-w-0">
                                         <span className="block text-sm font-semibold text-ada-ink">{label}</span>
                                         <span className="mt-0.5 block text-sm text-ada-ink-3">{hint}</span>
@@ -223,10 +234,11 @@ export default function ProDashboard() {
 
             {/* Stats cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <Card>
+                <Card className="relative overflow-hidden">
+                    <ToneBar tone={sectionTone('rdv')} />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle as="h2" className="text-sm font-medium">{t('pro:dashboard.rendez_vous', 'Rendez-vous')}</CardTitle>
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <ToneIcon tone={sectionTone('rdv')} icon={Calendar} size="sm" />
                     </CardHeader>
                     <CardContent>
                         {agendaOpen ? (
@@ -237,20 +249,22 @@ export default function ProDashboard() {
                         ) : <NotYetOpenBadge />}
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="relative overflow-hidden">
+                    <ToneBar tone={sectionTone('team')} />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle as="h2" className="text-sm font-medium">{t('pro:dashboard.equipe', 'Équipe')}</CardTitle>
-                        <Users className="h-4 w-4 text-muted-foreground" />
+                        <ToneIcon tone={sectionTone('team')} icon={Users} size="sm" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">{teamAccess === 'ok' ? teamMembers.length : '—'}</div>
                         <p className="text-xs text-muted-foreground">{t('pro:dashboard.membres_actifs', 'Membres actifs')}</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="relative overflow-hidden">
+                    <ToneBar tone={sectionTone('structure')} />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle as="h2" className="text-sm font-medium">{t('pro:dashboard.structure', 'Structure')}</CardTitle>
-                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                        <ToneIcon tone={sectionTone('structure')} icon={Building2} size="sm" />
                     </CardHeader>
                     <CardContent>
                         {/* owner usefulness pass: the real state of the record and of ADA's verification, with the next step */}
@@ -259,12 +273,13 @@ export default function ProDashboard() {
                         <Link to="/pro/structure" className="mt-1 inline-block text-xs font-medium text-indigo-700 underline">{t('pro:dashboard.voir_structure', 'Voir ma structure')}</Link>
                     </CardContent>
                 </Card>
-                <Card className="border-indigo-200 bg-indigo-50/30">
+                <Card className="relative overflow-hidden">
+                    <ToneBar tone={sectionTone('visio', 'cyan')} />
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle as="h2" className="text-sm font-medium text-indigo-700">
+                        <CardTitle as="h2" className="text-sm font-medium">
                             {t('pro:dashboard.visioconference', 'Visioconférence')}
                         </CardTitle>
-                        <Video className="h-4 w-4 text-indigo-500" />
+                        <ToneIcon tone={sectionTone('visio', 'cyan')} icon={Video} size="sm" />
                     </CardHeader>
                     <CardContent>
                         {videoOpen ? (
@@ -390,7 +405,7 @@ export default function ProDashboard() {
                         <CardHeader className="pb-3">
                             <div className="flex items-center justify-between">
                                 <CardTitle className="text-sm font-medium flex items-center gap-2">
-                                    <Users className="text-indigo-500" size={14} />
+                                    <Users className={sectionTone('team').text} size={14} aria-hidden="true" />
                                     {t('pro:dashboard.equipe', 'Équipe')}
                                 </CardTitle>
                                 <Link
@@ -439,9 +454,7 @@ export default function ProDashboard() {
                     {/* Messages shortcut (G3: not offered while messaging is not open) */}
                     <Card className={messagesOpen ? 'cursor-pointer hover:border-indigo-200 transition-colors' : ''} onClick={messagesOpen ? () => navigate('/pro/messages') : undefined} data-testid="pro-dashboard-messages">
                         <CardContent className="flex items-center gap-3 p-4">
-                            <div className="p-2 bg-indigo-50 rounded-lg">
-                                <MessageCircle className="text-indigo-600" size={18} />
-                            </div>
+                            <ToneIcon tone={sectionTone('messages')} icon={MessageCircle} size="sm" />
                             <div>
                                 <p className="text-sm font-medium text-slate-800">
                                     {t('pro:dashboard.messagerie_securisee', 'Messagerie sécurisée')}
@@ -466,6 +479,9 @@ export default function ProDashboard() {
                             {t('pro:dashboard.messages_notes_documents_sont', 'Messages, notes et documents sont chiffrés à l\'enregistrement et chaque accès est journalisé. Ce n\'est pas un chiffrement de bout en bout : nos serveurs détiennent les clés.')}
                         </p>
                     </div>
+
+                    {/* 24/11/2026: install ADA Pro as an app on this computer / phone (same offer as the citizen space) */}
+                    <InstallApp audience="pro" />
                 </div>
             </div>
         </div>

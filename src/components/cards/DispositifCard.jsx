@@ -4,6 +4,9 @@ import { ExternalLink } from 'lucide-react';
 import AnimatedCard from '@/components/ui/AnimatedCard';
 import { useT } from '@/i18n';
 import useContentTranslation from '@/hooks/useContentTranslation';
+import CategoryChip, { resolveCategory } from '@/components/ui/CategoryChip';
+import { ToneBar } from '@/components/ui/Tone';
+import { contentTone, topicTone } from '@/design/categoryTone';
 
 export default function DispositifCard({ dispositif, index = 0 }) {
     const { t } = useT('dispositifs');
@@ -15,11 +18,15 @@ export default function DispositifCard({ dispositif, index = 0 }) {
     const description = dispositif.description_falc;
     const montant = dispositif.montant;
     const liens = dispositif.liens;
+    // 24/11/2026: the topic of the official fiche (its classification, API field `categorie`) as the card's accent; the dispositif colour when unclassified
+    const topicSlug = resolveCategory(dispositif.categorie)?.slug;
+    const tone = topicSlug ? topicTone(topicSlug) : contentTone('dispositif');
     const viewLabel = t('dispositifs:card.view', 'Voir le dispositif {{title}}', { title: titre });
 
     return (
         <AnimatedCard index={index}>
-            <div className="bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition relative group flex flex-col h-full">
+            <div className={`bg-white border rounded-lg p-6 shadow-sm hover:shadow-md transition relative overflow-hidden group flex flex-col h-full ${tone.hover}`}>
+                <ToneBar tone={tone} />
                 <Link
                     to={targetUrl}
                     className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-lg"
@@ -28,7 +35,8 @@ export default function DispositifCard({ dispositif, index = 0 }) {
                     <span className="sr-only">{viewLabel}</span>
                 </Link>
 
-                <h2 className="text-xl font-semibold mb-2 text-indigo-700 group-hover:text-indigo-900 transition-colors" {...tr.attrs('titre')}>
+                {dispositif.categorie && <div className="mb-3"><CategoryChip slug={dispositif.categorie} /></div>}
+                <h2 className="text-xl font-semibold mb-2 text-slate-900 group-hover:text-blue-800 transition-colors" {...tr.attrs('titre')}>
                     {titre}
                 </h2>
                 <p className="text-gray-600 mb-4 line-clamp-3 flex-grow" {...(description ? tr.attrs('description_falc') : {})}>

@@ -33,6 +33,7 @@ import useContentTranslation from '@/hooks/useContentTranslation';
 import ContentTranslationNotice from '@/components/i18n/ContentTranslationNotice';
 import { NewsAdaBlock, NewsArticleHeader, NewsArticleTools, NewsCoverageAndRelated, ReadingProgress } from '@/components/news/NewsArticleExtras';
 import useReaderMode from '@/hooks/useReaderMode';
+import { topicTone } from '@/design/categoryTone';
 
 const TYPE_ICONS = {
   nouveaute: Star,
@@ -230,7 +231,7 @@ export default function ActualiteDetail() {
                 {typeLabel(actu.type_actu, t)}
               </Badge>
               {shownNewsCategory(actu.categorie) && (
-                <Badge variant="outline">
+                <Badge variant="outline" className={topicTone(actu.categorie).chip}>
                   {categoryLabel(actu.categorie, t)}
                 </Badge>
               )}

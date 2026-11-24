@@ -7,7 +7,8 @@ import {
 } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import CategoryChip from "@/components/ui/CategoryChip";
+import CategoryChip, { resolveCategory } from "@/components/ui/CategoryChip";
+import { topicTone } from "@/design/categoryTone";
 import { RecordProvenance, CardActionStrip } from '@/components/cards/RecordCardParts';
 import { getFreshnessBadge, getProvenance } from '@/lib/provenance';
 import { useFalc } from '@/contexts/FalcContext';
@@ -53,6 +54,7 @@ export default function DemarcheCard({ demarche, index = 0 }) {
         >
           <span className="sr-only">{t('demarches:card.open', 'Voir la démarche {{title}}', { title })}</span>
         </Link>
+        <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 ${topicTone(resolveCategory(demarche.categorie)?.slug, 'blue').bar}`} data-testid="card-tone" />
 
         <CardContent className="flex h-full flex-col p-0">
           <div className="flex-1 p-5 sm:p-6">

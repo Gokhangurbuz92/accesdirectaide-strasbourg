@@ -35,8 +35,23 @@ import i18n, { useT } from '@/i18n';
 import { Trans } from 'react-i18next';
 import { formatDate } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
+import { TONES, topicTone } from '@/design/categoryTone';
 
 const COLORS = ['#4f46e5', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+/**
+ * colour system (src/design/categoryTone.js): a theme that names a topic takes that topic's colour (the same as everywhere else); a theme that names
+ * none (a service's own name), or a colour already taken, keeps the position colour so two slices never look alike. The legend writes each name and share.
+ * @param {{ name?: any }[]} themes @returns {string[]}
+ */
+function themeColors(themes) {
+  const used = new Set();
+  return (themes || []).map((th, i) => {
+    const tone = topicTone(th && th.name);
+    const c = tone !== TONES.slate && !used.has(tone.color) ? tone.color : COLORS[i % COLORS.length];
+    used.add(c);
+    return c;
+  });
+}
 
 /**
  * ImpactReports — Tableau de bord d'impact social
@@ -292,7 +307,7 @@ export default function ImpactReports() {
                                                         rootTabIndex={-1}
                                                     >
                                                         {data.themes.map((/** @type {{ name: import("react").Key | null | undefined; }} */ entry, /** @type {number} */ i) => (
-                                                            <Cell key={entry.name} fill={COLORS[i % COLORS.length]} />
+                                                            <Cell key={entry.name} fill={themeColors(data.themes)[i]} />
                                                         ))}
                                                     </Pie>
                                                     <Tooltip
@@ -314,7 +329,7 @@ export default function ImpactReports() {
                                                         <div className="flex items-center gap-2 min-w-0">
                                                             <div
                                                                 className="w-2.5 h-2.5 rounded-full shrink-0"
-                                                                style={{ backgroundColor: COLORS[i % COLORS.length] }}
+                                                                style={{ backgroundColor: themeColors(data.themes)[i] }}
                                                             />
                                                             <span className="text-xs text-slate-600 truncate" {...fr}>
                                                                 {item.name}

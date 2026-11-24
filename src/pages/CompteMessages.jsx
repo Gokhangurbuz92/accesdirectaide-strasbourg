@@ -4,6 +4,8 @@ import { useMemo } from 'react';
 import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2, MessageCircle } from 'lucide-react';
+import { ToneIcon } from '@/components/ui/Tone';
+import { sectionTone } from '@/design/categoryTone';
 
 import SEO from '@/components/SEO';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -63,8 +65,8 @@ export default function CompteMessages() {
       <div className="mx-auto w-full max-w-4xl px-4 sm:px-6">
         <Card>
           <CardHeader>
-            <CardTitle as="h1" className="flex items-center gap-2">
-              <MessageCircle className="h-5 w-5 text-primary" aria-hidden="true" />
+            <CardTitle as="h1" className="flex items-center gap-3">
+              <ToneIcon tone={sectionTone('messages')} icon={MessageCircle} size="sm" />
               {t('compte:messages.mes_messages', 'Mes messages')}
             </CardTitle>
             <CardDescription>

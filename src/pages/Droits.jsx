@@ -9,6 +9,8 @@ import reference from '../../data/reference/social-domains.v1.json';
 import { frontendEnv } from '@/config/env';
 import { bookingOpened } from '@/lib/publicBeta';
 import { NEED_BY_ID, needBookingHref } from '@/lib/socialNeeds';
+import { TONES, topicTone } from '@/design/categoryTone';
+import { ToneBar, ToneIcon } from '@/components/ui/Tone';
 
 /**
  * G3 (19/11/2026) — « Explorer les droits par besoin »: the public, anonymous view of the Rights Graph (founder directive 19/11, track 1).
@@ -73,6 +75,7 @@ function NeedDetail({ need }) {
   const localAids = need.aids.filter((a) => a.territory !== 'FR');
   return (
     <article aria-labelledby="rights-need-title" data-testid={`rights-need-${need.id}`} className="space-y-8">
+      <div className="flex items-center gap-3"><ToneIcon tone={need.urgent ? TONES.red : topicTone(need.id)} icon={RouteIcon} /><span aria-hidden="true" className={`h-1 flex-1 rounded-full ${(need.urgent ? TONES.red : topicTone(need.id)).bar}`} /></div>
       {!isSource && <p className="text-sm text-slate-700">{t('rights:need.official-name', 'Nom officiel en français :')} <span {...fr} className="font-medium">{need.label}</span></p>}
       {urgentNumbers.length > 0 && (
         <section aria-labelledby="rights-numbers" className="rounded-lg border border-red-300 bg-red-50 p-4">
@@ -251,7 +254,8 @@ export default function Droits() {
             <ul className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2" data-testid="rights-needs">
               {NEEDS.map((n) => (
                 <li key={n.id}>
-                  <Link to={`/droits/${n.id}`} className={`flex min-h-11 h-full items-center justify-between gap-2 rounded-lg border bg-white px-3 py-2 text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${n.urgent ? 'border-red-300' : 'border-slate-300'}`} data-need={n.id}>
+                  <Link to={`/droits/${n.id}`} className={`relative flex min-h-11 h-full items-center justify-between gap-2 overflow-hidden rounded-lg border bg-white py-2 pe-3 ps-4 text-slate-900 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${n.urgent ? 'border-red-300' : `border-slate-300 ${topicTone(n.id).hover}`}`} data-need={n.id}>
+                    <ToneBar tone={n.urgent ? TONES.red : topicTone(n.id)} side="start" />
                     <span className="font-medium">{needLabel(n.id, t, n.label)}</span>
                     <span className="flex shrink-0 items-center gap-2 text-sm text-slate-700">
                       {n.urgent && <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-900">{t('rights:needs.urgent', 'Urgent')}</span>}

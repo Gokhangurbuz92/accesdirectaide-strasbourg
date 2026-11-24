@@ -9,6 +9,9 @@ import { explain } from '@/pages/admin/k5/helpers.js';
 import i18n, { useT } from '@/i18n';
 import { DATE_SHORT, formatDate } from '@/i18n';
 import { useFrAttrs } from '@/lib/recordLang';
+import { ToneChip } from '@/components/ui/Tone';
+import { resolveCategory } from '@/components/ui/CategoryChip';
+import { structureTone, topicTone } from '@/design/categoryTone';
 
 /**
  * PKG-11 / A02 — administrator list of one catalogue kind (aide, démarche, structure) through /api/admin/content: drafts, unverified and archived records
@@ -22,6 +25,17 @@ const verification = (r) => (r.publication_hold ? (r.holdKind === 'EDIT' ? i18n.
   : r.verification_status === 'VERIFIED' ? i18n.t('admin:catalogue_list.verif.verified', 'Vérifiée') : r.verification_status === 'REJECTED' ? i18n.t('admin:catalogue_list.verif.rejected', 'Refusée') : i18n.t('admin:catalogue_list.verif.never', 'Non vérifiée'));
 const statusOf = (r) => (r.publication_hold ? (r.holdKind === 'EDIT' ? 'edit' : 'hold') : r.verification_status === 'VERIFIED' ? 'verified' : r.verification_status === 'REJECTED' ? 'rejected' : 'never');
 const FILTERS = () => [['all', i18n.t('admin:catalogue_list.filter.all', 'Toutes')], ['never', i18n.t('admin:catalogue_list.filter.never', 'Non vérifiées')], ['hold', i18n.t('admin:catalogue_list.filter.hold', 'En attente (décision)')], ['edit', i18n.t('admin:catalogue_list.filter.edit', 'Modifiées depuis la vérification')], ['rejected', i18n.t('admin:catalogue_list.filter.rejected', 'Refusées')], ['verified', i18n.t('admin:catalogue_list.filter.verified', 'Vérifiées')]];
+
+/**
+ * colour system: a category of the taxonomy is a chip in its topic colour (the record's own word kept, with its language mark: R47); a town, a
+ * département or an unknown category stays plain text. A structure's type (when the list carries it) is a chip in its family colour.
+ */
+function CategoryText({ r, fr }) {
+  const text = r.categorie || r.ville || r.departement;
+  const cat = r.categorie ? resolveCategory(r.categorie) : null;
+  // the chip IS the French-marked element (lang + dir, R47), so it is a span with ToneChip's look rather than ToneChip (which carries no `dir`)
+  return cat ? <span {...fr} className={`inline-flex max-w-full items-center rounded-md border px-2 py-0.5 text-xs font-semibold leading-snug ${topicTone(cat.slug).chip}`}>{text}</span> : <span {...fr}>{text}</span>;
+}
 
 export default function CatalogueList({ kind, title, published, newPath, editPath, createLabel, verifiable = true }) {
   const { t } = useT('admin');
@@ -94,7 +108,7 @@ export default function CatalogueList({ kind, title, published, newPath, editPat
             <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded border border-slate-300 bg-white p-3" data-testid="admin-catalogue-row" data-id={r.id}>
               <div className="min-w-0">
                 <p className="font-semibold text-slate-900" {...fr}>{r.label}</p>
-                <p className="text-xs text-slate-700">{(r.categorie || r.ville || r.departement) ? <span {...fr}>{r.categorie || r.ville || r.departement}</span> : null}{(r.categorie || r.ville || r.departement) && r.updatedAt ? ' — ' : null}{r.updatedAt ? t('admin:catalogue_list.modified_on', 'modifiée le {{date}}', { date: formatDate(r.updatedAt, DATE_SHORT) }) : null}</p>
+                <p className="text-xs text-slate-700">{r.type_structure ? <><ToneChip tone={structureTone(r.type_structure)}><span {...fr}>{r.type_structure}</span></ToneChip>{' '}</> : null}{(r.categorie || r.ville || r.departement) ? <CategoryText r={r} fr={fr} /> : null}{(r.categorie || r.ville || r.departement) && r.updatedAt ? ' — ' : null}{r.updatedAt ? t('admin:catalogue_list.modified_on', 'modifiée le {{date}}', { date: formatDate(r.updatedAt, DATE_SHORT) }) : null}</p>
                 <div className="mt-1 flex flex-wrap gap-2">
                   <Badge variant="secondary" data-testid="admin-catalogue-state">{states[r.statut] || r.statut}</Badge>
                   {verifiable ? <Badge variant="outline" data-testid="admin-catalogue-verification">{verification(r)}</Badge> : null}

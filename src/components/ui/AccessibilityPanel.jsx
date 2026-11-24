@@ -17,9 +17,16 @@ import {
 } from "@/components/ui/popover";
 import { ACCESSIBILITY_EVENT, resetDisplayPreferences } from '@/lib/accountAccessibility';
 import { useT } from '@/i18n';
+import { useTheme } from '@/components/providers/ThemeProvider';
 
 export default function AccessibilityPanel() {
   const { t } = useT('layout');
+  // 24/11/2026 (owner: « the moon button and Sombre — which one does what? »): ONE dark mode. « Sombre » here and the moon button in the header both
+  // drive the site theme (ThemeProvider, key ada-theme), so each always shows the other's state. Contrast is only Normal / Fort.
+  const { theme, setTheme } = useTheme();
+  const [legacyDark, setLegacyDark] = useState(false);
+  useEffect(() => { if (legacyDark) setTheme('dark'); }, [legacyDark, setTheme]);
+  const isDark = theme === 'dark' || (theme === 'system' && typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
   const [settings, setSettings] = useState(/** @type {{ fontSize: number, contrast: string, lineHeight: string, simplifiedMode: boolean, reduceMotion?: boolean }} */ ({
     fontSize: 100,
     contrast: 'normal',
@@ -30,7 +37,12 @@ export default function AccessibilityPanel() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem('accessibilitySettings');
-      if (saved) setSettings(JSON.parse(saved));
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // the former separate « dark-mode » of this panel becomes the site theme
+        if (parsed?.contrast === 'dark') { parsed.contrast = 'normal'; setLegacyDark(true); }
+        setSettings(parsed);
+      }
     } catch { /* unreadable or blocked storage: keep the defaults */ }
     // K0 / C04: the signed-in account's saved preferences arrive through this event (src/lib/accountAccessibility.js)
     const onAccount = (/** @type {any} */ e) => { if (e?.detail?.device) setSettings(e.detail.device); };
@@ -198,11 +210,12 @@ export default function AccessibilityPanel() {
                   {t('layout:a11y.contrast.high', 'Fort')}
                 </Button>
                 <Button
-                  variant={settings.contrast === 'dark' ? 'default' : 'outline'}
+                  variant={isDark ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => choose(prev => ({ ...prev, contrast: 'dark' }))}
-                  aria-pressed={settings.contrast === 'dark'}
-                  className={`text-xs h-8 ${settings.contrast !== 'dark' ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
+                  onClick={() => setTheme(isDark ? 'light' : 'dark')}
+                  aria-pressed={isDark}
+                  className={`text-xs h-8 ${!isDark ? 'border-slate-200 text-slate-600 bg-slate-50 hover:bg-slate-100' : ''}`}
+                  data-testid="a11y-dark-theme"
                 >
                   <Moon className="h-3 w-3 me-1" aria-hidden="true" />
                   {t('layout:a11y.contrast.dark', 'Sombre')}

@@ -4,14 +4,18 @@
  * no image with recorded rights. They illustrate a THEME; they never pretend to show the event. Decorative by default (the title says what the item is).
  */
 import { useT } from '@/i18n';
+import { topicTone } from '@/design/categoryTone';
 
-/** colours come from the design tokens only (src/index.css: --muted, --chart-1..5; dark mode included): one motif colour and one accent per theme */
+/**
+ * Colours: the motif takes the platform's topic colour (src/design/categoryTone.js topicTone(topic).color = rgb(var(--c-*-500)), remapped by the dark theme),
+ * so a news theme has the same colour as its chips and bars everywhere; the accent and the background stay design tokens (src/index.css: --chart-1..5, --muted).
+ */
 const tok = (n) => `hsl(var(--chart-${n}))`;
 const BG = 'hsl(var(--muted))';
-/** @type {Record<string, [number, number]>} */
-const PAIRS = { logement: [4, 3], famille: [2, 3], sante: [1, 5], droits: [5, 3], emploi: [2, 4], education: [3, 4], handicap: [4, 3], justice: [5, 3],
-  environnement: [2, 1], economie: [1, 4], international: [4, 2], politique: [5, 1], technologie: [4, 5], culture: [5, 3], strasbourg: [1, 3], societe: [1, 3] };
-const PALETTE = Object.fromEntries(Object.entries(PAIRS).map(([k, [f, a]]) => [k, { bg: BG, fg: tok(f), accent: tok(a) }]));
+/** @type {Record<string, number>} the accent token of each theme */
+const ACCENT = { logement: 3, famille: 3, sante: 5, droits: 3, emploi: 4, education: 4, handicap: 3, justice: 3,
+  environnement: 1, economie: 4, international: 2, politique: 1, technologie: 5, culture: 3, strasbourg: 3, societe: 3 };
+const palette = (topic) => ({ bg: BG, fg: topicTone(topic).color, accent: tok(ACCENT[topic] ?? ACCENT.societe) });
 
 /** simple geometric motifs, one per theme (paths in a 160×90 box) */
 function Motif({ topic, fg, accent }) {
@@ -40,7 +44,7 @@ function Motif({ topic, fg, accent }) {
  */
 export default function NewsIllustration({ topic = 'societe', className = '', decorative = true }) {
   const { t } = useT('news');
-  const p = PALETTE[topic] || PALETTE.societe;
+  const p = palette(topic);
   const a11y = decorative ? { 'aria-hidden': true } : { role: 'img', 'aria-label': t('news:image.illustration', 'Illustration de la rubrique (dessin original AccesDirectAide)') };
   return (
     <svg viewBox="0 0 160 90" preserveAspectRatio="xMidYMid slice" className={className} {...a11y} data-testid="news-illustration" data-topic={topic} focusable="false">

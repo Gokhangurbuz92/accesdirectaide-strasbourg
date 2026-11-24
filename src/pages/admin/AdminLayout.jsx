@@ -17,6 +17,7 @@ import useMainHeadingText from '@/hooks/useMainHeadingText';
 import { useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { employmentOpened, entraideOpened, eventsOpened, storiesOpened, testimonialsOpened } from '@/lib/publicBeta';
+import { contentTone, sectionTone } from '@/design/categoryTone';
 
 
 /**
@@ -214,6 +215,26 @@ function navLabel(t, label) {
     return labels[label] || label;
 }
 
+/**
+ * colour system (src/design/categoryTone.js): each menu entry takes the colour of its section (the same as on the « À traiter » cards and in ADA Pro);
+ * the catalogue entries take their content colour (aides blue, démarches violet…, as on the public pages). Route → section KEY only, no colour here.
+ */
+const ROUTE_SECTION = {
+    '/admin/dashboard': 'dashboard', '/admin/veille': 'journal', '/admin/actualites-redaction': 'contenus', '/admin/ressources-publication': 'contenus',
+    '/admin/academie-evenements': 'evenements', '/admin/temoignages': 'moderation', '/admin/histoires': 'moderation', '/admin/offres-emploi': 'contenus',
+    '/admin/entraide': 'entraide', '/admin/moderation': 'moderation', '/admin/ws2': 'catalogue', '/admin/organizations': 'organisations',
+    '/admin/doublons': 'organisations', '/admin/structure-proposals': 'organisations', '/admin/falc': 'contenus', '/admin/signalements': 'moderation',
+    '/admin/review-queue': 'catalogue', '/admin/ai-oversight': 'audit', '/admin/inbox': 'contenus', '/admin/sources': 'journal', '/admin/versions': 'journal',
+    '/admin/data-quality': 'catalogue', '/admin/liens': 'catalogue', '/admin/privacy': 'securite', '/admin/support': 'messages',
+    '/admin/representants-legaux': 'confiance', '/admin/protection-juridique': 'protection', '/admin/sensibilite-services': 'securite', '/admin/rdv-externes': 'rdv',
+    '/admin/operations': 'journal', '/admin/securite': 'securite', '/admin/alertes': 'audit', '/admin/fournisseurs': 'parametres', '/admin/institutions': 'organisations',
+    '/admin/financement': 'impact', '/admin/pilote': 'impact', '/admin/features': 'parametres', '/admin/ai-metrics': 'impact', '/admin/conversations': 'messages',
+    '/admin/orchestrator': 'catalogue', '/admin/national': 'observatoire', '/admin/sync': 'journal', '/admin/health': 'audit', '/admin/observability': 'audit',
+    '/admin/runs': 'journal', '/admin/logs': 'journal', '/admin/audit': 'audit', '/admin/parametres': 'parametres',
+};
+const ROUTE_CONTENT = { '/admin/aides': 'aide', '/admin/demarches': 'demarche', '/admin/structures': 'structure', '/admin/dispositifs': 'dispositif', '/admin/guides': 'guide' };
+const routeTone = (/** @type {string} */ to) => (ROUTE_CONTENT[to] ? contentTone(ROUTE_CONTENT[to]) : sectionTone(ROUTE_SECTION[to], 'slate'));
+
 // @ts-ignore
 function SidebarSection({ section, isActive }) {
     const { t } = useT('admin');
@@ -261,17 +282,18 @@ function NavItem({ item }) {
     const isActive = location.pathname === item.to ||
         (item.to !== '/admin/dashboard' && location.pathname.startsWith(item.to + '/'));
     const Icon = item.icon;
+    const tone = routeTone(item.to);
 
     return (
         <Link
             to={item.to}
             className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive
-                    ? 'bg-blue-50 text-blue-700 font-semibold'
+                    ? `${tone.soft} ${tone.text} font-semibold`
                     : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             }`}
         >
-            <Icon className="h-4 w-4 flex-shrink-0" />
+            <Icon className={`h-4 w-4 flex-shrink-0 ${tone.text}`} aria-hidden="true" />
             <span>{navLabel(t, item.label)}</span>
         </Link>
     );

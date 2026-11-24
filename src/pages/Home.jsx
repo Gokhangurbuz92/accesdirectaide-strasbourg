@@ -10,6 +10,11 @@ import { Link } from 'react-router-dom';
 import VerifiedCatalogue from '@/components/layout/VerifiedCatalogue';
 import { useT } from '@/i18n';
 import FalcPageDraft from '@/components/FalcPageDraft';
+import { PAGE } from '@/design/layout';
+import InstallApp from '@/components/pwa/InstallApp';
+import { ArrowRight, BookOpen, HelpCircle } from 'lucide-react';
+import { ToneIcon } from '@/components/ui/Tone';
+import { TONES } from '@/design/categoryTone';
 
 /** R26: how a record gets onto the site — the three facts behind « vérifiée le … », in plain words, with the full method one click away */
 function HowWeVerify() {
@@ -21,7 +26,7 @@ function HowWeVerify() {
   ];
   return (
     <section className="py-12" aria-labelledby="how-we-verify">
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <div className={PAGE}>
         <h2 id="how-we-verify" className="text-xl font-bold text-slate-900">{t('home:verify.title', 'Des informations sourcées et datées')}</h2>
         <ol className="mt-5 grid gap-4 md:grid-cols-3">
           {steps.map(([title, text], i) => (
@@ -33,6 +38,34 @@ function HowWeVerify() {
           ))}
         </ol>
         <Link to="/sourcesmethode" className="mt-5 inline-block font-semibold text-blue-700 hover:underline">{t('home:verify.method', 'Notre méthode en détail')}</Link>
+      </div>
+    </section>
+  );
+}
+
+/** 24/11/2026: a small band towards the help pages (« Questions fréquentes », « Guide d’utilisation »), before the news */
+function HelpBand() {
+  const { t } = useT('home');
+  return (
+    <section className="py-6" aria-labelledby="home-help" data-testid="home-help">
+      <div className={PAGE}>
+        <div className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 sm:flex-row sm:items-center">
+          <ToneIcon tone={TONES.sky} icon={HelpCircle} />
+          <div className="min-w-0 flex-1">
+            <h2 id="home-help" className="text-lg font-bold text-slate-900">{t('home:help.title', 'Une question ?')}</h2>
+            <p className="text-sm text-slate-700">{t('home:help.text', 'Les réponses aux questions courantes et un guide pas à pas pour utiliser le site.')}</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link to="/questions-frequentes" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-blue-700 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2" data-testid="home-faq-link">
+              {t('home:help.faq', 'Voir les questions fréquentes')}<ArrowRight className="rtl-flip h-4 w-4" aria-hidden="true" />
+            </Link>
+            <Link to="/guide" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2">
+              <BookOpen className="h-4 w-4" aria-hidden="true" />{t('home:help.guide', 'Guide d’utilisation')}
+            </Link>
+          </div>
+        </div>
+        {/* 24/11/2026: on a phone the install offer sits here (the floating card is for tablets and computers) */}
+        <div className="mt-4 sm:hidden"><InstallApp /></div>
       </div>
     </section>
   );
@@ -58,14 +91,15 @@ export default function Home() {
       {/* Above-fold — critical for LCP */}
       <HeroSearch />
       {/* FA-D4: the simplified draft of this page, when « Facile à lire » is on */}
-      <div className="mx-auto max-w-3xl px-4 sm:px-6"><FalcPageDraft id="home" /></div>
+      <div className={PAGE}><FalcPageDraft id="home" /></div>
       {frontendEnv.flags.publicBeta ? (
         <section className="border-y border-slate-200 bg-slate-50 py-12">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6"><VerifiedCatalogue /></div>
+          <div className={PAGE}><VerifiedCatalogue /></div>
         </section>
       ) : <QuickAccessSection />}
       <CategoriesSection />
       {frontendEnv.flags.publicBeta && <HowWeVerify />}
+      <HelpBand />
 
       {/* Below-fold — lazy-loaded for performance */}
       {/* public beta: the guided assistant is closed, so it is not advertised */}

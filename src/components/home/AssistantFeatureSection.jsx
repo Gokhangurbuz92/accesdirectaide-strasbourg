@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Bot } from 'lucide-react';
 import { useT } from '@/i18n';
+import { PAGE } from '@/design/layout';
 
 export default function AssistantFeatureSection() {
   const { t } = useT('home');
@@ -24,7 +25,7 @@ export default function AssistantFeatureSection() {
       {/* Top fade from white */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white to-transparent" aria-hidden="true" />
 
-      <div className="relative z-10 mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-2 lg:items-center">
+      <div className={`relative z-10 grid gap-10 lg:grid-cols-2 lg:items-center ${PAGE}`}>
         <div>
           <p className="inline-flex rounded-full border border-indigo-300/30 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-indigo-200 backdrop-blur-sm">
             {t('home:assistant.badge', 'Exclusivité AccesDirect')}

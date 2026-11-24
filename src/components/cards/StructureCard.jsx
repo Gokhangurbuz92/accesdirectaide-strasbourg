@@ -24,6 +24,7 @@ import { bookingOpened } from '@/lib/publicBeta';
 import { useFalc } from '@/contexts/FalcContext';
 import AnimatedCard from '@/components/ui/AnimatedCard';
 import i18n, { formatDate, useT } from '@/i18n';
+import { structureTone } from '@/design/categoryTone';
 import useContentTranslation from '@/hooks/useContentTranslation';
 
 // R32: the French labels; typeLabel() gives them in the interface language (the names of public bodies and the acronyms are not translated)
@@ -37,17 +38,6 @@ const TYPE_LABELS = {
   france_travail: 'France Travail',
   cpam: 'CPAM',
   autre: 'Autre',
-};
-
-const TYPE_COLORS = {
-  association: 'bg-green-100 text-green-800',
-  service_public: 'bg-blue-100 text-blue-800',
-  etablissement_sante: 'bg-red-100 text-red-800',
-  mairie: 'bg-purple-100 text-purple-800',
-  caf: 'bg-orange-100 text-orange-800',
-  mdph: 'bg-indigo-100 text-indigo-800',
-  france_travail: 'bg-cyan-100 text-cyan-800',
-  cpam: 'bg-teal-100 text-teal-800',
 };
 
 /** the verification date as the card has always shown it (« 30/10/2026 »), in the interface language */
@@ -95,6 +85,7 @@ export default function StructureCard({ structure, compact = false, index = 0 })
         >
           <span className="sr-only">{t('structures:card.open', 'Voir la fiche de {{name}}', { name })}</span>
         </Link>
+        <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 ${structureTone(structure.type_structure).bar}`} data-testid="card-tone" />
 
         <CardContent className="flex h-full flex-col p-0">
           <div className={`flex flex-1 flex-col gap-3 ${compact ? 'p-4' : 'p-6'}`}>
@@ -105,9 +96,12 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                   <CategoryChip slug={structure.categorie} />
                 )}
                 {/* 11/11/2026: the type in sentence case (long French names were hard to read in the uppercase monospace badge) */}
-                <span className={`inline-flex max-w-full items-center rounded-md border px-2 py-0.5 text-xs font-semibold leading-snug ${TYPE_COLORS[structure.type_structure] || 'bg-slate-100 text-slate-800'}`}>
-                  {typeLabel(structure.type_structure)}
-                </span>
+                {/* 24/11/2026: the type in its family colour (santé, hébergement, handicap, personnes âgées, public service, association — src/design/categoryTone.js); no empty chip */}
+                {typeLabel(structure.type_structure) && (
+                  <span className={`inline-flex max-w-full items-center rounded-md border px-2 py-0.5 text-xs font-semibold leading-snug ${structureTone(structure.type_structure).chip}`} data-testid="structure-type-chip">
+                    {typeLabel(structure.type_structure)}
+                  </span>
+                )}
                 {structure.coverage === 'OFFICIAL' && (
                   <Badge variant="outline" className="text-green-700 border-green-300">
                     {t('structures:card.coverage.official', 'Source officielle')}

@@ -4,11 +4,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/api/client';
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { CheckCircle, XCircle } from 'lucide-react';
 import { useT } from '@/i18n';
 import RecordText from '@/components/i18n/RecordText';
+import { ToneChip } from '@/components/ui/Tone';
+import { topicTone } from '@/design/categoryTone';
 
 export default function AdminReview() {
     const { t } = useT('admin');
@@ -65,7 +66,7 @@ export default function AdminReview() {
                             <CardTitle className="text-xl font-medium">
                                 <RecordText>{item.titre}</RecordText>
                             </CardTitle>
-                            <Badge variant="secondary"><RecordText>{item.categorie}</RecordText></Badge>
+                            <ToneChip tone={topicTone(item.categorie)}><RecordText>{item.categorie}</RecordText></ToneChip>
                         </CardHeader>
                         <CardContent>
                             <p className="text-sm text-gray-500 mb-2">{t('admin:review.id', 'ID: {{id}}', { id: item.id })}</p>

@@ -20,6 +20,7 @@ import NewsFallback from '@/components/news/NewsFallback';
 import NewsCardV2 from '@/components/news/NewsCardV2';
 import { GEO_TABS, TOPIC_CHIPS, geoLabel, topicLabel } from '@/components/news/newsLabels';
 import useNewsBookmarks from '@/hooks/useNewsBookmarks';
+import { topicTone } from '@/design/categoryTone';
 import { generateBreadcrumbSchema } from '@/utils/schema';
 import { useFalc } from '@/contexts/FalcContext';
 import { formatDate, useT } from '@/i18n';
@@ -89,7 +90,7 @@ export default function Actualites() {
   const advancedCount = [source, from, to, sort === 'relevance' ? sort : ''].filter(Boolean).length;
   const activeFilters = searched ? [
     geo && { key: 'geo', label: geoLabel(geo, t), onRemove: () => setParam('geo', '') },
-    topic && { key: 'topic', label: topicLabel(topic, t), onRemove: () => setParam('topic', '') },
+    topic && { key: 'topic', label: topicLabel(topic, t), tone: topicTone(topic), onRemove: () => setParam('topic', '') },
     q && { key: 'q', label: `« ${q} »`, onRemove: () => setParam('q', '') },
     source && { key: 'source', label: source, onRemove: () => setParam('source', '') },
     from && { key: 'from', label: `≥ ${formatDate(from)}`, onRemove: () => setParam('from', '') },
@@ -156,8 +157,8 @@ export default function Actualites() {
               <div role="group" aria-label={t('news:filters.category', 'Catégorie')} data-testid="news-topic-chips" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 lg:flex-wrap lg:overflow-visible">
                 {TOPIC_CHIPS.map((id) => (
                   <button key={id} type="button" aria-pressed={topic === id} onClick={() => setParam('topic', topic === id ? '' : id)}
-                    className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${topic === id ? 'border-blue-800 bg-blue-800 text-white' : 'border-slate-300 bg-white text-slate-800 hover:border-blue-400 hover:text-blue-900'}`}>
-                    {topicLabel(id, t)}{facets.topics?.[id] ? <span className={`ms-1.5 text-xs ${topic === id ? 'text-blue-100' : 'text-slate-500'}`}>{facets.topics[id]}</span> : null}
+                    className={`inline-flex min-h-10 shrink-0 items-center rounded-full border px-3.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-700 ${topic === id ? topicTone(id).active : `${topicTone(id).chip} hover:border-slate-500`}`}>
+                    {topicLabel(id, t)}{facets.topics?.[id] ? <span className={`ms-1.5 text-xs ${topic === id ? 'text-white/80' : 'opacity-80'}`}>{facets.topics[id]}</span> : null}
                   </button>
                 ))}
               </div>
