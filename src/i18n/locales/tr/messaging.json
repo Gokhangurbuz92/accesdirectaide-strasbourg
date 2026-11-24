@@ -147,5 +147,19 @@
   "threads.err_too_long": "Bu mesaj çok uzun. Kısaltıp yeniden deneyin.",
   "threads.err_too_many": "Kısa sürede çok fazla mesaj. Bir dakika bekleyip yeniden deneyin.",
   "threads.err_not_found": "Bu konuşmaya artık erişilemiyor.",
-  "threads.err_generic": "Mesaj gönderilemedi. Biraz sonra yeniden deneyin."
+  "threads.err_generic": "Mesaj gönderilemedi. Biraz sonra yeniden deneyin.",
+  "report.button": "Bildir",
+  "report.button_sr": "{{when}} tarihli mesajı",
+  "report.legend": "Bu mesajı neden bildiriyorsunuz?",
+  "report.privacy": "Yalnızca seçtiğiniz kategori ve görüşmenin referansları gönderilir; mesajın metni gönderilmez.",
+  "report.cat_abusive": "Hakaret, tehdit veya ayrımcılık içeren sözler",
+  "report.cat_spam": "Reklam, tekrarlanan mesaj veya bir hizmetle ilgisi olmayan mesaj",
+  "report.cat_health": "Mesaj burada yeri olmayan sağlık bilgileri içeriyor",
+  "report.cat_not_related": "Mesaj randevuyla ilgili değil",
+  "report.cat_other": "Başka bir sorun",
+  "report.submit": "Bildirimi gönder",
+  "report.sending": "Gönderiliyor…",
+  "report.cancel": "Vazgeç",
+  "report.done": "Teşekkürler: mesaj AccesDirectAide ekibine bildirildi. Mesajın metni ekibe iletilmez; ekip sizinle bu görüşme üzerinden yeniden iletişime geçebilir.",
+  "report.failed": "Bildirim gönderilemedi. Daha sonra yeniden deneyin."
 }

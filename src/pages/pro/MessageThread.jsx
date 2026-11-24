@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { rdvMessagingClient, messagingErrorText } from '@/api/rdv-messaging-client';
 import { AttachmentList, AttachmentPicker } from '@/components/Messaging/MessageAttachments';
+import MessageReportButton from '@/components/Messaging/MessageReportButton';
 import { readAttachment, saveDownload } from '@/lib/messageAttachments';
 import { formatDate as formatInLanguage, useT } from '@/i18n';
 import { isNotOpenRefusal } from '@/lib/proModules';
@@ -98,6 +99,8 @@ export default function ProMessageThread() {
                       </p>
                       <p className="whitespace-pre-wrap text-slate-800">{message.body}</p>
                       <AttachmentList attachments={message.attachments} onDownload={download} testid="pro-attachment" />
+                      {mine ? null : <MessageReportButton messageId={String(message.id)} when={formatDate(message.createdAt)} testid="pro-message-report"
+                        onReport={(category) => rdvMessagingClient.pro.reportMessage(String(conversationId || ''), String(message.id), category)} />}
                     </div>
                   );
                 })

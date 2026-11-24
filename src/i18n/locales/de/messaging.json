@@ -147,5 +147,19 @@
   "threads.err_too_long": "Diese Nachricht ist zu lang. Kürzen Sie sie und versuchen Sie es erneut.",
   "threads.err_too_many": "Zu viele Nachrichten in kurzer Zeit. Warten Sie eine Minute und versuchen Sie es erneut.",
   "threads.err_not_found": "Diese Unterhaltung ist nicht mehr zugänglich.",
-  "threads.err_generic": "Die Nachricht konnte nicht gesendet werden. Versuchen Sie es gleich noch einmal."
+  "threads.err_generic": "Die Nachricht konnte nicht gesendet werden. Versuchen Sie es gleich noch einmal.",
+  "report.button": "Melden",
+  "report.button_sr": "die Nachricht vom {{when}}",
+  "report.legend": "Warum melden Sie diese Nachricht?",
+  "report.privacy": "Nur die gewählte Kategorie und die Angaben zum Gespräch werden übermittelt, nicht der Text der Nachricht.",
+  "report.cat_abusive": "Beleidigende, bedrohende oder diskriminierende Äußerungen",
+  "report.cat_spam": "Werbung, wiederholte Nachricht oder Nachricht ohne Bezug zu einem Angebot",
+  "report.cat_health": "Die Nachricht enthält Gesundheitsangaben, die hier nicht hingehören",
+  "report.cat_not_related": "Die Nachricht betrifft nicht den Termin",
+  "report.cat_other": "Anderes Problem",
+  "report.submit": "Meldung senden",
+  "report.sending": "Wird gesendet…",
+  "report.cancel": "Abbrechen",
+  "report.done": "Danke: Die Nachricht wurde dem Team von AccesDirectAide gemeldet. Der Text der Nachricht wird ihm nicht übermittelt; es kann Sie über dieses Gespräch erneut kontaktieren.",
+  "report.failed": "Die Meldung konnte nicht gesendet werden. Versuchen Sie es später erneut."
 }

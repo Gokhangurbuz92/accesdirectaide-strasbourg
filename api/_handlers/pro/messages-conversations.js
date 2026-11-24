@@ -17,6 +17,7 @@ import { insertMessageWithAttachment, prepareAttachment, readAttachment, sendAtt
 import { canNotify } from '../../_services/citizen-account.js';
 import { attachmentsOpen, conversationAllowed, conversationDecisions, refuseClosed, ATTACHMENTS } from '../../_services/messaging-policy.js';
 import { markConversationRead, unreadConversationIds } from '../../_services/conversation-read.js';
+import { fileMessageReport } from '../../_services/message-report.js';
 
 /**
  * @param {import('../../_utils/http-types').ApiRequest} req
@@ -250,6 +251,21 @@ async function sendMessage(req, res, proCtx, conversationId) {
 }
 
 /**
+ * R3 — « Signaler » a message of the person from inside a conversation of the caller's structure (existing ContentReport flow; the text is not copied).
+ * @param {import('../../_utils/http-types').ApiRequest} req
+ * @param {import('../../_utils/http-types').ApiResponse} res
+ */
+async function reportMessage(req, res, proCtx, conversationId) {
+  const limit = await enforceRateLimit(req, 'FEEDBACK', `pro:${proCtx.userId}:message-report`);
+  if (!limit.allowed) return res.status(limit.status).json(limit.error);
+  const conversation = await db.query.RdvConversation.findFirst({ where: eq(RdvConversation.id, conversationId), columns: { id: true, structureId: true, appointmentId: true } });
+  if (!conversation || conversation.structureId !== proCtx.structureId) return res.status(404).json({ error: 'Conversation introuvable.' });
+  if (!(await conversationAllowed(conversation.appointmentId)).open) return refuseClosed(res);
+  const out = await fileMessageReport({ side: 'PRO', conversation, messageId: req.body?.messageId, category: req.body?.category });
+  return out.ok ? res.status(201).json({ ok: true, reportId: out.reportId }) : res.status(out.status).json({ error: out.error });
+}
+
+/**
  * @param {import('../../_utils/http-types').ApiRequest} req
  * @param {import('../../_utils/http-types').ApiResponse} res
  */
@@ -277,7 +293,11 @@ async function handler(req, res) {
     return getConversation(req, res, proCtx, String(segments[0]));
   }
 
-  if (method === 'POST' && segments[0]) {
+  if (method === 'POST' && segments[0] && segments[1] === 'report' && segments.length === 2) {
+    return reportMessage(req, res, proCtx, String(segments[0]));
+  }
+
+  if (method === 'POST' && segments[0] && segments.length === 1) {
     return sendMessage(req, res, proCtx, String(segments[0]));
   }
 

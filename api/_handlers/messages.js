@@ -4,6 +4,7 @@
 import { insertMessageWithAttachment, prepareAttachment, readAttachment, sendAttachment, withAttachments } from '../_services/message-attachments.js';
 import crypto from 'node:crypto';
 import { attachmentsOpen, conversationAllowed, conversationDecisions, refuseClosed, ATTACHMENTS } from '../_services/messaging-policy.js';
+import { fileMessageReport } from '../_services/message-report.js';
 import { db } from '../../src/db/index.js';
 import * as schema from '../../src/db/schema.js';
 import { eq } from 'drizzle-orm';
@@ -227,6 +228,21 @@ async function sendMessage(req, res, user, conversationId) {
 }
 
 /**
+ * R3 — « Signaler » a message of the structure from inside the person's own conversation (existing ContentReport flow; the message text is not copied).
+ * @param {import('../_utils/http-types').ApiRequest} req
+ * @param {import('../_utils/http-types').ApiResponse} res
+ */
+async function reportMessage(req, res, user, conversationId) {
+  const limit = await enforceRateLimit(req, 'FEEDBACK', `${user.id}:message-report`);
+  if (!limit.allowed) return res.status(limit.status).json(limit.error);
+  const owned = await db.query.RdvConversation.findFirst({ where: (conv, { eq }) => eq(conv.id, conversationId), columns: { id: true, citizenUserId: true, appointmentId: true, structureId: true } });
+  if (!owned || owned.citizenUserId !== user.id) return res.status(404).json({ error: 'Conversation introuvable.' });
+  if (!(await conversationAllowed(owned.appointmentId)).open) return refuseClosed(res);
+  const out = await fileMessageReport({ side: 'USER', conversation: owned, messageId: req.body?.messageId, category: req.body?.category });
+  return out.ok ? res.status(201).json({ ok: true, reportId: out.reportId }) : res.status(out.status).json({ error: out.error });
+}
+
+/**
  * @param {import('../_utils/http-types').ApiRequest} req
  * @param {import('../_utils/http-types').ApiResponse} res
  */
@@ -328,7 +344,11 @@ export default async function handler(req, res) {
     return getConversation(req, res, auth.user, String(segments[1]));
   }
 
-  if (method === 'POST' && segments[0] === 'conversations' && segments[1]) {
+  if (method === 'POST' && segments[0] === 'conversations' && segments[1] && segments[2] === 'report' && segments.length === 3) {
+    return reportMessage(req, res, auth.user, String(segments[1]));
+  }
+
+  if (method === 'POST' && segments[0] === 'conversations' && segments[1] && segments.length === 2) {
     return sendMessage(req, res, auth.user, String(segments[1]));
   }
 

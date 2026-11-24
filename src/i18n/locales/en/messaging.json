@@ -147,5 +147,19 @@
   "threads.err_too_long": "This message is too long. Shorten it, then try again.",
   "threads.err_too_many": "Too many messages in a short time. Wait a minute, then try again.",
   "threads.err_not_found": "This conversation is no longer accessible.",
-  "threads.err_generic": "The message could not be sent. Try again in a moment."
+  "threads.err_generic": "The message could not be sent. Try again in a moment.",
+  "report.button": "Report",
+  "report.button_sr": "the message of {{when}}",
+  "report.legend": "Why are you reporting this message?",
+  "report.privacy": "Only the chosen category and the references of the conversation are sent; the text of the message is not.",
+  "report.cat_abusive": "Insulting, threatening or discriminatory words",
+  "report.cat_spam": "Advertising, repeated message or message unrelated to a service",
+  "report.cat_health": "The message contains health information that does not belong here",
+  "report.cat_not_related": "The message is not about the appointment",
+  "report.cat_other": "Another problem",
+  "report.submit": "Send the report",
+  "report.sending": "Sending…",
+  "report.cancel": "Cancel",
+  "report.done": "Thank you: the message has been reported to the AccesDirectAide team. The text of the message is not passed on to it; it may contact you again through this conversation.",
+  "report.failed": "The report could not be sent. Try again later."
 }

@@ -64,6 +64,7 @@ describe.skipIf(!hasDatabase)('R3 messaging HDS gate (real DB)', () => {
     const sids = sql`(${OK}, ${ESSMS})`;
     await db.execute(sql`DELETE FROM "RdvNotificationLog" WHERE "conversationId" IN (SELECT id FROM "RdvConversation" WHERE "structureId" IN ${sids})`);
     await db.execute(sql`DELETE FROM "RdvConversationMessage" WHERE "conversationId" IN (SELECT id FROM "RdvConversation" WHERE "structureId" IN ${sids})`);
+    await db.execute(sql`DELETE FROM "ContentReport" WHERE "contentType" = 'STRUCTURE' AND "contentId" IN ${sids}`);
     await db.execute(sql`DELETE FROM "RdvConversation" WHERE "structureId" IN ${sids}`);
     await db.execute(sql`DELETE FROM "ProAppointment" WHERE "structureId" IN ${sids}`); await db.execute(sql`DELETE FROM "ProRdvService" WHERE "structureId" IN ${sids}`);
     await db.execute(sql`DELETE FROM "CitizenUser" WHERE id = ${C.id}`); await db.execute(sql`DELETE FROM "ProUser" WHERE id IN (${P_OK.id}, ${P_E.id})`);
@@ -114,6 +115,26 @@ describe.skipIf(!hasDatabase)('R3 messaging HDS gate (real DB)', () => {
     expect(await count(conv.ok)).toBe(before);
     expect((await callP('POST', `/${conv.ok}`, P_OK, OK, { body: 'Réponse de la structure.' })).statusCode).toBe(201);
     expect((await callTab('GET', APT_OK, P_OK, OK)).statusCode).toBe(200);
+  });
+
+  it('« Signaler » in a thread: one ContentReport row (STRUCTURE / AUTRE, fixed description, no text, no e-mail); only the other party\'s message; a closed conversation refuses', async () => {
+    enforced();
+    const msgs = (await db.execute(sql`SELECT id, "senderType" FROM "RdvConversationMessage" WHERE "conversationId" = ${conv.ok} ORDER BY "createdAt"`)).rows;
+    const fromUser = msgs.find((m) => m.senderType === 'USER').id; const fromPro = msgs.find((m) => m.senderType === 'PRO').id;
+    const reports = async () => (await db.execute(sql`SELECT "contentType", "contentId", reason, message, "reporterEmail" FROM "ContentReport" WHERE "contentId" = ${OK} ORDER BY "createdAt"`)).rows;
+    expect((await callC('POST', `/conversations/${conv.ok}/report`, { messageId: fromUser, category: 'SPAM' })).body.error).toBe('OWN_MESSAGE');
+    expect((await callC('POST', `/conversations/${conv.ok}/report`, { messageId: fromPro, category: 'free text' })).statusCode).toBe(400);
+    const r = await callC('POST', `/conversations/${conv.ok}/report`, { messageId: fromPro, category: 'ABUSIVE' });
+    expect(r.statusCode, JSON.stringify(r.body)).toBe(201);
+    const p = await callP('POST', `/${conv.ok}/report`, P_OK, OK, { messageId: fromUser, category: 'NOT_RELATED' });
+    expect(p.statusCode, JSON.stringify(p.body)).toBe(201);
+    const rows = await reports();
+    expect(rows).toHaveLength(2);
+    for (const row of rows) { expect(row).toMatchObject({ contentType: 'STRUCTURE', contentId: OK, reason: 'AUTRE', reporterEmail: null }); expect(row.message).not.toMatch(/Bonjour|Réponse/); }
+    expect(rows[0].message).toContain(`conversation : ${conv.ok}`);
+    expect((await callC('POST', `/conversations/${conv.e}/report`, { messageId: fromPro, category: 'SPAM' })).statusCode).toBe(503);   // not served here
+    expect((await callP('POST', `/${conv.ok}/report`, P_E, ESSMS, { messageId: fromUser, category: 'SPAM' })).statusCode).toBe(404);   // another structure
+    expect(await reports()).toHaveLength(2);
   });
 
   it('legacy secure-messages: the same decision for an appointment thread; an unknown id (or a dossier id while dossiers are closed) answers 404', async () => {

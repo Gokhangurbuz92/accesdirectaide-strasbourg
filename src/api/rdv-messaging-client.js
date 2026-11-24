@@ -256,6 +256,10 @@ export const rdvMessagingClient = {
     downloadAttachment(conversationId, attachmentId) {
       return fetch(`/api/messages/conversations/${encodeURIComponent(conversationId)}/attachments/${encodeURIComponent(attachmentId)}`, { credentials: 'include' });
     },
+    /** R3: « Signaler » a message of the structure (closed category list; the text is not sent) */
+    reportMessage(conversationId, messageId, category) {
+      return requestJson(`/api/messages/conversations/${encodeURIComponent(conversationId)}/report`, { method: 'POST', auth: 'user', body: { messageId, category } });
+    },
     getOrCreateFromAppointment(appointmentId) {
       return requestJson(`/api/messages/from-appointment/${encodeURIComponent(appointmentId)}`, {
         method: 'POST',
@@ -268,6 +272,10 @@ export const rdvMessagingClient = {
     downloadAttachment(conversationId, attachmentId) {
       const token = typeof window !== 'undefined' ? localStorage.getItem('pro_token') : null;
       return fetch(`/api/pro/messages/conversations/${encodeURIComponent(conversationId)}/attachments/${encodeURIComponent(attachmentId)}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    },
+    /** R3: « Signaler » a message of the person (closed category list; the text is not sent) */
+    reportMessage(conversationId, messageId, category) {
+      return requestJson(`/api/pro/messages/conversations/${encodeURIComponent(conversationId)}/report`, { method: 'POST', auth: 'pro', body: { messageId, category } });
     },
     async listConversations() {
       const data = await requestJson('/api/pro/messages/conversations', { auth: 'pro' });
