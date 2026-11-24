@@ -112,9 +112,15 @@ Configurable via `LOG_LEVEL` (variable d'env) :
 ### Configuration
 
 ```env
-SENTRY_DSN=https://<your-sentry-key>@o<org-id>.ingest.sentry.io/<project-id>
-SENTRY_TRACES_SAMPLE_RATE=0.1
+SENTRY_DSN=https://<your-sentry-key>@o<org-id>.ingest.de.sentry.io/<project-id>   # EU region only; Production only
+# R5-S1: errors only. No tracing unless BOTH are set (not recommended; would need a new AIPD line and new legal wording):
+# SENTRY_SERVER_TRACING=on
+# SENTRY_TRACES_SAMPLE_RATE=0.1
 ```
+
+R5-S1: the same `SENTRY_DSN` feeds the browser (mapped to `VITE_SENTRY_DSN` at build time by `vite.config.js`) and the server. Nothing is sent unless
+`VERCEL_ENV=production` and the DSN host is `o<id>.ingest.de.sentry.io`. Browser and server events go through the same scrubber
+(`src/observability/sentryScrub.js`; server: `api/_utils/sentryServer.js`).
 
 ### Que capture Sentry automatiquement
 

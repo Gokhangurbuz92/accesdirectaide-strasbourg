@@ -86,7 +86,7 @@ fichiers). Avant, elles devenaient illisibles dès la promotion d'une nouvelle c
   + 1 h : actualites 13 h, tâches quotidiennes 49 h, ingest-structures 337 h ; ou tâche ouverte qui n'a jamais tourné après ce délai). Voir § 13.
 - **Signaux de sécurité** (RA-01) : connexions refusées, codes MFA refusés, exports — fenêtre de 70 minutes (intervalle du contrôle + 10 minutes de
   recouvrement, `ALERT_SECURITY_WINDOW_MINUTES`), prolongée jusqu'au contrôle précédent si une exécution a été retardée ; un même épisode n'est pas alerté deux fois.
-- **Erreurs** : Sentry, région UE, 10 % des traces de performance (`SENTRY_TRACES_SAMPLE_RATE`), Session Replay désactivé.
+- **Erreurs** : Sentry, région UE (`o<id>.ingest.de.sentry.io`), erreurs seulement (R5-S1) : aucune trace de performance par défaut (côté serveur seulement si `SENTRY_SERVER_TRACING=on` **et** `SENTRY_TRACES_SAMPLE_RATE` > 0 ; jamais côté navigateur), Session Replay désactivé, envoi seulement depuis un déploiement Vercel Production.
 - **Externe** (C1) : `.github/workflows/healthcheck.yml`, au plus une fois par heure depuis GitHub (GitHub peut retarder ou abandonner une exécution
   planifiée : une seule exécution sur 11 heures observée le 17/11/2026), lectures publiques seulement ; échec de la 2e exécution consécutive = e-mail
   GitHub au propriétaire (puis toutes les 6), ou dès la 1re quand l'exécution précédente date de plus de 2 heures. Il signale l'absence du contrôle interne quand la fonction, le planificateur ou le

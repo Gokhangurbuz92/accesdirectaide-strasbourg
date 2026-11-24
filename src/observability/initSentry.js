@@ -1,74 +1,48 @@
 import { sentryRef } from "./sentryRef";
-import { frontendEnv } from "@/config/env";
+import { errorTrackingActive, frontendEnv } from "@/config/env";
+import { SENTRY_DENY_URLS, keptDefaultIntegrations, scrubBreadcrumb, scrubEvent } from "./sentryScrub";
 
+/**
+ * Browser error tracking (Sentry, EU region — ingest host *.ingest.de.sentry.io, the only Sentry origin the CSP allows).
+ * Runs only when errorTrackingActive(): VITE_SENTRY_DSN set (EU host; the build maps the Production SENTRY_DSN into it, vite.config.js sentryDsnDefine) AND a production build (VITE_DEPLOY_ENV / MODE) AND a Vercel Production
+ * deployment (VERCEL_ENV=production at build time, injected by vite.config.js as __ADA_PRODUCTION_BUILD__) — a Preview build never sends.
+ * ERRORS ONLY (data minimisation, R5-S1): no browserTracingIntegration, no tracesSampleRate (omitted = tracing disabled), no trace headers on any
+ * request, no release-health session, sendDefaultPii false, every event and breadcrumb scrubbed (./sentryScrub.js).
+ */
 export async function initSentry() {
+  if (!errorTrackingActive()) return;
   const dsn = frontendEnv.sentry.dsn;
-  if (!dsn) return;
-
-  // STRICT: Prod only (Vercel Preview builds are technically "production" mode in Vite)
-  // We rely on VITE_DEPLOY_ENV (injected) or fallback to MODE.
-  const DEPLOY_ENV = frontendEnv.runtime.deployEnv;
-
-  if (DEPLOY_ENV !== 'production') return;
 
   try {
     const Sentry = await import("@sentry/react");
 
-    // Session Replay is OFF by default. It writes to the visitor's device (sessionStorage `sentryReplaySession`) and
-    // records the page, which is not strictly necessary for the service: enabling it requires a consent decision and a
-    // consent-gated banner first (STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/03_COOKIES_TRACEURS.md, decision C1 option B),
-    // plus an update of the /cookies and privacy pages. Opt-in only via VITE_SENTRY_REPLAY === 'true'.
+    // Session Replay STAYS OFF (R5-S1: « errors only, no replay »). It writes to the visitor's device (sessionStorage `sentryReplaySession`) and
+    // records the page, which is not strictly necessary for the service: enabling it requires a consent decision and a consent-gated banner first
+    // (STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/03_COOKIES_TRACEURS.md, decision C1 option B), a new AIPD line and an update of the /cookies and privacy
+    // pages; the release preflight FAILS when VITE_SENTRY_REPLAY=true (observability.no_session_replay). Opt-in flag kept only for that future decision.
     const replayEnabled = import.meta.env.VITE_SENTRY_REPLAY === 'true';
 
     /** @type {any[]} */
-    const integrations = [Sentry.browserTracingIntegration()];
+    const integrations = [];
     if (replayEnabled) integrations.push(Sentry.replayIntegration({ maskAllText: true, maskAllInputs: true, blockAllMedia: true }));
 
     Sentry.init({
       dsn,
       release: frontendEnv.runtime.gitCommitSha,
-      environment: DEPLOY_ENV,
+      environment: 'production',
+      sendDefaultPii: false,
 
-      integrations,
+      // the SDK defaults minus the release-health session, plus nothing else (no tracing)
+      integrations: (defaults) => [...keptDefaultIntegrations(defaults), ...integrations],
 
-      // Conservative defaults for Prod
-      tracesSampleRate: 0.1,
+      // no tracing: tracesSampleRate deliberately absent; no request carries a sentry-trace / baggage header
+      tracePropagationTargets: [],
       replaysSessionSampleRate: replayEnabled ? 0.01 : 0,
       replaysOnErrorSampleRate: replayEnabled ? 0.1 : 0,
 
-      tracePropagationTargets: [
-        "accesdirectaide.fr",
-        "www.accesdirectaide.fr",
-      ],
-
-      // PII scrubbing before sending an event (e-mail, IP, query string, cookies, authorization headers)
-      beforeSend(event) {
-        // 1. Anonymisation stricte de l'identité du citoyen/pro
-        if (event.user) {
-          delete event.user.email;
-          delete event.user.ip_address;
-          if (event.user.id) event.user.id = "[MASQUÉ-RGPD]";
-        }
-        
-        // 2. Nettoyage absolu de la requête HTTP
-        if (event.request) {
-          if (event.request.url && event.request.url.includes('?')) {
-            event.request.url = event.request.url.split('?')[0] + '?pii=scrubbed';
-          }
-          if (event.request.headers) {
-            delete event.request.headers['authorization'];
-            delete event.request.headers['cookie'];
-            delete event.request.headers['x-forwarded-for'];
-          }
-        }
-
-        // 3. Sécurité Back-end : Empêcher la fuite des variables d'environnement
-        if (event.contexts && event.contexts.runtime) {
-          delete event.contexts.runtime.env;
-        }
-
-        return event;
-      },
+      denyUrls: SENTRY_DENY_URLS,
+      beforeBreadcrumb: (crumb) => scrubBreadcrumb(crumb),
+      beforeSend: (event) => scrubEvent(event),
     });
 
     /** @type {{ current: typeof import("@sentry/react") | null }} */ (sentryRef).current = Sentry;

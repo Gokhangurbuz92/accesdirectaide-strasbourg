@@ -60,7 +60,7 @@ const STRUCT_V8_SHA = '51b988dce038d1a155ebbb9844a9d1f4ff6f17ed31d544382f37067a8
 describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderation block', () => {
   it('v12 = cgu-citoyen + notice, v13 = notice only, after v11; v10 / v11 unchanged byte for byte; approved by the owner on 23/11/2026', () => {
     const order = [...LEGAL_DRAFT_VERSIONS];
-    expect(order.slice(-10, -4)).toEqual([LEGAL_DRAFTS_V10,   // G14-R4: notice v15 follows too   // G14-R3 (proposed 24/11/2026): cgu v13-2026-11-24, notice v14-2026-11-24 follow
+    expect(order.slice(-11, -5)).toEqual([LEGAL_DRAFTS_V10,   // R5: cgu-professionnel v12 follows   // G14-R4: notice v15 follows too   // G14-R3 (proposed 24/11/2026): cgu v13-2026-11-24, notice v14-2026-11-24 follow
       LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]);
     expect([LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]).toEqual(['v9-2026-11-23', 'v10-2026-11-23']);
     expect(sha(PRO_V9)).toBe(PRO_V9_SHA); expect(sha(STRUCT_V8)).toBe(STRUCT_V8_SHA);
@@ -78,7 +78,7 @@ describe('legal drafts v12 / v13 (23/11/2026) — X04, X01, X02 and the moderati
     expect(latestDraftVersionOf(N)).toBe('v15-2026-11-24');   // G14-R4 (proposed)   // G14-R3: notice v14 and cgu v13 proposed (tests/unit/g14-r3-household-trusted-events.test.js)
     expect(latestDraftVersionOf('cgu-citoyen')).toBe('v14-2026-11-24');   // G14-R4 (proposed)
     expect(find(LEGAL_DRAFT_DOCUMENTS, N).version).toBe('v15-2026-11-24');
-    expect(latestDraftVersionOf('cgu-professionnel')).toBe('v11-2026-11-24');   // release-3 follow-up: cgu-professionnel v11 (proposed) is newer; v10 stays approved by name
+    expect(latestDraftVersionOf('cgu-professionnel')).toBe('v12-2026-11-25');   // R5: v12 (proposed 25/11/2026);   // release-3 follow-up: cgu-professionnel v11 (proposed) is newer; v10 stays approved by name
     expect(latestDraftVersionOf('conditions-structures')).toBe(LEGAL_DRAFTS_STRUCTURES_V9);
   });
 

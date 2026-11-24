@@ -169,7 +169,7 @@ describe('G14 shipped headers (vercel.json): exactly the 8x8.vc origins the JaaS
       const with8x8 = Object.entries(csp).filter(([, v]) => v.some((x) => /8x8/.test(x))).map(([k]) => k).sort();
       expect(with8x8).toEqual(['frame-src', 'script-src']);
       expect(csp['script-src'].filter((x) => /8x8/.test(x))).toEqual(['https://8x8.vc']);   // https only, no wildcard sub-domain
-      expect(csp['connect-src']).toEqual(["'self'", 'https://ada-hds-strasbourg.osc-fr1.scalingo.io']);   // + the HDS service (release 3, Mon Coffre)
+      expect(csp['connect-src']).toEqual(["'self'", 'https://ada-hds-strasbourg.osc-fr1.scalingo.io', 'https://*.ingest.de.sentry.io']);   // + the HDS service (release 3, Mon Coffre) + Sentry EU (R5-S1)
       expect(csp['default-src']).toEqual(["'self'"]);
       expect(csp['frame-ancestors']).toEqual(["'none'"]);
     });

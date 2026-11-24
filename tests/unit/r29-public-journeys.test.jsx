@@ -91,7 +91,7 @@ describe('N11 map provider', () => {
   it('the map view says that OpenStreetMap receives the IP address, and so does the privacy page (beta and after)', () => {
     expect(fs.readFileSync('src/pages/Annuaire.jsx', 'utf8')).toMatch(/data-testid="map-provider-notice"/);
     const privacy = fs.readFileSync('src/pages/Confidentialite.jsx', 'utf8');
-    expect(privacy.match(/fondation OpenStreetMap \(Royaume-Uni\), qui reçoivent votre adresse IP/g)).toHaveLength(3);   // beta, beta with personal accounts open (V2), after the beta
+    expect(privacy.match(/fondation OpenStreetMap \(Royaume-Uni\), qui reçoivent votre adresse IP/g)).toHaveLength(5);   // beta, beta with personal accounts open (V2), after the beta; R5-S1: the two beta paragraphs again in their « Sentry active » variant
     expect(fs.readFileSync('src/components/StructureMap.jsx', 'utf8')).toMatch(/openstreetmap\.org\/copyright/);   // attribution required by the tile policy
   });
 });

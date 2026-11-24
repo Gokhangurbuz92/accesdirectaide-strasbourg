@@ -1,5 +1,5 @@
 /**
- * Launch-readiness item 68 — server performance traces are sampled (10 % by default, SENTRY_TRACES_SAMPLE_RATE between 0 and 1), never 100 % by default;
+ * Launch-readiness item 68 / R5-S1 — no server performance trace by default (SENTRY_SERVER_TRACING=on and SENTRY_TRACES_SAMPLE_RATE both needed), never 100 % by default;
  * the SDK attaches no personal data by itself; Session Replay stays an explicit opt-in that the release preflight refuses.
  */
 import { describe, expect, it } from 'vitest';
@@ -7,12 +7,15 @@ import { readFileSync } from 'node:fs';
 import { tracesSampleRate } from '../../api/_utils/sentryServer.js';
 
 describe('Sentry sampling', () => {
-  it('10 % by default; a valid rate is used; anything else falls back to 10 %', () => {
-    expect(tracesSampleRate(undefined)).toBe(0.1);
-    expect(tracesSampleRate('')).toBe(0.1);
-    expect(tracesSampleRate('0')).toBe(0);
-    expect(tracesSampleRate('0.25')).toBe(0.25);
-    for (const bad of ['1.5', '-1', 'all', 'NaN']) expect(tracesSampleRate(bad), bad).toBe(0.1);
+  it('R5-S1: no server tracing by default — only SENTRY_SERVER_TRACING=on AND a rate in ]0, 1] enable it', () => {
+    expect(tracesSampleRate(undefined, undefined)).toBeUndefined();
+    expect(tracesSampleRate('', 'on')).toBeUndefined();
+    expect(tracesSampleRate('0.25', undefined)).toBeUndefined();   // a rate alone does nothing
+    expect(tracesSampleRate('0.25', 'off')).toBeUndefined();
+    expect(tracesSampleRate('0', 'on')).toBeUndefined();
+    expect(tracesSampleRate('0.25', 'on')).toBe(0.25);
+    expect(tracesSampleRate('1', 'on')).toBe(1);
+    for (const bad of ['1.5', '-1', 'all', 'NaN']) expect(tracesSampleRate(bad, 'on'), bad).toBeUndefined();
   });
   it('the server init never asks for 100 % nor default PII', () => {
     const src = readFileSync('api/_utils/sentryServer.js', 'utf8');

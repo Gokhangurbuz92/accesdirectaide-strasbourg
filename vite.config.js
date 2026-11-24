@@ -97,6 +97,17 @@ function legalAIdentificationDefine(mode) {
   return JSON.stringify(approved && domicile && phone ? { domicile, phone } : null);
 }
 
+/**
+ * R5-S1 (Sentry EU, errors only): the browser DSN. The Production environment holds it as SENTRY_DSN (sensitive variable, added 24/11/2026); Vite only
+ * exposes VITE_* to the client, so the build maps VITE_SENTRY_DSN || SENTRY_DSN into import.meta.env.VITE_SENTRY_DSN. A DSN is a public client key
+ * (Sentry docs): it ends up in the browser bundle by design. Sending still needs an EU DSN AND a Vercel Production build (errorTrackingActive,
+ * src/config/env.js) — a Preview build never sends, even if it had the variable. Never printed.
+ * @param {Record<string, string | undefined>} [env]
+ */
+export function sentryDsnDefine(env = process.env) {
+  return JSON.stringify(env.VITE_SENTRY_DSN || env.SENTRY_DSN || "");
+}
+
 // the config stays an object (tests read .plugins); the mode is the one `vite build` / `vite` would use
 const argvMode = process.argv.includes("--mode") ? process.argv[process.argv.indexOf("--mode") + 1] : process.argv.includes("build") ? "production" : "development";
 
@@ -119,6 +130,8 @@ export default defineConfig({
     __ADA_LEGAL_A_I_IDENTIFICATION__: legalAIdentificationDefine(argvMode),
     // R45 (ENG-LR-5): the draft legal documents never preview in a Production build (src/config/legal-drafts.js)
     __ADA_PRODUCTION_BUILD__: JSON.stringify(process.env.VERCEL_ENV === "production"),
+    // R5-S1: the browser Sentry DSN (SENTRY_DSN in Production) — see sentryDsnDefine above
+    "import.meta.env.VITE_SENTRY_DSN": sentryDsnDefine(),
     "import.meta.env.VITE_GIT_COMMIT_SHA": JSON.stringify(
       process.env.VERCEL_GIT_COMMIT_SHA ||
       process.env.VITE_GIT_COMMIT_SHA ||

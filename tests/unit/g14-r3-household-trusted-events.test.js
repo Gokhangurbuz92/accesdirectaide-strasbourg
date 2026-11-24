@@ -161,7 +161,7 @@ const OPEN_R3 = 'cgu-citoyen@v13-2026-11-24,notice-confidentialite@v14-2026-11-2
 describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026-11-24 (approved by the owner 24/11/2026)', () => {
   it('versions, order, status: drafts until the build names them; release 2 value keeps v13 / v12', () => {
     expect([L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_R3_CGU]).toEqual(['v14-2026-11-24', 'v13-2026-11-24']);
-    expect([...L.LEGAL_DRAFT_VERSIONS].slice(-4, -1)).toEqual([L.LEGAL_DRAFTS_R3_CGU, L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_PRO_V11]);   // + cgu-professionnel v11 (release-3 follow-up); G14-R4: notice v15 follows
+    expect([...L.LEGAL_DRAFT_VERSIONS].slice(-5, -2)).toEqual([L.LEGAL_DRAFTS_R3_CGU, L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_PRO_V11]);   // R5: cgu-professionnel v12 follows   // + cgu-professionnel v11 (release-3 follow-up); G14-R4: notice v15 follows
     expect(L.LEGAL_DRAFTS_R3_STATUS).toMatch(/^APPROVED — approuvée le 24\/11\/2026 par le responsable/);
     expect(L.LEGAL_DRAFTS_R3_STATUS).not.toMatch(/avocat|expert|proposée|en attente/);
     expect(L.latestDraftVersionOf(N)).toBe('v15-2026-11-24'); expect(L.latestDraftVersionOf(C)).toBe('v14-2026-11-24');   // G14-R4 drafts are newer

@@ -53,10 +53,10 @@ describe('PKG-6 / D21 raw exception capture: nothing sensitive is sent, a techni
     expect(JSON.stringify(envelopes)).not.toContain(PII.mail);
   });
 
-  it('an event that still carries an identifier in a field the scrubber does not rewrite is dropped, not sent', async () => {
+  it('an identifier in the transaction name never reaches the transport (R5-S1: the e-mail is rewritten; anything left would drop the event)', async () => {
     Sentry.withScope((scope) => { scope.setTransactionName(`GET /api/x/${PII.mail}`); Sentry.captureException(new Error('INTERNAL_ERROR')); });
     await flush();
-    expect(events()).toEqual([]);
+    for (const ev of events()) expect(ev.transaction).not.toContain('@');
     expect(JSON.stringify(envelopes)).not.toContain(PII.mail);
   });
 });

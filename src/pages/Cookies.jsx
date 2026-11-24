@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { AUDIENCE_OBJECTION_KEY, hasObjectedToAudience, setAudienceObjection } from '@/lib/audienceObjection';
 import { LEGAL_DOCS_VERSION, LEGAL_DOCS_LABEL } from '@/config/legal-documents';
 import { orientationBrowserOnly } from '@/lib/orientationBrowserOnly';
-import { frontendEnv } from "@/config/env";
+import { errorTrackingActive, frontendEnv } from "@/config/env";
 import i18n, { useLanguage, useT } from '@/i18n';
 
 // Draft text aligned on STRASBOURG_FULL_PRODUCT_PLAN/LEGAL_FR/03_COOKIES_TRACEURS.md, option A (Session Replay disabled,
@@ -226,9 +226,10 @@ export default function Cookies() {
                 <h2 className="text-xl font-bold text-slate-900">{t('legal:cookies.errors.title', '3. Journal des erreurs techniques')}</h2>
               </div>
               <div className="space-y-3 text-slate-700 leading-relaxed px-2">
-                <p>
-                  <Trans i18n={i18n} i18nKey="legal:cookies.errors.sentry" defaults="Quand une erreur se produit, nous en envoyons la description à notre prestataire <strong>Sentry</strong> (société américaine), après avoir retiré votre e-mail, votre adresse IP, les paramètres de l'adresse de la page, les cookies et les en-têtes de connexion." />
-                </p>
+                {errorTrackingActive()
+                  ? <p data-testid="sentry-active"><Trans i18n={i18n} i18nKey="legal:cookies.errors.active" defaults="<strong>Le suivi des erreurs est actif.</strong> Quand une erreur se produit sur le site ou sur nos serveurs, nous en envoyons la description à notre prestataire <strong>Sentry</strong> (Functional Software, Inc., société américaine ; données stockées dans l'Union européenne, à Francfort), avec le type de navigateur et le chemin de la page, après avoir retiré votre e-mail, votre adresse IP, les paramètres de l'adresse de la page, les cookies, les en-têtes de connexion, les identifiants présents dans l'adresse et ce que vous tapez dans les formulaires. Ce suivi ne dépose aucun cookie et n'écrit rien sur votre appareil. Détails et durée de conservation : <0>politique de confidentialité</0>."
+                    components={[<a key="privacy" href="/politique-confidentialite" className="text-blue-600 underline underline-offset-2 hover:text-blue-800">politique de confidentialité</a>]} /></p>
+                  : <p data-testid="sentry-off"><Trans i18n={i18n} i18nKey="legal:cookies.errors.off" defaults="<strong>Le suivi des erreurs (Sentry) n'est pas activé</strong> : aucune donnée ne lui est envoyée. S'il l'était un jour, seules les erreurs seraient envoyées, sans données qui vous identifient, et cette page serait mise à jour avant." /></p>}
                 <p>
                   <Trans i18n={i18n} i18nKey="legal:cookies.errors.replay" defaults="<strong>Nous n'enregistrons pas vos sessions</strong> : l'enregistrement de session (Session Replay) est désactivé par défaut. S'il devait être activé un jour, il ne le serait qu'avec votre accord, et cette page serait mise à jour avant." />
                 </p>

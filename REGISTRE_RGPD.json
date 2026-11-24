@@ -54,7 +54,7 @@
         "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
         "Upstash (limitation de débit, prévu)",
-        "Sentry (si DSN configuré)"
+        "Sentry (R5-S1 : erreurs, stockage UE Francfort, sans Session Replay ; actif si SENTRY_DSN en Production)"
       ],
       "conservation": [
         {
@@ -540,7 +540,7 @@
         "AuditLog (IP en clair et empreinte)",
         "ProAuditLog",
         "UpdateLog",
-        "Erreurs et Session Replay Sentry"
+        "Erreurs techniques Sentry du site et du serveur (description nettoyée, navigateur et système, chemin de page sans paramètres ; ni traces de performance ni Session Replay)"
       ],
       "categories_personnes": [
         "Administrateurs",
@@ -550,12 +550,12 @@
       ],
       "destinataires": [
         "Administrateurs AccesDirectAide",
-        "Sentry (sous-traitant, si DSN)"
+        "Sentry (sous-traitant, région UE, si DSN)"
       ],
       "sous_traitants": [
         "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
-        "Sentry (si DSN configuré)"
+        "Sentry (R5-S1 : erreurs, stockage UE Francfort, sans Session Replay ; actif si SENTRY_DSN en Production)"
       ],
       "conservation": [
         {
@@ -592,7 +592,7 @@
           "duree_jours": null,
           "source": null,
           "statut": "NON VÉRIFIÉ",
-          "description": "durée réglée dans la console Sentry, non vérifiée"
+          "description": "30 jours sur l'offre gratuite « Developer » (grille tarifaire sentry.io lue le 24/11/2026) ; offre souscrite à confirmer par le responsable"
         },
         {
           "donnee": "AdminUser",
@@ -1518,11 +1518,11 @@
     },
     {
       "nom": "Sentry (Functional Software Inc.)",
-      "role": "Erreurs serveur et navigateur, Session Replay (1 % / 10 % en erreur), traces 10 %",
-      "statut": "activé si un DSN est configuré",
-      "localisation": "NON VÉRIFIÉ",
-      "entite_contractante": "Functional Software Inc. (USA)",
-      "mecanisme_transfert": "NON VÉRIFIÉ",
+      "role": "R5-S1 : erreurs du site (navigateur) et du serveur seulement — ni traces de performance (serveur : seulement si SENTRY_SERVER_TRACING=on et SENTRY_TRACES_SAMPLE_RATE > 0, non configurés), ni Session Replay, ni session de santé de version ; identité, e-mail, IP, paramètres d'adresse, cookies, en-têtes (sauf User-Agent), corps de requête, jetons de chemin, saisies de formulaire et fils console retirés avant envoi (src/observability/sentryScrub.js, api/_utils/sentryServer.js)",
+      "statut": "actif seulement depuis un déploiement Vercel Production avec SENTRY_DSN (ajouté le 24/11/2026) en région UE — à l'approbation de R5-S1, après acceptation électronique du DPA Sentry par le responsable (opt-in, non automatique)",
+      "localisation": "UE — région « EU » de Sentry, Francfort (Allemagne) pour les événements (docs.sentry.io/organization/data-storage-location, lu le 24/11/2026) ; métadonnées du compte et de l'organisation aux États-Unis",
+      "entite_contractante": "Functional Software, Inc. d/b/a Sentry, 45 Fremont Street, 8th Floor, San Francisco, CA 94105 (USA)",
+      "mecanisme_transfert": "Clauses contractuelles types (UE), modules 2 et 3, réputées signées par l'acceptation du DPA (sentry.io/legal/dpa, annexe 3) ; Sentry déclare adhérer au Data Privacy Framework (sentry.io/privacy) — inscription sur la liste officielle non vérifiée ; lus le 24/11/2026",
       "dpa": "inconnu / non signé",
       "statut_contrat": "non vérifié"
     },

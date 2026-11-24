@@ -1258,6 +1258,36 @@ export const LEGAL_DRAFT_DOCUMENTS_R4_NOTICE = [withSections(LEGAL_DRAFTS_R4_CHA
 /** @type {DraftDocument[]} the citizen terms (from the release-3 draft v13) — Release 4 (PROPOSED) */
 export const LEGAL_DRAFT_DOCUMENTS_R4_CGU = [withSections(LEGAL_DRAFTS_R4_CHANGES, LEGAL_DRAFTS_R4_CGU)(docOf(LEGAL_DRAFT_DOCUMENTS_R3_CGU, 'cgu-citoyen'))];
 
+/*
+ * cgu-professionnel v12-2026-11-25 (NEW draft, PROPOSED 25/11/2026 — from v11-2026-11-24, approved by the owner on 24/11/2026 and unchanged byte for byte):
+ * EXACTLY two additions to § 3 « use », decided earlier with the owner, both conditional on their function being open. NOT approved: drafts until
+ * VITE_LEGAL_DOCS_APPROVED_VERSION names cgu-professionnel@v12-2026-11-25; no lawyer or expert review is claimed. Facts read in the code:
+ *  encryption keys  src/pages/pro/PartagesChiffres.jsx, src/lib/hdsSharing.js, src/components/hds/HdsUnlock.jsx, services/hds/src/sharing.js: each member
+ *                   creates a PERSONAL passphrase that protects their own key (« Personne ne peut la retrouver pour vous ») ; only a STRUCTURE_ADMIN creates
+ *                   or changes the organisation key and gives a member access to it (org-keys/members); a member who replaces a lost key loses access until
+ *                   an administrator gives it again (memberKeySet deletes their wraps); « Changer la clé de la structure (après le départ d'un membre) »
+ *                   re-issues every wrap; a deactivated ProUser gets no HDS ticket (api/_handlers/pro/hds-ticket.js); the service stores only opaque boxes.
+ *  job offers       api/_services/job-board.js (X05, P32 of the notice v15): only a STRUCTURE_ADMIN of an organisation ADA verified (E01) manages its listings;
+ *                   fields naming a criterion of Code du travail art. L1132-1 are refused (FORBIDDEN_CRITERION); every listing is read by a moderator before
+ *                   publication; rejection with a reason (the employer can correct) and takedown of a published listing; nothing stored about applicants.
+ *                   Articles read on Légifrance on 25/11/2026 (« En vigueur au 24/11/2026 »): L1132-1 (LEGIARTI000045391841, en vigueur depuis le
+ *                   01/09/2022), L1142-1 (LEGIARTI000006900801), L5331-2 (LEGIARTI000006903793), L5331-3 (LEGIARTI000006903794), L5331-4
+ *                   (LEGIARTI000006903796) — the last four en vigueur depuis le 01/05/2008.
+ */
+export const LEGAL_DRAFTS_PRO_V12 = 'v12-2026-11-25';
+export const LEGAL_DRAFTS_PRO_V12_DOCUMENT_IDS = Object.freeze(['cgu-professionnel']);
+export const LEGAL_DRAFTS_PRO_V12_STATUS = 'DRAFT — proposée le 25/11/2026, en attente de l’approbation du responsable ; à mettre en vigueur à l’ouverture des dossiers chiffrés partagés ou des offres d’emploi';
+export const LEGAL_DRAFTS_PRO_V12_ENCRYPTION = "Dossiers chiffrés partagés avec votre structure (lorsque cette fonction est ouverte) : chaque membre les ouvre avec sa phrase secrète personnelle, qui protège sa propre clé ; l'administrateur de la structure crée la clé de la structure et en donne l'accès aux membres. Gardez votre phrase secrète confidentielle : ne la communiquez à personne, pas même à un collègue, et ne l'écrivez pas dans un dossier ou un message. L'administrateur ne donne l'accès qu'aux membres qui en ont besoin pour accompagner les personnes ; lorsqu'un membre quitte la structure, son compte est désactivé et l'administrateur change la clé de la structure. AccesDirectAide ne peut ni retrouver ni réinitialiser une phrase secrète ou la clé de la structure : un membre qui perd sa phrase secrète en crée une nouvelle et un administrateur doit lui redonner l'accès ; si plus aucun administrateur ne peut ouvrir la clé de la structure, la structure ne peut plus lire les dossiers qui lui ont été partagés avec cette clé.";
+export const LEGAL_DRAFTS_PRO_V12_JOBS = "Offres d'emploi (lorsque cette fonction est ouverte) : seul un administrateur d'une structure vérifiée par AccesDirectAide publie les offres de sa structure, sous la responsabilité de celle-ci. Une offre ne contient aucune discrimination : aucun critère interdit par l'article L1132-1 du Code du travail (par exemple l'origine, le sexe, l'âge, la situation de famille, la grossesse, le handicap ou l'état de santé), ni le sexe ou la situation de famille recherchés (article L1142-1), ni limite d'âge supérieure (article L5331-2) ; elle est exacte et non trompeuse (article L5331-3) et rédigée en français (article L5331-4). Chaque offre est relue avant sa publication : AccesDirectAide peut la refuser, en indiquant le motif, et retirer à tout moment une offre publiée. Les personnes postulent directement auprès de votre structure, par le moyen indiqué dans l'offre ; ne leur demandez aucune information sur leur santé ou un handicap pour postuler.";
+/** indexes = those of cgu-professionnel v11 (§ 3 « use » items i1–i5, messaging_v11, delegate_v11) */
+export const LEGAL_DRAFTS_PRO_V12_CHANGES = Object.freeze({
+  'cgu-professionnel': { sections: {
+    use: { items: { insertAfter: { 6: [[LEGAL_DRAFTS_PRO_V12_ENCRYPTION, 'encryption_v12'], [LEGAL_DRAFTS_PRO_V12_JOBS, 'jobs_v12']] } } },
+  } },
+});
+/** @type {DraftDocument[]} the professional terms (from v11, approved 24/11/2026) — encryption keys of shared dossiers and job offers (PROPOSED 25/11/2026) */
+export const LEGAL_DRAFT_DOCUMENTS_PRO_V12 = [withSections(LEGAL_DRAFTS_PRO_V12_CHANGES, LEGAL_DRAFTS_PRO_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_PRO_V11, 'cgu-professionnel'))];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
@@ -1265,11 +1295,12 @@ export const LEGAL_DRAFT_DOCUMENTS_R4_CGU = [withSections(LEGAL_DRAFTS_R4_CHANGE
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_R4_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R4_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_R4_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R4_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
 export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10,
   LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_PRO_V11,   // G14-R3 (approved by the owner 24/11/2026)
-  LEGAL_DRAFTS_R4_NOTICE]);   // G14-R4 (proposed 24/11/2026): notice v15; cgu-citoyen v14-2026-11-24 shares the version string of the R3 notice (one entry, see SETS)
+  LEGAL_DRAFTS_R4_NOTICE,   // G14-R4 (proposed 24/11/2026): notice v15; cgu-citoyen v14-2026-11-24 shares the version string of the R3 notice (one entry, see SETS)
+  LEGAL_DRAFTS_PRO_V12]);   // R5 (proposed 25/11/2026): cgu-professionnel v12 — encryption keys of shared dossiers, job offers
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
   [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO],
@@ -1277,7 +1308,7 @@ const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LE
   [LEGAL_DRAFTS_V12]: [...LEGAL_DRAFT_DOCUMENTS_V12], [LEGAL_DRAFTS_V13]: [...LEGAL_DRAFT_DOCUMENTS_V13],
   [LEGAL_DRAFTS_STRUCTURES_V9]: [...LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9], [LEGAL_DRAFTS_PRO_V10]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V10],
   [LEGAL_DRAFTS_R3_CGU]: [...LEGAL_DRAFT_DOCUMENTS_R3_CGU], [LEGAL_DRAFTS_R3_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_R3_NOTICE, ...LEGAL_DRAFT_DOCUMENTS_R4_CGU], /* G14-R4: cgu-citoyen v14 shares this version string */ [LEGAL_DRAFTS_PRO_V11]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V11],
-  [LEGAL_DRAFTS_R4_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_R4_NOTICE] });
+  [LEGAL_DRAFTS_R4_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_R4_NOTICE], [LEGAL_DRAFTS_PRO_V12]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V12] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {

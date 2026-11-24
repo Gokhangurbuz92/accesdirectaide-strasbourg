@@ -156,7 +156,7 @@ describe('release preflight: hds.gateway', () => {
   it('the shipped CSP allows exactly the live HDS origin (release 3, 24/11/2026): a configured gateway passes; another allow-listed host still fails', () => {
     const vercel = readFileSync('vercel.json', 'utf8');
     const connect = [...vercel.matchAll(/connect-src ([^;"]*)/g)].map((m) => m[1]);
-    expect(connect).toEqual(Array(2).fill(`'self' ${gw.HDS_DEFAULT_ORIGIN}`));   // enforced + report-only; no wildcard
+    expect(connect).toEqual(Array(2).fill(`'self' ${gw.HDS_DEFAULT_ORIGIN} https://*.ingest.de.sentry.io`));   // enforced + report-only; no wildcard for HDS (R5-S1: + the Sentry EU ingest)
     expect(gw.HDS_DEFAULT_ORIGIN).toBe('https://ada-hds-strasbourg.osc-fr1.scalingo.io');
     const r = evaluateReleasePreflight(PROD_VAULT).find((c) => c.id === 'hds.gateway');
     expect(r?.status).toBe('PASS');
