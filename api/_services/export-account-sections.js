@@ -41,6 +41,9 @@ export const EXPORT_SECTION_TABLES = Object.freeze({
   moderationDecisions: 'ModerationDecision', moderationAppeals: 'ModerationAppeal', moderationSanctions: 'ModerationSanction',
   // G14-PS (0061): the person's social referrals (organisations, closed reasons, statuses, what they chose to share, consent channel, times)
   socialReferrals: 'SocialReferral',
+  // G14-R3G (0064): the links with a court-appointed representative where the person is the protected adult or the representative (facts only; the
+  // administrator's identity and note are not part of it, as for the other staff decisions)
+  legalProtectionMandates: 'LegalProtectionMandate',
 });
 
 /** columns that must never appear in these sections */
@@ -49,7 +52,7 @@ export const EXPORT_FORBIDDEN_FIELDS = Object.freeze(['endpoint', 'endpointHash'
 /**
  * @param {string} userId
  * @param {(query: import('drizzle-orm').SQL) => Promise<any[]>} rows reads rows and counts a failed read (privacy.js safeRows)
- * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean>, hasCommunityTables?: () => Promise<boolean>, hasEntraideTables?: () => Promise<boolean>, hasModerationTables?: () => Promise<boolean>, hasSocialReferralTables?: () => Promise<boolean> }} [deps]
+ * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean>, hasCommunityTables?: () => Promise<boolean>, hasEntraideTables?: () => Promise<boolean>, hasModerationTables?: () => Promise<boolean>, hasSocialReferralTables?: () => Promise<boolean>, hasLegalProtectionTable?: () => Promise<boolean> }} [deps]
  *   hasEventTables: migration 0053 present (X04); hasTestimonialTables: migration 0054 present (X02); hasCommunityTables: migration 0055 present (X01); hasEntraideTables: migration 0057 present (X03)
  */
 export async function accountLinkedSections(userId, rows, deps = {}) {
@@ -101,8 +104,15 @@ export async function accountLinkedSections(userId, rows, deps = {}) {
   const social = await import('./social-referrals.js');
   const withSocial = await (deps.hasSocialReferralTables || (() => social.socialReferralsAvailable()))();
   const socialReferrals = withSocial ? await rows(social.socialReferralsExportSql(userId)) : [];
+  // G14-R3G: same rule for a database without 0064
+  const lp = await import('./legal-protection.js');
+  const withLegalProtection = await (deps.hasLegalProtectionTable || (() => lp.legalProtectionInstalled()))();
+  const legalProtectionMandates = withLegalProtection ? await rows(sql`SELECT id, CASE WHEN "protectedUserId" = ${userId} THEN 'PROTECTED_PERSON' ELSE 'REPRESENTATIVE' END AS role,
+      "representativeKind", "mjpmForm", siret, measure, mode, "scopePerson", "scopeAssets", areas, "courtName", "decisionDate", "measureEndsOn", "validUntil",
+      status, "personContestedAt", "verifiedAt", "verificationMethod", "endedAt", "endedBy", "endReason", "createdAt"
+    FROM "LegalProtectionMandate" WHERE "protectedUserId" = ${userId} OR "representativeUserId" = ${userId} ORDER BY "createdAt"`) : [];
   return { pushSubscriptions, emailChangeRequests, ownershipRecoveryCases, parcoursReminders, appointmentNotices, eventRegistrations, testimonials, testimonialReports,
     communityMember, communityStories, communityStoryReports,
     entraideMember, entraideOffers, entraideRequests, entraideRequestsReceived, entraideContactShares, entraideReports, entraideBlocks,
-    moderationDecisions, moderationAppeals, moderationSanctions, socialReferrals };
+    moderationDecisions, moderationAppeals, moderationSanctions, socialReferrals, legalProtectionMandates };
 }
