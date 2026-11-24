@@ -40,6 +40,8 @@ export function createProHdsTicketHandler(deps = {}) {
     const env = deps.env || process.env;
     const structureId = String(req?.user?.structureId || '').trim(); const userId = String(req?.user?.userId || '').trim();
     if (!structureId || !userId) return send(res, 403, { error: 'Forbidden' });
+    // none of the capabilities a professional ticket can carry is open here: the same 503 as every closed ADA Pro module, whatever was asked
+    if (!PRO_TICKET_CAPS.some((c) => capabilityState(c, env).open)) return send(res, 503, capabilityRefusal(PRO_TICKET_CAPS[0]));
     const cap = String(req.query?.cap || '');
     if (!PRO_TICKET_CAPS.includes(cap)) return send(res, 400, { error: 'INVALID_CAPABILITY', message: 'Capacité inconnue.' });
     if (!capabilityState(cap, env).open) return send(res, 503, capabilityRefusal(cap));
