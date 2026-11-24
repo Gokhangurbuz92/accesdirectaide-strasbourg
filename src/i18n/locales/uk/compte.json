@@ -916,6 +916,7 @@
   "space.tile.passeport_body": "Ваші документи та підсумок, зашифровані лише на цьому пристрої.",
   "space.tile.orientations_sociales": "Мої соціальні направлення",
   "space.tile.orientations_sociales_body": "Пропозиції організації направити вас до іншої: нічого не передається без вашої згоди.",
+  "settings.gdpr_before_email": "Відповідно до GDPR (RGPD) ви маєте право на доступ до своїх даних, їх виправлення та видалення. З будь-яким запитом пишіть на",
   "parcours.limited.already": "Цей крок уже є в Mon Parcours.",
   "parcours.limited.place": "Місце:",
   "parcours.limited.place_gone": "Вибране місце більше не опубліковано.",
@@ -970,6 +971,5 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "Попросити допомогу на шкільну їдальню",
   "parcours.type.PASS_CULTURE": "Активувати pass Culture",
   "parcours.type.RETRAITE_DEMANDE": "Подати заяву на пенсію",
-  "parcours.type.RECOURS_ADMINISTRATIF": "Оскаржити рішення адміністративною скаргою",
-  "settings.gdpr_before_email": "Відповідно до GDPR (RGPD) ви маєте право на доступ до своїх даних, їх виправлення та видалення. З будь-яким запитом пишіть на"
+  "parcours.type.RECOURS_ADMINISTRATIF": "Оскаржити рішення адміністративною скаргою"
 }

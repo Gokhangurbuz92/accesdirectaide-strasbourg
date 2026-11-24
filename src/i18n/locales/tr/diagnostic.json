@@ -307,9 +307,9 @@
   "form.commune_other": "Bas-Rhin’deki başka bir belediye / Eurométropole dışı",
   "form.commune_hint": "Yalnızca, gösterge niteliğindeki tahmin kullanılabildiğinde konut yardımını tahmin etmek için kullanılır: tutarı belediyeye bağlıdır.",
   "estimate.withheld.commune_outside": "Tutar yok: konut yardımı burada yalnızca Eurométropole de Strasbourg belediyeleri için tahmin edilir (tutar belediyeye bağlıdır). CAF’ınız bunu belediyeniz için hesaplar.",
+  "page.badge_v2": "Bilgi amaçlı tahmin — bağlayıcı değildir, bir karar değildir",
+  "page.meta_description_v2": "Bazı yardımlar için yönlendirme ve bilgi amaçlı bir tahmin alın. Bu hesaplama resmî ya da bağlayıcı değildir ve başvurunuzun kurum tarafından incelenmesinin yerini tutmaz.",
   "official.amounts_note": "Tutarlar ve tavanlar: Yalnızca resmî sayfadakiler, sayfada belirtilen tarih itibarıyla geçerlidir. ADA bunları yukarıdaki sonuç için kullanmaz.",
   "official.owner_reviewed": "Kural, ADA ekibi tarafından bu resmî sayfalara dayanarak incelendi (bağımsız bir uzman tarafından değil). Kararı yetkili kurum verir.",
-  "item.verify_with_body": "Yetkili kurumla doğrulanmalıdır.",
-  "page.badge_v2": "Bilgi amaçlı tahmin — bağlayıcı değildir, bir karar değildir",
-  "page.meta_description_v2": "Bazı yardımlar için yönlendirme ve bilgi amaçlı bir tahmin alın. Bu hesaplama resmî ya da bağlayıcı değildir ve başvurunuzun kurum tarafından incelenmesinin yerini tutmaz."
+  "item.verify_with_body": "Yetkili kurumla doğrulanmalıdır."
 }

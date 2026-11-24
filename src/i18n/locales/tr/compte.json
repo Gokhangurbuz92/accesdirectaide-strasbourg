@@ -916,6 +916,7 @@
   "space.tile.passeport_body": "Belgeleriniz ve özetiniz, yalnızca bu cihazda şifrelenmiş olarak.",
   "space.tile.orientations_sociales": "Sosyal yönlendirmelerim",
   "space.tile.orientations_sociales_body": "Bir kuruluşun sizi başka bir kuruluşa yönlendirme önerileri: onayınız olmadan hiçbir şey gönderilmez.",
+  "settings.gdpr_before_email": "GDPR (RGPD) uyarınca verilerinize erişme, bunları düzeltme ve silme haklarına sahipsiniz. Her türlü talep için şu adrese yazın:",
   "parcours.limited.already": "Bu adım zaten Mon Parcours içinde.",
   "parcours.limited.place": "Yer:",
   "parcours.limited.place_gone": "Seçilen yer artık yayında değil.",
@@ -970,6 +971,5 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "Okul yemekhanesi için yardım istemek",
   "parcours.type.PASS_CULTURE": "pass Culture'ü etkinleştirmek",
   "parcours.type.RETRAITE_DEMANDE": "Emeklilik başvurusu yapmak",
-  "parcours.type.RECOURS_ADMINISTRATIF": "Bir karara idari başvuru ile itiraz etmek",
-  "settings.gdpr_before_email": "GDPR (RGPD) uyarınca verilerinize erişme, bunları düzeltme ve silme haklarına sahipsiniz. Her türlü talep için şu adrese yazın:"
+  "parcours.type.RECOURS_ADMINISTRATIF": "Bir karara idari başvuru ile itiraz etmek"
 }

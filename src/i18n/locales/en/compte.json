@@ -916,6 +916,7 @@
   "space.tile.passeport_body": "Your documents and your summary, encrypted on this device only.",
   "space.tile.orientations_sociales": "My social referrals",
   "space.tile.orientations_sociales_body": "Proposals from an organisation to refer you to another: nothing is sent without your agreement.",
+  "settings.gdpr_before_email": "Under the GDPR, you have a right of access, rectification and erasure of your data. For any request, write to",
   "parcours.limited.already": "This step is already in Mon Parcours.",
   "parcours.limited.place": "Place:",
   "parcours.limited.place_gone": "The chosen place is no longer published.",
@@ -970,6 +971,5 @@
   "parcours.type.CANTINE_AIDE_DEMANDE": "Apply for help with school canteen costs",
   "parcours.type.PASS_CULTURE": "Activate the pass Culture",
   "parcours.type.RETRAITE_DEMANDE": "Apply for your retirement pension",
-  "parcours.type.RECOURS_ADMINISTRATIF": "Challenge a decision with an administrative appeal",
-  "settings.gdpr_before_email": "Under the GDPR, you have a right of access, rectification and erasure of your data. For any request, write to"
+  "parcours.type.RECOURS_ADMINISTRATIF": "Challenge a decision with an administrative appeal"
 }

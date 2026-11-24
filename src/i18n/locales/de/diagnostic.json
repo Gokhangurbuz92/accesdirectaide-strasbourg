@@ -307,9 +307,9 @@
   "form.commune_other": "Andere Gemeinde im Bas-Rhin / außerhalb der Eurométropole",
   "form.commune_hint": "Dient nur zur Schätzung der Wohnhilfe, wenn die Richtwert-Schätzung verfügbar ist: Ihr Betrag hängt von der Gemeinde ab.",
   "estimate.withheld.commune_outside": "Kein Betrag: Die Wohnhilfe wird hier nur für die Gemeinden der Eurométropole de Strasbourg geschätzt (der Betrag hängt von der Gemeinde ab). Ihre CAF berechnet sie für Ihre Gemeinde.",
+  "page.badge_v2": "Unverbindliche Schätzung — keine Entscheidung",
+  "page.meta_description_v2": "Erhalten Sie Hinweise und eine unverbindliche Schätzung zu einigen Hilfen. Diese Berechnung ist weder amtlich noch verbindlich und ersetzt nicht die Bearbeitung Ihres Antrags durch die zuständige Stelle.",
   "official.amounts_note": "Beträge und Obergrenzen: Maßgeblich sind nur die Angaben der offiziellen Seite, zu dem dort genannten Datum. ADA verwendet sie nicht für das obige Ergebnis.",
   "official.owner_reviewed": "Regel vom ADA-Team anhand dieser offiziellen Seiten geprüft (nicht von einer unabhängigen Fachperson). Die zuständige Stelle entscheidet.",
-  "item.verify_with_body": "Bei der zuständigen Stelle zu prüfen.",
-  "page.badge_v2": "Unverbindliche Schätzung — keine Entscheidung",
-  "page.meta_description_v2": "Erhalten Sie Hinweise und eine unverbindliche Schätzung zu einigen Hilfen. Diese Berechnung ist weder amtlich noch verbindlich und ersetzt nicht die Bearbeitung Ihres Antrags durch die zuständige Stelle."
+  "item.verify_with_body": "Bei der zuständigen Stelle zu prüfen."
 }
