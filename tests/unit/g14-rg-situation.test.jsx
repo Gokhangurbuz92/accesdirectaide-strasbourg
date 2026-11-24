@@ -119,13 +119,20 @@ describe('G14-RG data — every link sourced, no orphan id', () => {
     }
   });
 
-  it('a fiche from the Rights Graph source ledger brings its title and DILA dates only (no rule, no condition)', () => {
-    for (const id of ['F12242', 'F10027', 'F38881', 'F286']) {
+  it('the four fiches the ledger alone knew were read live on service-public.gouv.fr (23/11/2026): title, « Vérifié le » date, read date — no ledger-only link left', () => {
+    const LIVE = { F12242: ['2026-09-14', 'handicap'], F10027: ['2026-07-01', 'sans-couverture-sante'], F38881: ['2026-07-23', 'perte-emploi'], F286: ['2026-04-01', 'faibles-revenus'] };
+    expect(file.liveChecks.fiches.map((x) => x.id).sort()).toEqual(Object.keys(LIVE).sort());
+    for (const [id, [verifiedAt, situation]] of Object.entries(LIVE)) {
       const f = sourcedFiche(id);
-      expect(f.origin, id).toBe('rights-graph-sources');
+      expect(f.origin, id).toBe('live-check');
       expect(Object.keys(f).sort()).toEqual(['id', 'modifiedAt', 'origin', 'readAt', 'title', 'url']);
-      expect(f.readAt).toBe('2026-11-18');
+      expect(f.url).toBe(`https://www.service-public.gouv.fr/particuliers/vosdroits/${id}`);
+      expect(f.modifiedAt, id).toBe(verifiedAt);
+      expect(f.readAt).toBe('2026-11-23');
+      expect(SITUATIONS.find((s) => s.id === situation).rights.map((r) => r.id), id).toContain(id);
     }
+    // no situation link rests on the archive ledger alone any more
+    for (const s of SITUATIONS) for (const f of [...s.rights, ...s.steps.flatMap((x) => (x.kind === 'stepType' ? x.sources : [x.fiche]))]) expect(f.origin, `${s.id} ${f.id}`).not.toBe('rights-graph-sources');
     expect(sourcedFiche('F999999')).toBeNull();
   });
 

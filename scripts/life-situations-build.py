@@ -749,14 +749,28 @@ DROPPED = [
     {'situation': 'equivalence-diplome', 'fr': 'Je veux faire reconnaître mon diplôme étranger', 'reason': 'Aucune fiche, démarche Mon Parcours ni sous-domaine du catalogue ne la couvre : non affichée.'},
 ]
 
+# Live check of the fiches that only the Rights Graph source ledger (archive of 2026-11-18) knew: each page was read on service-public.gouv.fr on the
+# readAt date (HTTP 200, no redirect); title = the page's H1, verifiedAt = its « Vérifié le » date. Titles and dates only — no rule or condition.
+LIVE_READ_AT = '2026-11-23'
+LIVE_CHECKS = [
+    {'id': 'F12242', 'title': 'Allocation aux adultes handicapés (AAH)', 'verifiedAt': '2026-09-14', 'situations': ['handicap']},
+    {'id': 'F10027', 'title': 'Complémentaire santé solidaire (ex-CMU-C)', 'verifiedAt': '2026-07-01', 'situations': ['sans-couverture-sante']},
+    {'id': 'F38881', 'title': "Allocation chômage d'aide au retour à l'emploi (ARE) d'un salarié du secteur privé dont la fin de contrat de travail intervient à compter du 1er avril 2025",
+     'verifiedAt': '2026-07-23', 'situations': ['perte-emploi']},
+    {'id': 'F286', 'title': 'RSA jeune actif', 'verifiedAt': '2026-04-01', 'situations': ['faibles-revenus']},
+]
+
 def main():
     p = os.path.join(ROOT, 'data/reference/life-situations.v1.json')
     old = json.load(open(p, encoding='utf-8'))
     out = {
         'schema': old['schema'], 'version': '2.0.0', 'status': old['status'],
-        'readMe': old['readMe'] + ['family: the group of the /situation index (FAMILIES order). Labels of situations and families: src/lib/situationLabels.js, generated with this file by scripts/life-situations-build.py.',
-                                   'Fiches are resolved in three sourced tiers: the public Rights Graph view, the Mon Parcours list sources, then the Rights Graph source ledger (data/rules/rights-graph-sources.v1.json, DILA archive read 2026-11-18; fiche titles and dates only — no D11 rule or condition).'],
+        'readMe': list(dict.fromkeys([x for x in old['readMe'] if not x.startswith('Fiches are resolved in')] + ['family: the group of the /situation index (FAMILIES order). Labels of situations and families: src/lib/situationLabels.js, generated with this file by scripts/life-situations-build.py.',
+                                   'Fiches are resolved in four sourced tiers: the public Rights Graph view, the Mon Parcours list sources, the live check of « liveChecks » (page read on service-public.gouv.fr: title, « Vérifié le » date, read date), then the Rights Graph source ledger (data/rules/rights-graph-sources.v1.json, DILA archive read 2026-11-18; fiche titles and dates only — no D11 rule or condition).'])),
         'emergencySource': 'F33954',
+        'liveChecks': {'readAt': LIVE_READ_AT, 'method': 'page lue sur service-public.gouv.fr (HTTP 200, sans redirection) ; titre = intitulé de la page, verifiedAt = sa date « Vérifié le »',
+                       'fiches': [{'id': c['id'], 'url': 'https://www.service-public.gouv.fr/particuliers/vosdroits/' + c['id'], 'title': c['title'], 'verifiedAt': c['verifiedAt'],
+                                   'readAt': LIVE_READ_AT, 'situations': c['situations']} for c in LIVE_CHECKS]},
         'families': [f for f, _ in FAMILIES],
         'uncovered': UNCOVERED, 'dropped': DROPPED,
         'situations': [{k: v for k, v in s.items() if k != 'labels'} for s in S],
@@ -765,6 +779,10 @@ def main():
     assert len(ids) == len(set(ids)), 'duplicate id'
     fams = {f for f, _ in FAMILIES}
     assert all(s['family'] in fams for s in S)
+    for c in LIVE_CHECKS:
+        for sid in c['situations']:
+            x = next(s for s in S if s['id'] == sid)
+            assert c['id'] in x.get('rights', []) + [st['fiche'] for st in x.get('steps', []) if isinstance(st, dict) and 'fiche' in st], (c['id'], sid)
     with open(p, 'w', encoding='utf-8') as f:
         json.dump(out, f, ensure_ascii=False, indent=2); f.write('\n')
     # explicit label module
