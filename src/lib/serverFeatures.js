@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
  * dossier sharing depends on its capabilities (citizen.shared_dossier, citizen.saved_diagnostic, the HDS-only routes). With « documents » open and the
  * capability closed, /diagnostic offered « Partager le dossier » and the server answered 503. The browser now asks GET /api/status once (no personal data,
  * the server caches it 30 s) and offers sharing only when the server says it serves it. Unknown (loading, error, old server) = not offered (fail closed).
- * @typedef {'sharedDossiers' | 'diagnosticShare'} ServerFeature
+ * @typedef {'sharedDossiers' | 'diagnosticShare' | 'hdsGateway'} ServerFeature
  */
 
 /** @param {unknown} body @param {ServerFeature} name @returns {boolean} */
@@ -39,4 +39,19 @@ export function useServerFeature(name, enabled) {
     return () => { alive = false; };
   }, [name, enabled]);
   return enabled && on;
+}
+
+/**
+ * tri-state read: true / false only when the server said so explicitly; null when unknown (error, old server, field absent).
+ * @param {ServerFeature} name @param {typeof fetch} [fetchImpl] @returns {Promise<boolean | null>}
+ */
+export async function fetchServerFeatureState(name, fetchImpl = globalThis.fetch) {
+  try {
+    const r = await fetchImpl('/api/status', { headers: { Accept: 'application/json' } });
+    if (!r || !r.ok) return null;
+    const f = /** @type {any} */ (await r.json())?.features;
+    return f && typeof f === 'object' && typeof f[name] === 'boolean' ? f[name] : null;
+  } catch {
+    return null;
+  }
 }

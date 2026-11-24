@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * PKG-10 / P24 — public status: what a person can rely on right now, in plain French, WITHOUT internals (no host, version, count, threshold, error text).
- *   GET /api/status → { checkedAt, features: { sharedDossiers, diagnosticShare }, components: [{ id, label, state, text }] }   state ∈ operational | degraded | unavailable | info
+ *   GET /api/status → { checkedAt, features: { sharedDossiers, diagnosticShare, hdsGateway }, components: [{ id, label, state, text }] }   state ∈ operational | degraded | unavailable | info
  *   features (G14-R4): two booleans the browser uses to offer sharing only when the server serves it (api/_utils/capabilities.js sharingAvailability)
  * Components are real dependencies, each checked here with a short time limit:
  *   - comptes : the database answers (SELECT 1)                      → accounts, appointments, dossier sharing
@@ -18,6 +18,11 @@ import { getMailerStatus } from '../_utils/mailer.js';
 import { AIProviderPolicy, LOCALITY } from '../lib/ai-policy.js';
 import { isPublicBetaRestricted, openSurfaces } from '../_utils/public-beta.js';
 import { capabilityOpen, sharingAvailability } from '../_utils/capabilities.js';
+import { hdsGatewayState } from '../_utils/hds-gateway.js';
+
+/** features + hdsGateway (G14-R4, QA v81 DTA-B33): whether this server can issue HDS tickets — a boolean, no origin or reason. The browser skips the
+ * ticket request (and its expected 503 HDS_GATEWAY_NOT_CONFIGURED) only when this is explicitly false. */
+const statusFeatures = () => ({ ...sharingAvailability(), hdsGateway: hdsGatewayState().ready });
 
 const TTL_MS = 30000;
 let cache = null;
@@ -80,7 +85,7 @@ async function betaStatus() {
     : m.state === 'operational' ? { state: 'operational', text: 'Les e-mails du compte (confirmation de l\'adresse, mot de passe oublié, suppression) sont envoyés.' } : m;
   return {
     checkedAt: new Date().toISOString(),
-    features: sharingAvailability(),
+    features: statusFeatures(),
     components: [
       { id: 'site', label: 'Site', ...(c.state === 'operational' ? { state: 'operational', text: 'Le site répond et les fiches publiées peuvent être consultées.' } : { state: 'unavailable', text: 'Les fiches ne peuvent pas être consultées pour le moment.' }) },
       { id: 'comptes', label: 'Comptes et rendez-vous', ...comptes },
@@ -95,7 +100,7 @@ async function betaStatus() {
 
 export async function computeStatus() {
   if (isPublicBetaRestricted()) return betaStatus();
-  const features = sharingAvailability();
+  const features = statusFeatures();
   const [c, a] = await Promise.all([database(features.sharedDossiers), assistant()]);
   return {
     checkedAt: new Date().toISOString(),

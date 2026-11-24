@@ -48,7 +48,7 @@ describe('R3H public status follows the opened surfaces', () => {
     delete process.env.ADA_CAPABILITIES_OPEN;
     const b = await computeStatus();
     expect(get(b, 'comptes').text).toMatch(/partage de dossier ne sont pas encore ouverts|Le partage de dossier n'est pas encore ouvert/);
-    expect(b.features).toEqual({ sharedDossiers: false, diagnosticShare: false });
+    expect(b.features).toEqual({ sharedDossiers: false, diagnosticShare: false, hdsGateway: false });
   });
   it('G14-R4: LAB (beta) with documents + diagnostic and both capabilities listed — sharing open and the diagnostic share served', async () => {
     process.env.ADA_BETA_OPEN_SURFACES = 'accounts,documents,diagnostic';
@@ -56,7 +56,7 @@ describe('R3H public status follows the opened surfaces', () => {
     process.env.ADA_HDS_CERTIFIED_HOSTING = ATTEST;
     const b = await computeStatus();
     expect(get(b, 'comptes').text).not.toMatch(/partage de dossier n'est pas encore ouvert/);
-    expect(b.features).toEqual({ sharedDossiers: true, diagnosticShare: true });
+    expect(b.features).toEqual({ sharedDossiers: true, diagnosticShare: true, hdsGateway: false });
   });
   it('G14-R4: deployed with the HDS gateway — shared dossiers open (at the HDS service) but the account-free diagnostic link is never served (409)', () => {
     const env = { ADA_PUBLIC_BETA_RESTRICTED: 'true', ADA_BETA_OPEN_SURFACES: 'accounts,documents,diagnostic', ADA_CAPABILITIES_OPEN: 'citizen.shared_dossier,citizen.saved_diagnostic,citizen.vault',

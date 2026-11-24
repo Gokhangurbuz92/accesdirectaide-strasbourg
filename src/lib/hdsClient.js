@@ -8,10 +8,12 @@
 
 /** @type {'hds' | 'legacy' | null} */
 let mode = null;
+/** @type {Promise<boolean | null> | null} the one /api/status read of this page */
+let gatewayProbe = null;
 /** the mode learnt from the last ticket request (null = not asked yet) */
 export const hdsVaultMode = () => mode;
 /** tests only */
-export const resetHdsMode = () => { mode = null; };
+export const resetHdsMode = () => { mode = null; gatewayProbe = null; };
 
 /** @typedef {{ status: number, code: string, serverMessage: string }} HdsFailure */
 /** @typedef {{ side?: 'citizen' | 'pro', conversation?: string }} TicketOptions */
@@ -34,6 +36,13 @@ async function proTicket(cap, o) {
 /** @param {string} cap @param {TicketOptions} [o] @returns {Promise<{ ticket: string, origin: string, role?: string } | null>} */
 export async function hdsTicket(cap, o = {}) {
   if (mode === 'legacy') return null;
+  if (mode === null && !gatewayProbe) {
+    // QA v81 DTA-B33: a server without an HDS gateway says so in /api/status (features.hdsGateway === false) → legacy path without a ticket request
+    // (no expected 503 in the console). Unknown (error, old server) → the ticket is asked as before (the server stays the authority).
+    const { fetchServerFeatureState } = await import('./serverFeatures.js');
+    gatewayProbe = fetchServerFeatureState('hdsGateway');
+  }
+  if (mode === null && (await gatewayProbe) === false) { mode = 'legacy'; return null; }
   let status = 0;
   /** @type {any} */
   let data = {};

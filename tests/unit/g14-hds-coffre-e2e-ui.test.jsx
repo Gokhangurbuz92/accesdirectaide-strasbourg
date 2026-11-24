@@ -76,7 +76,7 @@ describe('Mon Coffre, end-to-end encrypted through the HDS service', () => {
     expect(sent).not.toContain(CANARY);
     expect(sent).not.toMatch(/identite|application\/pdf|une phrase secrète/);
     expect(calls.some((c) => c.url.startsWith('/api/citizen/coffre'))).toBe(false);
-    expect(calls.filter((c) => c.url.startsWith('/api/')).every((c) => c.url.startsWith('/api/citizen/hds-ticket') && c.method === 'GET' && !c.body)).toBe(true);
+    expect(calls.filter((c) => c.url.startsWith('/api/')).every((c) => (c.url.startsWith('/api/citizen/hds-ticket') || c.url === '/api/status') && c.method === 'GET' && !c.body)).toBe(true);   // R4: + the one /api/status read (hdsGateway), no personal data
   }, 30000);
 
   it('without an HDS service the page keeps the LAB route (no passphrase step)', async () => {
