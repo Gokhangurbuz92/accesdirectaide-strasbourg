@@ -38,3 +38,6 @@ ae51520de57d9d999b63b2570e4c43e4ae1df3ea:tests/unit/r46-proconnect-oidc.test.js:
 # cand-final (17/11/2026): the same two reviewed strings (« emergency access », « Access requests to examine ») one line lower after the C12/P19 locale keys. Reviewed 17/11/2026.
 src/i18n/locales/en/admin.json:generic-api-key:676
 src/i18n/locales/en/admin.json:generic-api-key:765
+# 25/11/2026: synthetic fixture tokens in the Sentry scrub tests (24 random-looking characters, not a credential); replaced by « fixture-share-token-synthetic » in f424c06d
+18329eb3baf283f20c902fa8d1f4db6d9d7d742d:tests/unit/sentry-eu-server.test.js:generic-api-key:9
+e8c7c0f146c9ae0c208fd3358859010fedb26f26:tests/unit/sentry-eu-scrub.test.js:generic-api-key:11
