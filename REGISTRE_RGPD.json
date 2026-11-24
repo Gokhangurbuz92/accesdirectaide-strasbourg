@@ -1379,7 +1379,7 @@
     {
       "nom": "Mailjet (Sinch)",
       "role": "E-mails de service des comptes (vérification de l'adresse, mot de passe, avis du compte)",
-      "statut": "retenu (notice de confidentialité v6, non approuvée) ; envoi réel seulement si MAILER_PROVIDER=mailjet — état de la Production non vérifié ici ; offre (gratuite ou payante) non enregistrée",
+      "statut": "en service depuis le 18/11/2026 (activation 6b, MAILER_PROVIDER=mailjet) ; sous-traitant retenu ; offre (gratuite ou payante) non enregistrée",
       "localisation": "Google Cloud, Francfort (Allemagne) et Saint-Ghislain (Belgique)",
       "entite_contractante": "Groupe Sinch AB (Suède) ; Mailjet SAS est une société française — entité signataire exacte non vérifiée",
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA Sinch § 12 c–d) ; pas de Data Privacy Framework pour Mailjet (la société inscrite est Mailgun Technologies, Inc.)",
@@ -1422,11 +1422,20 @@
     },
     {
       "nom": "Microsoft (Outlook / Graph)",
-      "role": "Agenda des professionnels (disponibilités libre/occupé quand une structure l'a configuré, R42-A03)",
-      "statut": "non activé",
+      "role": "Agenda des professionnels (disponibilités libre/occupé quand une structure l'a configuré, R42-A03 ; Calendars.ReadBasic, rien n'est écrit)",
+      "statut": "en service depuis la release 2 (OUTLOOK_ENABLED=true) pour les professionnels qui connectent leur calendrier",
       "localisation": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "dpa": "DPA Microsoft (Products and Services Data Protection Addendum) — NON VÉRIFIÉ (aucune preuve archivée), non signé"
+    },
+    {
+      "nom": "8x8, Inc. (Jitsi as a Service)",
+      "role": "Visioconférence des rendez-vous (seulement si la structure a validé la visioconférence et la personne l'a acceptée)",
+      "statut": "en service depuis la release 2 (surface video) — notice v13, AIPD A1",
+      "localisation": "États-Unis (8x8, Inc.)",
+      "entite_contractante": "8x8, Inc. (États-Unis)",
+      "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (8x8 Global DPA 2025-02)",
+      "dpa": "8x8 Global DPA (version 2025-02) accepté par décision du responsable du 23/11/2026 — non signé, non confirmé par le fournisseur"
     }
   ],
   "services_non_destinataires": [

@@ -83,8 +83,18 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     expect(registre.organisme.responsable_traitement).toMatch(/Personne physique porteuse du projet/);
     expect(registre.organisme.responsable_traitement).toMatch(/n'est pas présentée comme responsable/);
     // legal v5: an agreement incorporated by a provider's terms is recorded as such — never as a signed one
-    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le (15|09)\/11\/2026|intégré aux conditions de service \(non signé\) — DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du responsable du 23\/11\/2026\)|accepté dans la console par le responsable de traitement \(déclaration du 13\/11\/2026\) — PDF non archivé, non signé séparément)$/);
+    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).toMatch(/^(inconnu \/ non signé|intégré aux conditions de service \(non signé\) — pages publiques lues le (15|09)\/11\/2026|intégré aux conditions de service \(non signé\) — DPA Cloudflare v6\.4 \(3 avril 2026\) lu le 23\/11\/2026, accepté en ligne \(décision du responsable du 23\/11\/2026\)|accepté dans la console par le responsable de traitement \(déclaration du 13\/11\/2026\) — PDF non archivé, non signé séparément|8x8 Global DPA \(version 2025-02\) accepté par décision du responsable du 23\/11\/2026 — non signé, non confirmé par le fournisseur|DPA Microsoft \(Products and Services Data Protection Addendum\) — NON VÉRIFIÉ \(aucune preuve archivée\), non signé)$/);
+    for (const s of registre.sous_traitants) expect(s.dpa, s.nom).not.toMatch(/(?<!non )signé(?! séparément)/);
     expect(registre.transferts_hors_ue).toMatch(/aucun signé/);
+  });
+
+  it('24/11 fact-check: 8x8 (JaaS) listed with its accepted, unsigned DPA and SCC module 2; Outlook / Graph live since release 2, DPA not verified; Mailjet live since 18/11', () => {
+    const find = (/** @type {RegExp} */ rx) => registre.sous_traitants.find((/** @type {any} */ s) => rx.test(s.nom));
+    const jaas = find(/^8x8/);
+    expect(jaas.dpa).toMatch(/2025-02\) accepté par décision du responsable du 23\/11\/2026 — non signé/); expect(jaas.mecanisme_transfert).toMatch(/2021\/914, module 2/); expect(jaas.statut).toMatch(/AIPD A1/);
+    const graph = find(/Outlook \/ Graph/);
+    expect(graph.statut).toMatch(/release 2 \(OUTLOOK_ENABLED=true\)/); expect(graph.dpa).toMatch(/NON VÉRIFIÉ/);
+    expect(find(/^Mailjet/).statut).toMatch(/^en service depuis le 18\/11\/2026/); expect(find(/^Mailjet/).statut).not.toMatch(/non approuvée/);
   });
 
   it('Gemini is blocked, not a recipient; the assistant uses local Ollama', () => {
