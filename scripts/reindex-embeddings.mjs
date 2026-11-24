@@ -2,12 +2,14 @@
 // PKG-11 / D16 — operator: rebuild the aide index from what people can see (api/lib/retrieval-index.js). Only D-5-visible aides are embedded; unchanged
 // records are left alone.
 //
-// Local (default): DATABASE_URL=… node scripts/reindex-embeddings.mjs [--dry-run] [--limit=1000]
+// Run with tsx (src/db/index.ts is TypeScript: plain `node` stops with ERR_MODULE_NOT_FOUND on src/db/index.js).
+// Local (default): DATABASE_URL=… node --import tsx scripts/reindex-embeddings.mjs [--dry-run] [--limit=1000]
 //   LOCAL embedding model only (Ollama on this machine, nomic-embed-text, column "embedding"); nothing is sent outside this machine.
 //
 // G14-AI — Cloudflare Workers AI (@cf/baai/bge-m3, column "embedding_m3", migration 0060), gated like a job (fail-closed):
 //   DATABASE_URL=… AI_PROVIDER=workers_ai AI_WORKERS_PRODUCTION_APPROVED=true CF_WORKERS_AI_ACCOUNT_ID=… CF_WORKERS_AI_TOKEN=… KV_REST_API_URL=… KV_REST_API_TOKEN=… \
-//     node scripts/reindex-embeddings.mjs --provider=workers_ai [--apply] [--limit=1000]
+//     node --import tsx scripts/reindex-embeddings.mjs --provider=workers_ai [--apply] [--limit=1000]
+//   Production owner wrapper (keychain Neon URL, Vercel env, dry run by default): CONTROL/db/reindex_m3.sh
 //   - without --apply: a dry run (what is stale, the estimated neurons, today's remaining budget) — no call to Cloudflare;
 //   - with --apply: refused unless the Workers AI policy is enabled, the shared KV counter is configured and the estimate fits today's remaining budget;
 //     every request goes through the same daily neuron counter as the assistant (api/lib/workers-ai.js). Only public, verified fiche texts are sent.

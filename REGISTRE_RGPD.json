@@ -111,7 +111,7 @@
       "sous_traitants": [
         "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon pour la copie partagée (prévu)",
-        "Scaleway SAS (hébergement de notre propre moteur OpenFisca, Paris fr-par ; branche g14-of, non fusionnée ici) — les réponses n'y sont pas enregistrées"
+        "Scaleway SAS (hébergement de notre propre moteur OpenFisca, Paris fr-par ; branche g14-of fusionnée dans la version a628f7b) — les réponses n'y sont pas enregistrées"
       ],
       "base_legale_g14": "Notice v12 / v13, P18 : intérêt légitime de l'exploitant à informer le public (art. 6.1.f) — décidé par le responsable le 23/11/2026",
       "services_refuses": [
@@ -369,7 +369,7 @@
         "Aucun tiers — modèle local"
       ],
       "modele_ia": "Ollama local (qwen3:8b, nomic-embed-text), joint uniquement en boucle locale (127.0.0.1)",
-      "evolution_g14": "Branche g14-ai (non fusionnée ici) : Cloudflare, Inc. — Workers AI (États-Unis), sous-traitant (art. 28) ; question (adresses et téléphones masqués ; NIR, IBAN, carte refusés) et extraits de fiches publiques vérifiées envoyés depuis le serveur, sans compte ni adresse IP ; aucune conversation enregistrée, compteurs techniques anonymes 90 jours ; DPA Cloudflare v6.4 (3 avril 2026) : CCT 2021/914 module 2 et cadre UE–États-Unis ; pas d'entraînement ni de conservation pour une inférence ordinaire (page Workers AI du 16/10/2026) ; base : intérêt légitime (art. 6.1.f) — décidé par le responsable le 23/11/2026",
+      "evolution_g14": "Branche g14-ai (fusionnée dans la version a628f7b) : Cloudflare, Inc. — Workers AI (États-Unis), sous-traitant (art. 28) ; question (adresses et téléphones masqués ; NIR, IBAN, carte refusés) et extraits de fiches publiques vérifiées envoyés depuis le serveur, sans compte ni adresse IP ; aucune conversation enregistrée, compteurs techniques anonymes 90 jours ; DPA Cloudflare v6.4 (3 avril 2026) : CCT 2021/914 module 2 et cadre UE–États-Unis ; pas d'entraînement ni de conservation pour une inférence ordinaire (page Workers AI du 16/10/2026) ; base : intérêt légitime (art. 6.1.f) — décidé par le responsable le 23/11/2026",
       "sous_traitants": [
         "Vercel (hébergement ; en service pour la bêta publique restreinte)",
         "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
@@ -753,7 +753,7 @@
     {
       "id": "T23",
       "nom": "Mode accompagnant (aide dans le compte, à côté de la personne ou à distance)",
-      "statut": "branche g14-aid, non fusionnée dans g14-lex",
+      "statut": "branche g14-aid fusionnée dans la version a628f7b",
       "finalite": "Permettre à une personne choisie (proche, travailleur social, conseiller France Services, professionnel) d'aider la personne dans son propre compte, à côté d'elle, 2 heures au plus ; à distance, une personne de confiance demande des actions que la personne confirme",
       "base_legale_proposee": "Consentement (art. 6.1.a), donné après saisie du mot de passe",
       "categories_donnees": [
@@ -794,7 +794,7 @@
     {
       "id": "T24",
       "nom": "Orientations sociales entre structures (hors santé)",
-      "statut": "branche g14-ps, non fusionnée dans g14-lex (capacité pro.referrals_social, migration 0061 en attente)",
+      "statut": "branche g14-ps fusionnée dans la version a628f7b (capacité pro.referrals_social, migration 0061 à appliquer en Production)",
       "finalite": "Orientation d'une personne d'une structure vers une autre, hors santé, avec son accord donné par un code à usage unique",
       "base_legale_proposee": "Consentement (art. 6.1.a) ; responsabilité conjointe exploitant / structure (art. 26) selon les conditions des structures v9",
       "categories_donnees": [
@@ -829,7 +829,7 @@
     {
       "id": "T25",
       "nom": "Observatoire des droits et des services (signaux de demande anonymes)",
-      "statut": "branche g14-obs, non fusionnée dans g14-lex (migration 0062)",
+      "statut": "branche g14-obs fusionnée dans la version a628f7b (migration 0062 à appliquer en Production)",
       "finalite": "Compter, par jour, les recherches et consultations par codes de listes fermées pour publier des tableaux trimestriels",
       "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v12 / v13, P20, décidé par le responsable le 23/11/2026",
       "categories_donnees": [
@@ -861,7 +861,7 @@
     {
       "id": "T26",
       "nom": "Notifications du navigateur (Web Push) et fichiers de calendrier",
-      "statut": "branche g14-chan-a11y, non fusionnée dans g14-lex",
+      "statut": "branche g14-chan-a11y fusionnée dans la version a628f7b",
       "finalite": "Rappeler un rendez-vous par une notification courte chiffrée, si la personne l'active ; fichier .ics pour les services non sensibles",
       "base_legale_proposee": "Consentement (art. 6.1.a), retirable à tout moment",
       "categories_donnees": [
@@ -1059,7 +1059,7 @@
     },
     {
       "nom": "Cloudflare, Inc. (Workers AI)",
-      "role": "Assistant citoyen (branche g14-ai, non fusionnée ici)",
+      "role": "Assistant citoyen (branche g14-ai fusionnée dans la version a628f7b)",
       "statut": "prévu",
       "localisation": "États-Unis (réseau mondial)",
       "mecanisme_transfert": "CCT 2021/914 module 2 (DPA Cloudflare v6.4, 3 avril 2026, clause 6.2) ; cadre UE–États-Unis (clause 6.4) — page lue le 23/11/2026",
@@ -1067,7 +1067,7 @@
     },
     {
       "nom": "Scaleway SAS (OpenFisca)",
-      "role": "Hébergement de notre moteur de calcul OpenFisca (branche g14-of, non fusionnée ici)",
+      "role": "Hébergement de notre moteur de calcul OpenFisca (branche g14-of fusionnée dans la version a628f7b)",
       "statut": "prévu",
       "localisation": "France (Paris, fr-par)",
       "mecanisme_transfert": "aucun transfert hors UE",

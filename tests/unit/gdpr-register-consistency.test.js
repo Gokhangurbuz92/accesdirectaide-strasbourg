@@ -59,6 +59,17 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
     for (const c of shared) expect(c.duree_jours_registre).toBe(RETENTION_POLICY_REGISTRY.SHARED_DIAGNOSTIC.durationDays);
   });
 
+  it('no G14 entry still says its branch is not merged (all G14 branches are in release a628f7b)', () => {
+    expect(fileText).not.toMatch(/non fusionn/i);
+    expect(fileText).not.toMatch(/not merged/i);
+    const src = fs.readFileSync(path.join(ROOT, 'scripts/gdpr-suite.mjs'), 'utf-8');
+    expect(src).not.toMatch(/non fusionn|not merged here/i);
+    for (const id of ['T08', 'T23', 'T24', 'T25', 'T26']) {
+      const t = registre.traitements.find((x) => x.id === id);
+      expect(JSON.stringify(t), id).toMatch(/fusionnée dans la version a628f7b/);
+    }
+  });
+
   it('makes no unsupported claim', () => {
     expect(fileText).not.toMatch(/zero[- ]?knowledge/i);
     expect(fileText).not.toMatch(/"dpa":\s*"Oui"/i);
