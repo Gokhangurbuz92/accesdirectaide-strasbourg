@@ -1292,7 +1292,8 @@
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA § 13.3, annexe 3) ; Vercel Inc. active sur la liste officielle du Data Privacy Framework (lue le 17/11/2026)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
       "role_propre": "Vercel est aussi responsable de traitement pour les données d'usage de son service (DPA § 4.b)",
-      "journaux": "journaux d'exécution : 1 jour sur l'offre Pro, 30 jours si l'option Observability Plus s'applique au projet (activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — option NON activée, vérifié en lecture seule par l'API Vercel le 17/11/2026 ; équipe en Pro depuis le 21/01/2026"
+      "journaux": "journaux d'exécution : 1 jour sur l'offre Pro, 30 jours si l'option Observability Plus s'applique au projet (activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — option NON activée, vérifié en lecture seule par l'API Vercel le 17/11/2026 ; équipe en Pro depuis le 21/01/2026",
+      "statut_contrat": "examiné"
     },
     {
       "nom": "Vercel Analytics + Speed Insights",
@@ -1301,7 +1302,8 @@
       "localisation": "NON VÉRIFIÉ",
       "entite_contractante": "Vercel Inc. (USA)",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "dpa": "inconnu / non signé",
+      "statut_contrat": "sans objet"
     },
     {
       "nom": "Neon",
@@ -1311,7 +1313,8 @@
       "entite_contractante": "Databricks, Inc., société mère de Neon, LLC (neon.com/dpa) — offre gratuite",
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, modules 2 et 3, réputées intégrées (DPA Databricks § 8.1, annexe B) ; Databricks, Inc. active sur la liste officielle du Data Privacy Framework (lue le 15/11/2026)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
-      "journaux": "historique de la base : 6 heures sur l'offre gratuite (plus long sur une offre payante)"
+      "journaux": "historique de la base : 6 heures sur l'offre gratuite (plus long sur une offre payante)",
+      "statut_contrat": "examiné"
     },
     {
       "nom": "Upstash",
@@ -1321,7 +1324,8 @@
       "entite_contractante": "Upstash, Inc. — offre gratuite",
       "mecanisme_transfert": "Data Privacy Framework d'abord (Upstash, Inc. active sur la liste officielle, lue le 17/11/2026) ; clauses contractuelles types (UE) 2021/914, module 2, s'il ne s'applique plus (DPA § 3.2 B, annexe 2)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
-      "role_propre": "Le DPA d'Upstash ne couvre pas ses traitements pour sa propre sécurité et l'analyse de son service : Upstash en est responsable (DPA, « How and when this DPA applies »)"
+      "role_propre": "Le DPA d'Upstash ne couvre pas ses traitements pour sa propre sécurité et l'analyse de son service : Upstash en est responsable (DPA, « How and when this DPA applies »)",
+      "statut_contrat": "examiné"
     },
     {
       "nom": "Scaleway SAS",
@@ -1330,7 +1334,8 @@
       "localisation": "Paris (UE)",
       "entite_contractante": "Scaleway SAS (France)",
       "mecanisme_transfert": "aucun transfert hors UE",
-      "dpa": "accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément"
+      "dpa": "accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément",
+      "statut_contrat": "accepté"
     },
     {
       "nom": "Cloudflare (R2)",
@@ -1339,7 +1344,8 @@
       "localisation": "seaux en juridiction UE",
       "entite_contractante": "Cloudflare, Inc. (USA)",
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, modules 2 et 3, et Data Privacy Framework (DPA Cloudflare, lu le 09/11/2026) ; contenu illisible sans les clés",
-      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 09/11/2026"
+      "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 09/11/2026",
+      "statut_contrat": "examiné"
     },
     {
       "nom": "Stockage objet S3/R2 (fournisseur à confirmer)",
@@ -1348,7 +1354,8 @@
       "localisation": "non choisie",
       "entite_contractante": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "dpa": "inconnu / non signé",
+      "statut_contrat": "sans objet"
     },
     {
       "nom": "Sentry (Functional Software Inc.)",
@@ -1357,7 +1364,8 @@
       "localisation": "NON VÉRIFIÉ",
       "entite_contractante": "Functional Software Inc. (USA)",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "dpa": "inconnu / non signé",
+      "statut_contrat": "non vérifié"
     },
     {
       "nom": "Microsoft (Outlook, boîte contact@accesdirectaide.fr)",
@@ -1366,7 +1374,8 @@
       "localisation": "NON VÉRIFIÉ",
       "entite_contractante": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "dpa": "inconnu / non signé",
+      "statut_contrat": "non vérifié"
     },
     {
       "nom": "Autres expéditeurs codés (Microsoft Graph sendMail, Resend)",
@@ -1374,7 +1383,8 @@
       "statut": "non retenus, non configurés",
       "localisation": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "dpa": "inconnu / non signé",
+      "statut_contrat": "sans objet"
     },
     {
       "nom": "Mailjet (Sinch)",
@@ -1385,7 +1395,8 @@
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (DPA Sinch § 12 c–d) ; pas de Data Privacy Framework pour Mailjet (la société inscrite est Mailgun Technologies, Inc.)",
       "dpa": "intégré aux conditions de service (non signé) — pages publiques lues le 15/11/2026",
       "role_propre": "Sinch est aussi responsable de traitement indépendant pour acheminer les messages, lutter contre le spam et la fraude et sécuriser son réseau (DPA § 3 a iv)",
-      "journaux": "statistiques : 90 jours (offre gratuite) ou 13 mois (offre payante) ; adresse du destinataire enregistrée comme contact pour la durée du compte, suppression demandée avant l'effacement du compte (api/_services/mail-contact-erasure.js) ; en cas d'échec, nouvel essai 3 jours au plus dans le délai d'un mois, puis effacement du compte et signalement sans adresse « intervention humaine requise » (api/_services/mail-contact-failures.js) ; effacement dans les 90 jours après la fin du contrat ; aucune durée publiée pour le contenu des messages"
+      "journaux": "statistiques : 90 jours (offre gratuite) ou 13 mois (offre payante) ; adresse du destinataire enregistrée comme contact pour la durée du compte, suppression demandée avant l'effacement du compte (api/_services/mail-contact-erasure.js) ; en cas d'échec, nouvel essai 3 jours au plus dans le délai d'un mois, puis effacement du compte et signalement sans adresse « intervention humaine requise » (api/_services/mail-contact-failures.js) ; effacement dans les 90 jours après la fin du contrat ; aucune durée publiée pour le contenu des messages",
+      "statut_contrat": "examiné"
     },
     {
       "nom": "Cloudflare, Inc. (Workers AI)",
@@ -1393,7 +1404,8 @@
       "statut": "prévu",
       "localisation": "États-Unis (réseau mondial)",
       "mecanisme_transfert": "CCT 2021/914 module 2 (DPA Cloudflare v6.4, 3 avril 2026, clause 6.2) ; cadre UE–États-Unis (clause 6.4) — page lue le 23/11/2026",
-      "dpa": "intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du responsable du 23/11/2026)"
+      "dpa": "intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du responsable du 23/11/2026)",
+      "statut_contrat": "accepté"
     },
     {
       "nom": "Scalingo SAS (HDS)",
@@ -1402,7 +1414,8 @@
       "localisation": "France — région osc-fr1",
       "entite_contractante": "Scalingo SAS (France) — certificat HDS n° 38436 (valable jusqu'au 11/09/2028)",
       "mecanisme_transfert": "aucun transfert hors UE",
-      "dpa": "inconnu / non signé"
+      "dpa": "inconnu / non signé",
+      "statut_contrat": "examiné"
     },
     {
       "nom": "Scaleway SAS (OpenFisca)",
@@ -1410,7 +1423,8 @@
       "statut": "prévu",
       "localisation": "France (Paris, fr-par)",
       "mecanisme_transfert": "aucun transfert hors UE",
-      "dpa": "accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément"
+      "dpa": "accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément",
+      "statut_contrat": "accepté"
     },
     {
       "nom": "Twilio",
@@ -1418,7 +1432,8 @@
       "statut": "non activé",
       "localisation": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "inconnu / non signé"
+      "dpa": "inconnu / non signé",
+      "statut_contrat": "sans objet"
     },
     {
       "nom": "Microsoft (Outlook / Graph)",
@@ -1426,7 +1441,8 @@
       "statut": "en service depuis la release 2 (OUTLOOK_ENABLED=true) pour les professionnels qui connectent leur calendrier",
       "localisation": "NON VÉRIFIÉ",
       "mecanisme_transfert": "NON VÉRIFIÉ",
-      "dpa": "DPA Microsoft (Products and Services Data Protection Addendum) — NON VÉRIFIÉ (aucune preuve archivée), non signé"
+      "dpa": "DPA Microsoft (Products and Services Data Protection Addendum) — NON VÉRIFIÉ (aucune preuve archivée), non signé",
+      "statut_contrat": "non vérifié"
     },
     {
       "nom": "8x8, Inc. (Jitsi as a Service)",
@@ -1435,7 +1451,8 @@
       "localisation": "États-Unis (8x8, Inc.)",
       "entite_contractante": "8x8, Inc. (États-Unis)",
       "mecanisme_transfert": "Clauses contractuelles types (UE) 2021/914, module 2 (8x8 Global DPA 2025-02)",
-      "dpa": "8x8 Global DPA (version 2025-02) accepté par décision du responsable du 23/11/2026 — non signé, non confirmé par le fournisseur"
+      "dpa": "8x8 Global DPA (version 2025-02) approuvé en principe par le fondateur (décision du 23/11/2026) — acceptation contractuelle non confirmée par le fournisseur, non signé",
+      "statut_contrat": "approuvé en principe par le fondateur"
     }
   ],
   "services_non_destinataires": [

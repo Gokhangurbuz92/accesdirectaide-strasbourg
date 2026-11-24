@@ -101,6 +101,9 @@ describe('G14-RG data — every link sourced, no orphan id', () => {
     for (const u of file.uncovered) { expect(all).toContain(u.subdomain); expect(u.reason.length).toBeGreaterThan(20); expect(used.has(u.subdomain)).toBe(false); }
     expect(all.filter((x) => !used.has(x) && !uncovered.includes(x))).toEqual([]);
     expect(uncovered).toEqual(['transversal/coordination-pro']);
+    // founder 24/11/2026: no citizen situation is invented to reach 86 / 86 — 85 subdomains covered + 1 documented exclusion (data/reference/README.md)
+    expect(all.filter((x) => used.has(x))).toHaveLength(85);
+    expect(fs.readFileSync('data/reference/README.md', 'utf8')).toMatch(/Exclusion volontaire \(une seule\) : `transversal\/coordination-pro`/);
     for (const d of domains.domains) expect(RAW_SITUATIONS.some((x) => x.subdomains.some((y) => y.startsWith(`${d.id}/`))), d.id).toBe(true);
     // every family has situations; the dropped ones (no sourced record, no subdomain) are listed with their reason and are not shown
     for (const f of FAMILIES) expect(SITUATIONS.filter((x) => x.family === f).length, f).toBeGreaterThan(2);

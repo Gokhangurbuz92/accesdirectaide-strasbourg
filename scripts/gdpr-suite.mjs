@@ -35,10 +35,34 @@ const DPA_INTEGRE_0911 = 'intégré aux conditions de service (non signé) — p
 // FA-D5: Scaleway — the owner's statement « Scaleway DPA : kabul » (13/11/2026, AIPD V2 annex § 8); the PDF is not archived yet
 const DPA_CLOUDFLARE_V64 = 'intégré aux conditions de service (non signé) — DPA Cloudflare v6.4 (3 avril 2026) lu le 23/11/2026, accepté en ligne (décision du responsable du 23/11/2026)';
 // 24/11 fact-check: 8x8 (JaaS) — Global DPA 2025-02 accepted by the owner's decision of 23/11/2026, neither signed nor confirmed by the vendor
-const DPA_8X8 = '8x8 Global DPA (version 2025-02) accepté par décision du responsable du 23/11/2026 — non signé, non confirmé par le fournisseur';
+const DPA_8X8 = '8x8 Global DPA (version 2025-02) approuvé en principe par le fondateur (décision du 23/11/2026) — acceptation contractuelle non confirmée par le fournisseur, non signé';
 // Microsoft Products and Services DPA: incorporated by Microsoft's terms; no evidence archived — never « signé »
 const DPA_MICROSOFT = 'DPA Microsoft (Products and Services Data Protection Addendum) — NON VÉRIFIÉ (aucune preuve archivée), non signé';
 const DPA_SCALEWAY = 'accepté dans la console par le responsable de traitement (déclaration du 13/11/2026) — PDF non archivé, non signé séparément';
+
+/**
+ * Founder clarification (24/11/2026): the register distinguishes how far each provider contract went —
+ *   « accepté »                              the contract (or its DPA) was actually accepted (console / online acceptance recorded);
+ *   « examiné »                              its public terms and DPA were read, no recorded acceptance is archived;
+ *   « approuvé en principe par le fondateur » the founder decided to use it, the contractual acceptance is not confirmed;
+ *   « non vérifié »                          nothing read or recorded; « sans objet » not chosen / not in use.
+ */
+export const CONTRACT_STATUSES = Object.freeze(['accepté', 'examiné', 'approuvé en principe par le fondateur', 'non vérifié', 'sans objet']);
+const CONTRACT_STATUS_BY_NAME = Object.freeze({
+    'Vercel': 'examiné', 'Vercel Analytics + Speed Insights': 'sans objet', 'Neon': 'examiné', 'Upstash': 'examiné', 'Scaleway SAS': 'accepté',
+    'Cloudflare (R2)': 'examiné', 'Stockage objet S3/R2 (fournisseur à confirmer)': 'sans objet', 'Sentry (Functional Software Inc.)': 'non vérifié',
+    'Microsoft (Outlook, boîte contact@accesdirectaide.fr)': 'non vérifié', 'Autres expéditeurs codés (Microsoft Graph sendMail, Resend)': 'sans objet',
+    'Mailjet (Sinch)': 'examiné', 'Cloudflare, Inc. (Workers AI)': 'accepté', 'Scalingo SAS (HDS)': 'examiné', 'Scaleway SAS (OpenFisca)': 'accepté',
+    'Twilio': 'sans objet', 'Microsoft (Outlook / Graph)': 'non vérifié', '8x8, Inc. (Jitsi as a Service)': 'approuvé en principe par le fondateur',
+});
+/** @param {Array<Record<string, any>>} list */
+function withContractStatus(list) {
+    return list.map((x) => {
+        const statut_contrat = CONTRACT_STATUS_BY_NAME[x.nom];
+        if (!CONTRACT_STATUSES.includes(statut_contrat)) throw new Error(`statut du contrat manquant pour ${x.nom}`);
+        return { ...x, statut_contrat };
+    });
+}
 
 export const SOURCE_FILES = Object.freeze({
     retention: 'api/_handlers/cron/gdpr-purge.js',
@@ -681,7 +705,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 mesures_securite: 'Chiffrement avant envoi (clé privée hors du producteur), sauvegardes et registre signés, vérification mensuelle de restauration dans une base jetable effacée ensuite, rejeu des effacements refusé si les traces sont incomplètes ou en désaccord ; copie des traces chiffrée et authentifiée (AES-256-GCM), noms HMAC',
             },
         ],
-        sous_traitants: [
+        sous_traitants: withContractStatus([
             { nom: 'Vercel', role: 'Hébergement front et fonctions serveur, cron', statut: 'en service (bêta publique restreinte ; crons fermés)', localisation: 'UE — région fra1 (Francfort) pour les fonctions ; pages statiques distribuées par le réseau mondial ; installations principales de Vercel aux États-Unis (DPA § 13.1)', entite_contractante: 'Vercel Inc. (USA) — équipe sur l\'offre Pro', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, module 2 (DPA § 13.3, annexe 3) ; Vercel Inc. active sur la liste officielle du Data Privacy Framework (lue le 17/11/2026)', dpa: DPA_INTEGRE, role_propre: 'Vercel est aussi responsable de traitement pour les données d\'usage de son service (DPA § 4.b)', journaux: 'journaux d\'exécution : 1 jour sur l\'offre Pro, 30 jours si l\'option Observability Plus s\'applique au projet (activée par défaut pour les équipes passées en Pro depuis le 03/04/2026) — option NON activée, vérifié en lecture seule par l\'API Vercel le 17/11/2026 ; équipe en Pro depuis le 21/01/2026' },
             { nom: 'Vercel Analytics + Speed Insights', role: 'Audience et performance', statut: 'désactivé par défaut (ADR-022 ; VITE_AUDIENCE_MEASUREMENT)', localisation: NON_VERIFIE, entite_contractante: 'Vercel Inc. (USA)', mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Neon', role: 'Base de données PostgreSQL', statut: 'en service (bêta publique restreinte)', localisation: 'Francfort selon /mentions-legales — preuve console à archiver', entite_contractante: 'Databricks, Inc., société mère de Neon, LLC (neon.com/dpa) — offre gratuite', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, modules 2 et 3, réputées intégrées (DPA Databricks § 8.1, annexe B) ; Databricks, Inc. active sur la liste officielle du Data Privacy Framework (lue le 15/11/2026)', dpa: DPA_INTEGRE, journaux: 'historique de la base : 6 heures sur l\'offre gratuite (plus long sur une offre payante)' },
@@ -699,7 +723,7 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
             { nom: 'Twilio', role: 'SMS', statut: 'non activé', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_INCONNU },
             { nom: 'Microsoft (Outlook / Graph)', role: 'Agenda des professionnels (disponibilités libre/occupé quand une structure l\'a configuré, R42-A03 ; Calendars.ReadBasic, rien n\'est écrit)', statut: 'en service depuis la release 2 (OUTLOOK_ENABLED=true) pour les professionnels qui connectent leur calendrier', localisation: NON_VERIFIE, mecanisme_transfert: NON_VERIFIE, dpa: DPA_MICROSOFT },
             { nom: '8x8, Inc. (Jitsi as a Service)', role: 'Visioconférence des rendez-vous (seulement si la structure a validé la visioconférence et la personne l\'a acceptée)', statut: 'en service depuis la release 2 (surface video) — notice v13, AIPD A1', localisation: 'États-Unis (8x8, Inc.)', entite_contractante: '8x8, Inc. (États-Unis)', mecanisme_transfert: 'Clauses contractuelles types (UE) 2021/914, module 2 (8x8 Global DPA 2025-02)', dpa: DPA_8X8 },
-        ],
+        ]),
         services_non_destinataires: [
             { nom: 'Google (Gemini API)', statut: 'bloqué', motif: 'Refusé par la politique IA du code (api/lib/ai-policy.js, BLOCKED_PENDING_PROVIDER_REVIEW) ; aucune donnée transmise ; pas un destinataire ni un sous-traitant', dpa: 'aucun' },
             { nom: 'Ollama (qwen3:8b, nomic-embed-text)', statut: 'activé en local', motif: 'Modèle de l\'assistant, exécuté sur la même machine (127.0.0.1) ; aucun transfert ; pas un sous-traitant tant qu\'il n\'est pas hébergé par un tiers' },

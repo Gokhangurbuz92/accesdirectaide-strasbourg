@@ -68,6 +68,18 @@ describe('notice v14 / cgu v13 (same versions, extended) — what the release-3 
   });
 });
 
+describe('founder 24/11: cgu-citoyen v13 / notice v14 stay true while the release-3 functions are closed (they can be put in force with the R3 code)', () => {
+  it('every new citizen-facing item is conditioned on its function being open', () => {
+    const OPEN = /\(lorsque cette fonction est ouverte\)|\(lorsqu'il est ouvert\)|lorsqu'il est ouvert/;
+    for (const k of ['account.household_v13', 'account.trusted_v13', 'account.legal_protection_v13', 'account.vault_v13', 'appointments.messaging_v13', 'appointments.external_v13']) expect(c13[k], k).toMatch(OPEN);
+    for (const k of ['purposes.p24_v14', 'purposes.p25_v14', 'purposes.p26_v14', 'purposes.p27_v14', 'purposes.p28_v14', 'purposes.p29_v14', 'institutions.p1_v14', 'processors.scalingo_v14']) expect(n14[k], k).toMatch(OPEN);
+    for (const lang of ['en', 'de', 'tr', 'ar', 'uk']) {
+      const loc = JSON.parse(readFileSync(`src/i18n/locales/${lang}/legaldraft.json`, 'utf8'));
+      for (const k of ['cguCitoyen.account.household_v13', 'privacyNotice.purposes.p29_v14']) expect(loc[k], `${lang} ${k}`).toMatch(/\(.+\)\s?:/);
+    }
+  });
+});
+
 describe('cgu-professionnel v11-2026-11-24 — a NEW draft (professional obligations change)', () => {
   it('= v10 + exactly three items: messaging rules, delegate member, own booking page; a draft, the newest of that document', () => {
     expect(L.LEGAL_DRAFTS_PRO_V11).toBe('v11-2026-11-24');
