@@ -6,6 +6,8 @@
  * - Never expose server secrets via `VITE_*`.
  */
 
+import { sentryDsnIsEu } from '../observability/sentryScrub.js';
+
 export const frontendEnv = {
   sentry: {
     /** @type {string | undefined} */
@@ -42,8 +44,6 @@ export const frontendEnv = {
   },
 };
 
-/** the only Sentry ingest origin the CSP allows (vercel.json connect-src https://*.ingest.de.sentry.io) */
-export const SENTRY_EU_INGEST_HOST = /^o\d+\.ingest\.de\.sentry\.io$/;
 
 /**
  * R5-S1 (Sentry EU, errors only): is browser error tracking active in THIS build? True only when
@@ -56,9 +56,7 @@ export const SENTRY_EU_INGEST_HOST = /^o\d+\.ingest\.de\.sentry\.io$/;
  */
 export function errorTrackingActive(facts) {
   const f = facts || errorTrackingBuildFacts();
-  let host = '';
-  try { host = f.dsn ? new URL(f.dsn).hostname : ''; } catch { host = ''; }
-  return SENTRY_EU_INGEST_HOST.test(host) && f.deployEnv === 'production' && f.vercelProduction === true;
+  return sentryDsnIsEu(f.dsn) && f.deployEnv === 'production' && f.vercelProduction === true;
 }
 
 /** @returns {{ dsn?: string, deployEnv?: string, vercelProduction: boolean }} */

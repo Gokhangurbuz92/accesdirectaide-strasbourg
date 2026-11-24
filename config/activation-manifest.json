@@ -1739,6 +1739,10 @@
       "class": "optional",
       "nature": "config"
     },
+    "SENTRY_SERVER_TRACING": {
+      "class": "optional",
+      "nature": "config"
+    },
     "SENTRY_AUTH_TOKEN": {
       "class": "optional",
       "nature": "secret",
@@ -3379,7 +3383,8 @@
       ],
       "optional": [
         "VITE_SENTRY_DSN",
-        "SENTRY_TRACES_SAMPLE_RATE"
+        "SENTRY_TRACES_SAMPLE_RATE",
+        "SENTRY_SERVER_TRACING"
       ],
       "tests": [
         "sentry-sampling.test.js",

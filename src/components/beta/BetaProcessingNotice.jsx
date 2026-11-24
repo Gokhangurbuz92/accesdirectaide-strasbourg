@@ -52,7 +52,7 @@ export default function BetaProcessingNotice() {
         )}
         {errors && (
           <li data-testid="beta-errors-on">
-            <Trans i18n={i18n} i18nKey="legal:beta.errors_on" defaults="Le suivi des erreurs techniques (Sentry, données stockées dans l’Union européenne) est actif : quand une erreur se produit, sa description est envoyée sans votre e-mail, votre adresse IP ni ce que vous tapez ; détails dans la <0>politique de confidentialité</0>."
+            <Trans i18n={i18n} i18nKey="legal:beta.errors_on" defaults="Le suivi des erreurs techniques du site et des serveurs (Sentry, données stockées dans l’Union européenne) est actif : quand une erreur se produit, sa description est envoyée sans votre e-mail, votre adresse IP ni ce que vous tapez ; détails dans la <0>politique de confidentialité</0>."
               components={[<Link key="privacy" to="/politique-confidentialite" className="underline underline-offset-2" />]} />
           </li>
         )}

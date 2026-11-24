@@ -70,8 +70,8 @@ describe('assistant feedback: a refused feedback is said, with a retry', () => {
 });
 
 describe('Sentry filter after removing the dead header scrubber', () => {
-  it('request headers are still redacted (authorization, cookie, tokens, keys)', () => {
-    const out = sanitizeSentryEvent({ request: { headers: { authorization: 'Bearer abc', cookie: 'sid=1', 'x-api-key': 'k', 'x-csrf-token': 't', accept: 'text/html' } } });
-    expect(out.request.headers).toMatchObject({ authorization: '[REDACTED]', cookie: '[REDACTED]', 'x-api-key': '[REDACTED]', 'x-csrf-token': '[REDACTED]', accept: 'text/html' });
+  it('request headers are removed except the user-agent (R5-S1: authorization, cookie, tokens, keys and every other header deleted)', () => {
+    const out = sanitizeSentryEvent({ request: { headers: { authorization: 'Bearer abc', cookie: 'sid=1', 'x-api-key': 'k', 'x-csrf-token': 't', accept: 'text/html', 'user-agent': 'UA' } } });
+    expect(out.request.headers).toEqual({ 'user-agent': 'UA' });
   });
 });

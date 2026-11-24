@@ -47,30 +47,16 @@ describe('Gate 2B-3A: Real Sentry Privacy Tests', () => {
 
         const scrubbed = sanitizeSentryEvent(rawEvent);
 
-        expect(scrubbed.user.id).toBe('[MASQUÉ-RGPD]');
-        expect(scrubbed.user.email).toBe('[REDACTED]');
-        expect(scrubbed.user.phone).toBe('[REDACTED]');
-        expect(scrubbed.request.headers.authorization).toBe('[REDACTED]');
-        expect(scrubbed.request.headers.cookie).toBe('[REDACTED]');
-        expect(scrubbed.request.headers['set-cookie']).toBe('[REDACTED]');
-        
-        expect(scrubbed.request.data.password).toBe('[REDACTED]');
-        expect(scrubbed.request.data.passwordHash).toBe('[REDACTED]');
-        expect(scrubbed.request.data.apiKey).toBe('[REDACTED]');
-        expect(scrubbed.request.data.accessToken).toBe('[REDACTED]');
-        expect(scrubbed.request.data.refreshToken).toBe('[REDACTED]');
-        expect(scrubbed.request.data.prompt).toBe('[REDACTED]');
-        expect(scrubbed.request.data.response).toBe('[REDACTED]');
-        expect(scrubbed.request.data.health).toBe('[REDACTED]');
-        expect(scrubbed.request.data.disability).toBe('[REDACTED]');
-        expect(scrubbed.request.data.NIR).toBe('[REDACTED]');
-        expect(scrubbed.request.data.IBAN).toBe('[REDACTED]');
+        // R5-S1 (stricter than before): identity, request body, cookies and every header except user-agent are deleted, not masked
+        expect(scrubbed.user).toBeUndefined();
+        expect(scrubbed.request).toEqual({ url: 'https://example.com/api' });
+        for (const v of ['test@example.com', '0600000000', '192.168.1.1', 'Bearer token', 'session=abc', '123456789012345', 'system prompt']) expect(JSON.stringify(scrubbed)).not.toContain(v);
 
         expect(scrubbed.extra.diagnostic).toBe('[REDACTED]');
         expect(scrubbed.contexts.sharedDiagnostic).toBe('[REDACTED]');
         
         expect(scrubbed.tags.email).toBe('[REDACTED]');
-        expect(scrubbed.breadcrumbs[0].data.password).toBe('[REDACTED]');
+        expect(scrubbed.breadcrumbs[0].data.password).toBe('[REDACTED]');   // a breadcrumb without category: data redacted by key
     });
 
     it('should scrub sensitive AI prompts from breadcrumbs', () => {
@@ -80,9 +66,7 @@ describe('Gate 2B-3A: Real Sentry Privacy Tests', () => {
             data: { someData: 'yes' }
         };
 
-        const scrubbed = sanitizeSentryBreadcrumb(rawBreadcrumb);
-
-        expect(scrubbed.message).toBe('[REDACTED SENSITIVE BREADCRUMB]');
-        expect(scrubbed.data).toBeUndefined();
+        // R5-S1: console breadcrumbs are dropped altogether (they may print anything)
+        expect(sanitizeSentryBreadcrumb(rawBreadcrumb)).toBeNull();
     });
 });

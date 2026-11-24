@@ -39,7 +39,8 @@ describe('privacy page', () => {
     const p = screen.getByTestId('sentry-active');
     for (const s of ['Sentry, actif', 'Functional Software, Inc.', "stockées dans l'Union européenne (Francfort, Allemagne", 'clauses contractuelles types',
       'Data Privacy Framework', 'la description de l\'erreur', 'chemin de la page sans ses paramètres', 'votre adresse IP', 'formulaires',
-      'Session Replay) est désactivé par défaut et n\'est pas utilisé', '30 jours', 'vous opposer', 'CNIL']) expect(p).toHaveTextContent(s);
+      'Session Replay) est désactivé par défaut et n\'est pas utilisé', '30 jours', 'vous opposer', 'CNIL',
+      'ou sur nos serveurs', 'ni par le site ni par les serveurs']) expect(p).toHaveTextContent(s);
     expect(screen.queryByTestId('sentry-off')).toBeNull();
     expect(screen.getByTestId('beta-processors')).toHaveTextContent("le suivi des erreurs (Sentry, données stockées dans l'Union européenne) est actif");
     expect(container.textContent).not.toContain("la mesure d'audience et Sentry ne sont pas activés");
@@ -64,6 +65,7 @@ describe('cookies page', () => {
     await show('pages/Cookies.jsx', { active: true });
     const p = screen.getByTestId('sentry-active');
     expect(p).toHaveTextContent('Le suivi des erreurs est actif');
+    expect(p).toHaveTextContent('sur le site ou sur nos serveurs');
     expect(p).toHaveTextContent('ne dépose aucun cookie');
     expect(p.querySelector('a')).toHaveAttribute('href', '/politique-confidentialite');
   });
@@ -78,6 +80,7 @@ describe('legal notice', () => {
     await show('pages/MentionsLegales.jsx', { active: true });
     expect(screen.getByTestId('host-errors-active')).toHaveTextContent('Functional Software, Inc. (Sentry), San Francisco, États-Unis');
     expect(screen.getByTestId('host-errors-active')).toHaveTextContent("stockées dans l'Union européenne (Francfort, Allemagne)");
+    expect(screen.getByTestId('host-errors-active')).toHaveTextContent('erreurs techniques du site et des serveurs seulement, sans traces de performance');
   });
   it('beta, not active: the former sentence', async () => {
     await show('pages/MentionsLegales.jsx', { active: false });
@@ -89,7 +92,7 @@ describe('beta notice', () => {
   it('active: error tracking listed as open, no longer in the « not open » sentence', async () => {
     await show('components/beta/BetaProcessingNotice.jsx', { active: true, open: 'admin,accounts,pro,appointments,video,assistant,social_referrals,diagnostic' });
     const box = screen.getByTestId('beta-processing-notice');
-    expect(screen.getByTestId('beta-errors-on')).toHaveTextContent('Le suivi des erreurs techniques (Sentry, données stockées dans l’Union européenne) est actif');
+    expect(screen.getByTestId('beta-errors-on')).toHaveTextContent('Le suivi des erreurs techniques du site et des serveurs (Sentry, données stockées dans l’Union européenne) est actif');
     expect(box).toHaveTextContent('Ne sont pas ouverts : dossiers, messages, documents et mesure d’audience.');
     expect(box).not.toHaveTextContent('suivi des erreurs (Sentry). Les passages');
   });

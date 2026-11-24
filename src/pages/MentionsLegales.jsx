@@ -29,7 +29,7 @@ export default function MentionsLegales() {
   const intro = t('legal:mentions.intro', "Qui édite AccesDirectAide, qui l'héberge, d'où viennent les informations.");
   const dbLabel = t('legal:mentions.host.dbLabel', 'Base de données :');
   // R5-S1: Sentry EU, errors only — named when this build sends errors (errorTrackingActive)
-  const errorsActive = t('legal:mentions.host.errorsActive', "Functional Software, Inc. (Sentry), San Francisco, États-Unis — données d'erreurs stockées dans l'Union européenne (Francfort, Allemagne) ; erreurs techniques seulement, sans enregistrement des sessions.");
+  const errorsActive = t('legal:mentions.host.errorsActive', "Functional Software, Inc. (Sentry), San Francisco, États-Unis — données d'erreurs stockées dans l'Union européenne (Francfort, Allemagne) ; erreurs techniques du site et des serveurs seulement, sans traces de performance ni enregistrement des sessions.");
   const filesLabel = t('legal:mentions.host.filesLabel', 'Stockage des fichiers (Coffre, pièces jointes) :');
   const rateLabel = t('legal:mentions.host.rateLabel', 'Limitation de débit (sécurité) :');
   const errorsLabel = t('legal:mentions.host.errorsLabel', 'Journal des erreurs techniques :');

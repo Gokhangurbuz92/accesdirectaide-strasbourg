@@ -8,6 +8,15 @@
 
 export const ID = '[id]';
 
+/** the only Sentry ingest origin the CSP allows (vercel.json connect-src https://*.ingest.de.sentry.io): o<id>.ingest.de.sentry.io (EU region, Frankfurt) */
+export const SENTRY_EU_INGEST_HOST = /^o\d+\.ingest\.de\.sentry\.io$/;
+
+/** is this DSN one of the EU region? (browser and server: nothing is sent to another region) @param {unknown} dsn */
+export function sentryDsnIsEu(dsn) {
+  if (typeof dsn !== 'string' || !dsn) return false;
+  try { return SENTRY_EU_INGEST_HOST.test(new URL(dsn).hostname); } catch { return false; }
+}
+
 /** paths whose dynamic parts are personal (share / passport links, reset tokens, appointments, shared files): every segment after the prefix is masked */
 const DYNAMIC_PREFIXES = [['share'], ['passport'], ['reset-password'], ['rdv'], ['compte', 'partages']];
 
@@ -60,6 +69,12 @@ export function scrubText(text) {
     .replace(/(^|[\s'"(])(\/[^\s'"<>)]*)/g, (_all, pre, p) => pre + String(scrubUrl(p)));
 }
 
+/** a tag: a route without its leading slash (« share/<token> ») is a path too @param {unknown} v */
+function scrubTag(v) {
+  if (typeof v !== 'string') return v;
+  return /^[^\s]*\/[^\s]*$/.test(v) && !/^[a-z][a-z0-9+.-]*:\/\//i.test(v) ? scrubUrl(v) : scrubText(v);
+}
+
 /** @param {any} frame */
 function scrubFrame(frame) {
   if (!frame || typeof frame !== 'object') return frame;
@@ -79,7 +94,7 @@ export function scrubBreadcrumb(crumb) {
   const out = { ...crumb };
   if (out.message) out.message = scrubText(out.message);
   const d = out.data && typeof out.data === 'object' ? out.data : null;
-  if (out.category === 'fetch' || out.category === 'xhr') {
+  if (out.category === 'fetch' || out.category === 'xhr' || out.category === 'http') {
     out.data = d ? { method: d.method, url: scrubUrl(d.url), status_code: d.status_code } : undefined;
   } else if (out.category === 'navigation') {
     out.data = d ? { from: scrubUrl(d.from), to: scrubUrl(d.to) } : undefined;
@@ -102,18 +117,22 @@ export function scrubEvent(event) {
   delete event.extra;
   delete event.server_name;
   if (event.request) {
-    const ua = event.request.headers && (event.request.headers['User-Agent'] || event.request.headers['user-agent']);
-    event.request = { url: scrubUrl(event.request.url), ...(ua ? { headers: { 'User-Agent': ua } } : {}) };
+    const h = event.request.headers && typeof event.request.headers === 'object' ? event.request.headers : {};
+    const uaKey = Object.keys(h).find((k) => k.toLowerCase() === 'user-agent');
+    const ua = uaKey ? h[uaKey] : undefined;
+    // every other header goes: x-forwarded-for, x-real-ip, cf-connecting-ip, authorization, cookie, referer …; data, cookies, query_string, env too
+    event.request = { url: scrubUrl(event.request.url), ...(typeof ua === 'string' ? { headers: { [String(uaKey)]: ua } } : {}) };
     if (!event.request.url) delete event.request.url;
   }
   if (event.contexts) {
     if (event.contexts.runtime) delete event.contexts.runtime.env;
     delete event.contexts.state;   // redux-like state snapshots
   }
-  if (event.transaction) event.transaction = scrubUrl(event.transaction);
+  if (event.transaction) event.transaction = scrubText(scrubUrl(event.transaction));
+  if (event.contexts?.http && typeof event.contexts.http.path === 'string') event.contexts.http.path = scrubUrl(event.contexts.http.path);
   if (event.message) event.message = typeof event.message === 'string' ? scrubText(event.message) : { ...event.message, formatted: scrubText(event.message.formatted), message: scrubText(event.message.message), params: undefined };
   if (event.logentry) event.logentry = { message: scrubText(event.logentry.message) };
-  if (event.tags && typeof event.tags === 'object') for (const k of Object.keys(event.tags)) event.tags[k] = scrubText(event.tags[k]);
+  if (event.tags && typeof event.tags === 'object') for (const k of Object.keys(event.tags)) event.tags[k] = scrubTag(event.tags[k]);
   for (const ex of event.exception?.values || []) {
     ex.value = scrubText(ex.value);
     for (const f of ex.stacktrace?.frames || []) scrubFrame(f);
