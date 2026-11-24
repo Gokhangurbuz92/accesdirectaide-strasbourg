@@ -4,6 +4,7 @@
  * a deployed environment, the release preflight check, and the erasure call. Synthetic keys only; the database is a proxy that fails if touched.
  */
 import crypto from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { describe, expect, it, vi } from 'vitest';
 
 const touched = vi.hoisted(() => ({ n: 0 }));
@@ -147,9 +148,16 @@ describe('release preflight: hds.gateway', () => {
     const both = { ...PROD_VAULT, ADA_CAPABILITIES_OPEN: 'citizen.vault,citizen.shared_dossier' };
     expect(hdsGatewayCheck(get(both), both, { cspText: csp(` ${gw.HDS_DEFAULT_ORIGIN}`) })).toEqual(['WARN', expect.stringMatching(/not ported.*citizen\.shared_dossier/)]);
   });
-  it('the shipped vercel.json does not yet allow the HDS origin, so a configured gateway FAILS the release until the CSP change is made', () => {
+  it('the shipped CSP allows exactly the live HDS origin (release 3, 24/11/2026): a configured gateway passes; another allow-listed host still fails', () => {
+    const vercel = readFileSync('vercel.json', 'utf8');
+    const connect = [...vercel.matchAll(/connect-src ([^;"]*)/g)].map((m) => m[1]);
+    expect(connect).toEqual(Array(2).fill(`'self' ${gw.HDS_DEFAULT_ORIGIN}`));   // enforced + report-only; no wildcard
+    expect(gw.HDS_DEFAULT_ORIGIN).toBe('https://ada-hds-strasbourg.osc-fr1.scalingo.io');
     const r = evaluateReleasePreflight(PROD_VAULT).find((c) => c.id === 'hds.gateway');
-    expect(r?.status).toBe('FAIL');
+    expect(r?.status).toBe('PASS');
+    const other = { ...PROD_VAULT, HDS_SERVICE_URL: 'https://another-app.osc-fr1.scalingo.io' };
+    const r2 = evaluateReleasePreflight(other).find((c) => c.id === 'hds.gateway');
+    expect(r2?.status).toBe('FAIL'); expect(r2?.detail).toMatch(/connect-src/);
     expect(evaluateReleasePreflight({}).find((c) => c.id === 'hds.gateway')?.status).toBe('PASS');
   });
 });

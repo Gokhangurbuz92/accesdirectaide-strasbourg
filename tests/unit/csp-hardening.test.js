@@ -20,9 +20,11 @@ describe('CSP (vercel.json)', () => {
   });
   // R31 (01/11/2026): Sentry (decision D5) and the audience measurement (ADR-022) are off, so no third-party host may receive a connection — an injected
   // script could otherwise send data to any project on those services. Turning one on is a deliberate change of this list (docs/deployment.md).
-  it('connections: the site itself only while Sentry and the audience measurement are off', () => {
-    expect(csp['connect-src']).toEqual(["'self'"]);
-    expect(readFileSync('api/_services/page-head.js', 'utf8')).toContain("connect-src 'self';");
+  // Release 3 (owner 24/11/2026, P28 / AIPD R9): the browser reaches Mon Coffre's HDS service (Scalingo osc-fr1) — exactly that origin, no wildcard;
+  // citizen.vault itself stays closed by default (capabilities). The API responses (security.js) keep 'self' only.
+  it('connections: the site itself and the HDS service only, while Sentry and the audience measurement are off', () => {
+    expect(csp['connect-src']).toEqual(["'self'", 'https://ada-hds-strasbourg.osc-fr1.scalingo.io']);
+    expect(readFileSync('api/_services/page-head.js', 'utf8')).toContain("connect-src 'self' https://ada-hds-strasbourg.osc-fr1.scalingo.io;");
     expect(readFileSync('api/_utils/security.js', 'utf8')).toContain(`"connect-src 'self'",`);
     expect(csp['object-src']).toEqual(["'none'"]);
   });

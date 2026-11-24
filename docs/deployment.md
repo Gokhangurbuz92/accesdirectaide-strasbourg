@@ -123,7 +123,7 @@ Ce sont des hypothèses **non vérifiables hors ligne** ; chacune est bloquante 
 | Base de données | Neon (PostgreSQL) | région UE, TLS vérifié, sauvegardes avec restauration testée |
 | Limites de débit, sessions | Upstash KV | région UE |
 | Stockage de fichiers | S3 compatible | région UE, DPA |
-| Erreurs | Sentry | région UE (`*.ingest.de.sentry.io`), DPA, Session Replay désactivé. **Désactivé pendant la bêta (D5)** : depuis le 01/11/2026 la CSP `connect-src` est `'self'` seulement ; activer Sentry (ou la mesure d'audience, `*.vercel-analytics.com`) demande d'ajouter son hôte dans `vercel.json`, `api/_services/page-head.js` et `api/_utils/security.js` |
+| Erreurs | Sentry | région UE (`*.ingest.de.sentry.io`), DPA, Session Replay désactivé. **Désactivé pendant la bêta (D5)** : depuis le 01/11/2026 la CSP `connect-src` est `'self'` seulement (plus, depuis la release 3, l'origine exacte du service HDS de Mon Coffre `https://ada-hds-strasbourg.osc-fr1.scalingo.io`) ; activer Sentry (ou la mesure d'audience, `*.vercel-analytics.com`) demande d'ajouter son hôte dans `vercel.json`, `api/_services/page-head.js` et `api/_utils/security.js` |
 | E-mail | Resend | DPA |
 | IA | aucune en production | modèle local (Ollama) sur le LAB seulement |
 
