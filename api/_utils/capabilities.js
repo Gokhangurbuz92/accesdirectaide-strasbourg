@@ -32,7 +32,7 @@ export const CAPABILITY_NOT_OPEN_MESSAGE = 'Cette fonction n’est pas encore ou
 const M = 'R45_HDS_FEATURE_MATRIX_FR.md § 3';
 
 /**
- * @typedef {{ description: string, aipd: 'in' | 'out', requiresHds: boolean, hdsDependsOnStructure?: boolean, hdsCheckedPerRecord?: boolean, hdsNote?: string, surface: string, accountsFull?: boolean,
+ * @typedef {{ description: string, aipd: 'in' | 'out', requiresHds: boolean, hdsDependsOnStructure?: boolean, hdsCheckedPerRecord?: boolean, hdsWaiverOnly?: boolean, hdsNote?: string, surface: string, accountsFull?: boolean,
  *   openable?: boolean, aipdRef: string }} Capability
  */
 /** @type {Readonly<Record<string, Capability>>} */
@@ -92,8 +92,12 @@ export const CAPABILITIES = Object.freeze({
   // classified NOT_ESSMS by the reviewed rule of the social referral (api/lib/social-referral-policy.js) AND the appointment's service is reviewed
   // « ordinary » (api/lib/service-sensitivity.js); anything else (ESSMS, health, unknown kind, sensitive or unreviewed service) needs the HDS attestation.
   // The route gate assumes the best case (`hdsCheckedPerRecord`); the handlers re-check every conversation (api/_services/messaging-policy.js).
+  // G14-R4 (live-checked review of 395a8abe): the messages are stored in Neon (server-side encryption, not the HDS service), so an HDS attestation must NOT
+  // widen the conversation to ESSMS / health / unreviewed services — the owner approved messaging for NOT_ESSMS + « ordinary » only (P29, 24/11/2026).
+  // `hdsWaiverOnly`: the HDS need is satisfied ONLY by the waiver (NOT_ESSMS + ordinary), never by the attestation. Files of a conversation are a separate
+  // path (messaging.attachments) that IS stored at the HDS service and keeps its own HDS rule.
   'messaging.conversations': { description: 'appointment conversations between a person and the structure of their appointment (text, notifications, read state)',
-    aipd: 'out', requiresHds: true, hdsDependsOnStructure: true, hdsCheckedPerRecord: true,
+    aipd: 'out', requiresHds: true, hdsDependsOnStructure: true, hdsCheckedPerRecord: true, hdsWaiverOnly: true,
     hdsNote: `${M} row 5 / R44 § 11.5: free text — HDS waived only for a NOT_ESSMS structure and an ordinary service; otherwise closed until HDS`, surface: 'communications', aipdRef: 'AIPD § 2.1 « messagerie » (line to sign)' },
   // R3: a file attached to a conversation message (PDF / image) can be a medical document whatever the structure: it stays closed until certified HDS
   // hosting exists, even when messaging.conversations is open for a NOT_ESSMS structure.
@@ -233,6 +237,9 @@ export function capabilitiesOfRoute(path) {
   return key ? ROUTE_CAPABILITIES[key] : [];
 }
 
+/** reason of a record whose HDS need is not waived while its data are kept outside the HDS service (G14-R4, `hdsWaiverOnly`) */
+export const STORED_OUTSIDE_HDS = 'STORED_OUTSIDE_HDS';
+
 /** @param {unknown} v */
 const flag = (v) => String(v ?? '').trim();
 
@@ -299,6 +306,8 @@ export function capabilityState(name, envVars = process.env, opts = {}) {
   if (cap.aipd !== 'in' && !listedCapabilities(envVars).has(key)) return { open: false, reason: 'NOT_LISTED_IN_ADA_CAPABILITIES_OPEN' };
   // a structure-dependent HDS need (ESSMS or not) is waived only for a structure positively classified NOT_ESSMS; unknown = HDS needed (fail-closed)
   const hdsNeeded = cap.requiresHds && !(cap.hdsDependsOnStructure && opts.structureCategory === 'NOT_ESSMS');
+  // G14-R4: data kept outside the HDS service (hdsWaiverOnly) — an attestation never opens what only the waiver may open
+  if (hdsNeeded && cap.hdsWaiverOnly) return { open: false, reason: STORED_OUTSIDE_HDS };
   if (hdsNeeded && !hdsAttestation(envVars, opts.now).valid) return { open: false, reason: 'HDS_HOSTING_NOT_ATTESTED' };
   // G14-R3 / R4: deployed, a capability served by the HDS service (or whose payload lives there) also needs the approved, allow-listed gateway, a matching
   // attestation and a ported module
@@ -326,6 +335,21 @@ export function closedCapabilityOfRoute(path, envVars = process.env) {
   // R3: a capability whose HDS need depends on the record (hdsCheckedPerRecord) passes the ROUTE gate in its best case (a NOT_ESSMS structure); its
   // handler decides each record with the real classification and refuses the others (fail closed)
   return capabilitiesOfRoute(path).find((c) => !capabilityState(c, envVars, CAPABILITIES[c]?.hdsCheckedPerRecord ? { structureCategory: 'NOT_ESSMS' } : {}).open) || null;
+}
+
+/**
+ * G14-R4 (live-checked review of 395a8abe) — what the browser may offer about dossier sharing, from the SAME rules that answer the requests (never a value):
+ *   sharedDossiers   citizen.shared_dossier is open (deployed: at the HDS service, « Mes dossiers partagés »)
+ *   diagnosticShare  POST /api/share/create would be served here: every capability of the route open AND not an HDS-only route in a deployed environment
+ *                    (an account-free share link has no HDS equivalent: deployed, it answers 409 even with the capability open)
+ * @param {Record<string, string | undefined>} [envVars] @returns {{ sharedDossiers: boolean, diagnosticShare: boolean }}
+ */
+export function sharingAvailability(envVars = process.env) {
+  const route = 'share/create';
+  return {
+    sharedDossiers: capabilityOpen('citizen.shared_dossier', envVars),
+    diagnosticShare: closedCapabilityOfRoute(route, envVars) === null && !hdsServiceRoute(capabilitiesOfRoute(route), envVars),
+  };
 }
 
 /** the refusal body (no data) @param {string} capability */

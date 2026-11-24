@@ -80,7 +80,7 @@ describe('R3 messaging capabilities', () => {
     ];
     for (const [row, reason] of cases) {
       expect(conversationDecision(row, LISTED), reason).toEqual({ open: false, reason });
-      if (row) expect(conversationDecision(row, { ...LISTED, ADA_HDS_CERTIFIED_HOSTING: HDS }).open, reason).toBe(true);   // HDS attested: every conversation
+      if (row) expect(conversationDecision(row, { ...LISTED, ADA_HDS_CERTIFIED_HOSTING: HDS }), reason).toEqual({ open: false, reason });   // G14-R4: HDS attested changes nothing (messages in Neon; P29 = NOT_ESSMS + ordinary)
     }
   });
   it('the LAB (no enforcement) reads nothing and serves everything; a read failure decides « closed »', async () => {

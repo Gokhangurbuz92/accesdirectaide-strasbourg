@@ -3,19 +3,19 @@
  * R3 (24/11/2026) — the per-conversation decision of the appointment messaging (capability `messaging.conversations`, api/_utils/capabilities.js).
  *
  * The route gate lets a conversation route through in its best case (capability listed, surface open). Each conversation is then decided here, from its
- * appointment: without a valid HDS attestation it is served ONLY when
+ * appointment: it is served ONLY when (G14-R4: whatever the HDS attestation says — the messages are stored in Neon, not at the HDS service)
  *   - the appointment's structure is positively classified NOT_ESSMS by the reviewed rule of the social referral (verified, active, no FINESS registration,
  *     a reviewed non-medical kind, no sensitive word — api/lib/social-referral-policy.js), AND
  *   - the appointment's service is reviewed « ordinary » by an administrator (api/lib/service-sensitivity.js; unknown = sensitive, fail closed).
  * Otherwise (ESSMS, health, unknown kind, sensitive or unreviewed service) the free text may be health data hosted on behalf of a care / medico-social
- * follow-up (R44 AIPD § 11.5, R45 matrix row 5): the conversation stays closed until certified hosting is attested. Attachments are a separate capability
- * (`messaging.attachments`, HDS whatever the structure).
+ * follow-up (R44 AIPD § 11.5, R45 matrix row 5): the conversation stays closed (owner decision P29: NOT_ESSMS + ordinary only); an HDS attestation does not
+ * open it, since its text is not stored at the HDS service. Attachments are a separate capability (`messaging.attachments`, stored at the HDS service).
  *
  * Nothing here reads a message: one query on the appointment, its structure and the stored service review. No personal data is logged or answered.
  */
 import { sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../src/db/index.js';
-import { capabilityEnforced, capabilityOpen, capabilityRefusal, capabilityState } from '../_utils/capabilities.js';
+import { capabilityEnforced, capabilityOpen, capabilityRefusal, capabilityState, STORED_OUTSIDE_HDS } from '../_utils/capabilities.js';
 import { socialReferralStructureClass } from '../lib/social-referral-policy.js';
 import { SENSITIVITY, resolveServiceSensitivity } from '../lib/service-sensitivity.js';
 
@@ -47,7 +47,7 @@ export function conversationDecision(row, envVars = process.env) {
   if (!capabilityEnforced(envVars)) return { open: true, reason: 'ENFORCEMENT_OFF' };   // development / test LAB only, like every capability
   const { structureCategory, reason } = conversationClass(row);
   const state = capabilityState(CONVERSATIONS, envVars, { structureCategory });
-  return state.open ? { open: true, reason: null } : { open: false, reason: state.reason === 'HDS_HOSTING_NOT_ATTESTED' && reason ? `HDS_REQUIRED:${reason}` : state.reason };
+  return state.open ? { open: true, reason: null } : { open: false, reason: (state.reason === 'HDS_HOSTING_NOT_ATTESTED' || state.reason === STORED_OUTSIDE_HDS) && reason ? `HDS_REQUIRED:${reason}` : state.reason };
 }
 
 /** the appointment rows of these appointment ids, with what the decision needs @param {string[]} appointmentIds @param {any} db */

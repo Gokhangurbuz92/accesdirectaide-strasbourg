@@ -128,7 +128,7 @@ async function getConversations(req, res, user) {
     },
   });
 
-  // R3: only the conversations this deployment serves (messaging.conversations: NOT_ESSMS structure + ordinary service, or HDS) are listed
+  // R3: only the conversations this deployment serves (messaging.conversations: NOT_ESSMS structure + ordinary service only — G14-R4: an HDS attestation does not widen it) are listed
   const decisions = await conversationDecisions(conversations.map((c) => c.appointmentId));
   return res.status(200).json({
     ok: true,

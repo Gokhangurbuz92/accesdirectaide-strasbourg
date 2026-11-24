@@ -135,7 +135,7 @@ async function getConversations(req, res, proCtx) {
 
   // B02: which of them this member has not read (null on a database without the read marker: no flag at all, as before)
   const unread = await unreadConversationIds(proCtx).catch(() => null);
-  // R3: only the conversations this deployment serves (messaging.conversations: NOT_ESSMS structure + ordinary service, or HDS)
+  // R3: only the conversations this deployment serves (messaging.conversations: NOT_ESSMS structure + ordinary service only — G14-R4: an HDS attestation does not widen it)
   const decisions = await conversationDecisions(conversations.map((c) => c.appointmentId));
 
   return res.status(200).json({

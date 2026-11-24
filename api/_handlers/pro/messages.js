@@ -59,7 +59,7 @@ async function handler(req, res) {
   if (!appointment || appointment.structureId !== proCtx.structureId) {
     return res.status(404).json({ error: 'Appointment not found' });
   }
-  if (!(await conversationAllowed(appointment.id)).open) return refuseClosed(res);   // R3: messaging.conversations (NOT_ESSMS + ordinary service, or HDS)
+  if (!(await conversationAllowed(appointment.id)).open) return refuseClosed(res);   // R3: messaging.conversations (NOT_ESSMS + ordinary service only, G14-R4)
 
   const conversation = await db.query.RdvConversation.findFirst({ where: eq(RdvConversation.appointmentId, appointment.id) });
 

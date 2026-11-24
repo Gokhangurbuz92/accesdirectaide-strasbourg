@@ -40,6 +40,7 @@ let calls;
 const fetchWith = (diagnostic, share) => vi.fn(async (url, init) => {
   calls.push({ url, body: init && init.body ? JSON.parse(init.body) : null });
   if (url === '/api/diagnostic') return { ok: diagnostic.status === 200, status: diagnostic.status, json: async () => diagnostic.body };
+  if (url === '/api/status') return { ok: true, status: 200, json: async () => ({ features: { sharedDossiers: true, diagnosticShare: true } }) };   // G14-R4
   if (url === '/api/share/create') return { ok: true, status: 200, json: async () => share || { shareId: 's1', shareUrl: '/share/s1#capability=abc', ownerSecret: 'o', passportUrl: '/passport/s1#owner=o', expiresAt: '2030-01-01T00:00:00Z' } };
   return { ok: false, status: 404, json: async () => ({}) };
 });
@@ -139,8 +140,10 @@ describe('U6 — every rendered state carries the five provenance lines (missing
 });
 
 describe('U7 — privacy wording: transmitted to the server, technical info recorded, sharing separate; no browser-only / nothing-stored claim', () => {
-  it('shows the owner-supplied provisional wording once, the sharing sentence apart, and links to the existing privacy page', () => {
+  it('shows the owner-supplied provisional wording once, the sharing sentence apart, and links to the existing privacy page', async () => {
+    vi.stubGlobal('fetch', fetchWith({ status: 200, body: {} }));   // G14-R4: the sharing sentence follows GET /api/status
     render(wrap(createElement(DiagnosticPage)));
+    await screen.findByTestId('privacy-sharing-sentence');
     const box = screen.getAllByTestId('privacy-notice');
     expect(box).toHaveLength(1);
     expect(box[0]).toHaveTextContent('Pour réaliser ce diagnostic, vos réponses sont transmises à notre serveur. Des informations techniques sur le traitement sont enregistrées.');

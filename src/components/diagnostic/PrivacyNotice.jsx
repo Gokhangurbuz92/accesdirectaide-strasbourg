@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { shareOpened } from '@/lib/publicBeta';
+import { useServerFeature } from '@/lib/serverFeatures';
 
 /**
  * Provisional LAB wording (owner-supplied proposal, NOT legal approval; release gate for legal basis / retention / notice stays OPEN).
@@ -41,7 +42,8 @@ export default function PrivacyNotice() {
     const text = privacyText(t);
     // R3H (live audit 24/11/2026): the sentences about sharing the diagnostic with a structure are shown only when this build offers the sharing (« documents »
     // surface, the same switch as the « Partager » button of DiagnosticOutcome); otherwise they described a step nobody can take
-    const sharing = shareOpened(frontendEnv.flags.publicBeta);
+    // G14-R4: … and only when the server really serves the sharing (GET /api/status features.diagnosticShare), like the button
+    const sharing = useServerFeature('diagnosticShare', shareOpened(frontendEnv.flags.publicBeta));
     const falc = sharing ? text.falc : text.falc.filter((_l, i) => i !== 2 && i !== 3);
     return (
         <section aria-labelledby="diag-privacy-title" data-testid="privacy-notice" className="mx-auto max-w-xl text-start text-sm text-slate-800">

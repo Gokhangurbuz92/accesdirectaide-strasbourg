@@ -9,21 +9,24 @@ import axe from 'axe-core';
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/react';
 import { createElement } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import DiagnosticOutcome from '../../src/components/diagnostic/DiagnosticOutcome.jsx';
 import ActionPlan from '../../src/components/diagnostic/ActionPlan.jsx';
 import { buildAssessment } from '../../api/lib/assessmentContract.js';
 import { UNSUPPORTED_RIGHTS } from '../../api/lib/diagnosticAssessment.js';
 import { findProhibitedDecisionWording } from '../helpers/decision-wording.js';
 
-afterEach(cleanup);
+// G14-R4: the server serves the diagnostic sharing (GET /api/status features.diagnosticShare) — the « Partager » button / step / sentence follow it
+const statusFetch = () => vi.fn(async (url) => (url === '/api/status' ? { ok: true, status: 200, json: async () => ({ features: { sharedDossiers: true, diagnosticShare: true } }) } : { ok: false, status: 404, json: async () => ({}) }));
+beforeEach(() => { vi.stubGlobal('fetch', statusFetch()); });
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 const ANSWERS = { birthDate: '1992-03-10', householdSize: 1, territory: '67000', income: { unemployment: 700 }, housing: { status: 'tenant', rent: 480 } };
 const results = (a = ANSWERS) => ({ assessment: buildAssessment({ answers: a, unsupportedRights: UNSUPPORTED_RIGHTS }), period: '2026-09', meta: { requestId: 'r', duration_ms: 1 } });
 const open = (r = results()) => render(createElement(MemoryRouter, null, createElement(DiagnosticOutcome, { results: r, situation: {} })));
 
 describe('the plan on the result page', () => {
-  it('is a labelled region with a heading, an ordered list of numbered steps (FALC sentence first) and a statement that it is not saved and decides nothing', () => {
-    open();
+  it('is a labelled region with a heading, an ordered list of numbered steps (FALC sentence first) and a statement that it is not saved and decides nothing', async () => {
+    open(); await screen.findByTestId('plan-step-share');
     const region = screen.getByTestId('action-plan');
     expect(region).toHaveAccessibleName(/Plan d.action/i);
     expect(within(region).getByRole('heading', { level: 2, name: /Plan d.action/i })).toBeInTheDocument();
@@ -37,8 +40,8 @@ describe('the plan on the result page', () => {
     open(); const first = screen.getByTestId('action-plan').querySelector('details > summary'); expect(first).toHaveTextContent(/Plus d.explications/i);
     first.focus(); expect(document.activeElement).toBe(first);
   });
-  it('links: internal information pages, the structure directory, an in-page anchor to the sharing buttons that exists, and the emergency resources', () => {
-    open(); const region = screen.getByTestId('action-plan');
+  it('links: internal information pages, the structure directory, an in-page anchor to the sharing buttons that exists, and the emergency resources', async () => {
+    open(); await screen.findByTestId('plan-step-share'); const region = screen.getByTestId('action-plan');
     const hrefs = [...region.querySelectorAll('a')].map((a) => a.getAttribute('href'));
     expect(hrefs).toEqual(expect.arrayContaining(['/aides/rsa', '/aides/apl', '/structures', '#share-actions', '/ressources?emergency=1', ]));
     for (const h of hrefs) expect(h).toMatch(/^(\/|#)/);

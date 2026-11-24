@@ -13,6 +13,7 @@ import ActionPlan from '@/components/diagnostic/ActionPlan';
 import { formatNumber, useT } from '@/i18n';
 import { frontendEnv } from '@/config/env';
 import { shareOpened } from '@/lib/publicBeta';
+import { useServerFeature } from '@/lib/serverFeatures';
 
 /**
  * DTA S1 stage 2b — result area of the diagnostic page, built on the assessment contract only.
@@ -21,12 +22,14 @@ import { shareOpened } from '@/lib/publicBeta';
  * R40: the texts are in the interface language (namespace `diagnostic`); a failure is kept as a code, so its message follows a language change.
  */
 /* G4: `local` = the result was computed in the browser (src/lib/orientationBrowserOnly.js): no question to the assistant (it would send the leads to a
-   server), no request id line, and the plan's « Partager » step only when the sharing button is offered (documents surface open) */
+   server), no request id line; G14-R4: the plan's « Partager » step only when the sharing button is offered (build AND server), local or not */
 export default function DiagnosticOutcome({ results, situation, structureLoader, local = false }) {
     const { period, meta } = results;
     const exportable = shareableResults(results);
-    // G3: /api/share/create belongs to the documents surface; a beta build that keeps it closed does not offer a button that could only fail
-    const canShare = shareOpened(frontendEnv.flags.publicBeta);
+    // G3: /api/share/create belongs to the documents surface; a beta build that keeps it closed does not offer a button that could only fail.
+    // G14-R4: and the server must really serve it (capabilities open, not an HDS-only route) — GET /api/status features.diagnosticShare
+    const buildShare = shareOpened(frontendEnv.flags.publicBeta);
+    const canShare = useServerFeature('diagnosticShare', buildShare);
     const { t, i18n } = useT('diagnostic');
     const SHARE_ERRORS = {
         rate: t('diagnostic:outcome.share_error_rate', 'Trop de partages en peu de temps : réessayez dans quelques minutes.'),
@@ -86,7 +89,7 @@ export default function DiagnosticOutcome({ results, situation, structureLoader,
         <div className="space-y-6">
             <AssessmentView results={results} linkAides />
 
-            <ActionPlan results={results} structureLoader={structureLoader} hideShareStep={local && !canShare} />
+            <ActionPlan results={results} structureLoader={structureLoader} hideShareStep={!canShare} />
 
             {!local && readAssessment(results).usable && (
                 <div className="rounded-xl border border-teal-200 bg-teal-50 p-4">

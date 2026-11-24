@@ -21,7 +21,7 @@ describe('R47 activation simulator — derivation', () => {
     for (const r of rep.results.filter((x) => x.kind === 'capability' && x.expected === 'open')) {
       const cap = CAPABILITIES[r.id.slice('capability.'.length)];
       expect(r.env.some((v) => v.name === 'ADA_CAPABILITIES_OPEN')).toBe(cap.aipd === 'out');
-      expect(r.env.some((v) => v.name === 'ADA_HDS_CERTIFIED_HOSTING')).toBe(cap.requiresHds);
+      expect(r.env.some((v) => v.name === 'ADA_HDS_CERTIFIED_HOSTING')).toBe(cap.requiresHds && !cap.hdsWaiverOnly);   // G14-R4: messaging (stored in Neon) is never opened by the token
     }
   });
 });

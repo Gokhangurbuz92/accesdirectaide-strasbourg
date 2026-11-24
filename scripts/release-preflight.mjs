@@ -209,8 +209,31 @@ export function messagingCheck(env, { betaOn, opened }) {
   const files = capabilityState('messaging.attachments', prodEnv);
   if (!surface || !best.open) return ['PASS', `appointment messaging closed (${!surface ? 'communications surface closed' : best.reason})`];
   if (betaOn && !opened.has('appointments')) return ['FAIL', 'messaging.conversations is open but the appointments surface is not: a conversation only exists for an appointment'];
-  if (!all.open) return ['WARN', `appointment messaging open for NOT_ESSMS structures and services reviewed « ordinary » only (no HDS attestation); attachments ${files.open ? 'open' : 'closed (HDS)'}`];
-  return ['WARN', `appointment messaging open for every structure (HDS attested: check the certificate); attachments ${files.open ? 'open' : 'closed (not listed)'}`];
+  // G14-R4: the messages are stored in Neon — an HDS attestation never widens the scope (capabilities.js hdsWaiverOnly); a wider state is a defect
+  if (all.open) return ['FAIL', 'messaging.conversations opens beyond NOT_ESSMS structures and « ordinary » services although the messages are not stored at the HDS service'];
+  return ['WARN', `appointment messaging open for NOT_ESSMS structures and services reviewed « ordinary » only (messages stored in Neon; an HDS attestation does not widen it); attachments ${files.open ? 'open (stored at the HDS service)' : 'closed'}`];
+}
+
+/**
+ * G14-R4 — does the `documents` surface need the EU object storage (STORAGE_*)? The Coffre and the shared dossiers live at the HDS service (services/hds):
+ * deployed, their Vercel routes never read or write a file (409 HDS_SERVICE_REQUIRED). So the bucket is NOT required when the gateway serves the vault
+ * module (HDS_SERVICE_URL on the certified allow-list, approval, ticket key, attestation of the same provider, module ported) AND no capability that would
+ * store files on Vercel / S3 is open — i.e. no open capability of the `documents` surface outside the HDS-served ones. Anything else = the bucket is
+ * required, as before (fail closed). Names only, never values.
+ * @param {Record<string, string | undefined>} env @param {(k: string) => string} get @returns {['PASS' | 'FAIL', string]}
+ */
+export function documentsStorageCheck(env, get) {
+  const prodEnv = { ...env, VERCEL_ENV: 'production' };
+  const bucket = ['STORAGE_ENDPOINT', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY_ID', 'STORAGE_SECRET_ACCESS_KEY'].every((k) => get(k));
+  const gw = hdsGatewayState(prodEnv, { deployed: true });
+  const vaultAtHds = gw.ready && hdsAttestationProvider(prodEnv) === gw.provider && hdsModuleReady('citizen.vault');
+  /** capabilities of the documents surface whose files would be kept by this application (Vercel / S3), open in production */
+  const vercelStored = Object.entries(CAPABILITIES).filter(([k, c]) => c.surface === 'documents' && !HDS_SERVICE_CAPABILITIES.includes(k) && !HDS_PAYLOAD_CAPABILITIES.includes(k)
+    && capabilityState(k, prodEnv).open).map(([k]) => k);
+  if (vaultAtHds && !vercelStored.length) return ['PASS', `documents served by the HDS service (${gw.origin}): Mon Coffre${capabilityState('citizen.shared_dossier', prodEnv).open ? ' and shared dossiers' : ''} end-to-end encrypted there — no bucket needed${bucket ? ' (STORAGE_* set but unused by these capabilities)' : ''}`];
+  if (bucket) return ['PASS', 'object storage (STORAGE_*): an EU bucket under a DPA'];
+  return ['FAIL', vercelStored.length ? `${vercelStored.join(', ')} open: files kept by this application need STORAGE_* (an EU bucket under a DPA)`
+    : `the documents surface is open but the HDS service does not serve the vault (${gw.ready ? (hdsAttestationProvider(prodEnv) !== gw.provider ? 'HDS_ATTESTATION_PROVIDER_MISMATCH' : 'HDS_MODULE_NOT_PORTED') : gw.reason}): STORAGE_* required (an EU bucket under a DPA)`];
 }
 
 /** @param {Record<string, string | undefined>} env @param {{ legalText?: string, policy?: any, cspText?: string }} [opts] legalText: the legal-pages source (tests pass their own); policy: a test copy of the retention policy */
@@ -262,7 +285,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
   // attachments ALWAYS go to the HDS service (capabilityState needs the ready gateway; Vercel refuses the bytes, api/_services/message-attachments.js): no bucket
   const attachmentsOpen = needs(['communications']) && capabilityState('messaging.attachments', { ...env, VERCEL_ENV: 'production' }).open;
   if (!needs(['documents'])) add('storage.configured', 'PASS', notUsed('the Coffre') + (attachmentsOpen ? '; message attachments open: stored end-to-end encrypted at the HDS service (no bucket)' : '; message attachments closed (messaging.attachments)'));
-  else add('storage.configured', ['STORAGE_ENDPOINT', 'STORAGE_BUCKET', 'STORAGE_ACCESS_KEY_ID', 'STORAGE_SECRET_ACCESS_KEY'].every((k) => get(k)) ? 'PASS' : 'FAIL', 'object storage (Coffre, attachments): an EU bucket under a DPA');
+  else add('storage.configured', ...documentsStorageCheck(env, get));
   // R34 (G11): the LAB's local file store must not reach production (the runtime ignores it there; the variable signals a copied LAB environment)
   add('storage.no_local_dir', !get('ADA_LOCAL_STORAGE_DIR') ? 'PASS' : beta ? 'WARN' : 'FAIL', 'ADA_LOCAL_STORAGE_DIR is LAB only: delete it from the production environment');
   add('db.tls_verified', get('DATABASE_SSL_VERIFY') === 'true' ? 'PASS' : 'FAIL', 'DATABASE_SSL_VERIFY=true: the database certificate is verified');

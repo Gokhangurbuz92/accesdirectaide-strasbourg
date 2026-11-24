@@ -41,7 +41,10 @@ describe('FA-D8 HDS-bound features stay closed in production', () => {
     const env = { VERCEL_ENV: 'production', ...everythingOpen, ADA_HDS_CERTIFIED_HOSTING: VALID };
     // G14-R3 / R4: the capabilities served by the HDS service, or whose payload lives there, need MORE than the token (the approved, allow-listed gateway; a ported module)
     const gated = [...HDS_SERVICE_CAPABILITIES, ...HDS_PAYLOAD_CAPABILITIES];
-    for (const name of HDS_BOUND.filter((n) => !gated.includes(n))) expect(capabilityState(name, env).open, name).toBe(true);
+    // G14-R4: messaging.conversations is stored in Neon — the token never opens it (hdsWaiverOnly: only NOT_ESSMS + ordinary, P29)
+    for (const name of HDS_BOUND.filter((n) => !gated.includes(n) && n !== 'messaging.conversations')) expect(capabilityState(name, env).open, name).toBe(true);
+    expect(capabilityState('messaging.conversations', env)).toEqual({ open: false, reason: 'STORED_OUTSIDE_HDS' });
+    expect(capabilityState('messaging.conversations', env, { structureCategory: 'NOT_ESSMS' }).open).toBe(true);
     for (const name of gated) expect(capabilityState(name, env).open, name).toBe(false);
   });
   it('G14-R3 / R4: the vault, shared dossiers, attachments and the referral payload open only with the gateway, a token of the SAME certified provider, and ported modules', () => {

@@ -11,7 +11,7 @@ import axe from 'axe-core';
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react';
 import { createElement as h } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import DiagnosticOutcome from '../../src/components/diagnostic/DiagnosticOutcome.jsx';
 import ActionPlan from '../../src/components/diagnostic/ActionPlan.jsx';
 import PrivacyNotice, { PRIVACY_TEXT } from '../../src/components/diagnostic/PrivacyNotice.jsx';
@@ -21,7 +21,10 @@ import { UNSUPPORTED_RIGHTS } from '../../api/lib/diagnosticAssessment.js';
 import { setLanguage } from '../../src/i18n/index.js';
 import { ENTITLEMENT_CLAIMS } from '../../scripts/i18n-check.mjs';
 
-afterEach(async () => { cleanup(); await act(async () => { await setLanguage('fr', { persist: false }); }); });
+// G14-R4: the server serves the diagnostic sharing (GET /api/status features.diagnosticShare) — the « Partager » button / step / sentence follow it
+const statusFetch = () => vi.fn(async (url) => (url === '/api/status' ? { ok: true, status: 200, json: async () => ({ features: { sharedDossiers: true, diagnosticShare: true } }) } : { ok: false, status: 404, json: async () => ({}) }));
+beforeEach(() => { vi.stubGlobal('fetch', statusFetch()); });
+afterEach(async () => { cleanup(); vi.unstubAllGlobals(); await act(async () => { await setLanguage('fr', { persist: false }); }); });
 const ANSWERS = { birthDate: '1992-03-10', householdSize: 1, territory: '67000', income: {}, housing: { status: 'tenant', rent: 480 } };
 const results = (a = ANSWERS) => ({ assessment: buildAssessment({ answers: a, unsupportedRights: UNSUPPORTED_RIGHTS }), period: '2026-09', meta: { requestId: 'r', duration_ms: 1 } });
 const CAF = [{ id: '1', slug: 'caf-67', nom: 'CAF du Bas-Rhin', ville: 'Strasbourg', is_pro_enabled: true }];
@@ -42,7 +45,7 @@ describe('French: the former text, exactly', () => {
   it('each plan step shows the French sentences of actionPlan.js (FALC title, title, detail)', async () => {
     const r = results();
     open(r);
-    await screen.findAllByTestId('plan-structure-link');
+    await screen.findAllByTestId('plan-structure-link'); await screen.findByTestId('plan-step-share');
     const shown = [...screen.getByTestId('action-plan-steps').children];
     const steps = buildActionPlan(r).steps;
     expect(shown).toHaveLength(steps.length);
@@ -56,8 +59,9 @@ describe('French: the former text, exactly', () => {
       expect(labels).toEqual(s.links.map((l) => l.label));
     }
   });
-  it('the privacy notice is PRIVACY_TEXT, with « Réinitialiser tout »', () => {
+  it('the privacy notice is PRIVACY_TEXT, with « Réinitialiser tout »', async () => {
     render(h(MemoryRouter, null, h(PrivacyNotice)));
+    await screen.findByTestId('privacy-sharing-sentence');
     const box = screen.getByTestId('privacy-notice');
     for (const s of [PRIVACY_TEXT.title, PRIVACY_TEXT.p1, PRIVACY_TEXT.p2, PRIVACY_TEXT.p3, ...PRIVACY_TEXT.falc, PRIVACY_TEXT.link]) expect(box.textContent).toContain(s);
     expect(PRIVACY_TEXT.p3).toContain('« Réinitialiser tout »');

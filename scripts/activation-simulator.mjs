@@ -251,7 +251,8 @@ export function buildItems() {
     const env = [tok('ADA_BETA_OPEN_SURFACES', cap.surface)];
     if (cap.accountsFull) env.push(eqv('ADA_BETA_ACCOUNTS_SCOPE', 'full'));
     if (cap.aipd === 'out') env.push(tok('ADA_CAPABILITIES_OPEN', name));
-    if (cap.requiresHds) env.push(eqv('ADA_HDS_CERTIFIED_HOSTING', 'jeton HDS1 valide et non expiré'));
+    // G14-R4: hdsWaiverOnly (messaging.conversations, messages in Neon) — the token never opens it; it is served only for NOT_ESSMS + « ordinary » (route best case)
+    if (cap.requiresHds && !cap.hdsWaiverOnly) env.push(eqv('ADA_HDS_CERTIFIED_HOSTING', 'jeton HDS1 valide et non expiré'));
     // G14-R3: served by the HDS service — the approved, allow-listed gateway and its signing key (api/_utils/hds-gateway.js)
     const hdsService = HDS_SERVICE_CAPABILITIES.includes(name);
     if (hdsService) env.push(eqv('HDS_PRODUCTION_APPROVED', 'true (approbation du propriétaire)'), eqv('HDS_SERVICE_URL', 'origine https sur la liste des hébergeurs certifiés'),
@@ -262,6 +263,7 @@ export function buildItems() {
     if (cap.aipd === 'out') other.push({ type: 'owner_decision', what: `extension de l’AIPD (${cap.aipdRef})`, ref: 'api/_utils/capabilities.js' });
     if (cap.requiresHds) other.push({ type: 'hds', what: `hébergement certifié HDS — ${cap.hdsNote || ''}`.trim(), ref: 'CONTROL/r45/R45_HDS_FEATURE_MATRIX_FR.md' });
     if (cap.hdsDependsOnStructure) other.push({ type: 'human_review', what: 'classement ESSMS / NOT_ESSMS revu de chaque structure (inconnu = HDS exigé)', ref: 'api/_utils/capabilities.js hdsDependsOnStructure' });
+    if (cap.hdsWaiverOnly) other.push({ type: 'owner_decision', what: 'servi seulement pour une structure NOT_ESSMS et un service revu « ordinaire » (P29) : le jeton HDS n’élargit pas (messages stockés dans Neon)', ref: 'api/_utils/capabilities.js hdsWaiverOnly' });
     if (name === 'pro.siao_interop') other.push({ type: 'partner', what: 'spécification et convention SI-SIAO ; adaptateur réel à écrire (aujourd’hui fiche de transmission manuelle)', ref: 'api/_handlers/pro/interop-siao.js' });
     if (name === 'ai.processing') other.push({ type: 'code_record', what: 'aucun modèle local joignable sur Vercel (OLLAMA_BASE_URL doit être en boucle locale) : un fournisseur d’IA approuvé (DPIA, DPA) demande une modification du code', ref: 'api/lib/ai-foundation.js' },
       { type: 'human_review', what: 'revue de sécurité du jeu d’évaluation de l’IA', ref: 'scripts/ai-eval.mjs' });
@@ -272,7 +274,7 @@ export function buildItems() {
       note: cap.openable === false ? 'NOT_OPENABLE : aucun interrupteur (politique d’âge)' : EXPANSION_SURFACES.includes(cap.surface) ? EXPANSION_NOTE
         : notPorted ? 'HDS_MODULE_NOT_PORTED : le module n’est pas encore porté sur le service HDS (api/_utils/hds-gateway.js HDS_MODULES)' : undefined,
       rollback: cap.aipd === 'out' ? `retirer « ${name} » de ADA_CAPABILITIES_OPEN` : `fermer la surface « ${cap.surface} »`,
-      probe: (e) => { const s = capabilityState(name, e); return s.open ? ok : no(s.reason); } });
+      probe: (e) => { const s = capabilityState(name, e, cap.hdsCheckedPerRecord ? { structureCategory: 'NOT_ESSMS' } : {}); return s.open ? ok : no(s.reason); } });
   }
 
   // art. 9 booking and the per-service review rule

@@ -1,7 +1,8 @@
 // @ts-nocheck
 /**
  * PKG-10 / P24 — public status: what a person can rely on right now, in plain French, WITHOUT internals (no host, version, count, threshold, error text).
- *   GET /api/status → { checkedAt, components: [{ id, label, state, text }] }   state ∈ operational | degraded | unavailable | info
+ *   GET /api/status → { checkedAt, features: { sharedDossiers, diagnosticShare }, components: [{ id, label, state, text }] }   state ∈ operational | degraded | unavailable | info
+ *   features (G14-R4): two booleans the browser uses to offer sharing only when the server serves it (api/_utils/capabilities.js sharingAvailability)
  * Components are real dependencies, each checked here with a short time limit:
  *   - comptes : the database answers (SELECT 1)                      → accounts, appointments, dossier sharing
  *   - emails  : the mail configuration (no message is sent)          → only resend / mailjet / msgraph (R42) with credentials count as real delivery; « test » is said to be a test
@@ -16,15 +17,18 @@ import { db } from '../../src/db/index.js';
 import { getMailerStatus } from '../_utils/mailer.js';
 import { AIProviderPolicy, LOCALITY } from '../lib/ai-policy.js';
 import { isPublicBetaRestricted, openSurfaces } from '../_utils/public-beta.js';
-import { capabilityOpen } from '../_utils/capabilities.js';
+import { capabilityOpen, sharingAvailability } from '../_utils/capabilities.js';
 
 const TTL_MS = 30000;
 let cache = null;
 const withTimeout = (p, ms) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), ms).unref?.())]);
 
-async function database() {
-  try { await withTimeout(db.execute(sql`SELECT 1`), 2000); return { state: 'operational', text: 'Les comptes, les rendez-vous et le partage de dossier fonctionnent.' }; }
-  catch { return { state: 'unavailable', text: 'Les comptes, les rendez-vous et le partage de dossier sont indisponibles pour le moment.' }; }
+async function database(sharing = true) {
+  // G14-R4: dossier sharing is named only when citizen.shared_dossier is really open (the server answered 503 while the page said it worked)
+  const what = sharing ? 'Les comptes, les rendez-vous et le partage de dossier' : 'Les comptes et les rendez-vous';
+  const rest = sharing ? '' : ' Le partage de dossier n\'est pas encore ouvert.';
+  try { await withTimeout(db.execute(sql`SELECT 1`), 2000); return { state: 'operational', text: `${what} fonctionnent.${rest}` }; }
+  catch { return { state: 'unavailable', text: `${what} sont indisponibles pour le moment.${rest}` }; }
 }
 function emails() {
   const m = getMailerStatus();
@@ -62,7 +66,8 @@ async function betaStatus() {
   const accounts = surfaces.has('accounts');
   // R3H (live audit 24/11/2026): with appointments and the citizen assistant opened (surface AND capability), the page still said both were closed
   const booking = accounts && surfaces.has('appointments') && capabilityOpen('citizen.booking');
-  const sharing = surfaces.has('documents');
+  // G14-R4: the documents surface alone is not sharing — the capability citizen.shared_dossier must be open too (otherwise every request answers 503)
+  const sharing = surfaces.has('documents') && sharingAvailability().sharedDossiers;
   const closedRest = !booking && !sharing ? ' Les rendez-vous et le partage de dossier ne sont pas encore ouverts.'
     : !booking ? ' Les rendez-vous ne sont pas encore ouverts.' : !sharing ? ' Le partage de dossier n\'est pas encore ouvert.' : '';
   const bookingText = booking ? ' Les demandes de rendez-vous en ligne sont ouvertes auprès des lieux qui les proposent.' : '';
@@ -75,6 +80,7 @@ async function betaStatus() {
     : m.state === 'operational' ? { state: 'operational', text: 'Les e-mails du compte (confirmation de l\'adresse, mot de passe oublié, suppression) sont envoyés.' } : m;
   return {
     checkedAt: new Date().toISOString(),
+    features: sharingAvailability(),
     components: [
       { id: 'site', label: 'Site', ...(c.state === 'operational' ? { state: 'operational', text: 'Le site répond et les fiches publiées peuvent être consultées.' } : { state: 'unavailable', text: 'Les fiches ne peuvent pas être consultées pour le moment.' }) },
       { id: 'comptes', label: 'Comptes et rendez-vous', ...comptes },
@@ -89,9 +95,11 @@ async function betaStatus() {
 
 export async function computeStatus() {
   if (isPublicBetaRestricted()) return betaStatus();
-  const [c, a] = await Promise.all([database(), assistant()]);
+  const features = sharingAvailability();
+  const [c, a] = await Promise.all([database(features.sharedDossiers), assistant()]);
   return {
     checkedAt: new Date().toISOString(),
+    features,
     components: [
       { id: 'site', label: 'Site', state: 'operational', text: 'Le site répond.' },
       { id: 'comptes', label: 'Comptes et rendez-vous', ...c },

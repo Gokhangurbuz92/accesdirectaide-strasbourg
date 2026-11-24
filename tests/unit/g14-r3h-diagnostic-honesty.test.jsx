@@ -11,7 +11,8 @@ import { readFileSync } from 'node:fs';
 import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.resetModules(); });
+afterEach(() => { cleanup(); vi.unstubAllEnvs(); vi.unstubAllGlobals(); vi.resetModules(); });
+const serverSays = (diagnosticShare) => vi.stubGlobal('fetch', vi.fn(async () => ({ ok: true, json: async () => ({ features: { sharedDossiers: diagnosticShare, diagnosticShare } }) })));   // G14-R4: GET /api/status
 const notice = async (surfaces) => {
   vi.stubEnv('KV_REST_API_URL', 'http://localhost'); vi.stubEnv('KV_REST_API_TOKEN', 'mock-token');
   vi.stubEnv('VITE_PUBLIC_BETA', 'true'); vi.stubEnv('VITE_PUBLIC_BETA_OPEN_SURFACES', surfaces);
@@ -40,9 +41,16 @@ describe('R3H /diagnostic says what really happens', () => {
     expect(box).toHaveTextContent(T.p1);
     expect(box).toHaveTextContent(T.p3);
   });
-  it('sharing opened: the sentences come back', async () => {
+  it('sharing opened (build AND server): the sentences come back', async () => {
+    serverSays(true);
     const T = await notice('accounts,documents');
-    expect(screen.getByTestId('privacy-sharing-sentence')).toHaveTextContent(T.p2);
+    expect(await screen.findByTestId('privacy-sharing-sentence')).toHaveTextContent(T.p2);
     expect(screen.getByTestId('privacy-notice')).toHaveTextContent(T.falc[3]);
+  });
+  it('G14-R4: documents open in the build but the server does not serve the sharing: no sentence about it', async () => {
+    serverSays(false);
+    await notice('accounts,documents');
+    await new Promise((r) => setTimeout(r, 10));
+    expect(screen.queryByTestId('privacy-sharing-sentence')).toBeNull();
   });
 });
