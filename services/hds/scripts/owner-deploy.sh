@@ -28,14 +28,17 @@ S=(scalingo --region "$REGION" --app "$APP")
 
 echo "1/6 app $APP ($REGION)"; "${S[@]}" apps-info >/dev/null
 echo "2/6 PostgreSQL addon ($PLAN, HDS-eligible Business class)"
-if "${S[@]}" addons 2>/dev/null | grep -qi postgresql; then echo "    already present"; else
-  "${S[@]}" addons-plans postgresql | grep -q "$PLAN" || { echo "plan $PLAN not offered: choose the smallest Business plan from 'scalingo addons-plans postgresql' and set HDS_PG_PLAN" >&2; exit 1; }
+ADDONS=$("${S[@]}" addons 2>/dev/null || true)   # captured first: « cmd | grep -q » + pipefail = SIGPIPE false negative (owner run 24/11)
+if grep -qi postgresql <<< "$ADDONS"; then echo "    already present"; else
+  PLANS=$("${S[@]}" addons-plans postgresql 2>/dev/null || true)
+  grep -q -- "$PLAN" <<< "$PLANS" || { echo "plan $PLAN not offered: choose the smallest Business plan from 'scalingo addons-plans postgresql' and set HDS_PG_PLAN" >&2; exit 1; }
   "${S[@]}" addons-add postgresql "$PLAN"
 fi
 echo "3/6 environment (names only)"
 "${S[@]}" env-set NODE_ENV=production "ALLOWED_ORIGIN=$ORIGIN" "HDS_TICKET_PUBLIC_KEYS=$PUB" HDS_TICKET_ISSUER=ada-main HDS_TICKET_AUDIENCE=ada-hds HDS_HEALTH_CATEGORY_ENABLED=false >/dev/null
-if "${S[@]}" env 2>/dev/null | grep -q '^HDS_DATA_KEYS='; then echo "    HDS_DATA_KEYS kept"; else "${S[@]}" env-set "HDS_DATA_KEYS=k1:$(openssl rand -hex 32)" >/dev/null; echo "    HDS_DATA_KEYS generated in the HDS environment"; fi
-if "${S[@]}" env 2>/dev/null | grep -q '^SENTRY_DSN='; then echo "SENTRY_DSN must not exist on the HDS app: remove it" >&2; exit 1; fi
+ENVNAMES=$("${S[@]}" env 2>/dev/null | sed -E 's/=.*//' || true)   # names only kept in memory
+if grep -qx 'HDS_DATA_KEYS' <<< "$ENVNAMES"; then echo "    HDS_DATA_KEYS kept"; else "${S[@]}" env-set "HDS_DATA_KEYS=k1:$(openssl rand -hex 32)" >/dev/null; echo "    HDS_DATA_KEYS generated in the HDS environment"; fi
+if grep -qx 'SENTRY_DSN' <<< "$ENVNAMES"; then echo "SENTRY_DSN must not exist on the HDS app: remove it" >&2; exit 1; fi
 echo "4/6 deploy HEAD:services/hds"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
 git -C "$ROOT" archive --format=tar.gz --prefix=ada-hds/ -o "$TMP/ada-hds.tar.gz" HEAD:services/hds
