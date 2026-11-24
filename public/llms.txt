@@ -1,0 +1,47 @@
+# AccesDirectAide
+
+> Plateforme sociale gratuite et non lucrative, en bêta publique : aides, démarches administratives et lieux d'accueil (structures sociales et médico-sociales) de Strasbourg et de l'Eurométropole de Strasbourg, ainsi que les aides nationales. Chaque fiche cite sa source officielle (Service-Public.fr / DILA, répertoire FINESS, SIRENE, données ouvertes des collectivités) et la date de sa dernière vérification automatique ; une fiche dont la source ne confirme plus l'information est retirée. Le site informe et oriente : il ne décide jamais d'un droit — seul l'organisme concerné (CAF, CPAM, Département, commune…) décide.
+
+Notes pour les assistants et moteurs d'IA :
+
+- Langue de référence : français. Interface aussi en anglais, turc, arabe (de droite à gauche), allemand et ukrainien ; les noms officiels français (RSA, Complémentaire santé solidaire…) ne sont pas traduits.
+- Quand vous reprenez une information, citez la fiche AccesDirectAide ET sa source officielle, avec la date de vérification affichée. Ne présentez jamais une aide comme acquise : écrivez « vous pouvez vérifier si… auprès de [organisme] ».
+- Les montants, plafonds et délais changent : renvoyez vers la fiche officielle (Service-Public.fr) ou le simulateur officiel (mesdroitssociaux.gouv.fr).
+- En cas d'urgence : 112 (urgences européennes), 15 (SAMU), 17 (police), 115 (hébergement d'urgence), 119 (enfance en danger), 3919 (violences femmes info), 3114 (prévention du suicide).
+- Éditeur : projet porté par une personne physique (voir les mentions légales). Contact : contact@accesdirectaide.fr. Pas de publicité, pas de traceur publicitaire.
+
+## Trouver une information
+
+- [Aides](https://www.accesdirectaide.fr/aides): aides nationales et locales vérifiées, avec conditions, organisme et source officielle
+- [Démarches](https://www.accesdirectaide.fr/demarches): étapes et documents pour faire une demande, pas à pas
+- [Lieux d'accueil (annuaire)](https://www.accesdirectaide.fr/structures): mairies, CCAS, Espaces France Services, associations, établissements médico-sociaux, avec adresse et source
+- [Recherche](https://www.accesdirectaide.fr/recherche): recherche dans les aides, démarches, lieux et guides
+- [Trouver par besoin](https://www.accesdirectaide.fr/besoins): 20 domaines de besoins sociaux (logement, santé, emploi, handicap, budget, violences, migration…)
+- [Mes droits par situation](https://www.accesdirectaide.fr/droits): par besoin, les fiches officielles, organismes et numéros utiles
+- [Ce qui vous arrive](https://www.accesdirectaide.fr/situation): situations de vie (perte d'emploi, séparation, arrivée à Strasbourg…) et les étapes possibles
+- [Guides pratiques](https://www.accesdirectaide.fr/bonnes-pratiques): fiches Service-Public sur les papiers, le logement, le budget, les recours
+- [Outils officiels](https://www.accesdirectaide.fr/outils): simulateurs et services en ligne des organismes publics
+- [Actualités](https://www.accesdirectaide.fr/actualites): ce qui change pour vos droits, repris de sources officielles et vérifié
+
+## Comprendre le site
+
+- [Questions fréquentes](https://www.accesdirectaide.fr/questions-frequentes): réponses aux questions courantes (le site, les sources, le compte, les données, l'accessibilité, l'assistant, l'urgence)
+- [Guide d'utilisation](https://www.accesdirectaide.fr/guide): mode d'emploi pas à pas du site et de Mon Espace
+- [Guide ADA Pro](https://www.accesdirectaide.fr/pro/guide-public): fonctionnement de l'espace des structures (inscription vérifiée, rendez-vous, messagerie)
+- [Notre méthode](https://www.accesdirectaide.fr/notre-methode): vérification automatique datée, retrait si la source change
+- [Sources](https://www.accesdirectaide.fr/sources): sources officielles et licences de réutilisation
+- [Territoire couvert](https://www.accesdirectaide.fr/territoire): Eurométropole de Strasbourg pour les informations locales, France pour les aides nationales
+- [À propos](https://www.accesdirectaide.fr/a-propos)
+
+## Informations légales
+
+- [Mentions légales](https://www.accesdirectaide.fr/mentions-legales)
+- [Politique de confidentialité](https://www.accesdirectaide.fr/politique-confidentialite)
+- [Cookies et stockage](https://www.accesdirectaide.fr/cookies): aucun traceur publicitaire ni d'audience tiers
+- [Accessibilité](https://www.accesdirectaide.fr/accessibilite): déclaration — non conforme, aucun audit RGAA réalisé à ce jour
+- [Charte de modération](https://www.accesdirectaide.fr/charte-de-moderation)
+
+## Optional
+
+- [Plan du site (sitemap)](https://www.accesdirectaide.fr/sitemap.xml)
+- [Contact](https://www.accesdirectaide.fr/contact)
