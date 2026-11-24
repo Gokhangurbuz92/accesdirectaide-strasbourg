@@ -282,5 +282,6 @@
  "parcours_add.consent_body": "Dieser Schritt scheint eine sensible Information zu enthalten (Gesundheit, Behinderung, Sucht, Aufenthaltsrecht, Justiz…). Es wurde nichts gespeichert. Er wird nur mit Ihrer Einwilligung gespeichert: nur für Sie sichtbar, nie einer Vertrauensperson gezeigt, jederzeit löschbar.",
  "parcours_add.consent_check": "Ich bin einverstanden, dass dieser Schritt in Mon Parcours gespeichert wird.",
  "parcours_add.consent_confirm": "Mit meiner Einwilligung speichern",
- "parcours_add.consent_cancel": "Nicht speichern"
+ "parcours_add.consent_cancel": "Nicht speichern",
+ "chat.limits": "Ich bin ein automatischer Assistent: Ich kann mich irren. Prüfen Sie die offizielle Seite; nur die zuständige Stelle entscheidet über Ihre Rechte. Im Notfall rufen Sie die 112 an."
 }

@@ -282,5 +282,6 @@
  "parcours_add.consent_body": "Bu adım hassas bir bilgi içeriyor gibi görünüyor (sağlık, engellilik, bağımlılık, oturma hakkı, adalet…). Hiçbir şey kaydedilmedi. Yalnızca izninizle kaydedilecek: yalnızca siz görebilirsiniz, güvendiğiniz bir kişiye asla gösterilmez, istediğiniz zaman silinebilir.",
  "parcours_add.consent_check": "Bu adımın Mon Parcours’a kaydedilmesini kabul ediyorum.",
  "parcours_add.consent_confirm": "İznimle kaydet",
- "parcours_add.consent_cancel": "Kaydetme"
+ "parcours_add.consent_cancel": "Kaydetme",
+ "chat.limits": "Ben otomatik bir asistanım: yanılabilirim. Resmî sayfayı kontrol edin; haklarınız hakkında yalnızca ilgili kurum karar verir. Acil durumda 112'yi arayın."
 }

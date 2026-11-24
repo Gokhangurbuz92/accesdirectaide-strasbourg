@@ -29,7 +29,7 @@ export default function Orientation() {
             <Button variant="outline">{t('diagnostic:orientation.voir_toutes_les_aides', "Voir toutes les aides")}</Button>
           </Link>
           <Link to="/demarches">
-            <Button variant="outline">{t('diagnostic:orientation.voir_les_demarches', "Voir les demarches")}</Button>
+            <Button variant="outline">{t('diagnostic:orientation.voir_les_demarches', "Voir les démarches")}</Button>
           </Link>
           <Link to="/annuaire">
             <Button variant="outline" className="gap-2">

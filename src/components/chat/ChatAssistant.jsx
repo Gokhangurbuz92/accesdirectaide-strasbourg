@@ -408,6 +408,8 @@ function CompassMessages({ messages, isLoading, error, onRetry, onPromptClick, e
             {message.greeting ? (
               <>
                 <p className="leading-relaxed">{t('shared:chat.greeting', 'Bonjour 👋 Je suis la Boussole Sociale. Je peux vous orienter vers les aides et les structures adaptées à votre situation. Posez-moi votre question !')}</p>
+                {/* R3H (live audit 24/11/2026): the open widget said what it can do, never its limits — it is automatic, can be wrong, decides nothing */}
+                <p className="mt-1 text-xs text-slate-600" data-testid="chat-limits">{t('shared:chat.limits', 'Je suis un assistant automatique : je peux me tromper. Vérifiez sur la fiche officielle ; seul l’organisme concerné décide de vos droits. En cas d’urgence, appelez le 112.')}</p>
                 {isSource ? null : <p className="mt-1 text-xs text-slate-600" data-testid="chat-french-only">{t('shared:chat.french_only', 'La Boussole Sociale répond en français.')}</p>}
               </>
             ) : (
