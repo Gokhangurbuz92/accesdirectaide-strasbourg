@@ -20,7 +20,8 @@ import { approvedTestPolicy, approvalEnv, executableStepIds, TEST_POLICY_VERSION
 
 const ALL_TABLES = ['EntityVersion', 'UpdateLog', 'AuditLog', 'ConversationLog', 'SharedDiagnostic', 'AuthToken', 'EmailChangeRequest', 'AiMetric', 'ConsentLog', 'UserConsent',
   'Invitation', 'ProOutlookToken', 'ProAuditLog', 'ProAppointment', 'AppointmentNotice', 'RdvConversation', 'RdvMessageAttachment', 'ProNotification', 'PushSubscription',
-  'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral', 'SharedDossierThread', 'ParcoursItem', 'ParcoursEvent'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016)
+  'LegalHold', 'SupportRequest', 'DSRRequest', 'CitizenUser', 'ProUser', 'ProCase', 'Referral', 'SharedDossierThread', 'ParcoursItem', 'ParcoursEvent',
+  'CitizenDelegation', 'DelegationAccessEvent', 'GuardianRelationship'];   // R45: SharedDossierThread (E11 follow-up) exists on 0042; G14: Mon Parcours (0016); G14-R3: delegations and guardian links (on 0042)
 // G14: the expansion steps need the 0053–0059 tables, absent from this 0042-like mock: they are skipped (skipped_steps) and tested on a real DB
 const EXPANSION_IDS = new Set(Object.keys(RETENTION_POLICY.decidedSteps || {}));
 const dialect = new PgDialect();

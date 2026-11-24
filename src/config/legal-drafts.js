@@ -1011,6 +1011,75 @@ export const LEGAL_DRAFT_DOCUMENTS_PRO_V10 = [withSections(LEGAL_DRAFTS_PRO_V10_
 /** @type {DraftDocument[]} the structure conditions (from v8) — ADA Pro opening */
 export const LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9 = [withSections(LEGAL_DRAFTS_STRUCTURES_V9_CHANGES, LEGAL_DRAFTS_STRUCTURES_V9)(docOf(LEGAL_DRAFT_DOCUMENTS_V8, 'conditions-structures'))];
 
+/*
+ * G14-R3 (24/11/2026, founder's yes to preparing the release-3 package) — notice-confidentialite v14-2026-11-24 and cgu-citoyen v13-2026-11-24, for the
+ * opening of « Mon foyer » (C03, citizen.household), the trusted persons (C23, citizen.delegations), the minor ↔ legal guardian link in its guarded form
+ * (C05, citizen.guardians: minors' own accounts stay closed, no NEW link can be declared — api/_services/guardianship.js MINOR_ACCOUNTS_CLOSED) and the
+ * Académie / events (X04, community.events: its texts are already in notice v12 / v13, § 3 ter and § 4, approved on 23/11/2026 — nothing new here).
+ * PROPOSED, NOT APPROVED: drafts until VITE_LEGAL_DOCS_APPROVED_VERSION names them (draftVisibility); no lawyer or expert review is claimed. Master:
+ * CONTROL/master/completion/R3_HANE_VEKALET_ETKINLIK_FR.md. Facts read in the code (branch g14-r3c, from f357f6d):
+ *  C03  api/_services/citizen-account.js addHouseholdMember: relation in HOUSEHOLD_RELATIONS, optional age band (AGE_BAND_KEYS), optional label ≤ 30
+ *       characters, MAX_HOUSEHOLD = 12; read only when citizen.household is open; shown on /compte/profil, in the export, deleted with the account.
+ *  C23  api/_services/delegation.js: invitation by e-mail (Mailjet), INVITE_DAYS = 7, DELEGATION_DURATIONS 30 / 90 / 180 / 365, scopes limited to the
+ *       parts open on the service (RDV_READ with citizen.booking; PARCOURS_READ needs ADA_PARCOURS_DELEGATE_READ=on; COFFRE_LIST needs the vault — HDS,
+ *       closed), roles TUTEUR / CURATEUR / REPRESENTANT stay PROOF_REQUIRED (open nothing), every view logged (DelegationAccessEvent), either side ends it.
+ *  C05  guardianship.js: links are declared from a minor's account only; no strong method configured (POLICY_PENDING): a link has no effect.
+ *  Durations of C23 / C05: PROPOSED (retention-policy.js DELEGATION_* / GUARDIAN_LINK_REVOKED_DAYS, pendingApproval).
+ *  v14 notice  = notice v13 (in force since release 2) + § 3 P24 / P25 / P26, § 4 three items and the « not open » list without « membres du foyer »,
+ *                § 5 one paragraph, § 6 Mailjet item (+ invitations of trusted persons), § 8 one paragraph.
+ *  v13 cgu     = cgu-citoyen v12 + § 5 two items (Mon foyer; trusted persons — the trusted person's obligations are new) and the corrections of the
+ *                statements that the release-2 opening of appointments made false (§ 5 item 1, § 6, § 7 item 3).
+ */
+export const LEGAL_DRAFTS_R3_NOTICE = 'v14-2026-11-24';
+export const LEGAL_DRAFTS_R3_CGU = 'v13-2026-11-24';
+export const LEGAL_DRAFTS_R3_NOTICE_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
+export const LEGAL_DRAFTS_R3_CGU_DOCUMENT_IDS = Object.freeze(['cgu-citoyen']);
+export const LEGAL_DRAFTS_R3_STATUS = 'DRAFT — proposée le 24/11/2026, en attente de l’approbation du responsable ; à mettre en vigueur à l’ouverture de la release 3 (foyer, personnes de confiance, lien avec un représentant légal, événements)';
+export const LEGAL_DRAFTS_R3_P24 = "P24 — Mon foyer : si vous le souhaitez, vous décrivez dans votre profil les personnes qui vivent avec vous, 12 au plus : pour chacune, le lien (conjoint ou partenaire, enfant, parent, frère ou sœur, autre), une tranche d'âge facultative et un nom court facultatif (30 caractères au plus). N'y indiquez ni nom complet ni information sur la santé. Ces informations ne servent qu'à vous les montrer, dans votre espace et dans la copie de vos données ; elles ne sont transmises à personne. Base : exécution des conditions d'utilisation (art. 6, 1, b) ; pour les personnes que vous décrivez, qui n'ont pas de compte, intérêt légitime (art. 6, 1, f) : vous permettre de garder la composition de votre foyer avec le minimum d'informations.";
+export const LEGAL_DRAFTS_R3_P25 = "P25 — Personnes de confiance : vous pouvez inviter une personne, par son adresse électronique, à consulter en lecture seule les parties de votre espace que vous choisissez parmi celles qui sont ouvertes (à ce jour, vos rendez-vous à venir : date, heure, structure et état), pour 30, 90, 180 ou 365 jours. Sont traités : l'adresse de la personne invitée, le rôle que vous indiquez, les parties choisies, les dates et le journal de chaque consultation, que vous voyez. L'invitation lui est envoyée par e-mail avec votre adresse électronique ; elle est valable 7 jours et ne peut être acceptée que depuis un compte dont l'adresse vérifiée est celle invitée. Chacun de vous deux voit l'adresse électronique de l'autre et peut mettre fin à la délégation à tout moment. Un rôle de tuteur, de curateur ou de représentant n'ouvre aucun accès : la vérification de ces mesures n'existe pas. Base : votre consentement (art. 6, 1, a) ; pour la personne invitée, intérêt légitime (art. 6, 1, f) à recevoir votre invitation et à y répondre.";
+export const LEGAL_DRAFTS_R3_P26 = "P26 — Lien avec un représentant légal : il relie le compte d'une personne mineure au compte d'un parent ou d'un autre représentant légal. Les comptes de personnes mineures ne sont pas ouverts : aucun nouveau lien ne peut être créé. Pour un lien qui existerait déjà, sont traités les deux comptes reliés, l'état du lien et la preuve de chaque étape ; chacune des deux personnes peut le retirer à tout moment. Une confirmation par e-mail ne prouve pas l'autorité parentale ; aucune vérification renforcée n'est en place et le lien n'a aucun effet sur le compte. Base : intérêt légitime (art. 6, 1, f) : permettre à chacun de voir et de retirer un lien existant.";
+export const LEGAL_DRAFTS_R3_RETENTION = Object.freeze([
+  ["Mon foyer : gardé tant que vous le gardez ; vous pouvez retirer une personne à tout moment ; effacé avec votre compte.", 'household_v14'],
+  ["Personnes de confiance : une invitation restée sans réponse est supprimée, avec l'adresse invitée, 30 jours après son expiration ; une délégation terminée, refusée ou expirée est supprimée, avec le journal des consultations, 12 mois après sa fin ; tout est effacé avec votre compte.", 'delegations_v14'],
+  ["Lien avec un représentant légal : un lien retiré est supprimé 30 jours après son retrait ; la preuve de chaque étape suit la règle des décisions de consentement ci-dessus.", 'guardians_v14'],
+]);
+export const LEGAL_DRAFTS_R3_NOT_OPEN = "Fonctions pas encore ouvertes (notamment message facultatif, rappel la veille par e-mail, orientations de dossiers entre professionnels, historique de consultation, favoris) : leurs durées seront annoncées dans cette notice avant leur ouverture.";
+export const LEGAL_DRAFTS_R3_RECIPIENTS = "Une personne de confiance que vous avez invitée voit, en lecture seule et pendant la durée choisie, les parties de votre espace que vous lui avez ouvertes et votre adresse électronique (section 3, P25).";
+export const LEGAL_DRAFTS_R3_MAILJET = "Mailjet (groupe Sinch) : envoi des e-mails de service (vérification de l'adresse, mot de passe, avis du compte, invitations des personnes de confiance, invitations et avis des comptes professionnels et, pour les contenus publiés, accusés de réception des signalements, décisions de modération et réponses aux contestations) ; données hébergées par Google Cloud à Francfort (Allemagne) et Saint-Ghislain (Belgique).";
+export const LEGAL_DRAFTS_R3_RIGHTS = "Retirer une personne de votre foyer, mettre fin à une délégation (donnée ou reçue) ou retirer un lien avec un représentant légal : depuis votre espace, à tout moment. Le journal des consultations de chaque délégation que vous avez donnée y est visible.";
+/** cgu-citoyen v13: § 5 */
+export const LEGAL_DRAFTS_R3_CGU_ACCOUNT_I1 = "Un compte vous donne accès à votre espace personnel (Mon Espace). Il est nécessaire pour demander un rendez-vous.";
+export const LEGAL_DRAFTS_R3_CGU_HOUSEHOLD = "Mon foyer : vous pouvez y décrire les personnes qui vivent avec vous (lien, tranche d'âge, nom court facultatif). N'indiquez que ce qui vous est utile, ni nom complet ni information sur la santé ; ces informations ne sont visibles que par vous.";
+export const LEGAL_DRAFTS_R3_CGU_TRUSTED = "Personnes de confiance : vous choisissez qui vous invitez, ce que la personne peut consulter, en lecture seule, et pour combien de temps ; vous pouvez y mettre fin à tout moment. Si vous êtes la personne de confiance, vous utilisez cet accès seulement pour aider la personne qui vous l'a donné, vous ne transmettez pas ce que vous voyez sans son accord et vous y mettez fin si elle vous le demande. Une délégation ne remplace ni une tutelle, ni une curatelle, ni un mandat.";
+/** cgu-citoyen v13: § 6 and § 7, the statements made false by the release-2 opening of appointments (notice v13 § 9) */
+export const LEGAL_DRAFTS_R3_CGU_APPOINTMENTS = Object.freeze([
+  ['6. Les rendez-vous', 'title_v13'],
+  ["La demande de rendez-vous se fait depuis votre compte, auprès des structures qui l'ont ouverte.", 'p1_v13'],
+  ["Selon le choix de la structure, le rendez-vous est confirmé aussitôt, ou la structure confirme, propose un autre créneau ou refuse. Elle peut aussi modifier ou annuler un rendez-vous ; vous en êtes informé dans votre espace.", 'p2_v13'],
+  ["Vous pouvez annuler votre demande ou votre rendez-vous depuis votre espace. Prévenez le plus tôt possible.", 'p3_v13'],
+  ["Le message joint à une demande n'est pas encore ouvert. Lorsqu'il le sera, il sera facultatif et ne sera transmis qu'avec votre accord, que vous pourrez retirer à tout moment depuis votre espace.", 'p5_v13'],
+]);
+export const LEGAL_DRAFTS_R3_CGU_USE_I3 = "N'utilisez pas de programme pour extraire le contenu en masse ou pour utiliser une fonction du service de façon automatisée, y compris la réservation de créneaux.";
+/** indexes = those of the base documents (notice v13, cgu-citoyen v12) */
+export const LEGAL_DRAFTS_R3_CHANGES = Object.freeze({
+  'notice-confidentialite': { sections: {
+    purposes: { items: { insertAfter: { 21: [[LEGAL_DRAFTS_R3_P24, 'p24_v14'], [LEGAL_DRAFTS_R3_P25, 'p25_v14'], [LEGAL_DRAFTS_R3_P26, 'p26_v14']] } } },
+    retention: { items: { insertAfter: { 28: [...LEGAL_DRAFTS_R3_RETENTION] }, replace: { 29: [LEGAL_DRAFTS_R3_NOT_OPEN, 'i14_v14'] } } },
+    recipients: { paras: { insertAfter: { 3: [[LEGAL_DRAFTS_R3_RECIPIENTS, 'trusted_v14']] } } },
+    processors: { items: { replace: { 3: [LEGAL_DRAFTS_R3_MAILJET, 'i4_v14'] } } },
+    rights: { paras: { insertAfter: { 1: [[LEGAL_DRAFTS_R3_RIGHTS, 'r3_v14']] } } },
+  } },
+  'cgu-citoyen': { sections: {
+    account: { items: { replace: { 0: [LEGAL_DRAFTS_R3_CGU_ACCOUNT_I1, 'i1_v13'] }, insertAfter: { 2: [[LEGAL_DRAFTS_R3_CGU_HOUSEHOLD, 'household_v13'], [LEGAL_DRAFTS_R3_CGU_TRUSTED, 'trusted_v13']] } } },
+    appointments: { title: LEGAL_DRAFTS_R3_CGU_APPOINTMENTS[0], paras: { replace: { 0: LEGAL_DRAFTS_R3_CGU_APPOINTMENTS[1], 1: LEGAL_DRAFTS_R3_CGU_APPOINTMENTS[2], 2: LEGAL_DRAFTS_R3_CGU_APPOINTMENTS[3], 4: LEGAL_DRAFTS_R3_CGU_APPOINTMENTS[4] } } },
+    use: { items: { replace: { 2: [LEGAL_DRAFTS_R3_CGU_USE_I3, 'i3_v13'] } } },
+  } },
+});
+/** @type {DraftDocument[]} the privacy notice (from v13, in force since release 2) — release-3 opening (PROPOSED) */
+export const LEGAL_DRAFT_DOCUMENTS_R3_NOTICE = [withSections(LEGAL_DRAFTS_R3_CHANGES, LEGAL_DRAFTS_R3_NOTICE)(docOf(LEGAL_DRAFT_DOCUMENTS_V13, 'notice-confidentialite'))];
+/** @type {DraftDocument[]} the citizen terms (from v12, in force since release 1 / 2) — release-3 opening (PROPOSED) */
+export const LEGAL_DRAFT_DOCUMENTS_R3_CGU = [withSections(LEGAL_DRAFTS_R3_CHANGES, LEGAL_DRAFTS_R3_CGU)(docOf(LEGAL_DRAFT_DOCUMENTS_V12, 'cgu-citoyen'))];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
@@ -1018,15 +1087,17 @@ export const LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9 = [withSections(LEGAL_DRAFTS_ST
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_R3_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
-export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10]);
+export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10,
+  LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE]);   // G14-R3 (proposed 24/11/2026)
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
   [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO],
   [LEGAL_DRAFTS_V10]: [...LEGAL_DRAFT_DOCUMENTS_V10], [LEGAL_DRAFTS_V11]: [...LEGAL_DRAFT_DOCUMENTS_V11],
   [LEGAL_DRAFTS_V12]: [...LEGAL_DRAFT_DOCUMENTS_V12], [LEGAL_DRAFTS_V13]: [...LEGAL_DRAFT_DOCUMENTS_V13],
-  [LEGAL_DRAFTS_STRUCTURES_V9]: [...LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9], [LEGAL_DRAFTS_PRO_V10]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V10] });
+  [LEGAL_DRAFTS_STRUCTURES_V9]: [...LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9], [LEGAL_DRAFTS_PRO_V10]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V10],
+  [LEGAL_DRAFTS_R3_CGU]: [...LEGAL_DRAFT_DOCUMENTS_R3_CGU], [LEGAL_DRAFTS_R3_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_R3_NOTICE] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {

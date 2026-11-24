@@ -1,7 +1,7 @@
 {
   "_avertissement": "Fichier GÉNÉRÉ par scripts/gdpr-suite.mjs — ne pas modifier à la main. Vue synthétique, PROJET non validé par un juriste. Référence : LEGAL_FR/06_REGISTRE_TRAITEMENTS.md.",
-  "version": "0.6",
-  "date_mise_a_jour": "2026-11-23",
+  "version": "0.7",
+  "date_mise_a_jour": "2026-11-24",
   "statut_document": "PROJET — RELECTURE JURIDIQUE REQUISE",
   "sources_code": {
     "retention": "api/_handlers/cron/gdpr-purge.js",
@@ -895,6 +895,179 @@
         }
       ],
       "mesures_securite": "Contenu chiffré pour le navigateur ; l'e-mail reste l'avis qui fait foi"
+    },
+    {
+      "id": "T29",
+      "nom": "Mon foyer — membres du foyer décrits par la personne (C03)",
+      "statut": "capacité citizen.household fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=household + ADA_CAPABILITIES_OPEN)",
+      "finalite": "Permettre à la personne de garder, dans son profil, la composition de son foyer pour elle-même",
+      "base_legale_proposee": "Exécution des conditions d'utilisation (art. 6.1.b) pour la personne ; intérêt légitime (art. 6.1.f) pour les membres décrits, sans compte (notice v14, P24) — à valider par le responsable",
+      "categories_donnees": [
+        "Lien avec la personne (liste fermée)",
+        "Tranche d'âge facultative (dont « moins de 18 ans » pour un enfant)",
+        "Nom court facultatif (30 caractères au plus)"
+      ],
+      "categories_personnes": [
+        "Citoyens titulaires d'un compte",
+        "Membres du foyer décrits (dont des enfants), sans compte"
+      ],
+      "destinataires": [
+        "La personne seule (profil, export)"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Membres du foyer (HouseholdMember)",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "tant que la personne les garde ; suppression par la personne à tout moment ; effacés avec le compte (ON DELETE CASCADE)"
+        }
+      ],
+      "mesures_securite": "12 personnes au plus ; aucun texte libre au-delà de 30 caractères ; lu seulement quand la capacité est ouverte ; règle d'âge du compte (ageGate) ; information des membres décrits : art. 14.5.b (données minimales, aucun contact) — à valider"
+    },
+    {
+      "id": "T30",
+      "nom": "Lien entre le compte d'une personne mineure et un représentant légal (C05) — forme restreinte",
+      "statut": "capacité citizen.guardians fermée ; ouverture proposée à la release 3 SANS création de lien : les comptes de mineurs restent fermés (citizen.minor_accounts non ouvrable) et la déclaration est refusée (MINOR_ACCOUNTS_CLOSED)",
+      "finalite": "Permettre à chacune des deux personnes de voir et de retirer un lien existant ; vérification renforcée par une personne habilitée, seulement si une politique d'âge validée la prévoit (aucune à ce jour)",
+      "base_legale_proposee": "Intérêt légitime (art. 6.1.f) — notice v14, P26 — à valider par le responsable ; toute création de lien exigerait une décision distincte (politique d'âge, art. 8 RGPD, art. 45 loi Informatique et Libertés)",
+      "categories_donnees": [
+        "Identifiants des deux comptes",
+        "État du lien",
+        "Preuve de chaque étape (ConsentLog GUARDIAN_LINK)"
+      ],
+      "categories_personnes": [
+        "Personnes mineures (comptes existants seulement)",
+        "Représentants légaux"
+      ],
+      "destinataires": [
+        "Les deux personnes",
+        "Un administrateur nommé avec MFA pour la seule vérification renforcée (aucune méthode autorisée à ce jour)"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Lien retiré (GuardianRelationship REVOKED)",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "30 jours après le retrait — durée PROPOSÉE (GUARDIAN_LINK_REVOKED_DAYS, à approuver ; étape guardianLinksRevokedDeleted non exécutable)"
+        },
+        {
+          "donnee": "Preuves des étapes (ConsentLog)",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "règle des décisions de consentement"
+        }
+      ],
+      "mesures_securite": "Aucun nouveau lien tant que les comptes de mineurs sont fermés ; une confirmation par e-mail n'est jamais une preuve ; sans politique d'âge validée, aucun effet sur le compte"
+    },
+    {
+      "id": "T31",
+      "nom": "Personnes de confiance — délégation de consultation en lecture seule (C23)",
+      "statut": "capacité citizen.delegations fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=delegations + ADA_CAPABILITIES_OPEN)",
+      "finalite": "Permettre à la personne de laisser une personne qu'elle choisit consulter, en lecture seule et pour une durée limitée, les parties ouvertes de son espace (à ce jour : rendez-vous à venir)",
+      "base_legale_proposee": "Consentement de la personne (art. 6.1.a) ; intérêt légitime (art. 6.1.f) pour la personne invitée (notice v14, P25) — à valider par le responsable",
+      "categories_donnees": [
+        "Adresse électronique invitée",
+        "Rôle indiqué",
+        "Parties ouvertes et durée",
+        "Dates",
+        "Journal des consultations (DelegationAccessEvent)",
+        "Rendez-vous à venir consultés (date, heure, structure, état)"
+      ],
+      "categories_personnes": [
+        "Citoyens titulaires d'un compte (personne)",
+        "Personnes de confiance invitées (avec ou sans compte au moment de l'invitation)"
+      ],
+      "destinataires": [
+        "La personne de confiance (lecture seule, parties choisies, adresse de la personne)",
+        "Mailjet (Sinch) pour l'e-mail d'invitation"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)",
+        "Mailjet (Sinch) — e-mail d'invitation"
+      ],
+      "conservation": [
+        {
+          "donnee": "Invitation sans réponse",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "30 jours après son expiration, avec l'adresse invitée — durée PROPOSÉE (DELEGATION_INVITATION_EXPIRED_DAYS, à approuver ; étape delegationInvitationsExpiredDeleted non exécutable)"
+        },
+        {
+          "donnee": "Délégation terminée, refusée ou expirée et son journal",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "365 jours après sa fin — durée PROPOSÉE (DELEGATION_ENDED_DAYS, à approuver ; étape delegationsEndedDeleted non exécutable)"
+        },
+        {
+          "donnee": "Délégation en cours",
+          "duree_jours": null,
+          "source": null,
+          "statut": "appliqué",
+          "description": "jusqu'à son terme (30 à 365 jours) ou sa fin par l'une des deux personnes ; effacée avec l'un des deux comptes"
+        }
+      ],
+      "mesures_securite": "Lecture seule, jamais la session de la personne ; acceptation seulement par le compte dont l'adresse vérifiée est l'adresse invitée ; jeton d'invitation en empreinte SHA-256, 7 jours, usage unique ; chaque partie suit sa propre capacité (Mon Coffre fermé : HDS ; Mon Parcours : ADA_PARCOURS_DELEGATE_READ) ; rôles tuteur / curateur / représentant sans effet (PROOF_REQUIRED) ; consultation suspendue pendant une limitation (art. 18) ; 10 délégations en cours au plus"
+    },
+    {
+      "id": "T32",
+      "nom": "Académie et événements — inscription d'une personne majeure (X04)",
+      "statut": "capacité community.events fermée (surface « events ») ; textes approuvés le 23/11/2026 (notice v12 / v13 § 3 ter et § 4) ; ligne AIPD X04 non signée ; ouverture proposée à la release 3",
+      "finalite": "Inscrire une personne majeure à un événement publié, lui rappeler l'événement dans Mon Espace, préparer la salle à partir de nombres",
+      "base_legale_proposee": "Exécution des conditions d'utilisation (art. 6.1.b) ; besoin d'accessibilité : consentement explicite (art. 9.2.a) par une case distincte jamais cochée d'avance — décidé le 22/11/2026 (formulaire G14)",
+      "categories_donnees": [
+        "Compte, événement, état et dates de l'inscription",
+        "Un besoin d'accessibilité facultatif dans une liste fermée de 8 (art. 9 possible)",
+        "Preuve de l'accord et de son retrait (ConsentLog EVENT_ACCESSIBILITY_NEED)"
+      ],
+      "categories_personnes": [
+        "Citoyens majeurs titulaires d'un compte"
+      ],
+      "destinataires": [
+        "La personne",
+        "L'organisateur : des nombres seulement (inscrits, places restantes, nombre de chaque besoin), jamais une identité"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Besoin d'accessibilité",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "effacé à l'annulation (appliqué) ; au plus tard 1 jour après la fin de l'événement — durée décidée le 22/11/2026, étape eventNeedsClearedAfterEnd non approuvée (dry-run à lire)"
+        },
+        {
+          "donnee": "Inscription",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "30 jours après la fin de l'événement — décidée le 22/11/2026, étape eventRegistrationsDeleted non approuvée"
+        },
+        {
+          "donnee": "Page d'un événement terminé",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "365 jours — décidée le 22/11/2026, étape academyEventsEndedDeleted non approuvée"
+        }
+      ],
+      "mesures_securite": "Compte majeur exigé (isAdultAccount) ; aucun texte libre ; le besoin n'est gardé qu'avec l'accord vrai ; verrou de capacité ; rappel sans titre, lieu ni besoin ; administration éditoriale par un administrateur nommé avec MFA"
     },
     {
       "id": "T22",

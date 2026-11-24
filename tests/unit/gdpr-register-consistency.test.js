@@ -122,7 +122,7 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
 
   it('G14 owner legal approval (23/11/2026): P18, P19, P20 and the social referrals carry decided bases and durations; Cloudflare DPA v6.4 accepted online', () => {
     const t = (/** @type {string} */ id) => registre.traitements.find((x) => x.id === id);
-    expect(registre.version).toBe('0.6');
+    expect(registre.version).toBe('0.7');   // G14-R3 (24/11/2026): T29–T32
     expect(t('T02').base_legale_g14).toMatch(/P18 : intérêt légitime .*\(art\. 6\.1\.f\) — décidé par le responsable le 23\/11\/2026$/);
     expect(t('T02').base_legale_proposee).toMatch(/^Intérêt légitime .*P18, décidé par le responsable le 23\/11\/2026$/);
     expect(t('T08').base_legale_proposee).toMatch(/P19, décidé par le responsable le 23\/11\/2026$/);
@@ -139,8 +139,8 @@ describe('REGISTRE_RGPD.json — generated, consistent with the code', () => {
   });
 
   it('date_mise_a_jour is the fixed revision date, not the run date', () => {
-    expect(registre.date_mise_a_jour).toBe('2026-11-23');   // G14 consolidation: T23–T26, Cloudflare Workers AI, Scaleway OpenFisca; FA-D5 (2026-11-18): backups, Scaleway, Cloudflare, erasure traces (2026-11-17 = legal v6, 2026-11-15 = v5, 2026-11-04 = R42-LEGAL)
-    expect(REGISTRE_DATE_REVISION).toBe('2026-11-23');
+    expect(registre.date_mise_a_jour).toBe('2026-11-24');   // G14-R3: T29–T32 (2026-11-23 = G14 consolidation: T23–T26, Cloudflare Workers AI, Scaleway OpenFisca; FA-D5 (2026-11-18): backups, Scaleway, Cloudflare, erasure traces (2026-11-17 = legal v6, 2026-11-15 = v5, 2026-11-04 = R42-LEGAL)
+    expect(REGISTRE_DATE_REVISION).toBe('2026-11-24');
     const built = buildRegistre(readCodeSources(ROOT));
     expect(built.date_mise_a_jour).toBe(REGISTRE_DATE_REVISION);
   });

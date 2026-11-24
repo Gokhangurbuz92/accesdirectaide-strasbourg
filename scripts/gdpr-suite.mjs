@@ -22,8 +22,8 @@ const ROOT_DIR = path.join(__dirname, '..');
  */
 
 // Date de révision du contenu (fixe). À changer uniquement quand le contenu du registre est révisé — jamais la date d'exécution.
-export const REGISTRE_VERSION = '0.6';   // G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
-export const REGISTRE_DATE_REVISION = '2026-11-23';
+export const REGISTRE_VERSION = '0.7';   // G14-R3 (24/11/2026, PROPOSED): T29 household, T30 guardian link (restricted form), T31 trusted persons, T32 events (X04). 0.6 = G14 owner legal approval (23/11/2026, OWNER_VALIDATED): P18 (T02), P19 (T08) and P20 (T25) bases decided, social referrals (T24) 12 months after closure decided, Cloudflare DPA v6.4 accepted online. 0.5 = G14 consolidation (23/11/2026): T02 OpenFisca at Scaleway, T08 Cloudflare Workers AI (branch g14-ai), T23 assisted mode, T24 social referrals, T25 Observatoire, T26 browser notifications and calendar files. Earlier:   // FA-D5 (18/11/2026): T22 backups + erasure traces, Scaleway and Cloudflare (R2) as processors, durations read from the code. 0.3 =   // Legal v5 (15/11/2026): provider contracts, transfer mechanisms and own-controller roles as read in CONTROL/v2/V4_SAGLAYICI_DOGRULAMA_2026-11-15.md; Mailjet retained for service e-mails, contact deleted on erasure. 0.2 = R42-LEGAL: natural-person operator, account-required appointments, guest booking retired, statuses of the beta
+export const REGISTRE_DATE_REVISION = '2026-11-24';
 
 export const CONTACT_PROTECTION_DONNEES = '[À COMPLÉTER : contact protection des données]';
 const DPA_INCONNU = 'inconnu / non signé';
@@ -534,6 +534,71 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                     texte('Abonnement en échec', 'non appliqué', '30 jours après le dernier échec (retention-policy PUSH_FAILING_DAYS ; étape pushSubscriptionsFailingDeleted non approuvée)'),
                 ],
                 mesures_securite: 'Contenu chiffré pour le navigateur ; l\'e-mail reste l\'avis qui fait foi',
+            },
+            // G14-R3 (24/11/2026, release-3 package, PROPOSED — not approved): household (C03), guardian link (C05), trusted persons (C23), events (X04).
+            // Notice v14-2026-11-24 P24 / P25 / P26 and v12 / v13 § 3 ter; durations of C23 / C05 = retention-policy.js pendingApproval (not executable).
+            {
+                id: 'T29',
+                nom: 'Mon foyer — membres du foyer décrits par la personne (C03)',
+                statut: 'capacité citizen.household fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=household + ADA_CAPABILITIES_OPEN)',
+                finalite: 'Permettre à la personne de garder, dans son profil, la composition de son foyer pour elle-même',
+                base_legale_proposee: 'Exécution des conditions d\'utilisation (art. 6.1.b) pour la personne ; intérêt légitime (art. 6.1.f) pour les membres décrits, sans compte (notice v14, P24) — à valider par le responsable',
+                categories_donnees: ['Lien avec la personne (liste fermée)', 'Tranche d\'âge facultative (dont « moins de 18 ans » pour un enfant)', 'Nom court facultatif (30 caractères au plus)'],
+                categories_personnes: ['Citoyens titulaires d\'un compte', 'Membres du foyer décrits (dont des enfants), sans compte'],
+                destinataires: ['La personne seule (profil, export)'],
+                sous_traitants: [vercel, neon],
+                conservation: [texte('Membres du foyer (HouseholdMember)', 'appliqué', 'tant que la personne les garde ; suppression par la personne à tout moment ; effacés avec le compte (ON DELETE CASCADE)')],
+                mesures_securite: '12 personnes au plus ; aucun texte libre au-delà de 30 caractères ; lu seulement quand la capacité est ouverte ; règle d\'âge du compte (ageGate) ; information des membres décrits : art. 14.5.b (données minimales, aucun contact) — à valider',
+            },
+            {
+                id: 'T30',
+                nom: 'Lien entre le compte d\'une personne mineure et un représentant légal (C05) — forme restreinte',
+                statut: 'capacité citizen.guardians fermée ; ouverture proposée à la release 3 SANS création de lien : les comptes de mineurs restent fermés (citizen.minor_accounts non ouvrable) et la déclaration est refusée (MINOR_ACCOUNTS_CLOSED)',
+                finalite: 'Permettre à chacune des deux personnes de voir et de retirer un lien existant ; vérification renforcée par une personne habilitée, seulement si une politique d\'âge validée la prévoit (aucune à ce jour)',
+                base_legale_proposee: 'Intérêt légitime (art. 6.1.f) — notice v14, P26 — à valider par le responsable ; toute création de lien exigerait une décision distincte (politique d\'âge, art. 8 RGPD, art. 45 loi Informatique et Libertés)',
+                categories_donnees: ['Identifiants des deux comptes', 'État du lien', 'Preuve de chaque étape (ConsentLog GUARDIAN_LINK)'],
+                categories_personnes: ['Personnes mineures (comptes existants seulement)', 'Représentants légaux'],
+                destinataires: ['Les deux personnes', 'Un administrateur nommé avec MFA pour la seule vérification renforcée (aucune méthode autorisée à ce jour)'],
+                sous_traitants: [vercel, neon],
+                conservation: [
+                    texte('Lien retiré (GuardianRelationship REVOKED)', 'non appliqué', '30 jours après le retrait — durée PROPOSÉE (GUARDIAN_LINK_REVOKED_DAYS, à approuver ; étape guardianLinksRevokedDeleted non exécutable)'),
+                    texte('Preuves des étapes (ConsentLog)', 'appliqué', 'règle des décisions de consentement'),
+                ],
+                mesures_securite: 'Aucun nouveau lien tant que les comptes de mineurs sont fermés ; une confirmation par e-mail n\'est jamais une preuve ; sans politique d\'âge validée, aucun effet sur le compte',
+            },
+            {
+                id: 'T31',
+                nom: 'Personnes de confiance — délégation de consultation en lecture seule (C23)',
+                statut: 'capacité citizen.delegations fermée ; ouverture proposée à la release 3 (ADA_BETA_ACCOUNTS_EXTRA=delegations + ADA_CAPABILITIES_OPEN)',
+                finalite: 'Permettre à la personne de laisser une personne qu\'elle choisit consulter, en lecture seule et pour une durée limitée, les parties ouvertes de son espace (à ce jour : rendez-vous à venir)',
+                base_legale_proposee: 'Consentement de la personne (art. 6.1.a) ; intérêt légitime (art. 6.1.f) pour la personne invitée (notice v14, P25) — à valider par le responsable',
+                categories_donnees: ['Adresse électronique invitée', 'Rôle indiqué', 'Parties ouvertes et durée', 'Dates', 'Journal des consultations (DelegationAccessEvent)', 'Rendez-vous à venir consultés (date, heure, structure, état)'],
+                categories_personnes: ['Citoyens titulaires d\'un compte (personne)', 'Personnes de confiance invitées (avec ou sans compte au moment de l\'invitation)'],
+                destinataires: ['La personne de confiance (lecture seule, parties choisies, adresse de la personne)', 'Mailjet (Sinch) pour l\'e-mail d\'invitation'],
+                sous_traitants: [vercel, neon, 'Mailjet (Sinch) — e-mail d\'invitation'],
+                conservation: [
+                    texte('Invitation sans réponse', 'non appliqué', '30 jours après son expiration, avec l\'adresse invitée — durée PROPOSÉE (DELEGATION_INVITATION_EXPIRED_DAYS, à approuver ; étape delegationInvitationsExpiredDeleted non exécutable)'),
+                    texte('Délégation terminée, refusée ou expirée et son journal', 'non appliqué', '365 jours après sa fin — durée PROPOSÉE (DELEGATION_ENDED_DAYS, à approuver ; étape delegationsEndedDeleted non exécutable)'),
+                    texte('Délégation en cours', 'appliqué', 'jusqu\'à son terme (30 à 365 jours) ou sa fin par l\'une des deux personnes ; effacée avec l\'un des deux comptes'),
+                ],
+                mesures_securite: 'Lecture seule, jamais la session de la personne ; acceptation seulement par le compte dont l\'adresse vérifiée est l\'adresse invitée ; jeton d\'invitation en empreinte SHA-256, 7 jours, usage unique ; chaque partie suit sa propre capacité (Mon Coffre fermé : HDS ; Mon Parcours : ADA_PARCOURS_DELEGATE_READ) ; rôles tuteur / curateur / représentant sans effet (PROOF_REQUIRED) ; consultation suspendue pendant une limitation (art. 18) ; 10 délégations en cours au plus',
+            },
+            {
+                id: 'T32',
+                nom: 'Académie et événements — inscription d\'une personne majeure (X04)',
+                statut: 'capacité community.events fermée (surface « events ») ; textes approuvés le 23/11/2026 (notice v12 / v13 § 3 ter et § 4) ; ligne AIPD X04 non signée ; ouverture proposée à la release 3',
+                finalite: 'Inscrire une personne majeure à un événement publié, lui rappeler l\'événement dans Mon Espace, préparer la salle à partir de nombres',
+                base_legale_proposee: 'Exécution des conditions d\'utilisation (art. 6.1.b) ; besoin d\'accessibilité : consentement explicite (art. 9.2.a) par une case distincte jamais cochée d\'avance — décidé le 22/11/2026 (formulaire G14)',
+                categories_donnees: ['Compte, événement, état et dates de l\'inscription', 'Un besoin d\'accessibilité facultatif dans une liste fermée de 8 (art. 9 possible)', 'Preuve de l\'accord et de son retrait (ConsentLog EVENT_ACCESSIBILITY_NEED)'],
+                categories_personnes: ['Citoyens majeurs titulaires d\'un compte'],
+                destinataires: ['La personne', 'L\'organisateur : des nombres seulement (inscrits, places restantes, nombre de chaque besoin), jamais une identité'],
+                sous_traitants: [vercel, neon],
+                conservation: [
+                    texte('Besoin d\'accessibilité', 'non appliqué', 'effacé à l\'annulation (appliqué) ; au plus tard 1 jour après la fin de l\'événement — durée décidée le 22/11/2026, étape eventNeedsClearedAfterEnd non approuvée (dry-run à lire)'),
+                    texte('Inscription', 'non appliqué', '30 jours après la fin de l\'événement — décidée le 22/11/2026, étape eventRegistrationsDeleted non approuvée'),
+                    texte('Page d\'un événement terminé', 'non appliqué', '365 jours — décidée le 22/11/2026, étape academyEventsEndedDeleted non approuvée'),
+                ],
+                mesures_securite: 'Compte majeur exigé (isAdultAccount) ; aucun texte libre ; le besoin n\'est gardé qu\'avec l\'accord vrai ; verrou de capacité ; rappel sans titre, lieu ni besoin ; administration éditoriale par un administrateur nommé avec MFA',
             },
             {
                 // FA-D5 (18/11/2026): P17 + P15b of the V2 register (CONTROL/v2/D2_V2_BASES_LEGALES_FR.md), notice v7 § 4 and § 6

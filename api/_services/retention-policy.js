@@ -52,6 +52,8 @@ const PROOF = 'preuve (proposition, à justifier par écrit)';
 const G14 = 'décision du responsable 22/11/2026, formulaire G14 (pas une obligation légale)';
 const G14_X03 = 'décision du responsable 22/11/2026, formulaire G14 — applicable avec l’AIPD dédiée X03 (pas une obligation légale)';
 const G14_DECISION = 'décision du responsable 22/11/2026, formulaire G14';
+/** G14-R3 (24/11/2026): the mark of a duration proposed for the release-3 package and not yet decided by the controller */
+export const R3_PROPOSAL = 'À APPROUVER — proposition G14-R3 du 24/11/2026 (paquet d’ouverture de la release 3), pas une décision du responsable';
 /** the X03 condition (question 27: « önerildiği gibi, ayrı AIPD ile birlikte ») */
 export const X03_AIPD_CONDITION = 'AIPD dédiée X03 signée';
 
@@ -190,6 +192,14 @@ export const RETENTION_POLICY = deepFreeze({
     // appeal is open, its restriction has ended (GREATEST(appealUntil, restrictionEndsAt, last appeal reviewedAt)); a sanction: it no longer counts
     // (a warning: 12 months after it was given, WARNING_WINDOW_DAYS; a suspension: its end), or it was lifted, whichever comes first. Its appeals go with it.
     MODERATION_CASE_CLOSED_DAYS: { days: 365, anchor: 'closing of the case: decision GREATEST(appealUntil, restrictionEndsAt, MAX(appeal.reviewedAt)) with no open appeal; sanction LEAST(liftedAt, endsAt or createdAt + 365 days)', basis: 'décision du responsable 23/11/2026 (pas une obligation légale)', ecode: 'DSA', decidedOn: '2026-11-23' },
+    // G14-R3 (release-3 package, 24/11/2026) — PROPOSED « à approuver » (pendingApproval): the trusted persons (C23) and the guardian links (C05) had no
+    // duration of their own (they lived until the account was erased). Proposed by engineering, NOT decided: a step whose duration carries pendingApproval
+    // never executes (stepApprovalProblem DURATION_PENDING_APPROVAL), whatever its approval record and GDPR_PURGE_APPROVED_STEPS say. If the controller
+    // decides them, a reviewed commit replaces pendingApproval by decidedOn and the policy gets a new version (re-pinned GDPR_PURGE_POLICY_VERSION).
+    // The household (C03) needs none: it is kept while the person keeps it, deleted by the person at any time and with the account (ON DELETE CASCADE).
+    DELEGATION_INVITATION_EXPIRED_DAYS: { days: 30, anchor: 'CitizenDelegation.inviteExpiresAt of an invitation never answered (status INVITED): the invited e-mail address goes with the row', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
+    DELEGATION_ENDED_DAYS: { days: 365, anchor: 'COALESCE(endedAt, expiresAt) of a delegation ended (REVOKED, DECLINED) or expired; its view log (DelegationAccessEvent) goes with it (ON DELETE CASCADE)', basis: OPS, ecode: 'C23', pendingApproval: R3_PROPOSAL },
+    GUARDIAN_LINK_REVOKED_DAYS: { days: 30, anchor: 'GuardianRelationship.updatedAt of a REVOKED link (the proof of each step stays in the consent ledger under its own rule)', basis: OPS, ecode: 'C05', pendingApproval: R3_PROPOSAL },
     BACKUP_KEEP_WEEKLY: { days: 0, anchor: 'number of weekly backups kept beyond BACKUP_KEEP_DAYS (a count, not days; V2: none — nothing older than 35 days)', basis: OPS, ecode: 'E15' },
   },
 });

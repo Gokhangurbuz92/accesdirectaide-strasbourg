@@ -12,7 +12,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { checkLegalPublisher, findAddressPatterns, readLegalDefaults } from '../../scripts/check-legal-publisher.mjs';
 import { resolvePublisherConfig, HOST, A_I_APPROVAL_TOKEN } from '../../src/config/legal-publisher.js';
-import { LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftTextKeys, draftVisibility, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V11_DOCUMENT_IDS, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V12_DOCUMENT_IDS, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_V13_DOCUMENT_IDS, LEGAL_DRAFTS_PRO_V10, LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
+import { LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE_DOCUMENT_IDS, LEGAL_DRAFTS_R3_CGU_DOCUMENT_IDS, LEGAL_DRAFT_DOCUMENTS, LEGAL_DRAFTS_VERSION, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V8_DOCUMENT_IDS, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_DOCUMENT_IDS, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS, LEGAL_NOTICE_VARIANT_DOCUMENT, LEGAL_DRAFT_STATUS, draftTextKeys, draftVisibility, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V10_DOCUMENT_IDS, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V11_DOCUMENT_IDS, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V12_DOCUMENT_IDS, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_V13_DOCUMENT_IDS, LEGAL_DRAFTS_PRO_V10, LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS } from '../../src/config/legal-drafts.js';
 import { ENTITLEMENT_CLAIMS } from '../../scripts/i18n-check.mjs';
 
 const FAKE_ADDRESS = "1 rue de l'Exemple 00000 Testville";
@@ -119,7 +119,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     for (const d of [...LEGAL_DRAFT_DOCUMENTS, LEGAL_NOTICE_VARIANT_DOCUMENT]) {
       // G4 (19/11/2026): v8 covers the two professional documents and the notice; G8 (19/11/2026): v9 covers the notice only; the others keep the shared version
       expect(d.status).toBe(LEGAL_DRAFT_STATUS.DRAFT_PENDING_OWNER_APPROVAL);
-      expect(d.version).toBe(LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_PRO_V10 : LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_STRUCTURES_V9 : LEGAL_DRAFTS_V13_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V13 : LEGAL_DRAFTS_V12_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V12 : LEGAL_DRAFTS_V11_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V11 : LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9_PRO : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
+      expect(d.version).toBe(LEGAL_DRAFTS_R3_NOTICE_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_R3_NOTICE : LEGAL_DRAFTS_R3_CGU_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_R3_CGU : LEGAL_DRAFTS_PRO_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_PRO_V10 : LEGAL_DRAFTS_STRUCTURES_V9_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_STRUCTURES_V9 : LEGAL_DRAFTS_V13_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V13 : LEGAL_DRAFTS_V12_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V12 : LEGAL_DRAFTS_V11_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V11 : LEGAL_DRAFTS_V10_DOCUMENT_IDS.includes(d.id) && d.sections ? LEGAL_DRAFTS_V10 : LEGAL_DRAFTS_V9_PRO_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9_PRO : LEGAL_DRAFTS_V9_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V9 : LEGAL_DRAFTS_V8_DOCUMENT_IDS.includes(d.id) ? LEGAL_DRAFTS_V8 : LEGAL_DRAFTS_VERSION);
     }
   });
   it('visibility: hidden in Production unless approved; preview only outside Production; an approval names id@version or the version', () => {
@@ -146,7 +146,7 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
     // G8 notice v9 (19/11/2026): P4p (professional accounts) moved from 3 bis to § 3 — ADA Pro opens to a pilot structure (tests/unit/g8-notice-v9.test.jsx)
     // G14 ADA Pro opening (notice v13, 23/11/2026): P4, P5, P7, P11 move from 3 bis to § 3 (appointments and Outlook open)
     // G14 consolidation (23/11/2026): P10c (browser notifications), P18 (indicative calculation), P19 (assistant), P20 (Observatoire), P21 (assisted mode), P23 (social referral)
-    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P4', 'P5', 'P7', 'P11', 'P10c', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', 'P23']);
+    expect((v2.items || []).map((x) => x.split(' — ')[0])).toEqual(['P1', 'P2', 'P2b', 'P3', 'P4p', 'P4', 'P5', 'P7', 'P11', 'P10c', 'P10a', 'P12', 'P13', 'P14', 'P15', 'P16', 'P17', 'P18', 'P19', 'P20', 'P21', 'P23', 'P24', 'P25', 'P26']);   // G14-R3 (proposed 24/11/2026): household, trusted persons, guardian link
     expect(t).toContain('ne sont pas des consentements au sens du RGPD');
     expect(t).toContain('Aucun numéro de téléphone n\'est demandé');
     expect(t).toContain('aucune information de ce type n\'est demandée');
@@ -160,7 +160,8 @@ describe('R45 draft documents (src/config/legal-drafts.js)', () => {
   });
   it('the terms say free service, no entitlement decision, AI limits, structure confirms, deletion, lawful liability, French law and mediation « à vérifier »', () => {
     const c = text(LEGAL_DRAFT_DOCUMENTS[0]);
-    for (const w of ['Le service est gratuit', 'Il ne prend aucune décision sur vos droits', 'Il peut se tromper', "c'est la structure qui confirmera", 'suppression de votre compte', 'Aucune clause de ces conditions ne réduit les droits que la loi vous reconnaît', 'droit français', 'est à vérifier']) expect(c, w).toContain(w);
+    for (const w of ['Le service est gratuit', 'Il ne prend aucune décision sur vos droits', 'Il peut se tromper', 'la structure confirme',   // G14-R3 cgu v13: appointments open since release 2 (was « c'est la structure qui confirmera »)
+      'suppression de votre compte', 'Aucune clause de ces conditions ne réduit les droits que la loi vous reconnaît', 'droit français', 'est à vérifier']) expect(c, w).toContain(w);
     // no abusive-clause style exclusions (consumer code L212-1; civil code 1171 to be checked by counsel)
     for (const d of LEGAL_DRAFT_DOCUMENTS) expect(text(d)).not.toMatch(/décline toute responsabilité|aucune responsabilité|en aucun cas responsable|sans préavis ni indemnité|tribunaux de Strasbourg seuls compétents/i);
     for (const d of LEGAL_DRAFT_DOCUMENTS) expect(text(d), d.id).toMatch(/version française de ce(?:s conditions| cette notice|tte notice)? est la seule juridiquement de référence|La version française de cette notice/);
@@ -270,7 +271,7 @@ describe('R45 draft documents rendering', () => {
     const { container } = await renderPage('LegalDraftDocument.jsx', '/confidentialite/notice');
     expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent('Projet — non approuvé');
     // G4 notice (19/11/2026): the privacy notice has a v8 draft, G8 (19/11/2026) a v9 draft (professional accounts); LAB preview shows the newest draft
-    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent(`notice-confidentialite@${LEGAL_DRAFTS_V13}`);   // G14 expansion: the newest notice draft is v13 (v11 + expansion + video)
+    expect(screen.getByTestId('legal-draft-banner')).toHaveTextContent(`notice-confidentialite@${LEGAL_DRAFTS_R3_NOTICE}`);   // G14-R3: notice v14 proposed   // G14 expansion: the newest notice draft is v13 (v11 + expansion + video)
     expect(screen.getAllByTestId('legal-proposed-badge').length).toBe(LEGAL_DRAFT_DOCUMENTS.find((d) => d.id === 'notice-confidentialite').sections.filter((s) => s.proposed).reduce((n, s) => n + (s.items || []).length, 0));
     expect(screen.getAllByTestId('legal-proposed-badge')[0]).toHaveTextContent('proposé — en attente de validation du responsable');
     expect(container.textContent).toContain('un rendez-vous confirmé, tenu ou manqué est anonymisé 1 an après sa date');   // G14 notice v13: appointments open

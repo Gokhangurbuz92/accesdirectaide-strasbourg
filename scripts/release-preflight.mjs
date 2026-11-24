@@ -9,13 +9,17 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
-import { CAPABILITIES, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
+import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation } from '../api/_utils/capabilities.js';
+import { approvedAtLeast, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE } from '../src/config/legal-drafts.js';
 import { isMainModule } from './lib/is-main.mjs';
 import { citizenTermsInForce } from '../api/_utils/terms-in-force.js';
 import { RETENTION_POLICY, executionGate, stepApprovalProblem } from '../api/_services/retention-policy.js';
 import { workersAiState } from '../api/lib/ai-policy.js';
 import { dailyNeuronBudget } from '../api/lib/workers-ai.js';
 import { OPENFISCA_FRANCE_PIN, SCALEWAY_TIERS } from '../api/lib/openfiscaPins.js';
+
+/** G14-R3: the capabilities whose texts exist only from notice v14-2026-11-24 / cgu-citoyen v13-2026-11-24 (community.events is in v12 / v13 already) */
+export const R3_LEGAL_CAPABILITIES = Object.freeze(['citizen.household', 'citizen.guardians', 'citizen.delegations']);
 
 /**
  * G14-AI — the citizen assistant on Cloudflare Workers AI (owner decision 23/11/2026, 0 €). Off (AI_PROVIDER unset, no CF_WORKERS_AI_*) = PASS.
@@ -185,6 +189,17 @@ export function evaluateReleasePreflight(env, opts = {}) {
     add('retention.unverified_accounts_7d', why ? 'FAIL' : 'PASS', why
       ? `citizen accounts need purge step 6c in force (notice: never-confirmed account erased no later than 8 days after creation): ${why}`
       : 'step 6c (never-confirmed accounts: 7-day threshold, daily run, at most 8 days) executes');
+  }
+  // G14-R3: household (P24), trusted persons (P25) and the guardian link (P26) are described only from notice v14-2026-11-24 and cgu-citoyen
+  // v13-2026-11-24 — opening one of them under an older approved text would process data the notice in force does not describe
+  {
+    const r3 = R3_LEGAL_CAPABILITIES.filter((c) => capabilityState(c, { ...env, VERCEL_ENV: 'production' }).open);
+    if (r3.length) {
+      const approved = get('VITE_LEGAL_DOCS_APPROVED_VERSION');
+      const ok = approvedAtLeast('notice-confidentialite', LEGAL_DRAFTS_R3_NOTICE, approved) && approvedAtLeast('cgu-citoyen', LEGAL_DRAFTS_R3_CGU, approved);
+      add('legal.r3_household_trusted_guardians', ok ? 'PASS' : 'FAIL', ok ? `${r3.join(', ')} open with notice ≥ ${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen ≥ ${LEGAL_DRAFTS_R3_CGU} in force`
+        : `${r3.join(', ')} open but VITE_LEGAL_DOCS_APPROVED_VERSION does not name notice-confidentialite@${LEGAL_DRAFTS_R3_NOTICE} and cgu-citoyen@${LEGAL_DRAFTS_R3_CGU} (or later)`);
+    }
   }
   if (betaOn && opened.has('accounts')) add('beta.accounts_scope', accountsScope(env) === 'full' ? 'WARN' : 'PASS', accountsScope(env) === 'full'
     ? 'ADA_BETA_ACCOUNTS_SCOPE=full: the whole citizen space is open (household, guardians, push, shares, parcours, favourites, history, delegations, referrals)'

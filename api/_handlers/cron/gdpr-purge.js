@@ -6,7 +6,7 @@ import {
     AuthToken, AiMetric, ConsentLog, UserConsent, Invitation, EmailChangeRequest,
     ProOutlookToken, ProAuditLog, ProAppointment,
     AppointmentNotice, ProNotification, PushSubscription, RdvConversation, RdvMessageAttachment,
-    LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser, ParcoursItem
+    LegalHold, SupportRequest, DSRRequest, CitizenUser, ProUser, ParcoursItem, CitizenDelegation, GuardianRelationship
 } from '../../../src/db/schema.js';
 import { lt, and, or, ne, isNotNull, isNull, eq, sql, inArray } from 'drizzle-orm';
 import { getCronAuth } from '../../_utils/cronAuth.js';
@@ -260,6 +260,31 @@ export const parcoursClosedAtSql = sql`COALESCE((SELECT max(e."createdAt") FROM 
 export const parcoursClosedStepsWhere = (before) => and(inArray(ParcoursItem.status, [...PARCOURS_CLOSED_STATES]), sql`${parcoursClosedAtSql} < ${before}`,
     sql`NOT ${heldSql(ParcoursItem.id, ParcoursItem.userId)}`, sql`NOT ${personProtectedSql(ParcoursItem.userId)}`);
 
+/**
+ * G14-R3 — trusted persons (C23) and guardian links (C05). Durations PROPOSED « à approuver » (retention-policy.js pendingApproval): these steps cannot
+ * execute until a reviewed commit removes that mark AND each step gets its own approval record. A legal hold on the row or on either person, a processing
+ * restriction or an open access request of either person keeps the row.
+ *   delegationInvitationsExpiredDeleted  an invitation never answered (INVITED), DELEGATION_INVITATION_EXPIRED_DAYS after inviteExpiresAt — it holds the
+ *                                        invited person's e-mail address, who never joined
+ *   delegationsEndedDeleted              a delegation ended (REVOKED, DECLINED) or expired (live state, expiresAt passed), DELEGATION_ENDED_DAYS after
+ *                                        COALESCE(endedAt, expiresAt); its view log (DelegationAccessEvent) goes with it (ON DELETE CASCADE)
+ *   guardianLinksRevokedDeleted          a REVOKED minor ↔ guardian link, GUARDIAN_LINK_REVOKED_DAYS after its last change (updatedAt)
+ * @param {Date} before
+ */
+export const delegationInvitationsExpiredWhere = (before) => and(eq(CitizenDelegation.status, 'INVITED'), isNotNull(CitizenDelegation.inviteExpiresAt),
+    lt(CitizenDelegation.inviteExpiresAt, before), sql`NOT ${heldSql(CitizenDelegation.id, CitizenDelegation.principalUserId)}`, sql`NOT ${personProtectedSql(CitizenDelegation.principalUserId)}`);
+/** @param {Date} before */
+export const delegationsEndedWhere = (before) => and(or(
+        and(inArray(CitizenDelegation.status, ['REVOKED', 'DECLINED']), sql`COALESCE(${CitizenDelegation.endedAt}, ${CitizenDelegation.expiresAt}) < ${before}`),
+        and(inArray(CitizenDelegation.status, ['ACTIVE', 'PROOF_REQUIRED']), lt(CitizenDelegation.expiresAt, before))),
+    sql`NOT ${heldSql(CitizenDelegation.id, CitizenDelegation.principalUserId, sql`COALESCE(${CitizenDelegation.delegateUserId}, '')`)}`,
+    sql`NOT ${personProtectedSql(CitizenDelegation.principalUserId)}`,
+    sql`(${CitizenDelegation.delegateUserId} IS NULL OR NOT ${personProtectedSql(CitizenDelegation.delegateUserId)})`);
+/** @param {Date} before */
+export const guardianLinksRevokedWhere = (before) => and(eq(GuardianRelationship.status, 'REVOKED'), lt(GuardianRelationship.updatedAt, before),
+    sql`NOT ${heldSql(GuardianRelationship.id, GuardianRelationship.minorId, GuardianRelationship.guardianId)}`,
+    sql`NOT ${personProtectedSql(GuardianRelationship.minorId)}`, sql`NOT ${personProtectedSql(GuardianRelationship.guardianId)}`);
+
 const deleteStep = (table, where) => ({
     count: (db, ctx) => countWhere(db, table, where(ctx)),
     run: async (db, ctx) => affected(await db.delete(table).where(where(ctx))),
@@ -471,6 +496,17 @@ export const PURGE_STEPS = [
     { id: 'parcoursClosedStepsDeleted', summaryKey: 'parcours_closed_steps_deleted', ecode: 'G14', kind: 'delete', table: 'ParcoursItem', durationKey: 'PARCOURS_CLOSED_STEP_DAYS',
         tables: ['ParcoursItem', 'ParcoursEvent', 'LegalHold', 'DSRRequest'],
         ...deleteStep(ParcoursItem, (ctx) => parcoursClosedStepsWhere(ctx.cutoff('PARCOURS_CLOSED_STEP_DAYS'))) },
+
+    // 20c–20e. G14-R3 — trusted persons and guardian links (PROPOSED « à approuver »: not executable while pendingApproval is set)
+    { id: 'delegationInvitationsExpiredDeleted', summaryKey: 'delegation_invitations_expired_deleted', ecode: 'C23', kind: 'delete', table: 'CitizenDelegation',
+        durationKey: 'DELEGATION_INVITATION_EXPIRED_DAYS', tables: ['CitizenDelegation', 'LegalHold', 'DSRRequest'],
+        ...deleteStep(CitizenDelegation, (ctx) => delegationInvitationsExpiredWhere(ctx.cutoff('DELEGATION_INVITATION_EXPIRED_DAYS'))) },
+    { id: 'delegationsEndedDeleted', summaryKey: 'delegations_ended_deleted', ecode: 'C23', kind: 'delete', table: 'CitizenDelegation', durationKey: 'DELEGATION_ENDED_DAYS',
+        tables: ['CitizenDelegation', 'DelegationAccessEvent', 'LegalHold', 'DSRRequest'],
+        ...deleteStep(CitizenDelegation, (ctx) => delegationsEndedWhere(ctx.cutoff('DELEGATION_ENDED_DAYS'))) },
+    { id: 'guardianLinksRevokedDeleted', summaryKey: 'guardian_links_revoked_deleted', ecode: 'C05', kind: 'delete', table: 'GuardianRelationship', durationKey: 'GUARDIAN_LINK_REVOKED_DAYS',
+        tables: ['GuardianRelationship', 'LegalHold', 'DSRRequest'],
+        ...deleteStep(GuardianRelationship, (ctx) => guardianLinksRevokedWhere(ctx.cutoff('GUARDIAN_LINK_REVOKED_DAYS'))) },
 
     // 21. R44 / E7 — REPORT ONLY: accounts without citizen activity for 24 months (last sign-in; an account never signed into counts from its creation —
     //     D4 V2, 08/11/2026: it used to be left out). Deleting is a later, separate decision (D4 V2 procedure: notice first, erasure engine — never this job).

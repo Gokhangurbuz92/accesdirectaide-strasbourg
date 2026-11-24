@@ -19,6 +19,15 @@ export const GUARDIAN_STATES = ['DECLARED', 'EMAIL_VERIFIED', 'STRONGER_VERIFICA
 export const STRONG_METHODS = ['PROFESSIONAL_ATTESTATION', 'IDENTITY_DOCUMENT_CHECK', 'OFFICIAL_IDENTITY_SERVICE'];
 export const MAX_ACTIVE_GUARDIANS = 2;
 export const NEUTRAL_DECLARE = 'Si cette adresse correspond au compte d’un adulte, cette personne verra votre demande dans son espace.';
+/**
+ * G14-R3 (release-3 package, 24/11/2026): a link is declared FROM a minor's account. While minors' own accounts are closed (capability
+ * citizen.minor_accounts, never openable: R42-A07 age policy), no new link may be created, even by an account whose profile says « moins-de-18 »
+ * (such an account can only exist by a later change of an adult-declared account, or from before R42): opening citizen.guardians then serves the
+ * guardian side of links that already exist (confirm, strong-check request, revocation) and the verifier's list — nothing that collects a minor's data.
+ * The LAB (capability enforcement off) keeps the full flow for its tests.
+ */
+export const MINOR_ACCOUNTS_CLOSED = Object.freeze({ ok: false, status: 409, code: 'MINOR_ACCOUNTS_CLOSED',
+  message: 'Les comptes de personnes mineures ne sont pas ouverts sur ce service : aucun nouveau lien avec un représentant légal ne peut être créé. Un lien existant peut être retiré à tout moment.' });
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 const EMAIL = /^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/;
