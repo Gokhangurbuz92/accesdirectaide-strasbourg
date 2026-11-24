@@ -45,6 +45,7 @@ import { frontendEnv } from '@/config/env';
 import { bookingOpened } from '@/lib/publicBeta';
 import FeedbackButton from '@/components/FeedbackButton';
 import StructureBookingBlock from '@/components/StructureBookingBlock';
+import ExternalBookingBlock from '@/components/ExternalBookingBlock';
 import { fetchBookingProfile, openServices } from '@/lib/bookingProfile';
 
 // R32: the French labels (a badge is shown only for these types); typeLabel() gives them in the interface language — the names of public bodies and the
@@ -361,6 +362,10 @@ export default function StructureDetail() {
             {bookingCandidate && (
               <StructureBookingBlock rdvPath={rdvPath} profile={bookingProfile || null} profileLoading={profileLoading} />
             )}
+
+            {/* G14 release 3: « Rendez-vous sur leur site » — the place's own booking page, reviewed; never AccesDirectAide booking (the server sends it only
+                once approved and while ADA_EXTERNAL_BOOKING is open) */}
+            {structure.external_booking ? <ExternalBookingBlock booking={structure.external_booking} /> : null}
 
             {/* automatic verification: when, against which official registers */}
             <div className="mb-4"><AutoVerificationNote record={structure} kind="structure" /></div>

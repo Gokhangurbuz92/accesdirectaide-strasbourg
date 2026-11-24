@@ -7,6 +7,8 @@
  "back": "All situations",
  "booking.intro": "These links only show the places where you can ask for an appointment online.",
  "booking.link": ": places with online appointments",
+ "booking.need_link": ": places where to book an appointment for this need",
+ "booking.needs_title": "By need",
  "booking.title": "Book an appointment",
  "emergency.body": "These numbers are free. Someone will answer.",
  "emergency.source": "Source: Service-Public sheet {{id}}.",

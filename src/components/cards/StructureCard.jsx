@@ -130,6 +130,15 @@ export default function StructureCard({ structure, compact = false, index = 0 })
                     {t('structures:card.online_booking', 'RDV en ligne')}
                   </Badge>
                 )}
+                {/* G14 release 3: the place books on its OWN system (reviewed page; the server sends it only while ADA_EXTERNAL_BOOKING is open) — a
+                    distinct badge, never counted as AccesDirectAide online booking */}
+                {structure.external_booking?.url && (
+                  <Badge variant="outline" className="border-slate-400 bg-white text-slate-800 flex items-center gap-1" data-testid="structure-external-booking-badge"
+                    title={t('structures:card.external_booking_hint', 'Cette structure prend ses rendez-vous sur son propre site, pas sur AccesDirectAide.')}>
+                    <Globe className="h-3 w-3" aria-hidden="true" />
+                    {t('structures:card.external_booking', 'Rendez-vous sur leur site')}
+                  </Badge>
+                )}
               </div>
               {isPmrAccessible && (
                 <Badge variant="outline" className="text-blue-700 border-blue-300 flex items-center gap-1">

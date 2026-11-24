@@ -191,5 +191,18 @@
   "detail.booking.duration": "({{n}} min)",
   "detail.booking.next_day": "First day with a free slot: {{date}}.",
   "detail.booking.no_slot_14": "No free slot in the next 14 days. You can try again later or contact the organisation.",
-  "detail.booking.loading": "Loading availability…"
+  "detail.booking.loading": "Loading availability…",
+  "ownbooking.title": "Appointments on their website",
+  "ownbooking.text": "This organisation takes appointments on its own system. This is not an AccesDirectAide booking: the request, the conditions and the confirmation depend on that website.",
+  "ownbooking.platform": "Public appointment platform: {{name}}.",
+  "ownbooking.needs": "For: {{needs}}.",
+  "ownbooking.leave": "You are leaving AccesDirectAide. The website you open has its own terms and its own privacy policy. AccesDirectAide sends it no information about you.",
+  "ownbooking.link": "Book an appointment on {{host}}",
+  "ownbooking.new_window": " (new window, external website)",
+  "card.external_booking_hint": "This organisation takes appointments on its own website, not on AccesDirectAide.",
+  "card.external_booking": "Appointments on their website",
+  "filters.need_chip": "Appointment for: {{need}}",
+  "filters.need": "Book an appointment for",
+  "filters.need_all": "All needs",
+  "filters.need_hint": "Places where an appointment for this need can be requested on AccesDirectAide, or that take appointments on their own website (checked page)."
 }

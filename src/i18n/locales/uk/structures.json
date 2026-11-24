@@ -195,5 +195,18 @@
   "detail.booking.duration": "({{n}} хв)",
   "detail.booking.next_day": "Перший день із вільним часом: {{date}}.",
   "detail.booking.no_slot_14": "Протягом наступних 14 днів вільного часу немає. Спробуйте пізніше або зверніться до установи.",
-  "detail.booking.loading": "Завантаження вільного часу…"
+  "detail.booking.loading": "Завантаження вільного часу…",
+  "ownbooking.title": "Запис на їхньому сайті",
+  "ownbooking.text": "Ця організація записує на прийом через власну систему. Це не запис через AccesDirectAide: запит, умови та підтвердження залежать від того сайту.",
+  "ownbooking.platform": "Публічна платформа запису: {{name}}.",
+  "ownbooking.needs": "Для: {{needs}}.",
+  "ownbooking.leave": "Ви залишаєте AccesDirectAide. Сайт, що відкриється, має власні умови та власну політику конфіденційності. AccesDirectAide не передає йому жодної інформації про вас.",
+  "ownbooking.link": "Записатися на {{host}}",
+  "ownbooking.new_window": " (нове вікно, зовнішній сайт)",
+  "card.external_booking_hint": "Ця організація записує на прийом на власному сайті, а не на AccesDirectAide.",
+  "card.external_booking": "Запис на їхньому сайті",
+  "filters.need_chip": "Запис щодо: {{need}}",
+  "filters.need": "Записатися щодо",
+  "filters.need_all": "Усі потреби",
+  "filters.need_hint": "Заклади, де можна подати запит на прийом щодо цієї потреби через AccesDirectAide, або які записують на власному сайті (перевірена сторінка)."
 }

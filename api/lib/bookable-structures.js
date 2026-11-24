@@ -30,15 +30,21 @@ export function bookingOpenOnServer(env = process.env) {
 
 /**
  * The predicate on the row aliased `S` ("Structure" by default). `video`: whether the VIDEO modality is bookable now (publicVideoStatus().available).
- * @param {{ alias?: string, video?: boolean }} [opts]
+ * G14 release 3: `subdomains` — only a place where THE SAME bookable service (every condition above) is tagged with one of these needs
+ * ("ProRdvServiceSubdomain", drizzle/0063; the caller passes it only when that table exists, and the ids are checked against the closed taxonomy).
+ * @param {{ alias?: string, video?: boolean, subdomains?: string[] | null }} [opts]
  */
-export function bookableStructureSql({ alias = 'Structure', video = false } = {}) {
+export function bookableStructureSql({ alias = 'Structure', video = false, subdomains = null } = {}) {
   const S = sql.raw(`"${alias.replace(/[^A-Za-z0-9_]/g, '')}"`);
   const allowed = video ? sql`ARRAY['IN_PERSON', 'VIDEO']::text[]` : sql`ARRAY['IN_PERSON']::text[]`;
   // the structure's modalities (structureModes): BOTH → both, VIDEO → video, anything else (no row, IN_PERSON) → in person
   const structureModes = sql`(CASE rs."bookingMode"::text WHEN 'BOTH' THEN ARRAY['IN_PERSON', 'VIDEO']::text[] WHEN 'VIDEO' THEN ARRAY['VIDEO']::text[] ELSE ARRAY['IN_PERSON']::text[] END)`;
   const review = sql`(${S}.settings_json -> 'serviceSensitivity' -> 'services' -> svc.id)`;
   const team = sql`(${S}.settings_json -> 'rdvBooking' -> 'team')`;
+  const needs = Array.isArray(subdomains)
+    ? sql`
+        AND EXISTS (SELECT 1 FROM "ProRdvServiceSubdomain" need WHERE need."serviceId" = svc.id AND need.subdomain = ANY(${`{${subdomains.filter((x) => /^[a-z0-9-]{1,64}$/.test(x)).join(',')}}`}::text[]))`
+    : sql``;
   return sql`(${S}.statut = 'actif' AND ${S}.verification_status = 'VERIFIED'
     AND COALESCE((SELECT rs0."isPublished" FROM "StructureRdvSettings" rs0 WHERE rs0."structureId" = ${S}.id LIMIT 1), ${S}.is_pro_enabled, false) = true
     AND EXISTS (
@@ -47,7 +53,7 @@ export function bookableStructureSql({ alias = 'Structure', video = false } = {}
         CROSS JOIN LATERAL unnest(CASE WHEN cardinality(svc.modes) > 0 THEN svc.modes ELSE ARRAY['IN_PERSON']::text[] END) AS m(mode)
       WHERE svc."structureId" = ${S}.id AND svc."isActive" = true
         AND m.mode = ANY(${structureModes}) AND m.mode = ANY(${allowed})
-        AND ${review} ->> 'value' = 'ordinary'
+        AND ${review} ->> 'value' = 'ordinary'${needs}
         AND btrim(COALESCE(${review} ->> 'reviewedBy', '')) <> ''
         AND COALESCE(${review} ->> 'reviewedAt', '') ~ '^\\d{4}-\\d{2}-\\d{2}'
         AND EXISTS (SELECT 1 FROM "ProAvailabilityRule" r WHERE r."structureId" = ${S}.id AND r."isActive" = true AND (r.modes IS NULL OR m.mode = ANY(r.modes)))
@@ -60,7 +66,7 @@ export function bookableStructureSql({ alias = 'Structure', video = false } = {}
     ))`;
 }
 
-/** the predicate with this deployment's video state @param {{ alias?: string }} [opts] @param {Record<string, string | undefined>} [env] */
+/** the predicate with this deployment's video state @param {{ alias?: string, subdomains?: string[] | null }} [opts] @param {Record<string, string | undefined>} [env] */
 export function bookableStructureSqlNow(opts = {}, env = process.env) {
   return bookableStructureSql({ ...opts, video: Boolean(publicVideoStatus(env).available) });
 }

@@ -19,6 +19,7 @@ import { useT } from '@/i18n';
 import FalcPageDraft from '@/components/FalcPageDraft';
 import { frontendEnv } from '@/config/env';
 import { bookingOpened, isBetaRestrictedPath } from '@/lib/publicBeta';
+import { DOMAIN_IDS, NEED_BY_ID, NEED_DOMAINS, domainName, needName } from '@/lib/socialNeeds';
 import serviceTerritory from '../../data/geography/service-territory.v1.json';
 
 const StructureMap = React.lazy(() => import('../components/StructureMap'));
@@ -81,10 +82,17 @@ export default function Annuaire() {
   // G14-FIND: « Rendez-vous en ligne » — offered (and sent) only when online booking is open in this build; the server checks it again
   const bookingOpen = bookingOpened(frontendEnv.flags.publicBeta);
   const orientationOpen = !frontendEnv.flags.publicBeta || !isBetaRestrictedPath('/orientation');
-  const rdvRaw = (searchParams.get('rdv') || '').trim();
+  // `bookable=1` is the same filter (the links of /situation and Mon Espace's directoryHref use that name)
+  const rdvRaw = (searchParams.get('rdv') || searchParams.get('bookable') || '').trim();
   const rdvOnly = bookingOpen && (rdvRaw === '1' || rdvRaw === 'true');
   // G14-FIND: a postal code of the Bas-Rhin (from « Où ? » in Mon Espace): the places whose recorded address has that postal code
   const zip = /^67\d{3}$/.test((searchParams.get('zip') || '').trim()) ? searchParams.get('zip').trim() : '';
+  // G14 release 3: « où prendre rendez-vous pour ce besoin » — a subdomain (or a domain) of the 20 × 86 taxonomy; the server lists the places where an
+  // AccesDirectAide-bookable service is tagged with it, or (once reviewed and while that display is open) whose own booking page names it
+  const subdomainRaw = (searchParams.get('subdomain') || '').trim();
+  const subdomain = NEED_BY_ID.has(subdomainRaw) ? subdomainRaw : '';
+  const domainRaw = (searchParams.get('domain') || '').trim();
+  const needDomain = !subdomain && DOMAIN_IDS.has(domainRaw) ? domainRaw : '';
   const page = parsePage(searchParams.get('page'));
   const limit = parseLimit(searchParams.get('limit') || searchParams.get('pageSize'));
   const sort = (searchParams.get('sort') || (q ? 'relevance' : 'quality')).trim();
@@ -102,7 +110,7 @@ export default function Annuaire() {
     error,
     refetch,
   } = useQuery({
-    queryKey: ['structures', { q, type, city, zip, departement, serves, pmr: pmrEnabled, rdv: rdvOnly, sort, page, limit }],
+    queryKey: ['structures', { q, type, city, zip, departement, serves, pmr: pmrEnabled, rdv: rdvOnly, subdomain, domain: needDomain, sort, page, limit }],
     queryFn: () => client.entities.Structure.filter({
       q: q || undefined,
       type: type || undefined,
@@ -112,6 +120,8 @@ export default function Annuaire() {
       serves: serves || undefined,
       pmr: pmrEnabled ? '1' : undefined,
       bookable: rdvOnly ? '1' : undefined,
+      subdomain: subdomain || undefined,
+      domain: needDomain || undefined,
       sort,
       page,
       limit,
@@ -188,7 +198,9 @@ export default function Annuaire() {
     zip && { key: 'zip', label: t('structures:filters.zip_chip', 'Code postal {{zip}}', { zip }), onRemove: () => handleParamChange('zip', '') },
     departement && { key: 'departement', label: departement, onRemove: () => handleParamChange('departement', '') },
     pmrEnabled && { key: 'pmr', label: t('structures:filters.pmr_only', 'Accessible PMR uniquement'), onRemove: () => handleParamChange('pmr', '') },
-    rdvOnly && { key: 'rdv', label: t('structures:filters.rdv_only', 'Rendez-vous en ligne'), onRemove: () => handleParamChange('rdv', '') },
+    rdvOnly && { key: 'rdv', label: t('structures:filters.rdv_only', 'Rendez-vous en ligne'), onRemove: () => { const p = new URLSearchParams(searchParams); p.delete('rdv'); p.delete('bookable'); p.set('page', '1'); setSearchParams(p); } },
+    subdomain && { key: 'subdomain', label: t('structures:filters.need_chip', 'Rendez-vous pour : {{need}}', { need: needName(t, subdomain) }), onRemove: () => handleParamChange('subdomain', '') },
+    needDomain && { key: 'domain', label: t('structures:filters.need_chip', 'Rendez-vous pour : {{need}}', { need: domainName(t, needDomain) }), onRemove: () => handleParamChange('domain', '') },
   ].filter(Boolean);
 
   /** the place filters, in the sidebar (prefix '') and in the phone sheet (prefix 'm-'); the types are the chips above the results @param {string} prefix */
@@ -220,6 +232,23 @@ export default function Annuaire() {
             {t('structures:filters.rdv_hint', 'Lieux où vous pouvez demander un rendez-vous sur AccesDirectAide. Ce n’est pas un partenariat : la structure confirme elle-même le rendez-vous.')}
           </p>
         </div>
+      )}
+      {/* G14 release 3: places that take appointments for a need (AccesDirectAide booking, or a reviewed own booking page) — offered while booking is open */}
+      {bookingOpen && (
+        <FilterField id={`${prefix}structures-need`} label={t('structures:filters.need', 'Prendre rendez-vous pour')}>
+          <select id={`${prefix}structures-need`} className={TEXT_INPUT} value={subdomain} aria-describedby={`${prefix}structures-need-hint`} data-testid={`${prefix}structures-need-filter`}
+            onChange={(e) => { const p = new URLSearchParams(searchParams); p.delete('domain'); if (e.target.value) p.set('subdomain', e.target.value); else p.delete('subdomain'); p.set('page', '1'); setSearchParams(p); }}>
+            <option value="">{t('structures:filters.need_all', 'Tous les besoins')}</option>
+            {NEED_DOMAINS.map((d) => (
+              <optgroup key={d.id} label={domainName(t, d.id)}>
+                {d.subdomains.map((x) => <option key={x.id} value={x.id}>{needName(t, x.id)}</option>)}
+              </optgroup>
+            ))}
+          </select>
+          <p id={`${prefix}structures-need-hint`} className="mt-1 text-xs text-slate-700">
+            {t('structures:filters.need_hint', 'Lieux où un rendez-vous pour ce besoin peut être demandé sur AccesDirectAide, ou qui prennent leurs rendez-vous sur leur propre site (page vérifiée).')}
+          </p>
+        </FilterField>
       )}
       {activeFilters.length > 0 && <Button type="button" variant="ghost" className="h-11 w-full" onClick={clearFilters}>{t('structures:filters.reset', 'Réinitialiser')}</Button>}
     </div>
@@ -270,7 +299,7 @@ export default function Annuaire() {
 
         <ResultsBar summary={!isLoading && !error && structures.length > 0
           ? t('structures:list.count', { count: total, defaultValue_one: '{{count}} structure trouvée.', defaultValue_other: '{{count}} structures trouvées.' }) : null}>
-          <MobileFilters title={t('structures:filters.toggle', 'Filtres')} count={[city, zip, departement, pmrEnabled, rdvOnly].filter(Boolean).length} render={renderFilters} onReset={clearFilters} />
+          <MobileFilters title={t('structures:filters.toggle', 'Filtres')} count={[city, zip, departement, pmrEnabled, rdvOnly, subdomain || needDomain].filter(Boolean).length} render={renderFilters} onReset={clearFilters} />
           <div role="tablist" aria-label={t('structures:view.label', 'Affichage')} className="inline-flex rounded-lg bg-slate-100 p-1">
             <button id="annuaire-tab-list" role="tab" type="button" aria-selected={viewMode === 'list'} aria-controls="annuaire-panel" tabIndex={viewMode === 'list' ? 0 : -1}
               className={tabClass(viewMode === 'list')} onClick={() => setViewMode('list')} onKeyDown={onTabKey}>

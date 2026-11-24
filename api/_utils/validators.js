@@ -107,6 +107,9 @@ export const searchStructuresSchema = baseSearchSchema.extend({
   pmr: z.enum(['true', 'false', '1', '0']).optional(),
   // G14-FIND: only the places that can really be asked for an appointment online now (api/lib/bookable-structures.js)
   bookable: z.enum(['true', 'false', '1', '0']).optional(),
+  // G14 release 3: « takes appointments for this need » — a subdomain or a domain id of data/reference/social-domains.v1.json (an unknown id matches nothing)
+  subdomain: z.string().regex(/^[a-z0-9-]{1,64}$/).optional(),
+  domain: z.string().regex(/^[a-z0-9-]{1,64}$/).optional(),
   // Strict whitelist for sort to prevent SQL injection
   sort: z.enum([
     // External stable aliases

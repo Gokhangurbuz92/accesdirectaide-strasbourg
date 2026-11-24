@@ -7,6 +7,8 @@
  "back": "كل الأوضاع",
  "booking.intro": "هذه الروابط تعرض فقط الأماكن التي يمكنك فيها طلب موعد عبر الإنترنت.",
  "booking.link": ": أماكن بمواعيد عبر الإنترنت",
+ "booking.need_link": ": أماكن لحجز موعد لهذا الاحتياج",
+ "booking.needs_title": "حسب الاحتياج",
  "booking.title": "حجز موعد",
  "emergency.body": "هذه الأرقام مجانية. سيجيبك أحد.",
  "emergency.source": "المصدر: صفحة Service-Public رقم {{id}}.",

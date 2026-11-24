@@ -191,5 +191,18 @@
   "detail.booking.duration": "({{n}} Min.)",
   "detail.booking.next_day": "Erster Tag mit freiem Termin: {{date}}.",
   "detail.booking.no_slot_14": "In den nächsten 14 Tagen kein freier Termin. Versuchen Sie es später erneut oder wenden Sie sich an die Einrichtung.",
-  "detail.booking.loading": "Verfügbarkeiten werden geladen…"
+  "detail.booking.loading": "Verfügbarkeiten werden geladen…",
+  "ownbooking.title": "Termine auf ihrer Website",
+  "ownbooking.text": "Diese Einrichtung vergibt Termine über ihr eigenes System. Das ist keine Terminbuchung über AccesDirectAide: Anfrage, Bedingungen und Bestätigung hängen von dieser Website ab.",
+  "ownbooking.platform": "Öffentliche Terminplattform: {{name}}.",
+  "ownbooking.needs": "Für: {{needs}}.",
+  "ownbooking.leave": "Sie verlassen AccesDirectAide. Die geöffnete Website hat eigene Bedingungen und eine eigene Datenschutzerklärung. AccesDirectAide übermittelt ihr keine Informationen über Sie.",
+  "ownbooking.link": "Termin auf {{host}} vereinbaren",
+  "ownbooking.new_window": " (neues Fenster, externe Website)",
+  "card.external_booking_hint": "Diese Einrichtung vergibt Termine auf ihrer eigenen Website, nicht auf AccesDirectAide.",
+  "card.external_booking": "Termine auf ihrer Website",
+  "filters.need_chip": "Termin für: {{need}}",
+  "filters.need": "Termin vereinbaren für",
+  "filters.need_all": "Alle Bedarfe",
+  "filters.need_hint": "Orte, bei denen ein Termin für diesen Bedarf über AccesDirectAide angefragt werden kann oder die Termine auf ihrer eigenen Website vergeben (geprüfte Seite)."
 }

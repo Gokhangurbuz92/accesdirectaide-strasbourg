@@ -188,6 +188,7 @@ const AdminFalc = lazy(() => import("./admin/k5/Falc.jsx"));
 const AdminDuplicates = lazy(() => import("./admin/k5/Duplicates.jsx"));
 const AdminLinkChecks = lazy(() => import("./admin/k5/LinkChecks.jsx"));   // RA-06
 const AdminServiceSensitivity = lazy(() => import("./admin/k5/ServiceSensitivity.jsx"));   // RA-07
+const AdminExternalBooking = lazy(() => import("./admin/k5/ExternalBooking.jsx"));   // G14 release 3: own booking pages of the places
 const AdminAlerts = lazy(() => import("./admin/k5/Alerts.jsx"));   // RA-03 (interface)
 const AdminAiOversight = lazy(() => import("./admin/k5/AiOversight.jsx"));
 const AdminProviders = lazy(() => import("./admin/k5/Providers.jsx"));   // R46 / N10
@@ -440,6 +441,7 @@ function PagesContent() {
                                     <Route path="doublons" element={<AdminDuplicates />} />
                                     <Route path="liens" element={<AdminLinkChecks />} />
                                     <Route path="sensibilite-services" element={<AdminServiceSensitivity />} />
+                                    <Route path="rdv-externes" element={<AdminExternalBooking />} />
                                     <Route path="alertes" element={<AdminAlerts />} />
                                     <Route path="ai-oversight" element={<AdminAiOversight />} />
                                     <Route path="orchestrator" element={<AIOrchestrator />} />

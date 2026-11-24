@@ -106,6 +106,7 @@ const SIDEBAR_SECTIONS = [
             { label: 'Représentants légaux (vérification)', to: '/admin/representants-legaux', icon: Shield },   // R46 / C05 verifier side
             { label: 'Protection juridique (majeurs)', to: '/admin/protection-juridique', icon: Shield },   // G14-R3G: verification of court decisions
             { label: 'Sensibilité des services réservables', to: '/admin/sensibilite-services', icon: Shield },   // RA-07
+            { label: 'Pages de rendez-vous des structures', to: '/admin/rdv-externes', icon: Shield },   // G14 release 3
         ]
     },
     {
@@ -179,6 +180,7 @@ function navLabel(t, label) {
         'Représentants légaux (vérification)': t('admin:layout.nav.guardians', 'Représentants légaux (vérification)'),
         'Protection juridique (majeurs)': t('admin:layout.nav.legal_protection', 'Protection juridique (majeurs)'),
         'Sensibilité des services réservables': t('admin:layout.nav.service_sensitivity', 'Sensibilité des services réservables'),
+        'Pages de rendez-vous des structures': t('admin:layout.nav.external_booking', 'Pages de rendez-vous des structures'),
         'Plateforme': t('admin:layout.nav.platform', 'Plateforme'),
         'Opérations et journal d’audit': t('admin:layout.nav.operations', 'Opérations et journal d’audit'),
         'Signaux de sécurité': t('admin:layout.nav.security', 'Signaux de sécurité'),

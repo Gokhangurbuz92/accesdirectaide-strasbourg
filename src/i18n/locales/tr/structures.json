@@ -191,5 +191,18 @@
   "detail.booking.duration": "({{n}} dk)",
   "detail.booking.next_day": "Boş randevusu olan ilk gün: {{date}}.",
   "detail.booking.no_slot_14": "Önümüzdeki 14 gün içinde boş randevu yok. Daha sonra tekrar deneyebilir ya da kurumla iletişime geçebilirsiniz.",
-  "detail.booking.loading": "Uygunluk yükleniyor…"
+  "detail.booking.loading": "Uygunluk yükleniyor…",
+  "ownbooking.title": "Randevu kendi sitelerinde",
+  "ownbooking.text": "Bu kuruluş randevularını kendi sistemi üzerinden alır. Bu bir AccesDirectAide randevusu değildir: talep, koşullar ve onay o siteye bağlıdır.",
+  "ownbooking.platform": "Kamuya açık randevu platformu: {{name}}.",
+  "ownbooking.needs": "Şunlar için: {{needs}}.",
+  "ownbooking.leave": "AccesDirectAide'den ayrılıyorsunuz. Açılan sitenin kendi koşulları ve kendi gizlilik politikası vardır. AccesDirectAide bu siteye sizinle ilgili hiçbir bilgi göndermez.",
+  "ownbooking.link": "{{host}} üzerinden randevu al",
+  "ownbooking.new_window": " (yeni pencere, dış site)",
+  "card.external_booking_hint": "Bu kuruluş randevularını AccesDirectAide'de değil, kendi sitesinde alır.",
+  "card.external_booking": "Randevu kendi sitelerinde",
+  "filters.need_chip": "Randevu konusu: {{need}}",
+  "filters.need": "Şunun için randevu al",
+  "filters.need_all": "Tüm ihtiyaçlar",
+  "filters.need_hint": "Bu ihtiyaç için AccesDirectAide üzerinden randevu talep edilebilen ya da randevularını kendi sitesinde alan yerler (kontrol edilmiş sayfa)."
 }
