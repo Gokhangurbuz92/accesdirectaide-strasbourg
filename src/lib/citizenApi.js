@@ -115,6 +115,8 @@ export const citizenApi = {
   /** with the HDS service `doc` is the encrypted { content, meta, dek, expiresAt? } of src/lib/vaultCrypto.js; otherwise the LAB form */
   uploadCoffre: (/** @type {Record<string, unknown>} */ doc) => vaultCall('/v1/vault/documents', { method: 'POST', body: doc }, () => call('/api/citizen/coffre', { method: 'POST', body: doc })),
   setCoffreKeyring: (/** @type {unknown} */ keyring) => vaultCall('/v1/vault/keyring', { method: 'PUT', body: { keyring } }, async () => { throw new CitizenApiError(citizenErrorText({ code: 'HDS_GATEWAY_NOT_CONFIGURED', status: 503 }), 503, 'HDS_GATEWAY_NOT_CONFIGURED'); }),
+  /** G14-R4: passphrase change, recovery, new recovery code — the SAME vault key re-wrapped; authToken = the browser's one-way proof that it holds it */
+  replaceCoffreKeyring: (/** @type {unknown} */ keyring, /** @type {string} */ authToken, /** @type {string} */ reason) => vaultCall('/v1/vault/keyring', { method: 'PUT', body: { keyring, replace: true, authToken, reason } }, async () => { throw new CitizenApiError(citizenErrorText({ code: 'HDS_GATEWAY_NOT_CONFIGURED', status: 503 }), 503, 'HDS_GATEWAY_NOT_CONFIGURED'); }),
   deleteCoffre: (/** @type {string} */ id) => vaultCall(`/v1/vault/documents/${encodeURIComponent(id)}`, { method: 'DELETE' }, () => call('/api/citizen/coffre', { method: 'DELETE', body: { id } })),
   coffreDownloadUrl: (/** @type {string} */ id) => `/api/citizen/coffre?download=${encodeURIComponent(id)}`,
   // G14-R3: with the HDS service the encrypted document is fetched with a ticket, opened in the page and saved from memory (a plain link cannot carry the ticket)

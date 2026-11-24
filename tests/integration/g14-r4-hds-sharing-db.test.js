@@ -254,6 +254,38 @@ describe.skipIf(!reachable)('G14-R4 HDS sharing on the LAB test cluster', () => 
     expect((await call(svc.base, 'GET', `/v1/dossiers/${c.body.id}`, { t: cit(P) })).status).toBe(404);
   }, 30000);
 
+  it('Mon Coffre recovery (zero-knowledge): a replacement needs the one-way proof and keeps the same vault key; recovery and passphrase change', async () => {
+    const R = 'citizen-r4-recovery';
+    const k = await vc.createKeyring('phrase initiale R4');
+    expect((await call(svc.base, 'PUT', '/v1/vault/keyring', { t: cit(R), body: { keyring: { ...k.keyring, authHash: undefined } } })).body.error).toBe('INVALID_KEYRING');   // a new keyring carries its proof hash
+    expect((await call(svc.base, 'PUT', '/v1/vault/keyring', { t: cit(R), body: { keyring: k.keyring } })).status).toBe(201);
+    const box = await vc.encryptDocument(k.vaultKey, { bytes: pdf(`${CANARY} coffre`), name: 'a.pdf', category: 'autre', type: 'application/pdf' });
+    expect((await call(svc.base, 'POST', '/v1/vault/documents', { t: cit(R), body: box })).status).toBe(201);
+    // a stolen session cannot silently replace the protection (it would orphan every document)
+    const other = await vc.createKeyring('phrase de l’attaquant');
+    expect((await call(svc.base, 'PUT', '/v1/vault/keyring', { t: cit(R), body: { keyring: other.keyring, replace: true } })).body.error).toBe('KEYRING_PROOF_REQUIRED');
+    expect((await call(svc.base, 'PUT', '/v1/vault/keyring', { t: cit(R), body: { keyring: other.keyring, replace: true, authToken: other.authToken } })).body.error).toBe('KEYRING_PROOF_REQUIRED');
+    expect((await call(svc.base, 'PUT', '/v1/vault/keyring', { t: cit(R), body: { keyring: other.keyring, replace: true, authToken: k.authToken } })).body.error).toBe('KEYRING_KEY_CHANGED');
+    // forgotten passphrase: the recovery code
+    const stored = (await call(svc.base, 'GET', '/v1/vault/documents', { t: cit(R) })).body;
+    const rec = /** @type {any} */ (await vc.recoverWithCode(stored.keyring, k.recoveryCode, 'phrase après secours'));
+    expect((await call(svc.base, 'PUT', '/v1/vault/keyring', { t: cit(R), body: { keyring: rec.keyring, replace: true, authToken: rec.authToken, reason: 'recovery' } })).status).toBe(200);
+    const after = (await call(svc.base, 'GET', '/v1/vault/documents', { t: cit(R) })).body;
+    const vk = /** @type {CryptoKey} */ (await vc.unlockKeyring(after.keyring, 'phrase après secours'));
+    const doc = after.documents[0];
+    const c = await call(svc.base, 'GET', `/v1/vault/documents/${doc.id}/content`, { t: cit(R) });
+    expect(new TextDecoder().decode(await vc.openContent(vk, doc, c.body.content))).toContain(CANARY);   // same vault key: documents intact
+    expect(await vc.recoverWithCode(after.keyring, k.recoveryCode, 'zzzzzzzzzzzz')).toBeNull();   // the used code is spent
+    const ch = /** @type {any} */ (await vc.changePassphrase(after.keyring, 'phrase après secours', 'phrase changée R4'));
+    expect((await call(svc.base, 'PUT', '/v1/vault/keyring', { t: cit(R), body: { keyring: ch.keyring, replace: true, authToken: ch.authToken, reason: 'passphrase_change' } })).status).toBe(200);
+    expect(await vc.recoverWithCode((await call(svc.base, 'GET', '/v1/vault/documents', { t: cit(R) })).body.keyring, rec.recoveryCode, 'phrase de secours 2')).not.toBeNull();
+    const ev = (await svc.pool.query("SELECT action FROM hds.access_event WHERE owner_id = $1 AND object_type = 'vault_keyring' ORDER BY id", [R])).rows.map((r) => r.action);
+    expect(ev).toEqual(['VAULT_KEYRING_CREATED', 'VAULT_RECOVERED_WITH_CODE', 'VAULT_PASSPHRASE_CHANGED']);
+    const dump = execFileSync('pg_dump', ['--data-only', url(DB)], { maxBuffer: 256 * 1024 * 1024 }).toString('latin1');
+    for (const secret of [k.recoveryCode.replace(/-/g, ''), rec.recoveryCode.replace(/-/g, ''), k.authToken, 'phrase changée']) expect(dump.includes(secret), 'secret in dump').toBe(false);
+    await call(svc.base, 'POST', '/v1/internal/erase-subject', { t: sign({ sub: R, typ: 'system', caps: ['hds.erase'] }), body: {} });
+  }, 120000);
+
   it('canaries: a dump of the HDS database holds no clear text; erasure covers the new objects; the output carries no id', async () => {
     const dump = execFileSync('pg_dump', ['--data-only', url(DB)], { maxBuffer: 256 * 1024 * 1024 }).toString('latin1');
     for (const needle of [CANARY, 'ordonnance', 'motif détaillé', 'bonjour', 'synthétique', 'application/pdf', '"d":']) expect(dump.includes(needle), needle).toBe(false);
@@ -264,7 +296,7 @@ describe.skipIf(!reachable)('G14-R4 HDS sharing on the LAB test cluster', () => 
     }
     const pm = await call(svc.base, 'POST', '/v1/internal/erase-subject', { t: sign({ sub: MEMBER1, typ: 'system', caps: ['hds.erase'] }), body: {} });
     expect(pm.body.memberKeys).toBe(1);
-    expect((await exportTombstones(svc.pool)).length).toBe(2);
+    expect((await exportTombstones(svc.pool)).length).toBe(3);
     const all = logLines.join('\n');
     for (const needle of [CANARY, 'Bearer', 'eyJ', P, S1, S2, MEMBER1, ADMIN1, 'rdvconv']) expect(all.includes(needle), needle).toBe(false);
   }, 30000);

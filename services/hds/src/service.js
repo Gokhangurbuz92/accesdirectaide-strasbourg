@@ -100,14 +100,33 @@ export function checkFileBoxes(input) {
 const vaultAad = (/** @type {string} */ owner, /** @type {string} */ id) => `vault:${owner}:${id}`;
 const keyringAad = (/** @type {string} */ owner) => `vault-keyring:${owner}`;
 
-/** @param {unknown} v */
+/**
+ * the Mon Coffre keyring: passphrase wrap { salt, iterations, wrapped, verifier }; G14-R4 optional recovery wrap (the same vault key wrapped by a one-time
+ * recovery code drawn in the browser) and authHash (SHA-256 of the browser's one-way proof that it holds the vault key — never the key)
+ * @param {unknown} v
+ */
 function checkKeyring(v) {
   const k = /** @type {any} */ (v);
   if (!k || typeof k !== 'object' || k.v !== 1 || k.kdf !== 'PBKDF2-SHA256' || !Number.isInteger(k.iterations) || k.iterations < KDF_MIN_ITERATIONS || k.iterations > 10000000) return null;
   if (typeof k.salt !== 'string' || !B64.test(k.salt) || Buffer.from(k.salt, 'base64').length !== 16) return null;
   const wrapped = checkBox(k.wrapped, 64); const verifier = checkBox(k.verifier, 128);
-  return wrapped && verifier ? { v: 1, kdf: 'PBKDF2-SHA256', iterations: k.iterations, salt: k.salt, wrapped, verifier } : null;
+  if (!wrapped || !verifier) return null;
+  /** @type {any} */ const out = { v: 1, kdf: 'PBKDF2-SHA256', iterations: k.iterations, salt: k.salt, wrapped, verifier };
+  if (k.recovery !== undefined) {
+    const r = k.recovery;
+    if (!r || typeof r !== 'object' || !Number.isInteger(r.iterations) || r.iterations < KDF_MIN_ITERATIONS || r.iterations > 10000000) return null;
+    if (typeof r.salt !== 'string' || !B64.test(r.salt) || Buffer.from(r.salt, 'base64').length !== 16) return null;
+    const rw = checkBox(r.wrapped, 64); const rv = checkBox(r.verifier, 128);
+    if (!rw || !rv) return null;
+    out.recovery = { iterations: r.iterations, salt: r.salt, wrapped: rw, verifier: rv };
+  }
+  if (k.authHash !== undefined) {
+    if (typeof k.authHash !== 'string' || !B64.test(k.authHash) || Buffer.from(k.authHash, 'base64').length !== 32) return null;
+    out.authHash = k.authHash;
+  }
+  return out;
 }
+const KEYRING_REASONS = Object.freeze({ passphrase_change: 'VAULT_PASSPHRASE_CHANGED', recovery: 'VAULT_RECOVERED_WITH_CODE', recovery_renewed: 'VAULT_RECOVERY_CODE_RENEWED', recovery_added: 'VAULT_RECOVERY_CODE_ADDED' });
 
 /** @param {Ctx} ctx @param {any} q @param {string} owner */
 async function readKeyring(ctx, q, owner) {
@@ -121,15 +140,24 @@ export async function vaultSetKeyring(ctx, p, input) {
   if (!keyring) return fail(400, 'INVALID_KEYRING', 'Trousseau de Mon Coffre invalide.');
   return tx(ctx.pool, async (c) => {
     await c.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`vault:${p.sub}`]);
-    const exists = (await c.query('SELECT 1 FROM hds.vault_keyring WHERE owner_id = $1', [p.sub])).rowCount;
-    // a passphrase change re-wraps the SAME vault key (the browser proves it opened the old one); never a silent replacement
-    if (exists && input?.replace !== true) return fail(409, 'KEYRING_EXISTS', 'Mon Coffre est déjà protégé par une phrase secrète.');
+    const prev = await readKeyring(ctx, c, p.sub);
+    // a passphrase change, a recovery or a new recovery code re-wraps the SAME vault key; never a silent replacement (which would orphan every document)
+    if (prev && input?.replace !== true) return fail(409, 'KEYRING_EXISTS', 'Mon Coffre est déjà protégé par une phrase secrète.');
+    if (prev && prev.authHash) {
+      const token = String(input?.authToken || '');
+      const ok = B64.test(token) && Buffer.from(token, 'base64').length === 32
+        && crypto.timingSafeEqual(crypto.createHash('sha256').update(Buffer.from(token, 'base64')).digest(), Buffer.from(prev.authHash, 'base64'));
+      if (!ok) return fail(403, 'KEYRING_PROOF_REQUIRED', 'Ouvrez d’abord Mon Coffre (phrase secrète ou code de secours) pour changer sa protection.');
+      if (keyring.authHash !== prev.authHash) return fail(400, 'KEYRING_KEY_CHANGED', 'La nouvelle protection doit garder la même clé de Mon Coffre.');
+    }
+    if (!prev && !keyring.authHash) return fail(400, 'INVALID_KEYRING', 'Trousseau de Mon Coffre incomplet (preuve de clé manquante).');
     const L = serverLayer(ctx, keyringAad(p.sub));
     await c.query(`INSERT INTO hds.vault_keyring (owner_id, kek_id, dek_wrapped, keyring_sealed) VALUES ($1, $2, $3, $4)
       ON CONFLICT (owner_id) DO UPDATE SET kek_id = EXCLUDED.kek_id, dek_wrapped = EXCLUDED.dek_wrapped, keyring_sealed = EXCLUDED.keyring_sealed, updated_at = now()`,
     [p.sub, L.kekId, L.wrapped, L.seal(Buffer.from(JSON.stringify(keyring)), 'keyring')]);
-    await event(ctx, c, { owner: p.sub, actor: p, action: exists ? 'VAULT_KEYRING_CHANGED' : 'VAULT_KEYRING_CREATED', objectType: 'vault_keyring' });
-    return { status: exists ? 200 : 201, body: { keyring } };
+    const reason = /** @type {Record<string, string>} */ (KEYRING_REASONS)[String(input?.reason || '')];
+    await event(ctx, c, { owner: p.sub, actor: p, action: prev ? (reason || 'VAULT_KEYRING_CHANGED') : 'VAULT_KEYRING_CREATED', objectType: 'vault_keyring' });
+    return { status: prev ? 200 : 201, body: { keyring } };
   });
 }
 

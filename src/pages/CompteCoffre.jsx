@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { citizenApi } from '@/lib/citizenApi';
 import { COFFRE_UPLOAD_CATEGORIES, fileToBase64 } from '@/lib/monEspace';
 import { saveBlob } from '@/lib/hdsClient';
-import { VAULT_PASSPHRASE_MIN, createKeyring, encryptDocument, openContent, openMeta, sniffType, unlockKeyring } from '@/lib/vaultCrypto';
+import { VAULT_PASSPHRASE_MIN, changePassphrase, createKeyring, encryptDocument, openContent, openMeta, recoverWithCode, renewRecoveryCode, sniffType, unlockKeyring } from '@/lib/vaultCrypto';
+import { RecoveryCodePanel, VaultRecoveryForm, VaultSecurityCard } from '@/components/hds/VaultRecovery';
 import { useMonEspaceLabels } from '@/lib/monEspaceLabels';
 import { getVaultKey, setVaultKey } from '@/lib/hdsKeys';
 import { ensureBoxKey } from '@/lib/hdsSharing';
@@ -33,6 +34,9 @@ export default function CompteCoffre() {
   const vaultKeyRef = useRef(getVaultKey());   // G14-R4: the key unlocked on another screen of this page life (memory only)
   const [e2e, setE2e] = useState({ on: false, keyring: null, unlocked: false });
   const [pass, setPass] = useState({ a: '', b: '' });
+  // G14-R4: the recovery code is shown ONCE (memory only), then forgotten by the page; « recover » = the forgotten-passphrase form
+  const [recoveryCode, setRecoveryCode] = useState('');
+  const [recovering, setRecovering] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -86,7 +90,7 @@ export default function CompteCoffre() {
     if (pass.a.length < VAULT_PASSPHRASE_MIN) { setProblem(t('compte:coffre.e2e_too_short', 'La phrase secrète doit contenir au moins {{min}} caractères.', { min: VAULT_PASSPHRASE_MIN })); return; }
     if (pass.a !== pass.b) { setProblem(t('compte:coffre.e2e_mismatch', 'Les deux phrases secrètes ne sont pas identiques.')); return; }
     setBusy(true);
-    try { const k = await createKeyring(pass.a); await citizenApi.setCoffreKeyring(k.keyring); vaultKeyRef.current = k.vaultKey; setVaultKey(k.vaultKey); await ensureBoxKey(k.vaultKey).catch(() => null); setPass({ a: '', b: '' }); await load(); }
+    try { const k = await createKeyring(pass.a); await citizenApi.setCoffreKeyring(k.keyring); vaultKeyRef.current = k.vaultKey; setVaultKey(k.vaultKey); await ensureBoxKey(k.vaultKey).catch(() => null); setPass({ a: '', b: '' }); setRecoveryCode(k.recoveryCode); await load(); }
     catch (err) { setProblem(err.message); } finally { setBusy(false); }
   };
   const unlock = async (e) => {
@@ -96,6 +100,37 @@ export default function CompteCoffre() {
       const key = await unlockKeyring(e2e.keyring, pass.a);
       if (!key) { setProblem(t('compte:coffre.e2e_phrase_incorrect', 'Phrase secrète incorrecte.')); return; }
       vaultKeyRef.current = key; setVaultKey(key); await ensureBoxKey(key).catch(() => null); setPass({ a: '', b: '' }); await load();
+    } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+  };
+
+  // G14-R4: forgotten passphrase → the recovery code opens the same vault key; a new passphrase AND a new code are set (the used code is spent)
+  const recover = async (code, next) => {
+    setMessage(''); setProblem(''); setBusy(true);
+    try {
+      const r = await recoverWithCode(e2e.keyring, code, next);
+      if (!r) { setProblem(t('compte:recovery.wrong_code', 'Code de secours incorrect.')); return; }
+      await citizenApi.replaceCoffreKeyring(r.keyring, r.authToken, 'recovery');
+      vaultKeyRef.current = r.vaultKey; setVaultKey(r.vaultKey); setRecovering(false); setRecoveryCode(r.recoveryCode);
+      setMessage(t('compte:recovery.recovered', 'Mon Coffre est ouvert avec votre nouvelle phrase secrète. Notez votre nouveau code de secours : l’ancien ne marche plus.'));
+      await load();
+    } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+  };
+  const changePass = async (current, next) => {
+    setMessage(''); setProblem(''); setBusy(true);
+    try {
+      const c = await changePassphrase(e2e.keyring, current, next);
+      if (!c) { setProblem(t('compte:recovery.wrong_current', 'Phrase secrète actuelle incorrecte.')); return; }
+      await citizenApi.replaceCoffreKeyring(c.keyring, c.authToken, 'passphrase_change');
+      setMessage(t('compte:recovery.changed', 'Phrase secrète changée. Votre code de secours reste le même.')); await load();
+    } catch (err) { setProblem(err.message); } finally { setBusy(false); }
+  };
+  const renewCode = async (current) => {
+    setMessage(''); setProblem(''); setBusy(true);
+    try {
+      const r = await renewRecoveryCode(e2e.keyring, current);
+      if (!r) { setProblem(t('compte:recovery.wrong_current', 'Phrase secrète actuelle incorrecte.')); return; }
+      await citizenApi.replaceCoffreKeyring(r.keyring, r.authToken, e2e.keyring?.recovery ? 'recovery_renewed' : 'recovery_added');
+      setRecoveryCode(r.recoveryCode); setMessage(t('compte:recovery.renewed', 'Nouveau code de secours créé. L’ancien ne marche plus.')); await load();
     } catch (err) { setProblem(err.message); } finally { setBusy(false); }
   };
 
@@ -116,14 +151,21 @@ export default function CompteCoffre() {
     <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8" data-testid="compte-coffre">
       <SEO title={t('compte:coffre.mon_coffre', 'Mon Coffre')} noindex />
       <h1 className="text-2xl font-bold text-slate-900">{t('compte:coffre.mon_coffre', 'Mon Coffre')}</h1>
-      {e2e.on ? <p className="text-sm text-slate-700" data-testid="coffre-e2e-intro">{t('compte:coffre.e2e_intro', 'Vos documents sont chiffrés dans votre navigateur avant d’être envoyés à un hébergeur certifié pour les données de santé : ni AccèsDirectAide ni l’hébergeur ne peuvent les lire. Personne ne peut retrouver votre phrase secrète : si vous l’oubliez, vos documents sont perdus.')}</p> : null}
+      {e2e.on ? <p className="text-sm text-slate-700" data-testid="coffre-e2e-intro">{t('compte:coffre.e2e_intro_r4', 'Vos documents sont chiffrés dans votre navigateur avant d’être envoyés à un hébergeur certifié pour les données de santé : ni AccèsDirectAide ni l’hébergeur ne peuvent les lire. Si vous oubliez votre phrase secrète, votre code de secours ouvre Mon Coffre. Si vous perdez les deux, vos documents sont perdus.')}</p> : null}
       {e2e.on ? null : <p className="text-sm text-slate-700">{t('compte:coffre.gardez_ici_vos_papiers', 'Gardez ici vos papiers importants. Chaque fichier est chiffré sur le serveur avant d’être conservé ; vous seul y avez accès depuis votre compte.')}</p>}
       <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950" data-testid="coffre-health-notice">{t('compte:coffre.ajoutez_pas_documents_medicaux', 'N’ajoutez pas de documents médicaux (certificat, compte rendu, ordonnance, dossier MDPH avec éléments médicaux) : leur hébergement demande un hébergeur agréé pour les données de santé, qui n’est pas encore en place.')}</p>
       <p className="rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950" data-testid="coffre-scan-notice">{t('compte:coffre.les_fichiers_sont_pas', 'Les fichiers ne sont pas encore analysés par un antivirus : n’ajoutez que des documents dont vous connaissez l’origine.')}</p>
       <div aria-live="polite" role="status" data-testid="coffre-status">{message ? <p className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-emerald-900">{message}</p> : null}</div>
       {problem ? <p role="alert" data-testid="coffre-problem" className="rounded-md border border-red-200 bg-red-50 p-3 text-red-900">{problem}</p> : null}
 
-      {e2e.on && !e2e.unlocked ? (
+      {recoveryCode ? <RecoveryCodePanel code={recoveryCode} onDone={() => setRecoveryCode('')} /> : null}
+      {!recoveryCode && e2e.on && !e2e.unlocked && recovering ? (
+        <Card data-testid="coffre-recover">
+          <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:recovery.forgot', 'J’ai oublié ma phrase secrète')}</CardTitle></CardHeader>
+          <CardContent><VaultRecoveryForm busy={busy} onSubmit={recover} onCancel={() => setRecovering(false)} onProblem={setProblem} /></CardContent>
+        </Card>
+      ) : null}
+      {!recoveryCode && e2e.on && !e2e.unlocked && !recovering ? (
         <Card data-testid={e2e.keyring ? 'coffre-unlock' : 'coffre-protect'}>
           <CardHeader><CardTitle as="h2" className="text-lg">{e2e.keyring ? t('compte:coffre.e2e_unlock_title', 'Ouvrir Mon Coffre') : t('compte:coffre.e2e_setup_title', 'Choisissez la phrase secrète de Mon Coffre')}</CardTitle></CardHeader>
           <CardContent>
@@ -132,12 +174,16 @@ export default function CompteCoffre() {
                 <input id="cf-pass" data-testid="coffre-passphrase" type="password" autoComplete={e2e.keyring ? 'current-password' : 'new-password'} className="mt-1 w-full rounded-md border border-slate-300 p-2" value={pass.a} onChange={(e) => setPass({ ...pass, a: e.target.value })} /></div>
               {e2e.keyring ? null : <div><label htmlFor="cf-pass2" className="block text-sm font-medium text-slate-800">{t('compte:coffre.e2e_passphrase_confirm', 'Confirmez la phrase secrète')}</label>
                 <input id="cf-pass2" data-testid="coffre-passphrase-confirm" type="password" autoComplete="new-password" className="mt-1 w-full rounded-md border border-slate-300 p-2" value={pass.b} onChange={(e) => setPass({ ...pass, b: e.target.value })} /></div>}
-              <div><Button type="submit" data-testid="coffre-passphrase-submit" disabled={busy}>{busy ? t('compte:coffre.e2e_working', 'Chiffrement en cours…') : e2e.keyring ? t('compte:coffre.e2e_unlock_submit', 'Ouvrir') : t('compte:coffre.e2e_setup_submit', 'Protéger Mon Coffre')}</Button></div>
+              {e2e.keyring ? null : <p className="text-sm text-slate-700">{t('compte:recovery.setup_hint', 'Après cette étape, vous recevrez un code de secours à garder dans un endroit sûr.')}</p>}
+              <div className="flex flex-wrap items-center gap-3"><Button type="submit" data-testid="coffre-passphrase-submit" disabled={busy}>{busy ? t('compte:coffre.e2e_working', 'Chiffrement en cours…') : e2e.keyring ? t('compte:coffre.e2e_unlock_submit', 'Ouvrir') : t('compte:coffre.e2e_setup_submit', 'Protéger Mon Coffre')}</Button>
+                {e2e.keyring ? (e2e.keyring.recovery
+                  ? <Button type="button" variant="link" onClick={() => { setProblem(''); setRecovering(true); }} data-testid="coffre-forgot">{t('compte:recovery.forgot', 'J’ai oublié ma phrase secrète')}</Button>
+                  : <span className="text-sm text-slate-700" data-testid="coffre-no-recovery-code">{t('compte:recovery.no_recovery', 'Ce coffre n’a pas de code de secours : une phrase secrète oubliée ne peut pas être remplacée.')}</span>) : null}</div>
             </form>
           </CardContent>
         </Card>
       ) : null}
-      {e2e.on && !e2e.unlocked ? null : (<>
+      {recoveryCode || (e2e.on && !e2e.unlocked) ? null : (<>
 
       <Card>
         <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:coffre.ajouter_document', 'Ajouter un document')}</CardTitle></CardHeader>
@@ -153,6 +199,7 @@ export default function CompteCoffre() {
         </CardContent>
       </Card>
 
+      {e2e.on ? <VaultSecurityCard busy={busy} hasRecovery={Boolean(e2e.keyring?.recovery)} onChange={changePass} onRenew={renewCode} onProblem={setProblem} /> : null}
       {e2e.on ? <p className="text-sm" data-testid="coffre-dossiers-link"><Link className="text-blue-800 underline" to="/compte/dossiers-chiffres">{t('compte:coffre.e2e_dossiers_link', 'Mes dossiers partagés avec des structures (chiffrés)')}</Link></p> : null}
       <Card>
         <CardHeader><CardTitle as="h2" className="text-lg">{t('compte:coffre.mes_documents', 'Mes documents')}</CardTitle></CardHeader>
