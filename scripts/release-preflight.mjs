@@ -9,7 +9,7 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
-import { approvedAtLeast, HEALTH_CONSENT_VERSION_PROPOSED, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R4_CGU, LEGAL_DRAFTS_R4_NOTICE, LEGAL_DRAFTS_V12 } from '../src/config/legal-drafts.js';
+import { approvedAtLeast, HEALTH_CONSENT_VERSION_PROPOSED, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_PRO_V12, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R4_CGU, LEGAL_DRAFTS_R4_NOTICE, LEGAL_DRAFTS_V12 } from '../src/config/legal-drafts.js';
 import { externalBookingMode } from '../api/lib/external-booking.js';
 import { partnerAdapterConfig } from '../api/lib/partner-adapter/config.js';
 import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation, hdsAttestationProvider } from '../api/_utils/capabilities.js';
@@ -30,7 +30,8 @@ export const R3G_LEGAL_CAPABILITY = 'citizen.legal_protection';
 /**
  * G14-R4 — the texts a Release-4 feature needs in force (never a value, no database read):
  *   shared dossiers, message attachments, Mon Coffre (recovery code), referral payload / partner bridge, job board X05 → notice v15-2026-11-24 (+ cgu-citoyen
- *   v14-2026-11-24 for what a person uses); X01 stories / X02 testimonials → the expansion texts (notice and cgu-citoyen v12-2026-11-23 or later).
+ *   v14-2026-11-24 for what a person uses); X01 stories / X02 testimonials → the expansion texts (notice and cgu-citoyen v12-2026-11-23 or later);
+ *   R5: shared dossiers / attachments / referral payload (organisation encryption keys) and the job board X05 → also cgu-professionnel v12-2026-11-25 or later.
  * X01 / X02 / X05 also need a NAMED moderator (moderation-dsa.js answers 503 MODERATION_NOT_STAFFED otherwise): reported as a reminder (WARN), not read here.
  * X03 (Entraide) is never part of this list: it stays closed until its dedicated AIPD, a safety officer and two moderators.
  * @param {Record<string, string | undefined>} env @param {{ get: (k: string) => string }} ctx
@@ -42,14 +43,18 @@ export function r4LegalChecks(env, { get }) {
   const approved = get('VITE_LEGAL_DOCS_APPROVED_VERSION');
   const N15 = ['notice-confidentialite', LEGAL_DRAFTS_R4_NOTICE]; const C14 = ['cgu-citoyen', LEGAL_DRAFTS_R4_CGU];
   const N12 = ['notice-confidentialite', LEGAL_DRAFTS_V12]; const C12 = ['cgu-citoyen', LEGAL_DRAFTS_V12];
+  // R5: the professional obligations of the organisation encryption keys (cgu-professionnel § 3 « use », item encryption_v12) and of the job offers
+  // (item jobs_v12) exist only from cgu-professionnel v12-2026-11-25. The organisation keys (services/hds /v1/pro/keys, /v1/pro/org-keys*) are reachable with a
+  // professional ticket of citizen.shared_dossier, messaging.attachments or pro.referrals (that ticket also carries citizen.shared_dossier: api/_handlers/pro/hds-ticket.js)
+  const P12 = ['cgu-professionnel', LEGAL_DRAFTS_PRO_V12];
   /** @type {Array<[string, boolean, string[][]]>} */
   const features = [
-    ['citizen.shared_dossier', open('citizen.shared_dossier'), [N15, C14]],
-    ['messaging.attachments', open('messaging.attachments'), [N15, C14]],
+    ['citizen.shared_dossier', open('citizen.shared_dossier'), [N15, C14, P12]],
+    ['messaging.attachments', open('messaging.attachments'), [N15, C14, P12]],
     ['citizen.vault', open('citizen.vault'), [N15, C14]],
-    ['pro.referrals', open('pro.referrals'), [N15]],
+    ['pro.referrals', open('pro.referrals'), [N15, P12]],
     ['partner.referral_adapter', open('partner.referral_adapter'), [N15]],
-    ['community.employment', open('community.employment'), [N15, C14]],
+    ['community.employment', open('community.employment'), [N15, C14, P12]],
     ['community.stories', open('community.stories'), [N12, C12]],
     ['community.testimonials', open('community.testimonials'), [N12, C12]],
   ];
