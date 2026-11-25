@@ -464,3 +464,6 @@ body.reduce-motion *::after {
 /* UI modernisation — ADA Pro: one title size on every console screen (they ranged from 18 to 24 px, « Tableau de Bord » vs « Rendez-vous ») */
 .ada-pro-page h1:not(.sr-only):not(.uppercase) { font-size: 1.75rem; line-height: 2.25rem; font-weight: 700; letter-spacing: -0.015em; color: rgb(var(--ada-ink)); }
 @media (max-width: 639px) { .ada-pro-page h1:not(.sr-only):not(.uppercase) { font-size: 1.5rem; line-height: 2rem; } }
+
+/* 25/11/2026 (WCAG 1.4.10 / 1.4.12): an e-mail address or a long link has no natural break point — it may wrap anywhere instead of overflowing a narrow card at 320 px with text spacing */
+a[href^="mailto:"], a[href^="tel:"] { overflow-wrap: anywhere; }
