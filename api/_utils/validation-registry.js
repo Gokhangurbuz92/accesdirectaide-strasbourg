@@ -17,7 +17,7 @@ import {
     proRescheduleSchema,
     proPublicProfileSchema,
     startVisioSchema,
-    proInviteSchema,
+    proInviteOrCancelSchema,
     proConsentSchema,
     proMfaSetupVerifySchema,
     proResendInviteSchema,
@@ -82,7 +82,7 @@ export const validationRegistry = {
     'assistant/recommendations': recommendationsSchema,
 
     // ─── Pro Operations ───────────────────────────
-    'pro/invite': proInviteSchema,
+    'pro/invite': proInviteOrCancelSchema,
     'pro/consent': proConsentSchema,
     'pro/resend-invite': proResendInviteSchema,
     'pro/appointments/cancel': cancelAppointmentSchema,
