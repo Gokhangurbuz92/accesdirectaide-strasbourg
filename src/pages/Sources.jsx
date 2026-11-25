@@ -5,6 +5,9 @@ import { useT } from '@/i18n';
 
 /** G14: the upstream source of the calculation engine (AGPL-3.0, run unmodified) */
 const ENGINE_SOURCE = 'https://github.com/openfisca/openfisca-france';
+/** R6: the data·inclusion dataset and the licence it is published under (data.gouv.fr « lov2 », read 25/11/2026) */
+const DATAINCLUSION_DATASET = 'https://www.data.gouv.fr/datasets/referentiel-de-loffre-dinsertion-sociale-et-professionnelle-data-inclusion';
+const LICENCE_OUVERTE = 'https://www.etalab.gouv.fr/licence-ouverte-open-licence/';
 
 // R35: the page was French-only (owner decision update §7: the six-language interface); the names of the official sites stay as they are written
 export default function Sources() {
@@ -57,6 +60,21 @@ export default function Sources() {
                     <li>{t('about:sourcespage.refused.blogs', 'Les blogs sans auteur expert identifié.')}</li>
                     <li>{t('about:sourcespage.refused.rumours', 'Les rumeurs ou les « on-dit ».')}</li>
                 </ul>
+            </div>
+
+            {/* R6: data·inclusion open data (Licence Ouverte 2.0 — the licence asks for the source and its date to be credited): the services other platforms list
+                for a place, each attributed to its producer, never presented as checked by the State (api/_services/verification/datainclusion.js) */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-100 mb-8 text-sm text-gray-700" data-testid="sources-datainclusion">
+                <h2 className="font-bold text-lg mb-2 text-gray-900">{t('about:sourcespage.datainclusion.title', 'Données ouvertes réutilisées : data·inclusion')}</h2>
+                <p className="mb-2">
+                    {t('about:sourcespage.datainclusion.text', "Les services que d'autres plateformes listent pour un lieu viennent du « Référentiel de l'offre d'insertion sociale et professionnelle — data·inclusion », publié chaque semaine par la Plateforme de l'inclusion sur data.gouv.fr. Chaque service indique qui le publie (par exemple France Travail, ou la structure elle-même sur DORA) et la date de l'export utilisé. Ces informations ne sont pas vérifiées par l'État : contactez le lieu avant de vous déplacer.")}
+                </p>
+                <p>
+                    {t('about:sourcespage.datainclusion.licence', 'Licence : Licence Ouverte 2.0 (Etalab).')}{' '}
+                    <a href={DATAINCLUSION_DATASET} target="_blank" rel="noreferrer noopener" className="text-blue-700 underline">{t('about:sourcespage.datainclusion.dataset', 'Le jeu de données sur data.gouv.fr')}</a>
+                    {' · '}
+                    <a href={LICENCE_OUVERTE} target="_blank" rel="noreferrer noopener" className="text-blue-700 underline">{t('about:sourcespage.datainclusion.licence_link', 'Le texte de la licence')}</a>
+                </p>
             </div>
 
             {/* G14: the engine of the indicative calculation is free software (AGPL-3.0), run unmodified on our own server — its source is linked here */}
