@@ -7,7 +7,7 @@ import { sql } from 'drizzle-orm';
 import { mailFailure, mailLedgerStatus, sendMail as defaultSendMail } from '../../_utils/mailer.js';
 import { canNotify as defaultCanNotify } from '../../_services/citizen-account.js';
 import { pushLedgerStatus, sendToUser as defaultSendToUser } from '../../_services/web-push.js';
-import { parcoursReminderText, sendTelegram as defaultSendTelegram, telegramInstalled, telegramLedgerStatus } from '../../_services/telegram.js';
+import { parcoursReminderText, sendTelegram as defaultSendTelegram, telegramInstalled, telegramLedgerStatus, telegramLinked, telegramOptionOpen } from '../../_services/telegram.js';
 import { isSmsSendWindow, optOutReady, withOptOut } from '../../lib/sms-policy.js';
 import { formatParisDate } from '../../_services/appointment-notices.js';
 import { sendTwilioSms } from '../../_utils/twilio-sms.js';
@@ -72,8 +72,12 @@ export async function runParcoursReminders({ now = new Date(), deps = {} } = {})
   const sendToUser = deps.sendToUser || defaultSendToUser; const smsSender = deps.sendSms || sendSms;
   const languageOf = deps.mailLanguage || citizenMailLanguage;   // A-15: the person's stored language (French otherwise)
   const sendTg = deps.sendTelegram || defaultSendTelegram;
-  // TG: the optional Telegram channel exists only with migration 0065; canNotify (capability citizen.telegram, TELEGRAM_*, preference + consent) decides per person
-  const channels = reminderChannels(await (deps.telegramInstalled || (() => telegramInstalled(db)))().catch(() => false));
+  // TG: the optional Telegram channel exists in a run only where it is OPEN (capability citizen.telegram + TELEGRAM_* configured) AND migration 0065 is applied;
+  // per person it is used only when the person consented (canNotify: preference + recorded consent) AND has a linked chat — otherwise it is skipped entirely:
+  // no ledger row (not even NO_CONSENT) is claimed for a channel the person never chose or that is closed here.
+  const telegramOpen = await Promise.resolve().then(deps.telegramOpen || (() => telegramOptionOpen())).catch(() => false);
+  const channels = reminderChannels(Boolean(telegramOpen) && await (deps.telegramInstalled || (() => telegramInstalled(db)))().catch(() => false));
+  const isLinked = deps.telegramLinked || ((userId) => telegramLinked(userId, { db }));
   const summary = { considered: 0, providerAccepted: 0, testRecorded: 0, notDelivered: 0, noConsent: 0, failed: 0, alreadySent: 0, deferredQuietHours: 0, takenOver: 0, cancelled: 0 };
   const staleBefore = new Date(now.getTime() - STALE_CLAIM_MINUTES * 60000);
   const retryBefore = new Date(now.getTime() - RETRY_BACKOFF_HOURS * 3600000);
@@ -86,8 +90,9 @@ export async function runParcoursReminders({ now = new Date(), deps = {} } = {})
       const dateStr = formatParisDate(due);   // PKG-11 audit pass 2: Paris date (servers run in UTC)
       const text = `Une étape de votre parcours arrive à échéance le ${dateStr}. Connectez-vous à Mon Espace (Mon Parcours) pour la voir.`;
       for (const channel of channels) {
-        summary.considered += 1;
         const consent = await canNotify(r.userId, channel, 'reminder').catch(() => false);
+        if (channel === 'telegram' && !(consent && await isLinked(r.userId).catch(() => false))) continue;   // TG: never a telegram row without consent + link
+        summary.considered += 1;
         const status = consent && (channel !== 'sms' || r.phone) ? 'CLAIMED' : 'NO_CONSENT';
         if (channel === 'sms' && status === 'CLAIMED' && !isSmsSendWindow(now)) { summary.deferredQuietHours += 1; continue; }   // PKG-11 / N02: no SMS 20:00-08:00 Paris; not claimed — a later run (catch-up window) sends it
         // R12 (C08): NO_CONSENT is not final — a person who opts in before the threshold has passed is reminded then (atomically claimed once, as before).

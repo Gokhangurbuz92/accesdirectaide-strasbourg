@@ -124,6 +124,12 @@ export async function consumeLinkCode(code, chatId, { db = defaultDb, now = new 
   });
 }
 
+/** is a Telegram chat linked to this account (sealed chat id present) — the reminder jobs ask it before claiming a telegram ledger row */
+export async function telegramLinked(userId, { db = defaultDb } = {}) {
+  const [row] = await db.select({ userId: TelegramLink.userId }).from(TelegramLink).where(and(eq(TelegramLink.userId, userId), isNotNull(TelegramLink.chatIdEncrypted))).limit(1);
+  return Boolean(row);
+}
+
 /** removes the account's link (unlink button, preference switched off): { ok, removed } */
 export async function removeLink(userId, { db = defaultDb } = {}) {
   const gone = await db.delete(TelegramLink).where(eq(TelegramLink.userId, userId)).returning({ userId: TelegramLink.userId });

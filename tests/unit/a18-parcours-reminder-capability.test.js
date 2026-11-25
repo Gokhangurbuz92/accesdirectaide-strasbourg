@@ -57,7 +57,7 @@ describe('A-18 — parcours-reminder is a no-op while Mon Parcours is closed', (
     await handler({ method: 'GET', url: '/api/cron/parcours-reminder', query: {}, headers: {} }, r);
     expect(r.statusCode).toBe(200);
     expect(r.body.skipped).toBeUndefined();
-    expect(dbCalls.length).toBe(3);   // TG: + the presence check of migration 0065 (the telegram channel), then both thresholds selected
+    expect(dbCalls.length).toBe(2);   // both thresholds selected; TG: citizen.telegram is closed here, so not even the presence check of migration 0065 is read
     expect(finished[0]).toMatchObject({ status: 'success' });
   });
 

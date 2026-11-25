@@ -272,11 +272,49 @@ describe('reminder dispatch: same jobs as push / e-mail, person\'s choice, silen
     } } }));
     const { runParcoursReminders } = await import('../../api/_handlers/cron/parcours-reminder.js');
     const summary = await runParcoursReminders({ now: new Date('2026-11-25T10:00:00Z'), deps: {
-      telegramInstalled: async () => true, canNotify: async (_u, ch) => ch === 'email' || ch === 'telegram', mailLanguage: async () => 'fr',
+      telegramOpen: () => true, telegramInstalled: async () => true, telegramLinked: async () => true, canNotify: async (_u, ch) => ch === 'email' || ch === 'telegram', mailLanguage: async () => 'fr',
       sendMail: async (m) => { sent.push(m); return { ok: true, status: 'PROVIDER_ACCEPTED', provider: 'test' }; },
       sendTelegram: async () => { throw new Error('telegram down'); }, sendToUser: async () => ({ status: 'NO_SUBSCRIPTION' }) } });
     expect(sent).toHaveLength(1);
     expect(summary.failed).toBeGreaterThanOrEqual(1);   // the telegram attempt, recorded FAILED (retryable), nothing else changed
     vi.doUnmock('../../src/db/index.js'); vi.resetModules();
+  });
+
+  it('Mon Parcours: no telegram ledger row at all unless the channel is open here AND the person consented AND has a linked chat', async () => {
+    const run = async (deps) => {
+      vi.resetModules();
+      const inserted = []; const tgSent = [];
+      const rows = [{ id: 'i1', userId: 'u1', dueDate: new Date('2026-12-02T10:00:00Z'), email: 'p@example.test', phone: null }];
+      vi.doMock('../../src/db/index.js', () => ({ db: { execute: async (q) => {
+        const { PgDialect } = await import('drizzle-orm/pg-core'); const query = new PgDialect().sqlToQuery(q);
+        if (/FROM "ParcoursItem" i JOIN "CitizenUser"/.test(query.sql)) return { rows: q.queryChunks ? rows.splice(0, rows.length) : [] };
+        if (/INSERT INTO "ParcoursReminder"/.test(query.sql)) { inserted.push(query.params.find((v) => ['email', 'sms', 'push', 'telegram'].includes(v))); return { rows: [{ itemId: 'i1', retaken: false }] }; }
+        return { rows: [] };
+      } } }));
+      const { runParcoursReminders } = await import('../../api/_handlers/cron/parcours-reminder.js');
+      await runParcoursReminders({ now: new Date('2026-11-25T10:00:00Z'), deps: {
+        telegramInstalled: async () => true, mailLanguage: async () => 'fr', sendMail: async () => ({ ok: true, status: 'TEST_RECORDED', provider: 'test' }),
+        sendToUser: async () => ({ status: 'NO_SUBSCRIPTION' }), sendTelegram: async (u) => { tgSent.push(u); return { status: 'ACCEPTED' }; }, ...deps } });
+      vi.doUnmock('../../src/db/index.js'); vi.resetModules();
+      return { inserted, tgSent };
+    };
+    const consentAll = async () => true; const consentNotTelegram = async (_u, ch) => ch !== 'telegram';
+    // closed here (capability citizen.telegram / TELEGRAM_* missing), even with consent and a link: nothing for telegram
+    let out = await run({ telegramOpen: () => false, telegramLinked: async () => true, canNotify: consentAll });
+    expect(out.inserted).not.toContain('telegram'); expect(out.tgSent).toEqual([]);
+    // the default (no TELEGRAM_* in this environment) is closed too
+    out = await run({ telegramLinked: async () => true, canNotify: consentAll });
+    expect(out.inserted).not.toContain('telegram'); expect(out.tgSent).toEqual([]);
+    // open, consented, but no linked chat: skipped (no NO_CONSENT / NOT_DELIVERED row)
+    out = await run({ telegramOpen: () => true, telegramLinked: async () => false, canNotify: consentAll });
+    expect(out.inserted).not.toContain('telegram'); expect(out.tgSent).toEqual([]);
+    // open, linked, but no consent: skipped too — while the other channels keep their NO_CONSENT rows as before
+    out = await run({ telegramOpen: () => true, telegramLinked: async () => true, canNotify: async (_u, ch) => ch === 'email' });
+    expect(out.inserted).toEqual(['email', 'sms', 'push']); expect(out.tgSent).toEqual([]);
+    // open, consented, linked: exactly one telegram claim
+    out = await run({ telegramOpen: () => true, telegramLinked: async () => true, canNotify: consentNotTelegram });
+    expect(out.inserted).not.toContain('telegram');
+    out = await run({ telegramOpen: () => true, telegramLinked: async () => true, canNotify: consentAll });
+    expect(out.inserted.filter((c) => c === 'telegram')).toHaveLength(1); expect(out.tgSent).toEqual(['u1']);
   });
 });
