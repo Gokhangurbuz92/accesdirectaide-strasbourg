@@ -259,7 +259,7 @@ const slugify = (s) => foldName(s).replace(/\s+/g, '-').replace(/^-+|-+$/g, '').
  * @param {{ db: any, plan: any, source: any, territory: any, lookup: (siret: string) => Promise<any>, snapshotRow: Function, now?: () => Date, limitNew?: number,
  *   paceMs?: number, departement?: string }} o
  */
-export async function applyPlan({ db, plan, source, territory, lookup, snapshotRow, now = () => new Date(), limitNew = 100, paceMs = 0, departement = '67' }) {
+export async function applyPlan({ db, plan, territory, lookup, snapshotRow, now = () => new Date(), limitNew = 100, paceMs = 0, departement = '67' }) {
   const res = { updated: [], created: [], refused: [], queued: [], skipped: [], later: 0, failure: null };
   const batch = `${BATCH_PREFIX}${plan.version}`;
   try {
