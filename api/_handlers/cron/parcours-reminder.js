@@ -7,6 +7,7 @@ import { sql } from 'drizzle-orm';
 import { mailFailure, mailLedgerStatus, sendMail as defaultSendMail } from '../../_utils/mailer.js';
 import { canNotify as defaultCanNotify } from '../../_services/citizen-account.js';
 import { pushLedgerStatus, sendToUser as defaultSendToUser } from '../../_services/web-push.js';
+import { parcoursReminderText, sendTelegram as defaultSendTelegram, telegramInstalled, telegramLedgerStatus } from '../../_services/telegram.js';
 import { isSmsSendWindow, optOutReady, withOptOut } from '../../lib/sms-policy.js';
 import { formatParisDate } from '../../_services/appointment-notices.js';
 import { sendTwilioSms } from '../../_utils/twilio-sms.js';
@@ -63,11 +64,16 @@ async function sendSms(to, body) {
 
 /** the button link of a translated reminder; none when no public address is configured (the French text needs none) */
 const parcoursUrl = () => { try { return buildAppUrl('/compte/parcours'); } catch { return null; } };
+/** TG: the channels of this run — « telegram » only on a database with migration 0065 (its CHECK of ParcoursReminder accepts the channel) */
+export const reminderChannels = (withTelegram) => ['email', 'sms', 'push', ...(withTelegram ? ['telegram'] : [])];
 
 export async function runParcoursReminders({ now = new Date(), deps = {} } = {}) {
   const sendMail = deps.sendMail || defaultSendMail; const canNotify = deps.canNotify || defaultCanNotify;
   const sendToUser = deps.sendToUser || defaultSendToUser; const smsSender = deps.sendSms || sendSms;
   const languageOf = deps.mailLanguage || citizenMailLanguage;   // A-15: the person's stored language (French otherwise)
+  const sendTg = deps.sendTelegram || defaultSendTelegram;
+  // TG: the optional Telegram channel exists only with migration 0065; canNotify (capability citizen.telegram, TELEGRAM_*, preference + consent) decides per person
+  const channels = reminderChannels(await (deps.telegramInstalled || (() => telegramInstalled(db)))().catch(() => false));
   const summary = { considered: 0, providerAccepted: 0, testRecorded: 0, notDelivered: 0, noConsent: 0, failed: 0, alreadySent: 0, deferredQuietHours: 0, takenOver: 0, cancelled: 0 };
   const staleBefore = new Date(now.getTime() - STALE_CLAIM_MINUTES * 60000);
   const retryBefore = new Date(now.getTime() - RETRY_BACKOFF_HOURS * 3600000);
@@ -79,7 +85,7 @@ export async function runParcoursReminders({ now = new Date(), deps = {} } = {})
       const due = new Date(r.dueDate);
       const dateStr = formatParisDate(due);   // PKG-11 audit pass 2: Paris date (servers run in UTC)
       const text = `Une étape de votre parcours arrive à échéance le ${dateStr}. Connectez-vous à Mon Espace (Mon Parcours) pour la voir.`;
-      for (const channel of ['email', 'sms', 'push']) {
+      for (const channel of channels) {
         summary.considered += 1;
         const consent = await canNotify(r.userId, channel, 'reminder').catch(() => false);
         const status = consent && (channel !== 'sms' || r.phone) ? 'CLAIMED' : 'NO_CONSENT';
@@ -109,7 +115,9 @@ export async function runParcoursReminders({ now = new Date(), deps = {} } = {})
               idempotencyKey: `parcours-reminder/${r.id}/${threshold}/${due.getTime()}/email` });
             final = emailReminderStatus(out);   // PKG-4: test outbox = TEST_RECORDED; R41-E: retryable = FAILED, refused / noop = NOT_DELIVERED
           } else if (channel === 'sms') final = await smsSender(r.phone, withOptOut(`Rappel ADA : ${text}`));   // PKG-5: accepted, not proven delivered
-          else {   // R11 / N04: the push service of the person's browser accepted the encrypted message (not proof it was seen); no subscription / no keys: not delivered
+          else if (channel === 'telegram') {   // TG: the Bot API took the generic text (not proof it was read); no link / no bot: not delivered
+            final = telegramLedgerStatus(await sendTg(r.userId, parcoursReminderText(dateStr, parcoursUrl())));
+          } else {   // R11 / N04: the push service of the person's browser accepted the encrypted message (not proof it was seen); no subscription / no keys: not delivered
             const out = await sendToUser(r.userId, { title: 'Rappel AccesDirectAide', body: `Une étape de votre parcours arrive à échéance le ${dateStr}.`, url: '/compte/parcours' });
             final = pushLedgerStatus(out);   // R40: every subscription ended by the browser (404 / 410) is NOT_DELIVERED, not a provider FAILED
           }

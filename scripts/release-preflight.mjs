@@ -21,6 +21,7 @@ import { RETENTION_POLICY, executionGate, stepApprovalProblem } from '../api/_se
 import { workersAiState } from '../api/lib/ai-policy.js';
 import { dailyNeuronBudget } from '../api/lib/workers-ai.js';
 import { OPENFISCA_FRANCE_PIN, SCALEWAY_TIERS } from '../api/lib/openfiscaPins.js';
+import { TELEGRAM_ENV, telegramConfig } from '../api/lib/telegram-config.js';
 
 /** G14-R3: the capabilities whose texts exist only from notice v14-2026-11-24 / cgu-citoyen v13-2026-11-24 (community.events is in v12 / v13 already) */
 export const R3_LEGAL_CAPABILITIES = Object.freeze(['citizen.household', 'citizen.guardians', 'citizen.delegations']);
@@ -238,6 +239,23 @@ export function documentsStorageCheck(env, get) {
     : `the documents surface is open but the HDS service does not serve the vault (${gw.ready ? (hdsAttestationProvider(prodEnv) !== gw.provider ? 'HDS_ATTESTATION_PROVIDER_MISMATCH' : 'HDS_MODULE_NOT_PORTED') : gw.reason}): STORAGE_* required (an EU bucket under a DPA)`];
 }
 
+/**
+ * TG — telegram.configured (variable NAMES only, never a value): PASS while citizen.telegram is closed and nothing is set (not used); with the capability
+ * open, FAIL unless TELEGRAM_BOT_TOKEN, TELEGRAM_BOT_USERNAME and TELEGRAM_WEBHOOK_SECRET are all present and well-formed (the card would otherwise say
+ * « pas encore proposé » to everyone). A partial set while closed is a WARN (a leftover, or an activation in progress). Migration 0065 is not read here.
+ * @param {Record<string, string | undefined>} env @param {{ get: (k: string) => string }} ctx @returns {['PASS' | 'WARN' | 'FAIL', string]}
+ */
+export function telegramCheck(env, { get }) {
+  const open = capabilityState('citizen.telegram', { ...env, VERCEL_ENV: 'production' }).open;
+  const set = TELEGRAM_ENV.filter((k) => get(k));
+  /** @type {any} */
+  const cfg = telegramConfig(Object.fromEntries(TELEGRAM_ENV.map((k) => [k, get(k)])));
+  const names = `set: ${set.join(', ') || 'none'}; missing: ${TELEGRAM_ENV.filter((k) => !set.includes(k)).join(', ') || 'none'}`;
+  if (!open) return set.length && !cfg.ok ? ['WARN', `citizen.telegram closed; TELEGRAM_* partly set or malformed (${cfg.reason}) — ${names}`] : ['PASS', `citizen.telegram closed (Telegram reminders not offered) — ${names}`];
+  return cfg.ok ? ['PASS', `citizen.telegram open with the bot configured (${names}); migration 0065 and the webhook (setWebhook with the secret) must be in place: not read here`]
+    : ['FAIL', `citizen.telegram open but the bot is not configured (${cfg.reason}) — ${names}`];
+}
+
 /** @param {Record<string, string | undefined>} env @param {{ legalText?: string, policy?: any, cspText?: string }} [opts] legalText: the legal-pages source (tests pass their own); policy: a test copy of the retention policy */
 export function evaluateReleasePreflight(env, opts = {}) {
   const get = (/** @type {string} */ k) => String(env[k] ?? '').trim();
@@ -401,6 +419,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
   }
   add('partner.bridge', ...partnerBridgeCheck(env, { get, betaOn }));
   add('messaging.conversations', ...messagingCheck(env, { betaOn, opened }));
+  add('telegram.configured', ...telegramCheck(env, { get }));
   // R3: the institution portal shows only FROZEN quarters (api/_services/territorial-stats.js): without the observatory-freeze job every cell is withheld
   if (capabilityState('institution.portal', { ...env, VERCEL_ENV: 'production' }).open && (!betaOn || opened.has('institution'))) {
     const frozen = !betaOn || openJobs(env).has('observatory-freeze');

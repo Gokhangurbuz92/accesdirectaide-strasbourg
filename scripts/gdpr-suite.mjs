@@ -748,6 +748,24 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 mesures_securite: 'Aucun formulaire de candidature, aucun compteur de clics, aucun journal de consultation ; champs discriminatoires refusés par construction ; vérification de l\'employeur recontrôlée à chaque lecture publique ; modération MFA',
             },
             {
+                // TG (owner decision 24/11/2026: notifications = Web Push → e-mail → OPTIONAL Telegram, 0 €) — DRAFT « à valider »: legal-drafts.js
+                // LEGAL_DRAFTS_TG_* (not in a notice version yet), AIPD line TG-1 (docs/rgpd-r4-aipd-lignes.md) to sign; migration 0065
+                id: 'T38',
+                nom: 'Rappels facultatifs sur Telegram',
+                statut: 'PROJET à valider — capacité citizen.telegram fermée (ADA_BETA_ACCOUNTS_EXTRA=telegram + ADA_CAPABILITIES_OPEN + TELEGRAM_* + migration 0065) ; aucun envoi',
+                finalite: 'Envoyer, si la personne l\'a demandé, un rappel court (rendez-vous la veille, échéance de Mon Parcours) dans sa propre conversation Telegram',
+                base_legale_proposee: 'Consentement (art. 6.1.a), donné avant le lien, retirable à tout moment (« Mon compte » ou /stop) — à valider',
+                categories_donnees: ['Identifiant de la conversation Telegram (chiffré au repos, index HMAC)', 'Date du lien, compteurs d\'envoi', 'Empreinte SHA-256 d\'un code de liaison à usage unique (10 minutes)', 'Contenu du message : rappel général et lien vers le compte (ni santé, ni handicap, ni situation familiale, ni nom de document ou de structure)'],
+                categories_personnes: ['Citoyens titulaires d\'un compte qui activent les rappels sur Telegram'],
+                destinataires: ['Telegram (Telegram Messenger Inc. pour les utilisateurs de l\'EEE ; groupe dont Telegram FZ-LLC à Dubaï) — acheminement vers le compte Telegram de la personne ; données des utilisateurs de l\'EEE stockées aux Pays-Bas selon telegram.org/privacy (lu le 25/11/2026)'],
+                sous_traitants: [vercel, neon],
+                conservation: [
+                    texte('Lien Telegram (TelegramLink)', 'non appliqué', 'jusqu\'à l\'arrêt par la personne, le blocage du robot ou l\'effacement du compte (ON DELETE CASCADE) — capacité fermée'),
+                    texte('Code de liaison', 'non appliqué', '10 minutes, à usage unique (empreinte seulement)'),
+                ],
+                mesures_securite: 'Consentement enregistré avant le lien (ConsentLog NOTIF_TELEGRAM_REMINDER) ; code aléatoire de 24 octets stocké en empreinte, à usage unique et de 10 minutes ; identifiant de conversation scellé (data-keys, « telegram-chat ») ; webhook protégé par l\'en-tête secret X-Telegram-Bot-Api-Secret-Token (comparaison en temps constant) ; textes génériques seulement ; limites de débit ; jeton du robot jamais journalisé',
+            },
+            {
                 // FA-D5 (18/11/2026): P17 + P15b of the V2 register (CONTROL/v2/D2_V2_BASES_LEGALES_FR.md), notice v7 § 4 and § 6
                 id: 'T22',
                 nom: 'Sauvegardes chiffrées, restauration et traces d\'effacement',

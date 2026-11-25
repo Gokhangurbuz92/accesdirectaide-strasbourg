@@ -118,6 +118,26 @@
             }
         }
     },
+    "/citizen/telegram": {
+        "get": {
+            "tags": ["Auth"],
+            "summary": "Rappels facultatifs sur Telegram : état (TG)",
+            "description": "Session citoyenne vérifiée ; capacité citizen.telegram (fermée par défaut). { available, linked, pending, reminders, botUsername } — available est faux tant que le robot n'est pas configuré ou que la migration 0065 manque (« pas encore proposé »). Jamais l'identifiant de conversation ni le code.",
+            "responses": { "200": { "description": "État du lien" }, "401": { "description": "Session requise" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+        },
+        "post": {
+            "tags": ["Auth"],
+            "summary": "Accord puis lien à usage unique vers le robot Telegram (TG)",
+            "description": "Corps { consentGiven: true }. Enregistre l'accord (préférence telegram/reminder + ConsentLog) PUIS crée un code aléatoire à usage unique valable 10 minutes, stocké en empreinte SHA-256, et rend { deepLink: https://t.me/<robot>?start=<code>, expiresAt }. 10 demandes par heure.",
+            "responses": { "201": { "description": "{ deepLink, expiresAt }" }, "400": { "description": "CONSENT_REQUIRED" }, "401": { "description": "Session requise" }, "409": { "description": "CHANNEL_UNAVAILABLE ou NOTIFICATION_OPTION_CLOSED" }, "429": { "description": "RATE_LIMITED" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+        },
+        "delete": {
+            "tags": ["Auth"],
+            "summary": "Arrêter les rappels sur Telegram (TG)",
+            "description": "Supprime le lien (identifiant chiffré) et désactive la préférence ; le retrait de l'accord est enregistré.",
+            "responses": { "200": { "description": "{ removed }" }, "401": { "description": "Session requise" }, "429": { "description": "RATE_LIMITED" }, "503": { "description": "CAPABILITY_NOT_OPEN" } }
+        }
+    },
     "/citizen/hds-ticket": {
         "get": {
             "tags": [
@@ -581,6 +601,20 @@
         "summary": "Données pour génération d'attestation officielle",
         "security": [{ "BearerAuth": [] }],
         "responses": { "200": { "description": "Données attestation" } }
+      }
+    },
+    "/monitor/telegram/webhook": {
+      "post": {
+        "tags": ["Monitor"],
+        "summary": "Webhook du robot Telegram des rappels facultatifs (TG) — FERMÉ",
+        "description": "Appelé par Telegram seulement. Désactivé (404) tant que TELEGRAM_BOT_TOKEN, TELEGRAM_BOT_USERNAME et TELEGRAM_WEBHOOK_SECRET ne sont pas configurés, que la capacité citizen.telegram est fermée ou que la migration 0065 manque. L'en-tête X-Telegram-Bot-Api-Secret-Token doit être égal à TELEGRAM_WEBHOOK_SECRET (comparaison en temps constant). Conversations privées seulement : « /start <code> » consomme le code à usage unique (10 min) et relie la conversation au compte (identifiant chiffré) ; « /stop » arrête les rappels (retrait enregistré). La réponse est le message du robot (méthode sendMessage dans la réponse du webhook). Rien du message n'est journalisé.",
+        "responses": {
+          "200": { "description": "{ method: 'sendMessage', chat_id, text } (réponse du robot) ou { ok: true } (mise à jour ignorée)" },
+          "401": { "description": "En-tête secret absent ou faux : rien n'est lu" },
+          "404": { "description": "Robot non configuré, capacité fermée ou table absente" },
+          "405": { "description": "Méthode non autorisée" },
+          "429": { "description": "Trop de requêtes" }
+        }
       }
     },
     "/monitor/partner/referral-events": {

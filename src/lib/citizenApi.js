@@ -68,6 +68,10 @@ export const citizenApi = {
   pushStatus: () => call('/api/citizen/push'),
   pushSubscribe: (/** @type {unknown} */ subscription) => call('/api/citizen/push', { method: 'POST', body: { subscription } }),
   pushUnsubscribe: (/** @type {string | null} */ endpoint) => call('/api/citizen/push', { method: 'DELETE', body: endpoint ? { endpoint } : {} }),
+  // TG: optional Telegram reminders — status, consent + single-use deep link (10 min), unlink
+  telegramStatus: () => call('/api/citizen/telegram'),
+  telegramLink: () => call('/api/citizen/telegram', { method: 'POST', body: { consentGiven: true } }),
+  telegramUnlink: () => call('/api/citizen/telegram', { method: 'DELETE', body: {} }),
   listShares: () => call('/api/citizen/shares'),
   claimShare: (/** @type {string} */ shareId, /** @type {string} */ ownerSecret) => call('/api/citizen/shares', { method: 'POST', body: { shareId }, headers: { 'X-Share-Owner-Secret': ownerSecret } }),
   // R46 / N03: in-app notifications (kind, time, link — never a content)

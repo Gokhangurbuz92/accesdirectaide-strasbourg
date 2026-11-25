@@ -16,14 +16,16 @@ import { evaluateAge } from '../lib/agePolicy.js';
 import { isAdultAccount } from '../_utils/age-policy.js';
 import { holdsOwnerSecret, isExpired } from '../_utils/share-access.js';
 import { pushConfig, removeSubscriptions } from './web-push.js';
+import { removeLink as removeTelegramLink, telegramInstalled, telegramOptionOpen } from './telegram.js';
 import { optionalProfileFieldsOpen } from '../_utils/profile-minimisation.js';
 import { phoneCollectionOpen } from '../_utils/phone-collection.js';
 
-export const CHANNELS = ['email', 'sms', 'inapp', 'push'];
+export const CHANNELS = ['email', 'sms', 'inapp', 'push', 'telegram'];
 /** Launch-readiness item 59 / R11 (N04): web push exists only where the deployment holds its VAPID keys (api/_services/web-push.js pushConfig); without them the
  * option is not offered and cannot be switched on (a choice nothing would ever honour). */
 // R12 (C20): « inapp » is not offered — no citizen in-app inbox exists, so nothing would honour it (it can still be switched off)
-export const unavailableChannels = (env = process.env) => ['inapp', ...(pushConfig(env).ok ? [] : ['push'])];
+// TG (owner 24/11/2026): the optional Telegram channel exists only where citizen.telegram is open AND the bot is configured (api/_services/telegram.js)
+export const unavailableChannels = (env = process.env) => ['inapp', ...(pushConfig(env).ok ? [] : ['push']), ...(telegramOptionOpen(env) ? [] : ['telegram'])];
 export const CATEGORIES = ['service', 'reminder', 'marketing'];
 export const HOUSEHOLD_RELATIONS = ['partner', 'child', 'parent', 'sibling', 'other'];
 export const MAX_HOUSEHOLD = 12;
@@ -36,9 +38,10 @@ export const DEFAULT_PREFS = Object.freeze({
   'inapp.service': false, 'inapp.reminder': false, 'inapp.marketing': false,   // R12 (C20): no in-app inbox exists for citizens — never shown as on
   'sms.service': false, 'sms.reminder': false, 'sms.marketing': false,
   'push.service': false, 'push.reminder': false, 'push.marketing': false,
+  'telegram.service': false, 'telegram.reminder': false, 'telegram.marketing': false,   // TG: optional, off until the person links Telegram with consent
 });
 /** Pairs that need a recorded, citizen-given consent before they can be on. */
-const CONSENT_REQUIRED = (channel, category) => category === 'marketing' || channel === 'sms' || channel === 'push';
+const CONSENT_REQUIRED = (channel, category) => category === 'marketing' || channel === 'sms' || channel === 'push' || channel === 'telegram';
 export const purposeOf = (channel, category) => `NOTIF_${channel.toUpperCase()}_${category.toUpperCase()}`;
 
 /**
@@ -73,6 +76,7 @@ export function smsReminderOpen(env = process.env) {
 export function notificationOptionOpen(channel, category, env = process.env) {
   const open = notificationOptionsOpen(env);
   if (channel === 'sms' && category === 'reminder' && !smsReminderOpen(env)) return false;
+  if (channel === 'telegram' && !telegramOptionOpen(env)) return false;   // TG: capability citizen.telegram + TELEGRAM_* configured
   return (channel !== 'sms' || open.sms) && (category !== 'reminder' || open.reminder) && (category !== 'marketing' || open.marketing);
 }
 export const NOTIFICATION_OPTION_CLOSED = 'NOTIFICATION_OPTION_CLOSED';
@@ -216,7 +220,7 @@ export async function setPreference(userId, input, db = defaultDb) {
     const gate = await ageGate(userId, db);
     if (!gate.allowed) return ageRefusal(gate);
   }
-  if (b.enabled && unavailableChannels().includes(b.channel)) return bad('CHANNEL_UNAVAILABLE', 'Les notifications sur cet appareil ne sont pas disponibles sur ce service : rien ne serait envoyé.', 409);
+  if (b.enabled && unavailableChannels().includes(b.channel)) return bad('CHANNEL_UNAVAILABLE', b.channel === 'telegram' ? 'Telegram n’est pas encore proposé sur ce service : rien ne serait envoyé.' : 'Les notifications sur cet appareil ne sont pas disponibles sur ce service : rien ne serait envoyé.', 409);
   await db.insert(NotificationPreference).values({ userId, channel: b.channel, category: b.category, enabled: b.enabled })
     .onConflictDoUpdate({ target: [NotificationPreference.userId, NotificationPreference.channel, NotificationPreference.category], set: { enabled: b.enabled, updatedAt: new Date() } });
   if (b.channel === 'email' && b.category === 'service') await db.update(CitizenUser).set({ notificationEmailEnabled: b.enabled }).where(eq(CitizenUser.id, userId));   // the flag every existing sender already checks
@@ -230,7 +234,12 @@ export async function setPreference(userId, input, db = defaultDb) {
   // R12 (N04): when no push category is left on, the browser subscriptions (endpoints = personal data) are deleted, not only left unused
   let pushSubscriptionsRemoved;
   if (b.channel === 'push' && !b.enabled && !CATEGORIES.some((c) => preferences[`push.${c}`] === true)) pushSubscriptionsRemoved = (await removeSubscriptions(userId, null, { db })).removed;
-  return { ok: true, status: 200, preferences, ...(pushSubscriptionsRemoved !== undefined ? { pushSubscriptionsRemoved } : {}) };
+  // TG: when no Telegram category is left on, the link (sealed chat id) is deleted too — never kept unused
+  let telegramLinkRemoved;
+  if (b.channel === 'telegram' && !b.enabled && !CATEGORIES.some((c) => preferences[`telegram.${c}`] === true)) {
+    if (await telegramInstalled(db)) telegramLinkRemoved = (await removeTelegramLink(userId, { db })).removed;
+  }
+  return { ok: true, status: 200, preferences, ...(pushSubscriptionsRemoved !== undefined ? { pushSubscriptionsRemoved } : {}), ...(telegramLinkRemoved !== undefined ? { telegramLinkRemoved } : {}) };
 }
 /** The single question every sender must ask. Marketing, SMS and push additionally need a recorded consent whose LATEST decision is "yes". */
 export async function canNotify(userId, channel, category, db = defaultDb) {

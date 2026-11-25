@@ -888,6 +888,27 @@ export const LEGAL_DRAFTS_G14C_PRO_RETENTION = Object.freeze([
   ["Notifications du navigateur : l'abonnement est gardé jusqu'à ce que vous désactiviez les notifications ou que votre compte soit effacé ; un abonnement qui ne fonctionne plus est supprimé 30 jours après.", 'push_g14c'],
 ]);
 export const LEGAL_DRAFTS_G14C_PUSH_TRANSFER = "Notifications du navigateur : le service de notification de l'éditeur de votre navigateur peut se trouver hors de l'Union européenne ; il ne transmet qu'un rappel chiffré, qu'il ne peut pas lire.";
+/**
+ * TG (owner decision 24/11/2026: notifications = Web Push → e-mail (Mailjet) → OPTIONAL Telegram, 0 €; WhatsApp rejected) — DRAFT « à valider » by the
+ * controller. NOT wired into any notice version: the capability citizen.telegram stays closed until these texts are approved in a new notice version and the
+ * AIPD line TG-1 (docs/rgpd-r4-aipd-lignes.md) is signed. Sources read on 25/11/2026 (nothing else is claimed):
+ *  - https://telegram.org/privacy (change log: last entry 21 August 2026): for EEA users the controller is Telegram Messenger Inc. (§ 1); EU representative
+ *    under art. 27: EDPO, Avenue Huart Hamoir 71, 1030 Brussels (§ 1.4); data of users who signed up from the EEA / UK stored in data centres in the
+ *    Netherlands (§ 4.1); cloud-chat messages stored on Telegram's servers (§ 3.3.1), kept « as long as necessary » (§ 4.3) and until deleted; Telegram
+ *    FZ-LLC is « a group member located in Dubai » and intra-group transfers rely on the standard contractual clauses (§ 8.2); bots receive the messages
+ *    sent to them and the public account data (§ 6.3). No address of Telegram Messenger Inc. is given in the policy.
+ *  - https://core.telegram.org/bots/api (Bot API 10.5, 22 November 2026): requests go to https://api.telegram.org/bot<token>/METHOD; setWebhook
+ *    « secret_token » (1–256 characters A-Z a-z 0-9 _ -) sent back in the header « X-Telegram-Bot-Api-Secret-Token ».
+ * NOT verified: whether Telegram offers a data-processing agreement (art. 28) for bots — none is signed; the texts below therefore do not call Telegram a
+ * processor and say what happens in the person's own Telegram account. To validate: role of Telegram (independent controller for the person's account vs
+ * recipient), the « transfert hors UE » wording, and the retention line.
+ */
+export const LEGAL_DRAFTS_TG_STATUS = 'DRAFT — à valider par le responsable (proposé le 25/11/2026) ; non intégré à une version de la notice ; capacité citizen.telegram fermée';
+export const LEGAL_DRAFTS_TG_P10D = "P10d — Rappels sur Telegram (facultatif), si vous les activez : après votre accord, vous reliez vous-même votre compte Telegram en appuyant sur « Démarrer » dans la conversation avec notre robot. Nous enregistrons l'identifiant de cette conversation (chiffré), la date du lien et le résultat des envois. Le message envoyé reste court et général (un rappel de rendez-vous ou d'étape de Mon Parcours, l'heure pour un rendez-vous non sensible, et un lien vers votre compte) : jamais votre santé, un handicap, votre situation familiale, le nom d'un document, d'une structure ou d'un service. L'e-mail reste l'avis qui fait foi. Base : votre consentement (art. 6, 1, a), retirable à tout moment depuis « Mon compte » ou en envoyant /stop au robot.";
+export const LEGAL_DRAFTS_TG_RECIPIENT = "Telegram (Telegram Messenger Inc., groupe Telegram, dont la société Telegram FZ-LLC à Dubaï) : acheminement des rappels que vous avez demandés vers votre propre compte Telegram. Les messages reçus dans votre compte Telegram y sont traités selon la politique de confidentialité de Telegram (https://telegram.org/privacy) ; pour les utilisateurs inscrits depuis l'Espace économique européen, Telegram indique stocker les données dans des centres de données aux Pays-Bas.";
+export const LEGAL_DRAFTS_TG_TRANSFER = "Rappels sur Telegram : le groupe Telegram est établi hors de l'Union européenne (Telegram FZ-LLC à Dubaï ; société mère aux îles Vierges britanniques). Telegram indique encadrer les transferts au sein de son groupe par les clauses contractuelles types de la Commission européenne. Vous seul choisissez d'utiliser ce canal ; sans lui, vos rappels restent disponibles par e-mail.";
+export const LEGAL_DRAFTS_TG_RETENTION = "Rappels sur Telegram : le lien (identifiant de conversation chiffré) est gardé jusqu'à ce que vous l'arrêtiez (« Mon compte » ou /stop), que vous bloquiez le robot ou que votre compte soit effacé ; un code de liaison non utilisé n'est plus valable après 10 minutes. Les messages déjà reçus restent dans votre compte Telegram tant que vous ne les supprimez pas.";
+export const LEGAL_DRAFTS_TG_COOKIES = "Rappels sur Telegram : aucun cookie ni traceur n'est ajouté sur le site ; le bouton « Ouvrir Telegram » est un simple lien vers t.me, ouvert seulement si vous cliquez.";
 /** @type {DraftSection} the new § 3 ter of the notice (v12 and v13) */
 const PARTICIPATION_SECTION = Object.freeze({ id: 'participation', title: '3 ter. Fonctions de participation', titleKey: 'title_v12',
   items: [LEGAL_DRAFTS_V12_EVENTS, LEGAL_DRAFTS_V12_TESTIMONIALS, LEGAL_DRAFTS_V12_STORIES], itemKeys: { 0: 'events_v12', 1: 'testimonials_v12', 2: 'stories_v12' },

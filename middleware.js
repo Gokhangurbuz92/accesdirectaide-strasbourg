@@ -1,5 +1,5 @@
 import { next } from '@vercel/edge';
-import { PUBLIC_BETA_MESSAGE, openSurfaces, isOpenJobPath } from './api/_utils/public-beta.js';
+import { PUBLIC_BETA_MESSAGE, openSurfaces, isOpenJobPath, isTelegramWebhookRequest } from './api/_utils/public-beta.js';
 import { isCspReportRequest } from './api/_utils/csp-reporting.js';
 
 /**
@@ -34,6 +34,8 @@ export function directFunctionResponse(url, method = 'GET') {
   // R35: unless the « jobs » surface is opened (ADA_BETA_OPEN_SURFACES); each job keeps its own switch (GDPR_PURGE_ENABLED…) and CRON_SECRET
   // R38: or this one job is opened by name (ADA_BETA_OPEN_JOBS, and ADA_JOBS_APPROVED for a personal-data job)
   if (beta && isCspReportRequest(method, p.replace(/^\/api\//, '').replace(/\/$/, ''))) return null;
+  // TG: the Telegram bot webhook, once the bot is configured (api/index.js and the handler apply the capability, table and secret-header checks)
+  if (beta && isTelegramWebhookRequest(method, p.replace(/^\/api\//, '').replace(/\/$/, ''))) return null;
   if (beta && /^\/api\/(cron|monitor)\//.test(p) && !openSurfaces(process.env).has('jobs') && !isOpenJobPath(p.replace(/^\/api\//, '').replace(/\/$/, ''))) return json(503, { error: 'PUBLIC_BETA_RESTRICTED', message: PUBLIC_BETA_MESSAGE });
   return null;
 }

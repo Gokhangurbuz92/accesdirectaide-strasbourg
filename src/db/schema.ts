@@ -616,6 +616,28 @@ export const PushSubscription = pgTable('PushSubscription', {
 	'PushSubscription_status_check': check('PushSubscription_status_check', sql`${t.status} IN ('ACTIVE', 'FAILING')`)
 }));
 
+/**
+ * TG (owner 24/11/2026: notifications = Web Push → e-mail → optional Telegram, 0 €) — the person's OPTIONAL Telegram link, one row per account (migration 0065).
+ * A pending link holds only the SHA-256 of a single-use random code and its expiry (10 min); once the person pressed « Start » in Telegram the row holds the
+ * chat id SEALED (api/lib/data-keys.ts, purpose « telegram-chat ») and a keyed HMAC of it (to find the link from a « /stop »), never the chat id in clear.
+ * Erased with the account (ON DELETE CASCADE), by « /stop » in Telegram, by the unlink button, or when Telegram answers that the person blocked the bot.
+ */
+export const TelegramLink = pgTable('TelegramLink', {
+	userId: text('userId').notNull().primaryKey(),
+	linkCodeHash: text('linkCodeHash').unique(),
+	linkCodeExpiresAt: timestamp('linkCodeExpiresAt', { precision: 3 }),
+	chatIdEncrypted: text('chatIdEncrypted'),
+	chatIdHmac: text('chatIdHmac').unique(),
+	linkedAt: timestamp('linkedAt', { precision: 3 }),
+	failureCount: integer('failureCount').notNull().default(0),
+	lastSuccessAt: timestamp('lastSuccessAt', { precision: 3 }),
+	lastFailureAt: timestamp('lastFailureAt', { precision: 3 }),
+	createdAt: timestamp('createdAt', { precision: 3 }).notNull().defaultNow()
+}, (t) => ({
+	'TelegramLink_user_fkey': foreignKey({ name: 'TelegramLink_user_fkey', columns: [t.userId], foreignColumns: [CitizenUser.id] }).onDelete('cascade').onUpdate('cascade'),
+	'TelegramLink_state_check': check('TelegramLink_state_check', sql`(${t.chatIdEncrypted} IS NULL) = (${t.chatIdHmac} IS NULL) AND (${t.chatIdEncrypted} IS NULL) = (${t.linkedAt} IS NULL) AND (${t.linkCodeHash} IS NULL) = (${t.linkCodeExpiresAt} IS NULL)`)
+}));
+
 export const EmailChangeRequest = pgTable('EmailChangeRequest', {
 	id: text('id').notNull().primaryKey().$defaultFn(() => crypto.randomUUID()),
 	userId: text('userId').notNull(),
