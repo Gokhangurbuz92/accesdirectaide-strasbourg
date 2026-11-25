@@ -31,6 +31,7 @@ const routeTable = [
     { path: 'monitor/csp-report', match: 'exact', handler: () => import('./_handlers/monitor/csp-report.js') },
     { path: 'monitor/mail-events/mailjet', match: 'exact', handler: () => import('./_handlers/monitor/mail-events-mailjet.js') },
     { path: 'monitor/partner/referral-events', match: 'exact', handler: () => import('./_handlers/monitor/partner-referral-events.js') },   // FA-D7: closed partner adapter (capability partner.referral_adapter)
+    { path: 'monitor/telegram/webhook', match: 'exact', handler: () => import('./_handlers/monitor/telegram-webhook.js') },   // TG: off (404) unless TELEGRAM_* + citizen.telegram + 0065; secret header
     { path: 'monitor/sms-inbound/twilio', match: 'exact', handler: () => import('./_handlers/monitor/sms-inbound-twilio.js') },   // R46 N02: off unless SMS_INBOUND_URL + TWILIO_AUTH_TOKEN   // R43-MAIL: off unless MAILER_EVENTS_ENABLED=1
     // --- Special / Root ---
     { path: 'download', match: 'exact', handler: () => import('./_handlers/download.js') },
@@ -248,6 +249,7 @@ const routeTable = [
     { path: 'citizen/guardians', match: 'exact', handler: () => import('./_handlers/citizen/guardians.js') },   // C05 (R30): minor ↔ legal guardian link
     { path: 'citizen/preferences', match: 'exact', handler: () => import('./_handlers/citizen/preferences.js') },
     { path: 'citizen/push', match: 'exact', handler: () => import('./_handlers/citizen/push.js') },   // R11 / N04: notifications on this device (Web Push)
+    { path: 'citizen/telegram', match: 'exact', handler: () => import('./_handlers/citizen/telegram.js') },   // TG: optional Telegram reminders (citizen.telegram, closed by default)
     { path: 'citizen/shares', match: 'exact', handler: () => import('./_handlers/citizen/shares.js') },
     { path: 'citizen/parcours', match: 'exact', handler: () => import('./_handlers/citizen/parcours.js') },
     { path: 'citizen/favorites', match: 'exact', handler: () => import('./_handlers/citizen/favorites.js') },

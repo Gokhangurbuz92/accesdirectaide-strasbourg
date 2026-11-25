@@ -108,6 +108,11 @@ const CONFIG = {
     // G14-CHAN: Web Push — subscribing / unsubscribing a device (per account + IP) and the messages one account may receive (per account, a day)
     CITIZEN_PUSH_SUBSCRIBE: { limit: 10, window: 3600 },
     PUSH_SEND_USER: { limit: 12, window: 86400 },
+    // TG: the optional Telegram channel — creating a link code (per account + IP), the reminders one account may receive (per account, a day), and the
+    // bot's webhook (per sending address: Telegram's servers; generous, the secret header is checked first)
+    CITIZEN_TELEGRAM_LINK: { limit: 10, window: 3600 },
+    TELEGRAM_SEND_USER: { limit: 12, window: 86400 },
+    TELEGRAM_WEBHOOK: { limit: 300, window: 60 },
     // G14-AID: starting an assisted session (password + optional ADA Pro helper code), resuming alone with the password, « agir pour moi »: 6 per 15 min per account
     ASSIST_REAUTH: { limit: 6, window: 900 },
     // R12: endpoints that called a provider, a model or the mailer without any limit

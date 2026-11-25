@@ -80,7 +80,9 @@ export const ACCOUNTS_EXTRA_SCREENS = Object.freeze({ parcours: Object.freeze(['
   // G14-R3: « Mon foyer » and the guardian card live on /compte/profil (already a narrow-scope screen): no screen of their own; the trusted persons have theirs
   household: Object.freeze([]), guardians: Object.freeze([]), delegations: Object.freeze(['/compte/delegations']),
   // G14-R3G: the representative of a protected adult and the protected person
-  legal_protection: Object.freeze(['/compte/protection-juridique']) });
+  legal_protection: Object.freeze(['/compte/protection-juridique']),
+  // TG: the optional Telegram card lives on /compte/profil (already a narrow-scope screen)
+  telegram: Object.freeze([]) });
 /** @param {unknown} v @returns {string[]} */
 const extrasOf = (v) => String(v || '').split(',').map((x) => x.trim().toLowerCase()).filter((x) => Object.prototype.hasOwnProperty.call(ACCOUNTS_EXTRA_SCREENS, x));
 /** @returns {BetaSubSwitches} */

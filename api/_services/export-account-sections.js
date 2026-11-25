@@ -23,6 +23,8 @@
  *   entraideContactShares   EntraideContactShare    (memberId -> …) X03: the e-mails the person chose to show (request id, address, time)
  *   entraideReports         EntraideReport          (reporterId -> …) X03: the reports the person made (reason, time — not whom)
  *   entraideBlocks          EntraideBlock           (blockerId -> …) X03: the blocks the person set (id, time — not whom)
+ *   telegramLinks           TelegramLink            (userId) TG: whether a Telegram chat is linked, when, delivery counters — with 0065; the chat id is
+ *                                                  given in clear to the person (it is theirs), never the code hash or the HMAC index
  *
  * EXPORT_SECTION_TABLES is the contract read by tests/unit/a14-export-covers-account-tables.test.js: a new table with a foreign key to CitizenUser must be
  * exported (here or in privacy.js) or the test fails.
@@ -44,15 +46,17 @@ export const EXPORT_SECTION_TABLES = Object.freeze({
   // G14-R3G (0064): the links with a court-appointed representative where the person is the protected adult or the representative (facts only; the
   // administrator's identity and note are not part of it, as for the other staff decisions)
   legalProtectionMandates: 'LegalProtectionMandate',
+  // TG (0065): the optional Telegram link (the person's own chat id, link time, delivery counters)
+  telegramLinks: 'TelegramLink',
 });
 
 /** columns that must never appear in these sections */
-export const EXPORT_FORBIDDEN_FIELDS = Object.freeze(['endpoint', 'endpointHash', 'subscriptionEncrypted', 'tokenHash', 'newEmailEncrypted', 'evidenceNote', 'decisionNote', 'proposedBy', 'decidedBy']);
+export const EXPORT_FORBIDDEN_FIELDS = Object.freeze(['endpoint', 'endpointHash', 'subscriptionEncrypted', 'tokenHash', 'newEmailEncrypted', 'evidenceNote', 'decisionNote', 'proposedBy', 'decidedBy', 'linkCodeHash', 'chatIdHmac', 'chatIdEncrypted']);
 
 /**
  * @param {string} userId
  * @param {(query: import('drizzle-orm').SQL) => Promise<any[]>} rows reads rows and counts a failed read (privacy.js safeRows)
- * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean>, hasCommunityTables?: () => Promise<boolean>, hasEntraideTables?: () => Promise<boolean>, hasModerationTables?: () => Promise<boolean>, hasSocialReferralTables?: () => Promise<boolean>, hasLegalProtectionTable?: () => Promise<boolean> }} [deps]
+ * @param {{ open?: (id: string, sealed: string) => string, hasEventTables?: () => Promise<boolean>, hasTestimonialTables?: () => Promise<boolean>, hasCommunityTables?: () => Promise<boolean>, hasEntraideTables?: () => Promise<boolean>, hasModerationTables?: () => Promise<boolean>, hasSocialReferralTables?: () => Promise<boolean>, hasLegalProtectionTable?: () => Promise<boolean>, hasTelegramTable?: () => Promise<boolean>, openChat?: (userId: string, sealed: string) => string }} [deps]
  *   hasEventTables: migration 0053 present (X04); hasTestimonialTables: migration 0054 present (X02); hasCommunityTables: migration 0055 present (X01); hasEntraideTables: migration 0057 present (X03)
  */
 export async function accountLinkedSections(userId, rows, deps = {}) {
@@ -111,8 +115,15 @@ export async function accountLinkedSections(userId, rows, deps = {}) {
       "representativeKind", "mjpmForm", siret, measure, mode, "scopePerson", "scopeAssets", areas, "courtName", "decisionDate", "measureEndsOn", "validUntil",
       status, "personContestedAt", "verifiedAt", "verificationMethod", "endedAt", "endedBy", "endReason", "createdAt"
     FROM "LegalProtectionMandate" WHERE "protectedUserId" = ${userId} OR "representativeUserId" = ${userId} ORDER BY "createdAt"`) : [];
+  // TG: same rule for a database without 0065; the sealed chat id is opened for the person (art. 15), the index and the code hash are never exported
+  const tg = await import('./telegram.js');
+  const withTelegram = await (deps.hasTelegramTable || (() => tg.telegramInstalled()))();
+  const openChat = deps.openChat || ((uid, sealed) => String(openText(sealed, { purpose: 'telegram-chat', context: `telegram:${uid}` }) || ''));
+  const telegramLinks = withTelegram ? (await rows(sql`SELECT "chatIdEncrypted" AS enc, "linkedAt", "linkCodeExpiresAt", "failureCount", "lastSuccessAt", "lastFailureAt", "createdAt" FROM "TelegramLink" WHERE "userId" = ${userId}`))
+    .map((r) => ({ telegramChatId: (() => { try { return r.enc ? openChat(userId, r.enc) || null : null; } catch { return null; } })(), linkedAt: r.linkedAt, pendingLinkExpiresAt: r.linkCodeExpiresAt,
+      failureCount: r.failureCount, lastSuccessAt: r.lastSuccessAt, lastFailureAt: r.lastFailureAt, createdAt: r.createdAt })) : [];
   return { pushSubscriptions, emailChangeRequests, ownershipRecoveryCases, parcoursReminders, appointmentNotices, eventRegistrations, testimonials, testimonialReports,
     communityMember, communityStories, communityStoryReports,
     entraideMember, entraideOffers, entraideRequests, entraideRequestsReceived, entraideContactShares, entraideReports, entraideBlocks,
-    moderationDecisions, moderationAppeals, moderationSanctions, socialReferrals, legalProtectionMandates };
+    moderationDecisions, moderationAppeals, moderationSanctions, socialReferrals, legalProtectionMandates, telegramLinks };
 }

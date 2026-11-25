@@ -20,7 +20,8 @@ import { minimalSms, resolveNotificationPrivacy } from '../../lib/notification-p
 import { citizenMailLanguage } from '../../_services/mail-language.js';
 import { reminderClaimOutcome } from '../../_utils/rdv-guest-core.js';
 import { appointmentColumns, appointmentGuestSchema, columnFlags } from '../../_utils/schema-features.js';
-import { appointmentReminderPush, osmDirectionsUrl, reminderCalendar } from '../../lib/reminder-channels.js';
+import { appointmentReminderPush, appointmentReminderTelegram, osmDirectionsUrl, reminderCalendar } from '../../lib/reminder-channels.js';
+import { sendTelegram, telegramInstalled, telegramLedgerStatus } from '../../_services/telegram.js';
 import { pushLedgerStatus, sendToUser } from '../../_services/web-push.js';
 import { capabilityOpen } from '../../_utils/capabilities.js';
 
@@ -137,6 +138,9 @@ export default async function handler(/** @type {import('../../_utils/http-types
             let notificationsCreated = 0;
             let skipped = 0;
             const push = { accepted: 0, notDelivered: 0, failed: 0, noConsent: 0, closed: 0 };   // G14-CHAN: the Web Push nudge (counts only)
+            const telegram = { accepted: 0, notDelivered: 0, failed: 0, noConsent: 0, closed: 0 };   // TG: the optional Telegram nudge (counts only)
+            const telegramReady = await telegramInstalled(db).catch(() => false);   // migration 0065
+            const appLink = (/** @type {string} */ path) => { try { return buildAppUrl(path); } catch { return null; } };
             const errors = [];
 
             for (const listed of appointments) {
@@ -326,6 +330,20 @@ export default async function handler(/** @type {import('../../_utils/http-types
                         } catch (pushErr) {
                             push.failed++; logger.warn({ err: { name: pushErr?.name } }, '[rdv-reminder] push nudge failed');
                         }
+                        // 5. TG — the optional Telegram nudge, same rules as the push one (once, on the closing pass; account, capability citizen.telegram
+                        //    open, migration 0065, the person's telegram/reminder consent); a failure only counts: the e-mail stays the record (fallback).
+                        try {
+                            if (!telegramReady || !capabilityOpen('citizen.telegram')) telegram.closed++;
+                            else if (!(await canNotify(rdv.citizenUserId, 'telegram', 'reminder').catch(() => false))) telegram.noConsent++;
+                            else {
+                                const level = (await resolveNotificationPrivacy(rdv)).level;
+                                const text = appointmentReminderTelegram(level, rdv.startAt, await citizenMailLanguage(rdv.citizenUserId), { rdv: appLink('/compte/rendez-vous'), account: appLink('/compte') });
+                                const st = telegramLedgerStatus(await sendTelegram(rdv.citizenUserId, text));
+                                if (st === 'PROVIDER_ACCEPTED') telegram.accepted++; else if (st === 'FAILED') telegram.failed++; else telegram.notDelivered++;
+                            }
+                        } catch (tgErr) {
+                            telegram.failed++; logger.warn({ err: { name: tgErr?.name } }, '[rdv-reminder] telegram nudge failed');
+                        }
                     }
                 }
             }
@@ -353,6 +371,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 smsChannelInactive,
                 notificationsCreated,
                 push,
+                telegram,
                 skipped,
                 errors: errors.length,
             }, '[Cron] RDV J-1 reminder completed');
@@ -368,6 +387,7 @@ export default async function handler(/** @type {import('../../_utils/http-types
                 smsChannelInactive,
                 notificationsCreated,
                 pushAccepted: push.accepted, pushNotDelivered: push.notDelivered, pushFailed: push.failed, pushNoConsent: push.noConsent, pushClosed: push.closed,
+                telegramAccepted: telegram.accepted, telegramNotDelivered: telegram.notDelivered, telegramFailed: telegram.failed, telegramNoConsent: telegram.noConsent, telegramClosed: telegram.closed,
                 skipped,
                 errors: errors.length > 0 ? errors.slice(0, 5) : undefined,
             };

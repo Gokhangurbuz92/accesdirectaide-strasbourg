@@ -10,7 +10,7 @@
  *    no service, no place); the minimal level says only that there is new information in the person's space. The link is inside the site.
  */
 import { locationOf } from './appointment-modes.js';
-import { minimalPush } from './notification-privacy.js';
+import { minimalPush, minimalTexts } from './notification-privacy.js';
 
 const OSM = 'https://www.openstreetmap.org';
 const finite = (/** @type {unknown} */ v) => v !== null && v !== undefined && v !== '' && Number.isFinite(Number(v));
@@ -48,6 +48,20 @@ export function parisHourFr(d) {
 export function appointmentReminderPush(level, startAt, lang = 'fr') {
   if (level !== 'reduced') return { ...minimalPush(lang), tag: 'account-notice' };
   return { title: 'Rappel AccesDirectAide', body: `Rappel : rendez-vous demain à ${parisHourFr(startAt)} — ouvrir AccesDirectAide`, url: '/compte/rendez-vous', tag: 'rdv-reminder' };
+}
+
+/**
+ * TG — the Telegram text of a J-1 appointment reminder at a privacy level (same rule as the push nudge). Reduced (a verified ordinary service): the hour
+ * only — « Rappel AccesDirectAide : vous avez un rendez-vous demain à 10 h. Détails : https://…/compte/rendez-vous ». Minimal (sensitive or unknown
+ * service, the default): only that there is new information, in the person's language, with the link to the account. Never a name, a structure, a
+ * service, a place, a health / disability / family detail or a document.
+ * @param {'minimal' | 'reduced'} level @param {Date | string} startAt @param {string} [lang] @param {{ rdv?: string | null, account?: string | null }} [urls]
+ * @returns {string}
+ */
+export function appointmentReminderTelegram(level, startAt, lang = 'fr', urls = {}) {
+  const link = (/** @type {string} */ text, /** @type {string | null | undefined} */ url) => (url ? `${text} Détails : ${url}` : text);
+  if (level !== 'reduced') return link(minimalTexts(lang).sms, urls.account);
+  return link(`Rappel AccesDirectAide : vous avez un rendez-vous demain à ${parisHourFr(startAt)}.`, urls.rdv);
 }
 
 /**

@@ -67,7 +67,7 @@ describe('E2 — « accounts » opens the booking scope unless ADA_BETA_ACCOUNTS
     'auth/delete-account', 'auth/export-data', 'citizen/profile', 'citizen/age-declaration', 'citizen/email-change', 'citizen/email-change-confirm', 'citizen/phone',
     'citizen/preferences', 'citizen/restriction', 'citizen/espace'];
   const REST = ['citizen/household', 'citizen/guardians', 'citizen/push', 'citizen/shares', 'citizen/parcours', 'citizen/favorites', 'citizen/history',
-    'citizen/delegations', 'citizen/referrals', 'citizen/assist', 'citizen/legal-protection'];   // G14-AID: the assisted mode is outside the narrow scope (ADA_BETA_ACCOUNTS_EXTRA=assist adds it); G14-R3G: legal_protection
+    'citizen/delegations', 'citizen/referrals', 'citizen/assist', 'citizen/legal-protection', 'citizen/telegram'];   // G14-AID: the assisted mode is outside the narrow scope (ADA_BETA_ACCOUNTS_EXTRA=assist adds it); G14-R3G: legal_protection
   it('serves what booking and the rights need, refuses the rest of the citizen space', () => {
     for (const p of BOOKING) expect(isAllowedInPublicBeta('POST', p, open), p).toBe(true);
     for (const p of REST) for (const m of ['GET', 'POST']) expect(isAllowedInPublicBeta(m, p, open), `${m} ${p}`).toBe(false);

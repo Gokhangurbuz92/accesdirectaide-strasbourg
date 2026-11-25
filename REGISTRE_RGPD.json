@@ -1386,6 +1386,46 @@
       "mesures_securite": "Aucun formulaire de candidature, aucun compteur de clics, aucun journal de consultation ; champs discriminatoires refusés par construction ; vérification de l'employeur recontrôlée à chaque lecture publique ; modération MFA"
     },
     {
+      "id": "T38",
+      "nom": "Rappels facultatifs sur Telegram",
+      "statut": "PROJET à valider — capacité citizen.telegram fermée (ADA_BETA_ACCOUNTS_EXTRA=telegram + ADA_CAPABILITIES_OPEN + TELEGRAM_* + migration 0065) ; aucun envoi",
+      "finalite": "Envoyer, si la personne l'a demandé, un rappel court (rendez-vous la veille, échéance de Mon Parcours) dans sa propre conversation Telegram",
+      "base_legale_proposee": "Consentement (art. 6.1.a), donné avant le lien, retirable à tout moment (« Mon compte » ou /stop) — à valider",
+      "categories_donnees": [
+        "Identifiant de la conversation Telegram (chiffré au repos, index HMAC)",
+        "Date du lien, compteurs d'envoi",
+        "Empreinte SHA-256 d'un code de liaison à usage unique (10 minutes)",
+        "Contenu du message : rappel général et lien vers le compte (ni santé, ni handicap, ni situation familiale, ni nom de document ou de structure)"
+      ],
+      "categories_personnes": [
+        "Citoyens titulaires d'un compte qui activent les rappels sur Telegram"
+      ],
+      "destinataires": [
+        "Telegram (Telegram Messenger Inc. pour les utilisateurs de l'EEE ; groupe dont Telegram FZ-LLC à Dubaï) — acheminement vers le compte Telegram de la personne ; données des utilisateurs de l'EEE stockées aux Pays-Bas selon telegram.org/privacy (lu le 25/11/2026)"
+      ],
+      "sous_traitants": [
+        "Vercel (hébergement ; en service pour la bêta publique restreinte)",
+        "Neon (PostgreSQL ; en service pour la bêta publique restreinte)"
+      ],
+      "conservation": [
+        {
+          "donnee": "Lien Telegram (TelegramLink)",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "jusqu'à l'arrêt par la personne, le blocage du robot ou l'effacement du compte (ON DELETE CASCADE) — capacité fermée"
+        },
+        {
+          "donnee": "Code de liaison",
+          "duree_jours": null,
+          "source": null,
+          "statut": "non appliqué",
+          "description": "10 minutes, à usage unique (empreinte seulement)"
+        }
+      ],
+      "mesures_securite": "Consentement enregistré avant le lien (ConsentLog NOTIF_TELEGRAM_REMINDER) ; code aléatoire de 24 octets stocké en empreinte, à usage unique et de 10 minutes ; identifiant de conversation scellé (data-keys, « telegram-chat ») ; webhook protégé par l'en-tête secret X-Telegram-Bot-Api-Secret-Token (comparaison en temps constant) ; textes génériques seulement ; limites de débit ; jeton du robot jamais journalisé"
+    },
+    {
       "id": "T22",
       "nom": "Sauvegardes chiffrées, restauration et traces d'effacement",
       "statut": "sauvegardes en service (2 par jour) ; traces d'effacement chez Upstash dès qu'un effacement a lieu ; seconde copie des traces chez Cloudflare éteinte tant que sa clé n'est pas posée et que la notice v7 n'est pas en vigueur",

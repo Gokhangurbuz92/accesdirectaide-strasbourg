@@ -141,6 +141,11 @@ export const CAPABILITIES = Object.freeze({
   // referral of a dossier (`pro.referrals`) stays closed. A new processing: outside the AIPD until its line is signed, on its own surface « social_referrals ».
   'pro.referrals_social': { description: 'social referrals (G14-PS): closed-list reasons, no free text or document, between NOT_ESSMS verified organisations, consent and withdrawal by the person, statuses for both organisations',
     aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row 10 referral: no health data by construction (closed non-health reasons, no text, no document) and no ESSMS party (FINESS-registered or unreviewed kinds refused)', surface: 'social_referrals', aipdRef: 'G14-PS (AIPD line to sign)' },
+  // TG (owner 24/11/2026: notifications = Web Push → e-mail → OPTIONAL Telegram, 0 €; WhatsApp rejected): reminders in the person's own Telegram chat.
+  // A new processor (Telegram Messenger Inc. / group in Dubai, outside the EU): outside the AIPD until its line is signed (docs/rgpd-r4-aipd-lignes.md
+  // « TG-1 »). Needs ADA_BETA_ACCOUNTS_EXTRA=telegram (narrow scope), this name in ADA_CAPABILITIES_OPEN, TELEGRAM_* configured and migration 0065.
+  'citizen.telegram': { description: 'optional Telegram reminders: a single-use link code, the person’s chat id sealed, generic reminder texts (no health, disability, family or document detail)',
+    aipd: 'out', requiresHds: false, hdsNote: 'not a matrix row: no (no health data by construction: generic texts only)', surface: 'accounts', accountsFull: true, aipdRef: 'TG-1 (AIPD line to sign)' },
   // ── never opened by a switch
   'citizen.minor_accounts': { description: 'independent accounts of minors (closed by the age policy; R42-A07)', aipd: 'out', requiresHds: false, surface: 'accounts', openable: false, aipdRef: 'AIPD § 2.2' },
 });
@@ -163,7 +168,7 @@ export const ROUTE_CAPABILITIES = Object.freeze({
   'citizen/profile': ['citizen.account'], 'citizen/age-declaration': ['citizen.account'], 'citizen/email-change': ['citizen.account'],
   'citizen/email-change-confirm': ['citizen.account'], 'citizen/phone': ['citizen.account'], 'citizen/preferences': ['citizen.account'],
   'citizen/restriction': ['citizen.account'], 'citizen/espace': ['citizen.account'], 'citizen/notifications': ['citizen.account'],
-  'citizen/push': ['citizen.push'], 'citizen/household': ['citizen.household'], 'citizen/guardians': ['citizen.guardians'],
+  'citizen/push': ['citizen.push'], 'citizen/telegram': ['citizen.telegram'], 'citizen/household': ['citizen.household'], 'citizen/guardians': ['citizen.guardians'],
   'citizen/parcours': ['citizen.parcours'], 'citizen/favorites': ['citizen.favorites'], 'citizen/history': ['citizen.history'],
   // G14: my moderation decisions and appeals — the account capability; the handler also answers 503 unless a content capability is open
   'citizen/moderation': ['citizen.account'],

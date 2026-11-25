@@ -51,6 +51,12 @@ export function isSmsInboundRequest(method, path, envVars = process.env) {
     && String(envVars.SMS_INBOUND_URL || '').startsWith('https://') && Boolean(envVars.TWILIO_AUTH_TOKEN);
 }
 
+/** TG: the Telegram bot webhook, only once the bot is configured (the handler still checks the capability, the table and the secret header) @param {string} method @param {string} path @param {Record<string, string | undefined>} [envVars] */
+export function isTelegramWebhookRequest(method, path, envVars = process.env) {
+  return String(method || '').toUpperCase() === 'POST' && path === 'monitor/telegram/webhook'
+    && ['TELEGRAM_BOT_TOKEN', 'TELEGRAM_BOT_USERNAME', 'TELEGRAM_WEBHOOK_SECRET'].every((k) => String(envVars[k] || '').trim() !== '');
+}
+
 /** FA-D7: a partner's signed answer, only once partner adapters are configured (the capability gate and the signature still apply) @param {string} method @param {string} path @param {Record<string, string | undefined>} [envVars] */
 export function isPartnerCallbackRequest(method, path, envVars = process.env) {
   return String(method || '').toUpperCase() === 'POST' && path === 'monitor/partner/referral-events' && String(envVars.ADA_PARTNER_ADAPTERS || '').trim() !== '';
@@ -226,6 +232,9 @@ export const ACCOUNTS_EXTRAS = Object.freeze({
   // citizen.legal_protection (the administrator's verification route admin/legal-protection follows the admin surface). Opens nothing before an
   // administrator verified a court decision; needs notice v14 / cgu v13 in force (preflight) and migration 0064 applied.
   legal_protection: Object.freeze({ routes: Object.freeze(['citizen/legal-protection']), capabilities: Object.freeze(['citizen.legal_protection']) }),
+  // TG (owner 24/11/2026): the optional Telegram reminders (GET / POST / DELETE citizen/telegram) — capability citizen.telegram, outside the AIPD until its
+  // line is signed (ADA_CAPABILITIES_OPEN), and the bot's TELEGRAM_* variables; without them the card says « pas encore proposé »
+  telegram: Object.freeze({ routes: Object.freeze(['citizen/telegram']), capabilities: Object.freeze(['citizen.telegram']) }),
 });
 /** the additions to the narrow accounts scope named in this environment (empty in the full scope) @param {Record<string, string | undefined>} [envVars] @returns {Set<string>} */
 export function accountsExtras(envVars = process.env) {
@@ -322,6 +331,7 @@ export function isAllowedInPublicBeta(method, path, envVars = process.env) {
   // R43-MAIL: the Mailjet delivery events — POST to that exact path only, and only when MAILER_EVENTS_ENABLED=1 (basic auth is checked by the handler)
   if (isMailEventsRequest(method, p, envVars)) return true;
   if (isSmsInboundRequest(method, p, envVars)) return true;
+  if (isTelegramWebhookRequest(method, p, envVars)) return true;
   if (isPartnerCallbackRequest(method, p, envVars)) return true;
   if (isPublicIndicatorsRequest(method, p, envVars)) return true;
   if (isObservatoireRequest(method, p, envVars)) return true;

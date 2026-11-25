@@ -9,6 +9,7 @@ import GuardianLinks from '@/components/account/GuardianLinks';
 import { AGE_BANDS } from '@/lib/ageBandOptions';
 import DeviceDisplayPreferences from '@/components/account/DeviceDisplayPreferences';
 import DevicePush from '@/components/DevicePush';
+import TelegramNotifications from '@/components/account/TelegramNotifications';
 import { FranceConnectLink } from '@/components/account/FranceConnect';
 import { LANGUAGES, SOURCE_LANGUAGE, formatDate, setLanguage, storedLanguage, useLanguage, useT } from '@/i18n';
 import { ErrorSummary, FieldError } from '@/components/forms/FieldErrors';
@@ -260,6 +261,8 @@ export default function CompteProfil() {
       </Card>
 
       <DevicePush />
+
+      <TelegramNotifications />
 
       <FranceConnectLink />
 
