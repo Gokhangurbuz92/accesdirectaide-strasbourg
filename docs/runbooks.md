@@ -176,6 +176,11 @@ ou ne la liste plus ; si le fichier du jour est illisible, plus ancien que le pr
   https://api.data.inclusion.gouv.fr/api/docs), à placer dans `DATA_INCLUSION_API_TOKEN` (secret). L'adaptateur (`apiStructures`, `apiServices`) ne garde
   jamais les contacts ; il n'est pas branché sur la veille tant que les conditions d'utilisation de l'API n'ont pas été acceptées par le propriétaire.
 - Libellés : `node scripts/datainclusion-terms.mjs` (version du schéma épinglée ; à relancer volontairement si le schéma change).
+- Import ponctuel pour l'Eurométropole (R6, commande du propriétaire) : `node --import tsx scripts/datainclusion-import.mjs` — **dry-run par défaut**
+  (`--out plan.json --report rapport.md`, `--check-sirene` facultatif) ; `--apply --plan --confirm <12 car. de l'empreinte> --backup <dump.enc>` n'écrit que
+  le plan relu. Il n'écrit jamais une fiche publique (la veille s'en charge par la voie de publication), crée les nouveaux lieux en **brouillon non vérifié**
+  (`import_batch` = `datainclusion-import:<date d'export>`, publiés ou non par la veille comme toute fiche), met les rapprochements incertains dans la file
+  de revue (`ReviewQueueItem`, raison `DATA_INCLUSION_DOUBLON_POSSIBLE`) et s'arrête si la licence du jeu de données n'est plus `lov2`.
 
 ## 7 quinquies. Notifications sur appareil (Web Push)
 

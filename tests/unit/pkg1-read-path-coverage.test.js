@@ -89,6 +89,7 @@ const REVIEWED_NOT_PUBLIC = {
   'scripts/finess-add-category.mjs': 'R38: owner command on the owner machine (bounded FINESS category insert): reads only the FINESS numbers already listed and the row count; never served; the records are created and verified by the veille FINESS step (D-5 ledger)',
   'scripts/finess-activities-import.mjs': 'R36: owner command on the owner machine (bounded FINESS activity import): reads the FINESS records for the change set and counts; never served, writes only `services` of published verified records with a VERIFY of its evidence (D-5 ledger)',
   'scripts/lib/finess-activities.mjs': 'R36: the library of that owner command (same scope); never imported by a served handler',
+  'scripts/lib/datainclusion-import.mjs': 'R6: owner command library (data·inclusion open-data import, dry-run by default): reads the Structure records to match the places; writes only services_externes of records NOT shown to the public, new DRAFT records (brouillon, UNVERIFIED) and review-queue entries; never publishes, never served',
   'scripts/transfer-rehearsal.mjs': 'R8: operator rehearsal of the content transfer on a NEW local database it creates (refuses a non-local server); counts and hashes only, never served',
   // maintenance scripts run by an operator, never served
   'scripts/cleanup-test-accounts.js': 'operator script', 'scripts/fix-source-urls.js': 'operator script', 'scripts/measure-phase10-baseline.js': 'operator script', 'scripts/recalculate-quality-scores.js': 'operator script',

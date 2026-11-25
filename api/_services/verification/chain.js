@@ -45,7 +45,7 @@ import { refreshRegistry, refreshOnlineServices, onlineServiceTerritory, ensureS
 import { officeRecord, officeTexts } from './offices.js';
 import { fetchFiness, readFiness, finessTexts, termsVersion } from './finess.js';
 import { proposeImportedExternalBookings } from '../external-booking.js';
-import { fetchDataInclusion, readDataInclusion, servicesValue, servicesFor, sameServices, producerOf, NOT_A_PLACE_NAME, termsVersion as diTermsVersion } from './datainclusion.js';
+import { fetchDataInclusion, readDataInclusion, servicesValue, servicesFor, sameServices, producerOf, growthRefusal, NOT_A_PLACE_NAME, termsVersion as diTermsVersion } from './datainclusion.js';
 import { nominativeEmail, publicEmail } from './contacts.js';
 import { probe as probeMachine, allowed, guardEnabled, modelOptions, unloadModel } from './resources.js';
 import { publicationAudit, WITHDRAW_ON } from './audit.js';
@@ -1393,11 +1393,8 @@ async function feedDataInclusion(ctx) {
     let s;
     try { s = await lookupSiret(c.siret, ctx.net); sireneStat(ctx, true); } catch (e) { sireneStat(ctx, false, e); count(ctx, 'datainclusion:later'); continue; }   // an outage: examined again
     const pl = c.places[0];
-    if (!s?.found) { skip('SIRET inconnu du répertoire SIRENE'); continue; }
-    if (!s.open) { skip('établissement fermé selon SIRENE'); continue; }
-    if (/^1/.test(String(s.legalForm || ''))) { skip('entrepreneur individuel (une personne)'); continue; }
-    if (s.postalCode && digits(s.postalCode).slice(0, 5) !== digits(pl.code_postal).slice(0, 5)) { skip('adresse SIRENE dans une autre commune'); continue; }
-    if (!String(s.postalCode || pl.code_postal || '').startsWith(ctx.departement)) { skip('hors du département'); continue; }
+    const refused = growthRefusal(s, pl, ctx.departement);   // the same rule as the open-data import (datainclusion.js)
+    if (refused) { skip(refused); continue; }
     const v = servicesValue({ version, placeList: c.places, servicesOf: r.servicesOf, created: true });
     const id = crypto.randomUUID();
     await ctx.db.insert(Structure).values({ id, nom: pl.nom, slug: `${slugify(pl.nom)}-${id.slice(0, 8)}`, adresse: pl.adresse, code_postal: pl.code_postal, ville: pl.commune, siret: c.siret,
