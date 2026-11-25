@@ -23,6 +23,7 @@ import { pipeline, PassThrough } from 'node:stream';
 import { officialJson, officialDownload, SourceError } from './fetcher.js';
 import { arrayElements, readableName } from './finess.js';
 import TERMS from './datainclusion-terms.js';
+import { needsOfServices } from './datainclusion-needs.js';
 import { validSiret } from '../../_utils/siret.js';
 
 export const DATASET = 'referentiel-de-loffre-dinsertion-sociale-et-professionnelle-data-inclusion';
@@ -217,7 +218,24 @@ export function servicesValue({ version, placeList, servicesOf, previous = null,
   const categories = [...new Set(s.services.flatMap((x) => x.categories))].sort();
   return { origin: 'DATA_INCLUSION', export: version, dataset: DATASET_PAGE, licence: 'Licence Ouverte 2.0', schema: `data·inclusion ${TERMS.schema}`,
     places: placeList.map((p) => ({ id: p.id, producer: p.source, link: p.link })).sort((a, b) => a.id.localeCompare(b.id)),
-    services: s.services, categories, staleServices: s.stale, createdFromDataInclusion: Boolean(created || previous?.createdFromDataInclusion), absentFrom: [] };
+    services: s.services, categories, staleServices: s.stale, createdFromDataInclusion: Boolean(created || previous?.createdFromDataInclusion), absentFrom: [],
+    // R6: the needs (20 × 86 subdomains) of these services, from the taxonomy's own correspondence only (datainclusion-needs.js) — internal, not in sameServices
+    needs: needsOfServices(s.services).needs };
+}
+
+/**
+ * Whether a place no record is may become a new record, from its SIRENE establishment (lookupSiret): the reason it may not, or null. Shared by the veille's
+ * growth (chain.js feedDataInclusion) and the open-data import (scripts/lib/datainclusion-import.mjs) so both apply the same rule.
+ * @param {any} s the lookupSiret result @param {{ code_postal?: string | null }} place @param {string} departement
+ */
+export function growthRefusal(s, place, departement) {
+  const cp = (v) => String(v || '').replace(/\D/g, '').slice(0, 5);
+  if (!s?.found) return 'SIRET inconnu du répertoire SIRENE';
+  if (!s.open) return 'établissement fermé selon SIRENE';
+  if (/^1/.test(String(s.legalForm || ''))) return 'entrepreneur individuel (une personne)';
+  if (s.postalCode && cp(s.postalCode) !== cp(place.code_postal)) return 'adresse SIRENE dans une autre commune';
+  if (!String(s.postalCode || place.code_postal || '').startsWith(departement)) return 'hors du département';
+  return null;
 }
 /** a JSON text independent of the order of keys (PostgreSQL's jsonb stores them in its own order) */
 const canonical = (v) => (Array.isArray(v) ? `[${v.map(canonical).join(',')}]` : v && typeof v === 'object' ? `{${Object.keys(v).sort().map((k) => `${JSON.stringify(k)}:${canonical(v[k])}`).join(',')}}` : JSON.stringify(v ?? null));

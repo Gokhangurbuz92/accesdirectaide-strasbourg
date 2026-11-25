@@ -131,6 +131,19 @@
       "trust_level": "VERIFIED",
       "enabled": false,
       "notes": "Housing aid programs - TO BE CONFIGURED"
+    },
+    {
+      "id": "data-inclusion-referentiel",
+      "label": "data·inclusion - Référentiel de l'offre d'insertion sociale et professionnelle (export hebdomadaire ouvert)",
+      "scope": "67",
+      "type": "structure",
+      "base_url": "https://www.data.gouv.fr",
+      "url_exact": "https://www.data.gouv.fr/datasets/referentiel-de-loffre-dinsertion-sociale-et-professionnelle-data-inclusion",
+      "strategy": "api",
+      "license": "Licence Ouverte 2.0 (Etalab, data.gouv.fr « lov2 », lu le 25/11/2026)",
+      "trust_level": "VERIFIED",
+      "enabled": true,
+      "notes": "Open weekly export (JSON, SHA-1 published), no token. Read by the veille (api/_services/verification/datainclusion.js) and by the owner import scripts/datainclusion-import.mjs (Eurométropole, dry-run by default). Each service is attributed to its ORIGINAL producer (France Travail, DORA…), never presented as checked by the State; identity of a new place = SIRENE. Credited on /sources."
     }
   ]
 }
