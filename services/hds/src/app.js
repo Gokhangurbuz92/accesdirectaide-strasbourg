@@ -34,7 +34,7 @@
  *   DELETE /v1/dossiers/:id/referrals                pro, cap pro.referrals       { toStructureId } the sender withdraws its still-pending proposal
  *   GET    /v1/orgs/:structureId/public-key          citizen | pro (D, pro.referrals or messaging.attachments)
  *   GET    /v1/pro/dossiers                          pro D                        dossiers shared with the ticket's structure
- *   GET    /v1/pro/keys                              pro D                        my key, the organisation keys with my wraps, members to wrap (admin)
+ *   GET    /v1/pro/keys                              pro D                        my key, the organisation keys with my wraps, members to wrap + members holding a key (admin)
  *   PUT    /v1/pro/member-key                        pro D                        { publicJwk, keyring, replace? }
  *   POST   /v1/pro/org-keys                          pro D, role STRUCTURE_ADMIN  { kid, publicJwk, wraps[] } (create / rotate)
  *   POST   /v1/pro/org-keys/members                  pro D, role STRUCTURE_ADMIN  { memberRef, wraps[] }

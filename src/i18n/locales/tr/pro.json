@@ -1658,5 +1658,21 @@
  "layout.guide": "ADA Pro kılavuzu",
  "dashboard.guide_link": "ADA Pro kılavuzu: nasıl çalışır",
  "dashboard.start.guide": "Tüm ayrıntılar kılavuzda",
- "breadcrumb.guide": "ADA Pro kılavuzu"
+ "breadcrumb.guide": "ADA Pro kılavuzu",
+ "hds.admin_only": "Kurum yöneticisine ayrılmıştır.",
+ "hds.invalid_member": "Bu üye çıkarılamaz (kendi erişiminizi kaldıramazsınız).",
+ "hds.team_failed": "Ekip listesi yüklenemedi: şu anda erişim verilemiyor. Tekrar deneyin.",
+ "hds.member_removed": "Erişim kaldırıldı. Bu üye anahtarın bir kopyasını saklamış olabilir: şimdi kurum anahtarını değiştirin.",
+ "hds.inactive_skipped": "ADA Pro hesabı devre dışı bırakılmış {{n}} üye erişim almayacak. Aşağıdan erişimlerini kaldırın.",
+ "hds.members_title": "Kişisel anahtarı olan üyeler",
+ "hds.member_unknown": "Silinmiş veya bilinmeyen hesap",
+ "hds.member_disabled": "Hesap devre dışı",
+ "hds.member_has_access": "Dosyaları açabilir",
+ "hds.member_no_access": "Erişim henüz verilmedi",
+ "hds.member_remove": "Erişimi kaldır",
+ "hds.members_empty": "Henüz başka hiçbir üye kişisel anahtarını oluşturmadı.",
+ "hds.member_remove_title": "{{who}} için erişim kaldırılsın mı?",
+ "hds.member_remove_effect": "Bu üye artık kurum anahtarıyla paylaşılan dosyaları açamayacak ve kişisel anahtarı silinecek (bir yönetici ona yeniden erişim verirse yeni bir anahtar oluşturması gerekecek). Anahtarın bir kopyasını tarayıcısında saklamış olabilir: ardından « Kurum anahtarını değiştir » ile kurum anahtarını değiştirin.",
+ "hds.cancel": "İptal",
+ "hds.member_remove_confirm": "Erişimi kaldır"
 }

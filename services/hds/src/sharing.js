@@ -482,7 +482,10 @@ export async function memberKeySet(ctx, p, input) {
   });
 }
 
-/** @param {Ctx} ctx @param {Principal} p @returns {Promise<Out>} my key, my organisation's keys with MY wraps, and (administrators) the members still to wrap */
+/**
+ * @param {Ctx} ctx @param {Principal} p @returns {Promise<Out>} my key, my organisation's keys with MY wraps, and (administrators) the members still to wrap
+ * and every member holding a personal key with whether they can open the ACTIVE organisation key (`members`, to withdraw an access: DELETE /v1/pro/org-keys/members)
+ */
 export async function orgKeysState(ctx, p) {
   const mine = (await ctx.pool.query('SELECT * FROM hds.member_key WHERE member_id = $1 AND structure_id = $2', [p.sub, p.str])).rows[0];
   const keyring = mine ? JSON.parse(serverOpen(ctx, mine, aadMember(p.sub))(mine.keyring_sealed, 'keyring').toString('utf8')) : null;
@@ -490,11 +493,14 @@ export async function orgKeysState(ctx, p) {
     LEFT JOIN hds.org_key_member m ON m.structure_id = k.structure_id AND m.kid = k.kid AND m.member_id = $2 WHERE k.structure_id = $1 ORDER BY k.created_at DESC`, [p.str, p.sub])).rows;
   const body = { memberRef: p.sub, structureId: p.str, role: p.role === 'STRUCTURE_ADMIN' ? 'STRUCTURE_ADMIN' : 'PRO', member: mine ? { publicJwk: JSON.parse(mine.public_jwk), keyring } : null,
     orgKeys: keys.map((k) => ({ kid: k.kid, publicJwk: JSON.parse(k.public_jwk), active: !k.retired_at, createdAt: k.created_at, wrappedPrivate: k.wrapped_private ? JSON.parse(k.wrapped_private) : null })),
-    pendingMembers: /** @type {any[]} */ ([]) };
+    pendingMembers: /** @type {any[]} */ ([]), ...(p.role === 'STRUCTURE_ADMIN' ? { members: /** @type {any[]} */ ([]) } : {}) };
   if (p.role === 'STRUCTURE_ADMIN') {
     body.pendingMembers = (await ctx.pool.query(`SELECT m.member_id, m.public_jwk FROM hds.member_key m WHERE m.structure_id = $1 AND EXISTS (SELECT 1 FROM hds.org_key k WHERE k.structure_id = $1)
       AND NOT EXISTS (SELECT 1 FROM hds.org_key_member w JOIN hds.org_key k ON k.structure_id = w.structure_id AND k.kid = w.kid AND k.retired_at IS NULL WHERE w.structure_id = $1 AND w.member_id = m.member_id)`, [p.str])).rows
       .map((r) => ({ memberRef: r.member_id, publicJwk: JSON.parse(r.public_jwk) }));
+    body.members = (await ctx.pool.query(`SELECT m.member_id, EXISTS (SELECT 1 FROM hds.org_key_member w JOIN hds.org_key k ON k.structure_id = w.structure_id AND k.kid = w.kid
+      AND k.retired_at IS NULL WHERE w.structure_id = $1 AND w.member_id = m.member_id) AS has_access FROM hds.member_key m WHERE m.structure_id = $1 ORDER BY m.member_id LIMIT 1000`, [p.str])).rows
+      .map((r) => ({ memberRef: r.member_id, hasAccess: Boolean(r.has_access) }));
   }
   return { status: 200, body };
 }
@@ -560,10 +566,11 @@ export async function orgKeyRemoveMember(ctx, p, input) {
   const member = String(input?.memberRef || '');
   if (!MEMBER.test(member) || member === p.sub) return fail(400, 'INVALID_MEMBER', 'Membre invalide.');
   return tx(ctx.pool, async (c) => {
-    await c.query('DELETE FROM hds.org_key_member WHERE structure_id = $1 AND member_id = $2', [p.str, member]);
-    await c.query('DELETE FROM hds.member_key WHERE structure_id = $1 AND member_id = $2', [p.str, member]);
-    await event(ctx, c, { owner: `org:${p.str}`, actor: p, action: 'ORG_KEY_MEMBER_REMOVED', objectType: 'org_key', structureId: p.str });
-    return { status: 200, body: { memberRef: member, rotateRecommended: true } };
+    await c.query('SELECT pg_advisory_xact_lock(hashtext($1))', [`org:${p.str}`]);
+    const wraps = (await c.query('DELETE FROM hds.org_key_member WHERE structure_id = $1 AND member_id = $2', [p.str, member])).rowCount || 0;
+    const keyRows = (await c.query('DELETE FROM hds.member_key WHERE structure_id = $1 AND member_id = $2', [p.str, member])).rowCount || 0;
+    if (wraps || keyRows) await event(ctx, c, { owner: `org:${p.str}`, actor: p, action: 'ORG_KEY_MEMBER_REMOVED', objectType: 'org_key', structureId: p.str });
+    return { status: 200, body: { memberRef: member, removed: Boolean(wraps || keyRows), rotateRecommended: true } };
   });
 }
 

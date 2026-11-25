@@ -200,17 +200,37 @@ export async function proCreateOrgKey() {
   return org.kid;
 }
 
-/** administrator: give the members who created their key access to every organisation key I can open @returns {Promise<number>} */
-export async function proWrapPending() {
+/**
+ * administrator: give the members who created their key access to every organisation key I can open — ONLY the members whose ADA Pro account is ACTIVE
+ * (`activeMemberRefs`, read from the team list of the main API). The HDS service does not know an account's status: a deactivated member keeps their
+ * personal key there, so after « Changer la clé » they would be listed as « to wrap » again. Without that list nothing is wrapped (fail closed).
+ * @param {ReadonlySet<string>} activeMemberRefs @returns {Promise<number>}
+ */
+export async function proWrapPending(activeMemberRefs) {
+  if (!(activeMemberRefs instanceof Set)) throw err('ACTIVE_MEMBERS_UNKNOWN');
   const st = await proKeys();
   const mk = need(keys.getMemberKey(), 'MEMBER_LOCKED');
   let n = 0;
-  for (const m of st.pendingMembers || []) {
+  for (const m of eligiblePending(st, activeMemberRefs)) {
     const wraps = [];
     for (const o of st.orgKeys || []) if (o.wrappedPrivate) wraps.push({ kid: o.kid, wrappedPrivate: await dc.wrapOrgPrivateFor(await dc.openOrgPrivateJwk(mk, o.wrappedPrivate), o.kid, m.publicJwk) });
     if (wraps.length) { await pro('/v1/pro/org-keys/members', { method: 'POST', body: { memberRef: m.memberRef, wraps } }); n += 1; }
   }
   return n;
+}
+
+/** the members still to wrap whose ADA Pro account is active (never myself) @param {any} st @param {ReadonlySet<string>} activeMemberRefs @returns {any[]} */
+export function eligiblePending(st, activeMemberRefs) {
+  return (st?.pendingMembers || []).filter((/** @type {any} */ m) => activeMemberRefs.has(String(m?.memberRef || '')) && m.memberRef !== st?.memberRef);
+}
+
+/**
+ * administrator: withdraw a member's access to the organisation key (their wraps and their personal key are deleted at the HDS service; audited there as
+ * ORG_KEY_MEMBER_REMOVED). They may have kept a copy of the key in their browser: « Changer la clé » afterwards is recommended.
+ * @param {string} memberRef @returns {Promise<{ memberRef: string, removed?: boolean, rotateRecommended: boolean } | null>}
+ */
+export async function proRemoveMember(memberRef) {
+  return pro('/v1/pro/org-keys/members', { method: 'DELETE', body: { memberRef } });
 }
 
 // ───────────── professional: dossiers

@@ -1658,5 +1658,21 @@
  "layout.guide": "ADA Pro guide",
  "dashboard.guide_link": "ADA Pro guide: how it works",
  "dashboard.start.guide": "All the details in the guide",
- "breadcrumb.guide": "ADA Pro guide"
+ "breadcrumb.guide": "ADA Pro guide",
+ "hds.admin_only": "Reserved for the organisation's administrator.",
+ "hds.invalid_member": "This member cannot be removed (you cannot remove your own access).",
+ "hds.team_failed": "The team list could not be loaded: access cannot be given for now. Try again.",
+ "hds.member_removed": "Access removed. This member may have kept a copy of the key: change the organisation key now.",
+ "hds.inactive_skipped": "{{n}} member(s) whose ADA Pro account is deactivated will not receive access. Remove their access below.",
+ "hds.members_title": "Members who have a personal key",
+ "hds.member_unknown": "Deleted or unknown account",
+ "hds.member_disabled": "Account deactivated",
+ "hds.member_has_access": "Can open the files",
+ "hds.member_no_access": "Access not given yet",
+ "hds.member_remove": "Remove access",
+ "hds.members_empty": "No other member has created their personal key yet.",
+ "hds.member_remove_title": "Remove access for {{who}}?",
+ "hds.member_remove_effect": "This member will no longer be able to open the files shared with the organisation key, and their personal key is deleted (they will have to create a new one if an administrator gives them access again). They may have kept a copy of the key in their browser: then change the organisation key with « Change the organisation key ».",
+ "hds.cancel": "Cancel",
+ "hds.member_remove_confirm": "Remove access"
 }
