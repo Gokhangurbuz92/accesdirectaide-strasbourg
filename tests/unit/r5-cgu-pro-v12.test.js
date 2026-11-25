@@ -36,7 +36,7 @@ describe('cgu-professionnel v12-2026-11-25', () => {
     expect(L.approvedVersionOf('cgu-professionnel', R4_APPROVED)).toBe('v11-2026-11-24');
     expect(L.approvedVersionOf('cgu-professionnel', WITH_V12)).toBe('v12-2026-11-25');
     expect(L.approvedAtLeast('cgu-professionnel', L.LEGAL_DRAFTS_PRO_V11, WITH_V12)).toBe(true);   // the release-3 preflight stays satisfied
-    expect([...L.LEGAL_DRAFT_VERSIONS].at(-1)).toBe('v12-2026-11-25');
+    expect([...L.LEGAL_DRAFT_VERSIONS].at(-2)).toBe('v12-2026-11-25');   // TG: notice v16-2026-11-25 follows (tests/unit/tg-notice-v16.test.js)
   });
 
   it('clause 1 states what the code does: personal passphrase, administrator gives access, departure → key change, no recovery by AccesDirectAide', () => {

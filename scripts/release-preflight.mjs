@@ -9,7 +9,7 @@
 import { evaluateMailerConfig } from '../api/_utils/mailer.js';
 import { LEGAL_PLACEHOLDERS } from '../src/config/legal-documents.js';
 import { openSurfaces, openJobs, proSelfRegistrationOpen, accountsScope, accountsExtras } from '../api/_utils/public-beta.js';
-import { approvedAtLeast, HEALTH_CONSENT_VERSION_PROPOSED, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_PRO_V12, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R4_CGU, LEGAL_DRAFTS_R4_NOTICE, LEGAL_DRAFTS_V12 } from '../src/config/legal-drafts.js';
+import { approvedAtLeast, HEALTH_CONSENT_VERSION_PROPOSED, LEGAL_DRAFTS_PRO_V11, LEGAL_DRAFTS_PRO_V12, LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_R4_CGU, LEGAL_DRAFTS_R4_NOTICE, LEGAL_DRAFTS_TG_NOTICE, LEGAL_DRAFTS_V12 } from '../src/config/legal-drafts.js';
 import { externalBookingMode } from '../api/lib/external-booking.js';
 import { partnerAdapterConfig } from '../api/lib/partner-adapter/config.js';
 import { CAPABILITIES, capabilityState, capabilityStates, hdsAttestation, hdsAttestationProvider } from '../api/_utils/capabilities.js';
@@ -261,6 +261,19 @@ export function telegramCheck(env, { get }) {
     : ['FAIL', `citizen.telegram open but the bot is not configured (${cfg.reason}) — ${names}`];
 }
 
+/**
+ * TG — legal.tg_texts: the Telegram reminders (P10d, recipient, transfer outside the EU, retention) are described only from notice-confidentialite
+ * v16-2026-11-25 (approved by the controller on 25/11/2026, TG_OWNER_APPROVAL_2026-11-25). With citizen.telegram open, FAIL unless
+ * VITE_LEGAL_DOCS_APPROVED_VERSION names that version (or later); closed: no line (the opening itself is a separate step, not approved).
+ * @param {Record<string, string | undefined>} env @param {{ get: (k: string) => string }} ctx @returns {Array<[string, 'PASS' | 'FAIL', string]>}
+ */
+export function telegramLegalChecks(env, { get }) {
+  if (!capabilityState('citizen.telegram', { ...env, VERCEL_ENV: 'production' }).open) return [];
+  const ok = approvedAtLeast('notice-confidentialite', LEGAL_DRAFTS_TG_NOTICE, get('VITE_LEGAL_DOCS_APPROVED_VERSION'));
+  return [['legal.tg_texts', ok ? 'PASS' : 'FAIL', ok ? `citizen.telegram open with notice-confidentialite ≥ ${LEGAL_DRAFTS_TG_NOTICE} in force`
+    : `citizen.telegram open but VITE_LEGAL_DOCS_APPROVED_VERSION does not name notice-confidentialite@${LEGAL_DRAFTS_TG_NOTICE} (or later)`]];
+}
+
 /** @param {Record<string, string | undefined>} env @param {{ legalText?: string, policy?: any, cspText?: string }} [opts] legalText: the legal-pages source (tests pass their own); policy: a test copy of the retention policy */
 export function evaluateReleasePreflight(env, opts = {}) {
   const get = (/** @type {string} */ k) => String(env[k] ?? '').trim();
@@ -425,6 +438,7 @@ export function evaluateReleasePreflight(env, opts = {}) {
   add('partner.bridge', ...partnerBridgeCheck(env, { get, betaOn }));
   add('messaging.conversations', ...messagingCheck(env, { betaOn, opened }));
   add('telegram.configured', ...telegramCheck(env, { get }));
+  for (const [id, st, detail] of telegramLegalChecks(env, { get })) add(id, st, detail);
   // R3: the institution portal shows only FROZEN quarters (api/_services/territorial-stats.js): without the observatory-freeze job every cell is withheld
   if (capabilityState('institution.portal', { ...env, VERCEL_ENV: 'production' }).open && (!betaOn || opened.has('institution'))) {
     const frozen = !betaOn || openJobs(env).has('observatory-freeze');

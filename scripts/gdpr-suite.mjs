@@ -748,13 +748,14 @@ export function buildRegistre({ retention, registry, legalEntity, backups }) {
                 mesures_securite: 'Aucun formulaire de candidature, aucun compteur de clics, aucun journal de consultation ; champs discriminatoires refusés par construction ; vérification de l\'employeur recontrôlée à chaque lecture publique ; modération MFA',
             },
             {
-                // TG (owner decision 24/11/2026: notifications = Web Push → e-mail → OPTIONAL Telegram, 0 €) — DRAFT « à valider »: legal-drafts.js
-                // LEGAL_DRAFTS_TG_* (not in a notice version yet), AIPD line TG-1 (docs/rgpd-r4-aipd-lignes.md) to sign; migration 0065
+                // TG (owner decision 24/11/2026: notifications = Web Push → e-mail → OPTIONAL Telegram, 0 €) — APPROVED by the controller on 25/11/2026
+                // (CONTROL/master/completion/TG_OWNER_APPROVAL_2026-11-25.md): legal-drafts.js LEGAL_DRAFTS_TG_* in notice v16-2026-11-25, AIPD line TG-1
+                // (docs/rgpd-r4-aipd-lignes.md) signed; migration 0065 in the next release; the opening (citizen.telegram) is a separate step, NOT approved
                 id: 'T38',
                 nom: 'Rappels facultatifs sur Telegram',
-                statut: 'PROJET à valider — capacité citizen.telegram fermée (ADA_BETA_ACCOUNTS_EXTRA=telegram + ADA_CAPABILITIES_OPEN + TELEGRAM_* + migration 0065) ; aucun envoi',
+                statut: 'approuvé par le responsable le 25/11/2026 (TG_OWNER_APPROVAL_2026-11-25 ; textes dans la notice v16-2026-11-25, ligne AIPD TG-1 signée) — capacité citizen.telegram fermée, ouverture non approuvée (étape séparée : ADA_BETA_ACCOUNTS_EXTRA=telegram + ADA_CAPABILITIES_OPEN + TELEGRAM_* + migration 0065) ; aucun envoi',
                 finalite: 'Envoyer, si la personne l\'a demandé, un rappel court (rendez-vous la veille, échéance de Mon Parcours) dans sa propre conversation Telegram',
-                base_legale_proposee: 'Consentement (art. 6.1.a), donné avant le lien, retirable à tout moment (« Mon compte » ou /stop) — à valider',
+                base_legale_proposee: 'Consentement (art. 6.1.a), donné avant le lien, retirable à tout moment (« Mon compte » ou /stop)',
                 categories_donnees: ['Identifiant de la conversation Telegram (chiffré au repos, index HMAC)', 'Date du lien, compteurs d\'envoi', 'Empreinte SHA-256 d\'un code de liaison à usage unique (10 minutes)', 'Contenu du message : rappel général et lien vers le compte (ni santé, ni handicap, ni situation familiale, ni nom de document ou de structure)'],
                 categories_personnes: ['Citoyens titulaires d\'un compte qui activent les rappels sur Telegram'],
                 destinataires: ['Telegram (Telegram Messenger Inc. pour les utilisateurs de l\'EEE ; groupe dont Telegram FZ-LLC à Dubaï) — acheminement vers le compte Telegram de la personne ; données des utilisateurs de l\'EEE stockées aux Pays-Bas selon telegram.org/privacy (lu le 25/11/2026)'],

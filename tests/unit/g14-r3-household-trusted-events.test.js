@@ -161,10 +161,10 @@ const OPEN_R3 = 'cgu-citoyen@v13-2026-11-24,notice-confidentialite@v14-2026-11-2
 describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026-11-24 (approved by the owner 24/11/2026)', () => {
   it('versions, order, status: drafts until the build names them; release 2 value keeps v13 / v12', () => {
     expect([L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_R3_CGU]).toEqual(['v14-2026-11-24', 'v13-2026-11-24']);
-    expect([...L.LEGAL_DRAFT_VERSIONS].slice(-5, -2)).toEqual([L.LEGAL_DRAFTS_R3_CGU, L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_PRO_V11]);   // R5: cgu-professionnel v12 follows   // + cgu-professionnel v11 (release-3 follow-up); G14-R4: notice v15 follows
+    expect([...L.LEGAL_DRAFT_VERSIONS].slice(-6, -3)).toEqual([L.LEGAL_DRAFTS_R3_CGU, L.LEGAL_DRAFTS_R3_NOTICE, L.LEGAL_DRAFTS_PRO_V11]);   // TG: notice v16 follows   // R5: cgu-professionnel v12 follows   // + cgu-professionnel v11 (release-3 follow-up); G14-R4: notice v15 follows
     expect(L.LEGAL_DRAFTS_R3_STATUS).toMatch(/^APPROVED — approuvée le 24\/11\/2026 par le responsable/);
     expect(L.LEGAL_DRAFTS_R3_STATUS).not.toMatch(/avocat|expert|proposée|en attente/);
-    expect(L.latestDraftVersionOf(N)).toBe('v15-2026-11-24'); expect(L.latestDraftVersionOf(C)).toBe('v14-2026-11-24');   // G14-R4 drafts are newer
+    expect(L.latestDraftVersionOf(N)).toBe('v16-2026-11-25');   // TG (approved 25/11/2026) expect(L.latestDraftVersionOf(C)).toBe('v14-2026-11-24');   // G14-R4 drafts are newer
     expect(L.approvedVersionOf(N, OPEN_R2)).toBe('v13-2026-11-23'); expect(L.approvedVersionOf(C, OPEN_R2)).toBe('v12-2026-11-23');
     expect(L.approvedVersionOf(N, OPEN_R3)).toBe('v14-2026-11-24'); expect(L.approvedVersionOf(C, OPEN_R3)).toBe('v13-2026-11-24');
     for (const t of OPEN_R3.split(',')) expect(L.knownApprovalToken(t), t).toBe(true);
@@ -225,7 +225,7 @@ describe('G14-R3 legal drafts — notice v14-2026-11-24 and cgu-citoyen v13-2026
   });
 
   it('LEGAL_DRAFT_DOCUMENTS shows the newest drafts (G14-R4: notice v15, cgu v14 — they carry the release-3 texts)', () => {
-    expect(find(L.LEGAL_DRAFT_DOCUMENTS, N).version).toBe('v15-2026-11-24');
+    expect(find(L.LEGAL_DRAFT_DOCUMENTS, N).version).toBe('v16-2026-11-25');   // TG: notice v16
     expect(find(L.LEGAL_DRAFT_DOCUMENTS, C).version).toBe('v14-2026-11-24');
   });
 });

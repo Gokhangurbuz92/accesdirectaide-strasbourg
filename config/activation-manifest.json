@@ -3127,7 +3127,7 @@
         {
           "id": "telegram-aipd",
           "kind": "legal",
-          "text": "AIPD line TG-1 signed, notice / register additions approved (draft « à valider »), capability citizen.telegram named in ADA_CAPABILITIES_OPEN; migration 0065 applied"
+          "text": "AIPD line TG-1 signed and texts approved (25/11/2026), VITE_LEGAL_DOCS_APPROVED_VERSION names notice-confidentialite@v16-2026-11-25 (preflight legal.tg_texts), opening approved separately, capability citizen.telegram named in ADA_CAPABILITIES_OPEN; migration 0065 applied"
         }
       ],
       "order": 6

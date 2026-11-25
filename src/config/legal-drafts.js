@@ -889,9 +889,13 @@ export const LEGAL_DRAFTS_G14C_PRO_RETENTION = Object.freeze([
 ]);
 export const LEGAL_DRAFTS_G14C_PUSH_TRANSFER = "Notifications du navigateur : le service de notification de l'éditeur de votre navigateur peut se trouver hors de l'Union européenne ; il ne transmet qu'un rappel chiffré, qu'il ne peut pas lire.";
 /**
- * TG (owner decision 24/11/2026: notifications = Web Push → e-mail (Mailjet) → OPTIONAL Telegram, 0 €; WhatsApp rejected) — DRAFT « à valider » by the
- * controller. NOT wired into any notice version: the capability citizen.telegram stays closed until these texts are approved in a new notice version and the
- * AIPD line TG-1 (docs/rgpd-r4-aipd-lignes.md) is signed. Sources read on 25/11/2026 (nothing else is claimed):
+ * TG (owner decision 24/11/2026: notifications = Web Push → e-mail (Mailjet) → OPTIONAL Telegram, 0 €; WhatsApp rejected) — APPROVED by the controller on
+ * 25/11/2026 (verbatim: CONTROL/master/completion/TG_OWNER_APPROVAL_2026-11-25.md; the controller's own approval, no lawyer or expert review): P10d, the
+ * recipient, the transfer outside the EU, the retention line and the cookies note « accepted as proposed » and taken into the NEXT notice version
+ * (notice-confidentialite v16-2026-11-25, below); register T38 and AIPD line TG-1 accepted. The only change from the proposed wording: each text names the
+ * condition « lorsque cette fonction est ouverte », so that v16 stays true while the channel is closed. The opening of citizen.telegram is a SEPARATE step,
+ * NOT approved. The cookies note is not part of the notice: the Cookies page (src/pages/Cookies.jsx) is not versioned through this file; it is added there
+ * with the opening. Sources read on 25/11/2026 (nothing else is claimed):
  *  - https://telegram.org/privacy (change log: last entry 21 August 2026): for EEA users the controller is Telegram Messenger Inc. (§ 1); EU representative
  *    under art. 27: EDPO, Avenue Huart Hamoir 71, 1030 Brussels (§ 1.4); data of users who signed up from the EEA / UK stored in data centres in the
  *    Netherlands (§ 4.1); cloud-chat messages stored on Telegram's servers (§ 3.3.1), kept « as long as necessary » (§ 4.3) and until deleted; Telegram
@@ -900,15 +904,15 @@ export const LEGAL_DRAFTS_G14C_PUSH_TRANSFER = "Notifications du navigateur : le
  *  - https://core.telegram.org/bots/api (Bot API 10.5, 22 November 2026): requests go to https://api.telegram.org/bot<token>/METHOD; setWebhook
  *    « secret_token » (1–256 characters A-Z a-z 0-9 _ -) sent back in the header « X-Telegram-Bot-Api-Secret-Token ».
  * NOT verified: whether Telegram offers a data-processing agreement (art. 28) for bots — none is signed; the texts below therefore do not call Telegram a
- * processor and say what happens in the person's own Telegram account. To validate: role of Telegram (independent controller for the person's account vs
- * recipient), the « transfert hors UE » wording, and the retention line.
+ * processor and say what happens in the person's own Telegram account (role of Telegram, transfer wording and retention line accepted as proposed by the
+ * controller on 25/11/2026).
  */
-export const LEGAL_DRAFTS_TG_STATUS = 'DRAFT — à valider par le responsable (proposé le 25/11/2026) ; non intégré à une version de la notice ; capacité citizen.telegram fermée';
-export const LEGAL_DRAFTS_TG_P10D = "P10d — Rappels sur Telegram (facultatif), si vous les activez : après votre accord, vous reliez vous-même votre compte Telegram en appuyant sur « Démarrer » dans la conversation avec notre robot. Nous enregistrons l'identifiant de cette conversation (chiffré), la date du lien et le résultat des envois. Le message envoyé reste court et général (un rappel de rendez-vous ou d'étape de Mon Parcours, l'heure pour un rendez-vous non sensible, et un lien vers votre compte) : jamais votre santé, un handicap, votre situation familiale, le nom d'un document, d'une structure ou d'un service. L'e-mail reste l'avis qui fait foi. Base : votre consentement (art. 6, 1, a), retirable à tout moment depuis « Mon compte » ou en envoyant /stop au robot.";
-export const LEGAL_DRAFTS_TG_RECIPIENT = "Telegram (Telegram Messenger Inc., groupe Telegram, dont la société Telegram FZ-LLC à Dubaï) : acheminement des rappels que vous avez demandés vers votre propre compte Telegram. Les messages reçus dans votre compte Telegram y sont traités selon la politique de confidentialité de Telegram (https://telegram.org/privacy) ; pour les utilisateurs inscrits depuis l'Espace économique européen, Telegram indique stocker les données dans des centres de données aux Pays-Bas.";
-export const LEGAL_DRAFTS_TG_TRANSFER = "Rappels sur Telegram : le groupe Telegram est établi hors de l'Union européenne (Telegram FZ-LLC à Dubaï ; société mère aux îles Vierges britanniques). Telegram indique encadrer les transferts au sein de son groupe par les clauses contractuelles types de la Commission européenne. Vous seul choisissez d'utiliser ce canal ; sans lui, vos rappels restent disponibles par e-mail.";
-export const LEGAL_DRAFTS_TG_RETENTION = "Rappels sur Telegram : le lien (identifiant de conversation chiffré) est gardé jusqu'à ce que vous l'arrêtiez (« Mon compte » ou /stop), que vous bloquiez le robot ou que votre compte soit effacé ; un code de liaison non utilisé n'est plus valable après 10 minutes. Les messages déjà reçus restent dans votre compte Telegram tant que vous ne les supprimez pas.";
-export const LEGAL_DRAFTS_TG_COOKIES = "Rappels sur Telegram : aucun cookie ni traceur n'est ajouté sur le site ; le bouton « Ouvrir Telegram » est un simple lien vers t.me, ouvert seulement si vous cliquez.";
+export const LEGAL_DRAFTS_TG_STATUS = 'APPROVED — approuvés le 25/11/2026 par le responsable (TG_OWNER_APPROVAL_2026-11-25), repris dans notice-confidentialite v16-2026-11-25 ; capacité citizen.telegram fermée (ouverture : étape séparée, non approuvée)';
+export const LEGAL_DRAFTS_TG_P10D = "P10d — Rappels sur Telegram (facultatif, lorsque cette fonction est ouverte), si vous les activez : après votre accord, vous reliez vous-même votre compte Telegram en appuyant sur « Démarrer » dans la conversation avec notre robot. Nous enregistrons l'identifiant de cette conversation (chiffré), la date du lien et le résultat des envois. Le message envoyé reste court et général (un rappel de rendez-vous ou d'étape de Mon Parcours, l'heure pour un rendez-vous non sensible, et un lien vers votre compte) : jamais votre santé, un handicap, votre situation familiale, le nom d'un document, d'une structure ou d'un service. L'e-mail reste l'avis qui fait foi. Base : votre consentement (art. 6, 1, a), retirable à tout moment depuis « Mon compte » ou en envoyant /stop au robot.";
+export const LEGAL_DRAFTS_TG_RECIPIENT = "Telegram (Telegram Messenger Inc., groupe Telegram, dont la société Telegram FZ-LLC à Dubaï), lorsque cette fonction est ouverte : acheminement des rappels que vous avez demandés vers votre propre compte Telegram. Les messages reçus dans votre compte Telegram y sont traités selon la politique de confidentialité de Telegram (https://telegram.org/privacy) ; pour les utilisateurs inscrits depuis l'Espace économique européen, Telegram indique stocker les données dans des centres de données aux Pays-Bas.";
+export const LEGAL_DRAFTS_TG_TRANSFER = "Rappels sur Telegram (lorsque cette fonction est ouverte) : le groupe Telegram est établi hors de l'Union européenne (Telegram FZ-LLC à Dubaï ; société mère aux îles Vierges britanniques). Telegram indique encadrer les transferts au sein de son groupe par les clauses contractuelles types de la Commission européenne. Vous seul choisissez d'utiliser ce canal ; sans lui, vos rappels restent disponibles par e-mail.";
+export const LEGAL_DRAFTS_TG_RETENTION = "Rappels sur Telegram (lorsque cette fonction est ouverte) : le lien (identifiant de conversation chiffré) est gardé jusqu'à ce que vous l'arrêtiez (« Mon compte » ou /stop), que vous bloquiez le robot ou que votre compte soit effacé ; un code de liaison non utilisé n'est plus valable après 10 minutes. Les messages déjà reçus restent dans votre compte Telegram tant que vous ne les supprimez pas.";
+export const LEGAL_DRAFTS_TG_COOKIES = "Rappels sur Telegram (lorsque cette fonction est ouverte) : aucun cookie ni traceur n'est ajouté sur le site ; le bouton « Ouvrir Telegram » est un simple lien vers t.me, ouvert seulement si vous cliquez.";
 /** @type {DraftSection} the new § 3 ter of the notice (v12 and v13) */
 const PARTICIPATION_SECTION = Object.freeze({ id: 'participation', title: '3 ter. Fonctions de participation', titleKey: 'title_v12',
   items: [LEGAL_DRAFTS_V12_EVENTS, LEGAL_DRAFTS_V12_TESTIMONIALS, LEGAL_DRAFTS_V12_STORIES], itemKeys: { 0: 'events_v12', 1: 'testimonials_v12', 2: 'stories_v12' },
@@ -1309,6 +1313,30 @@ export const LEGAL_DRAFTS_PRO_V12_CHANGES = Object.freeze({
 /** @type {DraftDocument[]} the professional terms (from v11, approved 24/11/2026) — encryption keys of shared dossiers and job offers (PROPOSED 25/11/2026) */
 export const LEGAL_DRAFT_DOCUMENTS_PRO_V12 = [withSections(LEGAL_DRAFTS_PRO_V12_CHANGES, LEGAL_DRAFTS_PRO_V12)(docOf(LEGAL_DRAFT_DOCUMENTS_PRO_V11, 'cgu-professionnel'))];
 
+/*
+ * notice-confidentialite v16-2026-11-25 (TG, APPROVED by the controller on 25/11/2026 — TG_OWNER_APPROVAL_2026-11-25: the LEGAL_DRAFTS_TG_* texts « accepted as
+ * proposed and taken into the next notice version »): the notice v15-2026-11-24 (approved by the owner on 24/11/2026, R4_OWNER_APPROVAL_2026-11-24, and
+ * unchanged byte for byte) plus EXACTLY four passages on the optional Telegram reminders, each conditioned on the function being open (« lorsque cette fonction
+ * est ouverte »), so the text is true while citizen.telegram is closed: § 3 P10d (after P10c, the browser notifications), § 4 retention (after the browser
+ * notifications), § 5 recipients (Telegram is a recipient, not called a processor: no art. 28 agreement), § 7 transfer outside the EU. cgu-citoyen, cgu-
+ * professionnel and conditions-structures are unchanged. In force only once VITE_LEGAL_DOCS_APPROVED_VERSION names notice-confidentialite@v16-2026-11-25; the
+ * opening of citizen.telegram is a separate step (NOT approved) and the release preflight (legal.tg_texts) refuses it under an older notice.
+ */
+export const LEGAL_DRAFTS_TG_NOTICE = 'v16-2026-11-25';
+export const LEGAL_DRAFTS_TG_NOTICE_DOCUMENT_IDS = Object.freeze(['notice-confidentialite']);
+export const LEGAL_DRAFTS_TG_NOTICE_STATUS = 'APPROVED — approuvée le 25/11/2026 par le responsable (TG_OWNER_APPROVAL_2026-11-25) : notice v15-2026-11-24 et rappels facultatifs sur Telegram (P10d, destinataire, transfert hors de l’Union européenne, conservation), chacun « lorsque cette fonction est ouverte » ; ouverture de citizen.telegram : étape séparée, non approuvée';
+/** indexes = those of notice v15 (§ 3 item 9 = p10c_g14c, § 4 item 28 = push_g14c, § 5 para 8 = dossiers_v15, § 7 para 3 = push_g14c) */
+export const LEGAL_DRAFTS_TG_NOTICE_CHANGES = Object.freeze({
+  'notice-confidentialite': { sections: {
+    purposes: { items: { insertAfter: { 9: [[LEGAL_DRAFTS_TG_P10D, 'p10d_v16']] } } },
+    retention: { items: { insertAfter: { 28: [[LEGAL_DRAFTS_TG_RETENTION, 'telegram_v16']] } } },
+    recipients: { paras: { insertAfter: { 8: [[LEGAL_DRAFTS_TG_RECIPIENT, 'telegram_v16']] } } },
+    transfers: { paras: { insertAfter: { 3: [[LEGAL_DRAFTS_TG_TRANSFER, 'telegram_v16']] } } },
+  } },
+});
+/** @type {DraftDocument[]} the privacy notice (from v15, approved 24/11/2026) — optional Telegram reminders (approved 25/11/2026) */
+export const LEGAL_DRAFT_DOCUMENTS_TG_NOTICE = [withSections(LEGAL_DRAFTS_TG_NOTICE_CHANGES, LEGAL_DRAFTS_TG_NOTICE)(docOf(LEGAL_DRAFT_DOCUMENTS_R4_NOTICE, 'notice-confidentialite'))];
+
 /**
  * The versions, oldest first. Since v8 a version need not cover every document: LEGAL_DRAFTS_VERSION is the version shared by the citizen terms and the
  * A-I / A-II variant (v7); the structure conditions are at LEGAL_DRAFTS_V8, the privacy notice at LEGAL_DRAFTS_V9, the professional terms at LEGAL_DRAFTS_V9_PRO
@@ -1316,12 +1344,13 @@ export const LEGAL_DRAFT_DOCUMENTS_PRO_V12 = [withSections(LEGAL_DRAFTS_PRO_V12_
  * of each document (LAB preview, tests); latestDraftVersionOf(id) = its version.
  */
 export const LEGAL_DRAFTS_VERSION = LEGAL_DRAFTS_V7;
-export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_R4_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R4_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
+export const LEGAL_DRAFT_DOCUMENTS = LEGAL_DRAFT_DOCUMENTS_V7.map((d) => LEGAL_DRAFT_DOCUMENTS_TG_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R4_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R4_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_NOTICE.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_R3_CGU.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_PRO_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V13.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V12.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V11.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V10.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9_PRO.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V9.find((x) => x.id === d.id) || LEGAL_DRAFT_DOCUMENTS_V8.find((x) => x.id === d.id) || d);
 export const LEGAL_NOTICE_VARIANT_DOCUMENT = LEGAL_NOTICE_VARIANT_DOCUMENT_V7;
 export const LEGAL_DRAFT_VERSIONS = Object.freeze([LEGAL_DRAFTS_V6, LEGAL_DRAFTS_V7, LEGAL_DRAFTS_V8, LEGAL_DRAFTS_V9, LEGAL_DRAFTS_V9_PRO, LEGAL_DRAFTS_V10, LEGAL_DRAFTS_V11, LEGAL_DRAFTS_V12, LEGAL_DRAFTS_V13, LEGAL_DRAFTS_STRUCTURES_V9, LEGAL_DRAFTS_PRO_V10,
   LEGAL_DRAFTS_R3_CGU, LEGAL_DRAFTS_R3_NOTICE, LEGAL_DRAFTS_PRO_V11,   // G14-R3 (approved by the owner 24/11/2026)
   LEGAL_DRAFTS_R4_NOTICE,   // G14-R4 (proposed 24/11/2026): notice v15; cgu-citoyen v14-2026-11-24 shares the version string of the R3 notice (one entry, see SETS)
-  LEGAL_DRAFTS_PRO_V12]);   // R5 (proposed 25/11/2026): cgu-professionnel v12 — encryption keys of shared dossiers, job offers
+  LEGAL_DRAFTS_PRO_V12,   // R5 (proposed 25/11/2026): cgu-professionnel v12 — encryption keys of shared dossiers, job offers
+  LEGAL_DRAFTS_TG_NOTICE]);   // TG (approved 25/11/2026): notice v16 — optional Telegram reminders, each passage « lorsque cette fonction est ouverte »
 /** @type {Readonly<Record<string, ReadonlyArray<{ id: string, version: string, path?: string | null }>>>} */
 const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LEGAL_NOTICE_VARIANT_DOCUMENT_V6], [LEGAL_DRAFTS_V7]: [...LEGAL_DRAFT_DOCUMENTS_V7, LEGAL_NOTICE_VARIANT_DOCUMENT_V7],
   [LEGAL_DRAFTS_V8]: [...LEGAL_DRAFT_DOCUMENTS_V8], [LEGAL_DRAFTS_V9]: [...LEGAL_DRAFT_DOCUMENTS_V9], [LEGAL_DRAFTS_V9_PRO]: [...LEGAL_DRAFT_DOCUMENTS_V9_PRO],
@@ -1329,7 +1358,8 @@ const SETS = Object.freeze({ [LEGAL_DRAFTS_V6]: [...LEGAL_DRAFT_DOCUMENTS_V6, LE
   [LEGAL_DRAFTS_V12]: [...LEGAL_DRAFT_DOCUMENTS_V12], [LEGAL_DRAFTS_V13]: [...LEGAL_DRAFT_DOCUMENTS_V13],
   [LEGAL_DRAFTS_STRUCTURES_V9]: [...LEGAL_DRAFT_DOCUMENTS_STRUCTURES_V9], [LEGAL_DRAFTS_PRO_V10]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V10],
   [LEGAL_DRAFTS_R3_CGU]: [...LEGAL_DRAFT_DOCUMENTS_R3_CGU], [LEGAL_DRAFTS_R3_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_R3_NOTICE, ...LEGAL_DRAFT_DOCUMENTS_R4_CGU], /* G14-R4: cgu-citoyen v14 shares this version string */ [LEGAL_DRAFTS_PRO_V11]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V11],
-  [LEGAL_DRAFTS_R4_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_R4_NOTICE], [LEGAL_DRAFTS_PRO_V12]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V12] });
+  [LEGAL_DRAFTS_R4_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_R4_NOTICE], [LEGAL_DRAFTS_PRO_V12]: [...LEGAL_DRAFT_DOCUMENTS_PRO_V12],
+  [LEGAL_DRAFTS_TG_NOTICE]: [...LEGAL_DRAFT_DOCUMENTS_TG_NOTICE] });
 
 /** the newest draft of a document (whatever is approved), or null @param {string} id */
 const latestDraftOf = (id) => {

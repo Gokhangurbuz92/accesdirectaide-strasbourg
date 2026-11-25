@@ -27,9 +27,9 @@ Statut : **signée par le responsable du traitement le 25/11/2026** (approbation
 
 Points à vérifier par le responsable avant signature : DPA accepté dans la console Sentry ; offre souscrite (30 jours sur l'offre gratuite « Developer », jusqu'à 90 jours sur les offres payantes) ; inscription de Functional Software, Inc. sur la liste officielle du Data Privacy Framework (non vérifiée par l'ingénierie : la page n'a pas pu être lue).
 
-## TG-1 — Rappels facultatifs sur Telegram — PROJET « à valider » (25/11/2026)
+## TG-1 — Rappels facultatifs sur Telegram — SIGNÉE par le responsable le 25/11/2026
 
-Statut : **projet d'ingénierie du 25/11/2026** (branche `telegram-r6`), à relire et signer par le responsable du traitement. Aucune relecture par un avocat ou un expert. Décision du responsable du 24/11/2026 : notifications = Web Push → e-mail (Mailjet) → Telegram facultatif, tous à 0 € ; WhatsApp écarté. La capacité `citizen.telegram` reste fermée tant que cette ligne n'est pas signée et que les textes (`src/config/legal-drafts.js` `LEGAL_DRAFTS_TG_*`, registre T38) ne sont pas approuvés dans une version de la notice.
+Statut : **signée par le responsable du traitement le 25/11/2026** (approbation TG, CONTROL/master/completion/TG_OWNER_APPROVAL_2026-11-25.md : ligne TG-1, registre T38 et textes `LEGAL_DRAFTS_TG_*` acceptés tels que proposés, repris dans la notice v16-2026-11-25 ; migration 0065 dans la prochaine release ; l'ouverture de `citizen.telegram` est une étape séparée, non approuvée) — projet d'ingénierie du 25/11/2026 (branche `telegram-r6`). Aucune relecture par un avocat ou un expert. Décision du responsable du 24/11/2026 : notifications = Web Push → e-mail (Mailjet) → Telegram facultatif, tous à 0 € ; WhatsApp écarté. La capacité `citizen.telegram` reste fermée jusqu'à l'étape d'ouverture, séparée et non approuvée ; ouverte, le contrôle de mise en production `legal.tg_texts` exige que `VITE_LEGAL_DOCS_APPROVED_VERSION` nomme `notice-confidentialite@v16-2026-11-25` (ou une version ultérieure).
 
 | Ligne | Capacité | Données | Risques principaux | Mesures (code) | Risque résiduel proposé |
 |---|---|---|---|---|---|
