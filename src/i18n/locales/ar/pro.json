@@ -1686,5 +1686,21 @@
  "layout.guide": "دليل ADA Pro",
  "dashboard.guide_link": "دليل ADA Pro: كيف يعمل",
  "dashboard.start.guide": "كل التفاصيل في الدليل",
- "breadcrumb.guide": "دليل ADA Pro"
+ "breadcrumb.guide": "دليل ADA Pro",
+ "hds.admin_only": "مخصص لمسؤول المؤسسة.",
+ "hds.invalid_member": "لا يمكن إزالة هذا العضو (لا يمكنك إزالة وصولك الخاص).",
+ "hds.team_failed": "تعذر تحميل قائمة الفريق: لا يمكن منح الوصول حاليًا. أعد المحاولة.",
+ "hds.member_removed": "تمت إزالة الوصول. ربما احتفظ هذا العضو بنسخة من المفتاح: غيّر مفتاح المؤسسة الآن.",
+ "hds.inactive_skipped": "لن يحصل {{n}} عضو حسابهم في ADA Pro معطّل على الوصول. أزل وصولهم أدناه.",
+ "hds.members_title": "الأعضاء الذين لديهم مفتاح شخصي",
+ "hds.member_unknown": "حساب محذوف أو غير معروف",
+ "hds.member_disabled": "الحساب معطّل",
+ "hds.member_has_access": "يمكنه فتح الملفات",
+ "hds.member_no_access": "لم يُمنح الوصول بعد",
+ "hds.member_remove": "إزالة الوصول",
+ "hds.members_empty": "لم ينشئ أي عضو آخر مفتاحه الشخصي بعد.",
+ "hds.member_remove_title": "إزالة وصول {{who}}؟",
+ "hds.member_remove_effect": "لن يتمكن هذا العضو بعد الآن من فتح الملفات المشتركة بمفتاح المؤسسة، وسيُحذف مفتاحه الشخصي (عليه إنشاء مفتاح جديد إذا منحه أحد المسؤولين الوصول مرة أخرى). ربما احتفظ بنسخة من المفتاح في متصفحه: غيّر بعد ذلك مفتاح المؤسسة باستخدام « تغيير مفتاح المؤسسة ».",
+ "hds.cancel": "إلغاء",
+ "hds.member_remove_confirm": "إزالة الوصول"
 }

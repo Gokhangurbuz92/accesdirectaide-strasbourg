@@ -1658,5 +1658,21 @@
  "layout.guide": "ADA-Pro-Leitfaden",
  "dashboard.guide_link": "ADA-Pro-Leitfaden: So funktioniert es",
  "dashboard.start.guide": "Alle Einzelheiten im Leitfaden",
- "breadcrumb.guide": "ADA-Pro-Leitfaden"
+ "breadcrumb.guide": "ADA-Pro-Leitfaden",
+ "hds.admin_only": "Der Administratorin oder dem Administrator der Einrichtung vorbehalten.",
+ "hds.invalid_member": "Dieses Mitglied kann nicht entfernt werden (Sie können Ihren eigenen Zugriff nicht entfernen).",
+ "hds.team_failed": "Die Teamliste konnte nicht geladen werden: Der Zugriff kann derzeit nicht gegeben werden. Versuchen Sie es erneut.",
+ "hds.member_removed": "Zugriff entfernt. Dieses Mitglied hat möglicherweise eine Kopie des Schlüssels behalten: Ändern Sie jetzt den Schlüssel der Einrichtung.",
+ "hds.inactive_skipped": "{{n}} Mitglied(er), deren ADA-Pro-Konto deaktiviert ist, erhalten keinen Zugriff. Entfernen Sie unten deren Zugriff.",
+ "hds.members_title": "Mitglieder mit einem persönlichen Schlüssel",
+ "hds.member_unknown": "Gelöschtes oder unbekanntes Konto",
+ "hds.member_disabled": "Konto deaktiviert",
+ "hds.member_has_access": "Kann die Dossiers öffnen",
+ "hds.member_no_access": "Zugriff noch nicht gegeben",
+ "hds.member_remove": "Zugriff entfernen",
+ "hds.members_empty": "Noch kein anderes Mitglied hat seinen persönlichen Schlüssel erstellt.",
+ "hds.member_remove_title": "Zugriff von {{who}} entfernen?",
+ "hds.member_remove_effect": "Dieses Mitglied kann die mit dem Schlüssel der Einrichtung geteilten Dossiers nicht mehr öffnen, und sein persönlicher Schlüssel wird gelöscht (es muss einen neuen erstellen, wenn eine Administratorin oder ein Administrator ihm wieder Zugriff gibt). Es hat möglicherweise eine Kopie des Schlüssels in seinem Browser behalten: Ändern Sie danach den Schlüssel der Einrichtung mit « Schlüssel der Einrichtung ändern ».",
+ "hds.cancel": "Abbrechen",
+ "hds.member_remove_confirm": "Zugriff entfernen"
 }

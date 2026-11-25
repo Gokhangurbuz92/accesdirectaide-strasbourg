@@ -286,6 +286,49 @@ describe.skipIf(!reachable)('G14-R4 HDS sharing on the LAB test cluster', () => 
     await call(svc.base, 'POST', '/v1/internal/erase-subject', { t: sign({ sub: R, typ: 'system', caps: ['hds.erase'] }), body: {} });
   }, 120000);
 
+  it('withdrawing a member (administrator only): the member’s wraps and personal key go, the audit says so, a rotation no longer offers them', async () => {
+    const S3 = 'struct-r4-three'; const A3 = 'pro-r4-admin-3'; const M3 = 'pro-r4-member-3'; const M4 = 'pro-r4-member-4';
+    /** @type {Record<string, any>} */ const pub = {};
+    for (const m of [A3, M3, M4]) {
+      const k = await dc.createMemberKeyring(`phrase pro ${m}`, 600000);
+      expect((await call(svc.base, 'PUT', '/v1/pro/member-key', { t: pro(m, S3), body: { publicJwk: k.publicJwk, keyring: k.keyring } })).status).toBe(201);
+      pub[m] = k.publicJwk; memberKeys[m] = k.privateKey;
+    }
+    const admin = () => pro(A3, S3, 'STRUCTURE_ADMIN');
+    const ok = await dc.createOrgKey([{ memberRef: A3, publicJwk: pub[A3] }]);
+    expect((await call(svc.base, 'POST', '/v1/pro/org-keys', { t: admin(), body: { kid: ok.kid, publicJwk: ok.publicJwk, wraps: ok.wraps } })).status).toBe(201);
+    for (const m of [M3, M4]) {
+      const w = await dc.wrapOrgPrivateFor(ok.privateJwk, ok.kid, pub[m]);
+      expect((await call(svc.base, 'POST', '/v1/pro/org-keys/members', { t: admin(), body: { memberRef: m, wraps: [{ kid: ok.kid, wrappedPrivate: w }] } })).status).toBe(200);
+    }
+    const st = await call(svc.base, 'GET', '/v1/pro/keys', { t: admin() });
+    expect(st.body.members).toEqual([A3, M3, M4].sort().map((m) => ({ memberRef: m, hasAccess: true })));
+    expect((await call(svc.base, 'GET', '/v1/pro/keys', { t: pro(M3, S3) })).body.members).toBeUndefined();   // only an administrator sees the team's keys
+    // refusals: a member, the administrator themself, a malformed reference
+    expect((await call(svc.base, 'DELETE', '/v1/pro/org-keys/members', { t: pro(M3, S3), body: { memberRef: M4 } })).body.error).toBe('ADMIN_ONLY');
+    expect((await call(svc.base, 'DELETE', '/v1/pro/org-keys/members', { t: admin(), body: { memberRef: A3 } })).body.error).toBe('INVALID_MEMBER');
+    expect((await call(svc.base, 'DELETE', '/v1/pro/org-keys/members', { t: admin(), body: { memberRef: 'bad ref' } })).status).toBe(400);
+    // an administrator of ANOTHER structure removes nothing here
+    expect((await call(svc.base, 'DELETE', '/v1/pro/org-keys/members', { t: pro(ADMIN2, S2, 'STRUCTURE_ADMIN'), body: { memberRef: M4 } })).body.removed).toBe(false);
+    const rm = await call(svc.base, 'DELETE', '/v1/pro/org-keys/members', { t: admin(), body: { memberRef: M4 } });
+    expect(rm).toEqual({ status: 200, body: { memberRef: M4, removed: true, rotateRecommended: true } });
+    expect((await call(svc.base, 'DELETE', '/v1/pro/org-keys/members', { t: admin(), body: { memberRef: M4 } })).body.removed).toBe(false);   // idempotent
+    const gone = await call(svc.base, 'GET', '/v1/pro/keys', { t: pro(M4, S3) });
+    expect(gone.body.member).toBeNull();
+    expect(gone.body.orgKeys.every((/** @type {any} */ o) => o.wrappedPrivate === null)).toBe(true);
+    const after = await call(svc.base, 'GET', '/v1/pro/keys', { t: admin() });
+    expect(after.body.members.map((/** @type {any} */ x) => x.memberRef)).toEqual([A3, M3].sort());
+    expect(after.body.pendingMembers).toEqual([]);
+    const ev = await svc.pool.query("SELECT count(*)::int AS n FROM hds.access_event WHERE owner_id = $1 AND action = 'ORG_KEY_MEMBER_REMOVED'", [`org:${S3}`]);
+    expect(ev.rows[0].n).toBe(1);
+    // rotation: the remaining member is offered again, the withdrawn one is not
+    const ok2 = await dc.createOrgKey([{ memberRef: A3, publicJwk: pub[A3] }]);
+    expect((await call(svc.base, 'POST', '/v1/pro/org-keys', { t: admin(), body: { kid: ok2.kid, publicJwk: ok2.publicJwk, wraps: ok2.wraps } })).body.rotated).toBe(true);
+    const rot = await call(svc.base, 'GET', '/v1/pro/keys', { t: admin() });
+    expect(rot.body.pendingMembers.map((/** @type {any} */ x) => x.memberRef)).toEqual([M3]);
+    expect(rot.body.members).toEqual([{ memberRef: A3, hasAccess: true }, { memberRef: M3, hasAccess: false }].sort((a, b) => a.memberRef.localeCompare(b.memberRef)));
+  }, 60000);
+
   it('canaries: a dump of the HDS database holds no clear text; erasure covers the new objects; the output carries no id', async () => {
     const dump = execFileSync('pg_dump', ['--data-only', url(DB)], { maxBuffer: 256 * 1024 * 1024 }).toString('latin1');
     for (const needle of [CANARY, 'ordonnance', 'motif détaillé', 'bonjour', 'synthétique', 'application/pdf', '"d":']) expect(dump.includes(needle), needle).toBe(false);

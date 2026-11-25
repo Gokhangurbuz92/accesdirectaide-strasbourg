@@ -14,6 +14,7 @@ vi.mock('../../src/db/index.js', () => ({ db: {} }));
 const L = await import('../../src/config/legal-drafts.js');
 const { r4LegalChecks, evaluateReleasePreflight } = await import('../../scripts/release-preflight.mjs');
 const { claimsEntitlement } = await import('../../api/lib/entitlementWording.js');
+const { generateTicketKeyPair } = await import('../../api/lib/hds-ticket.js');
 const { NOTICE_SLA_HOURS, noticeDueAt } = await import('../../api/_services/moderation-dsa.js');
 
 const keys = (/** @type {any} */ d) => Object.fromEntries(L.draftTextKeys(d));
@@ -74,8 +75,28 @@ describe('release preflight — Release-4 texts, X01 / X02 / X05 and the moderat
     const r1 = r4LegalChecks(jobs, { get: get(jobs) });
     expect(r1[0]).toEqual(['legal.r4_texts', 'FAIL', expect.stringMatching(/notice-confidentialite@v15-2026-11-24.*cgu-citoyen@v14-2026-11-24/)]);
     expect(r1.find((x) => x[0] === 'moderation.named_moderator')?.[1]).toBe('WARN');
-    const ok = { ...jobs, VITE_LEGAL_DOCS_APPROVED_VERSION: 'cgu-citoyen@v14-2026-11-24,notice-confidentialite@v15-2026-11-24' };
+    const ok = { ...jobs, VITE_LEGAL_DOCS_APPROVED_VERSION: 'cgu-citoyen@v14-2026-11-24,notice-confidentialite@v15-2026-11-24,cgu-professionnel@v12-2026-11-25' };
     expect(r4LegalChecks(ok, { get: get(ok) })[0][1]).toBe('PASS');
+  });
+  it('R5: job offers and the organisation encryption keys need cgu-professionnel v12-2026-11-25 or later (v11 is not enough)', () => {
+    const R4 = 'cgu-citoyen@v14-2026-11-24,notice-confidentialite@v15-2026-11-24';
+    const hds = { ...base, ADA_HDS_CERTIFIED_HOSTING: `HDS1:scalingo:38436:2099-12-31:${'a'.repeat(64)}`, HDS_SERVICE_URL: 'https://ada-hds-strasbourg.osc-fr1.scalingo.io', HDS_PRODUCTION_APPROVED: 'true',
+      HDS_TICKET_KID: 'k1', HDS_TICKET_PRIVATE_KEY: generateTicketKeyPair().privateKeyB64 };   // the HDS capabilities open only with an attestation and a configured service
+    for (const cap of ['community.employment', 'citizen.shared_dossier', 'messaging.attachments', 'pro.referrals']) {
+      const v11 = { ...hds, ADA_CAPABILITIES_OPEN: cap, VITE_LEGAL_DOCS_APPROVED_VERSION: `${R4},cgu-professionnel@v11-2026-11-24` };
+      const r = r4LegalChecks(v11, { get: get(v11) }).find((x) => x[0] === 'legal.r4_texts');
+      expect(r?.[1], cap).toBe('FAIL');
+      expect(r?.[2], cap).toMatch(/cgu-professionnel@v12-2026-11-25 \(or later\)/);
+      expect(r?.[2], cap).not.toMatch(/notice-confidentialite@|cgu-citoyen@/);
+      const v12 = { ...v11, VITE_LEGAL_DOCS_APPROVED_VERSION: `${R4},cgu-professionnel@v12-2026-11-25` };
+      expect(r4LegalChecks(v12, { get: get(v12) }).find((x) => x[0] === 'legal.r4_texts')?.[1], cap).toBe('PASS');
+      expect(evaluateReleasePreflight(v12).find((/** @type {any} */ x) => x.id === 'legal.r4_texts')?.status, cap).toBe('PASS');
+    }
+    // Mon Coffre alone (no organisation key) and the partner bridge keep their earlier requirement
+    for (const cap of ['citizen.vault', 'partner.referral_adapter']) {
+      const v11 = { ...hds, ADA_CAPABILITIES_OPEN: cap, VITE_LEGAL_DOCS_APPROVED_VERSION: `${R4},cgu-professionnel@v11-2026-11-24` };
+      expect(r4LegalChecks(v11, { get: get(v11) }).find((x) => x[0] === 'legal.r4_texts')?.[1], cap).toBe('PASS');
+    }
   });
   it('X01 / X02 need only the expansion texts (v12 or later); X03 opened is a FAIL', () => {
     const st = { ...base, ADA_CAPABILITIES_OPEN: 'community.stories,community.testimonials', VITE_LEGAL_DOCS_APPROVED_VERSION: 'cgu-citoyen@v12-2026-11-23,notice-confidentialite@v13-2026-11-23' };

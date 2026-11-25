@@ -1,8 +1,9 @@
 // @ts-nocheck
-import { useCallback, useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useState } from 'react';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import HdsUnlock from '@/components/hds/HdsUnlock';
+import OrgKeyMembers from '@/components/hds/OrgKeyMembers';
 import { proRdvRequest } from '@/api/pro-rdv-client';
 import { useCaseLabels } from '@/lib/caseLabelsI18n';
 import { formatDate, useT } from '@/i18n';
@@ -19,6 +20,8 @@ const REASONS = ['SPECIALISED_SUPPORT', 'ACCESS_TO_RIGHTS', 'HOUSING', 'EMPLOYME
  * opens them with their personal passphrase (their key opens the organisation key, which opens each dossier key) — nothing is readable on the ADA servers.
  * The administrator creates the organisation key and gives each member access to it. Export, attestation print and the SIAO hand-over sheet are built in this
  * browser; the person sees each of them in their access log. A referral wraps the dossier for the receiving organisation; the PERSON decides.
+ * R5: the administrator withdraws a member's access (« Retirer l'accès », DELETE /v1/pro/org-keys/members) and gives access only to members whose ADA Pro
+ * account is ACTIVE (team list of the main API) — after « Changer la clé » a deactivated member still holding a personal key is never re-wrapped.
  */
 export default function PartagesChiffres() {
   const { t } = useT('pro');
@@ -30,6 +33,7 @@ export default function PartagesChiffres() {
   const [open, setOpen] = useState(null);
   const [thread, setThread] = useState({ items: [], text: '' });
   const [ref, setRef] = useState({ q: '', receivers: [], to: '', reason: 'ACCESS_TO_RIGHTS', note: '' });
+  const [team, setTeam] = useState(/** @type {{ users: any[] | null, failed: boolean }} */ ({ users: null, failed: false }));
   const [message, setMessage] = useState(''); const [problem, setProblem] = useState(''); const [busy, setBusy] = useState(false);
   useEffect(() => subscribeKeys(() => setUnlocked(Boolean(getMemberKey()))), []);
 
@@ -38,6 +42,9 @@ export default function PartagesChiffres() {
     if (c === 'ORG_KEY_LOCKED') return t('pro:hds.org_locked', 'Votre clé ne peut pas encore ouvrir les dossiers de la structure : un administrateur doit vous en donner l’accès.');
     if (c === 'ORG_KEY_MISSING') return t('pro:hds.org_missing', 'La structure destinataire ne peut pas encore recevoir de dossier chiffré.');
     if (c === 'UNSUPPORTED_TYPE') return t('pro:hds.bad_type', 'Seuls les fichiers PDF, PNG et JPEG sont acceptés.');
+    if (c === 'ADMIN_ONLY') return t('pro:hds.admin_only', 'Réservé à l’administrateur de la structure.');
+    if (c === 'INVALID_MEMBER') return t('pro:hds.invalid_member', 'Ce membre ne peut pas être retiré (vous ne pouvez pas retirer votre propre accès).');
+    if (c === 'ACTIVE_MEMBERS_UNKNOWN') return t('pro:hds.team_failed', 'La liste de l’équipe n’a pas pu être chargée : l’accès ne peut pas être donné pour le moment. Réessayez.');
     if (c === 'REKEY_PENDING') return t('pro:hds.rekey_pending', 'La personne est en train de re-chiffrer ce dossier. Réessayez plus tard.');
     return err?.serverMessage || err?.payload?.message || t('pro:hds.error', 'Une erreur est survenue. Réessayez.');
   };
@@ -50,15 +57,33 @@ export default function PartagesChiffres() {
     catch (err) { setKeysState({ loading: false, unavailable: false, data: null }); setProblem(fail(err)); }
   }, []);   // eslint-disable-line react-hooks/exhaustive-deps -- loaded once
   const loadList = useCallback(async () => { try { setList((await hs.proList())?.dossiers || []); } catch (err) { setProblem(fail(err)); } }, []);   // eslint-disable-line react-hooks/exhaustive-deps
+  // R5: the team (ids, e-mail, status) of the structure — admin only (GET /api/pro/team is STRUCTURE_ADMIN), every page
+  const loadTeam = useCallback(async () => {
+    try {
+      const users = [];
+      for (let page = 1; page <= 20; page += 1) {
+        const data = await proRdvRequest('/api/pro/team', { query: { page, limit: 50 } });
+        users.push(...(data?.users || []));
+        if (page >= Number(data?.pagination?.totalPages || 1)) break;
+      }
+      setTeam({ users, failed: false });
+    } catch { setTeam({ users: null, failed: true }); }
+  }, []);
   useEffect(() => { loadKeys(); }, [loadKeys]);
   useEffect(() => { if (unlocked) loadList(); }, [unlocked, loadList]);
 
   const k = keysState.data;
   const admin = k?.role === 'STRUCTURE_ADMIN';
   const hasOrgKey = Boolean(k?.orgKeys?.some((o) => o.active));
+  useEffect(() => { if (admin && unlocked) loadTeam(); }, [admin, unlocked, loadTeam]);
+  const activeRefs = useMemo(() => (team.users ? new Set(team.users.filter((u) => u.status === 'active').map((u) => String(u.id))) : null), [team.users]);
+  const eligible = admin && activeRefs ? hs.eligiblePending(k, activeRefs) : [];
+  const skipped = activeRefs ? (k?.pendingMembers?.length || 0) - eligible.length : 0;
   const openDossier = (id) => run(async () => { const d = await hs.proOpen(id); setOpen(d); setThread({ items: await hs.readThread('pro', d.key, d.id, k.structureId), text: '' }); });
   const createOrgKey = () => run(async () => { await hs.proCreateOrgKey(); await loadKeys(); }, t('pro:hds.org_created', 'Clé de la structure créée.'));
-  const wrapPending = () => run(async () => { const n = await hs.proWrapPending(); await loadKeys(); setMessage(t('pro:hds.members_wrapped', '{{n}} membre(s) peuvent maintenant ouvrir les dossiers.', { n })); });
+  const wrapPending = () => run(async () => { const n = await hs.proWrapPending(activeRefs); await loadKeys(); setMessage(t('pro:hds.members_wrapped', '{{n}} membre(s) peuvent maintenant ouvrir les dossiers.', { n })); });
+  const removeMember = (memberRef) => run(async () => { await hs.proRemoveMember(memberRef); await loadKeys(); },
+    t('pro:hds.member_removed', 'Accès retiré. Ce membre a pu garder une copie de la clé : changez maintenant la clé de la structure.'));
   const send = (e) => { e.preventDefault(); if (!thread.text.trim()) return;
     run(async () => { await hs.postThread('pro', open.key, open.keyEpoch, open.id, k.structureId, thread.text); setThread({ items: await hs.readThread('pro', open.key, open.id, k.structureId), text: '' }); }); };
   const addFile = (e) => { e.preventDefault(); const f = e.currentTarget.elements.namedItem('file')?.files?.[0]; if (!f) return;
@@ -96,8 +121,11 @@ export default function PartagesChiffres() {
             <h2 id="pro-hds-admin" className="text-lg font-semibold text-slate-900">{t('pro:hds.admin', 'Clé de la structure (administrateur)')}</h2>
             {!hasOrgKey ? <Button type="button" onClick={createOrgKey} disabled={busy} data-testid="pro-hds-create-org">{t('pro:hds.create_org', 'Créer la clé de la structure')}</Button>
               : <p className="text-sm text-slate-700">{t('pro:hds.org_ready', 'La structure peut recevoir des dossiers chiffrés.')}</p>}
-            {k?.pendingMembers?.length ? <Button type="button" variant="outline" onClick={wrapPending} disabled={busy} data-testid="pro-hds-wrap">{t('pro:hds.wrap_pending', 'Donner l’accès à {{n}} membre(s) qui ont créé leur clé', { n: k.pendingMembers.length })}</Button> : null}
+            {eligible.length ? <Button type="button" variant="outline" onClick={wrapPending} disabled={busy} data-testid="pro-hds-wrap">{t('pro:hds.wrap_pending', 'Donner l’accès à {{n}} membre(s) qui ont créé leur clé', { n: eligible.length })}</Button> : null}
+            {skipped > 0 ? <p className="text-sm text-amber-950" data-testid="pro-hds-inactive-skipped">{t('pro:hds.inactive_skipped', '{{n}} membre(s) dont le compte ADA Pro est désactivé ne recevront pas l’accès. Retirez-leur l’accès ci-dessous.', { n: skipped })}</p> : null}
+            {team.failed ? <p className="text-sm text-amber-950" data-testid="pro-hds-team-failed">{t('pro:hds.team_failed', 'La liste de l’équipe n’a pas pu être chargée : l’accès ne peut pas être donné pour le moment. Réessayez.')}</p> : null}
             {hasOrgKey ? <Button type="button" variant="outline" onClick={createOrgKey} disabled={busy}>{t('pro:hds.rotate', 'Changer la clé de la structure (après le départ d’un membre)')}</Button> : null}
+            {hasOrgKey && team.users ? <OrgKeyMembers members={k?.members} self={String(k?.memberRef || '')} team={team.users} busy={busy} onRemove={removeMember} /> : null}
           </section>) : null}
         <section className={box} aria-labelledby="pro-hds-list">
           <h2 id="pro-hds-list" className="text-lg font-semibold text-slate-900">{t('pro:hds.list', 'Dossiers partagés avec la structure')}</h2>
