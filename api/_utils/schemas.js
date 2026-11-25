@@ -118,6 +118,11 @@ export const proInviteSchema = z.object({
     role: z.string().min(1, 'Rôle requis'),
 });
 
+// R6 security test (25/11/2026): the entry validates every mutating method with one schema per route; DELETE /api/pro/invite?id= (cancel a pending invitation)
+// sends no body, so it was refused 400 and a pending invitation could not be revoked. An EXACTLY empty body is the cancellation; any other body is an invitation
+// and still needs a valid e-mail and a role (same precedent as pro/team, DTA-B31).
+export const proInviteOrCancelSchema = z.union([proInviteSchema, z.object({}).strict()]);
+
 export const proConsentSchema = z.object({
     shareId: z.string().min(1, 'shareId requis'),
     signatureData: z.string().min(1, 'Signature requise'),

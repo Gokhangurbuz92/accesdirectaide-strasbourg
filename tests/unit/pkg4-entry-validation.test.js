@@ -27,4 +27,14 @@ describe('PKG-4 entry validation accepts what the screens send', () => {
       if (validationRegistry[p]) expect(ok(p, { action: 'note', id: 'c1', visibility: 'INTERNAL', body: 'x' }) || ok(p, { id: 'r1', decision: 'accept' }), p).toBe(true);
     }
   });
+  // R6 security test (25/11/2026): the team screen's « annuler l'invitation » (DELETE /api/pro/invite?id=, no body) was refused 400 validation_failed by the entry
+  // (the POST schema demanded { email, role } for every method), so a structure administrator could not revoke a pending invitation before it expired (7 days).
+  it('pro/invite: cancellation (no body) passes; an invitation still needs a valid e-mail and a role', () => {
+    expect(ok('pro/invite', {})).toBe(true);
+    expect(ok('pro/invite', { email: 'agent@example.test', role: 'PRO' })).toBe(true);
+    expect(ok('pro/invite', { email: 'not-an-address', role: 'PRO' })).toBe(false);
+    expect(ok('pro/invite', { email: 'agent@example.test' })).toBe(false);
+    expect(ok('pro/invite', { role: 'PRO' })).toBe(false);
+    expect(ok('pro/invite', { email: '', role: '' })).toBe(false);
+  });
 });
