@@ -33,7 +33,7 @@ describe.skipIf(!hasDatabase)('migration 0057: up → down → code without it �
   const ALL_DOWN = { t0: false, t1: false, t2: false, t3: false, t4: false, t5: false, x05: true, x01: true };
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
-  const down = async () => { for (const f of ['drizzle/rollback/0064_down.sql', 'drizzle/rollback/0063_down.sql', 'drizzle/rollback/0062_down.sql', 'drizzle/rollback/0061_down.sql', 'drizzle/rollback/0060_down.sql', 'drizzle/rollback/0059_down.sql', 'drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql']) await pool.query(fs.readFileSync(f, 'utf8')); };   // G13: 0058 is newer and is rolled back first
+  const down = async () => { for (const f of ['drizzle/rollback/0065_down.sql', 'drizzle/rollback/0064_down.sql', 'drizzle/rollback/0063_down.sql', 'drizzle/rollback/0062_down.sql', 'drizzle/rollback/0061_down.sql', 'drizzle/rollback/0060_down.sql', 'drizzle/rollback/0059_down.sql', 'drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql']) await pool.query(fs.readFileSync(f, 'utf8')); };   // G13: 0058 is newer and is rolled back first
   const REL = `(${TABLES.map((t) => `'"${t}"'::regclass`).join(', ')})`;
 
   beforeAll(async () => {
@@ -57,7 +57,7 @@ describe.skipIf(!hasDatabase)('migration 0057: up → down → code without it �
     const journal = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries;
     const at = journal.findIndex((e) => e.tag === TAG);   // G13: 0058 (sole administrator) follows 0057
     expect(journal[at]).toMatchObject({ idx: 57, tag: TAG }); expect(journal[at - 1].tag).toBe('0056_x05_job_board'); expect(when).toBeGreaterThan(journal[at - 1].when);
-    expect(journal.slice(at + 1).map((e) => e.tag)).toEqual(['0058_g12_sole_admin_checks', '0059_g14_moderation_dsa', '0060_g14_ai_bge_m3_index', '0061_g14_ps_social_referrals', '0062_g14_obs_demand_signals', '0063_g14_r3_booking_needs_external', '0064_r3g_legal_protection']);   // G14: 0059 (moderation, DSA) follows; G14-AI: 0060 (bge-m3 index); G14-PS: 0061; G14-OBS: 0062
+    expect(journal.slice(at + 1).map((e) => e.tag)).toEqual(['0058_g12_sole_admin_checks', '0059_g14_moderation_dsa', '0060_g14_ai_bge_m3_index', '0061_g14_ps_social_referrals', '0062_g14_obs_demand_signals', '0063_g14_r3_booking_needs_external', '0064_r3g_legal_protection', '0065_tg_telegram_link']);   // G14: 0059 (moderation, DSA) follows; G14-AI: 0060 (bge-m3 index); G14-PS: 0061; G14-OBS: 0062
     const fks = await q(`SELECT conname, confdeltype FROM pg_constraint WHERE conrelid IN ${REL} AND contype = 'f' ORDER BY 1`);
     expect(fks).toHaveLength(10); for (const f of fks) expect(f.confdeltype, f.conname).toBe('c');
     expect((await q(`SELECT conname FROM pg_constraint WHERE conrelid IN ${REL} AND contype = 'c' ORDER BY 1`)).map((r) => r.conname)).toEqual([
@@ -103,7 +103,7 @@ describe.skipIf(!hasDatabase)('migration 0057: up → down → code without it �
     const { accountLinkedSections } = await import('../../api/_services/export-account-sections.js');
     let failed = 0;
     const rows = async (query) => { try { return (await db.execute(query)).rows; } catch { failed += 1; return []; } };
-    const out = await accountLinkedSections('keep', rows, { hasLegalProtectionTable: async () => (await import('../../api/_services/legal-protection.js')).legalProtectionInstalled(db), hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEntraideTables: () => e.entraideSchemaAvailable(db),
+    const out = await accountLinkedSections('keep', rows, { hasTelegramTable: async () => (await import('../../api/_services/telegram.js')).telegramInstalled(db), hasLegalProtectionTable: async () => (await import('../../api/_services/legal-protection.js')).legalProtectionInstalled(db), hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEntraideTables: () => e.entraideSchemaAvailable(db),
       hasSocialReferralTables: async () => { const sr = await import('../../api/_services/social-referrals.js'); sr.forgetSocialReferralSchema(db); return sr.socialReferralsAvailable(db); } });   // G14-PS: 0061 rolled back here too
     for (const k of ['entraideMember', 'entraideOffers', 'entraideRequests', 'entraideRequestsReceived', 'entraideContactShares', 'entraideReports', 'entraideBlocks']) expect(out[k], k).toEqual([]);
     expect(failed).toBe(0);

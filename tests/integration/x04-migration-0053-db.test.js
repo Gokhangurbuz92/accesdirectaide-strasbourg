@@ -26,7 +26,7 @@ describe.skipIf(!hasDatabase)('migration 0053: up → down → code without it �
   const journalRow = async () => (await q('SELECT count(*)::int AS n FROM drizzle.__drizzle_migrations WHERE created_at = $1', [when]))[0].n;
   const up = () => migrate(drizzle(pool), { migrationsFolder: 'drizzle' });
   // drizzle re-applies only what is later than the NEWEST recorded migration: the later 0055 (X01) and 0054 (X02) are rolled back first, then 0053
-  const down = async () => { for (const f of ['drizzle/rollback/0064_down.sql', 'drizzle/rollback/0063_down.sql', 'drizzle/rollback/0062_down.sql', 'drizzle/rollback/0061_down.sql', 'drizzle/rollback/0060_down.sql', 'drizzle/rollback/0059_down.sql', 'drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql', 'drizzle/rollback/0053_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
+  const down = async () => { for (const f of ['drizzle/rollback/0065_down.sql', 'drizzle/rollback/0064_down.sql', 'drizzle/rollback/0063_down.sql', 'drizzle/rollback/0062_down.sql', 'drizzle/rollback/0061_down.sql', 'drizzle/rollback/0060_down.sql', 'drizzle/rollback/0059_down.sql', 'drizzle/rollback/0058_down.sql', 'drizzle/rollback/0057_down.sql', 'drizzle/rollback/0056_down.sql', 'drizzle/rollback/0055_down.sql', 'drizzle/rollback/0054_down.sql', 'drizzle/rollback/0053_down.sql'].filter((x) => fs.existsSync(x))) await pool.query(fs.readFileSync(f, 'utf8')); };
 
   beforeAll(async () => {
     when = JSON.parse(fs.readFileSync('drizzle/meta/_journal.json', 'utf8')).entries.find((e) => e.tag === TAG).when;
@@ -79,7 +79,7 @@ describe.skipIf(!hasDatabase)('migration 0053: up → down → code without it �
     // X02: the later 0054 is rolled back too here — its sections are asked of THIS database, not of the default one
     const tm = await import('../../api/_services/testimonials.js');
     const cs = await import('../../api/_services/community-stories.js');   // X01: the later 0055 too
-    const out = await accountLinkedSections('keep', rows, { hasLegalProtectionTable: async () => (await import('../../api/_services/legal-protection.js')).legalProtectionInstalled(db), hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => tm.testimonialsSchemaAvailable(db),
+    const out = await accountLinkedSections('keep', rows, { hasTelegramTable: async () => (await import('../../api/_services/telegram.js')).telegramInstalled(db), hasLegalProtectionTable: async () => (await import('../../api/_services/legal-protection.js')).legalProtectionInstalled(db), hasModerationTables: async () => (await import('../../api/_services/moderation-dsa.js')).moderationSchemaAvailable(db), hasEventTables: () => ev.academySchemaAvailable(db), hasTestimonialTables: () => tm.testimonialsSchemaAvailable(db),
       hasCommunityTables: () => cs.communitySchemaAvailable(db),
       // X03: the later 0057 is rolled back too here — its sections are asked of THIS database
       hasEntraideTables: async () => (await import('../../api/_services/entraide.js')).entraideSchemaAvailable(db),
