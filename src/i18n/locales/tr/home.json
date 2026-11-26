@@ -80,5 +80,6 @@
   "help.title": "Bir sorunuz mu var?",
   "help.text": "Sık sorulan soruların yanıtları ve siteyi kullanmak için adım adım bir kılavuz.",
   "help.faq": "Sık sorulan soruları görün",
-  "help.guide": "Kullanım kılavuzu"
+  "help.guide": "Kullanım kılavuzu",
+  "territory.places-scope": "Başvuru yerleri rehberi, resmî kayıtlara (Annuaire de l’administration, FINESS) dayanarak Bas-Rhin’in tamamını kapsar. Yerel yardımlar, asistan ve tahmini hesaplama aşağıda listelenen komünleri kapsar."
 }

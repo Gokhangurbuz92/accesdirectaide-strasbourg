@@ -11,7 +11,8 @@ import serviceTerritory from '../../data/geography/service-territory.v1.json';
  * PKG-11 / P28 · P07 — the territorial entry point: the communes the local catalogue serves, as INSEE lists them for the Eurométropole de Strasbourg
  * (data/geography/service-territory.v1.json, derived from the official reference without editing a value). The list says where it comes from and that it
  * still awaits a person's validation; each commune opens the directory filtered on the structures LOCATED there (a location, never a claim that they serve
- * the person). Outside these communes the assistant says it has no verified local information.
+ * the person). Outside these communes the assistant says it has no verified local information. R7: the directory of places itself covers the whole
+ * Bas-Rhin (D-5 v2 growth from the Annuaire and FINESS, territory = département 67) — the page says so (territory.places-scope).
  * PKG-11 / E05: a separate picker opens the directory on the places that SERVE a commune (reviewed service area, `serves=` INSEE code).
  * R32: the interface strings follow the interface language; the commune names (official, French) are marked as French.
  */
@@ -35,6 +36,9 @@ export default function TerritoireCouvert() {
       <h1 className="text-3xl font-bold text-slate-900">{t('home:territory.title', 'Territoire couvert')}</h1>
       <p className="text-lg text-slate-800">
         {t('home:territory.intro', { count, territory, defaultValue_one: 'AccesDirectAide présente pour l\'instant des informations locales pour les {{count}} communes de l\'{{territory}}. Pour une autre commune, renseignez-vous auprès de votre mairie ou de votre CCAS.', defaultValue_other: 'AccesDirectAide présente pour l\'instant des informations locales pour les {{count}} communes de l\'{{territory}}. Pour une autre commune, renseignez-vous auprès de votre mairie ou de votre CCAS.' })}
+      </p>
+      <p className="text-slate-800" data-testid="territoire-places-scope">
+        {t('home:territory.places-scope', 'L’annuaire des lieux d’accueil couvre tout le Bas-Rhin, à partir des registres officiels (Annuaire de l’administration, FINESS). Les aides locales, l’assistant et le calcul indicatif concernent les communes listées ci-dessous.')}
       </p>
 
       <section aria-labelledby="territoire-source" className="rounded-lg border border-slate-300 bg-slate-50 p-4 text-slate-900" data-testid="territoire-source">

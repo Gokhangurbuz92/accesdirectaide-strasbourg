@@ -32,6 +32,8 @@ describe('PKG-11 / P28 /territoire', () => {
   it('says where the list comes from and that no person has validated it, and never claims the structures serve the person', () => {
     const { container } = page();
     expect(screen.getByTestId('territoire-source')).toHaveTextContent(/Insee/);
+    // R7: the directory of places covers the whole Bas-Rhin (territory = département 67); the page must say so, not only « 33 communes »
+    expect(screen.getByTestId('territoire-places-scope')).toHaveTextContent(/tout le Bas-Rhin/);
     expect(screen.getByTestId('territoire-validation')).toHaveTextContent("Cette liste n'a pas encore été vérifiée par une personne de l'équipe.");
     expect(container).toHaveTextContent(/Être situé dans une commune ne veut pas dire servir/);
     expect(container.textContent).not.toMatch(/vérifiée par une personne\.|éligible|vous avez droit/i);

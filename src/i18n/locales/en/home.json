@@ -80,5 +80,6 @@
   "help.title": "A question?",
   "help.text": "Answers to common questions and a step-by-step guide to using the website.",
   "help.faq": "See the frequently asked questions",
-  "help.guide": "User guide"
+  "help.guide": "User guide",
+  "territory.places-scope": "The directory of places (accueil) covers the whole Bas-Rhin, from official registers (Annuaire de l’administration, FINESS). Local aids, the assistant and the indicative calculation cover the communes listed below."
 }

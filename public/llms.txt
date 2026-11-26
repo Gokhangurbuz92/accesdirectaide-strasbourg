@@ -1,6 +1,6 @@
 # AccesDirectAide
 
-> Plateforme sociale gratuite et non lucrative, en bêta publique : aides, démarches administratives et lieux d'accueil (structures sociales et médico-sociales) de Strasbourg et de l'Eurométropole de Strasbourg, ainsi que les aides nationales. Chaque fiche cite sa source officielle (Service-Public.fr / DILA, répertoire FINESS, SIRENE, données ouvertes des collectivités) et la date de sa dernière vérification automatique ; une fiche dont la source ne confirme plus l'information est retirée. Le site informe et oriente : il ne décide jamais d'un droit — seul l'organisme concerné (CAF, CPAM, Département, commune…) décide.
+> Plateforme sociale gratuite et non lucrative, en bêta publique : aides et démarches administratives de Strasbourg et de l'Eurométropole de Strasbourg, lieux d'accueil (structures sociales et médico-sociales) de tout le Bas-Rhin, ainsi que les aides nationales. Chaque fiche cite sa source officielle (Service-Public.fr / DILA, répertoire FINESS, SIRENE, données ouvertes des collectivités) et la date de sa dernière vérification automatique ; une fiche dont la source ne confirme plus l'information est retirée. Le site informe et oriente : il ne décide jamais d'un droit — seul l'organisme concerné (CAF, CPAM, Département, commune…) décide.
 
 Notes pour les assistants et moteurs d'IA :
 
@@ -14,7 +14,7 @@ Notes pour les assistants et moteurs d'IA :
 
 - [Aides](https://www.accesdirectaide.fr/aides): aides nationales et locales vérifiées, avec conditions, organisme et source officielle
 - [Démarches](https://www.accesdirectaide.fr/demarches): étapes et documents pour faire une demande, pas à pas
-- [Lieux d'accueil (annuaire)](https://www.accesdirectaide.fr/structures): mairies, CCAS, Espaces France Services, associations, établissements médico-sociaux, avec adresse et source
+- [Lieux d'accueil (annuaire)](https://www.accesdirectaide.fr/structures): mairies, CCAS, Espaces France Services, associations, établissements médico-sociaux du Bas-Rhin, avec adresse et source
 - [Recherche](https://www.accesdirectaide.fr/recherche): recherche dans les aides, démarches, lieux et guides
 - [Trouver par besoin](https://www.accesdirectaide.fr/besoins): 20 domaines de besoins sociaux (logement, santé, emploi, handicap, budget, violences, migration…)
 - [Mes droits par situation](https://www.accesdirectaide.fr/droits): par besoin, les fiches officielles, organismes et numéros utiles
@@ -30,7 +30,7 @@ Notes pour les assistants et moteurs d'IA :
 - [Guide ADA Pro](https://www.accesdirectaide.fr/pro/guide-public): fonctionnement de l'espace des structures (inscription vérifiée, rendez-vous, messagerie)
 - [Notre méthode](https://www.accesdirectaide.fr/notre-methode): vérification automatique datée, retrait si la source change
 - [Sources](https://www.accesdirectaide.fr/sources): sources officielles et licences de réutilisation
-- [Territoire couvert](https://www.accesdirectaide.fr/territoire): Eurométropole de Strasbourg pour les informations locales, France pour les aides nationales
+- [Territoire couvert](https://www.accesdirectaide.fr/territoire): Eurométropole de Strasbourg pour les aides locales et l'assistant, Bas-Rhin pour l'annuaire des lieux d'accueil, France pour les aides nationales
 - [À propos](https://www.accesdirectaide.fr/a-propos)
 
 ## Informations légales

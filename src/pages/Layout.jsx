@@ -521,7 +521,7 @@ export default function Layout({ children }) {   // R26: the active menu entry c
               <Trans
                 i18n={i18n}
                 i18nKey="layout:footer.coverage"
-                defaults="Territoire couvert : <0>Eurométropole de Strasbourg</0> pour les informations locales, et aides nationales."
+                defaults="Territoire couvert : <0>Eurométropole de Strasbourg</0> pour les aides locales, lieux d’accueil dans tout le Bas-Rhin, et aides nationales."
                 components={[<Link key="territoire" to="/territoire" className="underline underline-offset-2 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" />]}
               />
             </p>
