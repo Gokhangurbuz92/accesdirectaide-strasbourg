@@ -37,6 +37,10 @@ function getSentryClient() {
 function captureMessagingIssue(kind, context, error) {
   const Sentry = getSentryClient();
   if (!Sentry) return;
+  // R7: expected refusals (401/403/404/409/429…) are normal answers, not incidents — only 5xx and real network failures are reported;
+  // an aborted request (the person left the page) is not a network failure.
+  if (kind === 'request_failed' && !((context.status || 0) >= 500)) return;
+  if (kind === 'network_error' && /** @type {any} */ (error)?.name === 'AbortError') return;
 
   const level = (context.status || 0) >= 500 ? 'error' : 'warning';
 
