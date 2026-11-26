@@ -26,7 +26,7 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { and, desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, getTableColumns, sql } from 'drizzle-orm';
 import { db as defaultDb } from '../../../src/db/index.js';
 import { Aide, Demarche, Dispositif, Structure, SourceSnapshot, SourceRegistryEntry, VeilleEvent, CronRun, StructureDuplicateDecision } from '../../../src/db/schema.js';
 import { recordVerification, rowJson, contentVersion } from '../content-verification.js';
@@ -435,17 +435,45 @@ function tierOf(origin, src) {
 }
 const nextAt = (ctx, tier) => new Date(ctx.now().getTime() + tier.hours * HOUR).toISOString();
 
-async function eachRecord(ctx, kind, fn) {
+/**
+ * R7 (database egress, 26/11/2026): the due scan reads only what isDue, rememberIdentity, the run's `select` and the journal use — never the record's texts,
+ * its embedding or the whole auto_check (official.text alone is up to OFFICIAL_TEXT_MAX characters): of auto_check, only these keys (same JSON values).
+ * The whole record (minus the embedding, which the chain never reads) is loaded only for a record checked in this run.
+ */
+export const SCAN_AUTO_CHECK_KEYS = Object.freeze(['nextCheckAt', 'origin', 'sourceId', 'importantChangeAt', 'sourceModifiedAt']);
+export function scanColumns(kind) {
+  const t = TABLES[kind]; const ac = t.auto_check;
+  const keys = sql.join(SCAN_AUTO_CHECK_KEYS.map((k) => sql`${sql.raw(`'${k}'`)}, ${ac} -> ${sql.raw(`'${k}'`)}`), sql`, `);
+  const cols = { id: t.id, statut: t.statut, verification_status: t.verification_status, publication_hold: t.publication_hold,
+    auto_check: sql`CASE WHEN ${ac} IS NULL THEN NULL ELSE jsonb_build_object(${keys}) END`.mapWith(ac) };
+  // structures: their identity (rememberIdentity) and the fields a run's `select` restricts on (tests, rehearsals: id, siret, numéro FINESS, Annuaire id)
+  return kind === 'structure' ? { ...cols, nom: t.nom, siret: t.siret, source_annuaire: t.source_annuaire, source_url: t.source_url, numero_finess: t.numero_finess } : { ...cols, titre: t.titre };
+}
+/** every column of a record but its embedding (Aide: a 768-dimension vector no step of the chain reads) */
+export const fullColumns = (kind) => Object.fromEntries(Object.entries(getTableColumns(TABLES[kind])).filter(([k]) => k !== 'embedding'));
+/** the state publish / withdraw / personDecision read back from a record (not its texts) */
+export function stateColumns(kind) {
+  const t = TABLES[kind];
+  return { id: t.id, statut: t.statut, verification_status: t.verification_status, publication_hold: t.publication_hold, published_at: t.published_at,
+    date_verification: t.date_verification, ...(t.commentaire_statut ? { commentaire_statut: t.commentaire_statut } : {}) };
+}
+
+/** @internal exported for the tests (r7-veille-narrow-reads) */
+export async function eachRecord(ctx, kind, fn) {
   // the records checked the longest ago first: a run cut short (time, pause, QA) is continued by the next one
   const table = TABLES[kind];
-  const rows = (await ctx.db.select().from(table).orderBy(sql`${table.last_checked_at} ASC NULLS FIRST`)).filter((r) => ctx.select(kind, r));
+  const rows = (await ctx.db.select(scanColumns(kind)).from(table).orderBy(sql`${table.last_checked_at} ASC NULLS FIRST`)).filter((r) => ctx.select(kind, r));
   let done = 0;
   for (const row of rows) {
     if (ctx.halted() || !(await beat(ctx, { phase: kind, done, total: rows.length, current: String(titleOf(row)).slice(0, 80) }))) { count(ctx, `${kind}:later`); continue; }
     done += 1;
     if (!isDue(ctx, kind, row)) { count(ctx, `${kind}:notDue`); if (kind === 'structure') rememberIdentity(ctx, row); continue; }
     count(ctx, `${kind}:checked`);
-    try { await fn(ctx, kind, row); } catch (e) {
+    try {
+      const [full] = await ctx.db.select(fullColumns(kind)).from(table).where(eq(table.id, row.id));
+      if (!full) { count(ctx, `${kind}:gone`); continue; }   // deleted since the scan
+      await fn(ctx, kind, full);
+    } catch (e) {
       await note(ctx, { kind: 'SOURCE', outcome: 'RETRY', entityType: kind, entityId: row.id, title: titleOf(row), summary: `Vérification interrompue (${String(e?.cause?.message || e?.code || e?.message || e).slice(0, 220)}). Nouvel essai à la prochaine veille.` });
     }
   }
@@ -595,7 +623,7 @@ function legalChange(before, after) {
 }
 
 async function lastSnapshot(db, type, id) {
-  const [s] = await db.select().from(SourceSnapshot).where(and(eq(SourceSnapshot.entity_type, type), eq(SourceSnapshot.entity_id, id))).orderBy(desc(SourceSnapshot.fetched_at)).limit(1);
+  const [s] = await db.select({ raw_excerpt: SourceSnapshot.raw_excerpt, content_hash: SourceSnapshot.content_hash, final_url: SourceSnapshot.final_url }).from(SourceSnapshot).where(and(eq(SourceSnapshot.entity_type, type), eq(SourceSnapshot.entity_id, id))).orderBy(desc(SourceSnapshot.fetched_at)).limit(1);
   return s ? { ...safeJson(s.raw_excerpt), fingerprint: s.content_hash, url: s.final_url } : null;
 }
 async function saveSnapshot(db, type, id, src, url) {
@@ -725,7 +753,7 @@ async function publish(ctx, kind, row, { patch, fixed, sourceUrl, evidence, reve
   const table = TABLES[kind];
   try {
     return await ctx.db.transaction(async (tx) => {
-      const [before] = await tx.select().from(table).where(eq(table.id, row.id)).for('update');
+      const [before] = await tx.select(stateColumns(kind)).from(table).where(eq(table.id, row.id)).for('update');
       // a hold the chain never lifts (privacy, safety, a report, a duplicate): the record is left exactly as it is
       if (before?.publication_hold && PROTECTED_HOLD.test(before.publication_hold)) return { ok: false, code: 'PROTECTED_HOLD', hold: before.publication_hold };
       // a person's refusal or hold made after the activation: the record stays as the person left it
@@ -737,7 +765,7 @@ async function publish(ctx, kind, row, { patch, fixed, sourceUrl, evidence, reve
         versionId = await snapshotRow(tx, kind, row.id, 'veille automatique', SYSTEM_REVIEWER.id);
         await tx.update(table).set({ ...patch, updatedBy: SYSTEM_REVIEWER.id, updatedAt: new Date() }).where(eq(table.id, row.id));
       }
-      const [cur] = await tx.select().from(table).where(eq(table.id, row.id));
+      const [cur] = await tx.select(stateColumns(kind)).from(table).where(eq(table.id, row.id));
       if (cur.publication_hold && !isEditHold(cur.publication_hold)) {
         const r = await recordVerification({ entityType: kind, entityId: row.id, action: 'RELEASE_HOLD', reviewer: SYSTEM_REVIEWER, evidenceNote: `Levée automatique : ${evidence}`.slice(0, 2000) }, { db: tx, env: ctx.env, trustedDomains: ctx.trusted });
         if (!r.ok) throw new Refused(r);
@@ -757,7 +785,7 @@ async function publish(ctx, kind, row, { patch, fixed, sourceUrl, evidence, reve
 /** withdraw (or keep out) with the reason — only a record that is or could be shown; a record never published is just left as it is */
 async function withdraw(ctx, kind, row, reason, { force = false } = {}) {
   const table = TABLES[kind];
-  const [cur] = await ctx.db.select().from(table).where(eq(table.id, row.id));
+  const [cur] = await ctx.db.select(stateColumns(kind)).from(table).where(eq(table.id, row.id));
   if (!cur) return { ok: true, already: true };
   if (cur.verification_status === 'REJECTED' || cur.statut === 'archive' || (kind === 'structure' && cur.statut === 'suspendu')) return { ok: true, already: true };   // R14: a person's decision stays as it is
   if (cur.verification_status !== 'VERIFIED' && cur.statut !== PUBLISHED[kind]) return { ok: true, already: true };

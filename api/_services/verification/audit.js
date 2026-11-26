@@ -25,6 +25,9 @@ const KINDS = [
   { kind: 'dispositif', table: 'Dispositif', title: 'titre', shown: `statut = 'publie'`, auto: true },
   { kind: 'structure', table: 'Structure', title: 'nom', shown: `statut IN ('actif', 'publie')`, auto: true },
 ];
+/** the keys of auto_check the audit reads (TEXTS, FRESHNESS), with their JSON values as they are */
+export const AUDIT_AUTO_CHECK = `CASE WHEN x.auto_check IS NULL THEN NULL ELSE jsonb_build_object('texts', jsonb_build_object('at', x.auto_check -> 'texts' -> 'at'),
+  'importantChangeAt', x.auto_check -> 'importantChangeAt', 'nextCheckAt', x.auto_check -> 'nextCheckAt', 'checkedAt', x.auto_check -> 'checkedAt') END`;
 export const WITHDRAW_ON = new Set(['LEDGER', 'EVIDENCE', 'PRIVACY', 'TEXTS']);
 /** the versioned acceptance contract of public information (D-5 v2): what a release accepts, on the live records — never the legacy WS2 file flags */
 export const CONTRACT = Object.freeze({ name: 'D-5 v2 — contrat de publication', version: 2, clauses: ['LEDGER', 'EVIDENCE', 'PRIVACY', 'FRESHNESS', 'DUPLICATE', 'TEXTS'] });
@@ -38,7 +41,8 @@ export async function publicationAudit({ db, env = process.env, trusted = [], no
   const add = (k, row, code, detail) => out.violations.push({ kind: k, id: row.id, title: String(row.title || '').slice(0, 120), code, detail: String(detail).slice(0, 300) });
   for (const k of KINDS) {
     const extra = k.kind === 'structure' ? ', x.email, x.siret, x.source_annuaire' : '';
-    const rows = (await db.execute(sql.raw(`SELECT x.id, x.${k.title} AS title, x.verified_by, x.auto_check${extra} FROM "${k.table}" x
+    // R7 (database egress): of auto_check, only what the clauses below read — never official.text (up to 40 000 characters per record)
+    const rows = (await db.execute(sql.raw(`SELECT x.id, x.${k.title} AS title, x.verified_by, ${AUDIT_AUTO_CHECK} AS auto_check${extra} FROM "${k.table}" x
       WHERE ${k.shown} AND x.verification_status = 'VERIFIED' AND x.publication_hold IS NULL`))).rows.filter((r) => select(k.kind, r));
     out.byKind[k.kind] = rows.length; out.checked += rows.length;
     if (!rows.length) continue;
