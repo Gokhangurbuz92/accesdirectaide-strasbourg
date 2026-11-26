@@ -2243,5 +2243,6 @@
  "organizations.err.note": "Beschreiben Sie, was Sie in der Quelle geprüft haben (mindestens 20 Zeichen).",
  "organizations.err.stale": "Der Eintrag hat sich seit Ihrem Lesen geändert: Laden Sie die Seite neu und lesen Sie ihn vor der Entscheidung erneut.",
  "organizations.pro_registration.annuaire_open": "Diese SIRET im Annuaire des entreprises öffnen",
- "organizations.pro_registration.annuaire_use": "Diese Adresse als Quelle verwenden"
+ "organizations.pro_registration.annuaire_use": "Diese Adresse als Quelle verwenden",
+ "k5.privacy.stalled": "beim Schritt {{status}} angehalten: hier ist keine Entscheidung möglich; dem technischen Team melden (die gesetzliche Frist von einem Monat läuft)"
 }

@@ -2262,5 +2262,6 @@
  "organizations.err.note": "صف ما تحققت منه في المصدر (20 حرفًا على الأقل).",
  "organizations.err.stale": "تغيّر السجل منذ قراءتك له: أعد تحميل الصفحة واقرأه مجددًا قبل اتخاذ القرار.",
  "organizations.pro_registration.annuaire_open": "افتح رقم SIRET هذا في Annuaire des entreprises",
- "organizations.pro_registration.annuaire_use": "استخدم هذا العنوان كمصدر"
+ "organizations.pro_registration.annuaire_use": "استخدم هذا العنوان كمصدر",
+ "k5.privacy.stalled": "متوقف عند المرحلة {{status}}: لا يمكن اتخاذ أي قرار هنا؛ أبلغ الفريق التقني (المهلة القانونية البالغة شهرًا واحدًا جارية)"
 }

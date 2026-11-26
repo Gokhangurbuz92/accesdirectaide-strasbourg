@@ -18,10 +18,11 @@ const bad = (code, message, status = 400) => ({ ok: false, status, code, message
 const audit = (db, action, reviewer, requestId) => db.insert(AuditLog).values({ action, entity: 'DSR_REQUEST', entity_id: requestId, actor_id: reviewer, details: { requestId }, ip_hash: 'ADMIN_MFA' });
 
 export async function listOpen(db = defaultDb, deps = {}) {
-  const rows = (await db.execute(sql`SELECT id, "subjectId", status, "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'ACCESS_REVIEW' AND status IN ('IN_REVIEW') ORDER BY "createdAt" LIMIT 200`)).rows;
+  // R7 admin: a request stopped before or after the review (RECEIVED, IDENTITY_OR_AUTHORITY_CHECK, APPROVED, EXECUTING) is listed too, as STALLED and read-only — the one-month legal deadline runs
+  const rows = (await db.execute(sql`SELECT id, "subjectId", status, "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'ACCESS_REVIEW' AND status IN ('IN_REVIEW', 'RECEIVED', 'IDENTITY_OR_AUTHORITY_CHECK', 'APPROVED', 'EXECUTING') ORDER BY "createdAt" LIMIT 200`)).rows;
   const soleFrom = soleConfirmableFrom(db, deps.soleAdministratorCheck);   // G13: only while the proposer is the sole enabled MFA administrator
   const sole = await Promise.all(rows.map((r) => soleFrom(r.o?.proposal)));
-  return { ok: true, requests: rows.map((r, i) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt), stage: r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL', proposed: r.o?.proposal?.decision || null,
+  return { ok: true, requests: rows.map((r, i) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt), stage: r.status !== 'IN_REVIEW' ? 'STALLED' : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL', proposed: r.o?.proposal?.decision || null,
     proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null,
     soleAdministratorConfirmableFrom: sole[i] })) };   // PKG-6 / D22: the version the second reviewer confirms (no content here: the basis and the extract are in the audited MFA reading)
 }

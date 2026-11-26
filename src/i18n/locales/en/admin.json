@@ -2243,5 +2243,6 @@
  "organizations.err.note": "Describe what you checked on the source (at least 20 characters).",
  "organizations.err.stale": "The record changed since you read it: reload the page and read it again before deciding.",
  "organizations.pro_registration.annuaire_open": "Open this SIRET in the Annuaire des entreprises",
- "organizations.pro_registration.annuaire_use": "Use this address as the source"
+ "organizations.pro_registration.annuaire_use": "Use this address as the source",
+ "k5.privacy.stalled": "stopped at step {{status}}: no decision is possible here; report it to the technical team (the one-month legal deadline is running)"
 }

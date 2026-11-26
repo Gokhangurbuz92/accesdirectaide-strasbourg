@@ -2253,5 +2253,6 @@
  "organizations.err.note": "Опишіть, що ви перевірили в джерелі (щонайменше 20 символів).",
  "organizations.err.stale": "Запис змінився після вашого читання: перезавантажте сторінку й прочитайте його знову перед рішенням.",
  "organizations.pro_registration.annuaire_open": "Відкрити цей SIRET в Annuaire des entreprises",
- "organizations.pro_registration.annuaire_use": "Використати цю адресу як джерело"
+ "organizations.pro_registration.annuaire_use": "Використати цю адресу як джерело",
+ "k5.privacy.stalled": "зупинено на етапі {{status}}: тут неможливо ухвалити рішення; повідомте технічну команду (місячний законний строк спливає)"
 }

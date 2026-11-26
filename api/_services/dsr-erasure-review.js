@@ -58,11 +58,13 @@ export { SOLE_ADMIN_DELAY_MS, soleAdministratorCheck };
 const blockedStage = (code) => (code === 'EXECUTION_FAILED' ? 'EXECUTION_FAILED_RETRYABLE' : code === 'MAIL_CONTACT_RETRY' ? 'MAIL_CONTACT_RETRY' : 'BLOCKED_BY_LEGAL_HOLD');
 
 export async function listOpenErasures(db = defaultDb, deps = {}) {
-  const rows = (await db.execute(sql`SELECT id, status, "reasonCode", "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'DELETE' AND status IN ('IN_REVIEW', 'BLOCKED') ORDER BY "createdAt" LIMIT 100`)).rows;
+  // R7 admin: a request stopped before or after the review (RECEIVED, IDENTITY_OR_AUTHORITY_CHECK, APPROVED, EXECUTING) is listed too, as STALLED and
+  // read-only — the one-month legal deadline runs; no decision is offered on it
+  const rows = (await db.execute(sql`SELECT id, status, "reasonCode", "createdAt", "reviewOutcome" AS o FROM "DSRRequest" WHERE "requestType" = 'DELETE' AND status IN ('IN_REVIEW', 'BLOCKED', 'RECEIVED', 'IDENTITY_OR_AUTHORITY_CHECK', 'APPROVED', 'EXECUTING') ORDER BY "createdAt" LIMIT 100`)).rows;
   const soleFrom = soleConfirmableFrom(db, deps.soleAdministratorCheck);   // G13: only while the proposer is the sole enabled MFA administrator
   const sole = await Promise.all(rows.map((r) => soleFrom(r.o?.proposal)));
   return { ok: true, requests: rows.map((r, i) => ({ id: r.id, status: r.status, createdAt: r.createdAt, ...dsrDeadline(r.createdAt),
-    stage: r.status === 'BLOCKED' ? blockedStage(r.reasonCode) : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
+    stage: r.status === 'BLOCKED' ? blockedStage(r.reasonCode) : r.status !== 'IN_REVIEW' ? 'STALLED' : r.o?.proposal ? 'AWAITING_SECOND_REVIEWER' : 'AWAITING_PROPOSAL',
     ...(r.status === 'BLOCKED' && r.reasonCode === 'MAIL_CONTACT_RETRY' ? { mailContactRetry: { attempts: r.o?.mailContactRetry?.attempts ?? null, retryUntil: r.o?.mailContactRetry?.retryUntil ?? null } } : {}),
     proposed: r.o?.proposal?.decision || null, proposedBy: r.o?.proposal?.proposedBy || null, proposedAt: r.o?.proposal?.proposedAt || null, reason: r.o?.proposal?.reason || null,
     soleAdministratorConfirmableFrom: sole[i] })) };

@@ -2243,5 +2243,6 @@
  "organizations.err.note": "Kaynakta neyi kontrol ettiğinizi yazın (en az 20 karakter).",
  "organizations.err.stale": "Kayıt siz okuduktan sonra değişti: sayfayı yenileyin ve karar vermeden önce yeniden okuyun.",
  "organizations.pro_registration.annuaire_open": "Bu SIRET numarasını Annuaire des entreprises'te açın",
- "organizations.pro_registration.annuaire_use": "Bu adresi kaynak olarak kullan"
+ "organizations.pro_registration.annuaire_use": "Bu adresi kaynak olarak kullan",
+ "k5.privacy.stalled": "{{status}} adımında durdu: burada karar verilemez; teknik ekibe bildirin (bir aylık yasal süre işliyor)"
 }
