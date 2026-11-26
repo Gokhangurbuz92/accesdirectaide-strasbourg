@@ -38,7 +38,20 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'REASON_REQUIRED', message: 'Indiquez le motif de la décision (10 caractères au moins).' });
     }
 
+    // R7 admin: a decision applies only from the statuses the moderation flow allows — PUBLISH an imported draft; REJECT an imported draft or take
+    // down a published imported item. A rejected or retracted item is never republished, and an ADA original article moves only through its
+    // editorial workflow (api/_services/news/editorial-workflow.js). Anything else: 409, nothing written.
+    const ELIGIBLE = { PUBLISH: ['brouillon'], REJECT: ['brouillon', 'publie'] }[action];
+
     try {
+        if (ELIGIBLE) {
+            const current = await db.select({ id: Actualite.id, statut: Actualite.statut, type_actu: Actualite.type_actu }).from(Actualite).where(inArray(Actualite.id, ids));
+            const blocked = current.filter((r) => !ELIGIBLE.includes(r.statut) || r.type_actu === 'ada_original').map((r) => r.id);
+            if (blocked.length) {
+                return res.status(409).json({ error: 'INVALID_STATE', ids: blocked });
+            }
+        }
+
         let updateData = {};
 
         switch (action) {
@@ -64,7 +77,8 @@ export default async function handler(req, res) {
         }
 
         // only an item that links to its source over https can be published
-        const where = action === 'PUBLISH' ? and(inArray(Actualite.id, ids), sql`coalesce(${Actualite.lien_url}, ${Actualite.canonical_url}) LIKE 'https://%'`) : inArray(Actualite.id, ids);
+        const guard = ELIGIBLE ? [inArray(Actualite.statut, ELIGIBLE), sql`coalesce(${Actualite.type_actu}, '') <> 'ada_original'`] : [];
+        const where = action === 'PUBLISH' ? and(inArray(Actualite.id, ids), ...guard, sql`coalesce(${Actualite.lien_url}, ${Actualite.canonical_url}) LIKE 'https://%'`) : and(inArray(Actualite.id, ids), ...guard);
         const updated = await db.update(Actualite).set(updateData).where(where).returning({ id: Actualite.id });
         const count = updated.length;
 
