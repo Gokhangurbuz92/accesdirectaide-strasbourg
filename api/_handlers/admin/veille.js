@@ -3,6 +3,7 @@ import { checkRateLimit, getClientIp, getRateLimitStatus } from '../../_utils/ra
 import logger from '../../_utils/logger.js';
 import { resolveAuthContext, isAdminRole } from '../../_utils/auth.js';
 import { db } from '../../../src/db/index.js';
+import { AuditLog } from '../../../src/db/schema.js';
 import { veilleDigest, recordHistory } from '../../_services/verification/digest.js';
 import { pauseState, setPause, requestStop } from '../../_services/verification/control.js';
 import { SEED_SOURCES } from '../../_services/verification/sources.js';
@@ -47,14 +48,19 @@ export default async function handler(req, res) {
     if (auth.authType !== 'admin_jwt' || auth.mfa_verified !== true) return res.status(403).json({ error: 'MFA_SESSION_REQUIRED', message: 'Session administrateur avec MFA requise.' });
     const action = String(req.body?.action || '');
     const who = `admin:${auth.email || auth.id || 'admin'}`;
+    // R7 admin: each write action leaves one AuditLog row naming the administrator (the free-text pause reason is not copied: it stays in the pause state)
+    const audit = (code, details = {}) => db.insert(AuditLog).values({ action: code, actor: auth.email || null, actor_id: auth.email || null, entity: 'Veille', entity_id: null,
+      details: { ...details, mfa: true, authType: auth.authType } });
     if (action === 'pause') {
       const p = await setPause(db, { paused: true, by: who, reason: String(req.body?.reason || 'mise en pause depuis la page de la veille').slice(0, 200) });
       requestStop();
+      await audit('VEILLE_PAUSED');
       logger.info({ veille: 'pause' }, '[Veille] paused by the owner');
       return res.status(200).json({ ok: true, paused: p });
     }
     if (action === 'resume') {
       await setPause(db, { paused: false, by: who });
+      await audit('VEILLE_RESUMED');
       logger.info({ veille: 'resume' }, '[Veille] resumed by the owner');
       return res.status(200).json({ ok: true, paused: await pauseState(db) });
     }
@@ -64,6 +70,7 @@ export default async function handler(req, res) {
     const { startVeille, veilleRunning } = await import('../../_services/verification/schedule.js');
     if (veilleRunning()) return res.status(200).json({ ok: true, alreadyRunning: true });
     startVeille({ trigger: who, log: (m) => logger.info({ veille: m }, '[Veille]') });
+    await audit('VEILLE_RUN_STARTED');
     return res.status(202).json({ ok: true, started: true });
   } catch (error) {
     logger.error({ err: { name: error?.name, message: String(error?.message || '').slice(0, 200) } }, '[Veille] failed');
