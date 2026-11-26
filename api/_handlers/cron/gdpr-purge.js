@@ -321,9 +321,10 @@ const lpDeleteStep = (where) => ({
  *   endedPartnerAgreementsReport        REPORT: a PartnerAgreement ENDED more than PARTNER_AGREEMENT_ENDED_DAYS ago
  * @param {Date} before
  */
-export const contentReportsClosedWhere = (before) => and(inArray(ContentReport.status, ['FIXED', 'REJECTED']), lt(ContentReport.updatedAt, before));
+// R8 (audit 26/11/2026): like every other delete step, a report or the reported content under an ACTIVE LegalHold is kept
+export const contentReportsClosedWhere = (before) => and(inArray(ContentReport.status, ['FIXED', 'REJECTED']), lt(ContentReport.updatedAt, before), sql`NOT ${heldSql(ContentReport.id, ContentReport.contentId)}`);
 /** @param {Date} before */
-export const partnershipRequestsClosedWhere = (before) => and(ne(PartnershipRequest.status, 'pending'), lt(PartnershipRequest.updatedAt, before));
+export const partnershipRequestsClosedWhere = (before) => and(ne(PartnershipRequest.status, 'pending'), lt(PartnershipRequest.updatedAt, before), sql`NOT ${heldSql(PartnershipRequest.id)}`);
 /** @param {Date} before */
 export const suspendedInstitutionAccountsWhere = (before) => and(eq(InstitutionAccount.status, 'SUSPENDED'), sql`COALESCE(${InstitutionAccount.lastLogin}, ${InstitutionAccount.createdAt}) < ${before}`);
 /** @param {Date} before */
@@ -581,9 +582,9 @@ export const PURGE_STEPS = [
 
     // 22b. G14-R3 follow-up — durations decided 24/11/2026 (each step executes only once approved): content reports and partnership requests once handled;
     //      suspended institution accounts and ended conventions are only COUNTED (no suspension date recorded; an account references its convention).
-    { id: 'contentReportsClosedDeleted', summaryKey: 'content_reports_closed_deleted', ecode: 'R3-COM', kind: 'delete', table: 'ContentReport', durationKey: 'CONTENT_REPORT_CLOSED_DAYS', tables: ['ContentReport'],
+    { id: 'contentReportsClosedDeleted', summaryKey: 'content_reports_closed_deleted', ecode: 'R3-COM', kind: 'delete', table: 'ContentReport', durationKey: 'CONTENT_REPORT_CLOSED_DAYS', tables: ['ContentReport', 'LegalHold'],
         ...deleteStep(ContentReport, (ctx) => contentReportsClosedWhere(ctx.cutoff('CONTENT_REPORT_CLOSED_DAYS'))) },
-    { id: 'partnershipRequestsClosedDeleted', summaryKey: 'partnership_requests_closed_deleted', ecode: 'R3-COM', kind: 'delete', table: 'PartnershipRequest', durationKey: 'PARTNERSHIP_REQUEST_CLOSED_DAYS', tables: ['PartnershipRequest'],
+    { id: 'partnershipRequestsClosedDeleted', summaryKey: 'partnership_requests_closed_deleted', ecode: 'R3-COM', kind: 'delete', table: 'PartnershipRequest', durationKey: 'PARTNERSHIP_REQUEST_CLOSED_DAYS', tables: ['PartnershipRequest', 'LegalHold'],
         ...deleteStep(PartnershipRequest, (ctx) => partnershipRequestsClosedWhere(ctx.cutoff('PARTNERSHIP_REQUEST_CLOSED_DAYS'))) },
     { id: 'suspendedInstitutionAccountsReport', summaryKey: 'suspended_institution_accounts_eligible', ecode: 'R3-INST', kind: 'report', table: 'InstitutionAccount', durationKey: 'INSTITUTION_ACCOUNT_SUSPENDED_DAYS', tables: ['InstitutionAccount'],
         count: (db, ctx) => countWhere(db, InstitutionAccount, suspendedInstitutionAccountsWhere(ctx.cutoff('INSTITUTION_ACCOUNT_SUSPENDED_DAYS'))) },
