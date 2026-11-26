@@ -15,7 +15,8 @@ const bad = (status, code, message) => ({ ok: false, status, code, message });
 const AI_PENDING = sql`(details ? 'ai_suggestion' OR details ? 'ai_fix') AND lower(status) IN ('open', 'resolved_by_ai') AND COALESCE(details->>'ai_suggestion_status', 'PENDING_HUMAN_REVIEW') = 'PENDING_HUMAN_REVIEW'`;
 
 export async function list(db = defaultDb) {
-  const [falc] = (await db.execute(sql`SELECT count(*)::int AS n FROM "AiOutputReview" WHERE status = 'PENDING'`)).rows;
+  // R7 admin: FALC drafts only (a DOSSIER_SYNTHESIS draft is personal and reviewed by its organization, never by the administrators)
+  const [falc] = (await db.execute(sql`SELECT count(*)::int AS n FROM "AiOutputReview" WHERE kind = 'FALC' AND status = 'PENDING'`)).rows;
   const items = (await db.execute(sql`SELECT id, "entityType", "entityId", title, reason, severity, status, details->'ai_suggestion' AS suggestion, details->'ai_fix' AS fix,
       details->>'ai_suggested_at' AS "suggestedAt", "createdAt" FROM "ReviewQueueItem" WHERE ${AI_PENDING} ORDER BY "createdAt" LIMIT 200`)).rows;
   return { ok: true, falcPending: falc.n, aiSuggestions: items.map((r) => ({ id: r.id, entityType: r.entityType, entityId: r.entityId, title: r.title, reason: r.reason, severity: r.severity,

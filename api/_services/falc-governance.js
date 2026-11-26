@@ -67,8 +67,9 @@ export async function draft(entityType, entityId, field = 'summary_falc', actor,
   return { ok: true, id, origin, model, text, published: false };
 }
 
+// R7 admin: the administrators' FALC queue holds kind 'FALC' only — a DOSSIER_SYNTHESIS draft (personal, reviewed by its organization) never enters it
 export async function listPending(db = defaultDb) {
-  const rows = (await db.execute(sql`SELECT id, "entityType", "entityId", field, origin, model, "outputText", "createdAt" FROM "AiOutputReview" WHERE status = 'PENDING' ORDER BY "createdAt" LIMIT 200`)).rows;
+  const rows = (await db.execute(sql`SELECT id, "entityType", "entityId", field, origin, model, "outputText", "createdAt" FROM "AiOutputReview" WHERE kind = 'FALC' AND status = 'PENDING' ORDER BY "createdAt" LIMIT 200`)).rows;
   const out = [];
   for (const r of rows) {
     const rec = await readRecord(db, r.entityType, r.entityId);
@@ -79,7 +80,7 @@ export async function listPending(db = defaultDb) {
 
 export async function approve(reviewId, { text, note }, reviewer, db = defaultDb) {
   return db.transaction(async (tx) => {
-    const [r] = (await tx.execute(sql`SELECT * FROM "AiOutputReview" WHERE id = ${String(reviewId || '')} AND status = 'PENDING' FOR UPDATE`)).rows;
+    const [r] = (await tx.execute(sql`SELECT * FROM "AiOutputReview" WHERE id = ${String(reviewId || '')} AND kind = 'FALC' AND status = 'PENDING' FOR UPDATE`)).rows;
     if (!r) return bad(404, 'not_found', 'Brouillon introuvable ou déjà traité.');
     // PKG-6 / D22: the approval is bound to the source text the draft was made from; a source changed since then does not inherit it
     const rec = await readRecord(tx, r.entityType, r.entityId);
@@ -101,7 +102,7 @@ export async function approve(reviewId, { text, note }, reviewer, db = defaultDb
 
 export async function reject(reviewId, note, reviewer, db = defaultDb) {
   if (String(note || '').trim().length < 5) return bad(400, 'NOTE_REQUIRED', 'Indiquez pourquoi (au moins 5 caractères).');
-  const rows = (await db.execute(sql`UPDATE "AiOutputReview" SET status = 'REJECTED', "reviewedBy" = ${reviewer}, "reviewedAt" = NOW(), "reviewNote" = ${String(note).slice(0, 1000)} WHERE id = ${String(reviewId || '')} AND status = 'PENDING' RETURNING id, "entityType", "entityId"`)).rows;
+  const rows = (await db.execute(sql`UPDATE "AiOutputReview" SET status = 'REJECTED', "reviewedBy" = ${reviewer}, "reviewedAt" = NOW(), "reviewNote" = ${String(note).slice(0, 1000)} WHERE id = ${String(reviewId || '')} AND kind = 'FALC' AND status = 'PENDING' RETURNING id, "entityType", "entityId"`)).rows;
   if (!rows.length) return bad(404, 'not_found', 'Brouillon introuvable ou déjà traité.');
   await db.insert(AuditLog).values({ action: 'FALC_REJECTED', actor: reviewer, actor_id: reviewer, entity: tableOf(rows[0].entityType), entity_id: rows[0].entityId, details: { reviewId: rows[0].id } });
   return { ok: true };
