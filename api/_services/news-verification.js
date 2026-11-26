@@ -174,7 +174,9 @@ export async function verifyNewsDrafts({ db, schema, ops, now = new Date(), appl
   const { Actualite } = schema; const { eq } = ops;
   const published = await db.select({ titre: Actualite.titre }).from(Actualite).where(eq(Actualite.statut, 'publie'));
   const takenTitles = new Set(published.map((p) => sameText(p.titre)));
-  const drafts = await db.select().from(Actualite).where(eq(Actualite.statut, 'brouillon'));
+  // R7 admin: an ADA original article is published only through its editorial workflow (api/_services/news/editorial-workflow.js); its draft may
+  // carry the note of the administrator who returned it — never checked here, never overwritten
+  const drafts = (await db.select().from(Actualite).where(eq(Actualite.statut, 'brouillon'))).filter((d) => d.type_actu !== 'ada_original');
   // the « Particuliers » address first, then the most recent: a duplicate keeps the citizens' version
   drafts.sort((a, b) => (audienceOf(b.canonical_url) === 'particuliers') - (audienceOf(a.canonical_url) === 'particuliers') || new Date(b.date_publication) - new Date(a.date_publication));
   const result = { checked: 0, published: 0, kept: 0, reasons: {} };
