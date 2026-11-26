@@ -11,6 +11,13 @@ import { adminBulkActionSchema } from '../../../src/db/drizzle-schemas.js';
  * @param {import('../../_utils/http-types').ApiResponse} res
  */
 
+/**
+ * R7: the same official article reaches the inbox once per feed (Service-Public « Particuliers » and « Professionnels » publish the same page with a
+ * different ?xtor= tag). A draft whose source page (address without its query string) is already published is never published a second time.
+ */
+export const NOT_ALREADY_PUBLISHED = sql`NOT EXISTS (SELECT 1 FROM "Actualite" AS p WHERE p.statut = 'publie' AND p.id <> "Actualite".id
+  AND split_part(coalesce(p.lien_url, p.canonical_url, ''), '?', 1) = split_part(coalesce("Actualite".lien_url, "Actualite".canonical_url, ''), '?', 1))`;
+
 export default async function handler(req, res) {
     const ip = getClientIp(req);
     const rateLimit = await checkRateLimit('ADMIN_API', ip);
@@ -78,7 +85,7 @@ export default async function handler(req, res) {
 
         // only an item that links to its source over https can be published
         const guard = ELIGIBLE ? [inArray(Actualite.statut, ELIGIBLE), sql`coalesce(${Actualite.type_actu}, '') <> 'ada_original'`] : [];
-        const where = action === 'PUBLISH' ? and(inArray(Actualite.id, ids), ...guard, sql`coalesce(${Actualite.lien_url}, ${Actualite.canonical_url}) LIKE 'https://%'`) : and(inArray(Actualite.id, ids), ...guard);
+        const where = action === 'PUBLISH' ? and(inArray(Actualite.id, ids), ...guard, sql`coalesce(${Actualite.lien_url}, ${Actualite.canonical_url}) LIKE 'https://%'`, NOT_ALREADY_PUBLISHED) : and(inArray(Actualite.id, ids), ...guard);
         const updated = await db.update(Actualite).set(updateData).where(where).returning({ id: Actualite.id });
         const count = updated.length;
 

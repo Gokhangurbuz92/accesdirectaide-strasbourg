@@ -61,3 +61,13 @@ describe('R7 admin — news PUBLISH / REJECT status guard', () => {
     expect((await act('RETRY_FALC', ['g'])).statusCode).toBe(200);
   });
 });
+
+describe('R7 admin — the same official article is never published twice', () => {
+  it('PUBLISH carries the « not already published » condition on the source page without its query string', async () => {
+    const { NOT_ALREADY_PUBLISHED } = await import('../../api/_handlers/admin/actions.js');
+    const { PgDialect } = await import('drizzle-orm/pg-core');
+    const text = new PgDialect().sqlToQuery(NOT_ALREADY_PUBLISHED).sql;
+    expect(text).toMatch(/NOT EXISTS \(SELECT 1 FROM "Actualite" AS p WHERE p\.statut = 'publie' AND p\.id <> "Actualite"\.id/);
+    expect(text).toMatch(/split_part\(coalesce\(p\.lien_url, p\.canonical_url, ''\), '\?', 1\) = split_part\(coalesce\("Actualite"\.lien_url, "Actualite"\.canonical_url, ''\), '\?', 1\)/);
+  });
+});
