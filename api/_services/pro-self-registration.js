@@ -22,6 +22,13 @@ import { recordVerification } from './content-verification.js';
 import { setActivity } from './org-lifecycle.js';
 import { administerProAccount } from './pro-account-admin.js';
 import { mailMfaInvitation, writeMfaInvitation } from './pro-mfa-invitation.js';
+import { sendMail } from '../_utils/mailer.js';
+
+// R7: the sign-up page promises an e-mail once the request is handled; a refusal says so in a short generic notice. The administrator's reason stays in
+// the journal (it may hold internal notes) and is never sent.
+export const REFUSAL_NOTICE = 'Bonjour,\n\nVotre demande d’espace ADA Pro sur AccesDirectAide n’a pas été acceptée à l’issue de la vérification.\n\n'
+  + 'Si vous pensez qu’il s’agit d’une erreur, écrivez-nous à contact@accesdirectaide.fr en indiquant le nom de la structure et son numéro SIRET.\n\n'
+  + 'L’équipe AccesDirectAide';
 
 const bad = (code, message, status = 400) => ({ ok: false, status, code, message });
 /** a refusal found after a write: thrown to roll the whole transaction back, then returned as the answer */
@@ -100,15 +107,19 @@ export async function refuseSelfRegistration(input, reviewer, deps = {}) {
   if (!userId) return NOT_PENDING();
   if (reason.length < 5) return bad('reason_required', 'Indiquez le motif (il est conservé dans le journal).');
   try {
-    return await db.transaction(async (tx) => {
+    const out = await db.transaction(async (tx) => {
       const u = await pendingAccount(tx, userId);
       if (!u) return NOT_PENDING();
       const r = await administerProAccount('DISABLE_PRO_ACCOUNT', { userId, reason }, reviewer.email, tx);
       if (!r.ok) throw new Rollback(r);
       await tx.insert(AuditLog).values({ action: 'PRO_SELF_REGISTRATION_REFUSED', entity: 'ProUser', entity_id: userId, actor: reviewer.email, actor_id: reviewer.email,
         details: { structureId: String(u.structureId), reason }, ip_hash: 'ADMIN_MFA' });
-      return { ok: true, account: { id: userId, status: 'disabled' } };
+      return { ok: true, account: { id: userId, status: 'disabled' }, email: u.email };
     });
+    if (!out.ok) return out;
+    const mail = await sendMail({ to: out.email, category: 'pro-registration-refused', subject: 'Votre demande ADA Pro — Accès Direct Aide', text: REFUSAL_NOTICE })
+      .then(() => 'sent').catch(() => 'failed');   // the refusal is committed: a mail failure never undoes it
+    return { ok: true, account: out.account, mailStatus: mail };
   } catch (e) {
     if (e instanceof Rollback) return e.out;
     throw e;
