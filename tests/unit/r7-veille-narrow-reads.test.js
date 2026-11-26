@@ -92,7 +92,7 @@ async function run(kind, { legacy = false, select } = {}) {
   await eachRecord(ctx, kind, async (_ctx, _kind, row) => { seen.push(row); });
   return { db, ctx, seen };
 }
-const omitEmbedding = ({ embedding: _e, ...r }) => r;
+const omitEmbedding = (row) => { const r = { ...row }; delete r.embedding; return r; };
 
 describe('R7 (a) — the due scan reads no text, no embedding, no whole auto_check', () => {
   it('the scan query of every kind selects neither the embedding nor the auto_check document, only its scheduling keys', () => {
