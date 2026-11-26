@@ -243,12 +243,19 @@ export default async function handler(req, res) {
       if (nextStatus === 'resolved_by_ai') return res.status(400).json({ error: 'resolved_by_ai is not a human decision', requestId });
 
       const [before] = await db.select({ status: ReviewQueueItem.status, details: ReviewQueueItem.details }).from(ReviewQueueItem).where(eq(ReviewQueueItem.id, itemId));
+      // R7 admin: the same precondition as the bulk PATCH — only an open item ('open' or 'OPEN') is decided; a decided one is never re-decided
+      if (!before) {
+        return res.status(404).json({ error: 'Not found', requestId });
+      }
+      if (!isOpen(before.status)) {
+        return res.status(409).json({ error: 'NOT_OPEN', message: 'Cet élément a déjà été traité.', requestId });
+      }
       if ((before?.details?.ai_suggestion || before?.details?.ai_fix) && (reasonOf(parseJsonBody(req.body)) || '').length < 10) {
         return res.status(400).json({ error: 'REASON_REQUIRED', message: 'Décision sur une suggestion de l’IA : indiquez votre motif (au moins 10 caractères).', requestId });
       }
-      const [item] = await db.update(ReviewQueueItem).set({ status: nextStatus }).where(eq(ReviewQueueItem.id, itemId)).returning();
+      const [item] = await db.update(ReviewQueueItem).set({ status: nextStatus }).where(and(eq(ReviewQueueItem.id, itemId), sql`lower(${ReviewQueueItem.status}) = 'open'`)).returning();
       if (!item) {
-        return res.status(404).json({ error: 'Not found', requestId });
+        return res.status(409).json({ error: 'NOT_OPEN', message: 'Cet élément a déjà été traité.', requestId });
       }
       await auditDecision(writer, { reason: reasonOf(parseJsonBody(req.body)), itemId, from: before?.status ?? null, to: nextStatus, withAiSuggestion: Boolean(before?.details?.ai_suggestion || before?.details?.ai_fix) });
 
