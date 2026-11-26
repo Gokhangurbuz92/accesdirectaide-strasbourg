@@ -12,7 +12,7 @@ import { db as defaultDb } from '../../src/db/index.js';
 import { AuditLog } from '../../src/db/schema.js';
 
 const bad = (status, code, message) => ({ ok: false, status, code, message });
-const AI_PENDING = sql`(details ? 'ai_suggestion' OR details ? 'ai_fix') AND lower(status) IN ('open', 'resolved_by_ai') AND COALESCE(details->>'ai_suggestion_status', 'PENDING_HUMAN_REVIEW') = 'PENDING_HUMAN_REVIEW'`;
+export const AI_PENDING = sql`(details ? 'ai_suggestion' OR details ? 'ai_fix') AND lower(status) IN ('open', 'resolved_by_ai') AND COALESCE(details->>'ai_suggestion_status', 'PENDING_HUMAN_REVIEW') = 'PENDING_HUMAN_REVIEW'`;
 
 export async function list(db = defaultDb) {
   // R7 admin: FALC drafts only (a DOSSIER_SYNTHESIS draft is personal and reviewed by its organization, never by the administrators)

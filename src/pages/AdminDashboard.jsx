@@ -26,6 +26,14 @@ import {
     LifeBuoy,
     ShieldAlert,
     Lock,
+    Scale,
+    Handshake,
+    Newspaper,
+    PenLine,
+    CalendarClock,
+    KeyRound,
+    Wallet,
+    Landmark,
 } from 'lucide-react';
 import { ToneBar, ToneIcon } from '@/components/ui/Tone';
 import { sectionTone } from '@/design/categoryTone';
@@ -131,6 +139,16 @@ export default function AdminDashboard() {
         },
         { key: 'support', title: t('admin:dashboard.card.support.title', 'Demandes d’aide'), to: '/admin/support', count: n(tasks.support), unit: t('admin:dashboard.card.support.unit', 'ouverte(s)'), todo: t('admin:dashboard.card.support.todo', 'Répondre ou orienter ; les demandes liées aux données vont à la protection des données.') },
         { key: 'bg', title: t('admin:dashboard.card.bg.title', 'Accès d’urgence à examiner'), to: '/admin/operations', count: n(tasks.breakGlass), unit: t('admin:dashboard.card.bg.unit', 'à examiner'), todo: t('admin:dashboard.card.bg.todo', 'Un accès d’urgence est examiné ensuite, avec les actions faites pendant la fenêtre, par un autre administrateur — ou par vous-même tant que vous êtes le seul administrateur actif avec MFA.') },
+        // R7 admin: the queues that had no card (each count is the default list of the screen the card opens)
+        { key: 'appeals', title: t('admin:dashboard.card.appeals.title', 'Recours contre une modération'), to: '/admin/moderation', count: n(tasks.dsaAppeals), unit: t('admin:dashboard.card.ai.unit', 'à examiner'), todo: t('admin:dashboard.card.appeals.todo', 'Réexaminer la décision contestée et répondre à la personne (maintenue, annulée ou modifiée).') },
+        { key: 'partners', title: t('admin:dashboard.card.partners.title', 'Demandes de partenariat'), to: '/admin/signalements', count: n(tasks.partnerships), unit: t('admin:dashboard.card.prop.unit', 'en attente'), todo: t('admin:dashboard.card.partners.todo', 'Prendre contact, puis noter l’état de la demande.') },
+        { key: 'inbox', title: t('admin:dashboard.card.inbox.title', 'Actualités importées en brouillon'), to: '/admin/inbox', count: n(tasks.newsInbox), unit: t('admin:dashboard.card.falc.unit', 'brouillon(s)'), todo: t('admin:dashboard.card.inbox.todo', 'Publier ou rejeter avec votre motif ; seule une actualité liée à sa source en https peut être publiée.') },
+        { key: 'articles', title: t('admin:dashboard.card.articles.title', 'Articles d’ADA à relire'), to: '/admin/actualites-redaction', count: n(tasks.adaArticles), unit: t('admin:dashboard.card.ai.unit', 'à examiner'), todo: t('admin:dashboard.card.articles.todo', 'Relire l’article, ses sources et la liste de contrôle, puis approuver ou renvoyer en rédaction avec une note.') },
+        { key: 'extbook', title: t('admin:dashboard.card.extbook.title', 'Pages de rendez-vous externes'), to: '/admin/rdv-externes', count: n(tasks.externalBookings), unit: t('admin:dashboard.card.prop.unit', 'en attente'), todo: t('admin:dashboard.card.extbook.todo', 'Vérifier que la page appartient bien au lieu, puis l’approuver ou la refuser.') },
+        { key: 'holds', title: t('admin:dashboard.card.holds.title', 'Levées de conservation légale proposées'), to: '/admin/privacy', count: n(tasks.legalHoldReleases), unit: t('admin:dashboard.card.ai.unit', 'à examiner'), todo: t('admin:dashboard.card.holds.todo', 'Une autre personne confirme la levée proposée, après sa propre lecture.') },
+        { key: 'recovery', title: t('admin:dashboard.card.recovery.title', 'Récupérations de compte proposées'), to: '/admin/privacy', count: n(tasks.ownershipRecovery), unit: t('admin:dashboard.card.ai.unit', 'à examiner'), todo: t('admin:dashboard.card.recovery.todo', 'Une autre personne approuve ou refuse la récupération proposée, avec une note.') },
+        { key: 'funding', title: t('admin:dashboard.card.funding.title', 'Dossiers de financement'), to: '/admin/financement', count: n(tasks.fundingDossiers), unit: t('admin:dashboard.card.funding.unit', 'prêt(s) pour la validation'), todo: t('admin:dashboard.card.funding.todo', 'Le porteur relit le dossier et le valide avant tout dépôt.') },
+        { key: 'institutions', title: t('admin:dashboard.card.institutions.title', 'Comptes institutionnels'), to: '/admin/institutions', count: n(tasks.institutionAccounts), unit: t('admin:dashboard.card.institutions.unit', 'en attente de convention'), todo: t('admin:dashboard.card.institutions.todo', 'Activer un compte seulement quand sa convention est signée.') },
     ];
     const waiting = cards.filter((c) => c.count > 0);
     // colour system: each task card in the colour of the administration section it opens (icon tile + top bar); the amber border still says « en attente »
@@ -139,6 +157,8 @@ export default function AdminDashboard() {
         proreg: ['organisations', Building2], ws2: ['catalogue', ListChecks], orgs: ['organisations', Building2], dup: ['catalogue', Copy], prop: ['contenus', FilePlus],
         falc: ['contenus', BookOpen], rep: ['moderation', Flag], quality: ['catalogue', ClipboardCheck], ai: ['ia', Cpu], privacy: ['securite', Lock],
         support: ['messages', LifeBuoy], bg: ['securite', ShieldAlert],
+        appeals: ['moderation', Scale], partners: ['organisations', Handshake], inbox: ['contenus', Newspaper], articles: ['contenus', PenLine], extbook: ['rdv', CalendarClock],
+        holds: ['securite', Lock], recovery: ['securite', KeyRound], funding: ['journal', Wallet], institutions: ['organisations', Landmark],
     };
 
     return (
