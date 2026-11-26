@@ -15,7 +15,7 @@ export async function dataQualitySummary({ db = defaultDb, root } = {}) {
   for (const r of q.records) { byDataset[r.dataset] ||= {}; byDataset[r.dataset][r.state] = (byDataset[r.dataset][r.state] || 0) + 1; }
   const queue = (await db.execute(sql`SELECT reason, count(*)::int AS n,
       count(*) FILTER (WHERE "createdAt" < NOW() - interval '7 days')::int AS "olderThan7d", count(*) FILTER (WHERE "createdAt" < NOW() - interval '30 days')::int AS "olderThan30d"
-    FROM "ReviewQueueItem" WHERE status = 'open' GROUP BY reason ORDER BY n DESC`)).rows;
+    FROM "ReviewQueueItem" WHERE lower(status) = 'open' GROUP BY reason ORDER BY n DESC`)).rows;   // R7 admin: writers use 'open' and 'OPEN'
   const reports = (await db.execute(sql`SELECT status::text AS status, count(*)::int AS n FROM "ContentReport" GROUP BY status ORDER BY status`)).rows;
   const suggestions = (await db.execute(sql`SELECT status, count(*)::int AS n FROM "PartnershipRequest" GROUP BY status ORDER BY status`)).rows;
   return { ok: true, generatedAt: new Date().toISOString(),
