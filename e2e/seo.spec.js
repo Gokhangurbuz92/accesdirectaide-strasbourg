@@ -125,13 +125,15 @@ test.describe('SEO & Metadata', () => {
     await expect(canonical).toHaveAttribute('href', /https?:\/\/.*\/demarches\/demarche-test/);
   });
 
-  test('Réseaux Sociaux — Image OpenGraph au format WebP', async ({ page }) => {
+  test('Réseaux Sociaux — Image OpenGraph PNG absolue (logo ADA actuel)', async ({ page }) => {
     await page.goto('/');
     await page.waitForLoadState('networkidle');
 
-    // .first() : index.html statique, .last() = Helmet dynamique — les deux sont WebP
-    const ogImage = page.locator('meta[property="og:image"]').first();
-    await expect(ogImage).toHaveAttribute('content', /\.webp/i);
+    // 27/11 : LinkedIn/Facebook lisent l'index.html statique sans JavaScript, exigent une URL absolue et gèrent mal le WebP.
+    // .first() : index.html statique, .last() = Helmet dynamique — les deux pointent vers le PNG.
+    const ogImage = page.locator('meta[property="og:image"]');
+    await expect(ogImage.first()).toHaveAttribute('content', 'https://www.accesdirectaide.fr/og-image.png');
+    await expect(ogImage.last()).toHaveAttribute('content', /\/og-image\.png$/);
   });
 
 });
