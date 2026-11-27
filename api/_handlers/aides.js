@@ -126,6 +126,8 @@ async function handler(req, res) {
 
             let aide = await db.query.Aide.findFirst({
                 where: (a, { eq }) => effectiveParams.id ? eq(a.id, effectiveParams.id) : eq(a.slug, effectiveParams.slug),
+                // 27/11: the search vector and its bookkeeping are never shown and never read here (768 numbers per record on the wire and in the response)
+                columns: { embedding: false, embedding_model: false, embedded_text_sha256: false, embedded_at: false },
                 with: {
                     category: true,
                     situations: {

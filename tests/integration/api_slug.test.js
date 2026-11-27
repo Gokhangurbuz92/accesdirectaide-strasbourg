@@ -86,7 +86,9 @@ describe('API GET /api/aides (Integration Logic)', () => {
 
         // CRITICAL: Verify correct query structure
         expect(db.query.Aide.findFirst).toHaveBeenCalledWith(expect.objectContaining({
-            where: expect.any(Function)
+            where: expect.any(Function),
+            // 27/11: the search vector and its bookkeeping are never read for the detail page
+            columns: { embedding: false, embedding_model: false, embedded_text_sha256: false, embedded_at: false },
         }));
     });
 
