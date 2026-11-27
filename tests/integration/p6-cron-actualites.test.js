@@ -198,9 +198,9 @@ describe('P6 Cron Actualites (secure + idempotent)', () => {
       orderBy: (cr, { asc }) => [asc(cr.startedAt)],
     });
     expect(runs).toHaveLength(3);
-    expect(runs[0]?.status).toBe('success');
-    expect(runs[1]?.status).toBe('skipped');
-    expect(runs[1]?.skipReason).toBe('locked');
+    // the cooldown simulation above gives the first two runs the same startedAt, so their order is not defined: check them as a set
+    expect(runs.slice(0, 2).map((r) => r.status).sort()).toEqual(['skipped', 'success']);
+    expect(runs.slice(0, 2).find((r) => r.status === 'skipped')?.skipReason).toBe('locked');
     expect(runs[2]?.status).toBe('success');
   });
 
