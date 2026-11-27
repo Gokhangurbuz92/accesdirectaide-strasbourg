@@ -8,7 +8,7 @@ import {
     getCurrentPathname,
 } from '@/lib/seo';
 
-const DEFAULT_IMAGE = '/og-default.webp';
+const DEFAULT_IMAGE = '/og-image.png';
 const SITE_NAME = 'Accès Direct Aide';
 
 /** R32: og:locale follows the interface language (Open Graph locale names) */
