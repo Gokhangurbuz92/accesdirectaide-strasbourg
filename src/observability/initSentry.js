@@ -1,6 +1,6 @@
 import { sentryRef } from "./sentryRef";
 import { errorTrackingActive, frontendEnv } from "@/config/env";
-import { SENTRY_DENY_URLS, keptDefaultIntegrations, scrubBreadcrumb, scrubEvent } from "./sentryScrub";
+import { SENTRY_DENY_URLS, isBrowserNetworkNoise, keptDefaultIntegrations, scrubBreadcrumb, scrubEvent } from "./sentryScrub";
 
 /**
  * Browser error tracking (Sentry, EU region — ingest host *.ingest.de.sentry.io, the only Sentry origin the CSP allows).
@@ -42,7 +42,8 @@ export async function initSentry() {
 
       denyUrls: SENTRY_DENY_URLS,
       beforeBreadcrumb: (crumb) => scrubBreadcrumb(crumb),
-      beforeSend: (event) => scrubEvent(event),
+      // a request that never reached the server (« TypeError: Load failed » on Safari …) is the visitor's network, not an error of the site: not sent
+      beforeSend: (event) => (isBrowserNetworkNoise(event) ? null : scrubEvent(event)),
     });
 
     /** @type {{ current: typeof import("@sentry/react") | null }} */ (sentryRef).current = Sentry;

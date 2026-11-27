@@ -143,6 +143,21 @@ export function scrubEvent(event) {
   return event;
 }
 
+/** the browsers' own wording for a request that never reached the server (connection lost, page closed or left, offline): Safari, Chrome, Firefox */
+export const BROWSER_NETWORK_FAILURE = /^(Load failed|Failed to fetch|NetworkError when attempting to fetch resource\.?|The network connection was lost\.?|The Internet connection appears to be offline\.?|cancelled|annulé)$/i;
+
+/**
+ * A network failure on the visitor's side, not a fault of the site: a single TypeError whose message is exactly the browser's network wording. Dropped
+ * before sending (an outage of our own servers is seen by the health checks and the server-side tracking, not by this browser error).
+ * @param {any} event @returns {boolean}
+ */
+export function isBrowserNetworkNoise(event) {
+  const values = event?.exception?.values;
+  if (!Array.isArray(values) || values.length !== 1) return false;
+  const [ex] = values;
+  return ex?.type === 'TypeError' && typeof ex.value === 'string' && BROWSER_NETWORK_FAILURE.test(ex.value.trim());
+}
+
 /**
  * The integrations kept from the SDK defaults: everything except the release-health session (errors only).
  * @param {{ name: string }[]} defaults
