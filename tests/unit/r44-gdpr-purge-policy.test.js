@@ -56,6 +56,9 @@ function recDb({ tables = ALL_TABLES, guest = false, failTable = null, lockOk = 
 const writes = (db) => db.calls.filter((c) => c.op !== 'select');
 const NOW = new Date('2026-11-04T12:00:00Z');
 
+/** group 1 (expired technical records), approved by the owner on 27/11/2026 after the Production dry run */
+const G1_STEPS = ['deletedTokensCount', 'deletedEmailChangeCount', 'deletedOutlookTokensCount', 'deletedAiMetricsCount', 'deletedLogsCount', 'pushSubscriptionsFailingDeleted', 'jobListingsExpiredMarked'];
+
 describe('R44 retention policy object', () => {
   it('V2 phase 1 (owner, 09/11/2026) + G14 (owner 22/11/2026, question 32): APPROVED with A7 = 365 named in the version, only step 6c approved, frozen; the proposal stays unapproved', () => {
     // G14: a new version (expansion durations), approved together with step 6c in one move; the earlier version is named in « supersedes »
@@ -78,7 +81,7 @@ describe('R44 retention policy object', () => {
     }
     expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
     // C3 step 6c (V2 6B): ONLY unverifiedAccountsDeleted is approved; every other purge step still needs its own approval record
-    expect(Object.keys(RETENTION_POLICY.approvedSteps || {})).toEqual(['unverifiedAccountsDeleted']);
+    expect(Object.keys(RETENTION_POLICY.approvedSteps || {})).toEqual(['unverifiedAccountsDeleted', ...G1_STEPS]);
     const PROPOSED = proposedTestPolicy();
     expect(PROPOSED.status).toBe(POLICY_STATUS_PROPOSED);
     expect('approvedPolicyVersion' in PROPOSED).toBe(false);
@@ -152,17 +155,18 @@ describe('R44 / E16 execution gate', () => {
 });
 
 describe('R44 runGdprPurge — dry run by default, execution only of approved steps', () => {
-  it('the production policy, enabled, pinned and EVERY step listed: ONLY the 6c step (approved in the policy) executes; every other step is refused', async () => {
+  it('the production policy, enabled, pinned and EVERY step listed: ONLY the 6c and group-1 steps (approved in the policy) execute; every other step is refused', async () => {
     const db = recDb();
     const { status, body } = await runGdprPurge({ database: db, env: { GDPR_PURGE_ENABLED: 'true', GDPR_PURGE_APPROVED_STEPS: executableStepIds(PURGE_STEPS).join(','),
       GDPR_PURGE_POLICY_VERSION: RETENTION_POLICY.version }, now: NOW, logger: log });
     expect(status).toBe(200);
     // C3 6c: the never-confirmed accounts (and their consent rows) are the only deletions; plus the run's evidence row (AuditLog GDPR_PURGE_RUN, counts only)
-    expect(writes(db).map((w) => [w.op, w.table])).toEqual([['delete', 'ConsentLog'], ['delete', 'CitizenUser'], ['insert', 'AuditLog']]);
+    expect(writes(db).map((w) => [w.op, w.table])).toEqual([['delete', 'UpdateLog'], ['delete', 'AuthToken'], ['delete', 'EmailChangeRequest'], ['delete', 'ConsentLog'], ['delete', 'CitizenUser'],
+      ['delete', 'AiMetric'], ['delete', 'ProOutlookToken'], ['delete', 'PushSubscription'], ['insert', 'AuditLog']]);   // + group 1 (27/11/2026); X13 needs an expansion table absent here
     expect(body.steps.find((l) => l.id === 'unverifiedAccountsDeleted')).toMatchObject({ decision: 'executed', table: 'CitizenUser', days: 7 });
     // every other executable step is refused for lack of its own approval record (the guest step is skipped first: a 0042 database has no guest columns)
     expect(body.steps.filter((l) => l.decision === 'not_approved_in_policy').map((l) => l.id).sort())
-      .toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount' && id !== 'unverifiedAccountsDeleted' && !EXPANSION_IDS.has(id) && !LP_IDS.has(id)).sort());
+      .toEqual(executableStepIds(PURGE_STEPS).filter((id) => id !== 'clearedGuestHoldsCount' && id !== 'unverifiedAccountsDeleted' && !G1_STEPS.includes(id) && !EXPANSION_IDS.has(id) && !LP_IDS.has(id)).sort());
     expect(body.steps.filter((l) => LP_IDS.has(l.id)).every((l) => l.decision === 'skipped_schema')).toBe(true);
     // G14: on this 0042-like database the expansion tables do not exist — skipped, never executed
     expect(body.steps.filter((l) => EXPANSION_IDS.has(l.id)).every((l) => l.decision === 'skipped_schema')).toBe(true);

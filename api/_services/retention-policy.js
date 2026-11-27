@@ -26,6 +26,9 @@
  * No value here is a legal obligation: « Obligation légale » is stated only with a read and cited text (R43 § 3); none was identified for these durations.
  */
 
+/** the backup verified before the group-1 approval of 27/11/2026 */
+const G1_BACKUP = 'owner backup ada_pre-admin-decisions_20261126T132604Z (encrypted, decrypt + pg_restore --list verified by the owner script) + K3 scheduled nightly backups (ADAB2, EU) + restore evidence CONTROL/v2/c7/EVIDENCE_2026-11-12.json';
+
 export const POLICY_STATUS_PROPOSED = 'PROPOSED — NOT APPROVED';
 export const POLICY_STATUS_APPROVED = 'APPROVED';
 
@@ -133,6 +136,42 @@ export const RETENTION_POLICY = deepFreeze({
       approvedOn: '2026-11-14',
       dryRunReviewedOn: '2026-11-14',
       backupVerified: 'CONTROL/v2/c7/EVIDENCE_2026-11-12.json (restore verified) + K3 scheduled backups 2026-11-13T02:20Z/14:17Z (ADAB2, EU)',
+    },
+    // group 1 (expired technical records), owner approval 27/11/2026 after the Production dry run of 27/11 (72/72 steps, 0 errors)
+    deletedTokensCount: {
+      approvedOn: '2026-11-27',
+      dryRunReviewedOn: '2026-11-27',
+      backupVerified: G1_BACKUP,
+    },
+    deletedEmailChangeCount: {
+      approvedOn: '2026-11-27',
+      dryRunReviewedOn: '2026-11-27',
+      backupVerified: G1_BACKUP,
+    },
+    deletedOutlookTokensCount: {
+      approvedOn: '2026-11-27',
+      dryRunReviewedOn: '2026-11-27',
+      backupVerified: G1_BACKUP,
+    },
+    deletedAiMetricsCount: {
+      approvedOn: '2026-11-27',
+      dryRunReviewedOn: '2026-11-27',
+      backupVerified: G1_BACKUP,
+    },
+    deletedLogsCount: {
+      approvedOn: '2026-11-27',
+      dryRunReviewedOn: '2026-11-27',
+      backupVerified: G1_BACKUP,
+    },
+    pushSubscriptionsFailingDeleted: {
+      approvedOn: '2026-11-27',
+      dryRunReviewedOn: '2026-11-27',
+      backupVerified: G1_BACKUP,
+    },
+    jobListingsExpiredMarked: {
+      approvedOn: '2026-11-27',
+      dryRunReviewedOn: '2026-11-27',
+      backupVerified: G1_BACKUP,
     },
   },
   // G14 — the DURATIONS of the expansion steps are decided by the controller (décision du responsable 22/11/2026, formulaire G14). That is not the

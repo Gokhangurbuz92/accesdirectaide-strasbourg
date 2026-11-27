@@ -13,6 +13,9 @@ import { anyUgcOpen } from '../../api/_handlers/notices.js';
 
 const M = (email, role = 'MODERATOR') => ({ email, role });
 
+/** group 1 (expired technical records), approved by the owner on 27/11/2026 after the Production dry run */
+const G1_STEPS = ['deletedTokensCount', 'deletedEmailChangeCount', 'deletedOutlookTokensCount', 'deletedAiMetricsCount', 'deletedLogsCount', 'pushSubscriptionsFailingDeleted', 'jobListingsExpiredMarked'];
+
 describe('staffing — fail closed', () => {
   it('nobody named: every function that needs a person is closed; X04 events need nobody', () => {
     const s = staffingFromStaff([]);
@@ -73,11 +76,11 @@ describe('art. 23 notifier key', () => {
 });
 
 describe('retention policy G14', () => {
-  it('approved new version (question 32), the earlier one superseded, 6c still the only APPROVED step', () => {
+  it('approved new version (question 32), the earlier one superseded, 6c and group 1 (27/11/2026) the only APPROVED steps', () => {
     expect(isPolicyApproved(RETENTION_POLICY)).toBe(true);
     expect(RETENTION_POLICY.version).toBe('g14-r3-2026-11-24-a7-365d');   // R3 (owner 24/11/2026): a new version for the release-3 durations; these durations unchanged
-    expect(Object.keys(RETENTION_POLICY.approvedSteps)).toEqual(['unverifiedAccountsDeleted']);
-    expect(policySummary(RETENTION_POLICY)).toMatchObject({ approvedStepCount: 1, decidedStepCount: 39 });   // + 11 release-3 steps decided by the owner 24/11/2026   // 25 on 22/11 + the 2 moderation-case steps of 23/11 + G14-PS socialReferralsClosedDeleted (decided by the owner 23/11/2026)
+    expect(Object.keys(RETENTION_POLICY.approvedSteps)).toEqual(['unverifiedAccountsDeleted', ...G1_STEPS]);
+    expect(policySummary(RETENTION_POLICY)).toMatchObject({ approvedStepCount: 1 + G1_STEPS.length, decidedStepCount: 39 });   // + 11 release-3 steps decided by the owner 24/11/2026   // 25 on 22/11 + the 2 moderation-case steps of 23/11 + G14-PS socialReferralsClosedDeleted (decided by the owner 23/11/2026)
   });
   it('the durations are the « (önerilen) » answers of the form', () => {
     const d = (k) => policyDays(RETENTION_POLICY, k);
@@ -95,7 +98,7 @@ describe('retention policy G14', () => {
       expect(step, id).toBeTruthy();
       if (step.durationKey) expect(() => policyDays(RETENTION_POLICY, step.durationKey), id).not.toThrow();
       // G14-PS: the social referral duration is decided (owner, 23/11/2026) like the others: only the step's own approval is missing
-      expect(stepApprovalProblem(RETENTION_POLICY, step), id).toBe('STEP_NOT_APPROVED_IN_POLICY');
+      expect(stepApprovalProblem(RETENTION_POLICY, step), id).toBe(G1_STEPS.includes(id) ? null : 'STEP_NOT_APPROVED_IN_POLICY');
       expect(stepDecision(RETENTION_POLICY, id)).toBe(dec);
       if (id.startsWith('entraide')) expect(dec.condition).toBe(X03_AIPD_CONDITION);
     }

@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { CAPABILITIES, hdsAttestation } from '../../api/_utils/capabilities.js';
 import { NOT_OPENABLE, SCHEDULED_JOBS, SURFACES } from '../../api/_utils/public-beta.js';
 import { personalSurfacesOpened } from '../../src/lib/publicBeta.js';
+import { RETENTION_POLICY, stepApprovalProblem } from '../../api/_services/retention-policy.js';
 import { buildItems, finalConfig, simulate, syntheticHdsToken, toMarkdown, without, evaluate, SYNTHETIC } from '../../scripts/activation-simulator.mjs';
 
 const env = finalConfig({ profile: 'production' });
@@ -32,9 +33,11 @@ describe('R47 activation simulator — proof as Production evaluates it', () => 
     expect(rep.summary.removalsChecked).toBeGreaterThan(150);
     for (const r of rep.results) for (const x of r.removals) { expect(x.closed).toBe(true); expect(typeof x.code).toBe('string'); }
   });
-  it('closed by design stays closed in the final configuration: jobs surface, minors, unreviewed service, gdpr-purge (policy in code), legacy jobs', () => {
-    expect(rep.summary.closedByDesign).toEqual(expect.arrayContaining(['surface.jobs', 'capability.citizen.minor_accounts', 'booking.unreviewed_service', 'job.gdpr-purge', 'job.ingest-demarches']));
-    expect(rep.results.find((r) => r.id === 'job.gdpr-purge').final.code).toBe('STEP_NOT_APPROVED_IN_POLICY');   // policy approved (phase 1), no step record yet
+  it('closed by design stays closed in the final configuration: jobs surface, minors, unreviewed service, legacy jobs; gdpr-purge opens for its approved steps only', () => {
+    expect(rep.summary.closedByDesign).toEqual(expect.arrayContaining(['surface.jobs', 'capability.citizen.minor_accounts', 'booking.unreviewed_service', 'job.ingest-demarches']));
+    // 27/11/2026: group 1 approved in the policy — the synthetic list (deletedTokensCount) now executes; an unapproved step alone still does not
+    expect(rep.results.find((r) => r.id === 'job.gdpr-purge').final.code).toBeFalsy();
+    expect(stepApprovalProblem(RETENTION_POLICY, { id: 'auditLogsDeleted' })).toBe('STEP_NOT_APPROVED_IN_POLICY');
     expect(rep.results.find((r) => r.id === 'booking.unreviewed_service').final.code).toBe('SERVICE_SENSITIVITY_UNREVIEWED');
   });
   it('G10: the five expansion capabilities (X01–X05) are outside the AIPD and stay closed in the final 173 configuration, with their surfaces', () => {

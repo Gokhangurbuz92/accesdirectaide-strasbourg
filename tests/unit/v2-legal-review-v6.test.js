@@ -37,6 +37,9 @@ function frenchKeys(/** @type {any} */ doc) {
 /** the figures of a text, sorted (Arabic: « يوم واحد » / « سنة واحدة » = 1, written in words in the translation) */
 const figures = (/** @type {string} */ t) => (String(t).replace(/يوم واحد|سنة واحدة/g, ' 1 ').match(/\d+/g) || []).sort().join(',');
 
+/** group 1 (expired technical records), approved by the owner on 27/11/2026 after the Production dry run */
+const G1_STEPS = ['deletedTokensCount', 'deletedEmailChangeCount', 'deletedOutlookTokensCount', 'deletedAiMetricsCount', 'deletedLogsCount', 'pushSubscriptionsFailingDeleted', 'jobListingsExpiredMarked'];
+
 describe('legal drafts v6-2026-11-17', () => {
   it('one shared version on every document; every document is still a draft pending the owner\'s approval', () => {
     expect(LEGAL_DRAFTS_VERSION).toBe('v6-2026-11-17');
@@ -165,7 +168,7 @@ describe('legal drafts v6-2026-11-17', () => {
     // expired links: only steps 6 / 6b of the purge delete them, and the production policy approves neither — the text no longer says « puis supprimés »
     expect(items[2]).not.toMatch(/puis supprimés\.$/);
     expect(items[2]).toContain("leur suppression automatique après expiration n'est pas encore activée : ils sont supprimés avec le compte.");
-    expect(Object.keys(RETENTION_POLICY.approvedSteps || {})).toEqual(['unverifiedAccountsDeleted']);
+    expect(Object.keys(RETENTION_POLICY.approvedSteps || {})).toEqual(['unverifiedAccountsDeleted', ...G1_STEPS]);
     // closed account functions are named as such; they stay closed in the narrow scope (full accounts scope only)
     expect(items[13]).toMatch(/^Fonctions pas encore ouvertes \(notamment rendez-vous, message facultatif, notifications des professionnels, assistant, membres du foyer, historique de consultation, favoris, suivi des démarches\) :/);
     // the narrow 6B configuration (beta restricted, only the accounts surface opened, narrow accounts scope) — the env values of Production itself are not read here

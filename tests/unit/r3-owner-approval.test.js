@@ -41,6 +41,9 @@ const MARKS = {
 const REVIEW_CLAIM = /avocat|juriste|expert|lawyer|Anwalt|avukat|محام|юрист/i;
 const APPROVED = 'cgu-citoyen@v13-2026-11-24,notice-confidentialite@v14-2026-11-24,cgu-professionnel@v11-2026-11-24,conditions-structures@v9-2026-11-23';
 
+/** group 1 (expired technical records), approved by the owner on 27/11/2026 after the Production dry run */
+const G1_STEPS = ['deletedTokensCount', 'deletedEmailChangeCount', 'deletedOutlookTokensCount', 'deletedAiMetricsCount', 'deletedLogsCount', 'pushSubscriptionsFailingDeleted', 'jobListingsExpiredMarked'];
+
 describe('R3 owner approval (24/11/2026) — legal texts', () => {
   it('status strings: approved on 24/11/2026 by the controller, worded like LEGAL_DRAFTS_V12_STATUS; no review claimed', () => {
     expect(L.LEGAL_DRAFTS_V12_STATUS).toMatch(/^APPROVED — approuvée le 23\/11\/2026 par le responsable/);
@@ -103,7 +106,7 @@ describe('R3 owner approval — retention', () => {
       expect(RETENTION_POLICY.approvedSteps[id], id).toBeUndefined();
       expect(stepApprovalProblem(RETENTION_POLICY, /** @type {any} */ (PURGE_STEPS.find((s) => s.id === id))), id).toBe('STEP_NOT_APPROVED_IN_POLICY');
     }
-    expect(Object.keys(RETENTION_POLICY.approvedSteps)).toEqual(['unverifiedAccountsDeleted']);
+    expect(Object.keys(RETENTION_POLICY.approvedSteps)).toEqual(['unverifiedAccountsDeleted', ...G1_STEPS]);
   });
   it('a new policy version; Production must pin GDPR_PURGE_POLICY_VERSION to it, the previous pin is a dry run', () => {
     expect(RETENTION_POLICY.version).toBe('g14-r3-2026-11-24-a7-365d');

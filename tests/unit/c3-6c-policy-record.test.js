@@ -6,8 +6,8 @@ describe('C3 6c policy record', () => {
   it('approves unverifiedAccountsDeleted completely (dates, dry-run review not after approval, backup evidence)', () => {
     expect(stepApprovalProblem(RETENTION_POLICY, { id: 'unverifiedAccountsDeleted' })).toBeNull();
   });
-  it('approves no other step', () => {
-    for (const id of ['deletedTokensCount', 'rdvConversationsDeleted', 'auditLogsDeleted', 'citizenErasure', 'x']) {
+  it('approves no step outside 6c and group 1 (27/11/2026)', () => {
+    for (const id of ['deletedInvitationsCount', 'rdvConversationsDeleted', 'auditLogsDeleted', 'citizenErasure', 'x']) {
       expect(stepApprovalProblem(RETENTION_POLICY, { id })).toBe('STEP_NOT_APPROVED_IN_POLICY');
     }
   });
