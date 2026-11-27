@@ -57,7 +57,7 @@ async function main() {
 
   const storageDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ada-int-storage-'));
   fs.chmodSync(storageDir, 0o700);
-  const env = { PATH: process.env.PATH, HOME: process.env.HOME, LANG: process.env.LANG || 'C.UTF-8', ...(process.env.PG_BIN ? { PG_BIN: process.env.PG_BIN } : {}), ...integrationEnv(url, storageDir) };
+  const env = { PATH: process.env.PATH, HOME: process.env.HOME, LANG: 'C.UTF-8', ...(process.env.PG_BIN ? { PG_BIN: process.env.PG_BIN } : {}), ...integrationEnv(url, storageDir) };
   const run = (cmd, args) => spawnSync(cmd, args, { stdio: 'inherit', env }).status ?? 1;
 
   // drizzle.config.ts itself refuses `migrate` against any non-local database (scripts/db-migrate-guard.mjs)
