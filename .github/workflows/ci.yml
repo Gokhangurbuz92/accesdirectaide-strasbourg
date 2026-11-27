@@ -92,10 +92,10 @@ jobs:
           retention-days: 7
 
   integration:
-    # A10 (27/11/2026): the tests/integration suite (300 files) used to run only in the native QA before a release. It now runs on every push, against a
-    # throwaway PostgreSQL 17 + pgvector service with every drizzle migration applied, in the same environment the native QA uses (synthetic values only,
-    # loopback *_test database, no network service: storage / KV / Ollama point at unreachable local addresses). ws6 (its own disposable database) stays
-    # in the native QA.
+    # A10 (27/11/2026): the tests/integration suite used to run only in the native QA before a release. It now runs on every push against a throwaway
+    # PostgreSQL 17 + pgvector service. scripts/ci-integration.mjs refuses anything but a loopback *_test database, applies the extensions and every
+    # migration there, then runs the suite with the native QA's synthetic environment (no secret, no network service). ws6 (own disposable database)
+    # and ws2-local-seed (local Ollama model) stay in the native QA.
     name: Integration suite (real PostgreSQL 17 + pgvector)
     runs-on: ubuntu-24.04
     timeout-minutes: 40
@@ -106,61 +106,28 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_DB: ada_ci_int_test
-          TZ: UTC
-          PGTZ: UTC
         ports: ["127.0.0.1:5432:5432"]
         options: >-
           --health-cmd "pg_isready -U postgres" --health-interval 5s --health-timeout 5s --health-retries 20
     env:
-      TZ: UTC
-      NODE_ENV: test
-      VERCEL_ENV: development
-      ADA_PUBLIC_CONTENT_MODE: lab
-      JWT_SECRET: test-jwt-secret
-      ADA_ENCRYPTION_KEY: "0000000000000000000000000000000000000000000000000000000000000000"
-      OUTLOOK_TOKEN_ENCRYPTION_KEY: "1111111111111111111111111111111111111111111111111111111111111111"
-      AUTH_SECRET: "2222222222222222222222222222222222222222222222222222222222222222"
-      CRON_SECRET: test-cron-secret
-      ADMIN_TOKEN: test-admin-token
-      BYPASS_SECRET: test-bypass-secret
-      STORAGE_ENDPOINT: http://localhost:9000
-      STORAGE_BUCKET: test-bucket
-      STORAGE_ACCESS_KEY_ID: test-access-key
-      STORAGE_SECRET_ACCESS_KEY: test-secret-key
-      STORAGE_PUBLIC_URL: http://localhost:9000/test-bucket
-      OLLAMA_BASE_URL: http://127.0.0.1:9
-      KV_REST_API_URL: http://localhost
-      UPSTASH_KV_KV_REST_API_URL: http://localhost
-      UPSTASH_REDIS_REST_URL: http://localhost
-      KV_REST_API_TOKEN: dummy
-      UPSTASH_KV_KV_REST_API_TOKEN: dummy
-      UPSTASH_REDIS_REST_TOKEN: dummy
       DATABASE_URL: postgresql://postgres@127.0.0.1:5432/ada_ci_int_test
-      DATABASE_URL_TEST: postgresql://postgres@127.0.0.1:5432/ada_ci_int_test
-      POSTGRES_PRISMA_URL: postgresql://postgres@127.0.0.1:5432/ada_ci_int_test
-      POSTGRES_URL_NON_POOLING: postgresql://postgres@127.0.0.1:5432/ada_ci_int_test
-      DATABASE_URL_UNPOOLED: postgresql://postgres@127.0.0.1:5432/ada_ci_int_test
-      WS4_HYBRID_SQL_TEST_URL: postgresql://postgres@127.0.0.1:5432/ada_ci_int_test
-      WS4_TERRITORY_SQL_TEST_URL: postgresql://postgres@127.0.0.1:5432/ada_ci_int_test
-      WS2_REQUIRE_LOCAL_DB: "1"
+      PG_BIN: /usr/lib/postgresql/17/bin
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci --no-audit --no-fund
-      - name: Database (UTC, extensions, every migration)
+      - name: PostgreSQL 17 client tools (pg_dump / pg_restore for the backup and restore tests)
         run: |
-          sudo apt-get install -y -qq postgresql-client >/dev/null
-          psql -h 127.0.0.1 -U postgres -d postgres -v ON_ERROR_STOP=1 -c "ALTER DATABASE ada_ci_int_test SET timezone TO 'UTC'"
-          psql -h 127.0.0.1 -U postgres -d ada_ci_int_test -v ON_ERROR_STOP=1 -c "CREATE EXTENSION IF NOT EXISTS unaccent" -c "CREATE EXTENSION IF NOT EXISTS pg_trgm" -c "CREATE EXTENSION IF NOT EXISTS vector"
-          npx drizzle-kit migrate
-      - name: Integration suite (ws6 apart)
-        run: |
-          # outside the checkout (LocalFilesystemStorage refuses a root inside a Git worktree), owner-only like the native QA
-          install -d -m 700 "$RUNNER_TEMP/int-storage"
-          ADA_LOCAL_STORAGE_DIR="$RUNNER_TEMP/int-storage" npx vitest run tests/integration --exclude tests/integration/ws6-dsr-disposable-db-e2e.test.js
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y >/dev/null
+          sudo apt-get install -y -qq postgresql-client-17 >/dev/null
+          "$PG_BIN/pg_dump" --version
+      - name: Integration suite (throwaway database only)
+        run: node scripts/ci-integration.mjs
 
   secret-scan:
     # RA-10: the repository is public. The scan used to run only on the developer's machine (optional pre-push hook) and in the release script, AFTER the
